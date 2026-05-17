@@ -1,0 +1,54 @@
+{
+  "has_blocking_errors": true,
+  "issues": [
+    {
+      "code": "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+      "line_number": null,
+      "message": "P/FCF above 100x requires explicit explanation before publish.",
+      "metric": "price_to_fcf",
+      "raw_text": null,
+      "reported": 526.3113357193345,
+      "severity": "error",
+      "validated": null
+    }
+  ],
+  "numeric_claims": [
+    {
+      "line_number": 4,
+      "nearby_text": "- Report as-of date: `2026-05-05`",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 5,
+      "nearby_text": "- Price basis: `244.43 USD` close from `2026-05-05` via `csv_price_provider`",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 5,
+      "nearby_text": "- Price basis: `244.43 USD` close from `2026-05-05` via `csv_price_provider`",
+      "normalized_value": 244.43,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "244.43 USD",
+      "unit": "usd"
+    },
+    {
+      "line_number": 18,
+      "nearby_text": "| SBC / Revenue | 14.7% |",
+      "normalized_value": 14.7,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "14.7%",
+      "unit": "percent"
+    }
+  ],
+  "ticker": "NET"
+}

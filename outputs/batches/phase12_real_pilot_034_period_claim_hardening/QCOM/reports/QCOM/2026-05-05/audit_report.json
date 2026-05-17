@@ -1,0 +1,117 @@
+{
+  "has_blocking_errors": true,
+  "issues": [
+    {
+      "code": "MISSING_FCF_SUPPORT_FOR_ACCUMULATE",
+      "line_number": null,
+      "message": "QCOM has Accumulate/Buy framing with unavailable FCF and insufficient current cash-flow or technical support.",
+      "metric": "free_cash_flow_ttm",
+      "raw_text": null,
+      "reported": null,
+      "severity": "error",
+      "validated": null
+    }
+  ],
+  "numeric_claims": [
+    {
+      "line_number": 8,
+      "nearby_text": "- Report as-of date: `2026-05-05`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 9,
+      "nearby_text": "- Price basis: `2026-05-05` close via `csv_price_provider`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": "close",
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 21,
+      "nearby_text": "| SBC / Revenue | 6.5% |",
+      "normalized_value": 6.5,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "6.5%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 29,
+      "nearby_text": "- **QCOM_CLAIM_002**: QCOM has validated revenue TTM of $44.20B, so the business discussion should focus on QCT/QTL mix, handset cyclicality, automotive/IoT diversification and management forecast quality rather than generic scale language.",
+      "normalized_value": 44200000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$44.20B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 37,
+      "nearby_text": "- **QCOM_CLAIM_004**: SBC/Revenue is 6.5%, which should be interpreted through semiconductor-cycle, segment-mix and buyback context rather than a one-size-fits-all compensation lens.",
+      "normalized_value": 6.5,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "6.5%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 41,
+      "nearby_text": "- **QCOM_CLAIM_005**: Balance-sheet flexibility is anchored in validated net cash of $11.57B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+      "normalized_value": 11570000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "net_cash",
+      "raw_text": "$11.57B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 46,
+      "nearby_text": "- **QCOM_CLAIM_006**: Valuation is framed by validated EV/Sales of 4.26x; this directly limits how aggressive the Accumulate stance should be.",
+      "normalized_value": 4.26,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "4.26x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 64,
+      "nearby_text": "- **QCOM_CLAIM_010**: The bull case is that QCT recovery, QTL resilience, automotive/IoT diversification and disciplined capital returns combines with revenue of $44.20B to support the allowed upside rating path when cash conversion quality also holds.",
+      "normalized_value": 44200000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$44.20B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 73,
+      "nearby_text": "- **QCOM_CLAIM_012**: The bear case is that handset cyclicality, margin pressure, inventory risk or weak management forecast overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 6.5% or source-quality issues persist.",
+      "normalized_value": 6.5,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "6.5%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 84,
+      "nearby_text": "- **QCOM_CLAIM_015**: Source disagreement or current-period mismatch can reduce conviction for QCOM, especially where revenue $44.20B is a key valuation denominator.",
+      "normalized_value": 44200000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$44.20B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 109,
+      "nearby_text": "Initial position: 20-30%.",
+      "normalized_value": 30.0,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "30%",
+      "unit": "percent"
+    }
+  ],
+  "ticker": "QCOM"
+}

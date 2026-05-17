@@ -1,0 +1,115 @@
+{
+  "has_blocking_errors": false,
+  "issues": [],
+  "numeric_claims": [
+    {
+      "line_number": 8,
+      "nearby_text": "- Report as-of date: `2026-05-05`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 9,
+      "nearby_text": "- Price basis: `2026-05-05` close via `csv_price_provider`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": "close",
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 21,
+      "nearby_text": "| SBC / Revenue | 19.8% |",
+      "normalized_value": 19.8,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "19.8%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 29,
+      "nearby_text": "- **ZS_CLAIM_002**: ZS has validated revenue TTM of $2.93B, so the business discussion should focus on company-specific growth, margin quality and source-quality drivers rather than generic scale language.",
+      "normalized_value": 2930000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$2.93B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 33,
+      "nearby_text": "- **ZS_CLAIM_003**: Validated FCF TTM is $1.08B, making cash conversion a direct rating input for ZS.",
+      "normalized_value": 1080000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$1.08B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 37,
+      "nearby_text": "- **ZS_CLAIM_004**: SBC/Revenue is 19.8%, which should be interpreted through sector-specific quality and valuation context rather than a one-size-fits-all compensation lens.",
+      "normalized_value": 19.8,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "19.8%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 41,
+      "nearby_text": "- **ZS_CLAIM_005**: Balance-sheet flexibility is anchored in validated net cash of $1.76B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+      "normalized_value": 1760000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "net_cash",
+      "raw_text": "$1.76B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 46,
+      "nearby_text": "- **ZS_CLAIM_006**: Valuation is framed by validated EV/Sales of 7.10x; this directly limits how aggressive the Hold stance should be.",
+      "normalized_value": 7.1,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "7.10x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 50,
+      "nearby_text": "- **ZS_CLAIM_007**: For ZS, validated P/FCF is 20.89x and should be read against validated growth, cash-flow and risk context; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+      "normalized_value": 20.89,
+      "period_hint": "unknown",
+      "possible_metric": "price_to_fcf",
+      "raw_text": "20.89x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 64,
+      "nearby_text": "- **ZS_CLAIM_010**: The bull case is that validated growth and cash-flow quality combines with revenue of $2.93B to support the allowed upside rating path when cash conversion quality also holds.",
+      "normalized_value": 2930000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$2.93B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 73,
+      "nearby_text": "- **ZS_CLAIM_012**: The bear case is that source-quality issues, valuation risk or technical weakness overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 19.8% or source-quality issues persist.",
+      "normalized_value": 19.8,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "19.8%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 84,
+      "nearby_text": "- **ZS_CLAIM_015**: Source disagreement or current-period mismatch can reduce conviction for ZS, especially where revenue $2.93B is a key valuation denominator.",
+      "normalized_value": 2930000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$2.93B",
+      "unit": "usd"
+    }
+  ],
+  "ticker": "ZS"
+}

@@ -1,0 +1,6 @@
+{
+  "schema_path": "../New project/company-dossier-lab/docs/VIVI_REVIEW_OUTPUT_SCHEMA.json",
+  "target": "outputs/batches/guardrail_coverage_batch_002/vivi_batch_review.json",
+  "valid": true,
+  "errors": []
+}

@@ -1,0 +1,28 @@
+{
+  "accounting_gain_not_operating_turnaround_count": 0,
+  "archetype_confidence": 0.2,
+  "archetype_triggered_rules": [],
+  "as_of_date": "2026-05-16",
+  "company_archetype": "SEMICONDUCTOR_AI_INFRA",
+  "data_confidence_score": 62,
+  "deeptech_quality_score_cap": 0,
+  "deeptech_sec_ir_current_period_evidence_complete": true,
+  "early_commercial_capital_intensive_tech_count": 0,
+  "external_display_rating": null,
+  "internal_research_quality_score": 74,
+  "manual_review_reasons": [
+    "MISSING_FCF_SUPPORT_FOR_ACCUMULATE"
+  ],
+  "order_materiality_missing_count": 0,
+  "publish_quality_score": 72,
+  "publishable": false,
+  "risk_profiles": [],
+  "score_explanation_short": "Manual review because FCF support is missing for the external Accumulate display.",
+  "sec_ir_current_period_evidence_complete": true,
+  "speculative_deep_tech_profile_count": 0,
+  "status": "manual_review",
+  "technical_overweight_in_thesis_count": 0,
+  "ticker": "QCOM",
+  "total_score": 82.0,
+  "vendor_only_hard_metrics_count": 0
+}

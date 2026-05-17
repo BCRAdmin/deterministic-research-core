@@ -1,0 +1,37 @@
+{
+  "actual_archetype": "STANDARD_GROWTH",
+  "archetype_confidence": 0.2,
+  "artifact_consistency_status": "clean",
+  "company_name": "Palo Alto Networks, Inc.",
+  "concerns": [],
+  "data_confidence_score": 4,
+  "evidence_status": "low_confidence",
+  "expected_archetype": "SAAS_CONSUMPTION / SAAS_SECURITY / STANDARD_GROWTH",
+  "external_display_rating": "Hold",
+  "internal_research_quality_score": 65,
+  "likely_false_negative": "no",
+  "likely_false_positive": "no",
+  "manual_review_reasons": [
+    "FCF_UNAVAILABLE_WITHOUT_IR_SUPPORT",
+    "MISSING_CURRENT_PERIOD_KPI_CONTEXT",
+    "EARNINGS_DATE_UNAVAILABLE",
+    "SOURCE_FRAME_VARIANT_IGNORED",
+    "PERIOD_TYPE_MISMATCH_IGNORED",
+    "TRUE_SOURCE_VALUE_DISAGREEMENT"
+  ],
+  "primary_blockers": [
+    "FCF_UNAVAILABLE_WITHOUT_IR_SUPPORT",
+    "MISSING_CURRENT_PERIOD_KPI_CONTEXT",
+    "EARNINGS_DATE_UNAVAILABLE",
+    "SOURCE_FRAME_VARIANT_IGNORED",
+    "PERIOD_TYPE_MISMATCH_IGNORED",
+    "audit_errors=2"
+  ],
+  "public_ready": false,
+  "publish_quality_score": 57,
+  "publishable": false,
+  "recommended_next_action": "Keep manual_review and resolve blockers before any promotion.",
+  "review_status": "manual_review",
+  "sector_bucket": "SaaS / Consumption / Cybersecurity / High-SBC",
+  "ticker": "PANW"
+}

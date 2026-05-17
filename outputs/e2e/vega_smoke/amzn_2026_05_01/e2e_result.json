@@ -1,0 +1,139 @@
+{
+  "case_id": "amzn_2026_05_01",
+  "decision_packet": {
+    "action_policy": {
+      "new_money": "Wait for confirmation or better entry",
+      "primary_action": "Maintain existing position",
+      "risk_controls": {
+        "hard_stop_reference": 175.0,
+        "review_level": 190.0
+      }
+    },
+    "as_of_date": "2026-05-01",
+    "calibration_mode": "live",
+    "key_reasons": [
+      "Fundamental score: 2.0",
+      "Technical score: 3.0",
+      "Valuation score: 0.0"
+    ],
+    "key_risks": [
+      "Risk score: -2.0"
+    ],
+    "rating_permission": {
+      "allowed_ratings": [
+        "Hold",
+        "Accumulate",
+        "Tactical Trim"
+      ],
+      "blocked_ratings": [
+        "Strong Buy",
+        "Buy",
+        "Tactical Underweight",
+        "Underweight",
+        "Sell",
+        "Avoid"
+      ],
+      "preferred_rating": "Hold",
+      "reason": "Fundamentals and trend are constructive, but elevated risk prevents an aggressive rating."
+    },
+    "score_version": "v1",
+    "signal_scores": {
+      "composite_score": 3.0,
+      "fundamental_score": 2.0,
+      "risk_score": -2.0,
+      "technical_score": 3.0,
+      "valuation_score": 0.0
+    },
+    "ticker": "AMZN",
+    "triggered_rules": [
+      "REVENUE_GROWTH_GT_15",
+      "FCF_TTM_POSITIVE",
+      "PRICE_ABOVE_200SMA",
+      "GOLDEN_CROSS",
+      "PRICE_ABOVE_EMA10",
+      "RSI_GT_75",
+      "MACD_HISTOGRAM_POSITIVE",
+      "ATR_PCT_GT_8"
+    ]
+  },
+  "failure_reasons": [],
+  "final_audit": {
+    "has_blocking_errors": false,
+    "issues": [],
+    "numeric_claims": [
+      {
+        "line_number": 5,
+        "nearby_text": "FCF TTM: $32.000B.",
+        "normalized_value": 32000000000.0,
+        "period_hint": "ttm",
+        "possible_metric": "free_cash_flow_ttm",
+        "raw_text": "$32.000B",
+        "unit": "usd"
+      }
+    ],
+    "ticker": "AMZN"
+  },
+  "final_markdown": "# AMZN Bad Report\n\nSourceRegistry contains relevant company/news sources; the report should discuss sourced events rather than claiming no news.\n\nFCF TTM: $32.000B.\n",
+  "final_status": "repaired_publishable",
+  "initial_audit": {
+    "has_blocking_errors": true,
+    "issues": [
+      {
+        "code": "NUMERIC_MISMATCH",
+        "line_number": 5,
+        "message": "Report states free_cash_flow_ttm as $20B but validated MetricsPacket has 32000000000.0.",
+        "metric": "free_cash_flow_ttm",
+        "raw_text": "$20B",
+        "reported": 20000000000.0,
+        "severity": "error",
+        "validated": 32000000000.0
+      },
+      {
+        "code": "NO_NEWS_WITH_AVAILABLE_SOURCES",
+        "line_number": null,
+        "message": "Report claims no news, but SourceRegistry contains relevant sources.",
+        "metric": null,
+        "raw_text": null,
+        "reported": null,
+        "severity": "error",
+        "validated": null
+      }
+    ],
+    "numeric_claims": [
+      {
+        "line_number": 5,
+        "nearby_text": "FCF TTM is $20B, but another section says FCF TTM is $32B.",
+        "normalized_value": 20000000000.0,
+        "period_hint": "ttm",
+        "possible_metric": "free_cash_flow_ttm",
+        "raw_text": "$20B",
+        "unit": "usd"
+      },
+      {
+        "line_number": 5,
+        "nearby_text": "FCF TTM is $20B, but another section says FCF TTM is $32B.",
+        "normalized_value": 32000000000.0,
+        "period_hint": "ttm",
+        "possible_metric": "free_cash_flow_ttm",
+        "raw_text": "$32B",
+        "unit": "usd"
+      }
+    ],
+    "ticker": "AMZN"
+  },
+  "passed": true,
+  "quality_score": {
+    "event_awareness": 10,
+    "grade": "A",
+    "logic_consistency": 20,
+    "numerical_accuracy": 25,
+    "publishable": true,
+    "rating_discipline": 15,
+    "source_quality": 20,
+    "status": "Publishable",
+    "total_score": 96,
+    "writing_structure": 6
+  },
+  "repaired": true,
+  "ticker": "AMZN"
+}

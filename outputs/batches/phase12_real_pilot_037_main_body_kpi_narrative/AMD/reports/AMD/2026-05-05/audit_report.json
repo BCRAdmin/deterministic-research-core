@@ -1,0 +1,199 @@
+{
+  "has_blocking_errors": true,
+  "issues": [
+    {
+      "code": "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+      "line_number": null,
+      "message": "P/FCF above 100x on positive, non-near-zero FCF requires explicit explanation before publish.",
+      "metric": "price_to_fcf",
+      "raw_text": null,
+      "reported": 246.48234774239293,
+      "severity": "error",
+      "validated": null
+    },
+    {
+      "code": "TRUE_FINANCIAL_ANOMALY",
+      "line_number": null,
+      "message": "P/FCF above 100x on positive, non-near-zero FCF requires explicit explanation before publish.",
+      "metric": "price_to_fcf",
+      "raw_text": null,
+      "reported": 246.48234774239293,
+      "severity": "error",
+      "validated": null
+    }
+  ],
+  "numeric_claims": [
+    {
+      "line_number": 9,
+      "nearby_text": "- Fundamental basis: revenue scale is `$31.19B`.",
+      "normalized_value": 31190000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$31.19B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 10,
+      "nearby_text": "- Cash-conversion basis: free cash flow is `$2.36B`.",
+      "normalized_value": 2360000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$2.36B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 11,
+      "nearby_text": "- Valuation constraint: EV/Sales is `18.50x`.",
+      "normalized_value": 18.5,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "18.50x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 15,
+      "nearby_text": "- Report as-of date: `2026-05-05`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 16,
+      "nearby_text": "- Price basis: `2026-05-05` close via `csv_price_provider`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": "close",
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 28,
+      "nearby_text": "| SBC / Revenue | 4.0% |",
+      "normalized_value": 4.0,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "4.0%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 36,
+      "nearby_text": "- **AMD_CLAIM_002**: AMD has revenue TTM of $31.19B, so the business discussion should focus on semiconductor cycle, product mix, inventory, gross margin and management forecast quality rather than generic scale language.",
+      "normalized_value": 31190000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$31.19B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 40,
+      "nearby_text": "- **AMD_CLAIM_003**: FCF TTM is $2.36B, making cash conversion a direct rating input for AMD.",
+      "normalized_value": 2360000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$2.36B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 44,
+      "nearby_text": "- **AMD_CLAIM_004**: SBC/Revenue is 4.0%, which should be interpreted through semiconductor-cycle, segment-mix and balance-sheet context rather than a one-size-fits-all compensation lens.",
+      "normalized_value": 4.0,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "4.0%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 48,
+      "nearby_text": "- **AMD_CLAIM_005**: Balance-sheet flexibility is anchored in net cash of $4.11B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+      "normalized_value": 4110000000.0000005,
+      "period_hint": "unknown",
+      "possible_metric": "net_cash",
+      "raw_text": "$4.11B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 53,
+      "nearby_text": "- **AMD_CLAIM_006**: Valuation is framed by EV/Sales of 18.50x; this directly limits how aggressive the Hold stance should be.",
+      "normalized_value": 18.5,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "18.50x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 57,
+      "nearby_text": "- **AMD_CLAIM_007**: For AMD, P/FCF is 246.48x and should be read against cycle-adjusted earnings and FCF support; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+      "normalized_value": 246.48,
+      "period_hint": "unknown",
+      "possible_metric": "price_to_fcf",
+      "raw_text": "246.48x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 71,
+      "nearby_text": "- **AMD_CLAIM_010**: The bull case is that cycle recovery, AI/datacenter mix and margin leverage combines with revenue of $31.19B to support the allowed upside rating path when cash conversion quality also holds.",
+      "normalized_value": 31190000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$31.19B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 80,
+      "nearby_text": "- **AMD_CLAIM_012**: The bear case is that inventory correction, gross-margin pressure or weak management forecast overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 4.0% or source-quality issues persist.",
+      "normalized_value": 4.0,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "4.0%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 91,
+      "nearby_text": "- **AMD_CLAIM_015**: Source disagreement or current-period mismatch can reduce conviction for AMD, especially where revenue $31.19B is a key valuation denominator.",
+      "normalized_value": 31190000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$31.19B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 113,
+      "nearby_text": "- Why this rating? `Hold` balances revenue of `$31.19B` against valuation and technical timing.",
+      "normalized_value": 31190000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$31.19B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 114,
+      "nearby_text": "- Cash conversion: FCF is `$2.36B` and determines whether growth converts into equity value.",
+      "normalized_value": 2360000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$2.36B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 115,
+      "nearby_text": "- Why not more bullish? EV/Sales `18.50x` limits new-money urgency unless current-period KPIs accelerate.",
+      "normalized_value": 18.5,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "18.50x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 116,
+      "nearby_text": "- Additional valuation/technical constraint: P/FCF `246.48x` and RSI `72.54` argue against chasing without a better setup.",
+      "normalized_value": 246.48,
+      "period_hint": "unknown",
+      "possible_metric": "price_to_fcf",
+      "raw_text": "246.48x",
+      "unit": "multiple"
+    }
+  ],
+  "ticker": "AMD"
+}

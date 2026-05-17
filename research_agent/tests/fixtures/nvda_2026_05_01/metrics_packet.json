@@ -1,0 +1,26 @@
+{
+  "ticker": "NVDA",
+  "as_of_date": "2026-05-01",
+  "technical": {
+    "indicator_date": "2026-04-30",
+    "close": 900.0,
+    "sma_50": 780.0,
+    "sma_200": 700.0,
+    "ema_10": 920.0,
+    "rsi_14": 40.0,
+    "macd_histogram": 0.2,
+    "atr_14": 40.0
+  },
+  "fundamentals": {
+    "fiscal_period": "FY2026",
+    "revenue_growth_yoy": 0.50,
+    "free_cash_flow_ttm": 96575000000,
+    "fcf_margin_ttm": 0.35,
+    "operating_margin_ttm": 0.62,
+    "sbc_to_revenue": 0.08,
+    "net_cash": 25000000000
+  },
+  "valuation": {
+    "forward_pe_consensus": 37.0
+  }
+}

@@ -1,0 +1,6 @@
+[
+  {"code": "NUMERIC_MISMATCH", "metric": "free_cash_flow_ttm"},
+  {"code": "PERIOD_MISMATCH", "metric": "operating_margin"},
+  {"code": "NUMERIC_MISMATCH", "metric": "forward_pe_consensus"}
+]
+

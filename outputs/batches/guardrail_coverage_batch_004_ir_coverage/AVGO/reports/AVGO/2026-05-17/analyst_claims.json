@@ -1,0 +1,801 @@
+[
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "AVGO enters the report at a frozen close of 425.19 with a Hold stance; the action should reflect semiconductor cycle, product mix, inventory, gross margin and management forecast quality, valuation discipline and the current technical setup.",
+    "claim_id": "AVGO_CLAIM_001",
+    "claim_text": "AVGO enters the report at a frozen close of 425.19 with a Hold stance; the action should reflect semiconductor cycle, product mix, inventory, gross margin and management forecast quality, valuation discipline and the current technical setup.",
+    "claim_type": "price_data",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "AVGO_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "AVGO_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "AVGO_YAHOO_CHART_PRICE_CSV_PRICE",
+      "AVGO_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "AVGO_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "AVGO_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "The action language should stay consistent with the Hold stance.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Executive Summary",
+    "source_ids": [
+      "AVGO_YAHOO_CHART_PRICE_CSV",
+      "AVGO_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "AVGO's Q1 revenue of $19.31B and AI revenue of $8.40B show that AI infrastructure is the central current-period growth driver.",
+    "claim_id": "AVGO_CLAIM_002",
+    "claim_text": "AVGO's Q1 revenue of $19.31B and AI revenue of $8.40B show that AI infrastructure is the central current-period growth driver.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "AI acceleration can still be offset by valuation risk.",
+    "evidence_ids": [
+      "AVGO_IR_Q1_FY2026_RELEASE_CURRENT_Q_REVENUE",
+      "AVGO_AVGO_IR_Q1_FY2026_RELEASE_current_q_revenue_Q1_FY2026",
+      "AVGO_IR_Q1_FY2026_RELEASE_AI_REVENUE",
+      "AVGO_AVGO_IR_Q1_FY2026_RELEASE_ai_revenue_Q1_FY2026"
+    ],
+    "evidence_metrics": [
+      "current_q_revenue",
+      "ai_revenue"
+    ],
+    "importance": "high",
+    "investment_implication": "Hold requires explicit AI revenue support in the main report.",
+    "metric_refs": [
+      "current_q_revenue",
+      "ai_revenue"
+    ],
+    "section": "Business & Segment Context",
+    "source_ids": [
+      "AVGO_IR_Q1_FY2026_RELEASE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "AVGO's Q1 FCF of $8.01B provides current-period cash-flow support for the AI and VMware/software mix thesis.",
+    "claim_id": "AVGO_CLAIM_003",
+    "claim_text": "AVGO's Q1 FCF of $8.01B provides current-period cash-flow support for the AI and VMware/software mix thesis.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "Strong FCF does not eliminate multiple compression risk.",
+    "evidence_ids": [
+      "AVGO_IR_Q1_FY2026_RELEASE_CURRENT_Q_FREE_CASH_FLOW",
+      "AVGO_AVGO_IR_Q1_FY2026_RELEASE_current_q_free_cash_flow_Q1_FY2026"
+    ],
+    "evidence_metrics": [
+      "current_q_free_cash_flow"
+    ],
+    "importance": "high",
+    "investment_implication": "FCF context is required before AVGO can be considered publishable.",
+    "metric_refs": [
+      "current_q_free_cash_flow"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "AVGO_IR_Q1_FY2026_RELEASE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "AVGO's Q2 revenue guide of $22.00B and AI semiconductor guide of $10.70B are the forward catalysts that must support the Hold rating.",
+    "claim_id": "AVGO_CLAIM_004",
+    "claim_text": "AVGO's Q2 revenue guide of $22.00B and AI semiconductor guide of $10.70B are the forward catalysts that must support the Hold rating.",
+    "claim_type": "guidance",
+    "confidence": "high",
+    "counterargument": "Guidance can disappoint if AI order timing or VMware integration economics weaken.",
+    "evidence_ids": [
+      "AVGO_IR_Q1_FY2026_RELEASE_Q2_REVENUE_GUIDANCE",
+      "AVGO_AVGO_IR_Q1_FY2026_RELEASE_q2_revenue_guidance_Q2_FY2026_GUIDANCE",
+      "AVGO_IR_Q1_FY2026_RELEASE_Q2_AI_SEMICONDUCTOR_REVENUE_GUIDANCE",
+      "AVGO_AVGO_IR_Q1_FY2026_RELEASE_q2_ai_semiconductor_revenue_guidance_Q2_FY2026_GUIDANCE"
+    ],
+    "evidence_metrics": [
+      "q2_revenue_guidance",
+      "q2_ai_semiconductor_revenue_guidance"
+    ],
+    "importance": "high",
+    "investment_implication": "A more bullish stance requires Q2 guidance to convert into reported revenue and FCF.",
+    "metric_refs": [
+      "q2_revenue_guidance",
+      "q2_ai_semiconductor_revenue_guidance"
+    ],
+    "section": "Catalysts & Triggers",
+    "source_ids": [
+      "AVGO_IR_Q1_FY2026_RELEASE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "AVGO has revenue TTM of $65.18B, so the business discussion should focus on semiconductor cycle, product mix, inventory, gross margin and management forecast quality rather than generic scale language.",
+    "claim_id": "AVGO_CLAIM_005",
+    "claim_text": "AVGO has revenue TTM of $65.18B, so the business discussion should focus on semiconductor cycle, product mix, inventory, gross margin and management forecast quality rather than generic scale language.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "Revenue scale alone does not prove attractive returns or valuation discipline.",
+    "evidence_ids": [
+      "AVGO_SEC_COMPANYFACTS_1730168_REVENUE",
+      "AVGO_SEC_COMPANYFACTS_1730168_REVENUE_TTM",
+      "AVGO_SEC_COMPANYFACTS_1730168_SALES",
+      "AVGO_SEC_COMPANYFACTS_1730168_UMSATZ",
+      "AVGO_IR_Q1_FY2026_RELEASE_REVENUE",
+      "AVGO_IR_Q1_FY2026_RELEASE_REVENUE_TTM",
+      "AVGO_IR_Q1_FY2026_RELEASE_SALES",
+      "AVGO_IR_Q1_FY2026_RELEASE_UMSATZ",
+      "AVGO_SEC_revenue_FY2025_FY_0001730168-25-000121",
+      "AVGO_SEC_revenue_FY2025_Q2_0001730168-25-000064",
+      "AVGO_SEC_revenue_FY2025_Q3_0001730168-25-000098",
+      "AVGO_SEC_revenue_FY2026_Q1_0001730168-26-000016"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm"
+    ],
+    "importance": "high",
+    "investment_implication": "Use revenue evidence as context, not as a standalone buy signal.",
+    "metric_refs": [
+      "revenue_ttm"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "AVGO_SEC_COMPANYFACTS_1730168",
+      "AVGO_IR_Q1_FY2026_RELEASE",
+      "SEC_0001730168_0001730168-25-000121",
+      "SEC_0001730168_0001730168-25-000064",
+      "SEC_0001730168_0001730168-25-000098",
+      "SEC_0001730168_0001730168-26-000016"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "FCF TTM is $22.65B, making cash conversion a direct rating input for AVGO.",
+    "claim_id": "AVGO_CLAIM_006",
+    "claim_text": "FCF TTM is $22.65B, making cash conversion a direct rating input for AVGO.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "FCF may be company-defined or period-sensitive and can require reconciliation review.",
+    "evidence_ids": [
+      "AVGO_SEC_COMPANYFACTS_1730168_CASHFLOW",
+      "AVGO_SEC_COMPANYFACTS_1730168_FCF",
+      "AVGO_SEC_COMPANYFACTS_1730168_FREE_CASH_FLOW",
+      "AVGO_SEC_COMPANYFACTS_1730168_FREE_CASH_FLOW_TTM",
+      "AVGO_SEC_COMPANYFACTS_1730168_FREE_CASHFLOW",
+      "AVGO_IR_Q1_FY2026_RELEASE_CASHFLOW",
+      "AVGO_IR_Q1_FY2026_RELEASE_FCF",
+      "AVGO_IR_Q1_FY2026_RELEASE_FREE_CASH_FLOW",
+      "AVGO_IR_Q1_FY2026_RELEASE_FREE_CASH_FLOW_TTM",
+      "AVGO_IR_Q1_FY2026_RELEASE_FREE_CASHFLOW",
+      "AVGO_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm"
+    ],
+    "importance": "high",
+    "investment_implication": "FCF quality supports the thesis only if no sanity guard blocks the report.",
+    "metric_refs": [
+      "free_cash_flow_ttm"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "AVGO_SEC_COMPANYFACTS_1730168",
+      "AVGO_IR_Q1_FY2026_RELEASE",
+      "SEC_0001730168_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "SBC/Revenue is 8.3%, which should be interpreted through semiconductor-cycle, segment-mix and balance-sheet context rather than a one-size-fits-all compensation lens.",
+    "claim_id": "AVGO_CLAIM_007",
+    "claim_text": "SBC/Revenue is 8.3%, which should be interpreted through semiconductor-cycle, segment-mix and balance-sheet context rather than a one-size-fits-all compensation lens.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": "Sector and lifecycle matter, but persistent dilution can still reduce equity quality.",
+    "evidence_ids": [
+      "AVGO_SEC_COMPANYFACTS_1730168_SBC_TO_REVENUE",
+      "AVGO_SEC_DERIVED_SBC_TO_REVENUE"
+    ],
+    "evidence_metrics": [
+      "sbc_to_revenue"
+    ],
+    "importance": "medium",
+    "investment_implication": "Treat SBC as a risk modifier rather than an automatic rating override.",
+    "metric_refs": [
+      "sbc_to_revenue"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "AVGO_SEC_COMPANYFACTS_1730168",
+      "SEC_0001730168_DERIVED_SBC_TO_REVENUE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Balance-sheet flexibility is anchored in net cash of $9.31B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+    "claim_id": "AVGO_CLAIM_008",
+    "claim_text": "Balance-sheet flexibility is anchored in net cash of $9.31B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "AVGO_SEC_COMPANYFACTS_1730168_CASH",
+      "AVGO_SEC_COMPANYFACTS_1730168_CASH_AND_EQUIVALENTS",
+      "AVGO_SEC_COMPANYFACTS_1730168_CASH_AND_INVESTMENTS",
+      "AVGO_SEC_COMPANYFACTS_1730168_NET_CASH",
+      "AVGO_IR_Q1_FY2026_RELEASE_CASH",
+      "AVGO_IR_Q1_FY2026_RELEASE_CASH_AND_EQUIVALENTS",
+      "AVGO_IR_Q1_FY2026_RELEASE_CASH_AND_INVESTMENTS",
+      "AVGO_IR_Q1_FY2026_RELEASE_NET_CASH",
+      "AVGO_SEC_cash_and_equivalents_FY2025_FY_0001730168-25-000121",
+      "AVGO_SEC_cash_and_equivalents_FY2026_Q1_0001730168-26-000016",
+      "AVGO_SEC_COMPANYFACTS_1730168_DEBT",
+      "AVGO_SEC_COMPANYFACTS_1730168_NET_DEBT",
+      "AVGO_SEC_COMPANYFACTS_1730168_TOTAL_DEBT"
+    ],
+    "evidence_metrics": [
+      "net_cash",
+      "total_debt"
+    ],
+    "importance": "medium",
+    "investment_implication": "A stronger liquidity position can widen the acceptable holding corridor.",
+    "metric_refs": [
+      "net_cash",
+      "total_debt"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "AVGO_SEC_COMPANYFACTS_1730168",
+      "AVGO_IR_Q1_FY2026_RELEASE",
+      "SEC_0001730168_0001730168-25-000121",
+      "SEC_0001730168_0001730168-26-000016"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Valuation is framed by EV/Sales of 31.74x; this directly limits how aggressive the Hold stance should be.",
+    "claim_id": "AVGO_CLAIM_009",
+    "claim_text": "Valuation is framed by EV/Sales of 31.74x; this directly limits how aggressive the Hold stance should be.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": "Packet-derived valuation can still be blocked by sanity guards when source reconciliation is suspect.",
+    "evidence_ids": [
+      "AVGO_SEC_COMPANYFACTS_1730168_REVENUE",
+      "AVGO_SEC_COMPANYFACTS_1730168_REVENUE_TTM",
+      "AVGO_SEC_COMPANYFACTS_1730168_SALES",
+      "AVGO_SEC_COMPANYFACTS_1730168_UMSATZ",
+      "AVGO_IR_Q1_FY2026_RELEASE_REVENUE",
+      "AVGO_IR_Q1_FY2026_RELEASE_REVENUE_TTM",
+      "AVGO_IR_Q1_FY2026_RELEASE_SALES",
+      "AVGO_IR_Q1_FY2026_RELEASE_UMSATZ",
+      "AVGO_SEC_revenue_FY2025_FY_0001730168-25-000121",
+      "AVGO_SEC_revenue_FY2025_Q2_0001730168-25-000064",
+      "AVGO_SEC_revenue_FY2025_Q3_0001730168-25-000098",
+      "AVGO_SEC_revenue_FY2026_Q1_0001730168-26-000016",
+      "AVGO_SEC_COMPANYFACTS_1730168_CASHFLOW",
+      "AVGO_SEC_COMPANYFACTS_1730168_FCF",
+      "AVGO_SEC_COMPANYFACTS_1730168_FREE_CASH_FLOW",
+      "AVGO_SEC_COMPANYFACTS_1730168_FREE_CASH_FLOW_TTM",
+      "AVGO_SEC_COMPANYFACTS_1730168_FREE_CASHFLOW",
+      "AVGO_IR_Q1_FY2026_RELEASE_CASHFLOW",
+      "AVGO_IR_Q1_FY2026_RELEASE_FCF",
+      "AVGO_IR_Q1_FY2026_RELEASE_FREE_CASH_FLOW",
+      "AVGO_IR_Q1_FY2026_RELEASE_FREE_CASH_FLOW_TTM",
+      "AVGO_IR_Q1_FY2026_RELEASE_FREE_CASHFLOW",
+      "AVGO_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "AVGO_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "AVGO_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "AVGO_YAHOO_CHART_PRICE_CSV_PRICE",
+      "AVGO_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "AVGO_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "AVGO_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm",
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Do not upgrade rating solely from valuation language if audit has financial-sanity errors.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm",
+      "close"
+    ],
+    "section": "Valuation / Multiples",
+    "source_ids": [
+      "AVGO_SEC_COMPANYFACTS_1730168",
+      "AVGO_IR_Q1_FY2026_RELEASE",
+      "SEC_0001730168_0001730168-25-000121",
+      "SEC_0001730168_0001730168-25-000064",
+      "SEC_0001730168_0001730168-25-000098",
+      "SEC_0001730168_0001730168-26-000016",
+      "SEC_0001730168_DERIVED_FCF",
+      "AVGO_YAHOO_CHART_PRICE_CSV",
+      "AVGO_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "For AVGO, P/FCF is 91.76x and should be read against cycle-adjusted earnings and FCF support; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+    "claim_id": "AVGO_CLAIM_010",
+    "claim_text": "For AVGO, P/FCF is 91.76x and should be read against cycle-adjusted earnings and FCF support; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "AVGO_SEC_COMPANYFACTS_1730168_CASHFLOW",
+      "AVGO_SEC_COMPANYFACTS_1730168_FCF",
+      "AVGO_SEC_COMPANYFACTS_1730168_FREE_CASH_FLOW",
+      "AVGO_SEC_COMPANYFACTS_1730168_FREE_CASH_FLOW_TTM",
+      "AVGO_SEC_COMPANYFACTS_1730168_FREE_CASHFLOW",
+      "AVGO_IR_Q1_FY2026_RELEASE_CASHFLOW",
+      "AVGO_IR_Q1_FY2026_RELEASE_FCF",
+      "AVGO_IR_Q1_FY2026_RELEASE_FREE_CASH_FLOW",
+      "AVGO_IR_Q1_FY2026_RELEASE_FREE_CASH_FLOW_TTM",
+      "AVGO_IR_Q1_FY2026_RELEASE_FREE_CASHFLOW",
+      "AVGO_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "AVGO_SEC_COMPANYFACTS_1730168_REVENUE",
+      "AVGO_SEC_COMPANYFACTS_1730168_REVENUE_TTM",
+      "AVGO_SEC_COMPANYFACTS_1730168_SALES",
+      "AVGO_SEC_COMPANYFACTS_1730168_UMSATZ",
+      "AVGO_IR_Q1_FY2026_RELEASE_REVENUE",
+      "AVGO_IR_Q1_FY2026_RELEASE_REVENUE_TTM",
+      "AVGO_IR_Q1_FY2026_RELEASE_SALES",
+      "AVGO_IR_Q1_FY2026_RELEASE_UMSATZ",
+      "AVGO_SEC_revenue_FY2025_FY_0001730168-25-000121",
+      "AVGO_SEC_revenue_FY2025_Q2_0001730168-25-000064",
+      "AVGO_SEC_revenue_FY2025_Q3_0001730168-25-000098",
+      "AVGO_SEC_revenue_FY2026_Q1_0001730168-26-000016"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm",
+      "revenue_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "The rating should stay conservative when multiples are expensive, missing or flagged.",
+    "metric_refs": [
+      "free_cash_flow_ttm",
+      "revenue_ttm"
+    ],
+    "section": "Valuation / Multiples",
+    "source_ids": [
+      "AVGO_SEC_COMPANYFACTS_1730168",
+      "AVGO_IR_Q1_FY2026_RELEASE",
+      "SEC_0001730168_DERIVED_FCF",
+      "SEC_0001730168_0001730168-25-000121",
+      "SEC_0001730168_0001730168-25-000064",
+      "SEC_0001730168_0001730168-25-000098",
+      "SEC_0001730168_0001730168-26-000016"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The technical setup uses close 425.19, 50-SMA 369.40, 200-SMA 346.83 and RSI 58.64, creating timing risk if price cannot reclaim trend support.",
+    "claim_id": "AVGO_CLAIM_011",
+    "claim_text": "The technical setup uses close 425.19, 50-SMA 369.40, 200-SMA 346.83 and RSI 58.64, creating timing risk if price cannot reclaim trend support.",
+    "claim_type": "technical_metric",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "AVGO_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "AVGO_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "AVGO_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "AVGO_YAHOO_CHART_PRICE_CSV_PRICE",
+      "AVGO_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "AVGO_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "AVGO_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Timing language should follow the validated technical trend state.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Technical Setup",
+    "source_ids": [
+      "AVGO_YAHOO_CHART_PRICE_CSV",
+      "AVGO_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "AVGO's close of 425.19 and moving-average position imply constructive momentum but still requires valuation and risk discipline, so entries should be staged, delayed or trimmed according to business evidence and risk/reward.",
+    "claim_id": "AVGO_CLAIM_012",
+    "claim_text": "AVGO's close of 425.19 and moving-average position imply constructive momentum but still requires valuation and risk discipline, so entries should be staged, delayed or trimmed according to business evidence and risk/reward.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": "Technical weakness can be temporary if fundamentals and catalysts improve.",
+    "evidence_ids": [
+      "AVGO_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "AVGO_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "AVGO_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "AVGO_YAHOO_CHART_PRICE_CSV_PRICE",
+      "AVGO_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "AVGO_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "AVGO_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Use staged entries or trims when technical and fundamental signals diverge.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Technical Setup",
+    "source_ids": [
+      "AVGO_YAHOO_CHART_PRICE_CSV",
+      "AVGO_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The bull case is that cycle recovery, AI/datacenter mix and margin leverage combines with revenue of $65.18B to support the allowed upside rating path when cash conversion quality also holds.",
+    "claim_id": "AVGO_CLAIM_013",
+    "claim_text": "The bull case is that cycle recovery, AI/datacenter mix and margin leverage combines with revenue of $65.18B to support the allowed upside rating path when cash conversion quality also holds.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": "Strong scale does not resolve valuation or reconciliation anomalies.",
+    "evidence_ids": [
+      "AVGO_SEC_COMPANYFACTS_1730168_REVENUE",
+      "AVGO_SEC_COMPANYFACTS_1730168_REVENUE_TTM",
+      "AVGO_SEC_COMPANYFACTS_1730168_SALES",
+      "AVGO_SEC_COMPANYFACTS_1730168_UMSATZ",
+      "AVGO_IR_Q1_FY2026_RELEASE_REVENUE",
+      "AVGO_IR_Q1_FY2026_RELEASE_REVENUE_TTM",
+      "AVGO_IR_Q1_FY2026_RELEASE_SALES",
+      "AVGO_IR_Q1_FY2026_RELEASE_UMSATZ",
+      "AVGO_SEC_revenue_FY2025_FY_0001730168-25-000121",
+      "AVGO_SEC_revenue_FY2025_Q2_0001730168-25-000064",
+      "AVGO_SEC_revenue_FY2025_Q3_0001730168-25-000098",
+      "AVGO_SEC_revenue_FY2026_Q1_0001730168-26-000016",
+      "AVGO_SEC_COMPANYFACTS_1730168_CASHFLOW",
+      "AVGO_SEC_COMPANYFACTS_1730168_FCF",
+      "AVGO_SEC_COMPANYFACTS_1730168_FREE_CASH_FLOW",
+      "AVGO_SEC_COMPANYFACTS_1730168_FREE_CASH_FLOW_TTM",
+      "AVGO_SEC_COMPANYFACTS_1730168_FREE_CASHFLOW",
+      "AVGO_IR_Q1_FY2026_RELEASE_CASHFLOW",
+      "AVGO_IR_Q1_FY2026_RELEASE_FCF",
+      "AVGO_IR_Q1_FY2026_RELEASE_FREE_CASH_FLOW",
+      "AVGO_IR_Q1_FY2026_RELEASE_FREE_CASH_FLOW_TTM",
+      "AVGO_IR_Q1_FY2026_RELEASE_FREE_CASHFLOW",
+      "AVGO_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Bullish language should remain bounded by the evidence-backed action plan.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Bull Case",
+    "source_ids": [
+      "AVGO_SEC_COMPANYFACTS_1730168",
+      "AVGO_IR_Q1_FY2026_RELEASE",
+      "SEC_0001730168_0001730168-25-000121",
+      "SEC_0001730168_0001730168-25-000064",
+      "SEC_0001730168_0001730168-25-000098",
+      "SEC_0001730168_0001730168-26-000016",
+      "SEC_0001730168_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "A constructive technical bull path for AVGO requires confirmation beyond the current RSI of 58.64 and moving-average setup.",
+    "claim_id": "AVGO_CLAIM_014",
+    "claim_text": "A constructive technical bull path for AVGO requires confirmation beyond the current RSI of 58.64 and moving-average setup.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "AVGO_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "AVGO_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "AVGO_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "AVGO_YAHOO_CHART_PRICE_CSV_PRICE",
+      "AVGO_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "AVGO_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "AVGO_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Add or accumulate language should require confirmation when the preferred rating is not Buy.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Bull Case",
+    "source_ids": [
+      "AVGO_YAHOO_CHART_PRICE_CSV",
+      "AVGO_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The bear case is that inventory correction, gross-margin pressure or weak management forecast overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 8.3% or source-quality issues persist.",
+    "claim_id": "AVGO_CLAIM_015",
+    "claim_text": "The bear case is that inventory correction, gross-margin pressure or weak management forecast overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 8.3% or source-quality issues persist.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "AVGO_SEC_COMPANYFACTS_1730168_CASHFLOW",
+      "AVGO_SEC_COMPANYFACTS_1730168_FCF",
+      "AVGO_SEC_COMPANYFACTS_1730168_FREE_CASH_FLOW",
+      "AVGO_SEC_COMPANYFACTS_1730168_FREE_CASH_FLOW_TTM",
+      "AVGO_SEC_COMPANYFACTS_1730168_FREE_CASHFLOW",
+      "AVGO_IR_Q1_FY2026_RELEASE_CASHFLOW",
+      "AVGO_IR_Q1_FY2026_RELEASE_FCF",
+      "AVGO_IR_Q1_FY2026_RELEASE_FREE_CASH_FLOW",
+      "AVGO_IR_Q1_FY2026_RELEASE_FREE_CASH_FLOW_TTM",
+      "AVGO_IR_Q1_FY2026_RELEASE_FREE_CASHFLOW",
+      "AVGO_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "AVGO_SEC_COMPANYFACTS_1730168_SBC_TO_REVENUE",
+      "AVGO_SEC_DERIVED_SBC_TO_REVENUE"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm",
+      "sbc_to_revenue"
+    ],
+    "importance": "high",
+    "investment_implication": "Manual review remains appropriate when financial-sanity guards fire.",
+    "metric_refs": [
+      "free_cash_flow_ttm",
+      "sbc_to_revenue"
+    ],
+    "section": "Bear Case",
+    "source_ids": [
+      "AVGO_SEC_COMPANYFACTS_1730168",
+      "AVGO_IR_Q1_FY2026_RELEASE",
+      "SEC_0001730168_DERIVED_FCF",
+      "SEC_0001730168_DERIVED_SBC_TO_REVENUE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Valuation risk for AVGO is a discipline constraint; expensive or missing EV/Sales and P/FCF context should not be translated into a blocked rating.",
+    "claim_id": "AVGO_CLAIM_016",
+    "claim_text": "Valuation risk for AVGO is a discipline constraint; expensive or missing EV/Sales and P/FCF context should not be translated into a blocked rating.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "AVGO_SEC_COMPANYFACTS_1730168_REVENUE",
+      "AVGO_SEC_COMPANYFACTS_1730168_REVENUE_TTM",
+      "AVGO_SEC_COMPANYFACTS_1730168_SALES",
+      "AVGO_SEC_COMPANYFACTS_1730168_UMSATZ",
+      "AVGO_IR_Q1_FY2026_RELEASE_REVENUE",
+      "AVGO_IR_Q1_FY2026_RELEASE_REVENUE_TTM",
+      "AVGO_IR_Q1_FY2026_RELEASE_SALES",
+      "AVGO_IR_Q1_FY2026_RELEASE_UMSATZ",
+      "AVGO_SEC_revenue_FY2025_FY_0001730168-25-000121",
+      "AVGO_SEC_revenue_FY2025_Q2_0001730168-25-000064",
+      "AVGO_SEC_revenue_FY2025_Q3_0001730168-25-000098",
+      "AVGO_SEC_revenue_FY2026_Q1_0001730168-26-000016",
+      "AVGO_SEC_COMPANYFACTS_1730168_CASHFLOW",
+      "AVGO_SEC_COMPANYFACTS_1730168_FCF",
+      "AVGO_SEC_COMPANYFACTS_1730168_FREE_CASH_FLOW",
+      "AVGO_SEC_COMPANYFACTS_1730168_FREE_CASH_FLOW_TTM",
+      "AVGO_SEC_COMPANYFACTS_1730168_FREE_CASHFLOW",
+      "AVGO_IR_Q1_FY2026_RELEASE_CASHFLOW",
+      "AVGO_IR_Q1_FY2026_RELEASE_FCF",
+      "AVGO_IR_Q1_FY2026_RELEASE_FREE_CASH_FLOW",
+      "AVGO_IR_Q1_FY2026_RELEASE_FREE_CASH_FLOW_TTM",
+      "AVGO_IR_Q1_FY2026_RELEASE_FREE_CASHFLOW",
+      "AVGO_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Avoid full-exit language when the evidence supports only trim or hold actions.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Bear Case",
+    "source_ids": [
+      "AVGO_SEC_COMPANYFACTS_1730168",
+      "AVGO_IR_Q1_FY2026_RELEASE",
+      "SEC_0001730168_0001730168-25-000121",
+      "SEC_0001730168_0001730168-25-000064",
+      "SEC_0001730168_0001730168-25-000098",
+      "SEC_0001730168_0001730168-26-000016",
+      "SEC_0001730168_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Validation and audit issues are part of the AVGO research view; any blocking data issue should override a superficially complete report.",
+    "claim_id": "AVGO_CLAIM_017",
+    "claim_text": "Validation and audit issues are part of the AVGO research view; any blocking data issue should override a superficially complete report.",
+    "claim_type": "risk",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "AVGO_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "AVGO_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "AVGO_YAHOO_CHART_PRICE_CSV_PRICE",
+      "AVGO_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "AVGO_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "AVGO_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Blocking audit errors should keep the report in manual review.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Key Risks",
+    "source_ids": [
+      "AVGO_YAHOO_CHART_PRICE_CSV",
+      "AVGO_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Source disagreement or current-period mismatch can reduce conviction for AVGO, especially where revenue $65.18B is a key valuation denominator.",
+    "claim_id": "AVGO_CLAIM_018",
+    "claim_text": "Source disagreement or current-period mismatch can reduce conviction for AVGO, especially where revenue $65.18B is a key valuation denominator.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "AVGO_SEC_COMPANYFACTS_1730168_REVENUE",
+      "AVGO_SEC_COMPANYFACTS_1730168_REVENUE_TTM",
+      "AVGO_SEC_COMPANYFACTS_1730168_SALES",
+      "AVGO_SEC_COMPANYFACTS_1730168_UMSATZ",
+      "AVGO_IR_Q1_FY2026_RELEASE_REVENUE",
+      "AVGO_IR_Q1_FY2026_RELEASE_REVENUE_TTM",
+      "AVGO_IR_Q1_FY2026_RELEASE_SALES",
+      "AVGO_IR_Q1_FY2026_RELEASE_UMSATZ",
+      "AVGO_SEC_revenue_FY2025_FY_0001730168-25-000121",
+      "AVGO_SEC_revenue_FY2025_Q2_0001730168-25-000064",
+      "AVGO_SEC_revenue_FY2025_Q3_0001730168-25-000098",
+      "AVGO_SEC_revenue_FY2026_Q1_0001730168-26-000016",
+      "AVGO_SEC_COMPANYFACTS_1730168_CASHFLOW",
+      "AVGO_SEC_COMPANYFACTS_1730168_FCF",
+      "AVGO_SEC_COMPANYFACTS_1730168_FREE_CASH_FLOW",
+      "AVGO_SEC_COMPANYFACTS_1730168_FREE_CASH_FLOW_TTM",
+      "AVGO_SEC_COMPANYFACTS_1730168_FREE_CASHFLOW",
+      "AVGO_IR_Q1_FY2026_RELEASE_CASHFLOW",
+      "AVGO_IR_Q1_FY2026_RELEASE_FCF",
+      "AVGO_IR_Q1_FY2026_RELEASE_FREE_CASH_FLOW",
+      "AVGO_IR_Q1_FY2026_RELEASE_FREE_CASH_FLOW_TTM",
+      "AVGO_IR_Q1_FY2026_RELEASE_FREE_CASHFLOW",
+      "AVGO_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Source-quality limitations belong in the final action plan.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Key Risks",
+    "source_ids": [
+      "AVGO_SEC_COMPANYFACTS_1730168",
+      "AVGO_IR_Q1_FY2026_RELEASE",
+      "SEC_0001730168_0001730168-25-000121",
+      "SEC_0001730168_0001730168-25-000064",
+      "SEC_0001730168_0001730168-25-000098",
+      "SEC_0001730168_0001730168-26-000016",
+      "SEC_0001730168_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Catalysts for AVGO at the validated close of 425.19 should be limited to confirmed packet inputs; missing earnings or forward company data should be stated as unavailable rather than converted into event-risk claims.",
+    "claim_id": "AVGO_CLAIM_019",
+    "claim_text": "Catalysts for AVGO at the validated close of 425.19 should be limited to confirmed packet inputs; missing earnings or forward company data should be stated as unavailable rather than converted into event-risk claims.",
+    "claim_type": "price_data",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "AVGO_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "AVGO_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "AVGO_YAHOO_CHART_PRICE_CSV_PRICE",
+      "AVGO_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "AVGO_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "AVGO_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "If earnings are unavailable, the report should state that limitation rather than inventing timing.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Catalysts & Triggers",
+    "source_ids": [
+      "AVGO_YAHOO_CHART_PRICE_CSV",
+      "AVGO_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Trigger language should use evidence-backed levels such as 50-SMA 369.40 and 200-SMA 346.83, not unvalidated price targets.",
+    "claim_id": "AVGO_CLAIM_020",
+    "claim_text": "Trigger language should use evidence-backed levels such as 50-SMA 369.40 and 200-SMA 346.83, not unvalidated price targets.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "AVGO_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "AVGO_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "AVGO_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "AVGO_YAHOO_CHART_PRICE_CSV_PRICE",
+      "AVGO_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "AVGO_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "AVGO_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Use confirmation language instead of hard price targets unless risk/reward levels are validated.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Catalysts & Triggers",
+    "source_ids": [
+      "AVGO_YAHOO_CHART_PRICE_CSV",
+      "AVGO_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "We rate AVGO Hold at the validated close of 425.19 because semiconductor cycle, product mix, inventory, gross margin and management forecast quality supports the base case, while valuation and technical risk limit the case for a more bullish rating.",
+    "claim_id": "AVGO_CLAIM_021",
+    "claim_text": "We rate AVGO Hold at the validated close of 425.19 because semiconductor cycle, product mix, inventory, gross margin and management forecast quality supports the base case, while valuation and technical risk limit the case for a more bullish rating.",
+    "claim_type": "rating",
+    "confidence": "high",
+    "counterargument": "A more bullish rating needs cleaner valuation and technical confirmation; a more bearish rating needs evidence of deteriorating fundamentals or unresolved data errors.",
+    "evidence_ids": [
+      "AVGO_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "AVGO_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "AVGO_YAHOO_CHART_PRICE_CSV_PRICE",
+      "AVGO_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "AVGO_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "AVGO_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Hold AVGO; maintain core exposure but require better valuation, technical setup or current-period KPI proof before adding.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Final Rating & Action Plan",
+    "source_ids": [
+      "AVGO_YAHOO_CHART_PRICE_CSV",
+      "AVGO_CSV_PRICE_PROVIDER"
+    ]
+  }
+]

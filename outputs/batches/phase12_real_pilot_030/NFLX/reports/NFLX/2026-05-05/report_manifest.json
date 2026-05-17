@@ -1,0 +1,35 @@
+{
+  "allowed_ratings": [
+    "Hold",
+    "Tactical Trim",
+    "Tactical Underweight"
+  ],
+  "as_of_date": "2026-05-05",
+  "audit_report_path": null,
+  "company_name": "NETFLIX INC",
+  "decision_packet_path": "research_agent/data/packets/NFLX/2026-05-05/decision_packet.json",
+  "final_rating": "Hold",
+  "final_report_path": "outputs/batches/phase12_real_pilot_030/NFLX/reports/NFLX_2026-05-05_report.md",
+  "metadata": {
+    "canonical_financials_path": "research_agent/data/packets/NFLX/2026-05-05/canonical_financials.json",
+    "data_packet_path": "research_agent/data/packets/NFLX/2026-05-05/data_packet.json",
+    "evidence_ledger_path": "research_agent/data/packets/NFLX/2026-05-05/evidence_ledger.json",
+    "evidence_report_path": "research_agent/data/packets/NFLX/2026-05-05/evidence_report.md",
+    "quality_score_path": "outputs/batches/phase12_real_pilot_030/NFLX/reports/NFLX/2026-05-05/quality_score.json",
+    "reconciliation_report_path": "research_agent/data/packets/NFLX/2026-05-05/reconciliation_report.md",
+    "reconciliation_warnings_path": "research_agent/data/packets/NFLX/2026-05-05/reconciliation_warnings.json"
+  },
+  "metrics_packet_path": "research_agent/data/packets/NFLX/2026-05-05/metrics_packet.json",
+  "model_name": null,
+  "model_provider": null,
+  "pipeline_version": "research_agent_v0.1.0",
+  "preferred_rating": "Hold",
+  "price_basis_close": 87.88999938964844,
+  "price_basis_date": "2026-05-05",
+  "publishable": true,
+  "quality_score": 94.0,
+  "report_id": "NFLX_2026-05-05",
+  "tags": [],
+  "ticker": "NFLX",
+  "validation_report_path": "research_agent/data/packets/NFLX/2026-05-05/validation_report.json"
+}

@@ -1,0 +1,28 @@
+{
+  "all_required_files_present": true,
+  "missing": [],
+  "required_files": [
+    "final_report.md",
+    "quality_score.json",
+    "decision_packet.json",
+    "audit_report.json",
+    "evidence_report.md",
+    "reconciliation_report.md",
+    "report_manifest.json"
+  ],
+  "selected_tickers": [
+    "DDOG",
+    "INTU",
+    "NVDA",
+    "SNOW",
+    "AMZN"
+  ],
+  "selection_reasons": {
+    "AMZN": "mega_cap_ticker",
+    "DDOG": "highest_quality_score",
+    "INTU": "lowest_quality_score",
+    "NVDA": "semiconductor_ticker",
+    "SNOW": "saas_software_ticker"
+  },
+  "source_batch_id": "phase12_real_pilot_031"
+}

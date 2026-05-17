@@ -1,0 +1,23 @@
+{
+  "actual_archetype": "SAAS_CONSUMPTION",
+  "archetype_confidence": 0.2,
+  "artifact_consistency_status": "clean",
+  "company_name": "Salesforce, Inc.",
+  "concerns": [],
+  "data_confidence_score": 75,
+  "evidence_status": "clean",
+  "expected_archetype": "SAAS_CONSUMPTION / SAAS_SECURITY / STANDARD_GROWTH",
+  "external_display_rating": "Hold",
+  "internal_research_quality_score": 100,
+  "likely_false_negative": "no",
+  "likely_false_positive": "no",
+  "manual_review_reasons": [],
+  "primary_blockers": [],
+  "public_ready": false,
+  "publish_quality_score": 88,
+  "publishable": true,
+  "recommended_next_action": "Keep in passed review bundle; no public routing without Promotion Gate.",
+  "review_status": "passed",
+  "sector_bucket": "SaaS / Consumption / Cybersecurity / High-SBC",
+  "ticker": "CRM"
+}

@@ -1,0 +1,636 @@
+[
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "MDB enters the report with a validated Hold rating corridor and a price basis frozen before interpretation.",
+    "claim_id": "MDB_CLAIM_001",
+    "claim_text": "MDB enters the report with a validated Hold rating corridor and a price basis frozen before interpretation.",
+    "claim_type": "price_data",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "MDB_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "MDB_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "MDB_YAHOO_CHART_PRICE_CSV_PRICE",
+      "MDB_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "MDB_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "MDB_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "The committee text should stay inside the Hold action frame.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Executive Summary",
+    "source_ids": [
+      "MDB_YAHOO_CHART_PRICE_CSV",
+      "MDB_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Revenue scale is available in the validated packet and should anchor business-quality discussion before any qualitative expansion.",
+    "claim_id": "MDB_CLAIM_002",
+    "claim_text": "Revenue scale is available in the validated packet and should anchor business-quality discussion before any qualitative expansion.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "Revenue scale alone does not prove attractive returns or valuation discipline.",
+    "evidence_ids": [
+      "MDB_SEC_COMPANYFACTS_1441816_REVENUE",
+      "MDB_SEC_COMPANYFACTS_1441816_REVENUE_TTM",
+      "MDB_SEC_COMPANYFACTS_1441816_SALES",
+      "MDB_SEC_COMPANYFACTS_1441816_UMSATZ",
+      "MDB_SEC_revenue_FY2026_FY_0001628280-26-016799",
+      "MDB_SEC_revenue_FY2026_Q2_0001441816-25-000181",
+      "MDB_SEC_revenue_FY2026_Q3_0001628280-25-054768"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm"
+    ],
+    "importance": "high",
+    "investment_implication": "Use revenue evidence as context, not as a standalone buy signal.",
+    "metric_refs": [
+      "revenue_ttm"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "MDB_SEC_COMPANYFACTS_1441816",
+      "SEC_0001441816_0001628280-26-016799",
+      "SEC_0001441816_0001441816-25-000181",
+      "SEC_0001441816_0001628280-25-054768"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Free cash flow is a central quality check and should be interpreted only from the validated packet value.",
+    "claim_id": "MDB_CLAIM_003",
+    "claim_text": "Free cash flow is a central quality check and should be interpreted only from the validated packet value.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "FCF may be company-defined or period-sensitive and can require reconciliation review.",
+    "evidence_ids": [
+      "MDB_SEC_COMPANYFACTS_1441816_CASHFLOW",
+      "MDB_SEC_COMPANYFACTS_1441816_FCF",
+      "MDB_SEC_COMPANYFACTS_1441816_FREE_CASH_FLOW",
+      "MDB_SEC_COMPANYFACTS_1441816_FREE_CASH_FLOW_TTM",
+      "MDB_SEC_COMPANYFACTS_1441816_FREE_CASHFLOW",
+      "MDB_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm"
+    ],
+    "importance": "high",
+    "investment_implication": "FCF quality supports the thesis only if no sanity guard blocks the report.",
+    "metric_refs": [
+      "free_cash_flow_ttm"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "MDB_SEC_COMPANYFACTS_1441816",
+      "SEC_0001441816_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Stock-based compensation needs explicit review because dilution economics can change the quality of reported cash generation.",
+    "claim_id": "MDB_CLAIM_004",
+    "claim_text": "Stock-based compensation needs explicit review because dilution economics can change the quality of reported cash generation.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": "High-growth software companies may tolerate higher SBC while scaling.",
+    "evidence_ids": [
+      "MDB_SEC_COMPANYFACTS_1441816_SBC_TO_REVENUE",
+      "MDB_SEC_DERIVED_SBC_TO_REVENUE"
+    ],
+    "evidence_metrics": [
+      "sbc_to_revenue"
+    ],
+    "importance": "medium",
+    "investment_implication": "Treat SBC as a risk modifier rather than an automatic rating override.",
+    "metric_refs": [
+      "sbc_to_revenue"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "MDB_SEC_COMPANYFACTS_1441816",
+      "SEC_0001441816_DERIVED_SBC_TO_REVENUE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Balance-sheet flexibility is assessed through validated cash and debt references rather than narrative balance-sheet claims.",
+    "claim_id": "MDB_CLAIM_005",
+    "claim_text": "Balance-sheet flexibility is assessed through validated cash and debt references rather than narrative balance-sheet claims.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "MDB_SEC_COMPANYFACTS_1441816_CASH",
+      "MDB_SEC_COMPANYFACTS_1441816_CASH_AND_EQUIVALENTS",
+      "MDB_SEC_COMPANYFACTS_1441816_CASH_AND_INVESTMENTS",
+      "MDB_SEC_COMPANYFACTS_1441816_NET_CASH",
+      "MDB_SEC_cash_and_equivalents_FY2026_FY_0001628280-26-016799",
+      "MDB_SEC_cash_and_equivalents_FY2026_Q2_0001441816-25-000181",
+      "MDB_SEC_cash_and_equivalents_FY2026_Q3_0001628280-25-054768",
+      "MDB_SEC_COMPANYFACTS_1441816_DEBT",
+      "MDB_SEC_COMPANYFACTS_1441816_NET_DEBT",
+      "MDB_SEC_COMPANYFACTS_1441816_TOTAL_DEBT"
+    ],
+    "evidence_metrics": [
+      "net_cash",
+      "total_debt"
+    ],
+    "importance": "medium",
+    "investment_implication": "A stronger liquidity position can widen the acceptable holding corridor.",
+    "metric_refs": [
+      "net_cash",
+      "total_debt"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "MDB_SEC_COMPANYFACTS_1441816",
+      "SEC_0001441816_0001628280-26-016799",
+      "SEC_0001441816_0001441816-25-000181",
+      "SEC_0001441816_0001628280-25-054768"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Valuation is framed from validated revenue, FCF and price-basis evidence, not from manually recomputed multiples.",
+    "claim_id": "MDB_CLAIM_006",
+    "claim_text": "Valuation is framed from validated revenue, FCF and price-basis evidence, not from manually recomputed multiples.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": "Packet-derived valuation can still be blocked by sanity guards when source reconciliation is suspect.",
+    "evidence_ids": [
+      "MDB_SEC_COMPANYFACTS_1441816_REVENUE",
+      "MDB_SEC_COMPANYFACTS_1441816_REVENUE_TTM",
+      "MDB_SEC_COMPANYFACTS_1441816_SALES",
+      "MDB_SEC_COMPANYFACTS_1441816_UMSATZ",
+      "MDB_SEC_revenue_FY2026_FY_0001628280-26-016799",
+      "MDB_SEC_revenue_FY2026_Q2_0001441816-25-000181",
+      "MDB_SEC_revenue_FY2026_Q3_0001628280-25-054768",
+      "MDB_SEC_COMPANYFACTS_1441816_CASHFLOW",
+      "MDB_SEC_COMPANYFACTS_1441816_FCF",
+      "MDB_SEC_COMPANYFACTS_1441816_FREE_CASH_FLOW",
+      "MDB_SEC_COMPANYFACTS_1441816_FREE_CASH_FLOW_TTM",
+      "MDB_SEC_COMPANYFACTS_1441816_FREE_CASHFLOW",
+      "MDB_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "MDB_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "MDB_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "MDB_YAHOO_CHART_PRICE_CSV_PRICE",
+      "MDB_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "MDB_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "MDB_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm",
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Do not upgrade rating solely from valuation language if audit has financial-sanity errors.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm",
+      "close"
+    ],
+    "section": "Valuation / Multiples",
+    "source_ids": [
+      "MDB_SEC_COMPANYFACTS_1441816",
+      "SEC_0001441816_0001628280-26-016799",
+      "SEC_0001441816_0001441816-25-000181",
+      "SEC_0001441816_0001628280-25-054768",
+      "SEC_0001441816_DERIVED_FCF",
+      "MDB_YAHOO_CHART_PRICE_CSV",
+      "MDB_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "P/FCF and EV/Sales should be treated as risk controls when available, especially when the DecisionPacket limits aggressive ratings.",
+    "claim_id": "MDB_CLAIM_007",
+    "claim_text": "P/FCF and EV/Sales should be treated as risk controls when available, especially when the DecisionPacket limits aggressive ratings.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "MDB_SEC_COMPANYFACTS_1441816_CASHFLOW",
+      "MDB_SEC_COMPANYFACTS_1441816_FCF",
+      "MDB_SEC_COMPANYFACTS_1441816_FREE_CASH_FLOW",
+      "MDB_SEC_COMPANYFACTS_1441816_FREE_CASH_FLOW_TTM",
+      "MDB_SEC_COMPANYFACTS_1441816_FREE_CASHFLOW",
+      "MDB_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "MDB_SEC_COMPANYFACTS_1441816_REVENUE",
+      "MDB_SEC_COMPANYFACTS_1441816_REVENUE_TTM",
+      "MDB_SEC_COMPANYFACTS_1441816_SALES",
+      "MDB_SEC_COMPANYFACTS_1441816_UMSATZ",
+      "MDB_SEC_revenue_FY2026_FY_0001628280-26-016799",
+      "MDB_SEC_revenue_FY2026_Q2_0001441816-25-000181",
+      "MDB_SEC_revenue_FY2026_Q3_0001628280-25-054768"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm",
+      "revenue_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "The rating should stay conservative when multiples are expensive or flagged.",
+    "metric_refs": [
+      "free_cash_flow_ttm",
+      "revenue_ttm"
+    ],
+    "section": "Valuation / Multiples",
+    "source_ids": [
+      "MDB_SEC_COMPANYFACTS_1441816",
+      "SEC_0001441816_DERIVED_FCF",
+      "SEC_0001441816_0001628280-26-016799",
+      "SEC_0001441816_0001441816-25-000181",
+      "SEC_0001441816_0001628280-25-054768"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The technical setup is based on the frozen OHLCV-derived indicator packet rather than fresh chart interpretation.",
+    "claim_id": "MDB_CLAIM_008",
+    "claim_text": "The technical setup is based on the frozen OHLCV-derived indicator packet rather than fresh chart interpretation.",
+    "claim_type": "technical_metric",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "MDB_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "MDB_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "MDB_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "MDB_YAHOO_CHART_PRICE_CSV_PRICE",
+      "MDB_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "MDB_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "MDB_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Timing language should follow the validated technical trend state.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Technical Setup",
+    "source_ids": [
+      "MDB_YAHOO_CHART_PRICE_CSV",
+      "MDB_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Moving-average structure and momentum should guide whether the action is immediate, staged or defensive.",
+    "claim_id": "MDB_CLAIM_009",
+    "claim_text": "Moving-average structure and momentum should guide whether the action is immediate, staged or defensive.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": "Technical weakness can be temporary if fundamentals and catalysts improve.",
+    "evidence_ids": [
+      "MDB_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "MDB_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "MDB_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "MDB_YAHOO_CHART_PRICE_CSV_PRICE",
+      "MDB_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "MDB_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "MDB_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Use staged entries or trims when technical and fundamental signals diverge.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Technical Setup",
+    "source_ids": [
+      "MDB_YAHOO_CHART_PRICE_CSV",
+      "MDB_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The bull case starts with validated revenue and FCF evidence: operating scale and cash conversion can support a constructive rating corridor.",
+    "claim_id": "MDB_CLAIM_010",
+    "claim_text": "The bull case starts with validated revenue and FCF evidence: operating scale and cash conversion can support a constructive rating corridor.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": "Strong scale does not resolve valuation or reconciliation anomalies.",
+    "evidence_ids": [
+      "MDB_SEC_COMPANYFACTS_1441816_REVENUE",
+      "MDB_SEC_COMPANYFACTS_1441816_REVENUE_TTM",
+      "MDB_SEC_COMPANYFACTS_1441816_SALES",
+      "MDB_SEC_COMPANYFACTS_1441816_UMSATZ",
+      "MDB_SEC_revenue_FY2026_FY_0001628280-26-016799",
+      "MDB_SEC_revenue_FY2026_Q2_0001441816-25-000181",
+      "MDB_SEC_revenue_FY2026_Q3_0001628280-25-054768",
+      "MDB_SEC_COMPANYFACTS_1441816_CASHFLOW",
+      "MDB_SEC_COMPANYFACTS_1441816_FCF",
+      "MDB_SEC_COMPANYFACTS_1441816_FREE_CASH_FLOW",
+      "MDB_SEC_COMPANYFACTS_1441816_FREE_CASH_FLOW_TTM",
+      "MDB_SEC_COMPANYFACTS_1441816_FREE_CASHFLOW",
+      "MDB_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Bullish language must remain bounded by DecisionPacket permissions.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Bull Case",
+    "source_ids": [
+      "MDB_SEC_COMPANYFACTS_1441816",
+      "SEC_0001441816_0001628280-26-016799",
+      "SEC_0001441816_0001441816-25-000181",
+      "SEC_0001441816_0001628280-25-054768",
+      "SEC_0001441816_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "A constructive bull path requires technical confirmation from the validated indicator set rather than an unsupported price narrative.",
+    "claim_id": "MDB_CLAIM_011",
+    "claim_text": "A constructive bull path requires technical confirmation from the validated indicator set rather than an unsupported price narrative.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "MDB_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "MDB_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "MDB_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "MDB_YAHOO_CHART_PRICE_CSV_PRICE",
+      "MDB_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "MDB_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "MDB_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Add or accumulate language should require confirmation when the preferred rating is not Buy.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Bull Case",
+    "source_ids": [
+      "MDB_YAHOO_CHART_PRICE_CSV",
+      "MDB_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The bear case centers on FCF quality, SBC pressure and any audit-level sanity warnings.",
+    "claim_id": "MDB_CLAIM_012",
+    "claim_text": "The bear case centers on FCF quality, SBC pressure and any audit-level sanity warnings.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "MDB_SEC_COMPANYFACTS_1441816_CASHFLOW",
+      "MDB_SEC_COMPANYFACTS_1441816_FCF",
+      "MDB_SEC_COMPANYFACTS_1441816_FREE_CASH_FLOW",
+      "MDB_SEC_COMPANYFACTS_1441816_FREE_CASH_FLOW_TTM",
+      "MDB_SEC_COMPANYFACTS_1441816_FREE_CASHFLOW",
+      "MDB_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "MDB_SEC_COMPANYFACTS_1441816_SBC_TO_REVENUE",
+      "MDB_SEC_DERIVED_SBC_TO_REVENUE"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm",
+      "sbc_to_revenue"
+    ],
+    "importance": "high",
+    "investment_implication": "Manual review remains appropriate when financial-sanity guards fire.",
+    "metric_refs": [
+      "free_cash_flow_ttm",
+      "sbc_to_revenue"
+    ],
+    "section": "Bear Case",
+    "source_ids": [
+      "MDB_SEC_COMPANYFACTS_1441816",
+      "SEC_0001441816_DERIVED_FCF",
+      "SEC_0001441816_DERIVED_SBC_TO_REVENUE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Valuation risk should be interpreted as a discipline constraint, not as a standalone Sell call unless the action policy supports exit.",
+    "claim_id": "MDB_CLAIM_013",
+    "claim_text": "Valuation risk should be interpreted as a discipline constraint, not as a standalone Sell call unless the action policy supports exit.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "MDB_SEC_COMPANYFACTS_1441816_REVENUE",
+      "MDB_SEC_COMPANYFACTS_1441816_REVENUE_TTM",
+      "MDB_SEC_COMPANYFACTS_1441816_SALES",
+      "MDB_SEC_COMPANYFACTS_1441816_UMSATZ",
+      "MDB_SEC_revenue_FY2026_FY_0001628280-26-016799",
+      "MDB_SEC_revenue_FY2026_Q2_0001441816-25-000181",
+      "MDB_SEC_revenue_FY2026_Q3_0001628280-25-054768",
+      "MDB_SEC_COMPANYFACTS_1441816_CASHFLOW",
+      "MDB_SEC_COMPANYFACTS_1441816_FCF",
+      "MDB_SEC_COMPANYFACTS_1441816_FREE_CASH_FLOW",
+      "MDB_SEC_COMPANYFACTS_1441816_FREE_CASH_FLOW_TTM",
+      "MDB_SEC_COMPANYFACTS_1441816_FREE_CASHFLOW",
+      "MDB_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Avoid blocked Sell language when the DecisionPacket allows only trim or hold actions.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Bear Case",
+    "source_ids": [
+      "MDB_SEC_COMPANYFACTS_1441816",
+      "SEC_0001441816_0001628280-26-016799",
+      "SEC_0001441816_0001441816-25-000181",
+      "SEC_0001441816_0001628280-25-054768",
+      "SEC_0001441816_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Validation and audit issues are part of the research view and can override otherwise clean narrative sections.",
+    "claim_id": "MDB_CLAIM_014",
+    "claim_text": "Validation and audit issues are part of the research view and can override otherwise clean narrative sections.",
+    "claim_type": "risk",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "MDB_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "MDB_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "MDB_YAHOO_CHART_PRICE_CSV_PRICE",
+      "MDB_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "MDB_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "MDB_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Blocking audit errors should keep the report in manual review.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Key Risks",
+    "source_ids": [
+      "MDB_YAHOO_CHART_PRICE_CSV",
+      "MDB_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Low-confidence or disputed source reconciliation should reduce conviction even when the mechanical rating appears plausible.",
+    "claim_id": "MDB_CLAIM_015",
+    "claim_text": "Low-confidence or disputed source reconciliation should reduce conviction even when the mechanical rating appears plausible.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "MDB_SEC_COMPANYFACTS_1441816_REVENUE",
+      "MDB_SEC_COMPANYFACTS_1441816_REVENUE_TTM",
+      "MDB_SEC_COMPANYFACTS_1441816_SALES",
+      "MDB_SEC_COMPANYFACTS_1441816_UMSATZ",
+      "MDB_SEC_revenue_FY2026_FY_0001628280-26-016799",
+      "MDB_SEC_revenue_FY2026_Q2_0001441816-25-000181",
+      "MDB_SEC_revenue_FY2026_Q3_0001628280-25-054768",
+      "MDB_SEC_COMPANYFACTS_1441816_CASHFLOW",
+      "MDB_SEC_COMPANYFACTS_1441816_FCF",
+      "MDB_SEC_COMPANYFACTS_1441816_FREE_CASH_FLOW",
+      "MDB_SEC_COMPANYFACTS_1441816_FREE_CASH_FLOW_TTM",
+      "MDB_SEC_COMPANYFACTS_1441816_FREE_CASHFLOW",
+      "MDB_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Source-quality limitations belong in the final action plan.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Key Risks",
+    "source_ids": [
+      "MDB_SEC_COMPANYFACTS_1441816",
+      "SEC_0001441816_0001628280-26-016799",
+      "SEC_0001441816_0001441816-25-000181",
+      "SEC_0001441816_0001628280-25-054768",
+      "SEC_0001441816_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Catalysts are limited to confirmed packet inputs; unavailable earnings dates must not be converted into event-risk claims.",
+    "claim_id": "MDB_CLAIM_016",
+    "claim_text": "Catalysts are limited to confirmed packet inputs; unavailable earnings dates must not be converted into event-risk claims.",
+    "claim_type": "price_data",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "MDB_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "MDB_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "MDB_YAHOO_CHART_PRICE_CSV_PRICE",
+      "MDB_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "MDB_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "MDB_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "If earnings are unavailable, the report should state that limitation rather than inventing timing.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Catalysts & Triggers",
+    "source_ids": [
+      "MDB_YAHOO_CHART_PRICE_CSV",
+      "MDB_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Trigger language should reference validated support, resistance or trend confirmation only when produced by the technical packet.",
+    "claim_id": "MDB_CLAIM_017",
+    "claim_text": "Trigger language should reference validated support, resistance or trend confirmation only when produced by the technical packet.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "MDB_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "MDB_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "MDB_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "MDB_YAHOO_CHART_PRICE_CSV_PRICE",
+      "MDB_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "MDB_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "MDB_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Use confirmation language instead of hard price targets unless risk/reward levels are validated.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Catalysts & Triggers",
+    "source_ids": [
+      "MDB_YAHOO_CHART_PRICE_CSV",
+      "MDB_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The final action should use Hold, because the DecisionPacket identifies it as the preferred rating within the allowed corridor.",
+    "claim_id": "MDB_CLAIM_018",
+    "claim_text": "The final action should use Hold, because the DecisionPacket identifies it as the preferred rating within the allowed corridor.",
+    "claim_type": "rating",
+    "confidence": "high",
+    "counterargument": "Another allowed rating may be defensible, but blocked ratings are not allowed.",
+    "evidence_ids": [
+      "MDB_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "MDB_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "MDB_YAHOO_CHART_PRICE_CSV_PRICE",
+      "MDB_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "MDB_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "MDB_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Final report wording must choose Hold or another allowed rating with explicit justification.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Final Rating & Action Plan",
+    "source_ids": [
+      "MDB_YAHOO_CHART_PRICE_CSV",
+      "MDB_CSV_PRICE_PROVIDER"
+    ]
+  }
+]

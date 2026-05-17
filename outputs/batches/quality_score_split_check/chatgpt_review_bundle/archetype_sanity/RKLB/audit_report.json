@@ -1,0 +1,16 @@
+{
+  "has_blocking_errors": true,
+  "issues": [
+    {
+      "code": "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH_MANUAL_REVIEW_PROFILE",
+      "line_number": null,
+      "message": "Early-commercial capital-intensive tech profile requires manual review until FCF path, backlog conversion and execution milestones are evidenced.",
+      "metric": null,
+      "raw_text": null,
+      "reported": null,
+      "severity": "warning",
+      "validated": null
+    }
+  ],
+  "ticker": "RKLB"
+}

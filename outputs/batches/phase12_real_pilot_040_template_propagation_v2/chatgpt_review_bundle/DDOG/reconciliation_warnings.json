@@ -1,0 +1,37 @@
+[
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 13,
+    "message": "Ignored 13 annual/quarterly/YTD period-type variants for revenue.",
+    "metric": "revenue",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 13,
+    "message": "Ignored 13 annual/quarterly/YTD period-type variants for gross_profit.",
+    "metric": "gross_profit",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 13,
+    "message": "Ignored 13 annual/quarterly/YTD period-type variants for operating_income.",
+    "metric": "operating_income",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 14,
+    "message": "Ignored 14 annual/quarterly/YTD period-type variants for net_income.",
+    "metric": "net_income",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 12,
+    "message": "Ignored 12 annual/quarterly/YTD period-type variants for shares_diluted.",
+    "metric": "shares_diluted",
+    "severity": "info"
+  }
+]

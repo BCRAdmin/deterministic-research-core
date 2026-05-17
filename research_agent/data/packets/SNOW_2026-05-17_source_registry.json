@@ -1,0 +1,59 @@
+{
+  "registry_id": "SNOW_2026-05-17",
+  "sources": [
+    {
+      "authority_rank": 1,
+      "retrieved_at": "2026-05-17T02:08:45Z",
+      "source_id": "SNOW_SEC_COMPANYFACTS_1640147",
+      "source_type": "sec_filing",
+      "ticker": "SNOW",
+      "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001640147.json",
+      "used_for": [
+        "revenue",
+        "financial",
+        "cash",
+        "operating_income",
+        "free_cash_flow",
+        "fcf",
+        "sbc",
+        "debt",
+        "eps"
+      ]
+    },
+    {
+      "authority_rank": 1,
+      "retrieved_at": "2026-05-17T02:08:45Z",
+      "source_id": "SNOW_IR_FY2026_Q4_RELEASE",
+      "source_type": "company_ir",
+      "ticker": "SNOW",
+      "url": "https://investors.snowflake.com/",
+      "used_for": [
+        "adjusted_free_cash_flow",
+        "cash",
+        "current_period_kpis",
+        "customers_gt_1m",
+        "fcf",
+        "financial",
+        "free_cash_flow",
+        "fy2027_product_revenue_guidance",
+        "net_revenue_retention",
+        "product_revenue",
+        "remaining_performance_obligations",
+        "revenue"
+      ]
+    },
+    {
+      "authority_rank": 2,
+      "retrieved_at": "2026-05-17T02:08:45Z",
+      "source_id": "SNOW_YAHOO_CHART_PRICE_CSV",
+      "source_type": "exchange_ohlcv",
+      "ticker": "SNOW",
+      "url": "https://query1.finance.yahoo.com/v8/finance/chart/SNOW",
+      "used_for": [
+        "price",
+        "volume",
+        "technical_indicators"
+      ]
+    }
+  ]
+}

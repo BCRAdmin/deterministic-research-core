@@ -1,0 +1,138 @@
+{
+  "generated_at": "2026-05-17T01:17:19Z",
+  "rows": [
+    {
+      "issue_count": 0,
+      "path": "outputs/batches/guardrail_coverage_batch_002/AAPL/artifact_consistency_report.json",
+      "status": "clean",
+      "ticker": "AAPL"
+    },
+    {
+      "issue_count": 0,
+      "path": "outputs/batches/guardrail_coverage_batch_002/AMD/artifact_consistency_report.json",
+      "status": "clean",
+      "ticker": "AMD"
+    },
+    {
+      "issue_count": 0,
+      "path": "outputs/batches/guardrail_coverage_batch_002/AMZN/artifact_consistency_report.json",
+      "status": "clean",
+      "ticker": "AMZN"
+    },
+    {
+      "issue_count": 0,
+      "path": "outputs/batches/guardrail_coverage_batch_002/AVGO/artifact_consistency_report.json",
+      "status": "clean",
+      "ticker": "AVGO"
+    },
+    {
+      "issue_count": 0,
+      "path": "outputs/batches/guardrail_coverage_batch_002/CRM/artifact_consistency_report.json",
+      "status": "clean",
+      "ticker": "CRM"
+    },
+    {
+      "issue_count": 0,
+      "path": "outputs/batches/guardrail_coverage_batch_002/CRWD/artifact_consistency_report.json",
+      "status": "clean",
+      "ticker": "CRWD"
+    },
+    {
+      "issue_count": 0,
+      "path": "outputs/batches/guardrail_coverage_batch_002/DDOG/artifact_consistency_report.json",
+      "status": "clean",
+      "ticker": "DDOG"
+    },
+    {
+      "issue_count": 0,
+      "path": "outputs/batches/guardrail_coverage_batch_002/GOOGL/artifact_consistency_report.json",
+      "status": "clean",
+      "ticker": "GOOGL"
+    },
+    {
+      "issue_count": 0,
+      "path": "outputs/batches/guardrail_coverage_batch_002/INTC/artifact_consistency_report.json",
+      "status": "clean",
+      "ticker": "INTC"
+    },
+    {
+      "issue_count": 0,
+      "path": "outputs/batches/guardrail_coverage_batch_002/MDB/artifact_consistency_report.json",
+      "status": "clean",
+      "ticker": "MDB"
+    },
+    {
+      "issue_count": 0,
+      "path": "outputs/batches/guardrail_coverage_batch_002/META/artifact_consistency_report.json",
+      "status": "clean",
+      "ticker": "META"
+    },
+    {
+      "issue_count": 0,
+      "path": "outputs/batches/guardrail_coverage_batch_002/MRVL/artifact_consistency_report.json",
+      "status": "clean",
+      "ticker": "MRVL"
+    },
+    {
+      "issue_count": 0,
+      "path": "outputs/batches/guardrail_coverage_batch_002/MSFT/artifact_consistency_report.json",
+      "status": "clean",
+      "ticker": "MSFT"
+    },
+    {
+      "issue_count": 0,
+      "path": "outputs/batches/guardrail_coverage_batch_002/MU/artifact_consistency_report.json",
+      "status": "clean",
+      "ticker": "MU"
+    },
+    {
+      "issue_count": 0,
+      "path": "outputs/batches/guardrail_coverage_batch_002/NET/artifact_consistency_report.json",
+      "status": "clean",
+      "ticker": "NET"
+    },
+    {
+      "issue_count": 0,
+      "path": "outputs/batches/guardrail_coverage_batch_002/NFLX/artifact_consistency_report.json",
+      "status": "clean",
+      "ticker": "NFLX"
+    },
+    {
+      "issue_count": 0,
+      "path": "outputs/batches/guardrail_coverage_batch_002/NOW/artifact_consistency_report.json",
+      "status": "clean",
+      "ticker": "NOW"
+    },
+    {
+      "issue_count": 0,
+      "path": "outputs/batches/guardrail_coverage_batch_002/NVDA/artifact_consistency_report.json",
+      "status": "clean",
+      "ticker": "NVDA"
+    },
+    {
+      "issue_count": 0,
+      "path": "outputs/batches/guardrail_coverage_batch_002/PANW/artifact_consistency_report.json",
+      "status": "clean",
+      "ticker": "PANW"
+    },
+    {
+      "issue_count": 0,
+      "path": "outputs/batches/guardrail_coverage_batch_002/QCOM/artifact_consistency_report.json",
+      "status": "clean",
+      "ticker": "QCOM"
+    },
+    {
+      "issue_count": 0,
+      "path": "outputs/batches/guardrail_coverage_batch_002/SNOW/artifact_consistency_report.json",
+      "status": "clean",
+      "ticker": "SNOW"
+    },
+    {
+      "issue_count": 0,
+      "path": "outputs/batches/guardrail_coverage_batch_002/ZS/artifact_consistency_report.json",
+      "status": "clean",
+      "ticker": "ZS"
+    }
+  ],
+  "status": "clean"
+}

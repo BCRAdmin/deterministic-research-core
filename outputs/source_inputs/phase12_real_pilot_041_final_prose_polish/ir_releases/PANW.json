@@ -1,0 +1,34 @@
+{
+  "source_id": "PANW_IR_Q2_FY2026_RELEASE",
+  "source_type": "earnings_release",
+  "url": "https://investors.paloaltonetworks.com/news-releases/news-release-details/palo-alto-networks-reports-fiscal-second-quarter-2026-financial",
+  "retrieved_at": "2026-05-06",
+  "period": "Q2_FY2026",
+  "text": "",
+  "metrics": [
+    {
+      "metric_name": "revenue",
+      "value": 2600000000,
+      "unit": "usd",
+      "period": "Q2_FY2026",
+      "fiscal_year": 2026,
+      "fiscal_period": "Q2",
+      "period_bucket": "quarterly",
+      "basis": "gaap",
+      "statement_type": "income_statement",
+      "statement": "Palo Alto Networks reported fiscal second quarter 2026 revenue of approximately $2.6 billion."
+    },
+    {
+      "metric_name": "adjusted_free_cash_flow_margin",
+      "value": 0.37,
+      "unit": "ratio",
+      "period": "FY2026_GUIDANCE",
+      "fiscal_year": 2026,
+      "fiscal_period": "FY",
+      "period_bucket": "guidance",
+      "basis": "non_gaap",
+      "statement_type": "guidance",
+      "statement": "Palo Alto Networks guided to adjusted free cash flow margin of 37%."
+    }
+  ]
+}

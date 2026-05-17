@@ -1,0 +1,43 @@
+{
+  "coverage_note": "Carried forward from Batch 003 sourced current-period fixture.",
+  "metrics": [
+    {
+      "basis": "gaap",
+      "duration_days": 364,
+      "end_date": "2026-03-31",
+      "fiscal_period": "Q1",
+      "fiscal_year": 2026,
+      "metric_name": "operating_cash_flow",
+      "period": "TTM_Q1_2026",
+      "period_bucket": "ttm",
+      "start_date": "2025-04-01",
+      "statement": "Amazon reported trailing-twelve-month operating cash flow of $148.531 billion for the period ended March 31, 2026.",
+      "statement_type": "cash_flow",
+      "unit": "usd",
+      "value": 148531000000
+    },
+    {
+      "basis": "company_defined",
+      "duration_days": 364,
+      "end_date": "2026-03-31",
+      "fiscal_period": "Q1",
+      "fiscal_year": 2026,
+      "metric_name": "free_cash_flow",
+      "period": "TTM_Q1_2026",
+      "period_bucket": "ttm",
+      "start_date": "2025-04-01",
+      "statement": "Amazon reconciled trailing-twelve-month free cash flow to $1.232 billion for the period ended March 31, 2026.",
+      "statement_type": "cash_flow",
+      "unit": "usd",
+      "value": 1232000000
+    }
+  ],
+  "period": "TTM_Q1_2026",
+  "retrieved_at": "2026-05-06",
+  "source_confidence": "high",
+  "source_id": "AMZN_IR_Q1_2026_RELEASE",
+  "source_type": "earnings_release",
+  "source_url": "https://s2.q4cdn.com/299287126/files/doc_earnings/2026/q1/earnings-result/AMZN-Q1-2026-Earnings-Release.pdf",
+  "text": "",
+  "url": "https://s2.q4cdn.com/299287126/files/doc_earnings/2026/q1/earnings-result/AMZN-Q1-2026-Earnings-Release.pdf"
+}

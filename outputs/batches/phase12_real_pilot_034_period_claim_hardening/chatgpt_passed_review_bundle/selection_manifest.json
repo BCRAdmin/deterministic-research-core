@@ -1,0 +1,97 @@
+{
+  "source_batch": "phase12_real_pilot_034_period_claim_hardening",
+  "filters": {
+    "status": "passed",
+    "min_substantive_claim_count": 12,
+    "hard_claim_evidence_ratio": 1.0
+  },
+  "selected_tickers": [
+    {
+      "ticker": "AMZN",
+      "reasons": [
+        "highest Quality Score among eligible passed reports (92.0)",
+        "lowest Quality Score among eligible passed reports (92.0)",
+        "mega-cap representative",
+        "passed report with target action/rating `Accumulate`"
+      ],
+      "quality_score": 92.0,
+      "preferred_rating": "Accumulate",
+      "counts": {
+        "substantive_claim_count": 17,
+        "hard_claim_evidence_ratio": 100
+      }
+    },
+    {
+      "ticker": "SNOW",
+      "reasons": [
+        "software/SaaS representative"
+      ],
+      "quality_score": 92.0,
+      "preferred_rating": "Hold",
+      "counts": {
+        "substantive_claim_count": 17,
+        "hard_claim_evidence_ratio": 100
+      }
+    },
+    {
+      "ticker": "PANW",
+      "reasons": [
+        "passed cybersecurity representative"
+      ],
+      "quality_score": 92.0,
+      "preferred_rating": "Hold",
+      "counts": {
+        "substantive_claim_count": 16,
+        "hard_claim_evidence_ratio": 100
+      }
+    },
+    {
+      "ticker": "AVGO",
+      "reasons": [
+        "passed semiconductor/AI-infrastructure representative"
+      ],
+      "quality_score": 92.0,
+      "preferred_rating": "Hold",
+      "counts": {
+        "substantive_claim_count": 17,
+        "hard_claim_evidence_ratio": 100
+      }
+    },
+    {
+      "ticker": "MSFT",
+      "reasons": [
+        "additional unique eligible passed report to reach 7"
+      ],
+      "quality_score": 92.0,
+      "preferred_rating": "Hold",
+      "counts": {
+        "substantive_claim_count": 17,
+        "hard_claim_evidence_ratio": 100
+      }
+    },
+    {
+      "ticker": "GOOGL",
+      "reasons": [
+        "additional unique eligible passed report to reach 7"
+      ],
+      "quality_score": 92.0,
+      "preferred_rating": "Hold",
+      "counts": {
+        "substantive_claim_count": 17,
+        "hard_claim_evidence_ratio": 100
+      }
+    },
+    {
+      "ticker": "META",
+      "reasons": [
+        "additional unique eligible passed report to reach 7"
+      ],
+      "quality_score": 92.0,
+      "preferred_rating": "Hold",
+      "counts": {
+        "substantive_claim_count": 17,
+        "hard_claim_evidence_ratio": 100
+      }
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "action_policy": {
+    "primary_action": "Manual review required"
+  },
+  "as_of_date": "2026-05-17",
+  "calibration_mode": "live",
+  "key_reasons": [
+    "Fundamental score: -1.0",
+    "Technical score: -2.0",
+    "Valuation score: 0.0"
+  ],
+  "key_risks": [
+    "Risk score: -2.0",
+    "Validation issues: 2"
+  ],
+  "rating_permission": {
+    "allowed_ratings": [
+      "Tactical Underweight",
+      "Underweight",
+      "Sell"
+    ],
+    "blocked_ratings": [
+      "Strong Buy",
+      "Buy",
+      "Accumulate",
+      "Hold",
+      "Tactical Trim",
+      "Avoid"
+    ],
+    "preferred_rating": "Underweight",
+    "reason": "Weak business score and weak technicals restrict the rating to underweight or sell territory."
+  },
+  "score_version": "v1",
+  "signal_scores": {
+    "composite_score": -3.0,
+    "fundamental_score": -1.0,
+    "risk_score": -2.0,
+    "technical_score": -2.0,
+    "valuation_score": 0.0
+  },
+  "ticker": "LCID",
+  "triggered_rules": [
+    "FCF_MARGIN_NEGATIVE",
+    "OPERATING_MARGIN_NEGATIVE",
+    "NET_CASH_POSITIVE",
+    "PRICE_BELOW_200SMA",
+    "DEATH_CROSS",
+    "PRICE_BELOW_EMA10",
+    "MACD_HISTOGRAM_POSITIVE",
+    "ATR_PCT_GT_8"
+  ]
+}

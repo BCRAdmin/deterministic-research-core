@@ -1,0 +1,681 @@
+[
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "AAPL enters the report with a validated Accumulate rating corridor at a frozen close of 284.18; the action should reflect mega-cap platform growth, AI/cloud investment, margin durability and regulatory risk, valuation discipline and the current technical setup.",
+    "claim_id": "AAPL_CLAIM_001",
+    "claim_text": "AAPL enters the report with a validated Accumulate rating corridor at a frozen close of 284.18; the action should reflect mega-cap platform growth, AI/cloud investment, margin durability and regulatory risk, valuation discipline and the current technical setup.",
+    "claim_type": "price_data",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "AAPL_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "AAPL_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "AAPL_YAHOO_CHART_PRICE_CSV_PRICE",
+      "AAPL_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "AAPL_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "AAPL_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "The committee text should stay inside the Accumulate action frame.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Executive Summary",
+    "source_ids": [
+      "AAPL_YAHOO_CHART_PRICE_CSV",
+      "AAPL_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "AAPL's latest-quarter revenue of $111.18B, EPS of $2.01, operating cash flow above $28.00B and buyback authorization of $100.00B support capital-return quality, but Services/iPhone durability, AI strategy and regulatory platform risk argue for staged Accumulate rather than chasing.",
+    "claim_id": "AAPL_CLAIM_002",
+    "claim_text": "AAPL's latest-quarter revenue of $111.18B, EPS of $2.01, operating cash flow above $28.00B and buyback authorization of $100.00B support capital-return quality, but Services/iPhone durability, AI strategy and regulatory platform risk argue for staged Accumulate rather than chasing.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "Capital returns cannot offset product-cycle or regulatory pressure indefinitely.",
+    "evidence_ids": [
+      "AAPL_AAPL_IR_Q2_FY2026_RELEASE_current_q_revenue_Q2_FY2026",
+      "AAPL_AAPL_IR_Q2_FY2026_RELEASE_current_q_eps_Q2_FY2026",
+      "AAPL_AAPL_IR_Q2_FY2026_RELEASE_current_q_operating_cash_flow_Q2_FY2026",
+      "AAPL_AAPL_IR_Q2_FY2026_RELEASE_buyback_authorization_Q2_FY2026"
+    ],
+    "evidence_metrics": [
+      "current_q_revenue",
+      "current_q_eps",
+      "current_q_operating_cash_flow",
+      "buyback_authorization"
+    ],
+    "importance": "high",
+    "investment_implication": "Accumulate should be framed as staged or pullback-based.",
+    "metric_refs": [
+      "current_q_revenue",
+      "current_q_eps",
+      "current_q_operating_cash_flow",
+      "buyback_authorization"
+    ],
+    "section": "Business & Segment Context",
+    "source_ids": [
+      "AAPL_IR_Q2_FY2026_RELEASE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "AAPL has validated revenue TTM of $444.33B, so the business discussion should focus on mega-cap platform growth, AI/cloud investment, margin durability and regulatory risk rather than generic scale language.",
+    "claim_id": "AAPL_CLAIM_003",
+    "claim_text": "AAPL has validated revenue TTM of $444.33B, so the business discussion should focus on mega-cap platform growth, AI/cloud investment, margin durability and regulatory risk rather than generic scale language.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "Revenue scale alone does not prove attractive returns or valuation discipline.",
+    "evidence_ids": [
+      "AAPL_SEC_COMPANYFACTS_320193_REVENUE",
+      "AAPL_SEC_COMPANYFACTS_320193_REVENUE_TTM",
+      "AAPL_SEC_COMPANYFACTS_320193_SALES",
+      "AAPL_SEC_COMPANYFACTS_320193_UMSATZ",
+      "AAPL_SEC_revenue_FY2025_FY_0000320193-25-000079",
+      "AAPL_SEC_revenue_FY2025_Q3_0000320193-25-000073",
+      "AAPL_SEC_revenue_FY2026_Q1_0000320193-26-000006",
+      "AAPL_SEC_revenue_FY2026_Q2_0000320193-26-000013"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm"
+    ],
+    "importance": "high",
+    "investment_implication": "Use revenue evidence as context, not as a standalone buy signal.",
+    "metric_refs": [
+      "revenue_ttm"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "AAPL_SEC_COMPANYFACTS_320193",
+      "SEC_0000320193_0000320193-25-000079",
+      "SEC_0000320193_0000320193-25-000073",
+      "SEC_0000320193_0000320193-26-000006",
+      "SEC_0000320193_0000320193-26-000013"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Validated FCF TTM is $146.27B, making cash conversion a direct rating input for AAPL.",
+    "claim_id": "AAPL_CLAIM_004",
+    "claim_text": "Validated FCF TTM is $146.27B, making cash conversion a direct rating input for AAPL.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "FCF may be company-defined or period-sensitive and can require reconciliation review.",
+    "evidence_ids": [
+      "AAPL_SEC_COMPANYFACTS_320193_CASHFLOW",
+      "AAPL_SEC_COMPANYFACTS_320193_FCF",
+      "AAPL_SEC_COMPANYFACTS_320193_FREE_CASH_FLOW",
+      "AAPL_SEC_COMPANYFACTS_320193_FREE_CASH_FLOW_TTM",
+      "AAPL_SEC_COMPANYFACTS_320193_FREE_CASHFLOW",
+      "AAPL_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm"
+    ],
+    "importance": "high",
+    "investment_implication": "FCF quality supports the thesis only if no sanity guard blocks the report.",
+    "metric_refs": [
+      "free_cash_flow_ttm"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "AAPL_SEC_COMPANYFACTS_320193",
+      "SEC_0000320193_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "SBC/Revenue is 2.9%, which should be interpreted through mega-cap platform, capex and capital-return context rather than a one-size-fits-all compensation lens.",
+    "claim_id": "AAPL_CLAIM_005",
+    "claim_text": "SBC/Revenue is 2.9%, which should be interpreted through mega-cap platform, capex and capital-return context rather than a one-size-fits-all compensation lens.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": "Sector and lifecycle matter, but persistent dilution can still reduce equity quality.",
+    "evidence_ids": [
+      "AAPL_SEC_COMPANYFACTS_320193_SBC_TO_REVENUE",
+      "AAPL_SEC_DERIVED_SBC_TO_REVENUE"
+    ],
+    "evidence_metrics": [
+      "sbc_to_revenue"
+    ],
+    "importance": "medium",
+    "investment_implication": "Treat SBC as a risk modifier rather than an automatic rating override.",
+    "metric_refs": [
+      "sbc_to_revenue"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "AAPL_SEC_COMPANYFACTS_320193",
+      "SEC_0000320193_DERIVED_SBC_TO_REVENUE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Balance-sheet flexibility is anchored in validated net cash of $51.10B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+    "claim_id": "AAPL_CLAIM_006",
+    "claim_text": "Balance-sheet flexibility is anchored in validated net cash of $51.10B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "AAPL_SEC_COMPANYFACTS_320193_CASH",
+      "AAPL_SEC_COMPANYFACTS_320193_CASH_AND_EQUIVALENTS",
+      "AAPL_SEC_COMPANYFACTS_320193_CASH_AND_INVESTMENTS",
+      "AAPL_SEC_COMPANYFACTS_320193_NET_CASH",
+      "AAPL_SEC_cash_and_equivalents_FY2025_FY_0000320193-25-000079",
+      "AAPL_SEC_cash_and_equivalents_FY2026_Q1_0000320193-26-000006",
+      "AAPL_SEC_cash_and_equivalents_FY2026_Q2_0000320193-26-000013",
+      "AAPL_SEC_COMPANYFACTS_320193_DEBT",
+      "AAPL_SEC_COMPANYFACTS_320193_NET_DEBT",
+      "AAPL_SEC_COMPANYFACTS_320193_TOTAL_DEBT"
+    ],
+    "evidence_metrics": [
+      "net_cash",
+      "total_debt"
+    ],
+    "importance": "medium",
+    "investment_implication": "A stronger liquidity position can widen the acceptable holding corridor.",
+    "metric_refs": [
+      "net_cash",
+      "total_debt"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "AAPL_SEC_COMPANYFACTS_320193",
+      "SEC_0000320193_0000320193-25-000079",
+      "SEC_0000320193_0000320193-26-000006",
+      "SEC_0000320193_0000320193-26-000013"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Valuation is framed by validated EV/Sales of 9.30x; this directly limits how aggressive the Accumulate stance should be.",
+    "claim_id": "AAPL_CLAIM_007",
+    "claim_text": "Valuation is framed by validated EV/Sales of 9.30x; this directly limits how aggressive the Accumulate stance should be.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": "Packet-derived valuation can still be blocked by sanity guards when source reconciliation is suspect.",
+    "evidence_ids": [
+      "AAPL_SEC_COMPANYFACTS_320193_REVENUE",
+      "AAPL_SEC_COMPANYFACTS_320193_REVENUE_TTM",
+      "AAPL_SEC_COMPANYFACTS_320193_SALES",
+      "AAPL_SEC_COMPANYFACTS_320193_UMSATZ",
+      "AAPL_SEC_revenue_FY2025_FY_0000320193-25-000079",
+      "AAPL_SEC_revenue_FY2025_Q3_0000320193-25-000073",
+      "AAPL_SEC_revenue_FY2026_Q1_0000320193-26-000006",
+      "AAPL_SEC_revenue_FY2026_Q2_0000320193-26-000013",
+      "AAPL_SEC_COMPANYFACTS_320193_CASHFLOW",
+      "AAPL_SEC_COMPANYFACTS_320193_FCF",
+      "AAPL_SEC_COMPANYFACTS_320193_FREE_CASH_FLOW",
+      "AAPL_SEC_COMPANYFACTS_320193_FREE_CASH_FLOW_TTM",
+      "AAPL_SEC_COMPANYFACTS_320193_FREE_CASHFLOW",
+      "AAPL_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "AAPL_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "AAPL_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "AAPL_YAHOO_CHART_PRICE_CSV_PRICE",
+      "AAPL_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "AAPL_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "AAPL_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm",
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Do not upgrade rating solely from valuation language if audit has financial-sanity errors.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm",
+      "close"
+    ],
+    "section": "Valuation / Multiples",
+    "source_ids": [
+      "AAPL_SEC_COMPANYFACTS_320193",
+      "SEC_0000320193_0000320193-25-000079",
+      "SEC_0000320193_0000320193-25-000073",
+      "SEC_0000320193_0000320193-26-000006",
+      "SEC_0000320193_0000320193-26-000013",
+      "SEC_0000320193_DERIVED_FCF",
+      "AAPL_YAHOO_CHART_PRICE_CSV",
+      "AAPL_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "For AAPL, validated P/FCF is 28.61x and should be read against platform growth, FCF durability and capex intensity; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+    "claim_id": "AAPL_CLAIM_008",
+    "claim_text": "For AAPL, validated P/FCF is 28.61x and should be read against platform growth, FCF durability and capex intensity; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "AAPL_SEC_COMPANYFACTS_320193_CASHFLOW",
+      "AAPL_SEC_COMPANYFACTS_320193_FCF",
+      "AAPL_SEC_COMPANYFACTS_320193_FREE_CASH_FLOW",
+      "AAPL_SEC_COMPANYFACTS_320193_FREE_CASH_FLOW_TTM",
+      "AAPL_SEC_COMPANYFACTS_320193_FREE_CASHFLOW",
+      "AAPL_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "AAPL_SEC_COMPANYFACTS_320193_REVENUE",
+      "AAPL_SEC_COMPANYFACTS_320193_REVENUE_TTM",
+      "AAPL_SEC_COMPANYFACTS_320193_SALES",
+      "AAPL_SEC_COMPANYFACTS_320193_UMSATZ",
+      "AAPL_SEC_revenue_FY2025_FY_0000320193-25-000079",
+      "AAPL_SEC_revenue_FY2025_Q3_0000320193-25-000073",
+      "AAPL_SEC_revenue_FY2026_Q1_0000320193-26-000006",
+      "AAPL_SEC_revenue_FY2026_Q2_0000320193-26-000013"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm",
+      "revenue_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "The rating should stay conservative when multiples are expensive, missing or flagged.",
+    "metric_refs": [
+      "free_cash_flow_ttm",
+      "revenue_ttm"
+    ],
+    "section": "Valuation / Multiples",
+    "source_ids": [
+      "AAPL_SEC_COMPANYFACTS_320193",
+      "SEC_0000320193_DERIVED_FCF",
+      "SEC_0000320193_0000320193-25-000079",
+      "SEC_0000320193_0000320193-25-000073",
+      "SEC_0000320193_0000320193-26-000006",
+      "SEC_0000320193_0000320193-26-000013"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The technical setup uses validated levels: close 284.18, 50-SMA 261.82, 200-SMA 255.88 and RSI 67.26, creating timing risk if price cannot reclaim trend support.",
+    "claim_id": "AAPL_CLAIM_009",
+    "claim_text": "The technical setup uses validated levels: close 284.18, 50-SMA 261.82, 200-SMA 255.88 and RSI 67.26, creating timing risk if price cannot reclaim trend support.",
+    "claim_type": "technical_metric",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "AAPL_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "AAPL_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "AAPL_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "AAPL_YAHOO_CHART_PRICE_CSV_PRICE",
+      "AAPL_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "AAPL_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "AAPL_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Timing language should follow the validated technical trend state.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Technical Setup",
+    "source_ids": [
+      "AAPL_YAHOO_CHART_PRICE_CSV",
+      "AAPL_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "AAPL's close of 284.18 and moving-average position imply constructive momentum but still requires valuation and risk discipline, so entries should be staged, delayed or trimmed according to business evidence and risk/reward.",
+    "claim_id": "AAPL_CLAIM_010",
+    "claim_text": "AAPL's close of 284.18 and moving-average position imply constructive momentum but still requires valuation and risk discipline, so entries should be staged, delayed or trimmed according to business evidence and risk/reward.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": "Technical weakness can be temporary if fundamentals and catalysts improve.",
+    "evidence_ids": [
+      "AAPL_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "AAPL_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "AAPL_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "AAPL_YAHOO_CHART_PRICE_CSV_PRICE",
+      "AAPL_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "AAPL_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "AAPL_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Use staged entries or trims when technical and fundamental signals diverge.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Technical Setup",
+    "source_ids": [
+      "AAPL_YAHOO_CHART_PRICE_CSV",
+      "AAPL_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The bull case is that platform scale, ecosystem monetization and operating leverage combines with revenue of $444.33B to support the allowed upside rating path when cash conversion quality also holds.",
+    "claim_id": "AAPL_CLAIM_011",
+    "claim_text": "The bull case is that platform scale, ecosystem monetization and operating leverage combines with revenue of $444.33B to support the allowed upside rating path when cash conversion quality also holds.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": "Strong scale does not resolve valuation or reconciliation anomalies.",
+    "evidence_ids": [
+      "AAPL_SEC_COMPANYFACTS_320193_REVENUE",
+      "AAPL_SEC_COMPANYFACTS_320193_REVENUE_TTM",
+      "AAPL_SEC_COMPANYFACTS_320193_SALES",
+      "AAPL_SEC_COMPANYFACTS_320193_UMSATZ",
+      "AAPL_SEC_revenue_FY2025_FY_0000320193-25-000079",
+      "AAPL_SEC_revenue_FY2025_Q3_0000320193-25-000073",
+      "AAPL_SEC_revenue_FY2026_Q1_0000320193-26-000006",
+      "AAPL_SEC_revenue_FY2026_Q2_0000320193-26-000013",
+      "AAPL_SEC_COMPANYFACTS_320193_CASHFLOW",
+      "AAPL_SEC_COMPANYFACTS_320193_FCF",
+      "AAPL_SEC_COMPANYFACTS_320193_FREE_CASH_FLOW",
+      "AAPL_SEC_COMPANYFACTS_320193_FREE_CASH_FLOW_TTM",
+      "AAPL_SEC_COMPANYFACTS_320193_FREE_CASHFLOW",
+      "AAPL_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Bullish language must remain bounded by DecisionPacket permissions.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Bull Case",
+    "source_ids": [
+      "AAPL_SEC_COMPANYFACTS_320193",
+      "SEC_0000320193_0000320193-25-000079",
+      "SEC_0000320193_0000320193-25-000073",
+      "SEC_0000320193_0000320193-26-000006",
+      "SEC_0000320193_0000320193-26-000013",
+      "SEC_0000320193_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "A constructive technical bull path for AAPL requires confirmation beyond the current RSI of 67.26 and moving-average setup.",
+    "claim_id": "AAPL_CLAIM_012",
+    "claim_text": "A constructive technical bull path for AAPL requires confirmation beyond the current RSI of 67.26 and moving-average setup.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "AAPL_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "AAPL_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "AAPL_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "AAPL_YAHOO_CHART_PRICE_CSV_PRICE",
+      "AAPL_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "AAPL_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "AAPL_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Add or accumulate language should require confirmation when the preferred rating is not Buy.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Bull Case",
+    "source_ids": [
+      "AAPL_YAHOO_CHART_PRICE_CSV",
+      "AAPL_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The bear case is that regulatory pressure, capex intensity, growth deceleration or multiple compression overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 2.9% or source-quality issues persist.",
+    "claim_id": "AAPL_CLAIM_013",
+    "claim_text": "The bear case is that regulatory pressure, capex intensity, growth deceleration or multiple compression overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 2.9% or source-quality issues persist.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "AAPL_SEC_COMPANYFACTS_320193_CASHFLOW",
+      "AAPL_SEC_COMPANYFACTS_320193_FCF",
+      "AAPL_SEC_COMPANYFACTS_320193_FREE_CASH_FLOW",
+      "AAPL_SEC_COMPANYFACTS_320193_FREE_CASH_FLOW_TTM",
+      "AAPL_SEC_COMPANYFACTS_320193_FREE_CASHFLOW",
+      "AAPL_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "AAPL_SEC_COMPANYFACTS_320193_SBC_TO_REVENUE",
+      "AAPL_SEC_DERIVED_SBC_TO_REVENUE"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm",
+      "sbc_to_revenue"
+    ],
+    "importance": "high",
+    "investment_implication": "Manual review remains appropriate when financial-sanity guards fire.",
+    "metric_refs": [
+      "free_cash_flow_ttm",
+      "sbc_to_revenue"
+    ],
+    "section": "Bear Case",
+    "source_ids": [
+      "AAPL_SEC_COMPANYFACTS_320193",
+      "SEC_0000320193_DERIVED_FCF",
+      "SEC_0000320193_DERIVED_SBC_TO_REVENUE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Valuation risk for AAPL is a discipline constraint; expensive or missing EV/Sales and P/FCF context should not be translated into a blocked rating.",
+    "claim_id": "AAPL_CLAIM_014",
+    "claim_text": "Valuation risk for AAPL is a discipline constraint; expensive or missing EV/Sales and P/FCF context should not be translated into a blocked rating.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "AAPL_SEC_COMPANYFACTS_320193_REVENUE",
+      "AAPL_SEC_COMPANYFACTS_320193_REVENUE_TTM",
+      "AAPL_SEC_COMPANYFACTS_320193_SALES",
+      "AAPL_SEC_COMPANYFACTS_320193_UMSATZ",
+      "AAPL_SEC_revenue_FY2025_FY_0000320193-25-000079",
+      "AAPL_SEC_revenue_FY2025_Q3_0000320193-25-000073",
+      "AAPL_SEC_revenue_FY2026_Q1_0000320193-26-000006",
+      "AAPL_SEC_revenue_FY2026_Q2_0000320193-26-000013",
+      "AAPL_SEC_COMPANYFACTS_320193_CASHFLOW",
+      "AAPL_SEC_COMPANYFACTS_320193_FCF",
+      "AAPL_SEC_COMPANYFACTS_320193_FREE_CASH_FLOW",
+      "AAPL_SEC_COMPANYFACTS_320193_FREE_CASH_FLOW_TTM",
+      "AAPL_SEC_COMPANYFACTS_320193_FREE_CASHFLOW",
+      "AAPL_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Avoid blocked Sell language when the DecisionPacket allows only trim or hold actions.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Bear Case",
+    "source_ids": [
+      "AAPL_SEC_COMPANYFACTS_320193",
+      "SEC_0000320193_0000320193-25-000079",
+      "SEC_0000320193_0000320193-25-000073",
+      "SEC_0000320193_0000320193-26-000006",
+      "SEC_0000320193_0000320193-26-000013",
+      "SEC_0000320193_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Validation and audit issues are part of the AAPL research view; any blocking data issue should override a superficially complete report.",
+    "claim_id": "AAPL_CLAIM_015",
+    "claim_text": "Validation and audit issues are part of the AAPL research view; any blocking data issue should override a superficially complete report.",
+    "claim_type": "risk",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "AAPL_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "AAPL_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "AAPL_YAHOO_CHART_PRICE_CSV_PRICE",
+      "AAPL_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "AAPL_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "AAPL_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Blocking audit errors should keep the report in manual review.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Key Risks",
+    "source_ids": [
+      "AAPL_YAHOO_CHART_PRICE_CSV",
+      "AAPL_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Source disagreement or current-period mismatch can reduce conviction for AAPL, especially where revenue $444.33B is a key valuation denominator.",
+    "claim_id": "AAPL_CLAIM_016",
+    "claim_text": "Source disagreement or current-period mismatch can reduce conviction for AAPL, especially where revenue $444.33B is a key valuation denominator.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "AAPL_SEC_COMPANYFACTS_320193_REVENUE",
+      "AAPL_SEC_COMPANYFACTS_320193_REVENUE_TTM",
+      "AAPL_SEC_COMPANYFACTS_320193_SALES",
+      "AAPL_SEC_COMPANYFACTS_320193_UMSATZ",
+      "AAPL_SEC_revenue_FY2025_FY_0000320193-25-000079",
+      "AAPL_SEC_revenue_FY2025_Q3_0000320193-25-000073",
+      "AAPL_SEC_revenue_FY2026_Q1_0000320193-26-000006",
+      "AAPL_SEC_revenue_FY2026_Q2_0000320193-26-000013",
+      "AAPL_SEC_COMPANYFACTS_320193_CASHFLOW",
+      "AAPL_SEC_COMPANYFACTS_320193_FCF",
+      "AAPL_SEC_COMPANYFACTS_320193_FREE_CASH_FLOW",
+      "AAPL_SEC_COMPANYFACTS_320193_FREE_CASH_FLOW_TTM",
+      "AAPL_SEC_COMPANYFACTS_320193_FREE_CASHFLOW",
+      "AAPL_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Source-quality limitations belong in the final action plan.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Key Risks",
+    "source_ids": [
+      "AAPL_SEC_COMPANYFACTS_320193",
+      "SEC_0000320193_0000320193-25-000079",
+      "SEC_0000320193_0000320193-25-000073",
+      "SEC_0000320193_0000320193-26-000006",
+      "SEC_0000320193_0000320193-26-000013",
+      "SEC_0000320193_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Catalysts for AAPL at the validated close of 284.18 should be limited to confirmed packet inputs; missing earnings or forward company data should be stated as unavailable rather than converted into event-risk claims.",
+    "claim_id": "AAPL_CLAIM_017",
+    "claim_text": "Catalysts for AAPL at the validated close of 284.18 should be limited to confirmed packet inputs; missing earnings or forward company data should be stated as unavailable rather than converted into event-risk claims.",
+    "claim_type": "price_data",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "AAPL_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "AAPL_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "AAPL_YAHOO_CHART_PRICE_CSV_PRICE",
+      "AAPL_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "AAPL_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "AAPL_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "If earnings are unavailable, the report should state that limitation rather than inventing timing.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Catalysts & Triggers",
+    "source_ids": [
+      "AAPL_YAHOO_CHART_PRICE_CSV",
+      "AAPL_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Trigger language should use validated levels such as 50-SMA 261.82 and 200-SMA 255.88, not unvalidated price targets.",
+    "claim_id": "AAPL_CLAIM_018",
+    "claim_text": "Trigger language should use validated levels such as 50-SMA 261.82 and 200-SMA 255.88, not unvalidated price targets.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "AAPL_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "AAPL_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "AAPL_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "AAPL_YAHOO_CHART_PRICE_CSV_PRICE",
+      "AAPL_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "AAPL_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "AAPL_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Use confirmation language instead of hard price targets unless risk/reward levels are validated.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Catalysts & Triggers",
+    "source_ids": [
+      "AAPL_YAHOO_CHART_PRICE_CSV",
+      "AAPL_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "We rate AAPL Accumulate at the validated close of 284.18 because mega-cap platform growth, AI/cloud investment, margin durability and regulatory risk supports the base case, while valuation and technical risk limit the case for a more bullish rating.",
+    "claim_id": "AAPL_CLAIM_019",
+    "claim_text": "We rate AAPL Accumulate at the validated close of 284.18 because mega-cap platform growth, AI/cloud investment, margin durability and regulatory risk supports the base case, while valuation and technical risk limit the case for a more bullish rating.",
+    "claim_type": "rating",
+    "confidence": "high",
+    "counterargument": "A more bearish rating would require evidence that cash generation, technical confirmation or source quality has broken down.",
+    "evidence_ids": [
+      "AAPL_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "AAPL_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "AAPL_YAHOO_CHART_PRICE_CSV_PRICE",
+      "AAPL_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "AAPL_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "AAPL_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Use staged accumulation for AAPL; add on pullbacks or confirmed KPI acceleration, not on valuation-insensitive momentum.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Final Rating & Action Plan",
+    "source_ids": [
+      "AAPL_YAHOO_CHART_PRICE_CSV",
+      "AAPL_CSV_PRICE_PROVIDER"
+    ]
+  }
+]

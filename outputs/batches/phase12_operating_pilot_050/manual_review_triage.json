@@ -1,0 +1,410 @@
+{
+  "batch_id": "phase12_operating_pilot_050",
+  "count_by_reason_group": {
+    "claim_substance_gap": 2,
+    "data_gap": 11,
+    "guard_too_strict": 2,
+    "missing_current_period_context": 1,
+    "missing_fcf_support": 2,
+    "true_anomaly": 7
+  },
+  "generated_at": "2026-05-12T20:20:57Z",
+  "items": [
+    {
+      "external_display_rating": "Hold",
+      "fixability": "2. keep manual_review",
+      "primary_root_cause": "true_anomaly",
+      "quality_score": 76.0,
+      "reason_codes": [
+        "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+        "TRUE_FINANCIAL_ANOMALY",
+        "EARNINGS_DATE_UNAVAILABLE",
+        "SOURCE_FRAME_VARIANT_IGNORED",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT"
+      ],
+      "reason_groups": [
+        "true_anomaly"
+      ],
+      "recommended_next_action": "Keep `AMZN` in manual_review until the anomaly is explained or disproved.",
+      "status": "manual_review",
+      "ticker": "AMZN"
+    },
+    {
+      "external_display_rating": "Hold",
+      "fixability": "2. keep manual_review",
+      "primary_root_cause": "true_anomaly",
+      "quality_score": 75.0,
+      "reason_codes": [
+        "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+        "TRUE_FINANCIAL_ANOMALY",
+        "EARNINGS_DATE_UNAVAILABLE",
+        "SOURCE_FRAME_VARIANT_IGNORED",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT"
+      ],
+      "reason_groups": [
+        "true_anomaly"
+      ],
+      "recommended_next_action": "Keep `NVDA` in manual_review until the anomaly is explained or disproved.",
+      "status": "manual_review",
+      "ticker": "NVDA"
+    },
+    {
+      "external_display_rating": "Hold",
+      "fixability": "2. keep manual_review",
+      "primary_root_cause": "true_anomaly",
+      "quality_score": 74.0,
+      "reason_codes": [
+        "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+        "TRUE_FINANCIAL_ANOMALY",
+        "EARNINGS_DATE_UNAVAILABLE",
+        "SOURCE_FRAME_VARIANT_IGNORED",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT"
+      ],
+      "reason_groups": [
+        "true_anomaly"
+      ],
+      "recommended_next_action": "Keep `AMD` in manual_review until the anomaly is explained or disproved.",
+      "status": "manual_review",
+      "ticker": "AMD"
+    },
+    {
+      "external_display_rating": "Hold",
+      "fixability": "1. add IR data",
+      "primary_root_cause": "data_gap",
+      "quality_score": 78.0,
+      "reason_codes": [
+        "EARNINGS_DATE_UNAVAILABLE",
+        "SOURCE_FRAME_VARIANT_IGNORED",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT"
+      ],
+      "reason_groups": [
+        "data_gap"
+      ],
+      "recommended_next_action": "Add or confirm stronger IR/current-period support for `INTC` before rerun.",
+      "status": "manual_review",
+      "ticker": "INTC"
+    },
+    {
+      "external_display_rating": "Hold Pending FCF Support",
+      "fixability": "1. add IR data",
+      "primary_root_cause": "missing_fcf_support",
+      "quality_score": 87.0,
+      "reason_codes": [
+        "MISSING_FCF_SUPPORT_FOR_ACCUMULATE",
+        "EARNINGS_DATE_UNAVAILABLE",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT",
+        "SOURCE_FRAME_VARIANT_IGNORED"
+      ],
+      "reason_groups": [
+        "missing_fcf_support"
+      ],
+      "recommended_next_action": "Add or confirm stronger IR/current-period support for `QCOM` before rerun.",
+      "status": "manual_review",
+      "ticker": "QCOM"
+    },
+    {
+      "external_display_rating": "Hold",
+      "fixability": "2. keep manual_review",
+      "primary_root_cause": "true_anomaly",
+      "quality_score": 74.0,
+      "reason_codes": [
+        "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+        "TRUE_FINANCIAL_ANOMALY",
+        "EARNINGS_DATE_UNAVAILABLE",
+        "SOURCE_FRAME_VARIANT_IGNORED",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT"
+      ],
+      "reason_groups": [
+        "true_anomaly"
+      ],
+      "recommended_next_action": "Keep `MU` in manual_review until the anomaly is explained or disproved.",
+      "status": "manual_review",
+      "ticker": "MU"
+    },
+    {
+      "external_display_rating": "Hold",
+      "fixability": "1. add IR data",
+      "primary_root_cause": "data_gap",
+      "quality_score": 78.0,
+      "reason_codes": [
+        "EARNINGS_DATE_UNAVAILABLE",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT"
+      ],
+      "reason_groups": [
+        "data_gap"
+      ],
+      "recommended_next_action": "Add or confirm stronger IR/current-period support for `MRVL` before rerun.",
+      "status": "manual_review",
+      "ticker": "MRVL"
+    },
+    {
+      "external_display_rating": "Hold",
+      "fixability": "2. keep manual_review",
+      "primary_root_cause": "true_anomaly",
+      "quality_score": 74.0,
+      "reason_codes": [
+        "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+        "TRUE_FINANCIAL_ANOMALY",
+        "EARNINGS_DATE_UNAVAILABLE",
+        "SOURCE_FRAME_VARIANT_IGNORED",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT"
+      ],
+      "reason_groups": [
+        "true_anomaly"
+      ],
+      "recommended_next_action": "Keep `ANET` in manual_review until the anomaly is explained or disproved.",
+      "status": "manual_review",
+      "ticker": "ANET"
+    },
+    {
+      "external_display_rating": "Hold",
+      "fixability": "1. add IR data",
+      "primary_root_cause": "data_gap",
+      "quality_score": 78.0,
+      "reason_codes": [
+        "EARNINGS_DATE_UNAVAILABLE",
+        "SOURCE_FRAME_VARIANT_IGNORED",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT"
+      ],
+      "reason_groups": [
+        "data_gap"
+      ],
+      "recommended_next_action": "Add or confirm stronger IR/current-period support for `MDB` before rerun.",
+      "status": "manual_review",
+      "ticker": "MDB"
+    },
+    {
+      "external_display_rating": "Hold",
+      "fixability": "2. keep manual_review",
+      "primary_root_cause": "true_anomaly",
+      "quality_score": 60.0,
+      "reason_codes": [
+        "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+        "TRUE_FINANCIAL_ANOMALY",
+        "EARNINGS_DATE_UNAVAILABLE",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT"
+      ],
+      "reason_groups": [
+        "true_anomaly",
+        "claim_substance_gap"
+      ],
+      "recommended_next_action": "Keep `CRWD` in manual_review until the anomaly is explained or disproved.",
+      "status": "manual_review",
+      "ticker": "CRWD"
+    },
+    {
+      "external_display_rating": "Hold",
+      "fixability": "3. guard tuning",
+      "primary_root_cause": "guard_too_strict",
+      "quality_score": 78.0,
+      "reason_codes": [
+        "GUARD_THRESHOLD_REVIEW",
+        "EARNINGS_DATE_UNAVAILABLE",
+        "PERIOD_TYPE_MISMATCH_IGNORED"
+      ],
+      "reason_groups": [
+        "guard_too_strict"
+      ],
+      "recommended_next_action": "Review whether `NET` is a guard-threshold edge case; do not loosen guards blindly.",
+      "status": "manual_review",
+      "ticker": "NET"
+    },
+    {
+      "external_display_rating": "Hold",
+      "fixability": "1. add IR data",
+      "primary_root_cause": "missing_fcf_support",
+      "quality_score": 56.0,
+      "reason_codes": [
+        "FCF_UNAVAILABLE_WITHOUT_IR_SUPPORT",
+        "MISSING_CURRENT_PERIOD_KPI_CONTEXT",
+        "EARNINGS_DATE_UNAVAILABLE",
+        "SOURCE_FRAME_VARIANT_IGNORED",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT"
+      ],
+      "reason_groups": [
+        "missing_current_period_context",
+        "missing_fcf_support",
+        "claim_substance_gap"
+      ],
+      "recommended_next_action": "Add or confirm stronger IR/current-period support for `PANW` before rerun.",
+      "status": "manual_review",
+      "ticker": "PANW"
+    },
+    {
+      "external_display_rating": "Hold",
+      "fixability": "1. add IR data",
+      "primary_root_cause": "data_gap",
+      "quality_score": 78.0,
+      "reason_codes": [
+        "EARNINGS_DATE_UNAVAILABLE",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "SOURCE_FRAME_VARIANT_IGNORED"
+      ],
+      "reason_groups": [
+        "data_gap"
+      ],
+      "recommended_next_action": "Add or confirm stronger IR/current-period support for `ZS` before rerun.",
+      "status": "manual_review",
+      "ticker": "ZS"
+    },
+    {
+      "external_display_rating": "Hold",
+      "fixability": "1. add IR data",
+      "primary_root_cause": "data_gap",
+      "quality_score": 78.0,
+      "reason_codes": [
+        "EARNINGS_DATE_UNAVAILABLE",
+        "SOURCE_FRAME_VARIANT_IGNORED",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT"
+      ],
+      "reason_groups": [
+        "data_gap"
+      ],
+      "recommended_next_action": "Add or confirm stronger IR/current-period support for `NOW` before rerun.",
+      "status": "manual_review",
+      "ticker": "NOW"
+    },
+    {
+      "external_display_rating": "Hold",
+      "fixability": "1. add IR data",
+      "primary_root_cause": "data_gap",
+      "quality_score": 78.0,
+      "reason_codes": [
+        "EARNINGS_DATE_UNAVAILABLE",
+        "SOURCE_FRAME_VARIANT_IGNORED",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT"
+      ],
+      "reason_groups": [
+        "data_gap"
+      ],
+      "recommended_next_action": "Add or confirm stronger IR/current-period support for `ORCL` before rerun.",
+      "status": "manual_review",
+      "ticker": "ORCL"
+    },
+    {
+      "external_display_rating": "Hold",
+      "fixability": "1. add IR data",
+      "primary_root_cause": "data_gap",
+      "quality_score": 78.0,
+      "reason_codes": [
+        "EARNINGS_DATE_UNAVAILABLE",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT",
+        "SOURCE_FRAME_VARIANT_IGNORED"
+      ],
+      "reason_groups": [
+        "data_gap"
+      ],
+      "recommended_next_action": "Add or confirm stronger IR/current-period support for `ADBE` before rerun.",
+      "status": "manual_review",
+      "ticker": "ADBE"
+    },
+    {
+      "external_display_rating": "Hold",
+      "fixability": "1. add IR data",
+      "primary_root_cause": "data_gap",
+      "quality_score": 78.0,
+      "reason_codes": [
+        "EARNINGS_DATE_UNAVAILABLE",
+        "SOURCE_FRAME_VARIANT_IGNORED",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT"
+      ],
+      "reason_groups": [
+        "data_gap"
+      ],
+      "recommended_next_action": "Add or confirm stronger IR/current-period support for `INTU` before rerun.",
+      "status": "manual_review",
+      "ticker": "INTU"
+    },
+    {
+      "external_display_rating": "Hold",
+      "fixability": "1. add IR data",
+      "primary_root_cause": "data_gap",
+      "quality_score": 78.0,
+      "reason_codes": [
+        "EARNINGS_DATE_UNAVAILABLE",
+        "SOURCE_FRAME_VARIANT_IGNORED",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT"
+      ],
+      "reason_groups": [
+        "data_gap"
+      ],
+      "recommended_next_action": "Add or confirm stronger IR/current-period support for `UBER` before rerun.",
+      "status": "manual_review",
+      "ticker": "UBER"
+    },
+    {
+      "external_display_rating": "Hold",
+      "fixability": "1. add IR data",
+      "primary_root_cause": "data_gap",
+      "quality_score": 78.0,
+      "reason_codes": [
+        "EARNINGS_DATE_UNAVAILABLE",
+        "SOURCE_FRAME_VARIANT_IGNORED",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT"
+      ],
+      "reason_groups": [
+        "data_gap"
+      ],
+      "recommended_next_action": "Add or confirm stronger IR/current-period support for `TSLA` before rerun.",
+      "status": "manual_review",
+      "ticker": "TSLA"
+    },
+    {
+      "external_display_rating": "Hold",
+      "fixability": "2. keep manual_review",
+      "primary_root_cause": "true_anomaly",
+      "quality_score": 74.0,
+      "reason_codes": [
+        "GUARD_THRESHOLD_REVIEW",
+        "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+        "TRUE_FINANCIAL_ANOMALY",
+        "EARNINGS_DATE_UNAVAILABLE",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT"
+      ],
+      "reason_groups": [
+        "true_anomaly",
+        "guard_too_strict"
+      ],
+      "recommended_next_action": "Keep `PLTR` in manual_review until the anomaly is explained or disproved.",
+      "status": "manual_review",
+      "ticker": "PLTR"
+    },
+    {
+      "external_display_rating": "Hold",
+      "fixability": "1. add IR data",
+      "primary_root_cause": "data_gap",
+      "quality_score": 78.0,
+      "reason_codes": [
+        "EARNINGS_DATE_UNAVAILABLE",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT",
+        "SOURCE_FRAME_VARIANT_IGNORED"
+      ],
+      "reason_groups": [
+        "data_gap"
+      ],
+      "recommended_next_action": "Add or confirm stronger IR/current-period support for `IBM` before rerun.",
+      "status": "manual_review",
+      "ticker": "IBM"
+    }
+  ],
+  "total_manual_review": 21
+}

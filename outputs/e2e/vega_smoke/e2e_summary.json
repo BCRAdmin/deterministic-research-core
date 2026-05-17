@@ -1,0 +1,10 @@
+{
+  "avg_quality_score": 95.5,
+  "cases_failed": 0,
+  "cases_passed": 4,
+  "cases_total": 4,
+  "failures": [],
+  "manual_review_count": 0,
+  "repair_rate": 1.0,
+  "run_id": "e2e_latest"
+}

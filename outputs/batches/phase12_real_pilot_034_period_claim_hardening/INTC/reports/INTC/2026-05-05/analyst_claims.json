@@ -1,0 +1,650 @@
+[
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "INTC enters the report with a validated Hold rating corridor at a frozen close of 108.15; the action should reflect semiconductor cycle, product mix, inventory, gross margin and management forecast quality and the current technical setup.",
+    "claim_id": "INTC_CLAIM_001",
+    "claim_text": "INTC enters the report with a validated Hold rating corridor at a frozen close of 108.15; the action should reflect semiconductor cycle, product mix, inventory, gross margin and management forecast quality and the current technical setup.",
+    "claim_type": "price_data",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "INTC_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "INTC_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "INTC_YAHOO_CHART_PRICE_CSV_PRICE",
+      "INTC_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "INTC_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "INTC_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "The committee text should stay inside the Hold action frame.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Executive Summary",
+    "source_ids": [
+      "INTC_YAHOO_CHART_PRICE_CSV",
+      "INTC_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "INTC has validated revenue TTM of $52.76B, so the business discussion should focus on semiconductor cycle, product mix, inventory, gross margin and management forecast quality rather than generic scale language.",
+    "claim_id": "INTC_CLAIM_002",
+    "claim_text": "INTC has validated revenue TTM of $52.76B, so the business discussion should focus on semiconductor cycle, product mix, inventory, gross margin and management forecast quality rather than generic scale language.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "Revenue scale alone does not prove attractive returns or valuation discipline.",
+    "evidence_ids": [
+      "INTC_SEC_COMPANYFACTS_50863_REVENUE",
+      "INTC_SEC_COMPANYFACTS_50863_REVENUE_TTM",
+      "INTC_SEC_COMPANYFACTS_50863_SALES",
+      "INTC_SEC_COMPANYFACTS_50863_UMSATZ",
+      "INTC_SEC_revenue_FY2025_FY_0000050863-26-000011",
+      "INTC_SEC_revenue_FY2025_Q2_0000050863-25-000109",
+      "INTC_SEC_revenue_FY2025_Q3_0000050863-25-000179",
+      "INTC_SEC_revenue_FY2026_Q1_0000050863-26-000079"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm"
+    ],
+    "importance": "high",
+    "investment_implication": "Use revenue evidence as context, not as a standalone buy signal.",
+    "metric_refs": [
+      "revenue_ttm"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "INTC_SEC_COMPANYFACTS_50863",
+      "SEC_0000050863_0000050863-26-000011",
+      "SEC_0000050863_0000050863-25-000109",
+      "SEC_0000050863_0000050863-25-000179",
+      "SEC_0000050863_0000050863-26-000079"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Validated FCF TTM is $-23.30B, making cash conversion a direct rating input for INTC.",
+    "claim_id": "INTC_CLAIM_003",
+    "claim_text": "Validated FCF TTM is $-23.30B, making cash conversion a direct rating input for INTC.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "FCF may be company-defined or period-sensitive and can require reconciliation review.",
+    "evidence_ids": [
+      "INTC_SEC_COMPANYFACTS_50863_CASHFLOW",
+      "INTC_SEC_COMPANYFACTS_50863_FCF",
+      "INTC_SEC_COMPANYFACTS_50863_FREE_CASH_FLOW",
+      "INTC_SEC_COMPANYFACTS_50863_FREE_CASH_FLOW_TTM",
+      "INTC_SEC_COMPANYFACTS_50863_FREE_CASHFLOW",
+      "INTC_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm"
+    ],
+    "importance": "high",
+    "investment_implication": "FCF quality supports the thesis only if no sanity guard blocks the report.",
+    "metric_refs": [
+      "free_cash_flow_ttm"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "INTC_SEC_COMPANYFACTS_50863",
+      "SEC_0000050863_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "SBC/Revenue is 6.1%, which should be interpreted through semiconductor-cycle, segment-mix and balance-sheet context rather than a one-size-fits-all compensation lens.",
+    "claim_id": "INTC_CLAIM_004",
+    "claim_text": "SBC/Revenue is 6.1%, which should be interpreted through semiconductor-cycle, segment-mix and balance-sheet context rather than a one-size-fits-all compensation lens.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": "Sector and lifecycle matter, but persistent dilution can still reduce equity quality.",
+    "evidence_ids": [
+      "INTC_SEC_COMPANYFACTS_50863_SBC_TO_REVENUE",
+      "INTC_SEC_DERIVED_SBC_TO_REVENUE"
+    ],
+    "evidence_metrics": [
+      "sbc_to_revenue"
+    ],
+    "importance": "medium",
+    "investment_implication": "Treat SBC as a risk modifier rather than an automatic rating override.",
+    "metric_refs": [
+      "sbc_to_revenue"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "INTC_SEC_COMPANYFACTS_50863",
+      "SEC_0000050863_DERIVED_SBC_TO_REVENUE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Balance-sheet flexibility is anchored in validated net cash of $8.95B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+    "claim_id": "INTC_CLAIM_005",
+    "claim_text": "Balance-sheet flexibility is anchored in validated net cash of $8.95B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "INTC_SEC_COMPANYFACTS_50863_CASH",
+      "INTC_SEC_COMPANYFACTS_50863_CASH_AND_EQUIVALENTS",
+      "INTC_SEC_COMPANYFACTS_50863_CASH_AND_INVESTMENTS",
+      "INTC_SEC_COMPANYFACTS_50863_NET_CASH",
+      "INTC_SEC_cash_and_equivalents_FY2025_FY_0000050863-26-000011",
+      "INTC_SEC_cash_and_equivalents_FY2025_Q2_0000050863-25-000109",
+      "INTC_SEC_cash_and_equivalents_FY2025_Q3_0000050863-25-000179",
+      "INTC_SEC_cash_and_equivalents_FY2026_Q1_0000050863-26-000079",
+      "INTC_SEC_COMPANYFACTS_50863_DEBT",
+      "INTC_SEC_COMPANYFACTS_50863_NET_DEBT",
+      "INTC_SEC_COMPANYFACTS_50863_TOTAL_DEBT"
+    ],
+    "evidence_metrics": [
+      "net_cash",
+      "total_debt"
+    ],
+    "importance": "medium",
+    "investment_implication": "A stronger liquidity position can widen the acceptable holding corridor.",
+    "metric_refs": [
+      "net_cash",
+      "total_debt"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "INTC_SEC_COMPANYFACTS_50863",
+      "SEC_0000050863_0000050863-26-000011",
+      "SEC_0000050863_0000050863-25-000109",
+      "SEC_0000050863_0000050863-25-000179",
+      "SEC_0000050863_0000050863-26-000079"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Valuation is framed by validated EV/Sales of 10.25x; this directly limits how aggressive the Hold stance should be.",
+    "claim_id": "INTC_CLAIM_006",
+    "claim_text": "Valuation is framed by validated EV/Sales of 10.25x; this directly limits how aggressive the Hold stance should be.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": "Packet-derived valuation can still be blocked by sanity guards when source reconciliation is suspect.",
+    "evidence_ids": [
+      "INTC_SEC_COMPANYFACTS_50863_REVENUE",
+      "INTC_SEC_COMPANYFACTS_50863_REVENUE_TTM",
+      "INTC_SEC_COMPANYFACTS_50863_SALES",
+      "INTC_SEC_COMPANYFACTS_50863_UMSATZ",
+      "INTC_SEC_revenue_FY2025_FY_0000050863-26-000011",
+      "INTC_SEC_revenue_FY2025_Q2_0000050863-25-000109",
+      "INTC_SEC_revenue_FY2025_Q3_0000050863-25-000179",
+      "INTC_SEC_revenue_FY2026_Q1_0000050863-26-000079",
+      "INTC_SEC_COMPANYFACTS_50863_CASHFLOW",
+      "INTC_SEC_COMPANYFACTS_50863_FCF",
+      "INTC_SEC_COMPANYFACTS_50863_FREE_CASH_FLOW",
+      "INTC_SEC_COMPANYFACTS_50863_FREE_CASH_FLOW_TTM",
+      "INTC_SEC_COMPANYFACTS_50863_FREE_CASHFLOW",
+      "INTC_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "INTC_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "INTC_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "INTC_YAHOO_CHART_PRICE_CSV_PRICE",
+      "INTC_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "INTC_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "INTC_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm",
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Do not upgrade rating solely from valuation language if audit has financial-sanity errors.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm",
+      "close"
+    ],
+    "section": "Valuation / Multiples",
+    "source_ids": [
+      "INTC_SEC_COMPANYFACTS_50863",
+      "SEC_0000050863_0000050863-26-000011",
+      "SEC_0000050863_0000050863-25-000109",
+      "SEC_0000050863_0000050863-25-000179",
+      "SEC_0000050863_0000050863-26-000079",
+      "SEC_0000050863_DERIVED_FCF",
+      "INTC_YAHOO_CHART_PRICE_CSV",
+      "INTC_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "For INTC, validated P/FCF is not available in validated packet and should be read against cycle-adjusted earnings and FCF support; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+    "claim_id": "INTC_CLAIM_007",
+    "claim_text": "For INTC, validated P/FCF is not available in validated packet and should be read against cycle-adjusted earnings and FCF support; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "INTC_SEC_COMPANYFACTS_50863_CASHFLOW",
+      "INTC_SEC_COMPANYFACTS_50863_FCF",
+      "INTC_SEC_COMPANYFACTS_50863_FREE_CASH_FLOW",
+      "INTC_SEC_COMPANYFACTS_50863_FREE_CASH_FLOW_TTM",
+      "INTC_SEC_COMPANYFACTS_50863_FREE_CASHFLOW",
+      "INTC_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "INTC_SEC_COMPANYFACTS_50863_REVENUE",
+      "INTC_SEC_COMPANYFACTS_50863_REVENUE_TTM",
+      "INTC_SEC_COMPANYFACTS_50863_SALES",
+      "INTC_SEC_COMPANYFACTS_50863_UMSATZ",
+      "INTC_SEC_revenue_FY2025_FY_0000050863-26-000011",
+      "INTC_SEC_revenue_FY2025_Q2_0000050863-25-000109",
+      "INTC_SEC_revenue_FY2025_Q3_0000050863-25-000179",
+      "INTC_SEC_revenue_FY2026_Q1_0000050863-26-000079"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm",
+      "revenue_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "The rating should stay conservative when multiples are expensive, missing or flagged.",
+    "metric_refs": [
+      "free_cash_flow_ttm",
+      "revenue_ttm"
+    ],
+    "section": "Valuation / Multiples",
+    "source_ids": [
+      "INTC_SEC_COMPANYFACTS_50863",
+      "SEC_0000050863_DERIVED_FCF",
+      "SEC_0000050863_0000050863-26-000011",
+      "SEC_0000050863_0000050863-25-000109",
+      "SEC_0000050863_0000050863-25-000179",
+      "SEC_0000050863_0000050863-26-000079"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The technical setup uses validated levels: close 108.15, 50-SMA 57.93, 200-SMA 40.95 and RSI 84.53.",
+    "claim_id": "INTC_CLAIM_008",
+    "claim_text": "The technical setup uses validated levels: close 108.15, 50-SMA 57.93, 200-SMA 40.95 and RSI 84.53.",
+    "claim_type": "technical_metric",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "INTC_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "INTC_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "INTC_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "INTC_YAHOO_CHART_PRICE_CSV_PRICE",
+      "INTC_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "INTC_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "INTC_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Timing language should follow the validated technical trend state.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Technical Setup",
+    "source_ids": [
+      "INTC_YAHOO_CHART_PRICE_CSV",
+      "INTC_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "INTC's RSI and moving-average position imply an overbought setup that favors patience or tactical trimming over immediate full accumulation, so entries should be staged, delayed or trimmed according to the allowed rating corridor.",
+    "claim_id": "INTC_CLAIM_009",
+    "claim_text": "INTC's RSI and moving-average position imply an overbought setup that favors patience or tactical trimming over immediate full accumulation, so entries should be staged, delayed or trimmed according to the allowed rating corridor.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": "Technical weakness can be temporary if fundamentals and catalysts improve.",
+    "evidence_ids": [
+      "INTC_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "INTC_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "INTC_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "INTC_YAHOO_CHART_PRICE_CSV_PRICE",
+      "INTC_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "INTC_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "INTC_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Use staged entries or trims when technical and fundamental signals diverge.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Technical Setup",
+    "source_ids": [
+      "INTC_YAHOO_CHART_PRICE_CSV",
+      "INTC_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The bull case is that cycle recovery, AI/datacenter mix and margin leverage combines with revenue of $52.76B to support the allowed upside rating path when cash conversion quality also holds.",
+    "claim_id": "INTC_CLAIM_010",
+    "claim_text": "The bull case is that cycle recovery, AI/datacenter mix and margin leverage combines with revenue of $52.76B to support the allowed upside rating path when cash conversion quality also holds.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": "Strong scale does not resolve valuation or reconciliation anomalies.",
+    "evidence_ids": [
+      "INTC_SEC_COMPANYFACTS_50863_REVENUE",
+      "INTC_SEC_COMPANYFACTS_50863_REVENUE_TTM",
+      "INTC_SEC_COMPANYFACTS_50863_SALES",
+      "INTC_SEC_COMPANYFACTS_50863_UMSATZ",
+      "INTC_SEC_revenue_FY2025_FY_0000050863-26-000011",
+      "INTC_SEC_revenue_FY2025_Q2_0000050863-25-000109",
+      "INTC_SEC_revenue_FY2025_Q3_0000050863-25-000179",
+      "INTC_SEC_revenue_FY2026_Q1_0000050863-26-000079",
+      "INTC_SEC_COMPANYFACTS_50863_CASHFLOW",
+      "INTC_SEC_COMPANYFACTS_50863_FCF",
+      "INTC_SEC_COMPANYFACTS_50863_FREE_CASH_FLOW",
+      "INTC_SEC_COMPANYFACTS_50863_FREE_CASH_FLOW_TTM",
+      "INTC_SEC_COMPANYFACTS_50863_FREE_CASHFLOW",
+      "INTC_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Bullish language must remain bounded by DecisionPacket permissions.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Bull Case",
+    "source_ids": [
+      "INTC_SEC_COMPANYFACTS_50863",
+      "SEC_0000050863_0000050863-26-000011",
+      "SEC_0000050863_0000050863-25-000109",
+      "SEC_0000050863_0000050863-25-000179",
+      "SEC_0000050863_0000050863-26-000079",
+      "SEC_0000050863_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "A constructive technical bull path for INTC requires confirmation beyond the current RSI of 84.53 and moving-average setup.",
+    "claim_id": "INTC_CLAIM_011",
+    "claim_text": "A constructive technical bull path for INTC requires confirmation beyond the current RSI of 84.53 and moving-average setup.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "INTC_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "INTC_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "INTC_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "INTC_YAHOO_CHART_PRICE_CSV_PRICE",
+      "INTC_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "INTC_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "INTC_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Add or accumulate language should require confirmation when the preferred rating is not Buy.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Bull Case",
+    "source_ids": [
+      "INTC_YAHOO_CHART_PRICE_CSV",
+      "INTC_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The bear case is that inventory correction, gross-margin pressure or weak management forecast overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 6.1% or source-quality issues persist.",
+    "claim_id": "INTC_CLAIM_012",
+    "claim_text": "The bear case is that inventory correction, gross-margin pressure or weak management forecast overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 6.1% or source-quality issues persist.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "INTC_SEC_COMPANYFACTS_50863_CASHFLOW",
+      "INTC_SEC_COMPANYFACTS_50863_FCF",
+      "INTC_SEC_COMPANYFACTS_50863_FREE_CASH_FLOW",
+      "INTC_SEC_COMPANYFACTS_50863_FREE_CASH_FLOW_TTM",
+      "INTC_SEC_COMPANYFACTS_50863_FREE_CASHFLOW",
+      "INTC_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "INTC_SEC_COMPANYFACTS_50863_SBC_TO_REVENUE",
+      "INTC_SEC_DERIVED_SBC_TO_REVENUE"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm",
+      "sbc_to_revenue"
+    ],
+    "importance": "high",
+    "investment_implication": "Manual review remains appropriate when financial-sanity guards fire.",
+    "metric_refs": [
+      "free_cash_flow_ttm",
+      "sbc_to_revenue"
+    ],
+    "section": "Bear Case",
+    "source_ids": [
+      "INTC_SEC_COMPANYFACTS_50863",
+      "SEC_0000050863_DERIVED_FCF",
+      "SEC_0000050863_DERIVED_SBC_TO_REVENUE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Valuation risk for INTC is a discipline constraint; expensive or missing EV/Sales and P/FCF context should not be translated into a blocked rating.",
+    "claim_id": "INTC_CLAIM_013",
+    "claim_text": "Valuation risk for INTC is a discipline constraint; expensive or missing EV/Sales and P/FCF context should not be translated into a blocked rating.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "INTC_SEC_COMPANYFACTS_50863_REVENUE",
+      "INTC_SEC_COMPANYFACTS_50863_REVENUE_TTM",
+      "INTC_SEC_COMPANYFACTS_50863_SALES",
+      "INTC_SEC_COMPANYFACTS_50863_UMSATZ",
+      "INTC_SEC_revenue_FY2025_FY_0000050863-26-000011",
+      "INTC_SEC_revenue_FY2025_Q2_0000050863-25-000109",
+      "INTC_SEC_revenue_FY2025_Q3_0000050863-25-000179",
+      "INTC_SEC_revenue_FY2026_Q1_0000050863-26-000079",
+      "INTC_SEC_COMPANYFACTS_50863_CASHFLOW",
+      "INTC_SEC_COMPANYFACTS_50863_FCF",
+      "INTC_SEC_COMPANYFACTS_50863_FREE_CASH_FLOW",
+      "INTC_SEC_COMPANYFACTS_50863_FREE_CASH_FLOW_TTM",
+      "INTC_SEC_COMPANYFACTS_50863_FREE_CASHFLOW",
+      "INTC_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Avoid blocked Sell language when the DecisionPacket allows only trim or hold actions.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Bear Case",
+    "source_ids": [
+      "INTC_SEC_COMPANYFACTS_50863",
+      "SEC_0000050863_0000050863-26-000011",
+      "SEC_0000050863_0000050863-25-000109",
+      "SEC_0000050863_0000050863-25-000179",
+      "SEC_0000050863_0000050863-26-000079",
+      "SEC_0000050863_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Validation and audit issues are part of the INTC research view; any blocking data issue should override a superficially complete report.",
+    "claim_id": "INTC_CLAIM_014",
+    "claim_text": "Validation and audit issues are part of the INTC research view; any blocking data issue should override a superficially complete report.",
+    "claim_type": "risk",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "INTC_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "INTC_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "INTC_YAHOO_CHART_PRICE_CSV_PRICE",
+      "INTC_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "INTC_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "INTC_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Blocking audit errors should keep the report in manual review.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Key Risks",
+    "source_ids": [
+      "INTC_YAHOO_CHART_PRICE_CSV",
+      "INTC_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Source disagreement or current-period mismatch can reduce conviction for INTC, especially where revenue $52.76B is a key valuation denominator.",
+    "claim_id": "INTC_CLAIM_015",
+    "claim_text": "Source disagreement or current-period mismatch can reduce conviction for INTC, especially where revenue $52.76B is a key valuation denominator.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "INTC_SEC_COMPANYFACTS_50863_REVENUE",
+      "INTC_SEC_COMPANYFACTS_50863_REVENUE_TTM",
+      "INTC_SEC_COMPANYFACTS_50863_SALES",
+      "INTC_SEC_COMPANYFACTS_50863_UMSATZ",
+      "INTC_SEC_revenue_FY2025_FY_0000050863-26-000011",
+      "INTC_SEC_revenue_FY2025_Q2_0000050863-25-000109",
+      "INTC_SEC_revenue_FY2025_Q3_0000050863-25-000179",
+      "INTC_SEC_revenue_FY2026_Q1_0000050863-26-000079",
+      "INTC_SEC_COMPANYFACTS_50863_CASHFLOW",
+      "INTC_SEC_COMPANYFACTS_50863_FCF",
+      "INTC_SEC_COMPANYFACTS_50863_FREE_CASH_FLOW",
+      "INTC_SEC_COMPANYFACTS_50863_FREE_CASH_FLOW_TTM",
+      "INTC_SEC_COMPANYFACTS_50863_FREE_CASHFLOW",
+      "INTC_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Source-quality limitations belong in the final action plan.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Key Risks",
+    "source_ids": [
+      "INTC_SEC_COMPANYFACTS_50863",
+      "SEC_0000050863_0000050863-26-000011",
+      "SEC_0000050863_0000050863-25-000109",
+      "SEC_0000050863_0000050863-25-000179",
+      "SEC_0000050863_0000050863-26-000079",
+      "SEC_0000050863_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Catalysts for INTC should be limited to confirmed packet inputs; missing earnings or forward company data should be stated as unavailable rather than converted into event-risk claims.",
+    "claim_id": "INTC_CLAIM_016",
+    "claim_text": "Catalysts for INTC should be limited to confirmed packet inputs; missing earnings or forward company data should be stated as unavailable rather than converted into event-risk claims.",
+    "claim_type": "price_data",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "INTC_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "INTC_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "INTC_YAHOO_CHART_PRICE_CSV_PRICE",
+      "INTC_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "INTC_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "INTC_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "If earnings are unavailable, the report should state that limitation rather than inventing timing.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Catalysts & Triggers",
+    "source_ids": [
+      "INTC_YAHOO_CHART_PRICE_CSV",
+      "INTC_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Trigger language should use validated levels such as 50-SMA 57.93 and 200-SMA 40.95, not unvalidated price targets.",
+    "claim_id": "INTC_CLAIM_017",
+    "claim_text": "Trigger language should use validated levels such as 50-SMA 57.93 and 200-SMA 40.95, not unvalidated price targets.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "INTC_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "INTC_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "INTC_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "INTC_YAHOO_CHART_PRICE_CSV_PRICE",
+      "INTC_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "INTC_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "INTC_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Use confirmation language instead of hard price targets unless risk/reward levels are validated.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Catalysts & Triggers",
+    "source_ids": [
+      "INTC_YAHOO_CHART_PRICE_CSV",
+      "INTC_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The final action should use Hold, because DecisionPacket permissions connect INTC's fundamental score, technical score and risk score to that allowed rating corridor.",
+    "claim_id": "INTC_CLAIM_018",
+    "claim_text": "The final action should use Hold, because DecisionPacket permissions connect INTC's fundamental score, technical score and risk score to that allowed rating corridor.",
+    "claim_type": "rating",
+    "confidence": "high",
+    "counterargument": "Another allowed rating may be defensible, but blocked ratings are not allowed.",
+    "evidence_ids": [
+      "INTC_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "INTC_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "INTC_YAHOO_CHART_PRICE_CSV_PRICE",
+      "INTC_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "INTC_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "INTC_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Final report wording must choose Hold or another allowed rating with explicit justification.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Final Rating & Action Plan",
+    "source_ids": [
+      "INTC_YAHOO_CHART_PRICE_CSV",
+      "INTC_CSV_PRICE_PROVIDER"
+    ]
+  }
+]

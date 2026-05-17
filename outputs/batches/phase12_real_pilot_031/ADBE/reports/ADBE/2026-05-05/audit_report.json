@@ -1,0 +1,43 @@
+{
+  "has_blocking_errors": false,
+  "issues": [],
+  "numeric_claims": [
+    {
+      "line_number": 4,
+      "nearby_text": "- Report as-of date: `2026-05-05`",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 5,
+      "nearby_text": "- Price basis: `255.62 USD` close from `2026-05-05` via `csv_price_provider`",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 5,
+      "nearby_text": "- Price basis: `255.62 USD` close from `2026-05-05` via `csv_price_provider`",
+      "normalized_value": 255.62,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "255.62 USD",
+      "unit": "usd"
+    },
+    {
+      "line_number": 18,
+      "nearby_text": "| SBC / Revenue | 8.0% |",
+      "normalized_value": 8.0,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "8.0%",
+      "unit": "percent"
+    }
+  ],
+  "ticker": "ADBE"
+}

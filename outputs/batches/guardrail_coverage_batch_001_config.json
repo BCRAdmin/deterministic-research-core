@@ -1,0 +1,427 @@
+{
+  "batch_id": "guardrail_coverage_batch_001",
+  "as_of_date": "2026-05-05",
+  "max_parallel_jobs": 1,
+  "output_dir": "outputs/batches",
+  "pipeline_version": "guardrail_coverage_batch_001",
+  "model_provider": "ollama",
+  "model_name": "deepseek-v4-pro",
+  "price_csv_dir": "outputs/source_inputs/phase12_operating_pilot_050/prices",
+  "price_start_date": "2024-01-01",
+  "cik_records_path": "outputs/source_inputs/phase12_real_pilot_030/cik_records.json",
+  "sec_companyfacts_dir": "outputs/source_inputs/phase12_real_pilot_030/sec_companyfacts",
+  "sec_user_agent": "QuellwertResearchAgent/0.1 codex-pilot@example.com",
+  "ir_release_dir": "outputs/source_inputs/phase12_operating_pilot_050/ir_releases",
+  "tickers": [
+    {
+      "ticker": "GOOGL",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "guardrail_coverage_001",
+        "gold_control"
+      ]
+    },
+    {
+      "ticker": "SNOW",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "guardrail_coverage_001",
+        "gold_control"
+      ]
+    },
+    {
+      "ticker": "MSFT",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "guardrail_coverage_001",
+        "gold_control"
+      ]
+    },
+    {
+      "ticker": "AAPL",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "guardrail_coverage_001",
+        "mega_cap_platform"
+      ]
+    },
+    {
+      "ticker": "META",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "guardrail_coverage_001",
+        "mega_cap_platform"
+      ]
+    },
+    {
+      "ticker": "AMZN",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "guardrail_coverage_001",
+        "mega_cap_platform"
+      ]
+    },
+    {
+      "ticker": "NFLX",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "guardrail_coverage_001",
+        "mega_cap_platform"
+      ]
+    },
+    {
+      "ticker": "CRM",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "guardrail_coverage_001",
+        "saas_security"
+      ]
+    },
+    {
+      "ticker": "DDOG",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "guardrail_coverage_001",
+        "saas_security"
+      ]
+    },
+    {
+      "ticker": "NOW",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "guardrail_coverage_001",
+        "saas_security"
+      ]
+    },
+    {
+      "ticker": "MDB",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "guardrail_coverage_001",
+        "saas_security"
+      ]
+    },
+    {
+      "ticker": "NET",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "guardrail_coverage_001",
+        "saas_security"
+      ]
+    },
+    {
+      "ticker": "ZS",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "guardrail_coverage_001",
+        "saas_security"
+      ]
+    },
+    {
+      "ticker": "CRWD",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "guardrail_coverage_001",
+        "saas_security"
+      ]
+    },
+    {
+      "ticker": "PANW",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "guardrail_coverage_001",
+        "saas_security"
+      ]
+    },
+    {
+      "ticker": "NVDA",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "SMH",
+      "tags": [
+        "guardrail_coverage_001",
+        "semiconductor_ai_infra"
+      ]
+    },
+    {
+      "ticker": "AMD",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "SMH",
+      "tags": [
+        "guardrail_coverage_001",
+        "semiconductor_ai_infra"
+      ]
+    },
+    {
+      "ticker": "AVGO",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "SMH",
+      "tags": [
+        "guardrail_coverage_001",
+        "semiconductor_ai_infra"
+      ]
+    },
+    {
+      "ticker": "QCOM",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "SMH",
+      "tags": [
+        "guardrail_coverage_001",
+        "semiconductor_ai_infra"
+      ]
+    },
+    {
+      "ticker": "MU",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "SMH",
+      "tags": [
+        "guardrail_coverage_001",
+        "semiconductor_ai_infra"
+      ]
+    },
+    {
+      "ticker": "MRVL",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "SMH",
+      "tags": [
+        "guardrail_coverage_001",
+        "semiconductor_ai_infra"
+      ]
+    },
+    {
+      "ticker": "INTC",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "SMH",
+      "tags": [
+        "guardrail_coverage_001",
+        "semiconductor_ai_infra"
+      ]
+    },
+    {
+      "ticker": "TSM",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "SMH",
+      "tags": [
+        "guardrail_coverage_001",
+        "semiconductor_ai_infra"
+      ]
+    },
+    {
+      "ticker": "ASML",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "SMH",
+      "tags": [
+        "guardrail_coverage_001",
+        "semiconductor_ai_infra"
+      ]
+    },
+    {
+      "ticker": "RGTI",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "guardrail_coverage_001",
+        "speculative_deep_tech"
+      ]
+    },
+    {
+      "ticker": "IONQ",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "guardrail_coverage_001",
+        "speculative_deep_tech"
+      ]
+    },
+    {
+      "ticker": "QBTS",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "guardrail_coverage_001",
+        "speculative_deep_tech"
+      ]
+    },
+    {
+      "ticker": "QUBT",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "guardrail_coverage_001",
+        "speculative_deep_tech"
+      ]
+    },
+    {
+      "ticker": "SOUN",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "guardrail_coverage_001",
+        "speculative_deep_tech"
+      ]
+    },
+    {
+      "ticker": "BBAI",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "guardrail_coverage_001",
+        "speculative_deep_tech"
+      ]
+    },
+    {
+      "ticker": "RKLB",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "guardrail_coverage_001",
+        "early_commercial_capital_intensive"
+      ]
+    },
+    {
+      "ticker": "ASTS",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "guardrail_coverage_001",
+        "early_commercial_capital_intensive"
+      ]
+    },
+    {
+      "ticker": "ACHR",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "guardrail_coverage_001",
+        "early_commercial_capital_intensive"
+      ]
+    },
+    {
+      "ticker": "JOBY",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "guardrail_coverage_001",
+        "early_commercial_capital_intensive"
+      ]
+    },
+    {
+      "ticker": "RIVN",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "guardrail_coverage_001",
+        "early_commercial_capital_intensive"
+      ]
+    },
+    {
+      "ticker": "LCID",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "guardrail_coverage_001",
+        "early_commercial_capital_intensive"
+      ]
+    },
+    {
+      "ticker": "PLUG",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "guardrail_coverage_001",
+        "early_commercial_capital_intensive"
+      ]
+    },
+    {
+      "ticker": "PYPL",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "guardrail_coverage_001",
+        "turnaround_pressure"
+      ]
+    },
+    {
+      "ticker": "SNAP",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "guardrail_coverage_001",
+        "turnaround_pressure"
+      ]
+    },
+    {
+      "ticker": "WBA",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "SPY",
+      "tags": [
+        "guardrail_coverage_001",
+        "turnaround_pressure"
+      ]
+    },
+    {
+      "ticker": "PARA",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "SPY",
+      "tags": [
+        "guardrail_coverage_001",
+        "turnaround_pressure"
+      ]
+    }
+  ]
+}

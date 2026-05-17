@@ -1,0 +1,46 @@
+[
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 12,
+    "message": "Ignored 12 annual/quarterly/YTD period-type variants for gross_profit.",
+    "metric": "gross_profit",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 12,
+    "message": "Ignored 12 annual/quarterly/YTD period-type variants for operating_income.",
+    "metric": "operating_income",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 12,
+    "message": "Ignored 12 annual/quarterly/YTD period-type variants for net_income.",
+    "metric": "net_income",
+    "severity": "info"
+  },
+  {
+    "basis": "gaap",
+    "code": "TRUE_SOURCE_VALUE_DISAGREEMENT",
+    "message": "Comparable sources disagree for net_income (gaap, annual, FY2023).",
+    "metric": "net_income",
+    "period_type": "annual",
+    "severity": "warning"
+  },
+  {
+    "basis": "gaap",
+    "code": "TRUE_SOURCE_VALUE_DISAGREEMENT",
+    "message": "Comparable sources disagree for net_income (gaap, annual, FY2024).",
+    "metric": "net_income",
+    "period_type": "annual",
+    "severity": "warning"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 10,
+    "message": "Ignored 10 annual/quarterly/YTD period-type variants for shares_diluted.",
+    "metric": "shares_diluted",
+    "severity": "info"
+  }
+]

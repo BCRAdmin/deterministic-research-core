@@ -1,0 +1,648 @@
+[
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "ZS enters the report with a validated Hold rating corridor at a frozen close of 141.36; the action should reflect company-specific growth, margin quality and source-quality drivers, valuation discipline and the current technical setup.",
+    "claim_id": "ZS_CLAIM_001",
+    "claim_text": "ZS enters the report with a validated Hold rating corridor at a frozen close of 141.36; the action should reflect company-specific growth, margin quality and source-quality drivers, valuation discipline and the current technical setup.",
+    "claim_type": "price_data",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "ZS_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "ZS_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "ZS_YAHOO_CHART_PRICE_CSV_PRICE",
+      "ZS_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "ZS_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "ZS_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "The committee text should stay inside the Hold action frame.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Executive Summary",
+    "source_ids": [
+      "ZS_YAHOO_CHART_PRICE_CSV",
+      "ZS_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "ZS has validated revenue TTM of $2.93B, so the business discussion should focus on company-specific growth, margin quality and source-quality drivers rather than generic scale language.",
+    "claim_id": "ZS_CLAIM_002",
+    "claim_text": "ZS has validated revenue TTM of $2.93B, so the business discussion should focus on company-specific growth, margin quality and source-quality drivers rather than generic scale language.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "Revenue scale alone does not prove attractive returns or valuation discipline.",
+    "evidence_ids": [
+      "ZS_SEC_COMPANYFACTS_1713683_REVENUE",
+      "ZS_SEC_COMPANYFACTS_1713683_REVENUE_TTM",
+      "ZS_SEC_COMPANYFACTS_1713683_SALES",
+      "ZS_SEC_COMPANYFACTS_1713683_UMSATZ",
+      "ZS_SEC_revenue_FY2025_FY_0001713683-25-000158",
+      "ZS_SEC_revenue_FY2025_Q3_0001713683-25-000079",
+      "ZS_SEC_revenue_FY2026_Q1_0001713683-25-000205",
+      "ZS_SEC_revenue_FY2026_Q2_0001713683-26-000048"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm"
+    ],
+    "importance": "high",
+    "investment_implication": "Use revenue evidence as context, not as a standalone buy signal.",
+    "metric_refs": [
+      "revenue_ttm"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "ZS_SEC_COMPANYFACTS_1713683",
+      "SEC_0001713683_0001713683-25-000158",
+      "SEC_0001713683_0001713683-25-000079",
+      "SEC_0001713683_0001713683-25-000205",
+      "SEC_0001713683_0001713683-26-000048"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Validated FCF TTM is $1.08B, making cash conversion a direct rating input for ZS.",
+    "claim_id": "ZS_CLAIM_003",
+    "claim_text": "Validated FCF TTM is $1.08B, making cash conversion a direct rating input for ZS.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "FCF may be company-defined or period-sensitive and can require reconciliation review.",
+    "evidence_ids": [
+      "ZS_SEC_COMPANYFACTS_1713683_CASHFLOW",
+      "ZS_SEC_COMPANYFACTS_1713683_FCF",
+      "ZS_SEC_COMPANYFACTS_1713683_FREE_CASH_FLOW",
+      "ZS_SEC_COMPANYFACTS_1713683_FREE_CASH_FLOW_TTM",
+      "ZS_SEC_COMPANYFACTS_1713683_FREE_CASHFLOW",
+      "ZS_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm"
+    ],
+    "importance": "high",
+    "investment_implication": "FCF quality supports the thesis only if no sanity guard blocks the report.",
+    "metric_refs": [
+      "free_cash_flow_ttm"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "ZS_SEC_COMPANYFACTS_1713683",
+      "SEC_0001713683_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "SBC/Revenue is 19.8%, which should be interpreted through sector-specific quality and valuation context rather than a one-size-fits-all compensation lens.",
+    "claim_id": "ZS_CLAIM_004",
+    "claim_text": "SBC/Revenue is 19.8%, which should be interpreted through sector-specific quality and valuation context rather than a one-size-fits-all compensation lens.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": "Sector and lifecycle matter, but persistent dilution can still reduce equity quality.",
+    "evidence_ids": [
+      "ZS_SEC_COMPANYFACTS_1713683_SBC_TO_REVENUE",
+      "ZS_SEC_DERIVED_SBC_TO_REVENUE"
+    ],
+    "evidence_metrics": [
+      "sbc_to_revenue"
+    ],
+    "importance": "medium",
+    "investment_implication": "Treat SBC as a risk modifier rather than an automatic rating override.",
+    "metric_refs": [
+      "sbc_to_revenue"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "ZS_SEC_COMPANYFACTS_1713683",
+      "SEC_0001713683_DERIVED_SBC_TO_REVENUE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Balance-sheet flexibility is anchored in validated net cash of $1.76B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+    "claim_id": "ZS_CLAIM_005",
+    "claim_text": "Balance-sheet flexibility is anchored in validated net cash of $1.76B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "ZS_SEC_COMPANYFACTS_1713683_CASH",
+      "ZS_SEC_COMPANYFACTS_1713683_CASH_AND_EQUIVALENTS",
+      "ZS_SEC_COMPANYFACTS_1713683_CASH_AND_INVESTMENTS",
+      "ZS_SEC_COMPANYFACTS_1713683_NET_CASH",
+      "ZS_SEC_cash_and_equivalents_FY2025_FY_0001713683-25-000158",
+      "ZS_SEC_cash_and_equivalents_FY2026_Q1_0001713683-25-000205",
+      "ZS_SEC_cash_and_equivalents_FY2026_Q2_0001713683-26-000048",
+      "ZS_SEC_COMPANYFACTS_1713683_DEBT",
+      "ZS_SEC_COMPANYFACTS_1713683_NET_DEBT",
+      "ZS_SEC_COMPANYFACTS_1713683_TOTAL_DEBT"
+    ],
+    "evidence_metrics": [
+      "net_cash",
+      "total_debt"
+    ],
+    "importance": "medium",
+    "investment_implication": "A stronger liquidity position can widen the acceptable holding corridor.",
+    "metric_refs": [
+      "net_cash",
+      "total_debt"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "ZS_SEC_COMPANYFACTS_1713683",
+      "SEC_0001713683_0001713683-25-000158",
+      "SEC_0001713683_0001713683-25-000205",
+      "SEC_0001713683_0001713683-26-000048"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Valuation is framed by validated EV/Sales of 7.10x; this directly limits how aggressive the Hold stance should be.",
+    "claim_id": "ZS_CLAIM_006",
+    "claim_text": "Valuation is framed by validated EV/Sales of 7.10x; this directly limits how aggressive the Hold stance should be.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": "Packet-derived valuation can still be blocked by sanity guards when source reconciliation is suspect.",
+    "evidence_ids": [
+      "ZS_SEC_COMPANYFACTS_1713683_REVENUE",
+      "ZS_SEC_COMPANYFACTS_1713683_REVENUE_TTM",
+      "ZS_SEC_COMPANYFACTS_1713683_SALES",
+      "ZS_SEC_COMPANYFACTS_1713683_UMSATZ",
+      "ZS_SEC_revenue_FY2025_FY_0001713683-25-000158",
+      "ZS_SEC_revenue_FY2025_Q3_0001713683-25-000079",
+      "ZS_SEC_revenue_FY2026_Q1_0001713683-25-000205",
+      "ZS_SEC_revenue_FY2026_Q2_0001713683-26-000048",
+      "ZS_SEC_COMPANYFACTS_1713683_CASHFLOW",
+      "ZS_SEC_COMPANYFACTS_1713683_FCF",
+      "ZS_SEC_COMPANYFACTS_1713683_FREE_CASH_FLOW",
+      "ZS_SEC_COMPANYFACTS_1713683_FREE_CASH_FLOW_TTM",
+      "ZS_SEC_COMPANYFACTS_1713683_FREE_CASHFLOW",
+      "ZS_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "ZS_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "ZS_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "ZS_YAHOO_CHART_PRICE_CSV_PRICE",
+      "ZS_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "ZS_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "ZS_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm",
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Do not upgrade rating solely from valuation language if audit has financial-sanity errors.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm",
+      "close"
+    ],
+    "section": "Valuation / Multiples",
+    "source_ids": [
+      "ZS_SEC_COMPANYFACTS_1713683",
+      "SEC_0001713683_0001713683-25-000158",
+      "SEC_0001713683_0001713683-25-000079",
+      "SEC_0001713683_0001713683-25-000205",
+      "SEC_0001713683_0001713683-26-000048",
+      "SEC_0001713683_DERIVED_FCF",
+      "ZS_YAHOO_CHART_PRICE_CSV",
+      "ZS_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "For ZS, validated P/FCF is 20.89x and should be read against validated growth, cash-flow and risk context; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+    "claim_id": "ZS_CLAIM_007",
+    "claim_text": "For ZS, validated P/FCF is 20.89x and should be read against validated growth, cash-flow and risk context; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "ZS_SEC_COMPANYFACTS_1713683_CASHFLOW",
+      "ZS_SEC_COMPANYFACTS_1713683_FCF",
+      "ZS_SEC_COMPANYFACTS_1713683_FREE_CASH_FLOW",
+      "ZS_SEC_COMPANYFACTS_1713683_FREE_CASH_FLOW_TTM",
+      "ZS_SEC_COMPANYFACTS_1713683_FREE_CASHFLOW",
+      "ZS_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "ZS_SEC_COMPANYFACTS_1713683_REVENUE",
+      "ZS_SEC_COMPANYFACTS_1713683_REVENUE_TTM",
+      "ZS_SEC_COMPANYFACTS_1713683_SALES",
+      "ZS_SEC_COMPANYFACTS_1713683_UMSATZ",
+      "ZS_SEC_revenue_FY2025_FY_0001713683-25-000158",
+      "ZS_SEC_revenue_FY2025_Q3_0001713683-25-000079",
+      "ZS_SEC_revenue_FY2026_Q1_0001713683-25-000205",
+      "ZS_SEC_revenue_FY2026_Q2_0001713683-26-000048"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm",
+      "revenue_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "The rating should stay conservative when multiples are expensive, missing or flagged.",
+    "metric_refs": [
+      "free_cash_flow_ttm",
+      "revenue_ttm"
+    ],
+    "section": "Valuation / Multiples",
+    "source_ids": [
+      "ZS_SEC_COMPANYFACTS_1713683",
+      "SEC_0001713683_DERIVED_FCF",
+      "SEC_0001713683_0001713683-25-000158",
+      "SEC_0001713683_0001713683-25-000079",
+      "SEC_0001713683_0001713683-25-000205",
+      "SEC_0001713683_0001713683-26-000048"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The technical setup uses validated levels: close 141.36, 50-SMA 143.27, 200-SMA 232.25 and RSI 52.95, creating timing risk if price cannot reclaim trend support.",
+    "claim_id": "ZS_CLAIM_008",
+    "claim_text": "The technical setup uses validated levels: close 141.36, 50-SMA 143.27, 200-SMA 232.25 and RSI 52.95, creating timing risk if price cannot reclaim trend support.",
+    "claim_type": "technical_metric",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "ZS_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "ZS_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "ZS_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "ZS_YAHOO_CHART_PRICE_CSV_PRICE",
+      "ZS_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "ZS_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "ZS_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Timing language should follow the validated technical trend state.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Technical Setup",
+    "source_ids": [
+      "ZS_YAHOO_CHART_PRICE_CSV",
+      "ZS_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "ZS's close of 141.36 and moving-average position imply a damaged trend that requires confirmation before adding exposure, so entries should be staged, delayed or trimmed according to business evidence and risk/reward.",
+    "claim_id": "ZS_CLAIM_009",
+    "claim_text": "ZS's close of 141.36 and moving-average position imply a damaged trend that requires confirmation before adding exposure, so entries should be staged, delayed or trimmed according to business evidence and risk/reward.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": "Technical weakness can be temporary if fundamentals and catalysts improve.",
+    "evidence_ids": [
+      "ZS_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "ZS_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "ZS_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "ZS_YAHOO_CHART_PRICE_CSV_PRICE",
+      "ZS_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "ZS_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "ZS_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Use staged entries or trims when technical and fundamental signals diverge.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Technical Setup",
+    "source_ids": [
+      "ZS_YAHOO_CHART_PRICE_CSV",
+      "ZS_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The bull case is that validated growth and cash-flow quality combines with revenue of $2.93B to support the allowed upside rating path when cash conversion quality also holds.",
+    "claim_id": "ZS_CLAIM_010",
+    "claim_text": "The bull case is that validated growth and cash-flow quality combines with revenue of $2.93B to support the allowed upside rating path when cash conversion quality also holds.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": "Strong scale does not resolve valuation or reconciliation anomalies.",
+    "evidence_ids": [
+      "ZS_SEC_COMPANYFACTS_1713683_REVENUE",
+      "ZS_SEC_COMPANYFACTS_1713683_REVENUE_TTM",
+      "ZS_SEC_COMPANYFACTS_1713683_SALES",
+      "ZS_SEC_COMPANYFACTS_1713683_UMSATZ",
+      "ZS_SEC_revenue_FY2025_FY_0001713683-25-000158",
+      "ZS_SEC_revenue_FY2025_Q3_0001713683-25-000079",
+      "ZS_SEC_revenue_FY2026_Q1_0001713683-25-000205",
+      "ZS_SEC_revenue_FY2026_Q2_0001713683-26-000048",
+      "ZS_SEC_COMPANYFACTS_1713683_CASHFLOW",
+      "ZS_SEC_COMPANYFACTS_1713683_FCF",
+      "ZS_SEC_COMPANYFACTS_1713683_FREE_CASH_FLOW",
+      "ZS_SEC_COMPANYFACTS_1713683_FREE_CASH_FLOW_TTM",
+      "ZS_SEC_COMPANYFACTS_1713683_FREE_CASHFLOW",
+      "ZS_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Bullish language must remain bounded by DecisionPacket permissions.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Bull Case",
+    "source_ids": [
+      "ZS_SEC_COMPANYFACTS_1713683",
+      "SEC_0001713683_0001713683-25-000158",
+      "SEC_0001713683_0001713683-25-000079",
+      "SEC_0001713683_0001713683-25-000205",
+      "SEC_0001713683_0001713683-26-000048",
+      "SEC_0001713683_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "A constructive technical bull path for ZS requires confirmation beyond the current RSI of 52.95 and moving-average setup.",
+    "claim_id": "ZS_CLAIM_011",
+    "claim_text": "A constructive technical bull path for ZS requires confirmation beyond the current RSI of 52.95 and moving-average setup.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "ZS_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "ZS_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "ZS_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "ZS_YAHOO_CHART_PRICE_CSV_PRICE",
+      "ZS_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "ZS_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "ZS_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Add or accumulate language should require confirmation when the preferred rating is not Buy.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Bull Case",
+    "source_ids": [
+      "ZS_YAHOO_CHART_PRICE_CSV",
+      "ZS_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The bear case is that source-quality issues, valuation risk or technical weakness overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 19.8% or source-quality issues persist.",
+    "claim_id": "ZS_CLAIM_012",
+    "claim_text": "The bear case is that source-quality issues, valuation risk or technical weakness overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 19.8% or source-quality issues persist.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "ZS_SEC_COMPANYFACTS_1713683_CASHFLOW",
+      "ZS_SEC_COMPANYFACTS_1713683_FCF",
+      "ZS_SEC_COMPANYFACTS_1713683_FREE_CASH_FLOW",
+      "ZS_SEC_COMPANYFACTS_1713683_FREE_CASH_FLOW_TTM",
+      "ZS_SEC_COMPANYFACTS_1713683_FREE_CASHFLOW",
+      "ZS_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "ZS_SEC_COMPANYFACTS_1713683_SBC_TO_REVENUE",
+      "ZS_SEC_DERIVED_SBC_TO_REVENUE"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm",
+      "sbc_to_revenue"
+    ],
+    "importance": "high",
+    "investment_implication": "Manual review remains appropriate when financial-sanity guards fire.",
+    "metric_refs": [
+      "free_cash_flow_ttm",
+      "sbc_to_revenue"
+    ],
+    "section": "Bear Case",
+    "source_ids": [
+      "ZS_SEC_COMPANYFACTS_1713683",
+      "SEC_0001713683_DERIVED_FCF",
+      "SEC_0001713683_DERIVED_SBC_TO_REVENUE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Valuation risk for ZS is a discipline constraint; expensive or missing EV/Sales and P/FCF context should not be translated into a blocked rating.",
+    "claim_id": "ZS_CLAIM_013",
+    "claim_text": "Valuation risk for ZS is a discipline constraint; expensive or missing EV/Sales and P/FCF context should not be translated into a blocked rating.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "ZS_SEC_COMPANYFACTS_1713683_REVENUE",
+      "ZS_SEC_COMPANYFACTS_1713683_REVENUE_TTM",
+      "ZS_SEC_COMPANYFACTS_1713683_SALES",
+      "ZS_SEC_COMPANYFACTS_1713683_UMSATZ",
+      "ZS_SEC_revenue_FY2025_FY_0001713683-25-000158",
+      "ZS_SEC_revenue_FY2025_Q3_0001713683-25-000079",
+      "ZS_SEC_revenue_FY2026_Q1_0001713683-25-000205",
+      "ZS_SEC_revenue_FY2026_Q2_0001713683-26-000048",
+      "ZS_SEC_COMPANYFACTS_1713683_CASHFLOW",
+      "ZS_SEC_COMPANYFACTS_1713683_FCF",
+      "ZS_SEC_COMPANYFACTS_1713683_FREE_CASH_FLOW",
+      "ZS_SEC_COMPANYFACTS_1713683_FREE_CASH_FLOW_TTM",
+      "ZS_SEC_COMPANYFACTS_1713683_FREE_CASHFLOW",
+      "ZS_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Avoid blocked Sell language when the DecisionPacket allows only trim or hold actions.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Bear Case",
+    "source_ids": [
+      "ZS_SEC_COMPANYFACTS_1713683",
+      "SEC_0001713683_0001713683-25-000158",
+      "SEC_0001713683_0001713683-25-000079",
+      "SEC_0001713683_0001713683-25-000205",
+      "SEC_0001713683_0001713683-26-000048",
+      "SEC_0001713683_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Validation and audit issues are part of the ZS research view; any blocking data issue should override a superficially complete report.",
+    "claim_id": "ZS_CLAIM_014",
+    "claim_text": "Validation and audit issues are part of the ZS research view; any blocking data issue should override a superficially complete report.",
+    "claim_type": "risk",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "ZS_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "ZS_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "ZS_YAHOO_CHART_PRICE_CSV_PRICE",
+      "ZS_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "ZS_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "ZS_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Blocking audit errors should keep the report in manual review.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Key Risks",
+    "source_ids": [
+      "ZS_YAHOO_CHART_PRICE_CSV",
+      "ZS_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Source disagreement or current-period mismatch can reduce conviction for ZS, especially where revenue $2.93B is a key valuation denominator.",
+    "claim_id": "ZS_CLAIM_015",
+    "claim_text": "Source disagreement or current-period mismatch can reduce conviction for ZS, especially where revenue $2.93B is a key valuation denominator.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "ZS_SEC_COMPANYFACTS_1713683_REVENUE",
+      "ZS_SEC_COMPANYFACTS_1713683_REVENUE_TTM",
+      "ZS_SEC_COMPANYFACTS_1713683_SALES",
+      "ZS_SEC_COMPANYFACTS_1713683_UMSATZ",
+      "ZS_SEC_revenue_FY2025_FY_0001713683-25-000158",
+      "ZS_SEC_revenue_FY2025_Q3_0001713683-25-000079",
+      "ZS_SEC_revenue_FY2026_Q1_0001713683-25-000205",
+      "ZS_SEC_revenue_FY2026_Q2_0001713683-26-000048",
+      "ZS_SEC_COMPANYFACTS_1713683_CASHFLOW",
+      "ZS_SEC_COMPANYFACTS_1713683_FCF",
+      "ZS_SEC_COMPANYFACTS_1713683_FREE_CASH_FLOW",
+      "ZS_SEC_COMPANYFACTS_1713683_FREE_CASH_FLOW_TTM",
+      "ZS_SEC_COMPANYFACTS_1713683_FREE_CASHFLOW",
+      "ZS_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Source-quality limitations belong in the final action plan.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Key Risks",
+    "source_ids": [
+      "ZS_SEC_COMPANYFACTS_1713683",
+      "SEC_0001713683_0001713683-25-000158",
+      "SEC_0001713683_0001713683-25-000079",
+      "SEC_0001713683_0001713683-25-000205",
+      "SEC_0001713683_0001713683-26-000048",
+      "SEC_0001713683_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Catalysts for ZS at the validated close of 141.36 should be limited to confirmed packet inputs; missing earnings or forward company data should be stated as unavailable rather than converted into event-risk claims.",
+    "claim_id": "ZS_CLAIM_016",
+    "claim_text": "Catalysts for ZS at the validated close of 141.36 should be limited to confirmed packet inputs; missing earnings or forward company data should be stated as unavailable rather than converted into event-risk claims.",
+    "claim_type": "price_data",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "ZS_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "ZS_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "ZS_YAHOO_CHART_PRICE_CSV_PRICE",
+      "ZS_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "ZS_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "ZS_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "If earnings are unavailable, the report should state that limitation rather than inventing timing.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Catalysts & Triggers",
+    "source_ids": [
+      "ZS_YAHOO_CHART_PRICE_CSV",
+      "ZS_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Trigger language should use validated levels such as 50-SMA 143.27 and 200-SMA 232.25, not unvalidated price targets.",
+    "claim_id": "ZS_CLAIM_017",
+    "claim_text": "Trigger language should use validated levels such as 50-SMA 143.27 and 200-SMA 232.25, not unvalidated price targets.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "ZS_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "ZS_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "ZS_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "ZS_YAHOO_CHART_PRICE_CSV_PRICE",
+      "ZS_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "ZS_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "ZS_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Use confirmation language instead of hard price targets unless risk/reward levels are validated.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Catalysts & Triggers",
+    "source_ids": [
+      "ZS_YAHOO_CHART_PRICE_CSV",
+      "ZS_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "We rate ZS Hold at the validated close of 141.36 because company-specific growth, margin quality and source-quality drivers supports the base case, while valuation and technical risk limit the case for a more bullish rating.",
+    "claim_id": "ZS_CLAIM_018",
+    "claim_text": "We rate ZS Hold at the validated close of 141.36 because company-specific growth, margin quality and source-quality drivers supports the base case, while valuation and technical risk limit the case for a more bullish rating.",
+    "claim_type": "rating",
+    "confidence": "high",
+    "counterargument": "A more bullish rating needs cleaner valuation and technical confirmation; a more bearish rating needs evidence of deteriorating fundamentals or unresolved data errors.",
+    "evidence_ids": [
+      "ZS_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "ZS_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "ZS_YAHOO_CHART_PRICE_CSV_PRICE",
+      "ZS_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "ZS_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "ZS_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Hold ZS; maintain core exposure but require better valuation, technical setup or current-period KPI proof before adding.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Final Rating & Action Plan",
+    "source_ids": [
+      "ZS_YAHOO_CHART_PRICE_CSV",
+      "ZS_CSV_PRICE_PROVIDER"
+    ]
+  }
+]

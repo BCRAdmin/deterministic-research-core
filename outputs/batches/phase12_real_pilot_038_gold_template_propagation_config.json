@@ -1,0 +1,103 @@
+{
+  "batch_id": "phase12_real_pilot_038_gold_template_propagation",
+  "as_of_date": "2026-05-05",
+  "max_parallel_jobs": 1,
+  "output_dir": "outputs/batches",
+  "pipeline_version": "gold_template_propagation_v2",
+  "model_provider": "ollama",
+  "model_name": "deepseek-v4-pro",
+  "price_csv_dir": "outputs/source_inputs/phase12_real_pilot_030/prices",
+  "price_start_date": "2024-01-01",
+  "cik_records_path": "outputs/source_inputs/phase12_real_pilot_030/cik_records.json",
+  "sec_companyfacts_dir": "outputs/source_inputs/phase12_real_pilot_030/sec_companyfacts",
+  "sec_user_agent": "QuellwertResearchAgent/0.1 codex-pilot@example.com",
+  "tickers": [
+    {
+      "ticker": "MSFT",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "pilot30",
+        "mega-cap",
+        "cloud"
+      ]
+    },
+    {
+      "ticker": "GOOGL",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "pilot30",
+        "mega-cap",
+        "ads",
+        "cloud"
+      ]
+    },
+    {
+      "ticker": "META",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "pilot30",
+        "mega-cap",
+        "ads"
+      ]
+    },
+    {
+      "ticker": "AAPL",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "pilot30",
+        "mega-cap",
+        "hardware"
+      ]
+    },
+    {
+      "ticker": "DDOG",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "pilot30",
+        "software"
+      ]
+    },
+    {
+      "ticker": "SNOW",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "pilot30",
+        "software",
+        "data"
+      ]
+    },
+    {
+      "ticker": "CRM",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "pilot30",
+        "software"
+      ]
+    },
+    {
+      "ticker": "NFLX",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": [
+        "pilot30",
+        "internet",
+        "media"
+      ]
+    }
+  ]
+}

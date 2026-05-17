@@ -1,0 +1,54 @@
+{
+  "registry_id": "PANW_2026-05-17",
+  "sources": [
+    {
+      "authority_rank": 1,
+      "retrieved_at": "2026-05-17T02:08:45Z",
+      "source_id": "PANW_SEC_COMPANYFACTS_1327567",
+      "source_type": "sec_filing",
+      "ticker": "PANW",
+      "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001327567.json",
+      "used_for": [
+        "revenue",
+        "financial",
+        "cash",
+        "operating_income",
+        "free_cash_flow",
+        "fcf",
+        "sbc",
+        "debt",
+        "eps"
+      ]
+    },
+    {
+      "authority_rank": 1,
+      "retrieved_at": "2026-05-17T02:08:45Z",
+      "source_id": "PANW_IR_Q2_FY2026_RELEASE",
+      "source_type": "company_ir",
+      "ticker": "PANW",
+      "url": "https://investors.paloaltonetworks.com/news-releases/news-release-details/palo-alto-networks-reports-fiscal-second-quarter-2026-financial",
+      "used_for": [
+        "adjusted_free_cash_flow_margin",
+        "cash",
+        "current_period_kpis",
+        "fcf",
+        "financial",
+        "free_cash_flow",
+        "revenue"
+      ]
+    },
+    {
+      "authority_rank": 2,
+      "retrieved_at": "2026-05-17T02:08:45Z",
+      "source_id": "PANW_YAHOO_CHART_PRICE_CSV",
+      "source_type": "exchange_ohlcv",
+      "ticker": "PANW",
+      "url": "https://query1.finance.yahoo.com/v8/finance/chart/PANW",
+      "used_for": [
+        "price",
+        "volume",
+        "technical_indicators"
+      ]
+    }
+  ]
+}

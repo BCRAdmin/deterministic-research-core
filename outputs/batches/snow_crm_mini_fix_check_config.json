@@ -1,0 +1,31 @@
+{
+  "batch_id": "snow_crm_mini_fix_check",
+  "as_of_date": "2026-05-08",
+  "max_parallel_jobs": 1,
+  "output_dir": "outputs/batches",
+  "pipeline_version": "snow_crm_mini_fix_check",
+  "model_provider": "ollama",
+  "model_name": "deepseek-v4-pro",
+  "price_csv_dir": "outputs/source_inputs/phase12_current_batch_001/prices",
+  "price_start_date": "2024-01-01",
+  "cik_records_path": "outputs/source_inputs/phase12_real_pilot_030/cik_records.json",
+  "sec_companyfacts_dir": "outputs/source_inputs/phase12_real_pilot_030/sec_companyfacts",
+  "sec_user_agent": "QuellwertResearchAgent/0.1 codex-pilot@example.com",
+  "ir_release_dir": "outputs/source_inputs/snow_crm_mini_fix_check/ir_releases",
+  "tickers": [
+    {
+      "ticker": "SNOW",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": ["mini_fix", "rating_wording"]
+    },
+    {
+      "ticker": "CRM",
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": ["mini_fix", "fcf_evidence"]
+    }
+  ]
+}

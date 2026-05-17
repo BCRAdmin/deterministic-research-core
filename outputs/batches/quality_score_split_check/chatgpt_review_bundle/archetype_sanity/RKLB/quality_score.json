@@ -1,0 +1,43 @@
+{
+  "accounting_gain_not_operating_turnaround_count": 0,
+  "archetype_confidence": 1.0,
+  "archetype_triggered_rules": [
+    "revenue_ttm_gt_100m",
+    "revenue_ttm_lt_5b",
+    "operating_income_ttm_lt_0",
+    "free_cash_flow_ttm_lt_0",
+    "market_cap_revenue_gt_20",
+    "ev_sales_gt_20",
+    "backlog_contracts_or_contracted_missions_present",
+    "capital_intensive_development_program_present",
+    "major_execution_milestone_risk_present",
+    "product_platform_still_scaling",
+    "beta_high_volatility",
+    "current_period_evidence_exists_but_fcf_path_negative"
+  ],
+  "as_of_date": "2026-05-16",
+  "company_archetype": "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH",
+  "data_confidence_score": 72,
+  "deeptech_quality_score_cap": 84,
+  "deeptech_sec_ir_current_period_evidence_complete": true,
+  "early_commercial_capital_intensive_tech_count": 1,
+  "external_display_rating": "Manual Review / Hold Pending FCF and Execution Evidence",
+  "internal_research_quality_score": 78,
+  "manual_review_reasons": [
+    "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH_MANUAL_REVIEW_PROFILE"
+  ],
+  "order_materiality_missing_count": 0,
+  "publish_quality_score": 70,
+  "publishable": false,
+  "risk_profiles": [
+    "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH_MANUAL_REVIEW_PROFILE"
+  ],
+  "score_explanation_short": "Manual review due to negative FCF and extreme valuation; internal report is usable because backlog, revenue scale, FCF path and execution risks are clearly explained.",
+  "sec_ir_current_period_evidence_complete": true,
+  "speculative_deep_tech_profile_count": 0,
+  "status": "manual_review",
+  "technical_overweight_in_thesis_count": 0,
+  "ticker": "RKLB",
+  "total_score": 78.0,
+  "vendor_only_hard_metrics_count": 0
+}

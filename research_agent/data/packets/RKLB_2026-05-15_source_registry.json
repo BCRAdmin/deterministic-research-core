@@ -1,0 +1,67 @@
+{
+  "registry_id": "RKLB_2026-05-15",
+  "sources": [
+    {
+      "authority_rank": 1,
+      "retrieved_at": "2026-05-16T16:58:10Z",
+      "source_id": "RKLB_SEC_COMPANYFACTS_1819994",
+      "source_type": "sec_filing",
+      "ticker": "RKLB",
+      "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001819994.json",
+      "used_for": [
+        "revenue",
+        "gross_profit",
+        "operating_income",
+        "net_income",
+        "operating_cash_flow",
+        "capex",
+        "free_cash_flow",
+        "sbc",
+        "cash",
+        "debt",
+        "shares",
+        "eps"
+      ]
+    },
+    {
+      "authority_rank": 1,
+      "retrieved_at": "2026-05-16T16:58:10Z",
+      "source_id": "RKLB_Q1_2026_RESULTS_GLOBENEWSWIRE",
+      "source_type": "company_ir",
+      "ticker": "RKLB",
+      "url": "https://www.globenewswire.com/news-release/2026/05/07/3290563/0/en/rocket-lab-announces-first-quarter-2026-financial-results-surpasses-all-guidance-metrics-including-revenue-margin-and-adjusted-ebitda-posts-record-200m-quarterly-revenue-and-over-2.html",
+      "used_for": [
+        "current_q_revenue",
+        "latest_quarterly_revenue",
+        "revenue",
+        "full_year_revenue_growth",
+        "backlog",
+        "contract_backlog",
+        "launch_cadence",
+        "electron_execution",
+        "neutron_development_risk",
+        "product_revenue",
+        "space_systems_revenue",
+        "service_revenue",
+        "launch_services_revenue",
+        "operating_loss",
+        "cash",
+        "free_cash_flow",
+        "guidance"
+      ]
+    },
+    {
+      "authority_rank": 2,
+      "retrieved_at": "2026-05-16T16:58:10Z",
+      "source_id": "RKLB_YAHOO_CHART_PRICE_CSV",
+      "source_type": "exchange_ohlcv",
+      "ticker": "RKLB",
+      "url": "https://query2.finance.yahoo.com/v8/finance/chart/RKLB",
+      "used_for": [
+        "price",
+        "volume",
+        "technical_indicators"
+      ]
+    }
+  ]
+}

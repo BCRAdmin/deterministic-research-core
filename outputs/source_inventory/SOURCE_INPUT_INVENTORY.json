@@ -1,0 +1,982 @@
+{
+  "generated_at": "2026-05-17T01:17:19Z",
+  "records": [
+    {
+      "IR_current_period_evidence_present": true,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "MEGA_CAP_PLATFORM OR MEGA_CAP_CLOUD_PLATFORM",
+      "flags": [
+        "stale_price_basis"
+      ],
+      "historical_QA_only": true,
+      "latest_price_date": "2026-05-08",
+      "minimum_viable_report_possible": true,
+      "missing_minimum_inputs": [],
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "GOOGL"
+    },
+    {
+      "IR_current_period_evidence_present": true,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "SAAS_CONSUMPTION / STANDARD_GROWTH",
+      "flags": [
+        "stale_price_basis"
+      ],
+      "historical_QA_only": true,
+      "latest_price_date": "2026-05-08",
+      "minimum_viable_report_possible": true,
+      "missing_minimum_inputs": [],
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "SNOW"
+    },
+    {
+      "IR_current_period_evidence_present": true,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "MEGA_CAP_PLATFORM OR MEGA_CAP_CLOUD_PLATFORM",
+      "flags": [
+        "stale_price_basis"
+      ],
+      "historical_QA_only": true,
+      "latest_price_date": "2026-05-08",
+      "minimum_viable_report_possible": true,
+      "missing_minimum_inputs": [],
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "MSFT"
+    },
+    {
+      "IR_current_period_evidence_present": true,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "MEGA_CAP_PLATFORM OR MEGA_CAP_CLOUD_PLATFORM",
+      "flags": [
+        "stale_price_basis"
+      ],
+      "historical_QA_only": true,
+      "latest_price_date": "2026-05-08",
+      "minimum_viable_report_possible": true,
+      "missing_minimum_inputs": [],
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "AAPL"
+    },
+    {
+      "IR_current_period_evidence_present": true,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "MEGA_CAP_PLATFORM OR MEGA_CAP_CLOUD_PLATFORM",
+      "flags": [
+        "stale_price_basis"
+      ],
+      "historical_QA_only": true,
+      "latest_price_date": "2026-05-08",
+      "minimum_viable_report_possible": true,
+      "missing_minimum_inputs": [],
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "META"
+    },
+    {
+      "IR_current_period_evidence_present": true,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "MEGA_CAP_PLATFORM OR MEGA_CAP_CLOUD_PLATFORM",
+      "flags": [
+        "stale_price_basis"
+      ],
+      "historical_QA_only": true,
+      "latest_price_date": "2026-05-05",
+      "minimum_viable_report_possible": true,
+      "missing_minimum_inputs": [],
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "AMZN"
+    },
+    {
+      "IR_current_period_evidence_present": true,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "MEGA_CAP_PLATFORM OR MEGA_CAP_CLOUD_PLATFORM",
+      "flags": [
+        "stale_price_basis"
+      ],
+      "historical_QA_only": true,
+      "latest_price_date": "2026-05-08",
+      "minimum_viable_report_possible": true,
+      "missing_minimum_inputs": [],
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "NFLX"
+    },
+    {
+      "IR_current_period_evidence_present": true,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "SAAS_CONSUMPTION / SAAS_SECURITY / STANDARD_GROWTH",
+      "flags": [
+        "stale_price_basis"
+      ],
+      "historical_QA_only": true,
+      "latest_price_date": "2026-05-08",
+      "minimum_viable_report_possible": true,
+      "missing_minimum_inputs": [],
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "CRM"
+    },
+    {
+      "IR_current_period_evidence_present": true,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "SAAS_CONSUMPTION / SAAS_SECURITY / STANDARD_GROWTH",
+      "flags": [
+        "stale_price_basis"
+      ],
+      "historical_QA_only": true,
+      "latest_price_date": "2026-05-08",
+      "minimum_viable_report_possible": true,
+      "missing_minimum_inputs": [],
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "DDOG"
+    },
+    {
+      "IR_current_period_evidence_present": true,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "SAAS_CONSUMPTION / SAAS_SECURITY / STANDARD_GROWTH",
+      "flags": [
+        "stale_price_basis"
+      ],
+      "historical_QA_only": true,
+      "latest_price_date": "2026-05-05",
+      "minimum_viable_report_possible": true,
+      "missing_minimum_inputs": [],
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "NOW"
+    },
+    {
+      "IR_current_period_evidence_present": true,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "SAAS_CONSUMPTION / SAAS_SECURITY / STANDARD_GROWTH",
+      "flags": [
+        "stale_price_basis"
+      ],
+      "historical_QA_only": true,
+      "latest_price_date": "2026-05-05",
+      "minimum_viable_report_possible": true,
+      "missing_minimum_inputs": [],
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "MDB"
+    },
+    {
+      "IR_current_period_evidence_present": true,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "SAAS_CONSUMPTION / SAAS_SECURITY / STANDARD_GROWTH",
+      "flags": [
+        "stale_price_basis"
+      ],
+      "historical_QA_only": true,
+      "latest_price_date": "2026-05-05",
+      "minimum_viable_report_possible": true,
+      "missing_minimum_inputs": [],
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "NET"
+    },
+    {
+      "IR_current_period_evidence_present": true,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "SAAS_CONSUMPTION / SAAS_SECURITY / STANDARD_GROWTH",
+      "flags": [
+        "stale_price_basis"
+      ],
+      "historical_QA_only": true,
+      "latest_price_date": "2026-05-05",
+      "minimum_viable_report_possible": true,
+      "missing_minimum_inputs": [],
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "ZS"
+    },
+    {
+      "IR_current_period_evidence_present": true,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "SAAS_CONSUMPTION / SAAS_SECURITY / STANDARD_GROWTH",
+      "flags": [
+        "stale_price_basis"
+      ],
+      "historical_QA_only": true,
+      "latest_price_date": "2026-05-05",
+      "minimum_viable_report_possible": true,
+      "missing_minimum_inputs": [],
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "CRWD"
+    },
+    {
+      "IR_current_period_evidence_present": true,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "SAAS_CONSUMPTION / SAAS_SECURITY / STANDARD_GROWTH",
+      "flags": [
+        "stale_price_basis"
+      ],
+      "historical_QA_only": true,
+      "latest_price_date": "2026-05-05",
+      "minimum_viable_report_possible": true,
+      "missing_minimum_inputs": [],
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "PANW"
+    },
+    {
+      "IR_current_period_evidence_present": true,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "SEMICONDUCTOR_AI_INFRA OR SEMICONDUCTOR_CYCLICAL",
+      "flags": [
+        "stale_price_basis"
+      ],
+      "historical_QA_only": true,
+      "latest_price_date": "2026-05-08",
+      "minimum_viable_report_possible": true,
+      "missing_minimum_inputs": [],
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "NVDA"
+    },
+    {
+      "IR_current_period_evidence_present": true,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "SEMICONDUCTOR_AI_INFRA OR SEMICONDUCTOR_CYCLICAL",
+      "flags": [
+        "stale_price_basis"
+      ],
+      "historical_QA_only": true,
+      "latest_price_date": "2026-05-05",
+      "minimum_viable_report_possible": true,
+      "missing_minimum_inputs": [],
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "AMD"
+    },
+    {
+      "IR_current_period_evidence_present": true,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "SEMICONDUCTOR_AI_INFRA OR SEMICONDUCTOR_CYCLICAL",
+      "flags": [
+        "stale_price_basis"
+      ],
+      "historical_QA_only": true,
+      "latest_price_date": "2026-05-08",
+      "minimum_viable_report_possible": true,
+      "missing_minimum_inputs": [],
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "AVGO"
+    },
+    {
+      "IR_current_period_evidence_present": true,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "SEMICONDUCTOR_AI_INFRA OR SEMICONDUCTOR_CYCLICAL",
+      "flags": [
+        "stale_price_basis"
+      ],
+      "historical_QA_only": true,
+      "latest_price_date": "2026-05-08",
+      "minimum_viable_report_possible": true,
+      "missing_minimum_inputs": [],
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "QCOM"
+    },
+    {
+      "IR_current_period_evidence_present": true,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "SEMICONDUCTOR_AI_INFRA OR SEMICONDUCTOR_CYCLICAL",
+      "flags": [
+        "stale_price_basis"
+      ],
+      "historical_QA_only": true,
+      "latest_price_date": "2026-05-08",
+      "minimum_viable_report_possible": true,
+      "missing_minimum_inputs": [],
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "MU"
+    },
+    {
+      "IR_current_period_evidence_present": true,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "SEMICONDUCTOR_AI_INFRA OR SEMICONDUCTOR_CYCLICAL",
+      "flags": [
+        "stale_price_basis"
+      ],
+      "historical_QA_only": true,
+      "latest_price_date": "2026-05-05",
+      "minimum_viable_report_possible": true,
+      "missing_minimum_inputs": [],
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "MRVL"
+    },
+    {
+      "IR_current_period_evidence_present": true,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "SEMICONDUCTOR_AI_INFRA OR SEMICONDUCTOR_CYCLICAL",
+      "flags": [
+        "stale_price_basis"
+      ],
+      "historical_QA_only": true,
+      "latest_price_date": "2026-05-05",
+      "minimum_viable_report_possible": true,
+      "missing_minimum_inputs": [],
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "INTC"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": false,
+      "benchmark_present": true,
+      "canonical_financials_present": false,
+      "companyfacts_present": false,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "SEMICONDUCTOR_AI_INFRA OR SEMICONDUCTOR_CYCLICAL",
+      "flags": [
+        "stale_price_basis",
+        "missing_primary_financials",
+        "no_current_period_context",
+        "no_minimum_data"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": null,
+      "minimum_viable_report_possible": false,
+      "missing_minimum_inputs": [
+        "price",
+        "revenue / canonical financials",
+        "SEC/CIK or explicit vendor-only flag"
+      ],
+      "news_fallback_present": false,
+      "price_source_present": false,
+      "ticker": "TSM"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": false,
+      "benchmark_present": true,
+      "canonical_financials_present": false,
+      "companyfacts_present": false,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "SEMICONDUCTOR_AI_INFRA OR SEMICONDUCTOR_CYCLICAL",
+      "flags": [
+        "stale_price_basis",
+        "missing_primary_financials",
+        "no_current_period_context",
+        "no_minimum_data"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": null,
+      "minimum_viable_report_possible": false,
+      "missing_minimum_inputs": [
+        "price",
+        "revenue / canonical financials",
+        "SEC/CIK or explicit vendor-only flag"
+      ],
+      "news_fallback_present": false,
+      "price_source_present": false,
+      "ticker": "ASML"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": false,
+      "benchmark_present": true,
+      "canonical_financials_present": false,
+      "companyfacts_present": false,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL",
+      "flags": [
+        "stale_price_basis",
+        "missing_primary_financials",
+        "no_current_period_context",
+        "no_minimum_data"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": null,
+      "minimum_viable_report_possible": false,
+      "missing_minimum_inputs": [
+        "price",
+        "revenue / canonical financials",
+        "SEC/CIK or explicit vendor-only flag",
+        "SEC/IR or vendor-only current-period flag"
+      ],
+      "news_fallback_present": false,
+      "price_source_present": false,
+      "ticker": "RGTI"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": false,
+      "benchmark_present": true,
+      "canonical_financials_present": false,
+      "companyfacts_present": false,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL",
+      "flags": [
+        "stale_price_basis",
+        "missing_primary_financials",
+        "no_current_period_context",
+        "no_minimum_data"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": null,
+      "minimum_viable_report_possible": false,
+      "missing_minimum_inputs": [
+        "price",
+        "revenue / canonical financials",
+        "SEC/CIK or explicit vendor-only flag",
+        "SEC/IR or vendor-only current-period flag"
+      ],
+      "news_fallback_present": false,
+      "price_source_present": false,
+      "ticker": "IONQ"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": false,
+      "benchmark_present": true,
+      "canonical_financials_present": false,
+      "companyfacts_present": false,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL",
+      "flags": [
+        "stale_price_basis",
+        "missing_primary_financials",
+        "no_current_period_context",
+        "no_minimum_data"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": null,
+      "minimum_viable_report_possible": false,
+      "missing_minimum_inputs": [
+        "price",
+        "revenue / canonical financials",
+        "SEC/CIK or explicit vendor-only flag",
+        "SEC/IR or vendor-only current-period flag"
+      ],
+      "news_fallback_present": false,
+      "price_source_present": false,
+      "ticker": "QBTS"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": false,
+      "benchmark_present": true,
+      "canonical_financials_present": false,
+      "companyfacts_present": false,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL / UNKNOWN MANUAL_REVIEW",
+      "flags": [
+        "stale_price_basis",
+        "missing_primary_financials",
+        "no_current_period_context",
+        "no_minimum_data"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": null,
+      "minimum_viable_report_possible": false,
+      "missing_minimum_inputs": [
+        "price",
+        "revenue / canonical financials",
+        "SEC/CIK or explicit vendor-only flag",
+        "SEC/IR or vendor-only current-period flag"
+      ],
+      "news_fallback_present": false,
+      "price_source_present": false,
+      "ticker": "QUBT"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": false,
+      "benchmark_present": true,
+      "canonical_financials_present": false,
+      "companyfacts_present": false,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "SPECULATIVE_AI_STORY_STOCK / UNKNOWN MANUAL_REVIEW",
+      "flags": [
+        "stale_price_basis",
+        "missing_primary_financials",
+        "no_current_period_context",
+        "no_minimum_data"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": null,
+      "minimum_viable_report_possible": false,
+      "missing_minimum_inputs": [
+        "price",
+        "revenue / canonical financials",
+        "SEC/CIK or explicit vendor-only flag"
+      ],
+      "news_fallback_present": false,
+      "price_source_present": false,
+      "ticker": "SOUN"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": false,
+      "benchmark_present": true,
+      "canonical_financials_present": false,
+      "companyfacts_present": false,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "SPECULATIVE_AI_STORY_STOCK / UNKNOWN MANUAL_REVIEW",
+      "flags": [
+        "stale_price_basis",
+        "missing_primary_financials",
+        "no_current_period_context",
+        "no_minimum_data"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": null,
+      "minimum_viable_report_possible": false,
+      "missing_minimum_inputs": [
+        "price",
+        "revenue / canonical financials",
+        "SEC/CIK or explicit vendor-only flag"
+      ],
+      "news_fallback_present": false,
+      "price_source_present": false,
+      "ticker": "BBAI"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": false,
+      "benchmark_present": true,
+      "canonical_financials_present": false,
+      "companyfacts_present": false,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH",
+      "flags": [
+        "stale_price_basis",
+        "missing_primary_financials",
+        "no_current_period_context",
+        "no_minimum_data"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": null,
+      "minimum_viable_report_possible": false,
+      "missing_minimum_inputs": [
+        "price",
+        "revenue / canonical financials",
+        "SEC/CIK or explicit vendor-only flag",
+        "backlog/contracts/execution context"
+      ],
+      "news_fallback_present": false,
+      "price_source_present": false,
+      "ticker": "RKLB"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": false,
+      "benchmark_present": true,
+      "canonical_financials_present": false,
+      "companyfacts_present": false,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH / DISTRESSED_CAPITAL_INTENSIVE",
+      "flags": [
+        "stale_price_basis",
+        "missing_primary_financials",
+        "no_current_period_context",
+        "no_minimum_data"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": null,
+      "minimum_viable_report_possible": false,
+      "missing_minimum_inputs": [
+        "price",
+        "revenue / canonical financials",
+        "SEC/CIK or explicit vendor-only flag",
+        "backlog/contracts/execution context"
+      ],
+      "news_fallback_present": false,
+      "price_source_present": false,
+      "ticker": "ASTS"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": false,
+      "benchmark_present": true,
+      "canonical_financials_present": false,
+      "companyfacts_present": false,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH / DISTRESSED_CAPITAL_INTENSIVE",
+      "flags": [
+        "stale_price_basis",
+        "missing_primary_financials",
+        "no_current_period_context",
+        "no_minimum_data"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": null,
+      "minimum_viable_report_possible": false,
+      "missing_minimum_inputs": [
+        "price",
+        "revenue / canonical financials",
+        "SEC/CIK or explicit vendor-only flag",
+        "backlog/contracts/execution context"
+      ],
+      "news_fallback_present": false,
+      "price_source_present": false,
+      "ticker": "ACHR"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": false,
+      "benchmark_present": true,
+      "canonical_financials_present": false,
+      "companyfacts_present": false,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH / DISTRESSED_CAPITAL_INTENSIVE",
+      "flags": [
+        "stale_price_basis",
+        "missing_primary_financials",
+        "no_current_period_context",
+        "no_minimum_data"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": null,
+      "minimum_viable_report_possible": false,
+      "missing_minimum_inputs": [
+        "price",
+        "revenue / canonical financials",
+        "SEC/CIK or explicit vendor-only flag",
+        "backlog/contracts/execution context"
+      ],
+      "news_fallback_present": false,
+      "price_source_present": false,
+      "ticker": "JOBY"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": false,
+      "benchmark_present": true,
+      "canonical_financials_present": false,
+      "companyfacts_present": false,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH / DISTRESSED_CAPITAL_INTENSIVE",
+      "flags": [
+        "stale_price_basis",
+        "missing_primary_financials",
+        "no_current_period_context",
+        "no_minimum_data"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": null,
+      "minimum_viable_report_possible": false,
+      "missing_minimum_inputs": [
+        "price",
+        "revenue / canonical financials",
+        "SEC/CIK or explicit vendor-only flag",
+        "backlog/contracts/execution context"
+      ],
+      "news_fallback_present": false,
+      "price_source_present": false,
+      "ticker": "RIVN"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": false,
+      "benchmark_present": true,
+      "canonical_financials_present": false,
+      "companyfacts_present": false,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH / DISTRESSED_CAPITAL_INTENSIVE",
+      "flags": [
+        "stale_price_basis",
+        "missing_primary_financials",
+        "no_current_period_context",
+        "no_minimum_data"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": null,
+      "minimum_viable_report_possible": false,
+      "missing_minimum_inputs": [
+        "price",
+        "revenue / canonical financials",
+        "SEC/CIK or explicit vendor-only flag",
+        "backlog/contracts/execution context"
+      ],
+      "news_fallback_present": false,
+      "price_source_present": false,
+      "ticker": "LCID"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": false,
+      "benchmark_present": true,
+      "canonical_financials_present": false,
+      "companyfacts_present": false,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH / DISTRESSED_CAPITAL_INTENSIVE",
+      "flags": [
+        "stale_price_basis",
+        "missing_primary_financials",
+        "no_current_period_context",
+        "no_minimum_data"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": null,
+      "minimum_viable_report_possible": false,
+      "missing_minimum_inputs": [
+        "price",
+        "revenue / canonical financials",
+        "SEC/CIK or explicit vendor-only flag",
+        "backlog/contracts/execution context"
+      ],
+      "news_fallback_present": false,
+      "price_source_present": false,
+      "ticker": "PLUG"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": false,
+      "benchmark_present": true,
+      "canonical_financials_present": false,
+      "companyfacts_present": false,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "TURNAROUND / BUSINESS_MODEL_PRESSURE / STANDARD_WITH_RISK",
+      "flags": [
+        "stale_price_basis",
+        "missing_primary_financials",
+        "no_current_period_context",
+        "no_minimum_data"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": null,
+      "minimum_viable_report_possible": false,
+      "missing_minimum_inputs": [
+        "price",
+        "revenue / canonical financials",
+        "SEC/CIK or explicit vendor-only flag"
+      ],
+      "news_fallback_present": false,
+      "price_source_present": false,
+      "ticker": "PYPL"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": false,
+      "benchmark_present": true,
+      "canonical_financials_present": false,
+      "companyfacts_present": false,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "TURNAROUND / BUSINESS_MODEL_PRESSURE / STANDARD_WITH_RISK",
+      "flags": [
+        "stale_price_basis",
+        "missing_primary_financials",
+        "no_current_period_context",
+        "no_minimum_data"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": null,
+      "minimum_viable_report_possible": false,
+      "missing_minimum_inputs": [
+        "price",
+        "revenue / canonical financials",
+        "SEC/CIK or explicit vendor-only flag"
+      ],
+      "news_fallback_present": false,
+      "price_source_present": false,
+      "ticker": "SNAP"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": false,
+      "benchmark_present": true,
+      "canonical_financials_present": false,
+      "companyfacts_present": false,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "TURNAROUND / BUSINESS_MODEL_PRESSURE / STANDARD_WITH_RISK",
+      "flags": [
+        "stale_price_basis",
+        "missing_primary_financials",
+        "no_current_period_context",
+        "no_minimum_data"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": null,
+      "minimum_viable_report_possible": false,
+      "missing_minimum_inputs": [
+        "price",
+        "revenue / canonical financials",
+        "SEC/CIK or explicit vendor-only flag"
+      ],
+      "news_fallback_present": false,
+      "price_source_present": false,
+      "ticker": "WBA"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": false,
+      "benchmark_present": true,
+      "canonical_financials_present": false,
+      "companyfacts_present": false,
+      "current_report_possible": false,
+      "earnings_calendar_present": false,
+      "expected_archetype_bucket": "TURNAROUND / BUSINESS_MODEL_PRESSURE / STANDARD_WITH_RISK",
+      "flags": [
+        "stale_price_basis",
+        "missing_primary_financials",
+        "no_current_period_context",
+        "no_minimum_data"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": null,
+      "minimum_viable_report_possible": false,
+      "missing_minimum_inputs": [
+        "price",
+        "revenue / canonical financials",
+        "SEC/CIK or explicit vendor-only flag"
+      ],
+      "news_fallback_present": false,
+      "price_source_present": false,
+      "ticker": "PARA"
+    }
+  ],
+  "source_batch_id": "guardrail_coverage_batch_001",
+  "summary": {
+    "current_report_possible": 0,
+    "flags": {
+      "missing_primary_financials": 19,
+      "no_current_period_context": 19,
+      "no_minimum_data": 19,
+      "stale_price_basis": 41
+    },
+    "historical_QA_only": 22,
+    "minimum_viable_report_possible": 22
+  },
+  "ticker_count": 41
+}

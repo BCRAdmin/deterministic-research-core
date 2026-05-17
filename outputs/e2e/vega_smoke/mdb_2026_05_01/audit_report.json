@@ -1,0 +1,45 @@
+{
+  "has_blocking_errors": false,
+  "issues": [
+    {
+      "code": "FORWARD_EPS_GUIDANCE_MISMATCH",
+      "line_number": null,
+      "message": "Consensus EPS differs from company guidance midpoint by 20.7%.",
+      "metric": "forward_eps",
+      "raw_text": null,
+      "reported": null,
+      "severity": "warning",
+      "validated": null
+    }
+  ],
+  "numeric_claims": [
+    {
+      "line_number": 5,
+      "nearby_text": "Operative Action: reduce 20-30%, hold core position, and consider re-entry after confirmation.",
+      "normalized_value": 30.0,
+      "period_hint": "unknown",
+      "possible_metric": "entry",
+      "raw_text": "30%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 7,
+      "nearby_text": "The stock fell on 2026-04-30 in the context of the Ireland news from 2026-04-23, without proving direct causality.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-04-30",
+      "unit": "date"
+    },
+    {
+      "line_number": 7,
+      "nearby_text": "The stock fell on 2026-04-30 in the context of the Ireland news from 2026-04-23, without proving direct causality.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-04-23",
+      "unit": "date"
+    }
+  ],
+  "ticker": "MDB"
+}

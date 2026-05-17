@@ -1,0 +1,23 @@
+{
+  "ticker": "DDOG",
+  "company_name": "Datadog Inc.",
+  "as_of_date": "2026-05-01",
+  "price_basis": {
+    "close": 132.0,
+    "date": "2026-04-30",
+    "currency": "USD",
+    "source": "exchange_ohlcv"
+  },
+  "fiscal_context": {
+    "latest_fiscal_year": "FY2025",
+    "latest_quarter": "Q4 FY2025",
+    "fiscal_year_end": "2025-12-31"
+  },
+  "next_events": {
+    "next_earnings_date": "2026-05-07",
+    "confirmed": true,
+    "source": "company_ir"
+  },
+  "source_registry_id": "DDOG_2026_05_01"
+}
+

@@ -1,0 +1,16 @@
+{
+  "has_blocking_errors": true,
+  "issues": [
+    {
+      "code": "MISSING_FCF_SUPPORT_FOR_ACCUMULATE",
+      "line_number": null,
+      "message": "Accumulate display requires explicit FCF support before external publication.",
+      "metric": null,
+      "raw_text": null,
+      "reported": null,
+      "severity": "warning",
+      "validated": null
+    }
+  ],
+  "ticker": "QCOM"
+}

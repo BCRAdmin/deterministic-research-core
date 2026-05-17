@@ -1,0 +1,61 @@
+{
+  "blocking_issues": [
+    {
+      "artifact": "DATA_AVAILABILITY_REPORT.md",
+      "category": "Evidence Coverage",
+      "confidence": "high",
+      "evidence": "All unavailable items are recorded as status=data_unavailable with Missing CSV price history errors in dashboard_status.json.",
+      "expected_behavior": "Provider/input gaps should remain non-publishable and be rerun after source inputs are added; they should not be counted as false guardrail passes.",
+      "issue": "19 of 41 listed tickers could not be evaluated in source_ingestion_mode because local deterministic source inputs are missing.",
+      "severity": "major"
+    },
+    {
+      "artifact": "GUARDRAIL_COVERAGE_MATRIX.json",
+      "category": "Staleness / Data Freshness",
+      "confidence": "high",
+      "evidence": "guardrail_coverage_batch_001_config.json uses as_of_date=2026-05-05 and DATA_AVAILABILITY_REPORT.md records the local source basis.",
+      "expected_behavior": "Treat this as controlled pilot evidence, not a claim that every ticker was evaluated on today's market data.",
+      "issue": "The prompt requested latest_available, but the broad local deterministic input set supports a common 2026-05-05 price basis for this batch.",
+      "severity": "major"
+    }
+  ],
+  "do_not_change": [
+    "Do not loosen speculative deep-tech manual-review guards.",
+    "Do not let internal_research_quality_score promote a report to public-ready.",
+    "Do not show QCOM as plain Accumulate while FCF support is missing.",
+    "Do not hardcode RKLB/RGTI outcomes; keep archetype rules generic.",
+    "Do not route manual_review or data_unavailable items to Public Library."
+  ],
+  "false_block_candidates": [],
+  "false_pass_candidates": [],
+  "fix_list_for_codex": [],
+  "human_review_required": true,
+  "non_blocking_issues": [
+    {
+      "artifact": "dashboard_status.json",
+      "category": "Archetype Correctness",
+      "confidence": "high",
+      "evidence": "SYSTEMIC_FIX_PLAN.md documents Fix 2; rerun dashboard_status.json now shows DDOG actual_archetype=SAAS_CONSUMPTION.",
+      "expected_behavior": "Known SaaS/security and semiconductor cues should outrank generic platform language.",
+      "issue": "DDOG initially exposed a generic platform-wording archetype false positive during this sprint; the specific-cue priority fix was applied and the rerun now reports SAAS_CONSUMPTION.",
+      "severity": "minor"
+    },
+    {
+      "artifact": "DATA_AVAILABILITY_PRECHECK.json",
+      "category": "Artifact Consistency",
+      "confidence": "high",
+      "evidence": "DATA_AVAILABILITY_PRECHECK.json records requested_ticker_count_from_prompt=42 and listed_ticker_count=41.",
+      "expected_behavior": "Use the enumerated universe only and document the discrepancy instead of inventing an extra ticker.",
+      "issue": "The prompt states 42 tickers but enumerates 41 symbols.",
+      "severity": "info"
+    }
+  ],
+  "review_metadata": {
+    "batch_id": "guardrail_coverage_batch_001",
+    "bundle_id": "guardrail_coverage_batch_001",
+    "reviewed_at": "2026-05-17T00:45:41Z",
+    "reviewer": "Vivi",
+    "schema_version": "vivi-review-output.schema.v1"
+  },
+  "review_status": "manual_human_review"
+}

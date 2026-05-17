@@ -1,0 +1,124 @@
+{
+  "batch_id": "guardrail_coverage_batch_004_ir_coverage",
+  "generated_at": "2026-05-17T02:24:03Z",
+  "records": [
+    {
+      "category": "highest_quality",
+      "company_archetype": "SAAS_CONSUMPTION",
+      "data_confidence_score": 79,
+      "external_display_rating": "Hold with Underweight Bias",
+      "internal_research_quality_score": 100,
+      "publish_quality_score": 93,
+      "rationale": "Top publish_quality_score with data-confidence tie-break.",
+      "review_focus": "spot-check report, evidence appendix, rating consistency and no public-ready leakage",
+      "ticker": "SNOW",
+      "valuation_snapshot": {
+        "ev_to_sales": 12.019413201745454,
+        "market_cap_to_revenue": null,
+        "price_to_fcf": 47.45091350176675
+      }
+    },
+    {
+      "category": "highest_quality",
+      "company_archetype": "MEGA_CAP_PLATFORM",
+      "data_confidence_score": 77,
+      "external_display_rating": "Hold",
+      "internal_research_quality_score": 100,
+      "publish_quality_score": 93,
+      "rationale": "Top publish_quality_score with data-confidence tie-break.",
+      "review_focus": "spot-check report, evidence appendix, rating consistency and no public-ready leakage",
+      "ticker": "GOOGL",
+      "valuation_snapshot": {
+        "ev_to_sales": 11.891965548254806,
+        "market_cap_to_revenue": null,
+        "price_to_fcf": 75.36658375981368
+      }
+    },
+    {
+      "category": "highest_quality",
+      "company_archetype": "MEGA_CAP_PLATFORM",
+      "data_confidence_score": 71,
+      "external_display_rating": "Hold",
+      "internal_research_quality_score": 100,
+      "publish_quality_score": 93,
+      "rationale": "Top publish_quality_score with data-confidence tie-break.",
+      "review_focus": "spot-check report, evidence appendix, rating consistency and no public-ready leakage",
+      "ticker": "META",
+      "valuation_snapshot": {
+        "ev_to_sales": 7.456030508817249,
+        "market_cap_to_revenue": null,
+        "price_to_fcf": 35.52240148690369
+      }
+    },
+    {
+      "category": "lowest_quality",
+      "company_archetype": "SEMICONDUCTOR_AI_INFRA",
+      "data_confidence_score": 68,
+      "external_display_rating": "Accumulate",
+      "internal_research_quality_score": 100,
+      "publish_quality_score": 87,
+      "rationale": "Lowest passed publish_quality_score; useful for floor check.",
+      "review_focus": "spot-check report, evidence appendix, rating consistency and no public-ready leakage",
+      "ticker": "QCOM",
+      "valuation_snapshot": {
+        "ev_to_sales": 4.625642853007623,
+        "market_cap_to_revenue": null,
+        "price_to_fcf": null
+      }
+    },
+    {
+      "category": "lowest_quality",
+      "company_archetype": "SAAS_CONSUMPTION",
+      "data_confidence_score": 68,
+      "external_display_rating": "Hold",
+      "internal_research_quality_score": 100,
+      "publish_quality_score": 88,
+      "rationale": "Lowest passed publish_quality_score; useful for floor check.",
+      "review_focus": "spot-check report, evidence appendix, rating consistency and no public-ready leakage",
+      "ticker": "CRM",
+      "valuation_snapshot": {
+        "ev_to_sales": 3.766519391530968,
+        "market_cap_to_revenue": null,
+        "price_to_fcf": 11.517536088635964
+      }
+    },
+    {
+      "category": "deterministic_random",
+      "company_archetype": "MEGA_CAP_PLATFORM",
+      "data_confidence_score": 71,
+      "external_display_rating": "Hold",
+      "internal_research_quality_score": 100,
+      "publish_quality_score": 90,
+      "rationale": "Deterministic random sample using batch id seed.",
+      "review_focus": "spot-check report, evidence appendix, rating consistency and no public-ready leakage",
+      "ticker": "NFLX",
+      "valuation_snapshot": {
+        "ev_to_sales": 8.061356317667503,
+        "market_cap_to_revenue": null,
+        "price_to_fcf": 29.492647835243627
+      }
+    },
+    {
+      "category": "high_risk_high_valuation",
+      "company_archetype": "SEMICONDUCTOR_AI_INFRA",
+      "data_confidence_score": 77,
+      "external_display_rating": "Hold",
+      "internal_research_quality_score": 100,
+      "publish_quality_score": 90,
+      "rationale": "Highest available valuation/risk multiple among passed reports not already selected where possible.",
+      "review_focus": "spot-check report, evidence appendix, rating consistency and no public-ready leakage",
+      "ticker": "AVGO",
+      "valuation_snapshot": {
+        "ev_to_sales": 31.741738366346958,
+        "market_cap_to_revenue": null,
+        "price_to_fcf": 91.76249423522424
+      }
+    }
+  ],
+  "selection_rules": [
+    "3 highest quality",
+    "2 lowest quality",
+    "1 deterministic random",
+    "1 high-risk/high-valuation if available among passed"
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "registry_id": "GOOGL_2026-05-17",
+  "sources": [
+    {
+      "authority_rank": 1,
+      "retrieved_at": "2026-05-17T02:08:45Z",
+      "source_id": "GOOGL_SEC_COMPANYFACTS_1652044",
+      "source_type": "sec_filing",
+      "ticker": "GOOGL",
+      "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001652044.json",
+      "used_for": [
+        "revenue",
+        "financial",
+        "cash",
+        "operating_income",
+        "free_cash_flow",
+        "fcf",
+        "sbc",
+        "debt",
+        "eps"
+      ]
+    },
+    {
+      "authority_rank": 1,
+      "retrieved_at": "2026-05-17T02:08:45Z",
+      "source_id": "GOOGL_IR_Q1_2026_RELEASE",
+      "source_type": "company_ir",
+      "ticker": "GOOGL",
+      "url": "https://s206.q4cdn.com/479360582/files/doc_financials/2026/q1/2026q1-alphabet-earnings-release.pdf",
+      "used_for": [
+        "capex",
+        "cash",
+        "current_period_kpis",
+        "fcf",
+        "financial",
+        "free_cash_flow",
+        "google_cloud_growth",
+        "google_cloud_revenue",
+        "operating_cash_flow",
+        "operating_margin",
+        "other_income_gain",
+        "revenue"
+      ]
+    },
+    {
+      "authority_rank": 2,
+      "retrieved_at": "2026-05-17T02:08:45Z",
+      "source_id": "GOOGL_YAHOO_CHART_PRICE_CSV",
+      "source_type": "exchange_ohlcv",
+      "ticker": "GOOGL",
+      "url": "https://query1.finance.yahoo.com/v8/finance/chart/GOOGL",
+      "used_for": [
+        "price",
+        "volume",
+        "technical_indicators"
+      ]
+    }
+  ]
+}

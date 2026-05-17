@@ -1,0 +1,54 @@
+{
+  "blocking_issues": [],
+  "do_not_change": [
+    "No guard loosening.",
+    "No ticker hardcoding.",
+    "Manual Review remains allowed.",
+    "Promotion Gate remains the only public-ready path."
+  ],
+  "false_block_candidates": [],
+  "false_pass_candidates": [],
+  "fix_list_for_codex": [
+    {
+      "acceptance_test": "SOURCE_INPUT_INVENTORY.json shows price_source_present=true for added tickers, and the next coverage batch reduces data_unavailable without false public-ready cases.",
+      "do_not_touch_boundaries": [
+        "Do not synthesize prices.",
+        "Do not loosen evidence, rating, archetype, or freshness gates.",
+        "Do not hardcode ticker outcomes."
+      ],
+      "expected_behavior": "Add source-backed price CSVs or exclude unsupported names with an explicit data_gap status before rerun.",
+      "file_or_module": "outputs/source_inputs/phase12_operating_pilot_050/prices",
+      "issue": "Missing auditable price CSV coverage for the excluded guardrail tickers.",
+      "priority": "P1"
+    }
+  ],
+  "human_review_required": true,
+  "non_blocking_issues": [
+    {
+      "artifact": "DATA_AVAILABILITY_ROOT_CAUSE.json",
+      "category": "Evidence Coverage",
+      "confidence": "high",
+      "evidence": "19 Batch-001 rows cite missing local price CSV or adjacent source coverage gaps.",
+      "expected_behavior": "Keep excluded names documented as data gaps until auditable inputs exist.",
+      "issue": "Batch 002 excludes the Batch-001 unavailable tickers because minimum local source inputs are missing.",
+      "severity": "major"
+    },
+    {
+      "artifact": "dashboard_status.json",
+      "category": "Staleness / Data Freshness",
+      "confidence": "high",
+      "evidence": "22 dashboard rows are marked historical_qa_only.",
+      "expected_behavior": "No current-research or public-ready routing without fresh price basis and promotion gate.",
+      "issue": "Batch 002 uses a historical price basis and must not be treated as current research.",
+      "severity": "major"
+    }
+  ],
+  "review_metadata": {
+    "batch_id": "guardrail_coverage_batch_002",
+    "bundle_id": "guardrail_coverage_batch_002",
+    "reviewed_at": "2026-05-17T01:17:19Z",
+    "reviewer": "Vivi",
+    "schema_version": "v1.1"
+  },
+  "review_status": "manual_human_review"
+}

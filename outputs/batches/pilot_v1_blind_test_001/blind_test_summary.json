@@ -1,0 +1,164 @@
+{
+  "batch_id": "pilot_v1_blind_test_001",
+  "freeze_id": "pilot_v1",
+  "first_run_only": true,
+  "post_run_manual_edits": false,
+  "summary": {
+    "avg_quality_score": 78.0,
+    "failed": 0,
+    "manual_review": 5,
+    "passed": 0,
+    "pending": 0,
+    "repaired": 0,
+    "running": 0,
+    "total": 5
+  },
+  "reason_counts": {
+    "ticker_specific_kpi_gap": 5,
+    "reconciliation_warnings_present": 5
+  },
+  "items": [
+    {
+      "ticker": "NOW",
+      "status": "manual_review",
+      "quality_score": 78.0,
+      "final_rating": "Hold",
+      "main_review_reasons": [
+        "ticker_specific_kpi_gap",
+        "reconciliation_warnings_present"
+      ],
+      "counts": {
+        "audit_errors": 0,
+        "validation_errors": 0,
+        "reconciliation_warnings": 15,
+        "evidence_warnings": 0,
+        "substantive_claim_count": 13,
+        "current_period_kpi_claim_count": 15,
+        "ticker_specific_kpi_claim_count": 1
+      },
+      "generated_reports": {
+        "publish_report.md": "outputs/batches/pilot_v1_blind_test_001/NOW/reports/NOW/2026-05-05/publish_report.md",
+        "final_report.md": "outputs/batches/pilot_v1_blind_test_001/NOW/reports/NOW/2026-05-05/final_report.md",
+        "quality_score.json": "outputs/batches/pilot_v1_blind_test_001/NOW/reports/NOW/2026-05-05/quality_score.json",
+        "decision_packet.json": "research_agent/data/packets/NOW/2026-05-05/decision_packet.json",
+        "evidence_report.md": "research_agent/data/packets/NOW/2026-05-05/evidence_report.md",
+        "metrics_packet.json": "research_agent/data/packets/NOW/2026-05-05/metrics_packet.json"
+      },
+      "missing_required_artifacts": []
+    },
+    {
+      "ticker": "ORCL",
+      "status": "manual_review",
+      "quality_score": 78.0,
+      "final_rating": "Hold",
+      "main_review_reasons": [
+        "ticker_specific_kpi_gap",
+        "reconciliation_warnings_present"
+      ],
+      "counts": {
+        "audit_errors": 0,
+        "validation_errors": 0,
+        "reconciliation_warnings": 3,
+        "evidence_warnings": 0,
+        "substantive_claim_count": 13,
+        "current_period_kpi_claim_count": 15,
+        "ticker_specific_kpi_claim_count": 1
+      },
+      "generated_reports": {
+        "publish_report.md": "outputs/batches/pilot_v1_blind_test_001/ORCL/reports/ORCL/2026-05-05/publish_report.md",
+        "final_report.md": "outputs/batches/pilot_v1_blind_test_001/ORCL/reports/ORCL/2026-05-05/final_report.md",
+        "quality_score.json": "outputs/batches/pilot_v1_blind_test_001/ORCL/reports/ORCL/2026-05-05/quality_score.json",
+        "decision_packet.json": "research_agent/data/packets/ORCL/2026-05-05/decision_packet.json",
+        "evidence_report.md": "research_agent/data/packets/ORCL/2026-05-05/evidence_report.md",
+        "metrics_packet.json": "research_agent/data/packets/ORCL/2026-05-05/metrics_packet.json"
+      },
+      "missing_required_artifacts": []
+    },
+    {
+      "ticker": "ADBE",
+      "status": "manual_review",
+      "quality_score": 78.0,
+      "final_rating": "Hold",
+      "main_review_reasons": [
+        "ticker_specific_kpi_gap",
+        "reconciliation_warnings_present"
+      ],
+      "counts": {
+        "audit_errors": 0,
+        "validation_errors": 0,
+        "reconciliation_warnings": 22,
+        "evidence_warnings": 0,
+        "substantive_claim_count": 13,
+        "current_period_kpi_claim_count": 15,
+        "ticker_specific_kpi_claim_count": 1
+      },
+      "generated_reports": {
+        "publish_report.md": "outputs/batches/pilot_v1_blind_test_001/ADBE/reports/ADBE/2026-05-05/publish_report.md",
+        "final_report.md": "outputs/batches/pilot_v1_blind_test_001/ADBE/reports/ADBE/2026-05-05/final_report.md",
+        "quality_score.json": "outputs/batches/pilot_v1_blind_test_001/ADBE/reports/ADBE/2026-05-05/quality_score.json",
+        "decision_packet.json": "research_agent/data/packets/ADBE/2026-05-05/decision_packet.json",
+        "evidence_report.md": "research_agent/data/packets/ADBE/2026-05-05/evidence_report.md",
+        "metrics_packet.json": "research_agent/data/packets/ADBE/2026-05-05/metrics_packet.json"
+      },
+      "missing_required_artifacts": []
+    },
+    {
+      "ticker": "UBER",
+      "status": "manual_review",
+      "quality_score": 78.0,
+      "final_rating": "Hold",
+      "main_review_reasons": [
+        "ticker_specific_kpi_gap",
+        "reconciliation_warnings_present"
+      ],
+      "counts": {
+        "audit_errors": 0,
+        "validation_errors": 0,
+        "reconciliation_warnings": 5,
+        "evidence_warnings": 0,
+        "substantive_claim_count": 13,
+        "current_period_kpi_claim_count": 15,
+        "ticker_specific_kpi_claim_count": 1
+      },
+      "generated_reports": {
+        "publish_report.md": "outputs/batches/pilot_v1_blind_test_001/UBER/reports/UBER/2026-05-05/publish_report.md",
+        "final_report.md": "outputs/batches/pilot_v1_blind_test_001/UBER/reports/UBER/2026-05-05/final_report.md",
+        "quality_score.json": "outputs/batches/pilot_v1_blind_test_001/UBER/reports/UBER/2026-05-05/quality_score.json",
+        "decision_packet.json": "research_agent/data/packets/UBER/2026-05-05/decision_packet.json",
+        "evidence_report.md": "research_agent/data/packets/UBER/2026-05-05/evidence_report.md",
+        "metrics_packet.json": "research_agent/data/packets/UBER/2026-05-05/metrics_packet.json"
+      },
+      "missing_required_artifacts": []
+    },
+    {
+      "ticker": "TSLA",
+      "status": "manual_review",
+      "quality_score": 78.0,
+      "final_rating": "Hold",
+      "main_review_reasons": [
+        "ticker_specific_kpi_gap",
+        "reconciliation_warnings_present"
+      ],
+      "counts": {
+        "audit_errors": 0,
+        "validation_errors": 0,
+        "reconciliation_warnings": 23,
+        "evidence_warnings": 0,
+        "substantive_claim_count": 13,
+        "current_period_kpi_claim_count": 15,
+        "ticker_specific_kpi_claim_count": 1
+      },
+      "generated_reports": {
+        "publish_report.md": "outputs/batches/pilot_v1_blind_test_001/TSLA/reports/TSLA/2026-05-05/publish_report.md",
+        "final_report.md": "outputs/batches/pilot_v1_blind_test_001/TSLA/reports/TSLA/2026-05-05/final_report.md",
+        "quality_score.json": "outputs/batches/pilot_v1_blind_test_001/TSLA/reports/TSLA/2026-05-05/quality_score.json",
+        "decision_packet.json": "research_agent/data/packets/TSLA/2026-05-05/decision_packet.json",
+        "evidence_report.md": "research_agent/data/packets/TSLA/2026-05-05/evidence_report.md",
+        "metrics_packet.json": "research_agent/data/packets/TSLA/2026-05-05/metrics_packet.json"
+      },
+      "missing_required_artifacts": []
+    }
+  ],
+  "bundle_path": "outputs/batches/pilot_v1_blind_test_001/blind_test_review_bundle.zip",
+  "bundle_missing_required_artifacts": []
+}

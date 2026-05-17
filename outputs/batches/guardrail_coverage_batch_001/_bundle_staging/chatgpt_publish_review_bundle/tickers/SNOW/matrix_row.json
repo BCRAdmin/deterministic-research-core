@@ -1,0 +1,23 @@
+{
+  "actual_archetype": "SAAS_CONSUMPTION",
+  "archetype_confidence": 0.2,
+  "artifact_consistency_status": "clean",
+  "company_name": "Snowflake Inc.",
+  "concerns": [],
+  "data_confidence_score": 85,
+  "evidence_status": "clean",
+  "expected_archetype": "SAAS_CONSUMPTION / STANDARD_GROWTH",
+  "external_display_rating": "Tactical Underweight",
+  "internal_research_quality_score": 100,
+  "likely_false_negative": "no",
+  "likely_false_positive": "no",
+  "manual_review_reasons": [],
+  "primary_blockers": [],
+  "public_ready": false,
+  "publish_quality_score": 95,
+  "publishable": true,
+  "recommended_next_action": "Keep in passed review bundle; no public routing without Promotion Gate.",
+  "review_status": "passed",
+  "sector_bucket": "Gold-/Kontrollgruppe",
+  "ticker": "SNOW"
+}

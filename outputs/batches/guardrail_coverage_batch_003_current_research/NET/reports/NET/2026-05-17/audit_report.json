@@ -1,0 +1,196 @@
+{
+  "has_blocking_errors": false,
+  "issues": [],
+  "numeric_claims": [
+    {
+      "line_number": 9,
+      "nearby_text": "- Fundamental basis: revenue scale is `$2.19B`.",
+      "normalized_value": 2190000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$2.19B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 10,
+      "nearby_text": "- Cash-conversion basis: free cash flow is `$213.4M`.",
+      "normalized_value": 213400000.0,
+      "period_hint": "unknown",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$213.4M",
+      "unit": "usd"
+    },
+    {
+      "line_number": 11,
+      "nearby_text": "- Valuation constraint: EV/Sales is `31.67x`.",
+      "normalized_value": 31.67,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "31.67x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 15,
+      "nearby_text": "- Report as-of date: `2026-05-17`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-17",
+      "unit": "date"
+    },
+    {
+      "line_number": 16,
+      "nearby_text": "- Price basis: `2026-05-15` close via `csv_price_provider`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": "close",
+      "raw_text": "2026-05-15",
+      "unit": "date"
+    },
+    {
+      "line_number": 17,
+      "nearby_text": "- Technical indicators are based on the closing price from `2026-05-15`, not on the report creation date `2026-05-17`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-15",
+      "unit": "date"
+    },
+    {
+      "line_number": 17,
+      "nearby_text": "- Technical indicators are based on the closing price from `2026-05-15`, not on the report creation date `2026-05-17`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-17",
+      "unit": "date"
+    },
+    {
+      "line_number": 29,
+      "nearby_text": "| SBC / Revenue | 15.4% |",
+      "normalized_value": 15.4,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "15.4%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 37,
+      "nearby_text": "- **NET_CLAIM_002**: NET has revenue TTM of $2.19B, so the business discussion should focus on company-specific growth, margin quality and source-quality drivers rather than generic scale language.",
+      "normalized_value": 2190000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$2.19B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 41,
+      "nearby_text": "- **NET_CLAIM_003**: FCF TTM is $213.4M, making cash conversion a direct rating input for NET.",
+      "normalized_value": 213400000.0,
+      "period_hint": "ttm",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$213.4M",
+      "unit": "usd"
+    },
+    {
+      "line_number": 45,
+      "nearby_text": "- **NET_CLAIM_004**: SBC/Revenue is 15.4%, which should be interpreted through sector-specific quality and valuation context rather than a one-size-fits-all compensation lens.",
+      "normalized_value": 15.4,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "15.4%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 49,
+      "nearby_text": "- **NET_CLAIM_005**: Balance-sheet flexibility is anchored in net cash of $211.1M and debt evidence, which affects how much downside tolerance the action plan can carry.",
+      "normalized_value": 211100000.0,
+      "period_hint": "unknown",
+      "possible_metric": "net_cash",
+      "raw_text": "$211.1M",
+      "unit": "usd"
+    },
+    {
+      "line_number": 54,
+      "nearby_text": "- **NET_CLAIM_006**: Valuation is framed by EV/Sales of 31.67x; this directly limits how aggressive the Hold stance should be.",
+      "normalized_value": 31.67,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "31.67x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 58,
+      "nearby_text": "- **NET_CLAIM_007**: For NET, P/FCF is 326.47x and should be read against validated growth, cash-flow and risk context; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+      "normalized_value": 326.47,
+      "period_hint": "unknown",
+      "possible_metric": "price_to_fcf",
+      "raw_text": "326.47x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 72,
+      "nearby_text": "- **NET_CLAIM_010**: The bull case is that validated growth and cash-flow quality combines with revenue of $2.19B to support the allowed upside rating path when cash conversion quality also holds.",
+      "normalized_value": 2190000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$2.19B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 81,
+      "nearby_text": "- **NET_CLAIM_012**: The bear case is that source concerns, valuation risk or technical weakness overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 15.4% or source concerns persist.",
+      "normalized_value": 15.4,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "15.4%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 92,
+      "nearby_text": "- **NET_CLAIM_015**: Source disagreement or current-period mismatch can reduce conviction for NET, especially where revenue $2.19B is a key valuation denominator.",
+      "normalized_value": 2190000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$2.19B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 114,
+      "nearby_text": "- Why this rating? `Hold` balances revenue of `$2.19B` against valuation and technical timing.",
+      "normalized_value": 2190000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$2.19B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 115,
+      "nearby_text": "- Cash conversion: FCF is `$213.4M` and determines whether growth converts into equity value.",
+      "normalized_value": 213400000.0,
+      "period_hint": "unknown",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$213.4M",
+      "unit": "usd"
+    },
+    {
+      "line_number": 116,
+      "nearby_text": "- Why not more bullish? EV/Sales `31.67x` limits new-money urgency unless current-period KPIs accelerate.",
+      "normalized_value": 31.67,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "31.67x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 117,
+      "nearby_text": "- Additional valuation/technical constraint: P/FCF `326.47x` and RSI `45.89` argue against chasing without a better setup.",
+      "normalized_value": 326.47,
+      "period_hint": "unknown",
+      "possible_metric": "price_to_fcf",
+      "raw_text": "326.47x",
+      "unit": "multiple"
+    }
+  ],
+  "ticker": "NET"
+}

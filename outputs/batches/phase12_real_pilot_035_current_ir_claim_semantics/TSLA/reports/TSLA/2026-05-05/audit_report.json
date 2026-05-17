@@ -1,0 +1,142 @@
+{
+  "has_blocking_errors": false,
+  "issues": [],
+  "numeric_claims": [
+    {
+      "line_number": 9,
+      "nearby_text": "- Fundamental basis: validated revenue scale is `$92.31B`.",
+      "normalized_value": 92310000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$92.31B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 10,
+      "nearby_text": "- Cash-conversion basis: validated free cash flow is `$14.0M`.",
+      "normalized_value": 14000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$14.0M",
+      "unit": "usd"
+    },
+    {
+      "line_number": 11,
+      "nearby_text": "- Valuation constraint: validated EV/Sales is `14.73x`.",
+      "normalized_value": 14.73,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "14.73x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 15,
+      "nearby_text": "- Report as-of date: `2026-05-05`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 16,
+      "nearby_text": "- Price basis: `2026-05-05` close via `csv_price_provider`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": "close",
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 28,
+      "nearby_text": "| SBC / Revenue | 2.8% |",
+      "normalized_value": 2.8,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "2.8%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 36,
+      "nearby_text": "- **TSLA_CLAIM_002**: TSLA has validated revenue TTM of $92.31B, so the business discussion should focus on company-specific growth, margin quality and source-quality drivers rather than generic scale language.",
+      "normalized_value": 92310000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$92.31B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 40,
+      "nearby_text": "- **TSLA_CLAIM_003**: Validated FCF TTM is $14.0M, making cash conversion a direct rating input for TSLA.",
+      "normalized_value": 14000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$14.0M",
+      "unit": "usd"
+    },
+    {
+      "line_number": 44,
+      "nearby_text": "- **TSLA_CLAIM_004**: SBC/Revenue is 2.8%, which should be interpreted through sector-specific quality and valuation context rather than a one-size-fits-all compensation lens.",
+      "normalized_value": 2.8,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "2.8%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 48,
+      "nearby_text": "- **TSLA_CLAIM_005**: Balance-sheet flexibility is anchored in validated net cash of $18.18B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+      "normalized_value": 18180000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "net_cash",
+      "raw_text": "$18.18B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 53,
+      "nearby_text": "- **TSLA_CLAIM_006**: Valuation is framed by validated EV/Sales of 14.73x; this directly limits how aggressive the Hold stance should be.",
+      "normalized_value": 14.73,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "14.73x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 57,
+      "nearby_text": "- **TSLA_CLAIM_007**: For TSLA, validated P/FCF is 98399.36x and should be read against validated growth, cash-flow and risk context; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+      "normalized_value": 98399.36,
+      "period_hint": "unknown",
+      "possible_metric": "price_to_fcf",
+      "raw_text": "98399.36x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 71,
+      "nearby_text": "- **TSLA_CLAIM_010**: The bull case is that validated growth and cash-flow quality combines with revenue of $92.31B to support the allowed upside rating path when cash conversion quality also holds.",
+      "normalized_value": 92310000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$92.31B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 80,
+      "nearby_text": "- **TSLA_CLAIM_012**: The bear case is that source-quality issues, valuation risk or technical weakness overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 2.8% or source-quality issues persist.",
+      "normalized_value": 2.8,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "2.8%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 91,
+      "nearby_text": "- **TSLA_CLAIM_015**: Source disagreement or current-period mismatch can reduce conviction for TSLA, especially where revenue $92.31B is a key valuation denominator.",
+      "normalized_value": 92310000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$92.31B",
+      "unit": "usd"
+    }
+  ],
+  "ticker": "TSLA"
+}

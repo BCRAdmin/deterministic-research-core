@@ -1,0 +1,12 @@
+{
+  "active_deeptech_profile": false,
+  "archetype_confidence": 0.2,
+  "archetype_triggered_rules": [
+    "operating_income_ttm_lt_0"
+  ],
+  "company_archetype": "SAAS_CONSUMPTION",
+  "expected_role": "SaaS kein Deep-Tech",
+  "issue_codes": [],
+  "publishable": true,
+  "ticker": "SNOW"
+}

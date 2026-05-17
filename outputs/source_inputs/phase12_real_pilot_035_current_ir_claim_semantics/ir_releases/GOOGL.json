@@ -1,0 +1,55 @@
+{
+  "source_id": "GOOGL_IR_Q1_2026_RELEASE",
+  "source_type": "earnings_release",
+  "url": "https://s206.q4cdn.com/479360582/files/doc_financials/2026/q1/2026q1-alphabet-earnings-release.pdf",
+  "retrieved_at": "2026-05-06",
+  "period": "Q1_2026",
+  "text": "",
+  "metrics": [
+    {
+      "metric_name": "revenue",
+      "value": 109900000000,
+      "unit": "usd",
+      "period": "Q1_2026",
+      "fiscal_year": 2026,
+      "fiscal_period": "Q1",
+      "period_bucket": "quarterly",
+      "start_date": "2026-01-01",
+      "end_date": "2026-03-31",
+      "duration_days": 89,
+      "basis": "gaap",
+      "statement_type": "income_statement",
+      "statement": "Alphabet reported Q1 2026 revenue of $109.9 billion."
+    },
+    {
+      "metric_name": "operating_cash_flow",
+      "value": 45790000000,
+      "unit": "usd",
+      "period": "Q1_2026",
+      "fiscal_year": 2026,
+      "fiscal_period": "Q1",
+      "period_bucket": "quarterly",
+      "start_date": "2026-01-01",
+      "end_date": "2026-03-31",
+      "duration_days": 89,
+      "basis": "gaap",
+      "statement_type": "cash_flow",
+      "statement": "Alphabet reported Q1 2026 net cash provided by operating activities of $45.790 billion."
+    },
+    {
+      "metric_name": "free_cash_flow",
+      "value": 64429000000,
+      "unit": "usd",
+      "period": "TTM_Q1_2026",
+      "fiscal_year": 2026,
+      "fiscal_period": "Q1",
+      "period_bucket": "ttm",
+      "start_date": "2025-04-01",
+      "end_date": "2026-03-31",
+      "duration_days": 364,
+      "basis": "company_defined",
+      "statement_type": "cash_flow",
+      "statement": "Alphabet reported trailing-twelve-month free cash flow of $64.429 billion for Q1 2026."
+    }
+  ]
+}

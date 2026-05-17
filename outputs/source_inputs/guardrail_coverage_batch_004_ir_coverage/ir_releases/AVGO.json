@@ -1,0 +1,73 @@
+{
+  "coverage_note": "Carried forward from Batch 003 sourced current-period fixture.",
+  "metrics": [
+    {
+      "basis": "gaap",
+      "fiscal_period": "Q1",
+      "fiscal_year": 2026,
+      "metric_name": "current_q_revenue",
+      "period": "Q1_FY2026",
+      "period_bucket": "quarterly",
+      "statement": "Broadcom reported Q1 FY2026 revenue of $19.311 billion.",
+      "statement_type": "income_statement",
+      "unit": "usd",
+      "value": 19311000000
+    },
+    {
+      "basis": "company_defined",
+      "fiscal_period": "Q1",
+      "fiscal_year": 2026,
+      "metric_name": "ai_revenue",
+      "period": "Q1_FY2026",
+      "period_bucket": "quarterly",
+      "statement": "Broadcom reported Q1 FY2026 AI revenue of $8.4 billion.",
+      "statement_type": "income_statement",
+      "unit": "usd",
+      "value": 8400000000
+    },
+    {
+      "basis": "company_defined",
+      "fiscal_period": "Q1",
+      "fiscal_year": 2026,
+      "metric_name": "current_q_free_cash_flow",
+      "period": "Q1_FY2026",
+      "period_bucket": "quarterly",
+      "statement": "Broadcom reported Q1 FY2026 free cash flow of $8.010 billion.",
+      "statement_type": "cash_flow",
+      "unit": "usd",
+      "value": 8010000000
+    },
+    {
+      "basis": "company_defined",
+      "fiscal_period": "Q2",
+      "fiscal_year": 2026,
+      "metric_name": "q2_revenue_guidance",
+      "period": "Q2_FY2026_GUIDANCE",
+      "period_bucket": "guidance",
+      "statement": "Broadcom guided Q2 FY2026 revenue to approximately $22.0 billion.",
+      "statement_type": "guidance",
+      "unit": "usd",
+      "value": 22000000000
+    },
+    {
+      "basis": "company_defined",
+      "fiscal_period": "Q2",
+      "fiscal_year": 2026,
+      "metric_name": "q2_ai_semiconductor_revenue_guidance",
+      "period": "Q2_FY2026_GUIDANCE",
+      "period_bucket": "guidance",
+      "statement": "Broadcom expected Q2 FY2026 AI semiconductor revenue of approximately $10.7 billion.",
+      "statement_type": "guidance",
+      "unit": "usd",
+      "value": 10700000000
+    }
+  ],
+  "period": "Q1_FY2026",
+  "retrieved_at": "2026-05-06",
+  "source_confidence": "high",
+  "source_id": "AVGO_IR_Q1_FY2026_RELEASE",
+  "source_type": "earnings_release",
+  "source_url": "https://investors.broadcom.com/",
+  "text": "",
+  "url": "https://investors.broadcom.com/"
+}

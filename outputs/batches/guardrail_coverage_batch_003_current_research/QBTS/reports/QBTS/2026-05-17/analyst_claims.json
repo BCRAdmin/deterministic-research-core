@@ -1,0 +1,646 @@
+[
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "QBTS enters the report at a frozen close of 20.35 with a Underweight stance; the action should reflect company-specific growth, margin quality and source-quality drivers, valuation discipline and the current technical setup.",
+    "claim_id": "QBTS_CLAIM_001",
+    "claim_text": "QBTS enters the report at a frozen close of 20.35 with a Underweight stance; the action should reflect company-specific growth, margin quality and source-quality drivers, valuation discipline and the current technical setup.",
+    "claim_type": "price_data",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "QBTS_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "QBTS_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "QBTS_YAHOO_CHART_PRICE_CSV_PRICE",
+      "QBTS_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "QBTS_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "QBTS_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "The action language should stay consistent with the Underweight stance.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Executive Summary",
+    "source_ids": [
+      "QBTS_YAHOO_CHART_PRICE_CSV",
+      "QBTS_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "QBTS has revenue TTM of $24.7M, so the business discussion should focus on company-specific growth, margin quality and source-quality drivers rather than generic scale language.",
+    "claim_id": "QBTS_CLAIM_002",
+    "claim_text": "QBTS has revenue TTM of $24.7M, so the business discussion should focus on company-specific growth, margin quality and source-quality drivers rather than generic scale language.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "Revenue scale alone does not prove attractive returns or valuation discipline.",
+    "evidence_ids": [
+      "QBTS_SEC_COMPANYFACTS_1907982_REVENUE",
+      "QBTS_SEC_COMPANYFACTS_1907982_REVENUE_TTM",
+      "QBTS_SEC_COMPANYFACTS_1907982_SALES",
+      "QBTS_SEC_COMPANYFACTS_1907982_UMSATZ",
+      "QBTS_SEC_revenue_FY2025_FY_0001907982-26-000026",
+      "QBTS_SEC_revenue_FY2025_Q2_0001907982-25-000181",
+      "QBTS_SEC_revenue_FY2025_Q3_0001907982-25-000251",
+      "QBTS_SEC_revenue_FY2026_Q1_0001907982-26-000059"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm"
+    ],
+    "importance": "high",
+    "investment_implication": "Use revenue evidence as context, not as a standalone buy signal.",
+    "metric_refs": [
+      "revenue_ttm"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "QBTS_SEC_COMPANYFACTS_1907982",
+      "SEC_0001907982_0001907982-26-000026",
+      "SEC_0001907982_0001907982-25-000181",
+      "SEC_0001907982_0001907982-25-000251",
+      "SEC_0001907982_0001907982-26-000059"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "FCF TTM is $-91.8M, making cash conversion a direct rating input for QBTS.",
+    "claim_id": "QBTS_CLAIM_003",
+    "claim_text": "FCF TTM is $-91.8M, making cash conversion a direct rating input for QBTS.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "FCF may be company-defined or period-sensitive and can require reconciliation review.",
+    "evidence_ids": [
+      "QBTS_SEC_COMPANYFACTS_1907982_CASHFLOW",
+      "QBTS_SEC_COMPANYFACTS_1907982_FCF",
+      "QBTS_SEC_COMPANYFACTS_1907982_FREE_CASH_FLOW",
+      "QBTS_SEC_COMPANYFACTS_1907982_FREE_CASH_FLOW_TTM",
+      "QBTS_SEC_COMPANYFACTS_1907982_FREE_CASHFLOW",
+      "QBTS_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm"
+    ],
+    "importance": "high",
+    "investment_implication": "FCF quality supports the thesis only if no sanity guard blocks the report.",
+    "metric_refs": [
+      "free_cash_flow_ttm"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "QBTS_SEC_COMPANYFACTS_1907982",
+      "SEC_0001907982_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "SBC/Revenue is 90.2%, which should be interpreted through sector-specific quality and valuation context rather than a one-size-fits-all compensation lens.",
+    "claim_id": "QBTS_CLAIM_004",
+    "claim_text": "SBC/Revenue is 90.2%, which should be interpreted through sector-specific quality and valuation context rather than a one-size-fits-all compensation lens.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": "Sector and lifecycle matter, but persistent dilution can still reduce equity quality.",
+    "evidence_ids": [
+      "QBTS_SEC_COMPANYFACTS_1907982_SBC_TO_REVENUE",
+      "QBTS_SEC_DERIVED_SBC_TO_REVENUE"
+    ],
+    "evidence_metrics": [
+      "sbc_to_revenue"
+    ],
+    "importance": "medium",
+    "investment_implication": "Treat SBC as a risk modifier rather than an automatic rating override.",
+    "metric_refs": [
+      "sbc_to_revenue"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "QBTS_SEC_COMPANYFACTS_1907982",
+      "SEC_0001907982_DERIVED_SBC_TO_REVENUE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Balance-sheet flexibility is anchored in net cash of $554.5M and debt evidence, which affects how much downside tolerance the action plan can carry.",
+    "claim_id": "QBTS_CLAIM_005",
+    "claim_text": "Balance-sheet flexibility is anchored in net cash of $554.5M and debt evidence, which affects how much downside tolerance the action plan can carry.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "QBTS_SEC_COMPANYFACTS_1907982_CASH",
+      "QBTS_SEC_COMPANYFACTS_1907982_CASH_AND_EQUIVALENTS",
+      "QBTS_SEC_COMPANYFACTS_1907982_CASH_AND_INVESTMENTS",
+      "QBTS_SEC_COMPANYFACTS_1907982_NET_CASH",
+      "QBTS_SEC_cash_and_equivalents_FY2025_FY_0001907982-26-000026",
+      "QBTS_SEC_cash_and_equivalents_FY2026_Q1_0001907982-26-000059",
+      "QBTS_SEC_COMPANYFACTS_1907982_DEBT",
+      "QBTS_SEC_COMPANYFACTS_1907982_NET_DEBT",
+      "QBTS_SEC_COMPANYFACTS_1907982_TOTAL_DEBT"
+    ],
+    "evidence_metrics": [
+      "net_cash",
+      "total_debt"
+    ],
+    "importance": "medium",
+    "investment_implication": "A stronger liquidity position can widen the acceptable holding corridor.",
+    "metric_refs": [
+      "net_cash",
+      "total_debt"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "QBTS_SEC_COMPANYFACTS_1907982",
+      "SEC_0001907982_0001907982-26-000026",
+      "SEC_0001907982_0001907982-26-000059"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Valuation is framed by EV/Sales of 280.39x; this directly limits how aggressive the Underweight stance should be.",
+    "claim_id": "QBTS_CLAIM_006",
+    "claim_text": "Valuation is framed by EV/Sales of 280.39x; this directly limits how aggressive the Underweight stance should be.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": "Packet-derived valuation can still be blocked by sanity guards when source reconciliation is suspect.",
+    "evidence_ids": [
+      "QBTS_SEC_COMPANYFACTS_1907982_REVENUE",
+      "QBTS_SEC_COMPANYFACTS_1907982_REVENUE_TTM",
+      "QBTS_SEC_COMPANYFACTS_1907982_SALES",
+      "QBTS_SEC_COMPANYFACTS_1907982_UMSATZ",
+      "QBTS_SEC_revenue_FY2025_FY_0001907982-26-000026",
+      "QBTS_SEC_revenue_FY2025_Q2_0001907982-25-000181",
+      "QBTS_SEC_revenue_FY2025_Q3_0001907982-25-000251",
+      "QBTS_SEC_revenue_FY2026_Q1_0001907982-26-000059",
+      "QBTS_SEC_COMPANYFACTS_1907982_CASHFLOW",
+      "QBTS_SEC_COMPANYFACTS_1907982_FCF",
+      "QBTS_SEC_COMPANYFACTS_1907982_FREE_CASH_FLOW",
+      "QBTS_SEC_COMPANYFACTS_1907982_FREE_CASH_FLOW_TTM",
+      "QBTS_SEC_COMPANYFACTS_1907982_FREE_CASHFLOW",
+      "QBTS_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "QBTS_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "QBTS_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "QBTS_YAHOO_CHART_PRICE_CSV_PRICE",
+      "QBTS_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "QBTS_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "QBTS_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm",
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Do not upgrade rating solely from valuation language if audit has financial-sanity errors.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm",
+      "close"
+    ],
+    "section": "Valuation / Multiples",
+    "source_ids": [
+      "QBTS_SEC_COMPANYFACTS_1907982",
+      "SEC_0001907982_0001907982-26-000026",
+      "SEC_0001907982_0001907982-25-000181",
+      "SEC_0001907982_0001907982-25-000251",
+      "SEC_0001907982_0001907982-26-000059",
+      "SEC_0001907982_DERIVED_FCF",
+      "QBTS_YAHOO_CHART_PRICE_CSV",
+      "QBTS_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "For QBTS, P/FCF is not available in evidence set and should be read against validated growth, cash-flow and risk context; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+    "claim_id": "QBTS_CLAIM_007",
+    "claim_text": "For QBTS, P/FCF is not available in evidence set and should be read against validated growth, cash-flow and risk context; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "QBTS_SEC_COMPANYFACTS_1907982_CASHFLOW",
+      "QBTS_SEC_COMPANYFACTS_1907982_FCF",
+      "QBTS_SEC_COMPANYFACTS_1907982_FREE_CASH_FLOW",
+      "QBTS_SEC_COMPANYFACTS_1907982_FREE_CASH_FLOW_TTM",
+      "QBTS_SEC_COMPANYFACTS_1907982_FREE_CASHFLOW",
+      "QBTS_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "QBTS_SEC_COMPANYFACTS_1907982_REVENUE",
+      "QBTS_SEC_COMPANYFACTS_1907982_REVENUE_TTM",
+      "QBTS_SEC_COMPANYFACTS_1907982_SALES",
+      "QBTS_SEC_COMPANYFACTS_1907982_UMSATZ",
+      "QBTS_SEC_revenue_FY2025_FY_0001907982-26-000026",
+      "QBTS_SEC_revenue_FY2025_Q2_0001907982-25-000181",
+      "QBTS_SEC_revenue_FY2025_Q3_0001907982-25-000251",
+      "QBTS_SEC_revenue_FY2026_Q1_0001907982-26-000059"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm",
+      "revenue_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "The rating should stay conservative when multiples are expensive, missing or flagged.",
+    "metric_refs": [
+      "free_cash_flow_ttm",
+      "revenue_ttm"
+    ],
+    "section": "Valuation / Multiples",
+    "source_ids": [
+      "QBTS_SEC_COMPANYFACTS_1907982",
+      "SEC_0001907982_DERIVED_FCF",
+      "SEC_0001907982_0001907982-26-000026",
+      "SEC_0001907982_0001907982-25-000181",
+      "SEC_0001907982_0001907982-25-000251",
+      "SEC_0001907982_0001907982-26-000059"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The technical setup uses close 20.35, 50-SMA 18.21, 200-SMA 22.85 and RSI 50.19, creating timing risk if price cannot reclaim trend support.",
+    "claim_id": "QBTS_CLAIM_008",
+    "claim_text": "The technical setup uses close 20.35, 50-SMA 18.21, 200-SMA 22.85 and RSI 50.19, creating timing risk if price cannot reclaim trend support.",
+    "claim_type": "technical_metric",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "QBTS_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "QBTS_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "QBTS_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "QBTS_YAHOO_CHART_PRICE_CSV_PRICE",
+      "QBTS_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "QBTS_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "QBTS_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Timing language should follow the validated technical trend state.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Technical Setup",
+    "source_ids": [
+      "QBTS_YAHOO_CHART_PRICE_CSV",
+      "QBTS_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "QBTS's close of 20.35 and moving-average position imply a damaged trend that requires confirmation before adding exposure, so entries should be staged, delayed or trimmed according to business evidence and risk/reward.",
+    "claim_id": "QBTS_CLAIM_009",
+    "claim_text": "QBTS's close of 20.35 and moving-average position imply a damaged trend that requires confirmation before adding exposure, so entries should be staged, delayed or trimmed according to business evidence and risk/reward.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": "Technical weakness can be temporary if fundamentals and catalysts improve.",
+    "evidence_ids": [
+      "QBTS_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "QBTS_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "QBTS_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "QBTS_YAHOO_CHART_PRICE_CSV_PRICE",
+      "QBTS_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "QBTS_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "QBTS_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Use staged entries or trims when technical and fundamental signals diverge.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Technical Setup",
+    "source_ids": [
+      "QBTS_YAHOO_CHART_PRICE_CSV",
+      "QBTS_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The bull case is that validated growth and cash-flow quality combines with revenue of $24.7M to support the allowed upside rating path when cash conversion quality also holds.",
+    "claim_id": "QBTS_CLAIM_010",
+    "claim_text": "The bull case is that validated growth and cash-flow quality combines with revenue of $24.7M to support the allowed upside rating path when cash conversion quality also holds.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": "Strong scale does not resolve valuation or reconciliation anomalies.",
+    "evidence_ids": [
+      "QBTS_SEC_COMPANYFACTS_1907982_REVENUE",
+      "QBTS_SEC_COMPANYFACTS_1907982_REVENUE_TTM",
+      "QBTS_SEC_COMPANYFACTS_1907982_SALES",
+      "QBTS_SEC_COMPANYFACTS_1907982_UMSATZ",
+      "QBTS_SEC_revenue_FY2025_FY_0001907982-26-000026",
+      "QBTS_SEC_revenue_FY2025_Q2_0001907982-25-000181",
+      "QBTS_SEC_revenue_FY2025_Q3_0001907982-25-000251",
+      "QBTS_SEC_revenue_FY2026_Q1_0001907982-26-000059",
+      "QBTS_SEC_COMPANYFACTS_1907982_CASHFLOW",
+      "QBTS_SEC_COMPANYFACTS_1907982_FCF",
+      "QBTS_SEC_COMPANYFACTS_1907982_FREE_CASH_FLOW",
+      "QBTS_SEC_COMPANYFACTS_1907982_FREE_CASH_FLOW_TTM",
+      "QBTS_SEC_COMPANYFACTS_1907982_FREE_CASHFLOW",
+      "QBTS_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Bullish language should remain bounded by the evidence-backed action plan.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Bull Case",
+    "source_ids": [
+      "QBTS_SEC_COMPANYFACTS_1907982",
+      "SEC_0001907982_0001907982-26-000026",
+      "SEC_0001907982_0001907982-25-000181",
+      "SEC_0001907982_0001907982-25-000251",
+      "SEC_0001907982_0001907982-26-000059",
+      "SEC_0001907982_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "A constructive technical bull path for QBTS requires confirmation beyond the current RSI of 50.19 and moving-average setup.",
+    "claim_id": "QBTS_CLAIM_011",
+    "claim_text": "A constructive technical bull path for QBTS requires confirmation beyond the current RSI of 50.19 and moving-average setup.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "QBTS_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "QBTS_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "QBTS_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "QBTS_YAHOO_CHART_PRICE_CSV_PRICE",
+      "QBTS_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "QBTS_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "QBTS_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Add or accumulate language should require confirmation when the preferred rating is not Buy.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Bull Case",
+    "source_ids": [
+      "QBTS_YAHOO_CHART_PRICE_CSV",
+      "QBTS_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The bear case is that source-quality issues, valuation risk or technical weakness overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 90.2% or source-quality issues persist.",
+    "claim_id": "QBTS_CLAIM_012",
+    "claim_text": "The bear case is that source-quality issues, valuation risk or technical weakness overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 90.2% or source-quality issues persist.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "QBTS_SEC_COMPANYFACTS_1907982_CASHFLOW",
+      "QBTS_SEC_COMPANYFACTS_1907982_FCF",
+      "QBTS_SEC_COMPANYFACTS_1907982_FREE_CASH_FLOW",
+      "QBTS_SEC_COMPANYFACTS_1907982_FREE_CASH_FLOW_TTM",
+      "QBTS_SEC_COMPANYFACTS_1907982_FREE_CASHFLOW",
+      "QBTS_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "QBTS_SEC_COMPANYFACTS_1907982_SBC_TO_REVENUE",
+      "QBTS_SEC_DERIVED_SBC_TO_REVENUE"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm",
+      "sbc_to_revenue"
+    ],
+    "importance": "high",
+    "investment_implication": "Manual review remains appropriate when financial-sanity guards fire.",
+    "metric_refs": [
+      "free_cash_flow_ttm",
+      "sbc_to_revenue"
+    ],
+    "section": "Bear Case",
+    "source_ids": [
+      "QBTS_SEC_COMPANYFACTS_1907982",
+      "SEC_0001907982_DERIVED_FCF",
+      "SEC_0001907982_DERIVED_SBC_TO_REVENUE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Valuation risk for QBTS is a discipline constraint; expensive or missing EV/Sales and P/FCF context should not be translated into a blocked rating.",
+    "claim_id": "QBTS_CLAIM_013",
+    "claim_text": "Valuation risk for QBTS is a discipline constraint; expensive or missing EV/Sales and P/FCF context should not be translated into a blocked rating.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "QBTS_SEC_COMPANYFACTS_1907982_REVENUE",
+      "QBTS_SEC_COMPANYFACTS_1907982_REVENUE_TTM",
+      "QBTS_SEC_COMPANYFACTS_1907982_SALES",
+      "QBTS_SEC_COMPANYFACTS_1907982_UMSATZ",
+      "QBTS_SEC_revenue_FY2025_FY_0001907982-26-000026",
+      "QBTS_SEC_revenue_FY2025_Q2_0001907982-25-000181",
+      "QBTS_SEC_revenue_FY2025_Q3_0001907982-25-000251",
+      "QBTS_SEC_revenue_FY2026_Q1_0001907982-26-000059",
+      "QBTS_SEC_COMPANYFACTS_1907982_CASHFLOW",
+      "QBTS_SEC_COMPANYFACTS_1907982_FCF",
+      "QBTS_SEC_COMPANYFACTS_1907982_FREE_CASH_FLOW",
+      "QBTS_SEC_COMPANYFACTS_1907982_FREE_CASH_FLOW_TTM",
+      "QBTS_SEC_COMPANYFACTS_1907982_FREE_CASHFLOW",
+      "QBTS_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Avoid full-exit language when the evidence supports only trim or hold actions.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Bear Case",
+    "source_ids": [
+      "QBTS_SEC_COMPANYFACTS_1907982",
+      "SEC_0001907982_0001907982-26-000026",
+      "SEC_0001907982_0001907982-25-000181",
+      "SEC_0001907982_0001907982-25-000251",
+      "SEC_0001907982_0001907982-26-000059",
+      "SEC_0001907982_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Validation and audit issues are part of the QBTS research view; any blocking data issue should override a superficially complete report.",
+    "claim_id": "QBTS_CLAIM_014",
+    "claim_text": "Validation and audit issues are part of the QBTS research view; any blocking data issue should override a superficially complete report.",
+    "claim_type": "risk",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "QBTS_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "QBTS_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "QBTS_YAHOO_CHART_PRICE_CSV_PRICE",
+      "QBTS_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "QBTS_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "QBTS_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Blocking audit errors should keep the report in manual review.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Key Risks",
+    "source_ids": [
+      "QBTS_YAHOO_CHART_PRICE_CSV",
+      "QBTS_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Source disagreement or current-period mismatch can reduce conviction for QBTS, especially where revenue $24.7M is a key valuation denominator.",
+    "claim_id": "QBTS_CLAIM_015",
+    "claim_text": "Source disagreement or current-period mismatch can reduce conviction for QBTS, especially where revenue $24.7M is a key valuation denominator.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "QBTS_SEC_COMPANYFACTS_1907982_REVENUE",
+      "QBTS_SEC_COMPANYFACTS_1907982_REVENUE_TTM",
+      "QBTS_SEC_COMPANYFACTS_1907982_SALES",
+      "QBTS_SEC_COMPANYFACTS_1907982_UMSATZ",
+      "QBTS_SEC_revenue_FY2025_FY_0001907982-26-000026",
+      "QBTS_SEC_revenue_FY2025_Q2_0001907982-25-000181",
+      "QBTS_SEC_revenue_FY2025_Q3_0001907982-25-000251",
+      "QBTS_SEC_revenue_FY2026_Q1_0001907982-26-000059",
+      "QBTS_SEC_COMPANYFACTS_1907982_CASHFLOW",
+      "QBTS_SEC_COMPANYFACTS_1907982_FCF",
+      "QBTS_SEC_COMPANYFACTS_1907982_FREE_CASH_FLOW",
+      "QBTS_SEC_COMPANYFACTS_1907982_FREE_CASH_FLOW_TTM",
+      "QBTS_SEC_COMPANYFACTS_1907982_FREE_CASHFLOW",
+      "QBTS_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Source-quality limitations belong in the final action plan.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Key Risks",
+    "source_ids": [
+      "QBTS_SEC_COMPANYFACTS_1907982",
+      "SEC_0001907982_0001907982-26-000026",
+      "SEC_0001907982_0001907982-25-000181",
+      "SEC_0001907982_0001907982-25-000251",
+      "SEC_0001907982_0001907982-26-000059",
+      "SEC_0001907982_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Catalysts for QBTS at the validated close of 20.35 should be limited to confirmed packet inputs; missing earnings or forward company data should be stated as unavailable rather than converted into event-risk claims.",
+    "claim_id": "QBTS_CLAIM_016",
+    "claim_text": "Catalysts for QBTS at the validated close of 20.35 should be limited to confirmed packet inputs; missing earnings or forward company data should be stated as unavailable rather than converted into event-risk claims.",
+    "claim_type": "price_data",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "QBTS_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "QBTS_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "QBTS_YAHOO_CHART_PRICE_CSV_PRICE",
+      "QBTS_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "QBTS_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "QBTS_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "If earnings are unavailable, the report should state that limitation rather than inventing timing.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Catalysts & Triggers",
+    "source_ids": [
+      "QBTS_YAHOO_CHART_PRICE_CSV",
+      "QBTS_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Trigger language should use evidence-backed levels such as 50-SMA 18.21 and 200-SMA 22.85, not unvalidated price targets.",
+    "claim_id": "QBTS_CLAIM_017",
+    "claim_text": "Trigger language should use evidence-backed levels such as 50-SMA 18.21 and 200-SMA 22.85, not unvalidated price targets.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "QBTS_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "QBTS_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "QBTS_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "QBTS_YAHOO_CHART_PRICE_CSV_PRICE",
+      "QBTS_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "QBTS_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "QBTS_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Use confirmation language instead of hard price targets unless risk/reward levels are validated.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Catalysts & Triggers",
+    "source_ids": [
+      "QBTS_YAHOO_CHART_PRICE_CSV",
+      "QBTS_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "We rate QBTS Underweight at the validated close of 20.35 because company-specific growth, margin quality and source-quality drivers supports the base case, while valuation and technical risk limit the case for a more bullish rating.",
+    "claim_id": "QBTS_CLAIM_018",
+    "claim_text": "We rate QBTS Underweight at the validated close of 20.35 because company-specific growth, margin quality and source-quality drivers supports the base case, while valuation and technical risk limit the case for a more bullish rating.",
+    "claim_type": "rating",
+    "confidence": "high",
+    "counterargument": "A more bullish rating would require current-period KPI acceleration plus valuation or technical confirmation.",
+    "evidence_ids": [
+      "QBTS_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "QBTS_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "QBTS_YAHOO_CHART_PRICE_CSV_PRICE",
+      "QBTS_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "QBTS_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "QBTS_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Hold QBTS; maintain core exposure but require better valuation, technical setup or current-period KPI proof before adding.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Final Rating & Action Plan",
+    "source_ids": [
+      "QBTS_YAHOO_CHART_PRICE_CSV",
+      "QBTS_CSV_PRICE_PROVIDER"
+    ]
+  }
+]

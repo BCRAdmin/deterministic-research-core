@@ -1,0 +1,21 @@
+[project]
+name = "research-agent"
+version = "0.1.0"
+description = "Deterministic calculation and validation layer for stock research agents."
+requires-python = ">=3.9"
+dependencies = [
+  "numpy>=1.24",
+  "pandas>=2.0",
+  "pydantic>=2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["research_agent/tests"]
+pythonpath = ["."]
+addopts = "-q"
+

@@ -1,0 +1,39 @@
+{
+  "batch_id": "vega_batch_smoke",
+  "as_of_date": "2026-05-01",
+  "max_parallel_jobs": 1,
+  "output_dir": "outputs/batches",
+  "pipeline_version": "phase_12_smoke",
+  "model_provider": "test",
+  "model_name": "deterministic-fixture",
+  "tickers": [
+    {
+      "ticker": "AMZN",
+      "mode": "manual_packet_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": ["smoke", "e2e"]
+    },
+    {
+      "ticker": "NVDA",
+      "mode": "manual_packet_mode",
+      "priority": "normal",
+      "benchmark": "SMH",
+      "tags": ["smoke", "e2e"]
+    },
+    {
+      "ticker": "DDOG",
+      "mode": "manual_packet_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": ["smoke", "e2e"]
+    },
+    {
+      "ticker": "MDB",
+      "mode": "manual_packet_mode",
+      "priority": "normal",
+      "benchmark": "QQQ",
+      "tags": ["smoke", "e2e"]
+    }
+  ]
+}

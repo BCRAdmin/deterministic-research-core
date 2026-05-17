@@ -1,0 +1,33 @@
+{
+  "actual_archetype": "SEMICONDUCTOR_AI_INFRA",
+  "archetype_confidence": 0.2,
+  "artifact_consistency_status": "clean",
+  "company_name": "Intel Corporation",
+  "concerns": [],
+  "data_confidence_score": 81,
+  "evidence_status": "clean",
+  "expected_archetype": "SEMICONDUCTOR_AI_INFRA or SEMICONDUCTOR_CYCLICAL",
+  "external_display_rating": "Hold",
+  "internal_research_quality_score": 100,
+  "likely_false_negative": "no",
+  "likely_false_positive": "no",
+  "manual_review_reasons": [
+    "EARNINGS_DATE_UNAVAILABLE",
+    "SOURCE_FRAME_VARIANT_IGNORED",
+    "PERIOD_TYPE_MISMATCH_IGNORED",
+    "TRUE_SOURCE_VALUE_DISAGREEMENT"
+  ],
+  "primary_blockers": [
+    "EARNINGS_DATE_UNAVAILABLE",
+    "SOURCE_FRAME_VARIANT_IGNORED",
+    "PERIOD_TYPE_MISMATCH_IGNORED",
+    "TRUE_SOURCE_VALUE_DISAGREEMENT"
+  ],
+  "public_ready": false,
+  "publish_quality_score": 78,
+  "publishable": false,
+  "recommended_next_action": "Keep manual_review and resolve blockers before any promotion.",
+  "review_status": "manual_review",
+  "sector_bucket": "Semiconductors / AI Infrastructure / Cyclical AI",
+  "ticker": "INTC"
+}

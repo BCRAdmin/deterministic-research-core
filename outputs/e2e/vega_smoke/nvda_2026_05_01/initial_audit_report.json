@@ -1,0 +1,85 @@
+{
+  "has_blocking_errors": true,
+  "issues": [
+    {
+      "code": "NUMERIC_MISMATCH",
+      "line_number": 3,
+      "message": "Report states free_cash_flow_ttm as $58.1B but validated MetricsPacket has 96575000000.0.",
+      "metric": "free_cash_flow_ttm",
+      "raw_text": "$58.1B",
+      "reported": 58100000000.0,
+      "severity": "error",
+      "validated": 96575000000.0
+    },
+    {
+      "code": "PERIOD_MISMATCH",
+      "line_number": 5,
+      "message": "Report mixes Q4 and TTM period language for a validated metric.",
+      "metric": "operating_margin",
+      "raw_text": "65%",
+      "reported": null,
+      "severity": "error",
+      "validated": null
+    },
+    {
+      "code": "NUMERIC_MISMATCH",
+      "line_number": 5,
+      "message": "Report states operating_margin_ttm as 65% but validated MetricsPacket has 0.62.",
+      "metric": "operating_margin_ttm",
+      "raw_text": "65%",
+      "reported": 0.65,
+      "severity": "error",
+      "validated": 0.62
+    },
+    {
+      "code": "NUMERIC_MISMATCH",
+      "line_number": 7,
+      "message": "Report states forward_pe_consensus as 466-faches but validated MetricsPacket has 37.0.",
+      "metric": "forward_pe_consensus",
+      "raw_text": "466-faches",
+      "reported": 466.0,
+      "severity": "error",
+      "validated": 37.0
+    },
+    {
+      "code": "MISSING_EVIDENCE_FOR_HARD_CLAIM",
+      "line_number": 7,
+      "message": "No evidence found for metric forward_pe_consensus.",
+      "metric": "forward_pe_consensus",
+      "raw_text": "466-faches",
+      "reported": null,
+      "severity": "error",
+      "validated": null
+    }
+  ],
+  "numeric_claims": [
+    {
+      "line_number": 3,
+      "nearby_text": "FCF TTM: $58.1B, indicating very strong cash conversion.",
+      "normalized_value": 58100000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$58.1B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 5,
+      "nearby_text": "Operating Margin TTM: 65% (Q4 operating margin), so the trailing profitability base is 65%.",
+      "normalized_value": 65.0,
+      "period_hint": "mixed",
+      "possible_metric": "operating_margin_ttm",
+      "raw_text": "65%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 7,
+      "nearby_text": "Forward KGV: 466-faches KGV, still acceptable for growth.",
+      "normalized_value": 466.0,
+      "period_hint": "forward",
+      "possible_metric": "forward_pe_consensus",
+      "raw_text": "466-faches",
+      "unit": "multiple"
+    }
+  ],
+  "ticker": "NVDA"
+}

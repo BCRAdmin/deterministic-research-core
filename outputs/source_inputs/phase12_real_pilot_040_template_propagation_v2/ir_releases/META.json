@@ -1,0 +1,15 @@
+{
+  "source_id": "META_IR_Q1_2026_RELEASE",
+  "source_type": "earnings_release",
+  "url": "https://investor.fb.com/",
+  "retrieved_at": "2026-05-06",
+  "period": "Q1_2026",
+  "text": "",
+  "metrics": [
+    {"metric_name": "current_q_revenue", "value": 56311000000, "unit": "usd", "period": "Q1_2026", "fiscal_year": 2026, "fiscal_period": "Q1", "period_bucket": "quarterly", "basis": "gaap", "statement_type": "income_statement", "statement": "Meta reported Q1 2026 revenue of $56.311 billion."},
+    {"metric_name": "operating_margin", "value": 0.41, "unit": "ratio", "period": "Q1_2026", "fiscal_year": 2026, "fiscal_period": "Q1", "period_bucket": "quarterly", "basis": "gaap", "statement_type": "income_statement", "statement": "Meta reported Q1 2026 operating margin of 41%."},
+    {"metric_name": "current_q_free_cash_flow", "value": 12386000000, "unit": "usd", "period": "Q1_2026", "fiscal_year": 2026, "fiscal_period": "Q1", "period_bucket": "quarterly", "basis": "company_defined", "statement_type": "cash_flow", "statement": "Meta reported Q1 2026 free cash flow of $12.386 billion."},
+    {"metric_name": "capex_guidance_low", "value": 125000000000, "unit": "usd", "period": "FY2026_GUIDANCE", "fiscal_year": 2026, "fiscal_period": "FY", "period_bucket": "guidance", "basis": "company_defined", "statement_type": "guidance", "statement": "Meta guided FY2026 capital expenditures to a range beginning at $125 billion."},
+    {"metric_name": "capex_guidance_high", "value": 145000000000, "unit": "usd", "period": "FY2026_GUIDANCE", "fiscal_year": 2026, "fiscal_period": "FY", "period_bucket": "guidance", "basis": "company_defined", "statement_type": "guidance", "statement": "Meta guided FY2026 capital expenditures to a range up to $145 billion."}
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "batch_id": "rgti_deeptech_profile_check",
+  "generated_at": "2026-05-16T01:59:41",
+  "items": [
+    {
+      "ticker": "RGTI",
+      "review_status": "manual_review",
+      "publishable": false,
+      "internal_rating": "Preliminary Underweight",
+      "external_display_rating": "Manual Review / Preliminary Underweight",
+      "public_rating": null,
+      "company_archetype": "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL",
+      "archetype_confidence": 0.833,
+      "archetype_triggered_rules": [
+        "market_cap_revenue_gt_100",
+        "revenue_ttm_lt_50m",
+        "operating_income_ttm_negative",
+        "free_cash_flow_ttm_negative",
+        "sbc_to_revenue_gt_050",
+        "vendor_only_hard_financial_metrics",
+        "derivative_warrant_fair_value_effects_detected",
+        "no_sec_ir_current_period_evidence",
+        "lumpy_revenue_non_scaled_adoption_language",
+        "high_volatility_or_beta_gt_15"
+      ],
+      "artifacts": {
+        "raw_report": "reports/room16/runs/20260515-223522-rgti-e63b8cca/RGTI/generated/raw_room16_report.md",
+        "internal_best_report": "reports/room16/runs/20260515-223522-rgti-e63b8cca/RGTI/generated/internal_best_report.md",
+        "internal_best_report_pdf": "reports/room16/runs/20260515-223522-rgti-e63b8cca/RGTI/generated/RGTI_manual_review_reading_version.pdf",
+        "publish_report": null,
+        "quality_report": "reports/room16/runs/20260515-223522-rgti-e63b8cca/RGTI/quality/2026-05-15-room16-quality-report.md",
+        "evidence_report": "reports/room16/runs/20260515-223522-rgti-e63b8cca/RGTI/generated/evidence_report.md",
+        "dashboard_status": "reports/room16/runs/20260515-223522-rgti-e63b8cca/RGTI/dashboard_status.json"
+      }
+    }
+  ]
+}

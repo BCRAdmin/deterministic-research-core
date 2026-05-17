@@ -1,0 +1,23 @@
+{
+  "ticker": "NVDA",
+  "company_name": "NVIDIA Corporation",
+  "as_of_date": "2026-05-01",
+  "price_basis": {
+    "close": 900.0,
+    "date": "2026-04-30",
+    "currency": "USD",
+    "source": "exchange_ohlcv"
+  },
+  "fiscal_context": {
+    "latest_fiscal_year": "FY2026",
+    "latest_quarter": "Q4 FY2026",
+    "fiscal_year_end": "2026-01-25"
+  },
+  "next_events": {
+    "next_earnings_date": "2026-05-21",
+    "confirmed": true,
+    "source": "company_ir"
+  },
+  "source_registry_id": "NVDA_2026_05_01"
+}
+

@@ -1,0 +1,541 @@
+{
+  "created_at": "2026-05-16T04:15:42",
+  "run_dir": ".runtime/bcr-company-batches/20260515-223522-rgti-e63b8cca",
+  "date": "2026-05-15",
+  "verdict": "pass",
+  "artifacts": {
+    "complete_md": "reports/room16/runs/20260515-223522-rgti-e63b8cca/RGTI/complete/2026-05-15-room16-RGTI-complete-dossier.md",
+    "complete_docx": "reports/room16/runs/20260515-223522-rgti-e63b8cca/RGTI/complete/2026-05-15-room16-RGTI-complete-dossier.docx",
+    "complete_pdf": "reports/room16/runs/20260515-223522-rgti-e63b8cca/RGTI/complete/2026-05-15-room16-RGTI-complete-dossier.pdf",
+    "raw_report": "reports/room16/runs/20260515-223522-rgti-e63b8cca/RGTI/generated/raw_room16_report.md",
+    "raw_room16_report": "reports/room16/runs/20260515-223522-rgti-e63b8cca/RGTI/generated/raw_room16_report.md",
+    "internal_best_report": "reports/room16/runs/20260515-223522-rgti-e63b8cca/RGTI/generated/internal_best_report.md",
+    "quality_report": "reports/room16/runs/20260515-223522-rgti-e63b8cca/RGTI/quality/2026-05-15-room16-quality-report.md",
+    "quality_report_json": "reports/room16/runs/20260515-223522-rgti-e63b8cca/RGTI/quality/2026-05-15-room16-quality-report.json",
+    "evidence_report": "reports/room16/runs/20260515-223522-rgti-e63b8cca/RGTI/generated/evidence_report.md",
+    "dashboard_status": "reports/room16/runs/20260515-223522-rgti-e63b8cca/RGTI/dashboard_status.json",
+    "internal_best_report_pdf": "reports/room16/runs/20260515-223522-rgti-e63b8cca/RGTI/generated/RGTI_manual_review_reading_version.pdf"
+  },
+  "metrics": {
+    "ticker_count": 1,
+    "premium_required": false,
+    "raw_source_words": 6436,
+    "complete_md_words": 6754,
+    "complete_docx_words": 6750,
+    "complete_pdf_words": 7195,
+    "complete_pdf_pages": 21,
+    "pdf_text_backend": "pymupdf",
+    "pdf_render_backend": "pymupdf",
+    "batch_id": "rgti_deeptech_profile_check",
+    "research_integrity_verdict": "review_required",
+    "research_integrity_findings": [],
+    "institutional_quality_findings": [
+      {
+        "severity": "high",
+        "type": "SPECULATIVE_DEEP_TECH_MANUAL_REVIEW_PROFILE",
+        "message": "Speculative deep-tech early-commercial company archetype requires manual review.",
+        "details": {
+          "company_archetype": "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL",
+          "trigger_count": 10,
+          "triggers": {
+            "market_cap_revenue_gt_100": true,
+            "revenue_ttm_lt_50m": true,
+            "operating_income_ttm_negative": true,
+            "free_cash_flow_ttm_negative": true,
+            "sbc_to_revenue_gt_050": true,
+            "vendor_only_hard_financial_metrics": true,
+            "derivative_warrant_fair_value_effects_detected": true,
+            "no_sec_ir_current_period_evidence": true,
+            "lumpy_revenue_non_scaled_adoption_language": true,
+            "share_dilution_yoy_gt_010": false,
+            "technical_milestone_language_dominates_news": false,
+            "high_volatility_or_beta_gt_15": true
+          }
+        }
+      },
+      {
+        "severity": "high",
+        "type": "VENDOR_ONLY_HARD_METRICS",
+        "message": "Hard financial metrics rely on vendor/manual evidence without current-period SEC/IR support.",
+        "details": {
+          "has_sec_ir_current_period_evidence": false
+        }
+      }
+    ],
+    "institutional_regression_suite": {
+      "blocked": false,
+      "issues": []
+    },
+    "status": "manual_review",
+    "publishable": false,
+    "external_display_rating": "Manual Review / Preliminary Underweight",
+    "internal_rating": "Preliminary Underweight",
+    "review_status": "manual_review",
+    "risk_profiles": [
+      "SPECULATIVE_DEEP_TECH_MANUAL_REVIEW_PROFILE"
+    ],
+    "company_archetype": "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL",
+    "archetype_confidence": 0.833,
+    "archetype_triggered_rules": [
+      "market_cap_revenue_gt_100",
+      "revenue_ttm_lt_50m",
+      "operating_income_ttm_negative",
+      "free_cash_flow_ttm_negative",
+      "sbc_to_revenue_gt_050",
+      "vendor_only_hard_financial_metrics",
+      "derivative_warrant_fair_value_effects_detected",
+      "no_sec_ir_current_period_evidence",
+      "lumpy_revenue_non_scaled_adoption_language",
+      "high_volatility_or_beta_gt_15"
+    ],
+    "manual_review_reasons": [
+      "SPECULATIVE_DEEP_TECH_MANUAL_REVIEW_PROFILE",
+      "VENDOR_ONLY_HARD_METRICS"
+    ],
+    "quality_score": 75,
+    "quality_score_caps": {
+      "SPECULATIVE_DEEP_TECH_MANUAL_REVIEW_PROFILE": 75,
+      "VENDOR_ONLY_HARD_METRICS": 75
+    },
+    "speculative_deep_tech_assessment": {
+      "profile": "SPECULATIVE_DEEP_TECH_MANUAL_REVIEW_PROFILE",
+      "company_archetype": "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL",
+      "archetype_confidence": 0.833,
+      "archetype_triggered_rules": [
+        "market_cap_revenue_gt_100",
+        "revenue_ttm_lt_50m",
+        "operating_income_ttm_negative",
+        "free_cash_flow_ttm_negative",
+        "sbc_to_revenue_gt_050",
+        "vendor_only_hard_financial_metrics",
+        "derivative_warrant_fair_value_effects_detected",
+        "no_sec_ir_current_period_evidence",
+        "lumpy_revenue_non_scaled_adoption_language",
+        "high_volatility_or_beta_gt_15"
+      ],
+      "active": true,
+      "trigger_count": 10,
+      "triggers": {
+        "market_cap_revenue_gt_100": true,
+        "revenue_ttm_lt_50m": true,
+        "operating_income_ttm_negative": true,
+        "free_cash_flow_ttm_negative": true,
+        "sbc_to_revenue_gt_050": true,
+        "vendor_only_hard_financial_metrics": true,
+        "derivative_warrant_fair_value_effects_detected": true,
+        "no_sec_ir_current_period_evidence": true,
+        "lumpy_revenue_non_scaled_adoption_language": true,
+        "share_dilution_yoy_gt_010": false,
+        "technical_milestone_language_dominates_news": false,
+        "high_volatility_or_beta_gt_15": true
+      },
+      "issues": [
+        {
+          "code": "SPECULATIVE_DEEP_TECH_MANUAL_REVIEW_PROFILE",
+          "severity": "warning",
+          "message": "Speculative deep-tech early-commercial company archetype requires manual review.",
+          "details": {
+            "company_archetype": "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL",
+            "trigger_count": 10,
+            "triggers": {
+              "market_cap_revenue_gt_100": true,
+              "revenue_ttm_lt_50m": true,
+              "operating_income_ttm_negative": true,
+              "free_cash_flow_ttm_negative": true,
+              "sbc_to_revenue_gt_050": true,
+              "vendor_only_hard_financial_metrics": true,
+              "derivative_warrant_fair_value_effects_detected": true,
+              "no_sec_ir_current_period_evidence": true,
+              "lumpy_revenue_non_scaled_adoption_language": true,
+              "share_dilution_yoy_gt_010": false,
+              "technical_milestone_language_dominates_news": false,
+              "high_volatility_or_beta_gt_15": true
+            }
+          }
+        },
+        {
+          "code": "VENDOR_ONLY_HARD_METRICS",
+          "severity": "warning",
+          "message": "Hard financial metrics rely on vendor/manual evidence without current-period SEC/IR support.",
+          "details": {
+            "has_sec_ir_current_period_evidence": false
+          }
+        }
+      ],
+      "status": "manual_review",
+      "publishable": false,
+      "external_display_rating": "Manual Review / Preliminary Underweight",
+      "quality_score": 75,
+      "quality_score_caps": {
+        "SPECULATIVE_DEEP_TECH_MANUAL_REVIEW_PROFILE": 75,
+        "VENDOR_ONLY_HARD_METRICS": 75
+      },
+      "counts": {
+        "speculative_deep_tech_profile_count": 1,
+        "accounting_gain_not_operating_turnaround_count": 0,
+        "vendor_only_hard_metrics_count": 1,
+        "order_materiality_missing_count": 0,
+        "technical_overweight_in_thesis_count": 0
+      }
+    },
+    "speculative_deep_tech_profile_count": 1,
+    "accounting_gain_not_operating_turnaround_count": 0,
+    "vendor_only_hard_metrics_count": 1,
+    "order_materiality_missing_count": 0,
+    "technical_overweight_in_thesis_count": 0
+  },
+  "checks": [
+    {
+      "name": "manifest_completed",
+      "status": "pass",
+      "details": "completed"
+    },
+    {
+      "name": "manifest_has_tickers",
+      "status": "pass",
+      "details": [
+        "RGTI"
+      ]
+    },
+    {
+      "name": "all_tickers_ok",
+      "status": "pass",
+      "details": [
+        {
+          "ticker": "RGTI",
+          "status": "ok",
+          "elapsed_seconds": 1295.71,
+          "decision": "Underweight"
+        }
+      ]
+    },
+    {
+      "name": "RGTI_log_exists",
+      "status": "pass",
+      "details": "/Users/BjornRosinger/Documents/New project/company-dossier-lab/.runtime/bcr-company-batches/20260515-223522-rgti-e63b8cca/results/RGTI/TradingAgentsStrategy_logs/full_states_log_2026-05-14.json"
+    },
+    {
+      "name": "RGTI_market_report_has_content",
+      "status": "pass",
+      "details": {
+        "chars": 11214,
+        "min_chars": 1500
+      }
+    },
+    {
+      "name": "RGTI_sentiment_report_has_content",
+      "status": "pass",
+      "details": {
+        "chars": 10867,
+        "min_chars": 1500
+      }
+    },
+    {
+      "name": "RGTI_news_report_has_content",
+      "status": "pass",
+      "details": {
+        "chars": 9457,
+        "min_chars": 1500
+      }
+    },
+    {
+      "name": "RGTI_fundamentals_report_has_content",
+      "status": "pass",
+      "details": {
+        "chars": 13852,
+        "min_chars": 1500
+      }
+    },
+    {
+      "name": "RGTI_trader_investment_decision_has_content",
+      "status": "pass",
+      "details": {
+        "chars": 776,
+        "min_chars": 300
+      }
+    },
+    {
+      "name": "RGTI_investment_plan_has_content",
+      "status": "pass",
+      "details": {
+        "chars": 3753,
+        "min_chars": 300
+      }
+    },
+    {
+      "name": "RGTI_final_trade_decision_has_content",
+      "status": "pass",
+      "details": {
+        "chars": 3191,
+        "min_chars": 300
+      }
+    },
+    {
+      "name": "complete_md_exists",
+      "status": "pass",
+      "details": "reports/room16/runs/20260515-223522-rgti-e63b8cca/RGTI/complete/2026-05-15-room16-RGTI-complete-dossier.md"
+    },
+    {
+      "name": "complete_docx_exists",
+      "status": "pass",
+      "details": "reports/room16/runs/20260515-223522-rgti-e63b8cca/RGTI/complete/2026-05-15-room16-RGTI-complete-dossier.docx"
+    },
+    {
+      "name": "complete_pdf_exists",
+      "status": "pass",
+      "details": "reports/room16/runs/20260515-223522-rgti-e63b8cca/RGTI/complete/2026-05-15-room16-RGTI-complete-dossier.pdf"
+    },
+    {
+      "name": "complete_markdown_word_count",
+      "status": "pass",
+      "details": {
+        "words": 6754,
+        "min_words": 4500
+      }
+    },
+    {
+      "name": "complete_markdown_source_coverage",
+      "status": "pass",
+      "details": {
+        "complete_words": 6754,
+        "raw_source_words": 6436,
+        "min_ratio": 0.7
+      }
+    },
+    {
+      "name": "complete_docx_word_ratio",
+      "status": "pass",
+      "details": {
+        "docx_words": 6750,
+        "md_words": 6754,
+        "min_ratio": 0.75
+      }
+    },
+    {
+      "name": "complete_pdf_word_ratio",
+      "status": "pass",
+      "details": {
+        "pdf_words": 7195,
+        "md_words": 6754,
+        "min_ratio": 0.75
+      }
+    },
+    {
+      "name": "complete_pdf_page_range",
+      "status": "pass",
+      "details": {
+        "pages": 21,
+        "allowed": "8-30",
+        "ticker_count": 1
+      }
+    },
+    {
+      "name": "complete_md_no_forbidden_labels",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "name": "complete_md_no_visible_reasoning_leaks",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "name": "complete_md_uses_real_german_umlauts",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "name": "complete_md_no_broken_glyphs",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "name": "complete_md_no_unsupported_render_glyphs",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "name": "complete_md_contains_all_tickers",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "name": "complete_docx_no_forbidden_labels",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "name": "complete_docx_no_visible_reasoning_leaks",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "name": "complete_docx_uses_real_german_umlauts",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "name": "complete_docx_no_markdown_tokens",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "name": "complete_docx_no_broken_glyphs",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "name": "complete_docx_no_unsupported_render_glyphs",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "name": "complete_docx_contains_all_tickers",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "name": "complete_pdf_no_forbidden_labels",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "name": "complete_pdf_no_visible_reasoning_leaks",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "name": "complete_pdf_uses_real_german_umlauts",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "name": "complete_pdf_no_markdown_tokens",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "name": "complete_pdf_no_broken_glyphs",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "name": "complete_pdf_no_unsupported_render_glyphs",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "name": "complete_pdf_contains_all_tickers",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "name": "speculative_deep_tech_profile_recorded",
+      "status": "pass",
+      "details": {
+        "active": true,
+        "status": "manual_review",
+        "publishable": false,
+        "external_display_rating": "Manual Review / Preliminary Underweight",
+        "issue_codes": [
+          "SPECULATIVE_DEEP_TECH_MANUAL_REVIEW_PROFILE",
+          "VENDOR_ONLY_HARD_METRICS"
+        ]
+      }
+    },
+    {
+      "name": "manual_review_external_display_locked",
+      "status": "pass",
+      "details": {
+        "external_display_rating": "Manual Review / Preliminary Underweight",
+        "publishable": false
+      }
+    },
+    {
+      "name": "manual_review_has_internal_best_without_publish_report",
+      "status": "pass",
+      "details": {
+        "internal_best_report": "reports/room16/runs/20260515-223522-rgti-e63b8cca/RGTI/generated/internal_best_report.md"
+      }
+    },
+    {
+      "name": "research_integrity_no_critical_contradictions",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "name": "institutional_quality_no_critical_blockers",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "name": "institutional_regression_suite_passes",
+      "status": "pass",
+      "details": {
+        "blocked": false,
+        "issues": []
+      }
+    },
+    {
+      "name": "research_integrity_source_ledger_review_recorded",
+      "status": "pass",
+      "details": {
+        "strict_ready": false,
+        "findings": [],
+        "institutional_findings": [
+          {
+            "severity": "high",
+            "type": "SPECULATIVE_DEEP_TECH_MANUAL_REVIEW_PROFILE",
+            "message": "Speculative deep-tech early-commercial company archetype requires manual review.",
+            "details": {
+              "company_archetype": "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL",
+              "trigger_count": 10,
+              "triggers": {
+                "market_cap_revenue_gt_100": true,
+                "revenue_ttm_lt_50m": true,
+                "operating_income_ttm_negative": true,
+                "free_cash_flow_ttm_negative": true,
+                "sbc_to_revenue_gt_050": true,
+                "vendor_only_hard_financial_metrics": true,
+                "derivative_warrant_fair_value_effects_detected": true,
+                "no_sec_ir_current_period_evidence": true,
+                "lumpy_revenue_non_scaled_adoption_language": true,
+                "share_dilution_yoy_gt_010": false,
+                "technical_milestone_language_dominates_news": false,
+                "high_volatility_or_beta_gt_15": true
+              }
+            }
+          },
+          {
+            "severity": "high",
+            "type": "VENDOR_ONLY_HARD_METRICS",
+            "message": "Hard financial metrics rely on vendor/manual evidence without current-period SEC/IR support.",
+            "details": {
+              "has_sec_ir_current_period_evidence": false
+            }
+          }
+        ],
+        "note": "Use --strict-research-integrity for publication/client-grade reports."
+      }
+    },
+    {
+      "name": "pdf_render_outputs_created",
+      "status": "pass",
+      "details": {
+        "count": 5,
+        "dir": "reports/room16/runs/20260515-223522-rgti-e63b8cca/RGTI/quality/rendered/2026-05-15-20260515-223522-rgti-e63b8cca",
+        "render_backend": "pymupdf",
+        "text_backend": "pymupdf",
+        "allow_missing_pdf_renderer": false,
+        "note": "Visual PNG render is mandatory for green Room 16 reports unless explicitly bypassed for debugging."
+      }
+    }
+  ],
+  "rendered_pages": [
+    "reports/room16/runs/20260515-223522-rgti-e63b8cca/RGTI/quality/rendered/2026-05-15-20260515-223522-rgti-e63b8cca/complete-page-1.png",
+    "reports/room16/runs/20260515-223522-rgti-e63b8cca/RGTI/quality/rendered/2026-05-15-20260515-223522-rgti-e63b8cca/complete-page-2.png",
+    "reports/room16/runs/20260515-223522-rgti-e63b8cca/RGTI/quality/rendered/2026-05-15-20260515-223522-rgti-e63b8cca/complete-page-3.png",
+    "reports/room16/runs/20260515-223522-rgti-e63b8cca/RGTI/quality/rendered/2026-05-15-20260515-223522-rgti-e63b8cca/complete-page-11.png",
+    "reports/room16/runs/20260515-223522-rgti-e63b8cca/RGTI/quality/rendered/2026-05-15-20260515-223522-rgti-e63b8cca/complete-page-21.png"
+  ]
+}

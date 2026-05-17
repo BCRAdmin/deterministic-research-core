@@ -1,0 +1,162 @@
+[
+  {
+    "cik": "1652044",
+    "company_name": "Alphabet Inc.",
+    "ticker": "GOOGL"
+  },
+  {
+    "cik": "1640147",
+    "company_name": "Snowflake Inc.",
+    "ticker": "SNOW"
+  },
+  {
+    "cik": "789019",
+    "company_name": "MICROSOFT CORP",
+    "ticker": "MSFT"
+  },
+  {
+    "cik": "320193",
+    "company_name": "Apple Inc.",
+    "ticker": "AAPL"
+  },
+  {
+    "cik": "1326801",
+    "company_name": "Meta Platforms, Inc.",
+    "ticker": "META"
+  },
+  {
+    "cik": "1018724",
+    "company_name": "AMAZON COM INC",
+    "ticker": "AMZN"
+  },
+  {
+    "cik": "1065280",
+    "company_name": "NETFLIX INC",
+    "ticker": "NFLX"
+  },
+  {
+    "cik": "1108524",
+    "company_name": "Salesforce, Inc.",
+    "ticker": "CRM"
+  },
+  {
+    "cik": "1561550",
+    "company_name": "Datadog, Inc.",
+    "ticker": "DDOG"
+  },
+  {
+    "cik": "1373715",
+    "company_name": "ServiceNow, Inc.",
+    "ticker": "NOW"
+  },
+  {
+    "cik": "1441816",
+    "company_name": "MongoDB, Inc.",
+    "ticker": "MDB"
+  },
+  {
+    "cik": "1477333",
+    "company_name": "Cloudflare, Inc.",
+    "ticker": "NET"
+  },
+  {
+    "cik": "1713683",
+    "company_name": "Zscaler, Inc.",
+    "ticker": "ZS"
+  },
+  {
+    "cik": "1535527",
+    "company_name": "CrowdStrike Holdings, Inc.",
+    "ticker": "CRWD"
+  },
+  {
+    "cik": "1327567",
+    "company_name": "Palo Alto Networks Inc",
+    "ticker": "PANW"
+  },
+  {
+    "cik": "1045810",
+    "company_name": "NVIDIA CORP",
+    "ticker": "NVDA"
+  },
+  {
+    "cik": "2488",
+    "company_name": "ADVANCED MICRO DEVICES INC",
+    "ticker": "AMD"
+  },
+  {
+    "cik": "1730168",
+    "company_name": "Broadcom Inc.",
+    "ticker": "AVGO"
+  },
+  {
+    "cik": "804328",
+    "company_name": "QUALCOMM INC/DE",
+    "ticker": "QCOM"
+  },
+  {
+    "cik": "723125",
+    "company_name": "MICRON TECHNOLOGY INC",
+    "ticker": "MU"
+  },
+  {
+    "cik": "1835632",
+    "company_name": "Marvell Technology, Inc.",
+    "ticker": "MRVL"
+  },
+  {
+    "cik": "50863",
+    "company_name": "INTEL CORP",
+    "ticker": "INTC"
+  },
+  {
+    "cik": "1838359",
+    "company_name": "Rigetti Computing, Inc.",
+    "ticker": "RGTI"
+  },
+  {
+    "cik": "1824920",
+    "company_name": "IonQ, Inc.",
+    "ticker": "IONQ"
+  },
+  {
+    "cik": "1907982",
+    "company_name": "D-Wave Quantum Inc.",
+    "ticker": "QBTS"
+  },
+  {
+    "cik": "1819994",
+    "company_name": "Rocket Lab Corp",
+    "ticker": "RKLB"
+  },
+  {
+    "cik": "1780312",
+    "company_name": "AST SpaceMobile, Inc.",
+    "ticker": "ASTS"
+  },
+  {
+    "cik": "1824502",
+    "company_name": "Archer Aviation Inc.",
+    "ticker": "ACHR"
+  },
+  {
+    "cik": "1819848",
+    "company_name": "Joby Aviation, Inc.",
+    "ticker": "JOBY"
+  },
+  {
+    "cik": "1874178",
+    "company_name": "Rivian Automotive, Inc. / DE",
+    "ticker": "RIVN"
+  },
+  {
+    "cik": "1811210",
+    "company_name": "Lucid Group, Inc.",
+    "ticker": "LCID"
+  },
+  {
+    "cik": "1093691",
+    "company_name": "PLUG POWER INC",
+    "ticker": "PLUG"
+  }
+]

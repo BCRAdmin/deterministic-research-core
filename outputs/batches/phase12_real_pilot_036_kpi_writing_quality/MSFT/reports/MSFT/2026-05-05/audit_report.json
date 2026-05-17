@@ -1,0 +1,178 @@
+{
+  "has_blocking_errors": false,
+  "issues": [],
+  "numeric_claims": [
+    {
+      "line_number": 9,
+      "nearby_text": "- Fundamental basis: validated revenue scale is `$311.90B`.",
+      "normalized_value": 311900000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$311.90B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 10,
+      "nearby_text": "- Cash-conversion basis: validated free cash flow is `$67.65B`.",
+      "normalized_value": 67650000000.00001,
+      "period_hint": "unknown",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$67.65B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 11,
+      "nearby_text": "- Valuation constraint: validated EV/Sales is `9.59x`.",
+      "normalized_value": 9.59,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "9.59x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 15,
+      "nearby_text": "- Report as-of date: `2026-05-05`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 16,
+      "nearby_text": "- Price basis: `2026-05-05` close via `csv_price_provider`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": "close",
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 28,
+      "nearby_text": "| SBC / Revenue | 3.9% |",
+      "normalized_value": 3.9,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "3.9%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 36,
+      "nearby_text": "- **MSFT_CLAIM_003**: MSFT has validated revenue TTM of $311.90B, so the business discussion should focus on mega-cap platform growth, AI/cloud investment, margin durability and regulatory risk rather than generic scale language.",
+      "normalized_value": 311900000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$311.90B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 40,
+      "nearby_text": "- **MSFT_CLAIM_004**: Validated FCF TTM is $67.65B, making cash conversion a direct rating input for MSFT.",
+      "normalized_value": 67650000000.00001,
+      "period_hint": "ttm",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$67.65B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 44,
+      "nearby_text": "- **MSFT_CLAIM_005**: SBC/Revenue is 3.9%, which should be interpreted through mega-cap platform, capex and capital-return context rather than a one-size-fits-all compensation lens.",
+      "normalized_value": 3.9,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "3.9%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 48,
+      "nearby_text": "- **MSFT_CLAIM_006**: Balance-sheet flexibility is anchored in validated net cash of $70.46B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+      "normalized_value": 70460000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "net_cash",
+      "raw_text": "$70.46B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 53,
+      "nearby_text": "- **MSFT_CLAIM_007**: Valuation is framed by validated EV/Sales of 9.59x; this directly limits how aggressive the Hold stance should be.",
+      "normalized_value": 9.59,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "9.59x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 57,
+      "nearby_text": "- **MSFT_CLAIM_008**: For MSFT, validated P/FCF is 45.28x and should be read against platform growth, FCF durability and capex intensity; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+      "normalized_value": 45.28,
+      "period_hint": "unknown",
+      "possible_metric": "price_to_fcf",
+      "raw_text": "45.28x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 71,
+      "nearby_text": "- **MSFT_CLAIM_011**: The bull case is that platform scale, ecosystem monetization and operating leverage combines with revenue of $311.90B to support the allowed upside rating path when cash conversion quality also holds.",
+      "normalized_value": 311900000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$311.90B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 80,
+      "nearby_text": "- **MSFT_CLAIM_013**: The bear case is that regulatory pressure, capex intensity, growth deceleration or multiple compression overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 3.9% or source-quality issues persist.",
+      "normalized_value": 3.9,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "3.9%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 91,
+      "nearby_text": "- **MSFT_CLAIM_016**: Source disagreement or current-period mismatch can reduce conviction for MSFT, especially where revenue $311.90B is a key valuation denominator.",
+      "normalized_value": 311900000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$311.90B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 113,
+      "nearby_text": "- Why this rating? `Hold` balances validated revenue of `$311.90B` against valuation and technical timing.",
+      "normalized_value": 311900000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$311.90B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 114,
+      "nearby_text": "- Cash conversion: validated FCF is `$67.65B` and determines whether growth converts into equity value.",
+      "normalized_value": 67650000000.00001,
+      "period_hint": "unknown",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$67.65B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 115,
+      "nearby_text": "- Why not more bullish? EV/Sales `9.59x` limits new-money urgency unless current-period KPIs accelerate.",
+      "normalized_value": 9.59,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "9.59x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 116,
+      "nearby_text": "- Additional valuation/technical constraint: P/FCF `45.28x` and RSI `52.59` argue against chasing without a better setup.",
+      "normalized_value": 45.28,
+      "period_hint": "unknown",
+      "possible_metric": "price_to_fcf",
+      "raw_text": "45.28x",
+      "unit": "multiple"
+    }
+  ],
+  "ticker": "MSFT"
+}

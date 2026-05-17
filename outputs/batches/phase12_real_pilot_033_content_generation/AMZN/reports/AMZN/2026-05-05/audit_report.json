@@ -1,0 +1,54 @@
+{
+  "has_blocking_errors": true,
+  "issues": [
+    {
+      "code": "FINANCIAL_SANITY_FCF_MARGIN_ANOMALY",
+      "line_number": null,
+      "message": "FCF margin above 40% for this company profile indicates a likely FCF or period reconciliation anomaly.",
+      "metric": "fcf_margin_ttm",
+      "raw_text": null,
+      "reported": 0.502078078078078,
+      "severity": "error",
+      "validated": null
+    }
+  ],
+  "numeric_claims": [
+    {
+      "line_number": 8,
+      "nearby_text": "- Report as-of date: `2026-05-05`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 9,
+      "nearby_text": "- Price basis: `2026-05-05` close via `csv_price_provider`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 21,
+      "nearby_text": "| SBC / Revenue | 9.2% |",
+      "normalized_value": 9.2,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "9.2%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 109,
+      "nearby_text": "Initial position: 20-30%.",
+      "normalized_value": 30.0,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "30%",
+      "unit": "percent"
+    }
+  ],
+  "ticker": "AMZN"
+}

@@ -1,0 +1,15 @@
+{
+  "source_id": "MSFT_IR_Q3_FY2026_RELEASE",
+  "source_type": "earnings_release",
+  "url": "https://www.microsoft.com/en-us/investor/earnings",
+  "retrieved_at": "2026-05-06",
+  "period": "Q3_FY2026",
+  "text": "",
+  "metrics": [
+    {"metric_name": "current_q_revenue", "value": 82886000000, "unit": "usd", "period": "Q3_FY2026", "fiscal_year": 2026, "fiscal_period": "Q3", "period_bucket": "quarterly", "basis": "gaap", "statement_type": "income_statement", "statement": "Microsoft reported FY2026 Q3 revenue of $82.886 billion."},
+    {"metric_name": "microsoft_cloud_revenue", "value": 54500000000, "unit": "usd", "period": "Q3_FY2026", "fiscal_year": 2026, "fiscal_period": "Q3", "period_bucket": "quarterly", "basis": "company_defined", "statement_type": "income_statement", "statement": "Microsoft reported Microsoft Cloud revenue of $54.5 billion."},
+    {"metric_name": "microsoft_cloud_growth", "value": 0.29, "unit": "ratio", "period": "Q3_FY2026", "fiscal_year": 2026, "fiscal_period": "Q3", "period_bucket": "quarterly", "basis": "company_defined", "statement_type": "income_statement", "statement": "Microsoft reported Microsoft Cloud revenue growth of 29%."},
+    {"metric_name": "azure_growth", "value": 0.40, "unit": "ratio", "period": "Q3_FY2026", "fiscal_year": 2026, "fiscal_period": "Q3", "period_bucket": "quarterly", "basis": "company_defined", "statement_type": "income_statement", "statement": "Microsoft reported Azure and other cloud services growth of 40%."},
+    {"metric_name": "ai_run_rate", "value": 37000000000, "unit": "usd", "period": "Q3_FY2026", "fiscal_year": 2026, "fiscal_period": "Q3", "period_bucket": "annualized", "basis": "company_defined", "statement_type": "income_statement", "statement": "Microsoft disclosed AI business annual revenue run rate above $37 billion."}
+  ]
+}

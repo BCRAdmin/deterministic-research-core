@@ -1,0 +1,54 @@
+{
+  "has_blocking_errors": true,
+  "issues": [
+    {
+      "code": "FINANCIAL_SANITY_SBC_REVENUE_ANOMALY",
+      "line_number": null,
+      "message": "SBC/Revenue above 30% for a mega-cap or non-SaaS profile requires manual reconciliation.",
+      "metric": "sbc_to_revenue",
+      "raw_text": null,
+      "reported": 0.5269627789437615,
+      "severity": "error",
+      "validated": null
+    }
+  ],
+  "numeric_claims": [
+    {
+      "line_number": 4,
+      "nearby_text": "- Report as-of date: `2026-05-05`",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 5,
+      "nearby_text": "- Price basis: `183.98 USD` close from `2026-05-05` via `csv_price_provider`",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 5,
+      "nearby_text": "- Price basis: `183.98 USD` close from `2026-05-05` via `csv_price_provider`",
+      "normalized_value": 183.98,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "183.98 USD",
+      "unit": "usd"
+    },
+    {
+      "line_number": 18,
+      "nearby_text": "| SBC / Revenue | 52.7% |",
+      "normalized_value": 52.7,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "52.7%",
+      "unit": "percent"
+    }
+  ],
+  "ticker": "PANW"
+}

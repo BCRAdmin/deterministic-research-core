@@ -1,0 +1,131 @@
+{
+  "batch_id": "guardrail_coverage_batch_004_ir_coverage",
+  "manual_review_count": 22,
+  "records": [
+    {
+      "category": "evidence/current-period limitation",
+      "count": 22,
+      "operating_interpretation": "Keep internal/manual until direct current-period evidence or explicit no-guidance evidence is stronger.",
+      "tickers": [
+        "ACHR",
+        "AMD",
+        "AMZN",
+        "ASTS",
+        "CRWD",
+        "INTC",
+        "IONQ",
+        "JOBY",
+        "LCID",
+        "MDB",
+        "MRVL",
+        "MU",
+        "NET",
+        "NOW",
+        "NVDA",
+        "PANW",
+        "PLUG",
+        "QBTS",
+        "RGTI",
+        "RIVN",
+        "RKLB",
+        "ZS"
+      ]
+    },
+    {
+      "category": "valuation anomaly",
+      "count": 12,
+      "operating_interpretation": "Manual review is expected; do not resolve by guard loosening.",
+      "tickers": [
+        "ACHR",
+        "AMD",
+        "AMZN",
+        "ASTS",
+        "CRWD",
+        "IONQ",
+        "JOBY",
+        "MU",
+        "NVDA",
+        "QBTS",
+        "RGTI",
+        "RKLB"
+      ]
+    },
+    {
+      "category": "FCF support",
+      "count": 6,
+      "operating_interpretation": "Require explicit FCF/OCF support before stronger public/passed interpretation.",
+      "tickers": [
+        "AMD",
+        "AMZN",
+        "CRWD",
+        "MU",
+        "NVDA",
+        "PANW"
+      ]
+    },
+    {
+      "category": "Deep-Tech / Early-Commercial",
+      "count": 6,
+      "operating_interpretation": "Manual review is desired for speculative or capital-intensive profiles.",
+      "tickers": [
+        "ACHR",
+        "ASTS",
+        "JOBY",
+        "QBTS",
+        "RGTI",
+        "RKLB"
+      ]
+    },
+    {
+      "category": "Semiconductor / cyclicality",
+      "count": 5,
+      "operating_interpretation": "Review cyclicality, guidance, inventory/capex and AI-cycle evidence.",
+      "tickers": [
+        "AMD",
+        "INTC",
+        "MRVL",
+        "MU",
+        "NVDA"
+      ]
+    },
+    {
+      "category": "turnaround/distressed",
+      "count": 3,
+      "operating_interpretation": "Treat as internal risk notes; public promotion needs stronger operator review.",
+      "tickers": [
+        "LCID",
+        "PLUG",
+        "RIVN"
+      ]
+    },
+    {
+      "category": "artifact/evidence/reconciliation warning",
+      "count": 22,
+      "operating_interpretation": "Resolve stale/reconciliation/source-frame artifacts before promotion.",
+      "tickers": [
+        "ACHR",
+        "AMD",
+        "AMZN",
+        "ASTS",
+        "CRWD",
+        "INTC",
+        "IONQ",
+        "JOBY",
+        "LCID",
+        "MDB",
+        "MRVL",
+        "MU",
+        "NET",
+        "NOW",
+        "NVDA",
+        "PANW",
+        "PLUG",
+        "QBTS",
+        "RGTI",
+        "RIVN",
+        "RKLB",
+        "ZS"
+      ]
+    }
+  ]
+}

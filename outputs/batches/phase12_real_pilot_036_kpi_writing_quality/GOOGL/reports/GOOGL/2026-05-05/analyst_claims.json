@@ -1,0 +1,767 @@
+[
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "GOOGL enters the report with a validated Hold rating corridor at a frozen close of 388.43; the action should reflect Search, YouTube, Google Cloud growth, AI monetization and capex intensity, valuation discipline and the current technical setup.",
+    "claim_id": "GOOGL_CLAIM_001",
+    "claim_text": "GOOGL enters the report with a validated Hold rating corridor at a frozen close of 388.43; the action should reflect Search, YouTube, Google Cloud growth, AI monetization and capex intensity, valuation discipline and the current technical setup.",
+    "claim_type": "price_data",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "GOOGL_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_PRICE",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "GOOGL_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "The committee text should stay inside the Hold action frame.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Executive Summary",
+    "source_ids": [
+      "GOOGL_YAHOO_CHART_PRICE_CSV",
+      "GOOGL_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "GOOGL Q1 revenue of $109.90B and Google Cloud revenue of $20.00B at 63.0% growth show the current-period growth engine is real, but Cloud and Search strength still need to be balanced against AI capex and valuation before moving beyond Hold.",
+    "claim_id": "GOOGL_CLAIM_002",
+    "claim_text": "GOOGL Q1 revenue of $109.90B and Google Cloud revenue of $20.00B at 63.0% growth show the current-period growth engine is real, but Cloud and Search strength still need to be balanced against AI capex and valuation before moving beyond Hold.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "Cloud acceleration can be offset by depreciation and AI infrastructure spending.",
+    "evidence_ids": [
+      "GOOGL_GOOGL_IR_Q1_2026_RELEASE_google_cloud_revenue_Q1_2026",
+      "GOOGL_GOOGL_IR_Q1_2026_RELEASE_google_cloud_growth_Q1_2026"
+    ],
+    "evidence_metrics": [
+      "current_q_revenue",
+      "google_cloud_revenue",
+      "google_cloud_growth"
+    ],
+    "importance": "high",
+    "investment_implication": "Require Cloud plus FCF/capex context before publishing a bullish upgrade.",
+    "metric_refs": [
+      "current_q_revenue",
+      "google_cloud_revenue",
+      "google_cloud_growth"
+    ],
+    "section": "Business & Segment Context",
+    "source_ids": [
+      "GOOGL_IR_Q1_2026_RELEASE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "GOOGL's operating margin of 36.1%, capex of $35.67B and TTM FCF of $64.43B make AI capex the main cash-conversion debate, so Hold is more disciplined than adding aggressively into an overbought chart.",
+    "claim_id": "GOOGL_CLAIM_003",
+    "claim_text": "GOOGL's operating margin of 36.1%, capex of $35.67B and TTM FCF of $64.43B make AI capex the main cash-conversion debate, so Hold is more disciplined than adding aggressively into an overbought chart.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "One-off gains or investment income should not be treated as recurring operating quality.",
+    "evidence_ids": [
+      "GOOGL_GOOGL_IR_Q1_2026_RELEASE_operating_margin_Q1_2026",
+      "GOOGL_SEC_COMPANYFACTS_1652044_CAPEX",
+      "GOOGL_SEC_capex_FY2025_FY_0001652044-26-000018",
+      "GOOGL_SEC_capex_FY2026_Q1_0001652044-26-000048",
+      "GOOGL_SEC_capex_FY2025_Q2_0001652044-25-000062",
+      "GOOGL_SEC_capex_FY2025_Q3_0001652044-25-000091",
+      "GOOGL_GOOGL_IR_Q1_2026_RELEASE_capex_Q1_2026",
+      "GOOGL_SEC_COMPANYFACTS_1652044_CASHFLOW",
+      "GOOGL_SEC_COMPANYFACTS_1652044_FCF",
+      "GOOGL_SEC_COMPANYFACTS_1652044_FREE_CASH_FLOW",
+      "GOOGL_SEC_COMPANYFACTS_1652044_FREE_CASH_FLOW_TTM",
+      "GOOGL_SEC_COMPANYFACTS_1652044_FREE_CASHFLOW",
+      "GOOGL_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "GOOGL_GOOGL_IR_Q1_2026_RELEASE_free_cash_flow_TTM_Q1_2026"
+    ],
+    "evidence_metrics": [
+      "operating_margin",
+      "capex",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "high",
+    "investment_implication": "Hold remains more disciplined than Buy until FCF conversion and capex pressure are clearer.",
+    "metric_refs": [
+      "operating_margin",
+      "capex",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "GOOGL_IR_Q1_2026_RELEASE",
+      "GOOGL_SEC_COMPANYFACTS_1652044",
+      "SEC_0001652044_0001652044-26-000018",
+      "SEC_0001652044_0001652044-26-000048",
+      "SEC_0001652044_0001652044-25-000062",
+      "SEC_0001652044_0001652044-25-000091",
+      "SEC_0001652044_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "GOOGL's Other Income gain of $37.70B is a current-period quality caveat: it can lift reported earnings, but it should not be capitalized as recurring Search or Cloud economics.",
+    "claim_id": "GOOGL_CLAIM_004",
+    "claim_text": "GOOGL's Other Income gain of $37.70B is a current-period quality caveat: it can lift reported earnings, but it should not be capitalized as recurring Search or Cloud economics.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "Investment gains can support balance-sheet flexibility, but they are not operating margin.",
+    "evidence_ids": [
+      "GOOGL_GOOGL_IR_Q1_2026_RELEASE_other_income_gain_Q1_2026"
+    ],
+    "evidence_metrics": [
+      "other_income_gain"
+    ],
+    "importance": "high",
+    "investment_implication": "Keep rating language anchored in operating cash generation and capex, not one-off gains.",
+    "metric_refs": [
+      "other_income_gain"
+    ],
+    "section": "Key Risks",
+    "source_ids": [
+      "GOOGL_IR_Q1_2026_RELEASE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "GOOGL has validated revenue TTM of $398.90B, so the business discussion should focus on Search, YouTube, Google Cloud growth, AI monetization and capex intensity rather than generic scale language.",
+    "claim_id": "GOOGL_CLAIM_005",
+    "claim_text": "GOOGL has validated revenue TTM of $398.90B, so the business discussion should focus on Search, YouTube, Google Cloud growth, AI monetization and capex intensity rather than generic scale language.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "Revenue scale alone does not prove attractive returns or valuation discipline.",
+    "evidence_ids": [
+      "GOOGL_SEC_COMPANYFACTS_1652044_REVENUE",
+      "GOOGL_SEC_COMPANYFACTS_1652044_REVENUE_TTM",
+      "GOOGL_SEC_COMPANYFACTS_1652044_SALES",
+      "GOOGL_SEC_COMPANYFACTS_1652044_UMSATZ",
+      "GOOGL_SEC_revenue_FY2025_FY_0001652044-26-000018",
+      "GOOGL_SEC_revenue_FY2025_Q2_0001652044-25-000062",
+      "GOOGL_SEC_revenue_FY2025_Q3_0001652044-25-000091",
+      "GOOGL_SEC_revenue_FY2026_Q1_0001652044-26-000048",
+      "GOOGL_GOOGL_IR_Q1_2026_RELEASE_revenue_Q1_2026"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm"
+    ],
+    "importance": "high",
+    "investment_implication": "Use revenue evidence as context, not as a standalone buy signal.",
+    "metric_refs": [
+      "revenue_ttm"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "GOOGL_SEC_COMPANYFACTS_1652044",
+      "SEC_0001652044_0001652044-26-000018",
+      "SEC_0001652044_0001652044-25-000062",
+      "SEC_0001652044_0001652044-25-000091",
+      "SEC_0001652044_0001652044-26-000048",
+      "GOOGL_IR_Q1_2026_RELEASE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Validated FCF TTM is $64.43B, making cash conversion a direct rating input for GOOGL.",
+    "claim_id": "GOOGL_CLAIM_006",
+    "claim_text": "Validated FCF TTM is $64.43B, making cash conversion a direct rating input for GOOGL.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "FCF may be company-defined or period-sensitive and can require reconciliation review.",
+    "evidence_ids": [
+      "GOOGL_SEC_COMPANYFACTS_1652044_CASHFLOW",
+      "GOOGL_SEC_COMPANYFACTS_1652044_FCF",
+      "GOOGL_SEC_COMPANYFACTS_1652044_FREE_CASH_FLOW",
+      "GOOGL_SEC_COMPANYFACTS_1652044_FREE_CASH_FLOW_TTM",
+      "GOOGL_SEC_COMPANYFACTS_1652044_FREE_CASHFLOW",
+      "GOOGL_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "GOOGL_GOOGL_IR_Q1_2026_RELEASE_free_cash_flow_TTM_Q1_2026"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm"
+    ],
+    "importance": "high",
+    "investment_implication": "FCF quality supports the thesis only if no sanity guard blocks the report.",
+    "metric_refs": [
+      "free_cash_flow_ttm"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "GOOGL_SEC_COMPANYFACTS_1652044",
+      "SEC_0001652044_DERIVED_FCF",
+      "GOOGL_IR_Q1_2026_RELEASE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "SBC/Revenue is 5.7%, which should be interpreted through mega-cap ads/cloud margin and regulatory context rather than a one-size-fits-all compensation lens.",
+    "claim_id": "GOOGL_CLAIM_007",
+    "claim_text": "SBC/Revenue is 5.7%, which should be interpreted through mega-cap ads/cloud margin and regulatory context rather than a one-size-fits-all compensation lens.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": "Sector and lifecycle matter, but persistent dilution can still reduce equity quality.",
+    "evidence_ids": [
+      "GOOGL_SEC_COMPANYFACTS_1652044_SBC_TO_REVENUE",
+      "GOOGL_SEC_DERIVED_SBC_TO_REVENUE"
+    ],
+    "evidence_metrics": [
+      "sbc_to_revenue"
+    ],
+    "importance": "medium",
+    "investment_implication": "Treat SBC as a risk modifier rather than an automatic rating override.",
+    "metric_refs": [
+      "sbc_to_revenue"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "GOOGL_SEC_COMPANYFACTS_1652044",
+      "SEC_0001652044_DERIVED_SBC_TO_REVENUE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Balance-sheet flexibility is anchored in validated net cash of $112.04B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+    "claim_id": "GOOGL_CLAIM_008",
+    "claim_text": "Balance-sheet flexibility is anchored in validated net cash of $112.04B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "GOOGL_SEC_COMPANYFACTS_1652044_CASH",
+      "GOOGL_SEC_COMPANYFACTS_1652044_CASH_AND_EQUIVALENTS",
+      "GOOGL_SEC_COMPANYFACTS_1652044_CASH_AND_INVESTMENTS",
+      "GOOGL_SEC_COMPANYFACTS_1652044_NET_CASH",
+      "GOOGL_SEC_cash_and_equivalents_FY2025_FY_0001652044-26-000018",
+      "GOOGL_SEC_cash_and_equivalents_FY2026_Q1_0001652044-26-000048",
+      "GOOGL_SEC_COMPANYFACTS_1652044_DEBT",
+      "GOOGL_SEC_COMPANYFACTS_1652044_NET_DEBT",
+      "GOOGL_SEC_COMPANYFACTS_1652044_TOTAL_DEBT"
+    ],
+    "evidence_metrics": [
+      "net_cash",
+      "total_debt"
+    ],
+    "importance": "medium",
+    "investment_implication": "A stronger liquidity position can widen the acceptable holding corridor.",
+    "metric_refs": [
+      "net_cash",
+      "total_debt"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "GOOGL_SEC_COMPANYFACTS_1652044",
+      "SEC_0001652044_0001652044-26-000018",
+      "SEC_0001652044_0001652044-26-000048"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Valuation is framed by validated EV/Sales of 11.64x; this directly limits how aggressive the Hold stance should be.",
+    "claim_id": "GOOGL_CLAIM_009",
+    "claim_text": "Valuation is framed by validated EV/Sales of 11.64x; this directly limits how aggressive the Hold stance should be.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": "Packet-derived valuation can still be blocked by sanity guards when source reconciliation is suspect.",
+    "evidence_ids": [
+      "GOOGL_SEC_COMPANYFACTS_1652044_REVENUE",
+      "GOOGL_SEC_COMPANYFACTS_1652044_REVENUE_TTM",
+      "GOOGL_SEC_COMPANYFACTS_1652044_SALES",
+      "GOOGL_SEC_COMPANYFACTS_1652044_UMSATZ",
+      "GOOGL_SEC_revenue_FY2025_FY_0001652044-26-000018",
+      "GOOGL_SEC_revenue_FY2025_Q2_0001652044-25-000062",
+      "GOOGL_SEC_revenue_FY2025_Q3_0001652044-25-000091",
+      "GOOGL_SEC_revenue_FY2026_Q1_0001652044-26-000048",
+      "GOOGL_GOOGL_IR_Q1_2026_RELEASE_revenue_Q1_2026",
+      "GOOGL_SEC_COMPANYFACTS_1652044_CASHFLOW",
+      "GOOGL_SEC_COMPANYFACTS_1652044_FCF",
+      "GOOGL_SEC_COMPANYFACTS_1652044_FREE_CASH_FLOW",
+      "GOOGL_SEC_COMPANYFACTS_1652044_FREE_CASH_FLOW_TTM",
+      "GOOGL_SEC_COMPANYFACTS_1652044_FREE_CASHFLOW",
+      "GOOGL_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "GOOGL_GOOGL_IR_Q1_2026_RELEASE_free_cash_flow_TTM_Q1_2026",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_PRICE",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "GOOGL_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm",
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Do not upgrade rating solely from valuation language if audit has financial-sanity errors.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm",
+      "close"
+    ],
+    "section": "Valuation / Multiples",
+    "source_ids": [
+      "GOOGL_SEC_COMPANYFACTS_1652044",
+      "SEC_0001652044_0001652044-26-000018",
+      "SEC_0001652044_0001652044-25-000062",
+      "SEC_0001652044_0001652044-25-000091",
+      "SEC_0001652044_0001652044-26-000048",
+      "GOOGL_IR_Q1_2026_RELEASE",
+      "SEC_0001652044_DERIVED_FCF",
+      "GOOGL_YAHOO_CHART_PRICE_CSV",
+      "GOOGL_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "For GOOGL, validated P/FCF is 73.78x and should be read against ads/cloud growth, AI capex burden and cash-flow durability; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+    "claim_id": "GOOGL_CLAIM_010",
+    "claim_text": "For GOOGL, validated P/FCF is 73.78x and should be read against ads/cloud growth, AI capex burden and cash-flow durability; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "GOOGL_SEC_COMPANYFACTS_1652044_CASHFLOW",
+      "GOOGL_SEC_COMPANYFACTS_1652044_FCF",
+      "GOOGL_SEC_COMPANYFACTS_1652044_FREE_CASH_FLOW",
+      "GOOGL_SEC_COMPANYFACTS_1652044_FREE_CASH_FLOW_TTM",
+      "GOOGL_SEC_COMPANYFACTS_1652044_FREE_CASHFLOW",
+      "GOOGL_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "GOOGL_GOOGL_IR_Q1_2026_RELEASE_free_cash_flow_TTM_Q1_2026",
+      "GOOGL_SEC_COMPANYFACTS_1652044_REVENUE",
+      "GOOGL_SEC_COMPANYFACTS_1652044_REVENUE_TTM",
+      "GOOGL_SEC_COMPANYFACTS_1652044_SALES",
+      "GOOGL_SEC_COMPANYFACTS_1652044_UMSATZ",
+      "GOOGL_SEC_revenue_FY2025_FY_0001652044-26-000018",
+      "GOOGL_SEC_revenue_FY2025_Q2_0001652044-25-000062",
+      "GOOGL_SEC_revenue_FY2025_Q3_0001652044-25-000091",
+      "GOOGL_SEC_revenue_FY2026_Q1_0001652044-26-000048",
+      "GOOGL_GOOGL_IR_Q1_2026_RELEASE_revenue_Q1_2026"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm",
+      "revenue_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "The rating should stay conservative when multiples are expensive, missing or flagged.",
+    "metric_refs": [
+      "free_cash_flow_ttm",
+      "revenue_ttm"
+    ],
+    "section": "Valuation / Multiples",
+    "source_ids": [
+      "GOOGL_SEC_COMPANYFACTS_1652044",
+      "SEC_0001652044_DERIVED_FCF",
+      "GOOGL_IR_Q1_2026_RELEASE",
+      "SEC_0001652044_0001652044-26-000018",
+      "SEC_0001652044_0001652044-25-000062",
+      "SEC_0001652044_0001652044-25-000091",
+      "SEC_0001652044_0001652044-26-000048"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The technical setup uses validated levels: close 388.43, 50-SMA 318.42, 200-SMA 283.15 and RSI 81.33, creating timing risk if price cannot reclaim trend support.",
+    "claim_id": "GOOGL_CLAIM_011",
+    "claim_text": "The technical setup uses validated levels: close 388.43, 50-SMA 318.42, 200-SMA 283.15 and RSI 81.33, creating timing risk if price cannot reclaim trend support.",
+    "claim_type": "technical_metric",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "GOOGL_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_PRICE",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "GOOGL_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Timing language should follow the validated technical trend state.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Technical Setup",
+    "source_ids": [
+      "GOOGL_YAHOO_CHART_PRICE_CSV",
+      "GOOGL_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "GOOGL's close of 388.43 and moving-average position imply an overbought setup that favors patience or tactical trimming over immediate full accumulation, so entries should be staged, delayed or trimmed according to business evidence and risk/reward.",
+    "claim_id": "GOOGL_CLAIM_012",
+    "claim_text": "GOOGL's close of 388.43 and moving-average position imply an overbought setup that favors patience or tactical trimming over immediate full accumulation, so entries should be staged, delayed or trimmed according to business evidence and risk/reward.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": "Technical weakness can be temporary if fundamentals and catalysts improve.",
+    "evidence_ids": [
+      "GOOGL_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_PRICE",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "GOOGL_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Use staged entries or trims when technical and fundamental signals diverge.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Technical Setup",
+    "source_ids": [
+      "GOOGL_YAHOO_CHART_PRICE_CSV",
+      "GOOGL_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The bull case is that Search monetization, Cloud growth and AI product integration combines with revenue of $398.90B to support the allowed upside rating path when cash conversion quality also holds.",
+    "claim_id": "GOOGL_CLAIM_013",
+    "claim_text": "The bull case is that Search monetization, Cloud growth and AI product integration combines with revenue of $398.90B to support the allowed upside rating path when cash conversion quality also holds.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": "Strong scale does not resolve valuation or reconciliation anomalies.",
+    "evidence_ids": [
+      "GOOGL_SEC_COMPANYFACTS_1652044_REVENUE",
+      "GOOGL_SEC_COMPANYFACTS_1652044_REVENUE_TTM",
+      "GOOGL_SEC_COMPANYFACTS_1652044_SALES",
+      "GOOGL_SEC_COMPANYFACTS_1652044_UMSATZ",
+      "GOOGL_SEC_revenue_FY2025_FY_0001652044-26-000018",
+      "GOOGL_SEC_revenue_FY2025_Q2_0001652044-25-000062",
+      "GOOGL_SEC_revenue_FY2025_Q3_0001652044-25-000091",
+      "GOOGL_SEC_revenue_FY2026_Q1_0001652044-26-000048",
+      "GOOGL_GOOGL_IR_Q1_2026_RELEASE_revenue_Q1_2026",
+      "GOOGL_SEC_COMPANYFACTS_1652044_CASHFLOW",
+      "GOOGL_SEC_COMPANYFACTS_1652044_FCF",
+      "GOOGL_SEC_COMPANYFACTS_1652044_FREE_CASH_FLOW",
+      "GOOGL_SEC_COMPANYFACTS_1652044_FREE_CASH_FLOW_TTM",
+      "GOOGL_SEC_COMPANYFACTS_1652044_FREE_CASHFLOW",
+      "GOOGL_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "GOOGL_GOOGL_IR_Q1_2026_RELEASE_free_cash_flow_TTM_Q1_2026"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Bullish language must remain bounded by DecisionPacket permissions.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Bull Case",
+    "source_ids": [
+      "GOOGL_SEC_COMPANYFACTS_1652044",
+      "SEC_0001652044_0001652044-26-000018",
+      "SEC_0001652044_0001652044-25-000062",
+      "SEC_0001652044_0001652044-25-000091",
+      "SEC_0001652044_0001652044-26-000048",
+      "GOOGL_IR_Q1_2026_RELEASE",
+      "SEC_0001652044_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "A constructive technical bull path for GOOGL requires confirmation beyond the current RSI of 81.33 and moving-average setup.",
+    "claim_id": "GOOGL_CLAIM_014",
+    "claim_text": "A constructive technical bull path for GOOGL requires confirmation beyond the current RSI of 81.33 and moving-average setup.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "GOOGL_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_PRICE",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "GOOGL_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Add or accumulate language should require confirmation when the preferred rating is not Buy.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Bull Case",
+    "source_ids": [
+      "GOOGL_YAHOO_CHART_PRICE_CSV",
+      "GOOGL_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The bear case is that AI capex intensity, regulatory pressure or ad-growth slowdown overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 5.7% or source-quality issues persist.",
+    "claim_id": "GOOGL_CLAIM_015",
+    "claim_text": "The bear case is that AI capex intensity, regulatory pressure or ad-growth slowdown overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 5.7% or source-quality issues persist.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "GOOGL_SEC_COMPANYFACTS_1652044_CASHFLOW",
+      "GOOGL_SEC_COMPANYFACTS_1652044_FCF",
+      "GOOGL_SEC_COMPANYFACTS_1652044_FREE_CASH_FLOW",
+      "GOOGL_SEC_COMPANYFACTS_1652044_FREE_CASH_FLOW_TTM",
+      "GOOGL_SEC_COMPANYFACTS_1652044_FREE_CASHFLOW",
+      "GOOGL_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "GOOGL_GOOGL_IR_Q1_2026_RELEASE_free_cash_flow_TTM_Q1_2026",
+      "GOOGL_SEC_COMPANYFACTS_1652044_SBC_TO_REVENUE",
+      "GOOGL_SEC_DERIVED_SBC_TO_REVENUE"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm",
+      "sbc_to_revenue"
+    ],
+    "importance": "high",
+    "investment_implication": "Manual review remains appropriate when financial-sanity guards fire.",
+    "metric_refs": [
+      "free_cash_flow_ttm",
+      "sbc_to_revenue"
+    ],
+    "section": "Bear Case",
+    "source_ids": [
+      "GOOGL_SEC_COMPANYFACTS_1652044",
+      "SEC_0001652044_DERIVED_FCF",
+      "GOOGL_IR_Q1_2026_RELEASE",
+      "SEC_0001652044_DERIVED_SBC_TO_REVENUE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Valuation risk for GOOGL is a discipline constraint; expensive or missing EV/Sales and P/FCF context should not be translated into a blocked rating.",
+    "claim_id": "GOOGL_CLAIM_016",
+    "claim_text": "Valuation risk for GOOGL is a discipline constraint; expensive or missing EV/Sales and P/FCF context should not be translated into a blocked rating.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "GOOGL_SEC_COMPANYFACTS_1652044_REVENUE",
+      "GOOGL_SEC_COMPANYFACTS_1652044_REVENUE_TTM",
+      "GOOGL_SEC_COMPANYFACTS_1652044_SALES",
+      "GOOGL_SEC_COMPANYFACTS_1652044_UMSATZ",
+      "GOOGL_SEC_revenue_FY2025_FY_0001652044-26-000018",
+      "GOOGL_SEC_revenue_FY2025_Q2_0001652044-25-000062",
+      "GOOGL_SEC_revenue_FY2025_Q3_0001652044-25-000091",
+      "GOOGL_SEC_revenue_FY2026_Q1_0001652044-26-000048",
+      "GOOGL_GOOGL_IR_Q1_2026_RELEASE_revenue_Q1_2026",
+      "GOOGL_SEC_COMPANYFACTS_1652044_CASHFLOW",
+      "GOOGL_SEC_COMPANYFACTS_1652044_FCF",
+      "GOOGL_SEC_COMPANYFACTS_1652044_FREE_CASH_FLOW",
+      "GOOGL_SEC_COMPANYFACTS_1652044_FREE_CASH_FLOW_TTM",
+      "GOOGL_SEC_COMPANYFACTS_1652044_FREE_CASHFLOW",
+      "GOOGL_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "GOOGL_GOOGL_IR_Q1_2026_RELEASE_free_cash_flow_TTM_Q1_2026"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Avoid blocked Sell language when the DecisionPacket allows only trim or hold actions.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Bear Case",
+    "source_ids": [
+      "GOOGL_SEC_COMPANYFACTS_1652044",
+      "SEC_0001652044_0001652044-26-000018",
+      "SEC_0001652044_0001652044-25-000062",
+      "SEC_0001652044_0001652044-25-000091",
+      "SEC_0001652044_0001652044-26-000048",
+      "GOOGL_IR_Q1_2026_RELEASE",
+      "SEC_0001652044_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Validation and audit issues are part of the GOOGL research view; any blocking data issue should override a superficially complete report.",
+    "claim_id": "GOOGL_CLAIM_017",
+    "claim_text": "Validation and audit issues are part of the GOOGL research view; any blocking data issue should override a superficially complete report.",
+    "claim_type": "risk",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "GOOGL_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_PRICE",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "GOOGL_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Blocking audit errors should keep the report in manual review.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Key Risks",
+    "source_ids": [
+      "GOOGL_YAHOO_CHART_PRICE_CSV",
+      "GOOGL_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Source disagreement or current-period mismatch can reduce conviction for GOOGL, especially where revenue $398.90B is a key valuation denominator.",
+    "claim_id": "GOOGL_CLAIM_018",
+    "claim_text": "Source disagreement or current-period mismatch can reduce conviction for GOOGL, especially where revenue $398.90B is a key valuation denominator.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "GOOGL_SEC_COMPANYFACTS_1652044_REVENUE",
+      "GOOGL_SEC_COMPANYFACTS_1652044_REVENUE_TTM",
+      "GOOGL_SEC_COMPANYFACTS_1652044_SALES",
+      "GOOGL_SEC_COMPANYFACTS_1652044_UMSATZ",
+      "GOOGL_SEC_revenue_FY2025_FY_0001652044-26-000018",
+      "GOOGL_SEC_revenue_FY2025_Q2_0001652044-25-000062",
+      "GOOGL_SEC_revenue_FY2025_Q3_0001652044-25-000091",
+      "GOOGL_SEC_revenue_FY2026_Q1_0001652044-26-000048",
+      "GOOGL_GOOGL_IR_Q1_2026_RELEASE_revenue_Q1_2026",
+      "GOOGL_SEC_COMPANYFACTS_1652044_CASHFLOW",
+      "GOOGL_SEC_COMPANYFACTS_1652044_FCF",
+      "GOOGL_SEC_COMPANYFACTS_1652044_FREE_CASH_FLOW",
+      "GOOGL_SEC_COMPANYFACTS_1652044_FREE_CASH_FLOW_TTM",
+      "GOOGL_SEC_COMPANYFACTS_1652044_FREE_CASHFLOW",
+      "GOOGL_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "GOOGL_GOOGL_IR_Q1_2026_RELEASE_free_cash_flow_TTM_Q1_2026"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Source-quality limitations belong in the final action plan.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Key Risks",
+    "source_ids": [
+      "GOOGL_SEC_COMPANYFACTS_1652044",
+      "SEC_0001652044_0001652044-26-000018",
+      "SEC_0001652044_0001652044-25-000062",
+      "SEC_0001652044_0001652044-25-000091",
+      "SEC_0001652044_0001652044-26-000048",
+      "GOOGL_IR_Q1_2026_RELEASE",
+      "SEC_0001652044_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Catalysts for GOOGL at the validated close of 388.43 should be limited to confirmed packet inputs; missing earnings or forward company data should be stated as unavailable rather than converted into event-risk claims.",
+    "claim_id": "GOOGL_CLAIM_019",
+    "claim_text": "Catalysts for GOOGL at the validated close of 388.43 should be limited to confirmed packet inputs; missing earnings or forward company data should be stated as unavailable rather than converted into event-risk claims.",
+    "claim_type": "price_data",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "GOOGL_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_PRICE",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "GOOGL_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "If earnings are unavailable, the report should state that limitation rather than inventing timing.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Catalysts & Triggers",
+    "source_ids": [
+      "GOOGL_YAHOO_CHART_PRICE_CSV",
+      "GOOGL_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Trigger language should use validated levels such as 50-SMA 318.42 and 200-SMA 283.15, not unvalidated price targets.",
+    "claim_id": "GOOGL_CLAIM_020",
+    "claim_text": "Trigger language should use validated levels such as 50-SMA 318.42 and 200-SMA 283.15, not unvalidated price targets.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "GOOGL_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_PRICE",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "GOOGL_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Use confirmation language instead of hard price targets unless risk/reward levels are validated.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Catalysts & Triggers",
+    "source_ids": [
+      "GOOGL_YAHOO_CHART_PRICE_CSV",
+      "GOOGL_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "We rate GOOGL Hold at the validated close of 388.43 because Search, YouTube, Google Cloud growth, AI monetization and capex intensity supports the base case, while valuation and technical risk limit the case for a more bullish rating.",
+    "claim_id": "GOOGL_CLAIM_021",
+    "claim_text": "We rate GOOGL Hold at the validated close of 388.43 because Search, YouTube, Google Cloud growth, AI monetization and capex intensity supports the base case, while valuation and technical risk limit the case for a more bullish rating.",
+    "claim_type": "rating",
+    "confidence": "high",
+    "counterargument": "A more bullish rating needs cleaner valuation and technical confirmation; a more bearish rating needs evidence of deteriorating fundamentals or unresolved data errors.",
+    "evidence_ids": [
+      "GOOGL_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_PRICE",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "GOOGL_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "GOOGL_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Hold GOOGL; maintain core exposure but require better valuation, technical setup or current-period KPI proof before adding.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Final Rating & Action Plan",
+    "source_ids": [
+      "GOOGL_YAHOO_CHART_PRICE_CSV",
+      "GOOGL_CSV_PRICE_PROVIDER"
+    ]
+  }
+]

@@ -1,0 +1,38 @@
+{
+  "actual_archetype": "SEMICONDUCTOR_AI_INFRA",
+  "archetype_confidence": 0.2,
+  "artifact_consistency_status": "clean",
+  "company_name": "NVIDIA Corporation",
+  "concerns": [],
+  "data_confidence_score": 60,
+  "evidence_status": "low_confidence",
+  "expected_archetype": "SEMICONDUCTOR_AI_INFRA or SEMICONDUCTOR_CYCLICAL",
+  "external_display_rating": "Hold",
+  "internal_research_quality_score": 100,
+  "likely_false_negative": "no",
+  "likely_false_positive": "no",
+  "manual_review_reasons": [
+    "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+    "TRUE_FINANCIAL_ANOMALY",
+    "EARNINGS_DATE_UNAVAILABLE",
+    "SOURCE_FRAME_VARIANT_IGNORED",
+    "PERIOD_TYPE_MISMATCH_IGNORED",
+    "TRUE_SOURCE_VALUE_DISAGREEMENT"
+  ],
+  "primary_blockers": [
+    "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+    "TRUE_FINANCIAL_ANOMALY",
+    "EARNINGS_DATE_UNAVAILABLE",
+    "SOURCE_FRAME_VARIANT_IGNORED",
+    "PERIOD_TYPE_MISMATCH_IGNORED",
+    "audit_errors=2",
+    "financial_sanity_errors=2"
+  ],
+  "public_ready": false,
+  "publish_quality_score": 75,
+  "publishable": false,
+  "recommended_next_action": "Keep manual_review and resolve blockers before any promotion.",
+  "review_status": "manual_review",
+  "sector_bucket": "Semiconductors / AI Infrastructure / Cyclical AI",
+  "ticker": "NVDA"
+}

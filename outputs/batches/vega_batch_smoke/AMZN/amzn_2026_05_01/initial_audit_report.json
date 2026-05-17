@@ -1,0 +1,46 @@
+{
+  "has_blocking_errors": true,
+  "issues": [
+    {
+      "code": "NUMERIC_MISMATCH",
+      "line_number": 5,
+      "message": "Report states free_cash_flow_ttm as $20B but validated MetricsPacket has 32000000000.0.",
+      "metric": "free_cash_flow_ttm",
+      "raw_text": "$20B",
+      "reported": 20000000000.0,
+      "severity": "error",
+      "validated": 32000000000.0
+    },
+    {
+      "code": "NO_NEWS_WITH_AVAILABLE_SOURCES",
+      "line_number": null,
+      "message": "Report claims no news, but SourceRegistry contains relevant sources.",
+      "metric": null,
+      "raw_text": null,
+      "reported": null,
+      "severity": "error",
+      "validated": null
+    }
+  ],
+  "numeric_claims": [
+    {
+      "line_number": 5,
+      "nearby_text": "FCF TTM is $20B, but another section says FCF TTM is $32B.",
+      "normalized_value": 20000000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$20B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 5,
+      "nearby_text": "FCF TTM is $20B, but another section says FCF TTM is $32B.",
+      "normalized_value": 32000000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$32B",
+      "unit": "usd"
+    }
+  ],
+  "ticker": "AMZN"
+}

@@ -1,0 +1,70 @@
+{
+  "batch_id": "phase12_current_batch_003",
+  "count_by_reason_group": {
+    "missing_fcf_support": 1,
+    "true_anomaly": 2
+  },
+  "generated_at": "2026-05-12T20:17:20Z",
+  "items": [
+    {
+      "external_display_rating": "Hold",
+      "fixability": "2. keep manual_review",
+      "primary_root_cause": "true_anomaly",
+      "quality_score": 74.0,
+      "reason_codes": [
+        "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+        "TRUE_FINANCIAL_ANOMALY",
+        "EARNINGS_DATE_UNAVAILABLE",
+        "SOURCE_FRAME_VARIANT_IGNORED",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT"
+      ],
+      "reason_groups": [
+        "true_anomaly"
+      ],
+      "recommended_next_action": "Keep `MU` in manual_review until the anomaly is explained or disproved.",
+      "status": "manual_review",
+      "ticker": "MU"
+    },
+    {
+      "external_display_rating": "Hold",
+      "fixability": "2. keep manual_review",
+      "primary_root_cause": "true_anomaly",
+      "quality_score": 75.0,
+      "reason_codes": [
+        "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+        "TRUE_FINANCIAL_ANOMALY",
+        "EARNINGS_DATE_UNAVAILABLE",
+        "SOURCE_FRAME_VARIANT_IGNORED",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT"
+      ],
+      "reason_groups": [
+        "true_anomaly"
+      ],
+      "recommended_next_action": "Keep `NVDA` in manual_review until the anomaly is explained or disproved.",
+      "status": "manual_review",
+      "ticker": "NVDA"
+    },
+    {
+      "external_display_rating": "Hold Pending FCF Support",
+      "fixability": "1. add IR data",
+      "primary_root_cause": "missing_fcf_support",
+      "quality_score": 87.0,
+      "reason_codes": [
+        "MISSING_FCF_SUPPORT_FOR_ACCUMULATE",
+        "EARNINGS_DATE_UNAVAILABLE",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT",
+        "SOURCE_FRAME_VARIANT_IGNORED"
+      ],
+      "reason_groups": [
+        "missing_fcf_support"
+      ],
+      "recommended_next_action": "Add or confirm stronger IR/current-period support for `QCOM` before rerun.",
+      "status": "manual_review",
+      "ticker": "QCOM"
+    }
+  ],
+  "total_manual_review": 3
+}

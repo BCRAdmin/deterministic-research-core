@@ -1,0 +1,193 @@
+{
+  "case_id": "ddog_2026_05_01",
+  "decision_packet": {
+    "action_policy": {
+      "hold_core": true,
+      "primary_action": "Trim partial exposure",
+      "reentry_conditions": [
+        "Pullback to validated support zone",
+        "Breakout above validated resistance with volume",
+        "Positive earnings/guidance confirmation"
+      ],
+      "risk_controls": {
+        "hard_stop_reference": null,
+        "review_level": 120.0
+      },
+      "trim_size": "20-30%"
+    },
+    "as_of_date": "2026-05-01",
+    "calibration_mode": "live",
+    "key_reasons": [
+      "Fundamental score: 3.0",
+      "Technical score: -2.0",
+      "Valuation score: -2.0",
+      "Operative action class: tactical_trim"
+    ],
+    "key_risks": [
+      "Risk score: -1.0"
+    ],
+    "rating_permission": {
+      "allowed_ratings": [
+        "Hold",
+        "Tactical Trim",
+        "Tactical Underweight"
+      ],
+      "blocked_ratings": [
+        "Strong Buy",
+        "Buy",
+        "Accumulate",
+        "Underweight",
+        "Sell",
+        "Avoid"
+      ],
+      "preferred_rating": "Tactical Trim",
+      "reason": "Operative action implies partial trim and core hold, not a full exit."
+    },
+    "score_version": "v1",
+    "signal_scores": {
+      "composite_score": -2.0,
+      "fundamental_score": 3.0,
+      "risk_score": -1.0,
+      "technical_score": -2.0,
+      "valuation_score": -2.0
+    },
+    "ticker": "DDOG",
+    "triggered_rules": [
+      "REVENUE_GROWTH_GT_15",
+      "FCF_TTM_POSITIVE",
+      "NET_CASH_POSITIVE",
+      "PRICE_ABOVE_200SMA",
+      "DEATH_CROSS",
+      "PRICE_BELOW_EMA10",
+      "MACD_HISTOGRAM_NEGATIVE",
+      "FORWARD_PE_GT_60",
+      "PRICE_TO_FCF_GT_60",
+      "ATR_PCT_GT_5"
+    ]
+  },
+  "failure_reasons": [],
+  "final_audit": {
+    "has_blocking_errors": false,
+    "issues": [],
+    "numeric_claims": [
+      {
+        "line_number": 5,
+        "nearby_text": "Operative Action: reduce 25%, hold core position for long-term investors.",
+        "normalized_value": 25.0,
+        "period_hint": "unknown",
+        "possible_metric": null,
+        "raw_text": "25%",
+        "unit": "percent"
+      },
+      {
+        "line_number": 7,
+        "nearby_text": "Long Setup: Entry $132, Stop-Loss $120.00, Take-Profit $150.",
+        "normalized_value": 132.0,
+        "period_hint": "unknown",
+        "possible_metric": "stop_loss",
+        "raw_text": "$132",
+        "unit": "usd"
+      },
+      {
+        "line_number": 7,
+        "nearby_text": "Long Setup: Entry $132, Stop-Loss $120.00, Take-Profit $150.",
+        "normalized_value": 120.0,
+        "period_hint": "unknown",
+        "possible_metric": "stop_loss",
+        "raw_text": "$120.00",
+        "unit": "usd"
+      },
+      {
+        "line_number": 7,
+        "nearby_text": "Long Setup: Entry $132, Stop-Loss $120.00, Take-Profit $150.",
+        "normalized_value": 150.0,
+        "period_hint": "unknown",
+        "possible_metric": "stop_loss",
+        "raw_text": "$150",
+        "unit": "usd"
+      }
+    ],
+    "ticker": "DDOG"
+  },
+  "final_markdown": "# DDOG Bad Report\n\nRating: Tactical Trim.\n\nOperative Action: reduce 25%, hold core position for long-term investors.\n\nLong Setup: Entry $132, Stop-Loss $120.00, Take-Profit $150.\n\n",
+  "final_status": "repaired_publishable",
+  "initial_audit": {
+    "has_blocking_errors": true,
+    "issues": [
+      {
+        "code": "INVALID_TRADE_LEVEL",
+        "line_number": null,
+        "message": "For a long position, stop-loss must be below entry.",
+        "metric": "trade_levels",
+        "raw_text": null,
+        "reported": null,
+        "severity": "error",
+        "validated": null
+      },
+      {
+        "code": "RATING_TOO_HARSH_FOR_ACTION",
+        "line_number": null,
+        "message": "Final rating is Sell, but operative actions imply tactical trim rather than full exit.",
+        "metric": "rating",
+        "raw_text": null,
+        "reported": null,
+        "severity": "error",
+        "validated": null
+      }
+    ],
+    "numeric_claims": [
+      {
+        "line_number": 5,
+        "nearby_text": "Operative Action: reduce 25%, hold core position for long-term investors.",
+        "normalized_value": 25.0,
+        "period_hint": "unknown",
+        "possible_metric": null,
+        "raw_text": "25%",
+        "unit": "percent"
+      },
+      {
+        "line_number": 7,
+        "nearby_text": "Long Setup: Entry $132, Stop-Loss $140, Take-Profit $150.",
+        "normalized_value": 132.0,
+        "period_hint": "unknown",
+        "possible_metric": "stop_loss",
+        "raw_text": "$132",
+        "unit": "usd"
+      },
+      {
+        "line_number": 7,
+        "nearby_text": "Long Setup: Entry $132, Stop-Loss $140, Take-Profit $150.",
+        "normalized_value": 140.0,
+        "period_hint": "unknown",
+        "possible_metric": "stop_loss",
+        "raw_text": "$140",
+        "unit": "usd"
+      },
+      {
+        "line_number": 7,
+        "nearby_text": "Long Setup: Entry $132, Stop-Loss $140, Take-Profit $150.",
+        "normalized_value": 150.0,
+        "period_hint": "unknown",
+        "possible_metric": "stop_loss",
+        "raw_text": "$150",
+        "unit": "usd"
+      }
+    ],
+    "ticker": "DDOG"
+  },
+  "passed": true,
+  "quality_score": {
+    "event_awareness": 10,
+    "grade": "A",
+    "logic_consistency": 20,
+    "numerical_accuracy": 25,
+    "publishable": true,
+    "rating_discipline": 15,
+    "source_quality": 20,
+    "status": "Publishable",
+    "total_score": 100,
+    "writing_structure": 10
+  },
+  "repaired": true,
+  "ticker": "DDOG"
+}

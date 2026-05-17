@@ -1,0 +1,208 @@
+{
+  "case_id": "mdb_2026_05_01",
+  "decision_packet": {
+    "action_policy": {
+      "hold_core": true,
+      "primary_action": "Trim partial exposure",
+      "reentry_conditions": [
+        "Pullback to validated support zone",
+        "Breakout above validated resistance with volume",
+        "Positive earnings/guidance confirmation"
+      ],
+      "risk_controls": {
+        "hard_stop_reference": null,
+        "review_level": 265.07
+      },
+      "trim_size": "20-30%"
+    },
+    "as_of_date": "2026-05-01",
+    "calibration_mode": "live",
+    "key_reasons": [
+      "Fundamental score: 1.0",
+      "Technical score: -2.0",
+      "Valuation score: 0.0",
+      "Operative action class: tactical_trim"
+    ],
+    "key_risks": [
+      "Risk score: -3.0",
+      "Validation issues: 2"
+    ],
+    "rating_permission": {
+      "allowed_ratings": [
+        "Hold",
+        "Tactical Trim",
+        "Tactical Underweight"
+      ],
+      "blocked_ratings": [
+        "Strong Buy",
+        "Buy",
+        "Accumulate",
+        "Underweight",
+        "Sell",
+        "Avoid"
+      ],
+      "preferred_rating": "Tactical Trim",
+      "reason": "Operative action implies partial trim and core hold, not a full exit."
+    },
+    "score_version": "v1",
+    "signal_scores": {
+      "composite_score": -3.0,
+      "fundamental_score": 1.0,
+      "risk_score": -3.0,
+      "technical_score": -2.0,
+      "valuation_score": 0.0
+    },
+    "ticker": "MDB",
+    "triggered_rules": [
+      "REVENUE_GROWTH_GT_15",
+      "FCF_TTM_POSITIVE",
+      "OPERATING_MARGIN_NEGATIVE",
+      "SBC_TO_REVENUE_GT_20",
+      "NET_CASH_POSITIVE",
+      "PRICE_BELOW_200SMA",
+      "DEATH_CROSS",
+      "PRICE_BELOW_EMA10",
+      "MACD_HISTOGRAM_POSITIVE",
+      "ATR_PCT_GT_8",
+      "FORWARD_EPS_GUIDANCE_MISMATCH"
+    ]
+  },
+  "failure_reasons": [],
+  "final_audit": {
+    "has_blocking_errors": false,
+    "issues": [
+      {
+        "code": "FORWARD_EPS_GUIDANCE_MISMATCH",
+        "line_number": null,
+        "message": "Consensus EPS differs from company guidance midpoint by 20.7%.",
+        "metric": "forward_eps",
+        "raw_text": null,
+        "reported": null,
+        "severity": "warning",
+        "validated": null
+      }
+    ],
+    "numeric_claims": [
+      {
+        "line_number": 5,
+        "nearby_text": "Operative Action: reduce 20-30%, hold core position, and consider re-entry after confirmation.",
+        "normalized_value": 30.0,
+        "period_hint": "unknown",
+        "possible_metric": "entry",
+        "raw_text": "30%",
+        "unit": "percent"
+      },
+      {
+        "line_number": 7,
+        "nearby_text": "The stock fell on 2026-04-30 in the context of the Ireland news from 2026-04-23, without proving direct causality.",
+        "normalized_value": null,
+        "period_hint": "unknown",
+        "possible_metric": null,
+        "raw_text": "2026-04-30",
+        "unit": "date"
+      },
+      {
+        "line_number": 7,
+        "nearby_text": "The stock fell on 2026-04-30 in the context of the Ireland news from 2026-04-23, without proving direct causality.",
+        "normalized_value": null,
+        "period_hint": "unknown",
+        "possible_metric": null,
+        "raw_text": "2026-04-23",
+        "unit": "date"
+      }
+    ],
+    "ticker": "MDB"
+  },
+  "final_markdown": "# MDB Bad Report\n\nRating: Tactical Trim.\n\nOperative Action: reduce 20-30%, hold core position, and consider re-entry after confirmation.\n\nThe stock fell on 2026-04-30 in the context of the Ireland news from 2026-04-23, without proving direct causality.\n\nForward EPS of 7.05 and company guidance are basically the same base for the Forward KGV.\n\n",
+  "final_status": "repaired_publishable",
+  "initial_audit": {
+    "has_blocking_errors": true,
+    "issues": [
+      {
+        "code": "RATING_TOO_HARSH_FOR_ACTION",
+        "line_number": null,
+        "message": "Final rating is Sell, but operative actions imply tactical trim rather than full exit.",
+        "metric": "rating",
+        "raw_text": null,
+        "reported": null,
+        "severity": "error",
+        "validated": null
+      },
+      {
+        "code": "OVERSTATED_CAUSALITY",
+        "line_number": null,
+        "message": "Report implies direct causality between news and price movement, but validator did not confirm same-day relationship.",
+        "metric": null,
+        "raw_text": null,
+        "reported": null,
+        "severity": "warning",
+        "validated": null
+      },
+      {
+        "code": "FORWARD_EPS_GUIDANCE_MISMATCH",
+        "line_number": null,
+        "message": "Consensus EPS differs from company guidance midpoint by 20.7%.",
+        "metric": "forward_eps",
+        "raw_text": null,
+        "reported": null,
+        "severity": "warning",
+        "validated": null
+      },
+      {
+        "code": "WEAK_NEWS_CAUSALITY",
+        "line_number": null,
+        "message": "News date and price move date are 7 days apart. Do not imply direct causality without additional evidence.",
+        "metric": null,
+        "raw_text": null,
+        "reported": null,
+        "severity": "warning",
+        "validated": null
+      }
+    ],
+    "numeric_claims": [
+      {
+        "line_number": 5,
+        "nearby_text": "Operative Action: reduce 20-30%, hold core position, and consider re-entry after confirmation.",
+        "normalized_value": 30.0,
+        "period_hint": "unknown",
+        "possible_metric": "entry",
+        "raw_text": "30%",
+        "unit": "percent"
+      },
+      {
+        "line_number": 7,
+        "nearby_text": "The stock fell on 2026-04-30 because of the Ireland news from 2026-04-23, proving distribution.",
+        "normalized_value": null,
+        "period_hint": "unknown",
+        "possible_metric": null,
+        "raw_text": "2026-04-30",
+        "unit": "date"
+      },
+      {
+        "line_number": 7,
+        "nearby_text": "The stock fell on 2026-04-30 because of the Ireland news from 2026-04-23, proving distribution.",
+        "normalized_value": null,
+        "period_hint": "unknown",
+        "possible_metric": null,
+        "raw_text": "2026-04-23",
+        "unit": "date"
+      }
+    ],
+    "ticker": "MDB"
+  },
+  "passed": true,
+  "quality_score": {
+    "event_awareness": 10,
+    "grade": "A-",
+    "logic_consistency": 14,
+    "numerical_accuracy": 25,
+    "publishable": true,
+    "rating_discipline": 15,
+    "source_quality": 16,
+    "status": "Publishable",
+    "total_score": 90,
+    "writing_structure": 10
+  },
+  "repaired": true,
+  "ticker": "MDB"
+}

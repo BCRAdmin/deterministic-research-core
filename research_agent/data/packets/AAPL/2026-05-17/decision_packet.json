@@ -1,0 +1,62 @@
+{
+  "action_policy": {
+    "add_conditions": [
+      "Pullback to support",
+      "Reclaim of short-term moving average",
+      "Positive fundamental catalyst"
+    ],
+    "initial_position": "20-30%",
+    "primary_action": "Staged accumulation",
+    "risk_controls": {
+      "stop_reference": 266.18919921875
+    }
+  },
+  "as_of_date": "2026-05-17",
+  "calibration_mode": "live",
+  "key_reasons": [
+    "Fundamental score: 3.0",
+    "Technical score: 3.0",
+    "Valuation score: 0.0"
+  ],
+  "key_risks": [
+    "Risk score: 0.0",
+    "Validation issues: 2"
+  ],
+  "rating_permission": {
+    "allowed_ratings": [
+      "Buy",
+      "Accumulate",
+      "Hold"
+    ],
+    "blocked_ratings": [
+      "Strong Buy",
+      "Tactical Trim",
+      "Tactical Underweight",
+      "Underweight",
+      "Sell",
+      "Avoid"
+    ],
+    "preferred_rating": "Accumulate",
+    "reason": "Strong business quality and constructive technical setup support staged accumulation."
+  },
+  "score_version": "v1",
+  "signal_scores": {
+    "composite_score": 3.0,
+    "fundamental_score": 3.0,
+    "risk_score": 0.0,
+    "technical_score": 3.0,
+    "valuation_score": 0.0
+  },
+  "ticker": "AAPL",
+  "triggered_rules": [
+    "FCF_TTM_POSITIVE",
+    "FCF_MARGIN_GT_25",
+    "OPERATING_MARGIN_GT_10",
+    "NET_CASH_POSITIVE",
+    "PRICE_ABOVE_200SMA",
+    "GOLDEN_CROSS",
+    "PRICE_ABOVE_EMA10",
+    "RSI_GT_75",
+    "MACD_HISTOGRAM_POSITIVE"
+  ]
+}

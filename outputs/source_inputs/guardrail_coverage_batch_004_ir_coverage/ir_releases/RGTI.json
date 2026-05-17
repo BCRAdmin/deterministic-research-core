@@ -1,0 +1,114 @@
+{
+  "coverage_type": "SEC-derived current-period fixture",
+  "fiscal_period": "latest",
+  "local_source_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/sec_companyfacts/RGTI.json",
+  "metrics": [
+    {
+      "basis": "gaap",
+      "date": "2026-05-11",
+      "end_date": "2026-05-11",
+      "fiscal_period": "latest",
+      "fiscal_year": null,
+      "metric_name": "revenue",
+      "period": "latest_companyfacts_ttm",
+      "period_bucket": "ttm",
+      "reconciliation_note": "SEC-derived current-period fixture generated from audited SEC CompanyFacts cache; no company guidance inferred.",
+      "statement": "RGTI revenue is sourced from SEC CompanyFacts / latest filing context as of 2026-05-11.",
+      "statement_type": "income_statement",
+      "supports_metrics": [
+        "revenue",
+        "revenue_ttm"
+      ],
+      "unit": "usd",
+      "value": 9243000.0
+    },
+    {
+      "basis": "gaap",
+      "date": "2026-05-11",
+      "end_date": "2026-05-11",
+      "fiscal_period": "latest",
+      "fiscal_year": null,
+      "metric_name": "operating_cash_flow",
+      "period": "latest_companyfacts_ttm",
+      "period_bucket": "ttm",
+      "reconciliation_note": "SEC-derived current-period fixture generated from audited SEC CompanyFacts cache; no company guidance inferred.",
+      "statement": "RGTI operating cash flow is sourced from SEC CompanyFacts / latest filing context as of 2026-05-11.",
+      "statement_type": "cash_flow",
+      "supports_metrics": [
+        "operating_cash_flow",
+        "operating_cash_flow_ttm"
+      ],
+      "unit": "usd",
+      "value": -58554000.0
+    },
+    {
+      "basis": "gaap",
+      "date": "2026-05-11",
+      "end_date": "2026-05-11",
+      "fiscal_period": "latest",
+      "fiscal_year": null,
+      "metric_name": "free_cash_flow",
+      "period": "latest_companyfacts_ttm",
+      "period_bucket": "ttm",
+      "reconciliation_note": "SEC-derived current-period fixture generated from audited SEC CompanyFacts cache; no company guidance inferred.",
+      "statement": "RGTI SEC-derived free cash flow is sourced from SEC CompanyFacts / latest filing context as of 2026-05-11.",
+      "statement_type": "cash_flow",
+      "supports_metrics": [
+        "free_cash_flow",
+        "free_cash_flow_ttm",
+        "sec_derived_fcf"
+      ],
+      "unit": "usd",
+      "value": -75809000.0
+    },
+    {
+      "basis": "gaap",
+      "date": "2026-05-11",
+      "end_date": "2026-05-11",
+      "fiscal_period": "latest",
+      "fiscal_year": null,
+      "metric_name": "sbc",
+      "period": "latest_companyfacts_ttm",
+      "period_bucket": "ttm",
+      "reconciliation_note": "SEC-derived current-period fixture generated from audited SEC CompanyFacts cache; no company guidance inferred.",
+      "statement": "RGTI stock-based compensation is sourced from SEC CompanyFacts / latest filing context as of 2026-05-11.",
+      "statement_type": "cash_flow",
+      "supports_metrics": [
+        "sbc",
+        "sbc_ttm"
+      ],
+      "unit": "usd",
+      "value": 14758000.0
+    },
+    {
+      "basis": "gaap",
+      "date": "2026-05-11",
+      "end_date": "2026-05-11",
+      "fiscal_period": "latest",
+      "fiscal_year": null,
+      "metric_name": "cash_and_equivalents",
+      "period": "latest_companyfacts_instant",
+      "period_bucket": "instant",
+      "reconciliation_note": "SEC-derived current-period fixture generated from audited SEC CompanyFacts cache; no company guidance inferred.",
+      "statement": "RGTI cash and equivalents is sourced from SEC CompanyFacts / latest filing context as of 2026-05-11.",
+      "statement_type": "balance_sheet",
+      "supports_metrics": [
+        "cash_and_equivalents",
+        "cash",
+        "cash_and_investments"
+      ],
+      "unit": "usd",
+      "value": 48146000.0
+    }
+  ],
+  "period": "latest_companyfacts_ttm",
+  "report_date": "2026-05-11",
+  "retrieved_at": "2026-05-17T02:08:44Z",
+  "source_confidence": "high",
+  "source_form": "SEC_10Q_or_10K_companyfacts_current_period",
+  "source_id": "RGTI_SEC_CURRENT_PERIOD_COMPANYFACTS_2026_05_11",
+  "source_type": "sec_filing",
+  "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001838359.json",
+  "text": "SEC CompanyFacts-derived current-period metrics. No company guidance included; no consensus data included.",
+  "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001838359.json"
+}

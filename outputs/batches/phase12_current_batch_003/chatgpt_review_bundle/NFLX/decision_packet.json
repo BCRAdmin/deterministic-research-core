@@ -1,0 +1,58 @@
+{
+  "action_policy": {
+    "new_money": "Wait for confirmation or better entry",
+    "primary_action": "Maintain existing position",
+    "risk_controls": {
+      "hard_stop_reference": 103.33543502807618,
+      "review_level": 95.53679962158203
+    }
+  },
+  "as_of_date": "2026-05-08",
+  "calibration_mode": "live",
+  "key_reasons": [
+    "Fundamental score: 3.0",
+    "Technical score: -3.0",
+    "Valuation score: 1.0"
+  ],
+  "key_risks": [
+    "Risk score: 0.0",
+    "Validation issues: 1"
+  ],
+  "rating_permission": {
+    "allowed_ratings": [
+      "Hold",
+      "Tactical Trim",
+      "Tactical Underweight"
+    ],
+    "blocked_ratings": [
+      "Strong Buy",
+      "Buy",
+      "Accumulate",
+      "Underweight",
+      "Sell",
+      "Avoid"
+    ],
+    "preferred_rating": "Hold",
+    "reason": "Business quality is positive, but technical trend is weak and risk controls matter."
+  },
+  "score_version": "v1",
+  "signal_scores": {
+    "composite_score": 1.0,
+    "fundamental_score": 3.0,
+    "risk_score": 0.0,
+    "technical_score": -3.0,
+    "valuation_score": 1.0
+  },
+  "ticker": "NFLX",
+  "triggered_rules": [
+    "FCF_TTM_POSITIVE",
+    "FCF_MARGIN_GT_25",
+    "OPERATING_MARGIN_GT_10",
+    "NET_CASH_POSITIVE",
+    "PRICE_BELOW_200SMA",
+    "DEATH_CROSS",
+    "PRICE_BELOW_EMA10",
+    "MACD_HISTOGRAM_NEGATIVE",
+    "PRICE_TO_FCF_LT_30"
+  ]
+}

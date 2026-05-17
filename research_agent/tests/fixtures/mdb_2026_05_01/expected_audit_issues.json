@@ -1,0 +1,7 @@
+[
+  {"code": "OVERSTATED_CAUSALITY"},
+  {"code": "WEAK_NEWS_CAUSALITY"},
+  {"code": "FORWARD_EPS_GUIDANCE_MISMATCH"},
+  {"code": "RATING_TOO_HARSH_FOR_ACTION", "metric": "rating"}
+]
+

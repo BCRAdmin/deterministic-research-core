@@ -1,0 +1,311 @@
+{
+  "as_of_date": "2026-05-05",
+  "cik_records_path": "outputs/source_inputs/phase12_real_pilot_030/cik_records.json",
+  "missing_ciks": [],
+  "price_csv_dir": "outputs/source_inputs/phase12_real_pilot_030/prices",
+  "price_status": {
+    "AAPL": {
+      "latest_date": "2026-05-05",
+      "ok": true,
+      "rows": 587
+    },
+    "ADBE": {
+      "latest_date": "2026-05-05",
+      "ok": true,
+      "rows": 587
+    },
+    "AMD": {
+      "latest_date": "2026-05-05",
+      "ok": true,
+      "rows": 587
+    },
+    "AMZN": {
+      "latest_date": "2026-05-05",
+      "ok": true,
+      "rows": 587
+    },
+    "ANET": {
+      "latest_date": "2026-05-05",
+      "ok": true,
+      "rows": 587
+    },
+    "AVGO": {
+      "latest_date": "2026-05-05",
+      "ok": true,
+      "rows": 587
+    },
+    "CRM": {
+      "latest_date": "2026-05-05",
+      "ok": true,
+      "rows": 587
+    },
+    "CRWD": {
+      "latest_date": "2026-05-05",
+      "ok": true,
+      "rows": 587
+    },
+    "DDOG": {
+      "latest_date": "2026-05-05",
+      "ok": true,
+      "rows": 587
+    },
+    "GOOGL": {
+      "latest_date": "2026-05-05",
+      "ok": true,
+      "rows": 587
+    },
+    "IBM": {
+      "latest_date": "2026-05-05",
+      "ok": true,
+      "rows": 587
+    },
+    "INTC": {
+      "latest_date": "2026-05-05",
+      "ok": true,
+      "rows": 587
+    },
+    "INTU": {
+      "latest_date": "2026-05-05",
+      "ok": true,
+      "rows": 587
+    },
+    "MDB": {
+      "latest_date": "2026-05-05",
+      "ok": true,
+      "rows": 587
+    },
+    "META": {
+      "latest_date": "2026-05-05",
+      "ok": true,
+      "rows": 587
+    },
+    "MRVL": {
+      "latest_date": "2026-05-05",
+      "ok": true,
+      "rows": 587
+    },
+    "MSFT": {
+      "latest_date": "2026-05-05",
+      "ok": true,
+      "rows": 587
+    },
+    "MU": {
+      "latest_date": "2026-05-05",
+      "ok": true,
+      "rows": 587
+    },
+    "NET": {
+      "latest_date": "2026-05-05",
+      "ok": true,
+      "rows": 587
+    },
+    "NFLX": {
+      "latest_date": "2026-05-05",
+      "ok": true,
+      "rows": 587
+    },
+    "NOW": {
+      "latest_date": "2026-05-05",
+      "ok": true,
+      "rows": 587
+    },
+    "NVDA": {
+      "latest_date": "2026-05-05",
+      "ok": true,
+      "rows": 587
+    },
+    "ORCL": {
+      "latest_date": "2026-05-05",
+      "ok": true,
+      "rows": 587
+    },
+    "PANW": {
+      "latest_date": "2026-05-05",
+      "ok": true,
+      "rows": 587
+    },
+    "PLTR": {
+      "latest_date": "2026-05-05",
+      "ok": true,
+      "rows": 587
+    },
+    "QCOM": {
+      "latest_date": "2026-05-05",
+      "ok": true,
+      "rows": 587
+    },
+    "SNOW": {
+      "latest_date": "2026-05-05",
+      "ok": true,
+      "rows": 587
+    },
+    "TSLA": {
+      "latest_date": "2026-05-05",
+      "ok": true,
+      "rows": 587
+    },
+    "UBER": {
+      "latest_date": "2026-05-05",
+      "ok": true,
+      "rows": 587
+    },
+    "ZS": {
+      "latest_date": "2026-05-05",
+      "ok": true,
+      "rows": 587
+    }
+  },
+  "sec_companyfacts_dir": "outputs/source_inputs/phase12_real_pilot_030/sec_companyfacts",
+  "sec_status": {
+    "AAPL": {
+      "cik": "320193",
+      "entity_name": "Apple Inc.",
+      "ok": true
+    },
+    "ADBE": {
+      "cik": "796343",
+      "entity_name": "ADOBE INC.",
+      "ok": true
+    },
+    "AMD": {
+      "cik": "2488",
+      "entity_name": "ADVANCED MICRO DEVICES, INC.",
+      "ok": true
+    },
+    "AMZN": {
+      "cik": "1018724",
+      "entity_name": "AMAZON.COM, INC.",
+      "ok": true
+    },
+    "ANET": {
+      "cik": "1596532",
+      "entity_name": "ARISTA NETWORKS, INC.",
+      "ok": true
+    },
+    "AVGO": {
+      "cik": "1730168",
+      "entity_name": "Broadcom Inc.",
+      "ok": true
+    },
+    "CRM": {
+      "cik": "1108524",
+      "entity_name": "Salesforce, Inc.",
+      "ok": true
+    },
+    "CRWD": {
+      "cik": "1535527",
+      "entity_name": "CrowdStrike Holdings, Inc.",
+      "ok": true
+    },
+    "DDOG": {
+      "cik": "1561550",
+      "entity_name": "Datadog, Inc.",
+      "ok": true
+    },
+    "GOOGL": {
+      "cik": "1652044",
+      "entity_name": "Alphabet Inc.",
+      "ok": true
+    },
+    "IBM": {
+      "cik": "51143",
+      "entity_name": "INTERNATIONAL BUSINESS MACHINES CORP",
+      "ok": true
+    },
+    "INTC": {
+      "cik": "50863",
+      "entity_name": "INTEL CORP",
+      "ok": true
+    },
+    "INTU": {
+      "cik": "896878",
+      "entity_name": "INTUIT INC.",
+      "ok": true
+    },
+    "MDB": {
+      "cik": "1441816",
+      "entity_name": "MONGODB, INC.",
+      "ok": true
+    },
+    "META": {
+      "cik": "1326801",
+      "entity_name": "Meta Platforms, Inc.",
+      "ok": true
+    },
+    "MRVL": {
+      "cik": "1835632",
+      "entity_name": "MARVELL TECHNOLOGY, INC.",
+      "ok": true
+    },
+    "MSFT": {
+      "cik": "789019",
+      "entity_name": "MICROSOFT CORPORATION",
+      "ok": true
+    },
+    "MU": {
+      "cik": "723125",
+      "entity_name": "MICRON TECHNOLOGY INC",
+      "ok": true
+    },
+    "NET": {
+      "cik": "1477333",
+      "entity_name": "Cloudflare, Inc.",
+      "ok": true
+    },
+    "NFLX": {
+      "cik": "1065280",
+      "entity_name": "Netflix, Inc.",
+      "ok": true
+    },
+    "NOW": {
+      "cik": "1373715",
+      "entity_name": "SERVICENOW, INC.",
+      "ok": true
+    },
+    "NVDA": {
+      "cik": "1045810",
+      "entity_name": "NVIDIA CORP",
+      "ok": true
+    },
+    "ORCL": {
+      "cik": "1341439",
+      "entity_name": "Oracle Corporation",
+      "ok": true
+    },
+    "PANW": {
+      "cik": "1327567",
+      "entity_name": "Palo Alto Networks Inc",
+      "ok": true
+    },
+    "PLTR": {
+      "cik": "1321655",
+      "entity_name": "Palantir Technologies Inc.",
+      "ok": true
+    },
+    "QCOM": {
+      "cik": "804328",
+      "entity_name": "QUALCOMM INC/DE",
+      "ok": true
+    },
+    "SNOW": {
+      "cik": "1640147",
+      "entity_name": "SNOWFLAKE INC.",
+      "ok": true
+    },
+    "TSLA": {
+      "cik": "1318605",
+      "entity_name": "Tesla,\u00a0Inc.",
+      "ok": true
+    },
+    "UBER": {
+      "cik": "1543151",
+      "entity_name": "Uber Technologies, Inc.",
+      "ok": true
+    },
+    "ZS": {
+      "cik": "1713683",
+      "entity_name": "ZSCALER, INC.",
+      "ok": true
+    }
+  }
+}

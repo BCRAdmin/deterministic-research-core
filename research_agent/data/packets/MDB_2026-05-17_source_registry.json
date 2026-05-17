@@ -1,0 +1,57 @@
+{
+  "registry_id": "MDB_2026-05-17",
+  "sources": [
+    {
+      "authority_rank": 1,
+      "retrieved_at": "2026-05-17T02:08:45Z",
+      "source_id": "MDB_SEC_COMPANYFACTS_1441816",
+      "source_type": "sec_filing",
+      "ticker": "MDB",
+      "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001441816.json",
+      "used_for": [
+        "revenue",
+        "financial",
+        "cash",
+        "operating_income",
+        "free_cash_flow",
+        "fcf",
+        "sbc",
+        "debt",
+        "eps"
+      ]
+    },
+    {
+      "authority_rank": 1,
+      "retrieved_at": "2026-05-17T02:08:45Z",
+      "source_id": "MDB_SEC_CURRENT_PERIOD_COMPANYFACTS_2026_05_14",
+      "source_type": "sec_filing",
+      "ticker": "MDB",
+      "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001441816.json",
+      "used_for": [
+        "cash",
+        "cash_and_equivalents",
+        "current_period_kpis",
+        "fcf",
+        "financial",
+        "free_cash_flow",
+        "operating_cash_flow",
+        "revenue",
+        "sbc",
+        "sec_derived_current_period"
+      ]
+    },
+    {
+      "authority_rank": 2,
+      "retrieved_at": "2026-05-17T02:08:45Z",
+      "source_id": "MDB_YAHOO_CHART_PRICE_CSV",
+      "source_type": "exchange_ohlcv",
+      "ticker": "MDB",
+      "url": "https://query1.finance.yahoo.com/v8/finance/chart/MDB",
+      "used_for": [
+        "price",
+        "volume",
+        "technical_indicators"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "registry_id": "NFLX_2026-05-17",
+  "sources": [
+    {
+      "authority_rank": 1,
+      "retrieved_at": "2026-05-17T02:08:45Z",
+      "source_id": "NFLX_SEC_COMPANYFACTS_1065280",
+      "source_type": "sec_filing",
+      "ticker": "NFLX",
+      "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001065280.json",
+      "used_for": [
+        "revenue",
+        "financial",
+        "cash",
+        "operating_income",
+        "free_cash_flow",
+        "fcf",
+        "sbc",
+        "debt",
+        "eps"
+      ]
+    },
+    {
+      "authority_rank": 1,
+      "retrieved_at": "2026-05-17T02:08:45Z",
+      "source_id": "NFLX_IR_Q1_2026_RELEASE",
+      "source_type": "company_ir",
+      "ticker": "NFLX",
+      "url": "https://ir.netflix.net/",
+      "used_for": [
+        "cash",
+        "current_period_kpis",
+        "current_q_free_cash_flow",
+        "current_q_revenue",
+        "fcf",
+        "financial",
+        "free_cash_flow",
+        "operating_income",
+        "operating_margin",
+        "revenue"
+      ]
+    },
+    {
+      "authority_rank": 2,
+      "retrieved_at": "2026-05-17T02:08:45Z",
+      "source_id": "NFLX_YAHOO_CHART_PRICE_CSV",
+      "source_type": "exchange_ohlcv",
+      "ticker": "NFLX",
+      "url": "https://query1.finance.yahoo.com/v8/finance/chart/NFLX",
+      "used_for": [
+        "price",
+        "volume",
+        "technical_indicators"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+[
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 16,
+    "message": "Ignored 16 annual/quarterly/YTD period-type variants for revenue.",
+    "metric": "revenue",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 16,
+    "message": "Ignored 16 annual/quarterly/YTD period-type variants for gross_profit.",
+    "metric": "gross_profit",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 16,
+    "message": "Ignored 16 annual/quarterly/YTD period-type variants for operating_income.",
+    "metric": "operating_income",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 16,
+    "message": "Ignored 16 annual/quarterly/YTD period-type variants for net_income.",
+    "metric": "net_income",
+    "severity": "info"
+  },
+  {
+    "code": "SOURCE_FRAME_VARIANT_IGNORED",
+    "count": 3,
+    "message": "Ignored 3 SEC frame/concept variants across distinct periods for cash_and_equivalents.",
+    "metric": "cash_and_equivalents",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 9,
+    "message": "Ignored 9 annual/quarterly/YTD period-type variants for shares_diluted.",
+    "metric": "shares_diluted",
+    "severity": "info"
+  }
+]

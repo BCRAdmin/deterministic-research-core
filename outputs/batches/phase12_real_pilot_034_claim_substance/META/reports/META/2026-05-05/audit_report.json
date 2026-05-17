@@ -1,0 +1,115 @@
+{
+  "has_blocking_errors": false,
+  "issues": [],
+  "numeric_claims": [
+    {
+      "line_number": 8,
+      "nearby_text": "- Report as-of date: `2026-05-05`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 9,
+      "nearby_text": "- Price basis: `2026-05-05` close via `csv_price_provider`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": "close",
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 21,
+      "nearby_text": "| SBC / Revenue | 9.1% |",
+      "normalized_value": 9.1,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "9.1%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 29,
+      "nearby_text": "- **META_CLAIM_002**: META has validated revenue TTM of $197.38B, so the business discussion should focus on mega-cap platform growth, AI/cloud investment, margin durability and regulatory risk rather than generic scale language.",
+      "normalized_value": 197380000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$197.38B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 33,
+      "nearby_text": "- **META_CLAIM_003**: Validated FCF TTM is $48.24B, making cash conversion a direct rating input for META.",
+      "normalized_value": 48240000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$48.24B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 37,
+      "nearby_text": "- **META_CLAIM_004**: SBC/Revenue is 9.1%, which should be interpreted through mega-cap platform, capex and capital-return context rather than a one-size-fits-all compensation lens.",
+      "normalized_value": 9.1,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "9.1%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 41,
+      "nearby_text": "- **META_CLAIM_005**: Balance-sheet flexibility is anchored in validated net cash of $103.19B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+      "normalized_value": 103190000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "net_cash",
+      "raw_text": "$103.19B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 46,
+      "nearby_text": "- **META_CLAIM_006**: Valuation is framed by validated EV/Sales of 7.34x; this directly limits how aggressive the Hold stance should be.",
+      "normalized_value": 7.34,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "7.34x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 50,
+      "nearby_text": "- **META_CLAIM_007**: For META, validated P/FCF is 32.15x and should be read against platform growth, FCF durability and capex intensity; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+      "normalized_value": 32.15,
+      "period_hint": "unknown",
+      "possible_metric": "price_to_fcf",
+      "raw_text": "32.15x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 64,
+      "nearby_text": "- **META_CLAIM_010**: The bull case is that platform scale, ecosystem monetization and operating leverage combines with revenue of $197.38B to support the allowed upside rating path when cash conversion quality also holds.",
+      "normalized_value": 197380000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$197.38B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 73,
+      "nearby_text": "- **META_CLAIM_012**: The bear case is that regulatory pressure, capex intensity, growth deceleration or multiple compression overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 9.1% or source-quality issues persist.",
+      "normalized_value": 9.1,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "9.1%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 84,
+      "nearby_text": "- **META_CLAIM_015**: Source disagreement or current-period mismatch can reduce conviction for META, especially where revenue $197.38B is a key valuation denominator.",
+      "normalized_value": 197380000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$197.38B",
+      "unit": "usd"
+    }
+  ],
+  "ticker": "META"
+}

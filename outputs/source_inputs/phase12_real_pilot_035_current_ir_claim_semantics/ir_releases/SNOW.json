@@ -1,0 +1,55 @@
+{
+  "source_id": "SNOW_IR_FY2026_Q4_RELEASE",
+  "source_type": "earnings_release",
+  "url": "https://investors.snowflake.com/",
+  "retrieved_at": "2026-05-06",
+  "period": "FY2026",
+  "text": "",
+  "metrics": [
+    {
+      "metric_name": "revenue",
+      "value": 4342000000,
+      "unit": "usd",
+      "period": "FY2026",
+      "fiscal_year": 2026,
+      "fiscal_period": "FY",
+      "period_bucket": "annual",
+      "start_date": "2025-02-01",
+      "end_date": "2026-01-31",
+      "duration_days": 364,
+      "basis": "gaap",
+      "statement_type": "income_statement",
+      "statement": "Snowflake reported fiscal year 2026 revenue of approximately $4.342 billion."
+    },
+    {
+      "metric_name": "free_cash_flow",
+      "value": 1120000000,
+      "unit": "usd",
+      "period": "FY2026",
+      "fiscal_year": 2026,
+      "fiscal_period": "FY",
+      "period_bucket": "annual",
+      "start_date": "2025-02-01",
+      "end_date": "2026-01-31",
+      "duration_days": 364,
+      "basis": "company_defined",
+      "statement_type": "cash_flow",
+      "statement": "Snowflake reported fiscal year 2026 free cash flow of $1.120 billion."
+    },
+    {
+      "metric_name": "adjusted_free_cash_flow",
+      "value": 1193000000,
+      "unit": "usd",
+      "period": "FY2026",
+      "fiscal_year": 2026,
+      "fiscal_period": "FY",
+      "period_bucket": "annual",
+      "start_date": "2025-02-01",
+      "end_date": "2026-01-31",
+      "duration_days": 364,
+      "basis": "non_gaap",
+      "statement_type": "cash_flow",
+      "statement": "Snowflake reported fiscal year 2026 adjusted free cash flow of $1.193 billion."
+    }
+  ]
+}

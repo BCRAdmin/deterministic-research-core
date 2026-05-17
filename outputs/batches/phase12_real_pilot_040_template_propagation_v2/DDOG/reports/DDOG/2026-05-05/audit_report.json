@@ -1,0 +1,223 @@
+{
+  "has_blocking_errors": false,
+  "issues": [],
+  "numeric_claims": [
+    {
+      "line_number": 9,
+      "nearby_text": "- Fundamental basis: revenue scale is `$3.43B`.",
+      "normalized_value": 3430000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$3.43B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 10,
+      "nearby_text": "- Cash-conversion basis: free cash flow is `$914.7M`.",
+      "normalized_value": 914700000.0,
+      "period_hint": "unknown",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$914.7M",
+      "unit": "usd"
+    },
+    {
+      "line_number": 11,
+      "nearby_text": "- Valuation constraint: EV/Sales is `14.14x`.",
+      "normalized_value": 14.14,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "14.14x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 15,
+      "nearby_text": "- Report as-of date: `2026-05-05`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 16,
+      "nearby_text": "- Price basis: `2026-05-05` close via `csv_price_provider`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": "close",
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 28,
+      "nearby_text": "| SBC / Revenue | 21.9% |",
+      "normalized_value": 21.9,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "21.9%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 33,
+      "nearby_text": "- **DDOG_CLAIM_002**: DDOG's FY2025 revenue of $3.43B anchors the observability-platform demand story; the platform case is credible only if usage growth and AI monitoring demand convert into durable cash generation.",
+      "normalized_value": 3430000000.0,
+      "period_hint": "fy",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$3.43B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 39,
+      "nearby_text": "- **DDOG_CLAIM_003**: DDOG reported operating cash flow of $1.05B and company-defined free cash flow of $914.7M, which makes FCF conversion the core support for any Hold-to-Accumulate path.",
+      "normalized_value": 1050000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$1.05B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 39,
+      "nearby_text": "- **DDOG_CLAIM_003**: DDOG reported operating cash flow of $1.05B and company-defined free cash flow of $914.7M, which makes FCF conversion the core support for any Hold-to-Accumulate path.",
+      "normalized_value": 914700000.0,
+      "period_hint": "unknown",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$914.7M",
+      "unit": "usd"
+    },
+    {
+      "line_number": 43,
+      "nearby_text": "- **DDOG_CLAIM_005**: DDOG has revenue TTM of $3.43B, so the business discussion should focus on observability platform expansion, large-customer growth, AI monitoring and usage-based demand rather than generic scale language.",
+      "normalized_value": 3430000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$3.43B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 47,
+      "nearby_text": "- **DDOG_CLAIM_006**: FCF TTM is $914.7M, making cash conversion a direct rating input for DDOG.",
+      "normalized_value": 914700000.0,
+      "period_hint": "ttm",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$914.7M",
+      "unit": "usd"
+    },
+    {
+      "line_number": 51,
+      "nearby_text": "- **DDOG_CLAIM_007**: SBC/Revenue is 21.9%, which should be interpreted through SaaS usage growth, ARR/customer expansion, SBC and cash-conversion context rather than a one-size-fits-all compensation lens.",
+      "normalized_value": 21.9,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "21.9%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 55,
+      "nearby_text": "- **DDOG_CLAIM_008**: Balance-sheet flexibility is anchored in net cash of $4.47B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+      "normalized_value": 4470000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "net_cash",
+      "raw_text": "$4.47B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 60,
+      "nearby_text": "- **DDOG_CLAIM_009**: Valuation is framed by EV/Sales of 14.14x; this directly limits how aggressive the Hold stance should be.",
+      "normalized_value": 14.14,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "14.14x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 64,
+      "nearby_text": "- **DDOG_CLAIM_010**: For DDOG, P/FCF is 57.91x and should be read against growth durability versus high FCF multiple; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+      "normalized_value": 57.91,
+      "period_hint": "unknown",
+      "possible_metric": "price_to_fcf",
+      "raw_text": "57.91x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 78,
+      "nearby_text": "- **DDOG_CLAIM_013**: The bull case is that observability consolidation, AI monitoring demand and large-customer expansion combines with revenue of $3.43B to support the allowed upside rating path when cash conversion quality also holds.",
+      "normalized_value": 3430000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$3.43B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 87,
+      "nearby_text": "- **DDOG_CLAIM_015**: The bear case is that usage slowdown, valuation compression, SBC dilution or weaker company forecast overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 21.9% or source-quality issues persist.",
+      "normalized_value": 21.9,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "21.9%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 95,
+      "nearby_text": "- **DDOG_CLAIM_004**: DDOG's FY2025 SBC of $750.7M and cash plus marketable securities of $4.47B define the equity-quality tradeoff: liquidity is strong, but compensation intensity still matters for shareholders.",
+      "normalized_value": 750700000.0,
+      "period_hint": "fy",
+      "possible_metric": null,
+      "raw_text": "$750.7M",
+      "unit": "usd"
+    },
+    {
+      "line_number": 95,
+      "nearby_text": "- **DDOG_CLAIM_004**: DDOG's FY2025 SBC of $750.7M and cash plus marketable securities of $4.47B define the equity-quality tradeoff: liquidity is strong, but compensation intensity still matters for shareholders.",
+      "normalized_value": 4470000000.0,
+      "period_hint": "fy",
+      "possible_metric": null,
+      "raw_text": "$4.47B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 102,
+      "nearby_text": "- **DDOG_CLAIM_018**: Source disagreement or current-period mismatch can reduce conviction for DDOG, especially where revenue $3.43B is a key valuation denominator.",
+      "normalized_value": 3430000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$3.43B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 124,
+      "nearby_text": "- Why this rating? `Hold` balances revenue of `$3.43B` against valuation and technical timing.",
+      "normalized_value": 3430000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$3.43B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 125,
+      "nearby_text": "- Cash conversion: FCF is `$914.7M` and determines whether growth converts into equity value.",
+      "normalized_value": 914700000.0,
+      "period_hint": "unknown",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$914.7M",
+      "unit": "usd"
+    },
+    {
+      "line_number": 126,
+      "nearby_text": "- Why not more bullish? EV/Sales `14.14x` limits new-money urgency unless current-period KPIs accelerate.",
+      "normalized_value": 14.14,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "14.14x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 127,
+      "nearby_text": "- Additional valuation/technical constraint: P/FCF `57.91x` and RSI `69.58` argue against chasing without a better setup.",
+      "normalized_value": 57.91,
+      "period_hint": "unknown",
+      "possible_metric": "price_to_fcf",
+      "raw_text": "57.91x",
+      "unit": "multiple"
+    }
+  ],
+  "ticker": "DDOG"
+}

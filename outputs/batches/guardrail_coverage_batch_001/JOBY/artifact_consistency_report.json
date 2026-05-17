@@ -1,0 +1,13 @@
+{
+  "batch_id": "guardrail_coverage_batch_001",
+  "generated_at": "2026-05-17T00:45:41Z",
+  "issue_count": 0,
+  "issues": [],
+  "public_ready": false,
+  "publishable": false,
+  "review_status": "data_unavailable",
+  "stage": "source_ingestion_guardrail_coverage",
+  "status": "not_applicable_data_unavailable",
+  "ticker": "JOBY",
+  "visibility": "hidden"
+}

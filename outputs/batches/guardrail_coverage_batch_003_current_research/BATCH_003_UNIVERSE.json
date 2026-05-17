@@ -1,0 +1,414 @@
+{
+  "batch_id": "guardrail_coverage_batch_003_current_research",
+  "excluded_tickers": [
+    {
+      "expected_archetype_bucket": "TURNAROUND / BUSINESS_MODEL_PRESSURE / STANDARD_WITH_RISK",
+      "reason": "Foreign issuer / ADR support is not explicit in this deterministic source-ingestion lane.",
+      "ticker": "TSM"
+    },
+    {
+      "expected_archetype_bucket": "TURNAROUND / BUSINESS_MODEL_PRESSURE / STANDARD_WITH_RISK",
+      "reason": "Foreign issuer / ADR support is not explicit in this deterministic source-ingestion lane.",
+      "ticker": "ASML"
+    },
+    {
+      "expected_archetype_bucket": "TURNAROUND / BUSINESS_MODEL_PRESSURE / STANDARD_WITH_RISK",
+      "reason": "Lower-priority speculative case; keep out until the higher-value quantum set is current-data-ready.",
+      "ticker": "QUBT"
+    },
+    {
+      "expected_archetype_bucket": "TURNAROUND / BUSINESS_MODEL_PRESSURE / STANDARD_WITH_RISK",
+      "reason": "Lower-priority speculative AI story-stock; keep out until core deep-tech coverage is stable.",
+      "ticker": "SOUN"
+    },
+    {
+      "expected_archetype_bucket": "TURNAROUND / BUSINESS_MODEL_PRESSURE / STANDARD_WITH_RISK",
+      "reason": "Lower-priority speculative AI story-stock; keep out until core deep-tech coverage is stable.",
+      "ticker": "BBAI"
+    },
+    {
+      "expected_archetype_bucket": "TURNAROUND / BUSINESS_MODEL_PRESSURE / STANDARD_WITH_RISK",
+      "reason": "Useful turnaround case, but lower priority than the required Batch-003 guardrail universe.",
+      "ticker": "PYPL"
+    },
+    {
+      "expected_archetype_bucket": "TURNAROUND / BUSINESS_MODEL_PRESSURE / STANDARD_WITH_RISK",
+      "reason": "Useful turnaround case, but lower priority than the required Batch-003 guardrail universe.",
+      "ticker": "SNAP"
+    },
+    {
+      "expected_archetype_bucket": "TURNAROUND / BUSINESS_MODEL_PRESSURE / STANDARD_WITH_RISK",
+      "reason": "Useful distressed case, but lower priority than the required Batch-003 guardrail universe.",
+      "ticker": "WBA"
+    },
+    {
+      "expected_archetype_bucket": "TURNAROUND / BUSINESS_MODEL_PRESSURE / STANDARD_WITH_RISK",
+      "reason": "Useful distressed case, but lower priority than the required Batch-003 guardrail universe.",
+      "ticker": "PARA"
+    }
+  ],
+  "generated_at": "2026-05-17T01:51:24Z",
+  "included_ticker_count": 32,
+  "included_tickers": [
+    "GOOGL",
+    "SNOW",
+    "MSFT",
+    "AAPL",
+    "META",
+    "AMZN",
+    "NFLX",
+    "CRM",
+    "DDOG",
+    "NOW",
+    "MDB",
+    "NET",
+    "ZS",
+    "CRWD",
+    "PANW",
+    "NVDA",
+    "AMD",
+    "AVGO",
+    "QCOM",
+    "MU",
+    "MRVL",
+    "INTC",
+    "RGTI",
+    "IONQ",
+    "QBTS",
+    "RKLB",
+    "ASTS",
+    "ACHR",
+    "JOBY",
+    "RIVN",
+    "LCID",
+    "PLUG"
+  ],
+  "records": [
+    {
+      "benchmark": "QQQ",
+      "expected_archetype_bucket": "MEGA_CAP_PLATFORM or MEGA_CAP_CLOUD_PLATFORM",
+      "fresh_price": true,
+      "include_reason": "Gold/control regression case.",
+      "minimum_viable_data": true,
+      "planned_status_if_gap": "manual_review/data_gap",
+      "sec_companyfacts": true,
+      "ticker": "GOOGL"
+    },
+    {
+      "benchmark": "QQQ",
+      "expected_archetype_bucket": "SAAS_CONSUMPTION / SAAS_SECURITY / STANDARD_GROWTH",
+      "fresh_price": true,
+      "include_reason": "Gold/control regression case.",
+      "minimum_viable_data": true,
+      "planned_status_if_gap": "manual_review/data_gap",
+      "sec_companyfacts": true,
+      "ticker": "SNOW"
+    },
+    {
+      "benchmark": "QQQ",
+      "expected_archetype_bucket": "MEGA_CAP_PLATFORM or MEGA_CAP_CLOUD_PLATFORM",
+      "fresh_price": true,
+      "include_reason": "Gold/control regression case.",
+      "minimum_viable_data": true,
+      "planned_status_if_gap": "manual_review/data_gap",
+      "sec_companyfacts": true,
+      "ticker": "MSFT"
+    },
+    {
+      "benchmark": "QQQ",
+      "expected_archetype_bucket": "MEGA_CAP_PLATFORM or MEGA_CAP_CLOUD_PLATFORM",
+      "fresh_price": true,
+      "include_reason": "Current research coverage candidate with fresh price and SEC source path.",
+      "minimum_viable_data": true,
+      "planned_status_if_gap": "manual_review/data_gap",
+      "sec_companyfacts": true,
+      "ticker": "AAPL"
+    },
+    {
+      "benchmark": "QQQ",
+      "expected_archetype_bucket": "MEGA_CAP_PLATFORM or MEGA_CAP_CLOUD_PLATFORM",
+      "fresh_price": true,
+      "include_reason": "Current research coverage candidate with fresh price and SEC source path.",
+      "minimum_viable_data": true,
+      "planned_status_if_gap": "manual_review/data_gap",
+      "sec_companyfacts": true,
+      "ticker": "META"
+    },
+    {
+      "benchmark": "QQQ",
+      "expected_archetype_bucket": "MEGA_CAP_PLATFORM or MEGA_CAP_CLOUD_PLATFORM",
+      "fresh_price": true,
+      "include_reason": "Current research coverage candidate with fresh price and SEC source path.",
+      "minimum_viable_data": true,
+      "planned_status_if_gap": "manual_review/data_gap",
+      "sec_companyfacts": true,
+      "ticker": "AMZN"
+    },
+    {
+      "benchmark": "QQQ",
+      "expected_archetype_bucket": "MEGA_CAP_PLATFORM or MEGA_CAP_CLOUD_PLATFORM",
+      "fresh_price": true,
+      "include_reason": "Current research coverage candidate with fresh price and SEC source path.",
+      "minimum_viable_data": true,
+      "planned_status_if_gap": "manual_review/data_gap",
+      "sec_companyfacts": true,
+      "ticker": "NFLX"
+    },
+    {
+      "benchmark": "QQQ",
+      "expected_archetype_bucket": "SAAS_CONSUMPTION / SAAS_SECURITY / STANDARD_GROWTH",
+      "fresh_price": true,
+      "include_reason": "Current research coverage candidate with fresh price and SEC source path.",
+      "minimum_viable_data": true,
+      "planned_status_if_gap": "manual_review/data_gap",
+      "sec_companyfacts": true,
+      "ticker": "CRM"
+    },
+    {
+      "benchmark": "QQQ",
+      "expected_archetype_bucket": "SAAS_CONSUMPTION / SAAS_SECURITY / STANDARD_GROWTH",
+      "fresh_price": true,
+      "include_reason": "Current research coverage candidate with fresh price and SEC source path.",
+      "minimum_viable_data": true,
+      "planned_status_if_gap": "manual_review/data_gap",
+      "sec_companyfacts": true,
+      "ticker": "DDOG"
+    },
+    {
+      "benchmark": "QQQ",
+      "expected_archetype_bucket": "SAAS_CONSUMPTION / SAAS_SECURITY / STANDARD_GROWTH",
+      "fresh_price": true,
+      "include_reason": "Current research coverage candidate with fresh price and SEC source path.",
+      "minimum_viable_data": true,
+      "planned_status_if_gap": "manual_review/data_gap",
+      "sec_companyfacts": true,
+      "ticker": "NOW"
+    },
+    {
+      "benchmark": "QQQ",
+      "expected_archetype_bucket": "SAAS_CONSUMPTION / SAAS_SECURITY / STANDARD_GROWTH",
+      "fresh_price": true,
+      "include_reason": "Current research coverage candidate with fresh price and SEC source path.",
+      "minimum_viable_data": true,
+      "planned_status_if_gap": "manual_review/data_gap",
+      "sec_companyfacts": true,
+      "ticker": "MDB"
+    },
+    {
+      "benchmark": "QQQ",
+      "expected_archetype_bucket": "SAAS_CONSUMPTION / SAAS_SECURITY / STANDARD_GROWTH",
+      "fresh_price": true,
+      "include_reason": "Current research coverage candidate with fresh price and SEC source path.",
+      "minimum_viable_data": true,
+      "planned_status_if_gap": "manual_review/data_gap",
+      "sec_companyfacts": true,
+      "ticker": "NET"
+    },
+    {
+      "benchmark": "QQQ",
+      "expected_archetype_bucket": "SAAS_CONSUMPTION / SAAS_SECURITY / STANDARD_GROWTH",
+      "fresh_price": true,
+      "include_reason": "Current research coverage candidate with fresh price and SEC source path.",
+      "minimum_viable_data": true,
+      "planned_status_if_gap": "manual_review/data_gap",
+      "sec_companyfacts": true,
+      "ticker": "ZS"
+    },
+    {
+      "benchmark": "QQQ",
+      "expected_archetype_bucket": "SAAS_CONSUMPTION / SAAS_SECURITY / STANDARD_GROWTH",
+      "fresh_price": true,
+      "include_reason": "Current research coverage candidate with fresh price and SEC source path.",
+      "minimum_viable_data": true,
+      "planned_status_if_gap": "manual_review/data_gap",
+      "sec_companyfacts": true,
+      "ticker": "CRWD"
+    },
+    {
+      "benchmark": "QQQ",
+      "expected_archetype_bucket": "SAAS_CONSUMPTION / SAAS_SECURITY / STANDARD_GROWTH",
+      "fresh_price": true,
+      "include_reason": "Current research coverage candidate with fresh price and SEC source path.",
+      "minimum_viable_data": true,
+      "planned_status_if_gap": "manual_review/data_gap",
+      "sec_companyfacts": true,
+      "ticker": "PANW"
+    },
+    {
+      "benchmark": "SMH",
+      "expected_archetype_bucket": "SEMICONDUCTOR_AI_INFRA or SEMICONDUCTOR_CYCLICAL",
+      "fresh_price": true,
+      "include_reason": "Current research coverage candidate with fresh price and SEC source path.",
+      "minimum_viable_data": true,
+      "planned_status_if_gap": "manual_review/data_gap",
+      "sec_companyfacts": true,
+      "ticker": "NVDA"
+    },
+    {
+      "benchmark": "SMH",
+      "expected_archetype_bucket": "SEMICONDUCTOR_AI_INFRA or SEMICONDUCTOR_CYCLICAL",
+      "fresh_price": true,
+      "include_reason": "Current research coverage candidate with fresh price and SEC source path.",
+      "minimum_viable_data": true,
+      "planned_status_if_gap": "manual_review/data_gap",
+      "sec_companyfacts": true,
+      "ticker": "AMD"
+    },
+    {
+      "benchmark": "SMH",
+      "expected_archetype_bucket": "SEMICONDUCTOR_AI_INFRA or SEMICONDUCTOR_CYCLICAL",
+      "fresh_price": true,
+      "include_reason": "Current research coverage candidate with fresh price and SEC source path.",
+      "minimum_viable_data": true,
+      "planned_status_if_gap": "manual_review/data_gap",
+      "sec_companyfacts": true,
+      "ticker": "AVGO"
+    },
+    {
+      "benchmark": "SMH",
+      "expected_archetype_bucket": "SEMICONDUCTOR_AI_INFRA or SEMICONDUCTOR_CYCLICAL",
+      "fresh_price": true,
+      "include_reason": "FCF-support display rule regression case.",
+      "minimum_viable_data": true,
+      "planned_status_if_gap": "manual_review/data_gap",
+      "sec_companyfacts": true,
+      "ticker": "QCOM"
+    },
+    {
+      "benchmark": "SMH",
+      "expected_archetype_bucket": "SEMICONDUCTOR_AI_INFRA or SEMICONDUCTOR_CYCLICAL",
+      "fresh_price": true,
+      "include_reason": "Current research coverage candidate with fresh price and SEC source path.",
+      "minimum_viable_data": true,
+      "planned_status_if_gap": "manual_review/data_gap",
+      "sec_companyfacts": true,
+      "ticker": "MU"
+    },
+    {
+      "benchmark": "SMH",
+      "expected_archetype_bucket": "SEMICONDUCTOR_AI_INFRA or SEMICONDUCTOR_CYCLICAL",
+      "fresh_price": true,
+      "include_reason": "Current research coverage candidate with fresh price and SEC source path.",
+      "minimum_viable_data": true,
+      "planned_status_if_gap": "manual_review/data_gap",
+      "sec_companyfacts": true,
+      "ticker": "MRVL"
+    },
+    {
+      "benchmark": "SMH",
+      "expected_archetype_bucket": "SEMICONDUCTOR_AI_INFRA or SEMICONDUCTOR_CYCLICAL",
+      "fresh_price": true,
+      "include_reason": "Current research coverage candidate with fresh price and SEC source path.",
+      "minimum_viable_data": true,
+      "planned_status_if_gap": "manual_review/data_gap",
+      "sec_companyfacts": true,
+      "ticker": "INTC"
+    },
+    {
+      "benchmark": "QQQ",
+      "expected_archetype_bucket": "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL",
+      "fresh_price": true,
+      "include_reason": "Speculative deep-tech guardrail case.",
+      "minimum_viable_data": true,
+      "planned_status_if_gap": "manual_review/data_gap",
+      "sec_companyfacts": true,
+      "ticker": "RGTI"
+    },
+    {
+      "benchmark": "QQQ",
+      "expected_archetype_bucket": "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL",
+      "fresh_price": true,
+      "include_reason": "Speculative deep-tech guardrail case.",
+      "minimum_viable_data": true,
+      "planned_status_if_gap": "manual_review/data_gap",
+      "sec_companyfacts": true,
+      "ticker": "IONQ"
+    },
+    {
+      "benchmark": "QQQ",
+      "expected_archetype_bucket": "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL",
+      "fresh_price": true,
+      "include_reason": "Speculative deep-tech guardrail case.",
+      "minimum_viable_data": true,
+      "planned_status_if_gap": "manual_review/data_gap",
+      "sec_companyfacts": true,
+      "ticker": "QBTS"
+    },
+    {
+      "benchmark": "QQQ",
+      "expected_archetype_bucket": "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH / DISTRESSED_CAPITAL_INTENSIVE",
+      "fresh_price": true,
+      "include_reason": "Early-commercial capital-intensive guardrail case.",
+      "minimum_viable_data": true,
+      "planned_status_if_gap": "manual_review/data_gap",
+      "sec_companyfacts": true,
+      "ticker": "RKLB"
+    },
+    {
+      "benchmark": "QQQ",
+      "expected_archetype_bucket": "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH / DISTRESSED_CAPITAL_INTENSIVE",
+      "fresh_price": true,
+      "include_reason": "Early-commercial capital-intensive guardrail case.",
+      "minimum_viable_data": true,
+      "planned_status_if_gap": "manual_review/data_gap",
+      "sec_companyfacts": true,
+      "ticker": "ASTS"
+    },
+    {
+      "benchmark": "QQQ",
+      "expected_archetype_bucket": "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH / DISTRESSED_CAPITAL_INTENSIVE",
+      "fresh_price": true,
+      "include_reason": "Early-commercial capital-intensive guardrail case.",
+      "minimum_viable_data": true,
+      "planned_status_if_gap": "manual_review/data_gap",
+      "sec_companyfacts": true,
+      "ticker": "ACHR"
+    },
+    {
+      "benchmark": "QQQ",
+      "expected_archetype_bucket": "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH / DISTRESSED_CAPITAL_INTENSIVE",
+      "fresh_price": true,
+      "include_reason": "Early-commercial capital-intensive guardrail case.",
+      "minimum_viable_data": true,
+      "planned_status_if_gap": "manual_review/data_gap",
+      "sec_companyfacts": true,
+      "ticker": "JOBY"
+    },
+    {
+      "benchmark": "QQQ",
+      "expected_archetype_bucket": "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH / DISTRESSED_CAPITAL_INTENSIVE",
+      "fresh_price": true,
+      "include_reason": "Early-commercial capital-intensive guardrail case.",
+      "minimum_viable_data": true,
+      "planned_status_if_gap": "manual_review/data_gap",
+      "sec_companyfacts": true,
+      "ticker": "RIVN"
+    },
+    {
+      "benchmark": "QQQ",
+      "expected_archetype_bucket": "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH / DISTRESSED_CAPITAL_INTENSIVE",
+      "fresh_price": true,
+      "include_reason": "Early-commercial capital-intensive guardrail case.",
+      "minimum_viable_data": true,
+      "planned_status_if_gap": "manual_review/data_gap",
+      "sec_companyfacts": true,
+      "ticker": "LCID"
+    },
+    {
+      "benchmark": "QQQ",
+      "expected_archetype_bucket": "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH / DISTRESSED_CAPITAL_INTENSIVE",
+      "fresh_price": true,
+      "include_reason": "Early-commercial capital-intensive guardrail case.",
+      "minimum_viable_data": true,
+      "planned_status_if_gap": "manual_review/data_gap",
+      "sec_companyfacts": true,
+      "ticker": "PLUG"
+    }
+  ],
+  "summary": {
+    "fresh_price_count": 32,
+    "minimum_viable_count": 32,
+    "sec_companyfacts_count": 32
+  },
+  "target_size": "24-32"
+}

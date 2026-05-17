@@ -1,0 +1,15 @@
+{
+  "as_of_date": "2026-05-08",
+  "has_blocking_errors": false,
+  "issues": [
+    {
+      "code": "EARNINGS_DATE_UNAVAILABLE",
+      "computed": null,
+      "message": "Next earnings date is unavailable; report must state that it is unconfirmed.",
+      "metric": null,
+      "reported": null,
+      "severity": "warning"
+    }
+  ],
+  "ticker": "MSFT"
+}

@@ -1,0 +1,23 @@
+{
+  "actual_archetype": "MEGA_CAP_PLATFORM",
+  "archetype_confidence": 0.2,
+  "artifact_consistency_status": "clean",
+  "company_name": "Microsoft Corporation",
+  "concerns": [],
+  "data_confidence_score": 77,
+  "evidence_status": "clean",
+  "expected_archetype": "MEGA_CAP_PLATFORM or MEGA_CAP_CLOUD_PLATFORM",
+  "external_display_rating": "Hold",
+  "internal_research_quality_score": 100,
+  "likely_false_negative": "no",
+  "likely_false_positive": "no",
+  "manual_review_reasons": [],
+  "primary_blockers": [],
+  "public_ready": false,
+  "publish_quality_score": 92,
+  "publishable": true,
+  "recommended_next_action": "Keep in passed review bundle; no public routing without Promotion Gate.",
+  "review_status": "passed",
+  "sector_bucket": "Gold-/Kontrollgruppe",
+  "ticker": "MSFT"
+}

@@ -1,0 +1,5 @@
+[
+  {"code": "INVALID_TRADE_LEVEL"},
+  {"code": "RATING_TOO_HARSH_FOR_ACTION", "metric": "rating"}
+]
+

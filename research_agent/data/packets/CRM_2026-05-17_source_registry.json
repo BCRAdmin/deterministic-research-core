@@ -1,0 +1,57 @@
+{
+  "registry_id": "CRM_2026-05-17",
+  "sources": [
+    {
+      "authority_rank": 1,
+      "retrieved_at": "2026-05-17T02:08:45Z",
+      "source_id": "CRM_SEC_COMPANYFACTS_1108524",
+      "source_type": "sec_filing",
+      "ticker": "CRM",
+      "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001108524.json",
+      "used_for": [
+        "revenue",
+        "financial",
+        "cash",
+        "operating_income",
+        "free_cash_flow",
+        "fcf",
+        "sbc",
+        "debt",
+        "eps"
+      ]
+    },
+    {
+      "authority_rank": 1,
+      "retrieved_at": "2026-05-17T02:08:45Z",
+      "source_id": "CRM_IR_FY2026_Q4_RELEASE",
+      "source_type": "company_ir",
+      "ticker": "CRM",
+      "url": "https://www.salesforce.com/news/press-releases/2026/02/25/fy26-q4-earnings/",
+      "used_for": [
+        "cash",
+        "cash_and_equivalents",
+        "current_period_kpis",
+        "fcf",
+        "financial",
+        "free_cash_flow",
+        "marketable_securities",
+        "operating_cash_flow",
+        "revenue",
+        "sbc"
+      ]
+    },
+    {
+      "authority_rank": 2,
+      "retrieved_at": "2026-05-17T02:08:45Z",
+      "source_id": "CRM_YAHOO_CHART_PRICE_CSV",
+      "source_type": "exchange_ohlcv",
+      "ticker": "CRM",
+      "url": "https://query1.finance.yahoo.com/v8/finance/chart/CRM",
+      "used_for": [
+        "price",
+        "volume",
+        "technical_indicators"
+      ]
+    }
+  ]
+}

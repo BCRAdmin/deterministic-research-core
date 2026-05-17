@@ -1,0 +1,199 @@
+{
+  "has_blocking_errors": true,
+  "issues": [
+    {
+      "code": "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+      "line_number": null,
+      "message": "P/FCF above 100x on positive, non-near-zero FCF requires explicit explanation before publish.",
+      "metric": "price_to_fcf",
+      "raw_text": null,
+      "reported": 630.8096755310006,
+      "severity": "error",
+      "validated": null
+    },
+    {
+      "code": "TRUE_FINANCIAL_ANOMALY",
+      "line_number": null,
+      "message": "P/FCF above 100x on positive, non-near-zero FCF requires explicit explanation before publish.",
+      "metric": "price_to_fcf",
+      "raw_text": null,
+      "reported": 630.8096755310006,
+      "severity": "error",
+      "validated": null
+    }
+  ],
+  "numeric_claims": [
+    {
+      "line_number": 9,
+      "nearby_text": "- Fundamental basis: revenue scale is `$54.86B`.",
+      "normalized_value": 54860000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$54.86B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 10,
+      "nearby_text": "- Cash-conversion basis: free cash flow is `$1.16B`.",
+      "normalized_value": 1160000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$1.16B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 11,
+      "nearby_text": "- Valuation constraint: EV/Sales is `13.19x`.",
+      "normalized_value": 13.19,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "13.19x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 15,
+      "nearby_text": "- Report as-of date: `2026-05-05`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 16,
+      "nearby_text": "- Price basis: `2026-05-05` close via `csv_price_provider`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": "close",
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 28,
+      "nearby_text": "| SBC / Revenue | 1.5% |",
+      "normalized_value": 1.5,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "1.5%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 36,
+      "nearby_text": "- **MU_CLAIM_002**: MU has revenue TTM of $54.86B, so the business discussion should focus on semiconductor cycle, product mix, inventory, gross margin and management forecast quality rather than generic scale language.",
+      "normalized_value": 54860000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$54.86B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 40,
+      "nearby_text": "- **MU_CLAIM_003**: FCF TTM is $1.16B, making cash conversion a direct rating input for MU.",
+      "normalized_value": 1160000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$1.16B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 44,
+      "nearby_text": "- **MU_CLAIM_004**: SBC/Revenue is 1.5%, which should be interpreted through semiconductor-cycle, segment-mix and balance-sheet context rather than a one-size-fits-all compensation lens.",
+      "normalized_value": 1.5,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "1.5%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 48,
+      "nearby_text": "- **MU_CLAIM_005**: Balance-sheet flexibility is anchored in net cash of $7.56B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+      "normalized_value": 7560000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "net_cash",
+      "raw_text": "$7.56B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 53,
+      "nearby_text": "- **MU_CLAIM_006**: Valuation is framed by EV/Sales of 13.19x; this directly limits how aggressive the Hold stance should be.",
+      "normalized_value": 13.19,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "13.19x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 57,
+      "nearby_text": "- **MU_CLAIM_007**: For MU, P/FCF is 630.81x and should be read against cycle-adjusted earnings and FCF support; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+      "normalized_value": 630.81,
+      "period_hint": "unknown",
+      "possible_metric": "price_to_fcf",
+      "raw_text": "630.81x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 71,
+      "nearby_text": "- **MU_CLAIM_010**: The bull case is that cycle recovery, AI/datacenter mix and margin leverage combines with revenue of $54.86B to support the allowed upside rating path when cash conversion quality also holds.",
+      "normalized_value": 54860000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$54.86B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 80,
+      "nearby_text": "- **MU_CLAIM_012**: The bear case is that inventory correction, gross-margin pressure or weak management forecast overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 1.5% or source concerns persist.",
+      "normalized_value": 1.5,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "1.5%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 91,
+      "nearby_text": "- **MU_CLAIM_015**: Source disagreement or current-period mismatch can reduce conviction for MU, especially where revenue $54.86B is a key valuation denominator.",
+      "normalized_value": 54860000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$54.86B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 113,
+      "nearby_text": "- Why this rating? `Hold` balances revenue of `$54.86B` against valuation and technical timing.",
+      "normalized_value": 54860000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$54.86B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 114,
+      "nearby_text": "- Cash conversion: FCF is `$1.16B` and determines whether growth converts into equity value.",
+      "normalized_value": 1160000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$1.16B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 115,
+      "nearby_text": "- Why not more bullish? EV/Sales `13.19x` limits new-money urgency unless current-period KPIs accelerate.",
+      "normalized_value": 13.19,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "13.19x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 116,
+      "nearby_text": "- Additional valuation/technical constraint: P/FCF `630.81x` and RSI `81.74` argue against chasing without a better setup.",
+      "normalized_value": 630.81,
+      "period_hint": "unknown",
+      "possible_metric": "price_to_fcf",
+      "raw_text": "630.81x",
+      "unit": "multiple"
+    }
+  ],
+  "ticker": "MU"
+}

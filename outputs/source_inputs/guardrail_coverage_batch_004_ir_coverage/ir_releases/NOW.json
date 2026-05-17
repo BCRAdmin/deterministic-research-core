@@ -1,0 +1,114 @@
+{
+  "coverage_type": "SEC-derived current-period fixture",
+  "fiscal_period": "latest",
+  "local_source_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/sec_companyfacts/NOW.json",
+  "metrics": [
+    {
+      "basis": "gaap",
+      "date": "2026-05-15",
+      "end_date": "2026-05-15",
+      "fiscal_period": "latest",
+      "fiscal_year": null,
+      "metric_name": "revenue",
+      "period": "latest_companyfacts_ttm",
+      "period_bucket": "ttm",
+      "reconciliation_note": "SEC-derived current-period fixture generated from audited SEC CompanyFacts cache; no company guidance inferred.",
+      "statement": "NOW revenue is sourced from SEC CompanyFacts / latest filing context as of 2026-05-15.",
+      "statement_type": "income_statement",
+      "supports_metrics": [
+        "revenue",
+        "revenue_ttm"
+      ],
+      "unit": "usd",
+      "value": 13480000000.0
+    },
+    {
+      "basis": "gaap",
+      "date": "2026-05-15",
+      "end_date": "2026-05-15",
+      "fiscal_period": "latest",
+      "fiscal_year": null,
+      "metric_name": "operating_cash_flow",
+      "period": "latest_companyfacts_ttm",
+      "period_bucket": "ttm",
+      "reconciliation_note": "SEC-derived current-period fixture generated from audited SEC CompanyFacts cache; no company guidance inferred.",
+      "statement": "NOW operating cash flow is sourced from SEC CompanyFacts / latest filing context as of 2026-05-15.",
+      "statement_type": "cash_flow",
+      "supports_metrics": [
+        "operating_cash_flow",
+        "operating_cash_flow_ttm"
+      ],
+      "unit": "usd",
+      "value": 5590000000.0
+    },
+    {
+      "basis": "gaap",
+      "date": "2026-05-15",
+      "end_date": "2026-05-15",
+      "fiscal_period": "latest",
+      "fiscal_year": null,
+      "metric_name": "free_cash_flow",
+      "period": "latest_companyfacts_ttm",
+      "period_bucket": "ttm",
+      "reconciliation_note": "SEC-derived current-period fixture generated from audited SEC CompanyFacts cache; no company guidance inferred.",
+      "statement": "NOW SEC-derived free cash flow is sourced from SEC CompanyFacts / latest filing context as of 2026-05-15.",
+      "statement_type": "cash_flow",
+      "supports_metrics": [
+        "free_cash_flow",
+        "free_cash_flow_ttm",
+        "sec_derived_fcf"
+      ],
+      "unit": "usd",
+      "value": 4944000000.0
+    },
+    {
+      "basis": "gaap",
+      "date": "2026-05-15",
+      "end_date": "2026-05-15",
+      "fiscal_period": "latest",
+      "fiscal_year": null,
+      "metric_name": "sbc",
+      "period": "latest_companyfacts_ttm",
+      "period_bucket": "ttm",
+      "reconciliation_note": "SEC-derived current-period fixture generated from audited SEC CompanyFacts cache; no company guidance inferred.",
+      "statement": "NOW stock-based compensation is sourced from SEC CompanyFacts / latest filing context as of 2026-05-15.",
+      "statement_type": "cash_flow",
+      "supports_metrics": [
+        "sbc",
+        "sbc_ttm"
+      ],
+      "unit": "usd",
+      "value": 1820000000.0
+    },
+    {
+      "basis": "gaap",
+      "date": "2026-05-15",
+      "end_date": "2026-05-15",
+      "fiscal_period": "latest",
+      "fiscal_year": null,
+      "metric_name": "cash_and_equivalents",
+      "period": "latest_companyfacts_instant",
+      "period_bucket": "instant",
+      "reconciliation_note": "SEC-derived current-period fixture generated from audited SEC CompanyFacts cache; no company guidance inferred.",
+      "statement": "NOW cash and equivalents is sourced from SEC CompanyFacts / latest filing context as of 2026-05-15.",
+      "statement_type": "balance_sheet",
+      "supports_metrics": [
+        "cash_and_equivalents",
+        "cash",
+        "cash_and_investments"
+      ],
+      "unit": "usd",
+      "value": 2310000000.0
+    }
+  ],
+  "period": "latest_companyfacts_ttm",
+  "report_date": "2026-05-15",
+  "retrieved_at": "2026-05-17T02:08:44Z",
+  "source_confidence": "high",
+  "source_form": "SEC_10Q_or_10K_companyfacts_current_period",
+  "source_id": "NOW_SEC_CURRENT_PERIOD_COMPANYFACTS_2026_05_15",
+  "source_type": "sec_filing",
+  "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001373715.json",
+  "text": "SEC CompanyFacts-derived current-period metrics. No company guidance included; no consensus data included.",
+  "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001373715.json"
+}

@@ -1,0 +1,660 @@
+[
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "AMZN enters the report with a validated Hold rating corridor at a frozen close of 273.55; the action should reflect mega-cap platform growth, AI/cloud investment, margin durability and regulatory risk, valuation discipline and the current technical setup.",
+    "claim_id": "AMZN_CLAIM_001",
+    "claim_text": "AMZN enters the report with a validated Hold rating corridor at a frozen close of 273.55; the action should reflect mega-cap platform growth, AI/cloud investment, margin durability and regulatory risk, valuation discipline and the current technical setup.",
+    "claim_type": "price_data",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "AMZN_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "AMZN_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "AMZN_YAHOO_CHART_PRICE_CSV_PRICE",
+      "AMZN_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "AMZN_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "AMZN_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "The committee text should stay inside the Hold action frame.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Executive Summary",
+    "source_ids": [
+      "AMZN_YAHOO_CHART_PRICE_CSV",
+      "AMZN_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "AMZN has validated revenue TTM of $685.06B, so the business discussion should focus on mega-cap platform growth, AI/cloud investment, margin durability and regulatory risk rather than generic scale language.",
+    "claim_id": "AMZN_CLAIM_002",
+    "claim_text": "AMZN has validated revenue TTM of $685.06B, so the business discussion should focus on mega-cap platform growth, AI/cloud investment, margin durability and regulatory risk rather than generic scale language.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "Revenue scale alone does not prove attractive returns or valuation discipline.",
+    "evidence_ids": [
+      "AMZN_SEC_COMPANYFACTS_1018724_REVENUE",
+      "AMZN_SEC_COMPANYFACTS_1018724_REVENUE_TTM",
+      "AMZN_SEC_COMPANYFACTS_1018724_SALES",
+      "AMZN_SEC_COMPANYFACTS_1018724_UMSATZ",
+      "AMZN_SEC_revenue_FY2025_FY_0001018724-26-000004",
+      "AMZN_SEC_revenue_FY2025_Q2_0001018724-25-000086",
+      "AMZN_SEC_revenue_FY2025_Q3_0001018724-25-000123",
+      "AMZN_SEC_revenue_FY2026_Q1_0001018724-26-000014"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm"
+    ],
+    "importance": "high",
+    "investment_implication": "Use revenue evidence as context, not as a standalone buy signal.",
+    "metric_refs": [
+      "revenue_ttm"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "AMZN_SEC_COMPANYFACTS_1018724",
+      "SEC_0001018724_0001018724-26-000004",
+      "SEC_0001018724_0001018724-25-000086",
+      "SEC_0001018724_0001018724-25-000123",
+      "SEC_0001018724_0001018724-26-000014"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Validated FCF TTM is $1.23B, making cash conversion a direct rating input for AMZN.",
+    "claim_id": "AMZN_CLAIM_003",
+    "claim_text": "Validated FCF TTM is $1.23B, making cash conversion a direct rating input for AMZN.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "FCF may be company-defined or period-sensitive and can require reconciliation review.",
+    "evidence_ids": [
+      "AMZN_SEC_COMPANYFACTS_1018724_CASHFLOW",
+      "AMZN_SEC_COMPANYFACTS_1018724_FCF",
+      "AMZN_SEC_COMPANYFACTS_1018724_FREE_CASH_FLOW",
+      "AMZN_SEC_COMPANYFACTS_1018724_FREE_CASH_FLOW_TTM",
+      "AMZN_SEC_COMPANYFACTS_1018724_FREE_CASHFLOW",
+      "AMZN_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "AMZN_AMZN_IR_Q1_2026_RELEASE_free_cash_flow_TTM_Q1_2026"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm"
+    ],
+    "importance": "high",
+    "investment_implication": "FCF quality supports the thesis only if no sanity guard blocks the report.",
+    "metric_refs": [
+      "free_cash_flow_ttm"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "AMZN_SEC_COMPANYFACTS_1018724",
+      "SEC_0001018724_DERIVED_FCF",
+      "AMZN_IR_Q1_2026_RELEASE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "SBC/Revenue is 2.8%, which should be interpreted through mega-cap platform, capex and capital-return context rather than a one-size-fits-all compensation lens.",
+    "claim_id": "AMZN_CLAIM_004",
+    "claim_text": "SBC/Revenue is 2.8%, which should be interpreted through mega-cap platform, capex and capital-return context rather than a one-size-fits-all compensation lens.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": "Sector and lifecycle matter, but persistent dilution can still reduce equity quality.",
+    "evidence_ids": [
+      "AMZN_SEC_COMPANYFACTS_1018724_SBC_TO_REVENUE",
+      "AMZN_SEC_DERIVED_SBC_TO_REVENUE"
+    ],
+    "evidence_metrics": [
+      "sbc_to_revenue"
+    ],
+    "importance": "medium",
+    "investment_implication": "Treat SBC as a risk modifier rather than an automatic rating override.",
+    "metric_refs": [
+      "sbc_to_revenue"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "AMZN_SEC_COMPANYFACTS_1018724",
+      "SEC_0001018724_DERIVED_SBC_TO_REVENUE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Balance-sheet flexibility is anchored in validated net cash of $102.73B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+    "claim_id": "AMZN_CLAIM_005",
+    "claim_text": "Balance-sheet flexibility is anchored in validated net cash of $102.73B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "AMZN_SEC_COMPANYFACTS_1018724_CASH",
+      "AMZN_SEC_COMPANYFACTS_1018724_CASH_AND_EQUIVALENTS",
+      "AMZN_SEC_COMPANYFACTS_1018724_CASH_AND_INVESTMENTS",
+      "AMZN_SEC_COMPANYFACTS_1018724_NET_CASH",
+      "AMZN_SEC_cash_and_equivalents_FY2025_FY_0001018724-26-000004",
+      "AMZN_SEC_cash_and_equivalents_FY2026_Q1_0001018724-26-000014",
+      "AMZN_SEC_COMPANYFACTS_1018724_DEBT",
+      "AMZN_SEC_COMPANYFACTS_1018724_NET_DEBT",
+      "AMZN_SEC_COMPANYFACTS_1018724_TOTAL_DEBT"
+    ],
+    "evidence_metrics": [
+      "net_cash",
+      "total_debt"
+    ],
+    "importance": "medium",
+    "investment_implication": "A stronger liquidity position can widen the acceptable holding corridor.",
+    "metric_refs": [
+      "net_cash",
+      "total_debt"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "AMZN_SEC_COMPANYFACTS_1018724",
+      "SEC_0001018724_0001018724-26-000004",
+      "SEC_0001018724_0001018724-26-000014"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Valuation is framed by validated EV/Sales of 4.19x; this directly limits how aggressive the Hold stance should be.",
+    "claim_id": "AMZN_CLAIM_006",
+    "claim_text": "Valuation is framed by validated EV/Sales of 4.19x; this directly limits how aggressive the Hold stance should be.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": "Packet-derived valuation can still be blocked by sanity guards when source reconciliation is suspect.",
+    "evidence_ids": [
+      "AMZN_SEC_COMPANYFACTS_1018724_REVENUE",
+      "AMZN_SEC_COMPANYFACTS_1018724_REVENUE_TTM",
+      "AMZN_SEC_COMPANYFACTS_1018724_SALES",
+      "AMZN_SEC_COMPANYFACTS_1018724_UMSATZ",
+      "AMZN_SEC_revenue_FY2025_FY_0001018724-26-000004",
+      "AMZN_SEC_revenue_FY2025_Q2_0001018724-25-000086",
+      "AMZN_SEC_revenue_FY2025_Q3_0001018724-25-000123",
+      "AMZN_SEC_revenue_FY2026_Q1_0001018724-26-000014",
+      "AMZN_SEC_COMPANYFACTS_1018724_CASHFLOW",
+      "AMZN_SEC_COMPANYFACTS_1018724_FCF",
+      "AMZN_SEC_COMPANYFACTS_1018724_FREE_CASH_FLOW",
+      "AMZN_SEC_COMPANYFACTS_1018724_FREE_CASH_FLOW_TTM",
+      "AMZN_SEC_COMPANYFACTS_1018724_FREE_CASHFLOW",
+      "AMZN_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "AMZN_AMZN_IR_Q1_2026_RELEASE_free_cash_flow_TTM_Q1_2026",
+      "AMZN_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "AMZN_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "AMZN_YAHOO_CHART_PRICE_CSV_PRICE",
+      "AMZN_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "AMZN_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "AMZN_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm",
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Do not upgrade rating solely from valuation language if audit has financial-sanity errors.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm",
+      "close"
+    ],
+    "section": "Valuation / Multiples",
+    "source_ids": [
+      "AMZN_SEC_COMPANYFACTS_1018724",
+      "SEC_0001018724_0001018724-26-000004",
+      "SEC_0001018724_0001018724-25-000086",
+      "SEC_0001018724_0001018724-25-000123",
+      "SEC_0001018724_0001018724-26-000014",
+      "SEC_0001018724_DERIVED_FCF",
+      "AMZN_IR_Q1_2026_RELEASE",
+      "AMZN_YAHOO_CHART_PRICE_CSV",
+      "AMZN_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "For AMZN, validated P/FCF is 2414.43x and should be read against platform growth, FCF durability and capex intensity; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+    "claim_id": "AMZN_CLAIM_007",
+    "claim_text": "For AMZN, validated P/FCF is 2414.43x and should be read against platform growth, FCF durability and capex intensity; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "AMZN_SEC_COMPANYFACTS_1018724_CASHFLOW",
+      "AMZN_SEC_COMPANYFACTS_1018724_FCF",
+      "AMZN_SEC_COMPANYFACTS_1018724_FREE_CASH_FLOW",
+      "AMZN_SEC_COMPANYFACTS_1018724_FREE_CASH_FLOW_TTM",
+      "AMZN_SEC_COMPANYFACTS_1018724_FREE_CASHFLOW",
+      "AMZN_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "AMZN_AMZN_IR_Q1_2026_RELEASE_free_cash_flow_TTM_Q1_2026",
+      "AMZN_SEC_COMPANYFACTS_1018724_REVENUE",
+      "AMZN_SEC_COMPANYFACTS_1018724_REVENUE_TTM",
+      "AMZN_SEC_COMPANYFACTS_1018724_SALES",
+      "AMZN_SEC_COMPANYFACTS_1018724_UMSATZ",
+      "AMZN_SEC_revenue_FY2025_FY_0001018724-26-000004",
+      "AMZN_SEC_revenue_FY2025_Q2_0001018724-25-000086",
+      "AMZN_SEC_revenue_FY2025_Q3_0001018724-25-000123",
+      "AMZN_SEC_revenue_FY2026_Q1_0001018724-26-000014"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm",
+      "revenue_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "The rating should stay conservative when multiples are expensive, missing or flagged.",
+    "metric_refs": [
+      "free_cash_flow_ttm",
+      "revenue_ttm"
+    ],
+    "section": "Valuation / Multiples",
+    "source_ids": [
+      "AMZN_SEC_COMPANYFACTS_1018724",
+      "SEC_0001018724_DERIVED_FCF",
+      "AMZN_IR_Q1_2026_RELEASE",
+      "SEC_0001018724_0001018724-26-000004",
+      "SEC_0001018724_0001018724-25-000086",
+      "SEC_0001018724_0001018724-25-000123",
+      "SEC_0001018724_0001018724-26-000014"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The technical setup uses validated levels: close 273.55, 50-SMA 227.41, 200-SMA 227.86 and RSI 80.51.",
+    "claim_id": "AMZN_CLAIM_008",
+    "claim_text": "The technical setup uses validated levels: close 273.55, 50-SMA 227.41, 200-SMA 227.86 and RSI 80.51.",
+    "claim_type": "technical_metric",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "AMZN_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "AMZN_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "AMZN_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "AMZN_YAHOO_CHART_PRICE_CSV_PRICE",
+      "AMZN_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "AMZN_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "AMZN_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Timing language should follow the validated technical trend state.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Technical Setup",
+    "source_ids": [
+      "AMZN_YAHOO_CHART_PRICE_CSV",
+      "AMZN_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "AMZN's RSI and moving-average position imply an overbought setup that favors patience or tactical trimming over immediate full accumulation, so entries should be staged, delayed or trimmed according to the allowed rating corridor.",
+    "claim_id": "AMZN_CLAIM_009",
+    "claim_text": "AMZN's RSI and moving-average position imply an overbought setup that favors patience or tactical trimming over immediate full accumulation, so entries should be staged, delayed or trimmed according to the allowed rating corridor.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": "Technical weakness can be temporary if fundamentals and catalysts improve.",
+    "evidence_ids": [
+      "AMZN_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "AMZN_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "AMZN_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "AMZN_YAHOO_CHART_PRICE_CSV_PRICE",
+      "AMZN_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "AMZN_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "AMZN_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Use staged entries or trims when technical and fundamental signals diverge.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Technical Setup",
+    "source_ids": [
+      "AMZN_YAHOO_CHART_PRICE_CSV",
+      "AMZN_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The bull case is that platform scale, ecosystem monetization and operating leverage combines with revenue of $685.06B to support the allowed upside rating path when cash conversion quality also holds.",
+    "claim_id": "AMZN_CLAIM_010",
+    "claim_text": "The bull case is that platform scale, ecosystem monetization and operating leverage combines with revenue of $685.06B to support the allowed upside rating path when cash conversion quality also holds.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": "Strong scale does not resolve valuation or reconciliation anomalies.",
+    "evidence_ids": [
+      "AMZN_SEC_COMPANYFACTS_1018724_REVENUE",
+      "AMZN_SEC_COMPANYFACTS_1018724_REVENUE_TTM",
+      "AMZN_SEC_COMPANYFACTS_1018724_SALES",
+      "AMZN_SEC_COMPANYFACTS_1018724_UMSATZ",
+      "AMZN_SEC_revenue_FY2025_FY_0001018724-26-000004",
+      "AMZN_SEC_revenue_FY2025_Q2_0001018724-25-000086",
+      "AMZN_SEC_revenue_FY2025_Q3_0001018724-25-000123",
+      "AMZN_SEC_revenue_FY2026_Q1_0001018724-26-000014",
+      "AMZN_SEC_COMPANYFACTS_1018724_CASHFLOW",
+      "AMZN_SEC_COMPANYFACTS_1018724_FCF",
+      "AMZN_SEC_COMPANYFACTS_1018724_FREE_CASH_FLOW",
+      "AMZN_SEC_COMPANYFACTS_1018724_FREE_CASH_FLOW_TTM",
+      "AMZN_SEC_COMPANYFACTS_1018724_FREE_CASHFLOW",
+      "AMZN_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "AMZN_AMZN_IR_Q1_2026_RELEASE_free_cash_flow_TTM_Q1_2026"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Bullish language must remain bounded by DecisionPacket permissions.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Bull Case",
+    "source_ids": [
+      "AMZN_SEC_COMPANYFACTS_1018724",
+      "SEC_0001018724_0001018724-26-000004",
+      "SEC_0001018724_0001018724-25-000086",
+      "SEC_0001018724_0001018724-25-000123",
+      "SEC_0001018724_0001018724-26-000014",
+      "SEC_0001018724_DERIVED_FCF",
+      "AMZN_IR_Q1_2026_RELEASE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "A constructive technical bull path for AMZN requires confirmation beyond the current RSI of 80.51 and moving-average setup.",
+    "claim_id": "AMZN_CLAIM_011",
+    "claim_text": "A constructive technical bull path for AMZN requires confirmation beyond the current RSI of 80.51 and moving-average setup.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "AMZN_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "AMZN_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "AMZN_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "AMZN_YAHOO_CHART_PRICE_CSV_PRICE",
+      "AMZN_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "AMZN_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "AMZN_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Add or accumulate language should require confirmation when the preferred rating is not Buy.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Bull Case",
+    "source_ids": [
+      "AMZN_YAHOO_CHART_PRICE_CSV",
+      "AMZN_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The bear case is that regulatory pressure, capex intensity, growth deceleration or multiple compression overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 2.8% or source-quality issues persist.",
+    "claim_id": "AMZN_CLAIM_012",
+    "claim_text": "The bear case is that regulatory pressure, capex intensity, growth deceleration or multiple compression overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 2.8% or source-quality issues persist.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "AMZN_SEC_COMPANYFACTS_1018724_CASHFLOW",
+      "AMZN_SEC_COMPANYFACTS_1018724_FCF",
+      "AMZN_SEC_COMPANYFACTS_1018724_FREE_CASH_FLOW",
+      "AMZN_SEC_COMPANYFACTS_1018724_FREE_CASH_FLOW_TTM",
+      "AMZN_SEC_COMPANYFACTS_1018724_FREE_CASHFLOW",
+      "AMZN_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "AMZN_AMZN_IR_Q1_2026_RELEASE_free_cash_flow_TTM_Q1_2026",
+      "AMZN_SEC_COMPANYFACTS_1018724_SBC_TO_REVENUE",
+      "AMZN_SEC_DERIVED_SBC_TO_REVENUE"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm",
+      "sbc_to_revenue"
+    ],
+    "importance": "high",
+    "investment_implication": "Manual review remains appropriate when financial-sanity guards fire.",
+    "metric_refs": [
+      "free_cash_flow_ttm",
+      "sbc_to_revenue"
+    ],
+    "section": "Bear Case",
+    "source_ids": [
+      "AMZN_SEC_COMPANYFACTS_1018724",
+      "SEC_0001018724_DERIVED_FCF",
+      "AMZN_IR_Q1_2026_RELEASE",
+      "SEC_0001018724_DERIVED_SBC_TO_REVENUE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Valuation risk for AMZN is a discipline constraint; expensive or missing EV/Sales and P/FCF context should not be translated into a blocked rating.",
+    "claim_id": "AMZN_CLAIM_013",
+    "claim_text": "Valuation risk for AMZN is a discipline constraint; expensive or missing EV/Sales and P/FCF context should not be translated into a blocked rating.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "AMZN_SEC_COMPANYFACTS_1018724_REVENUE",
+      "AMZN_SEC_COMPANYFACTS_1018724_REVENUE_TTM",
+      "AMZN_SEC_COMPANYFACTS_1018724_SALES",
+      "AMZN_SEC_COMPANYFACTS_1018724_UMSATZ",
+      "AMZN_SEC_revenue_FY2025_FY_0001018724-26-000004",
+      "AMZN_SEC_revenue_FY2025_Q2_0001018724-25-000086",
+      "AMZN_SEC_revenue_FY2025_Q3_0001018724-25-000123",
+      "AMZN_SEC_revenue_FY2026_Q1_0001018724-26-000014",
+      "AMZN_SEC_COMPANYFACTS_1018724_CASHFLOW",
+      "AMZN_SEC_COMPANYFACTS_1018724_FCF",
+      "AMZN_SEC_COMPANYFACTS_1018724_FREE_CASH_FLOW",
+      "AMZN_SEC_COMPANYFACTS_1018724_FREE_CASH_FLOW_TTM",
+      "AMZN_SEC_COMPANYFACTS_1018724_FREE_CASHFLOW",
+      "AMZN_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "AMZN_AMZN_IR_Q1_2026_RELEASE_free_cash_flow_TTM_Q1_2026"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Avoid blocked Sell language when the DecisionPacket allows only trim or hold actions.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Bear Case",
+    "source_ids": [
+      "AMZN_SEC_COMPANYFACTS_1018724",
+      "SEC_0001018724_0001018724-26-000004",
+      "SEC_0001018724_0001018724-25-000086",
+      "SEC_0001018724_0001018724-25-000123",
+      "SEC_0001018724_0001018724-26-000014",
+      "SEC_0001018724_DERIVED_FCF",
+      "AMZN_IR_Q1_2026_RELEASE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Validation and audit issues are part of the AMZN research view; any blocking data issue should override a superficially complete report.",
+    "claim_id": "AMZN_CLAIM_014",
+    "claim_text": "Validation and audit issues are part of the AMZN research view; any blocking data issue should override a superficially complete report.",
+    "claim_type": "risk",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "AMZN_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "AMZN_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "AMZN_YAHOO_CHART_PRICE_CSV_PRICE",
+      "AMZN_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "AMZN_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "AMZN_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Blocking audit errors should keep the report in manual review.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Key Risks",
+    "source_ids": [
+      "AMZN_YAHOO_CHART_PRICE_CSV",
+      "AMZN_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Source disagreement or current-period mismatch can reduce conviction for AMZN, especially where revenue $685.06B is a key valuation denominator.",
+    "claim_id": "AMZN_CLAIM_015",
+    "claim_text": "Source disagreement or current-period mismatch can reduce conviction for AMZN, especially where revenue $685.06B is a key valuation denominator.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "AMZN_SEC_COMPANYFACTS_1018724_REVENUE",
+      "AMZN_SEC_COMPANYFACTS_1018724_REVENUE_TTM",
+      "AMZN_SEC_COMPANYFACTS_1018724_SALES",
+      "AMZN_SEC_COMPANYFACTS_1018724_UMSATZ",
+      "AMZN_SEC_revenue_FY2025_FY_0001018724-26-000004",
+      "AMZN_SEC_revenue_FY2025_Q2_0001018724-25-000086",
+      "AMZN_SEC_revenue_FY2025_Q3_0001018724-25-000123",
+      "AMZN_SEC_revenue_FY2026_Q1_0001018724-26-000014",
+      "AMZN_SEC_COMPANYFACTS_1018724_CASHFLOW",
+      "AMZN_SEC_COMPANYFACTS_1018724_FCF",
+      "AMZN_SEC_COMPANYFACTS_1018724_FREE_CASH_FLOW",
+      "AMZN_SEC_COMPANYFACTS_1018724_FREE_CASH_FLOW_TTM",
+      "AMZN_SEC_COMPANYFACTS_1018724_FREE_CASHFLOW",
+      "AMZN_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "AMZN_AMZN_IR_Q1_2026_RELEASE_free_cash_flow_TTM_Q1_2026"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Source-quality limitations belong in the final action plan.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Key Risks",
+    "source_ids": [
+      "AMZN_SEC_COMPANYFACTS_1018724",
+      "SEC_0001018724_0001018724-26-000004",
+      "SEC_0001018724_0001018724-25-000086",
+      "SEC_0001018724_0001018724-25-000123",
+      "SEC_0001018724_0001018724-26-000014",
+      "SEC_0001018724_DERIVED_FCF",
+      "AMZN_IR_Q1_2026_RELEASE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Catalysts for AMZN should be limited to confirmed packet inputs; missing earnings or forward company data should be stated as unavailable rather than converted into event-risk claims.",
+    "claim_id": "AMZN_CLAIM_016",
+    "claim_text": "Catalysts for AMZN should be limited to confirmed packet inputs; missing earnings or forward company data should be stated as unavailable rather than converted into event-risk claims.",
+    "claim_type": "price_data",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "AMZN_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "AMZN_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "AMZN_YAHOO_CHART_PRICE_CSV_PRICE",
+      "AMZN_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "AMZN_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "AMZN_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "If earnings are unavailable, the report should state that limitation rather than inventing timing.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Catalysts & Triggers",
+    "source_ids": [
+      "AMZN_YAHOO_CHART_PRICE_CSV",
+      "AMZN_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Trigger language should use validated levels such as 50-SMA 227.41 and 200-SMA 227.86, not unvalidated price targets.",
+    "claim_id": "AMZN_CLAIM_017",
+    "claim_text": "Trigger language should use validated levels such as 50-SMA 227.41 and 200-SMA 227.86, not unvalidated price targets.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "AMZN_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "AMZN_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "AMZN_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "AMZN_YAHOO_CHART_PRICE_CSV_PRICE",
+      "AMZN_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "AMZN_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "AMZN_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Use confirmation language instead of hard price targets unless risk/reward levels are validated.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Catalysts & Triggers",
+    "source_ids": [
+      "AMZN_YAHOO_CHART_PRICE_CSV",
+      "AMZN_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The final action should use Hold, because DecisionPacket permissions connect AMZN's fundamental score, technical score and risk score to that allowed rating corridor.",
+    "claim_id": "AMZN_CLAIM_018",
+    "claim_text": "The final action should use Hold, because DecisionPacket permissions connect AMZN's fundamental score, technical score and risk score to that allowed rating corridor.",
+    "claim_type": "rating",
+    "confidence": "high",
+    "counterargument": "Another allowed rating may be defensible, but blocked ratings are not allowed.",
+    "evidence_ids": [
+      "AMZN_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "AMZN_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "AMZN_YAHOO_CHART_PRICE_CSV_PRICE",
+      "AMZN_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "AMZN_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "AMZN_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Final report wording must choose Hold or another allowed rating with explicit justification.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Final Rating & Action Plan",
+    "source_ids": [
+      "AMZN_YAHOO_CHART_PRICE_CSV",
+      "AMZN_CSV_PRICE_PROVIDER"
+    ]
+  }
+]

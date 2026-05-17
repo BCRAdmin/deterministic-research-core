@@ -1,0 +1,118 @@
+{
+  "has_blocking_errors": true,
+  "issues": [
+    {
+      "code": "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+      "line_number": null,
+      "message": "P/FCF above 100x on positive, non-near-zero FCF requires explicit explanation before publish.",
+      "metric": "price_to_fcf",
+      "raw_text": null,
+      "reported": 144.0683209816406,
+      "severity": "error",
+      "validated": null
+    },
+    {
+      "code": "TRUE_FINANCIAL_ANOMALY",
+      "line_number": null,
+      "message": "P/FCF above 100x on positive, non-near-zero FCF requires explicit explanation before publish.",
+      "metric": "price_to_fcf",
+      "raw_text": null,
+      "reported": 144.0683209816406,
+      "severity": "error",
+      "validated": null
+    }
+  ],
+  "numeric_claims": [
+    {
+      "line_number": 9,
+      "nearby_text": "- Cash-conversion basis: free cash flow is `$1.03B`.",
+      "normalized_value": 1030000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$1.03B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 13,
+      "nearby_text": "- Report as-of date: `2026-05-17`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-17",
+      "unit": "date"
+    },
+    {
+      "line_number": 14,
+      "nearby_text": "- Price basis: `2026-05-15` close via `csv_price_provider`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": "close",
+      "raw_text": "2026-05-15",
+      "unit": "date"
+    },
+    {
+      "line_number": 15,
+      "nearby_text": "- Technical indicators are based on the closing price from `2026-05-15`, not on the report creation date `2026-05-17`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-15",
+      "unit": "date"
+    },
+    {
+      "line_number": 15,
+      "nearby_text": "- Technical indicators are based on the closing price from `2026-05-15`, not on the report creation date `2026-05-17`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-17",
+      "unit": "date"
+    },
+    {
+      "line_number": 39,
+      "nearby_text": "- **CRWD_CLAIM_003**: FCF TTM is $1.03B, making cash conversion a direct rating input for CRWD.",
+      "normalized_value": 1030000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$1.03B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 47,
+      "nearby_text": "- **CRWD_CLAIM_005**: Balance-sheet flexibility is anchored in net cash of $3.10B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+      "normalized_value": 3100000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "net_cash",
+      "raw_text": "$3.10B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 56,
+      "nearby_text": "- **CRWD_CLAIM_007**: For CRWD, P/FCF is 144.07x and should be read against validated growth, cash-flow and risk context; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+      "normalized_value": 144.07,
+      "period_hint": "unknown",
+      "possible_metric": "price_to_fcf",
+      "raw_text": "144.07x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 113,
+      "nearby_text": "- Cash conversion: FCF is `$1.03B` and determines whether growth converts into equity value.",
+      "normalized_value": 1030000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$1.03B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 115,
+      "nearby_text": "- Additional valuation/technical constraint: P/FCF `144.07x` and RSI `82.57` argue against chasing without a better setup.",
+      "normalized_value": 144.07,
+      "period_hint": "unknown",
+      "possible_metric": "price_to_fcf",
+      "raw_text": "144.07x",
+      "unit": "multiple"
+    }
+  ],
+  "ticker": "CRWD"
+}

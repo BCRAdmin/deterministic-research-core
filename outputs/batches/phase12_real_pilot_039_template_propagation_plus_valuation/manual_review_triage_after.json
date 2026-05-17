@@ -1,0 +1,837 @@
+{
+  "batch_id": "phase12_real_pilot_039_template_propagation_plus_valuation",
+  "summary": {
+    "avg_quality_score": 77.53333333333333,
+    "failed": 0,
+    "manual_review": 26,
+    "passed": 4,
+    "pending": 0,
+    "repaired": 0,
+    "running": 0,
+    "total": 30
+  },
+  "passed_tickers": [
+    "MSFT",
+    "GOOGL",
+    "AVGO",
+    "SNOW"
+  ],
+  "manual_review_tickers": [
+    "AMZN",
+    "META",
+    "AAPL",
+    "NVDA",
+    "AMD",
+    "INTC",
+    "QCOM",
+    "MU",
+    "MRVL",
+    "ANET",
+    "DDOG",
+    "MDB",
+    "CRWD",
+    "NET",
+    "PANW",
+    "ZS",
+    "CRM",
+    "NOW",
+    "ORCL",
+    "ADBE",
+    "INTU",
+    "UBER",
+    "TSLA",
+    "PLTR",
+    "IBM",
+    "NFLX"
+  ],
+  "manual_review_count": 26,
+  "count_by_reason": {
+    "AUDIT_BLOCKER": 12,
+    "TRUE_FINANCIAL_ANOMALY": 7,
+    "FINANCIAL_SANITY_ERROR": 7,
+    "LOW_CURRENT_PERIOD_KPI_COUNT": 23,
+    "QUALITY_BELOW_PUBLISH_GATE": 26,
+    "LOW_TICKER_SPECIFIC_KPI_COUNT": 20,
+    "MECHANICAL_RATING_LANGUAGE": 4,
+    "PERIOD_BUG": 2,
+    "LOW_SUBSTANTIVE_CLAIM_COUNT": 2,
+    "FCF_UNAVAILABLE_BLOCK": 1,
+    "HARD_CLAIMS_WITHOUT_EVIDENCE": 1
+  },
+  "count_by_root_cause": {
+    "true_financial_anomaly": 7,
+    "quality_gate_or_data_coverage_gap": 2,
+    "current_period_kpi_coverage_gap": 12,
+    "post_audit_or_evidence_blocker": 3,
+    "period_denominator_or_reconciliation_gap": 2
+  },
+  "manual_review": [
+    {
+      "ticker": "AMZN",
+      "quality_score": 73.0,
+      "final_rating": "Hold",
+      "reason_codes": [
+        "AUDIT_BLOCKER",
+        "TRUE_FINANCIAL_ANOMALY",
+        "FINANCIAL_SANITY_ERROR",
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "primary_root_cause": "true_financial_anomaly",
+      "secondary_root_causes": [
+        "AUDIT_BLOCKER",
+        "TRUE_FINANCIAL_ANOMALY",
+        "FINANCIAL_SANITY_ERROR",
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "counts": {
+        "audit_errors": 2,
+        "period_bug": 0,
+        "true_anomaly": 1,
+        "substantive_claim_count": 15,
+        "current_period_kpi_claim_count": 1,
+        "ticker_specific_kpi_claim_count": 4,
+        "financial_sanity_errors": 2
+      },
+      "recommended_next_action": "Keep manual_review until the anomaly is either explained by IR/SEC evidence or the valuation/action stance is explicitly constrained."
+    },
+    {
+      "ticker": "META",
+      "quality_score": 78.0,
+      "final_rating": "Hold",
+      "reason_codes": [
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "primary_root_cause": "quality_gate_or_data_coverage_gap",
+      "secondary_root_causes": [
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "counts": {
+        "audit_errors": 0,
+        "period_bug": 0,
+        "true_anomaly": 0,
+        "substantive_claim_count": 18,
+        "current_period_kpi_claim_count": 4,
+        "ticker_specific_kpi_claim_count": 7,
+        "financial_sanity_errors": 0
+      },
+      "recommended_next_action": "Review data coverage and quality score drivers before promotion."
+    },
+    {
+      "ticker": "AAPL",
+      "quality_score": 78.0,
+      "final_rating": "Accumulate",
+      "reason_codes": [
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "primary_root_cause": "quality_gate_or_data_coverage_gap",
+      "secondary_root_causes": [
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "counts": {
+        "audit_errors": 0,
+        "period_bug": 0,
+        "true_anomaly": 0,
+        "substantive_claim_count": 16,
+        "current_period_kpi_claim_count": 3,
+        "ticker_specific_kpi_claim_count": 4,
+        "financial_sanity_errors": 0
+      },
+      "recommended_next_action": "Review data coverage and quality score drivers before promotion."
+    },
+    {
+      "ticker": "NVDA",
+      "quality_score": 72.0,
+      "final_rating": "Hold",
+      "reason_codes": [
+        "AUDIT_BLOCKER",
+        "TRUE_FINANCIAL_ANOMALY",
+        "FINANCIAL_SANITY_ERROR",
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "primary_root_cause": "true_financial_anomaly",
+      "secondary_root_causes": [
+        "AUDIT_BLOCKER",
+        "TRUE_FINANCIAL_ANOMALY",
+        "FINANCIAL_SANITY_ERROR",
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "counts": {
+        "audit_errors": 2,
+        "period_bug": 0,
+        "true_anomaly": 1,
+        "substantive_claim_count": 15,
+        "current_period_kpi_claim_count": 1,
+        "ticker_specific_kpi_claim_count": 5,
+        "financial_sanity_errors": 2
+      },
+      "recommended_next_action": "Keep manual_review until the anomaly is either explained by IR/SEC evidence or the valuation/action stance is explicitly constrained."
+    },
+    {
+      "ticker": "AMD",
+      "quality_score": 71.0,
+      "final_rating": "Hold",
+      "reason_codes": [
+        "AUDIT_BLOCKER",
+        "TRUE_FINANCIAL_ANOMALY",
+        "FINANCIAL_SANITY_ERROR",
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "primary_root_cause": "true_financial_anomaly",
+      "secondary_root_causes": [
+        "AUDIT_BLOCKER",
+        "TRUE_FINANCIAL_ANOMALY",
+        "FINANCIAL_SANITY_ERROR",
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "counts": {
+        "audit_errors": 2,
+        "period_bug": 0,
+        "true_anomaly": 1,
+        "substantive_claim_count": 15,
+        "current_period_kpi_claim_count": 1,
+        "ticker_specific_kpi_claim_count": 1,
+        "financial_sanity_errors": 2
+      },
+      "recommended_next_action": "Keep manual_review until the anomaly is either explained by IR/SEC evidence or the valuation/action stance is explicitly constrained."
+    },
+    {
+      "ticker": "INTC",
+      "quality_score": 78.0,
+      "final_rating": "Hold",
+      "reason_codes": [
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "MECHANICAL_RATING_LANGUAGE",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "primary_root_cause": "current_period_kpi_coverage_gap",
+      "secondary_root_causes": [
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "MECHANICAL_RATING_LANGUAGE",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "counts": {
+        "audit_errors": 0,
+        "period_bug": 0,
+        "true_anomaly": 0,
+        "substantive_claim_count": 14,
+        "current_period_kpi_claim_count": 1,
+        "ticker_specific_kpi_claim_count": 1,
+        "financial_sanity_errors": 0
+      },
+      "recommended_next_action": "Add real current-period IR/KPI coverage and ticker-specific interpretation; keep manual_review if data is unavailable."
+    },
+    {
+      "ticker": "QCOM",
+      "quality_score": 78.0,
+      "final_rating": "Accumulate",
+      "reason_codes": [
+        "AUDIT_BLOCKER",
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "MECHANICAL_RATING_LANGUAGE",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "primary_root_cause": "post_audit_or_evidence_blocker",
+      "secondary_root_causes": [
+        "AUDIT_BLOCKER",
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "MECHANICAL_RATING_LANGUAGE",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "counts": {
+        "audit_errors": 1,
+        "period_bug": 0,
+        "true_anomaly": 0,
+        "substantive_claim_count": 14,
+        "current_period_kpi_claim_count": 1,
+        "ticker_specific_kpi_claim_count": 1,
+        "financial_sanity_errors": 0
+      },
+      "recommended_next_action": "Map the hard claim to EvidenceItems or remove the hard number from the main report; keep publish blocked until audit is clean."
+    },
+    {
+      "ticker": "MU",
+      "quality_score": 71.0,
+      "final_rating": "Hold",
+      "reason_codes": [
+        "AUDIT_BLOCKER",
+        "TRUE_FINANCIAL_ANOMALY",
+        "FINANCIAL_SANITY_ERROR",
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "primary_root_cause": "true_financial_anomaly",
+      "secondary_root_causes": [
+        "AUDIT_BLOCKER",
+        "TRUE_FINANCIAL_ANOMALY",
+        "FINANCIAL_SANITY_ERROR",
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "counts": {
+        "audit_errors": 2,
+        "period_bug": 0,
+        "true_anomaly": 1,
+        "substantive_claim_count": 15,
+        "current_period_kpi_claim_count": 1,
+        "ticker_specific_kpi_claim_count": 1,
+        "financial_sanity_errors": 2
+      },
+      "recommended_next_action": "Keep manual_review until the anomaly is either explained by IR/SEC evidence or the valuation/action stance is explicitly constrained."
+    },
+    {
+      "ticker": "MRVL",
+      "quality_score": 78.0,
+      "final_rating": "Hold",
+      "reason_codes": [
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "primary_root_cause": "current_period_kpi_coverage_gap",
+      "secondary_root_causes": [
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "counts": {
+        "audit_errors": 0,
+        "period_bug": 0,
+        "true_anomaly": 0,
+        "substantive_claim_count": 15,
+        "current_period_kpi_claim_count": 1,
+        "ticker_specific_kpi_claim_count": 1,
+        "financial_sanity_errors": 0
+      },
+      "recommended_next_action": "Add real current-period IR/KPI coverage and ticker-specific interpretation; keep manual_review if data is unavailable."
+    },
+    {
+      "ticker": "ANET",
+      "quality_score": 71.0,
+      "final_rating": "Hold",
+      "reason_codes": [
+        "AUDIT_BLOCKER",
+        "TRUE_FINANCIAL_ANOMALY",
+        "FINANCIAL_SANITY_ERROR",
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "primary_root_cause": "true_financial_anomaly",
+      "secondary_root_causes": [
+        "AUDIT_BLOCKER",
+        "TRUE_FINANCIAL_ANOMALY",
+        "FINANCIAL_SANITY_ERROR",
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "counts": {
+        "audit_errors": 2,
+        "period_bug": 0,
+        "true_anomaly": 1,
+        "substantive_claim_count": 13,
+        "current_period_kpi_claim_count": 1,
+        "ticker_specific_kpi_claim_count": 1,
+        "financial_sanity_errors": 2
+      },
+      "recommended_next_action": "Keep manual_review until the anomaly is either explained by IR/SEC evidence or the valuation/action stance is explicitly constrained."
+    },
+    {
+      "ticker": "DDOG",
+      "quality_score": 78.0,
+      "final_rating": "Hold",
+      "reason_codes": [
+        "AUDIT_BLOCKER",
+        "PERIOD_BUG",
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "primary_root_cause": "period_denominator_or_reconciliation_gap",
+      "secondary_root_causes": [
+        "AUDIT_BLOCKER",
+        "PERIOD_BUG",
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "counts": {
+        "audit_errors": 2,
+        "period_bug": 1,
+        "true_anomaly": 0,
+        "substantive_claim_count": 15,
+        "current_period_kpi_claim_count": 1,
+        "ticker_specific_kpi_claim_count": 1,
+        "financial_sanity_errors": 0
+      },
+      "recommended_next_action": "Fix current-period denominator and SEC/IR reconciliation before considering publishability; do not loosen guards."
+    },
+    {
+      "ticker": "MDB",
+      "quality_score": 78.0,
+      "final_rating": "Hold",
+      "reason_codes": [
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "primary_root_cause": "current_period_kpi_coverage_gap",
+      "secondary_root_causes": [
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "counts": {
+        "audit_errors": 0,
+        "period_bug": 0,
+        "true_anomaly": 0,
+        "substantive_claim_count": 13,
+        "current_period_kpi_claim_count": 1,
+        "ticker_specific_kpi_claim_count": 1,
+        "financial_sanity_errors": 0
+      },
+      "recommended_next_action": "Add real current-period IR/KPI coverage and ticker-specific interpretation; keep manual_review if data is unavailable."
+    },
+    {
+      "ticker": "CRWD",
+      "quality_score": 60.0,
+      "final_rating": "Hold",
+      "reason_codes": [
+        "AUDIT_BLOCKER",
+        "TRUE_FINANCIAL_ANOMALY",
+        "FINANCIAL_SANITY_ERROR",
+        "LOW_SUBSTANTIVE_CLAIM_COUNT",
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "MECHANICAL_RATING_LANGUAGE",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "primary_root_cause": "true_financial_anomaly",
+      "secondary_root_causes": [
+        "AUDIT_BLOCKER",
+        "TRUE_FINANCIAL_ANOMALY",
+        "FINANCIAL_SANITY_ERROR",
+        "LOW_SUBSTANTIVE_CLAIM_COUNT",
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "MECHANICAL_RATING_LANGUAGE",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "counts": {
+        "audit_errors": 2,
+        "period_bug": 0,
+        "true_anomaly": 1,
+        "substantive_claim_count": 10,
+        "current_period_kpi_claim_count": 1,
+        "ticker_specific_kpi_claim_count": 1,
+        "financial_sanity_errors": 2
+      },
+      "recommended_next_action": "Keep manual_review until the anomaly is either explained by IR/SEC evidence or the valuation/action stance is explicitly constrained."
+    },
+    {
+      "ticker": "NET",
+      "quality_score": 78.0,
+      "final_rating": "Hold",
+      "reason_codes": [
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "primary_root_cause": "current_period_kpi_coverage_gap",
+      "secondary_root_causes": [
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "counts": {
+        "audit_errors": 0,
+        "period_bug": 0,
+        "true_anomaly": 0,
+        "substantive_claim_count": 13,
+        "current_period_kpi_claim_count": 1,
+        "ticker_specific_kpi_claim_count": 1,
+        "financial_sanity_errors": 0
+      },
+      "recommended_next_action": "Add real current-period IR/KPI coverage and ticker-specific interpretation; keep manual_review if data is unavailable."
+    },
+    {
+      "ticker": "PANW",
+      "quality_score": 53.0,
+      "final_rating": "Hold",
+      "reason_codes": [
+        "AUDIT_BLOCKER",
+        "FCF_UNAVAILABLE_BLOCK",
+        "LOW_SUBSTANTIVE_CLAIM_COUNT",
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "MECHANICAL_RATING_LANGUAGE",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "primary_root_cause": "post_audit_or_evidence_blocker",
+      "secondary_root_causes": [
+        "AUDIT_BLOCKER",
+        "FCF_UNAVAILABLE_BLOCK",
+        "LOW_SUBSTANTIVE_CLAIM_COUNT",
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "MECHANICAL_RATING_LANGUAGE",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "counts": {
+        "audit_errors": 2,
+        "period_bug": 0,
+        "true_anomaly": 0,
+        "substantive_claim_count": 11,
+        "current_period_kpi_claim_count": 1,
+        "ticker_specific_kpi_claim_count": 1,
+        "financial_sanity_errors": 0
+      },
+      "recommended_next_action": "Map the hard claim to EvidenceItems or remove the hard number from the main report; keep publish blocked until audit is clean."
+    },
+    {
+      "ticker": "ZS",
+      "quality_score": 78.0,
+      "final_rating": "Hold",
+      "reason_codes": [
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "primary_root_cause": "current_period_kpi_coverage_gap",
+      "secondary_root_causes": [
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "counts": {
+        "audit_errors": 0,
+        "period_bug": 0,
+        "true_anomaly": 0,
+        "substantive_claim_count": 13,
+        "current_period_kpi_claim_count": 1,
+        "ticker_specific_kpi_claim_count": 1,
+        "financial_sanity_errors": 0
+      },
+      "recommended_next_action": "Add real current-period IR/KPI coverage and ticker-specific interpretation; keep manual_review if data is unavailable."
+    },
+    {
+      "ticker": "CRM",
+      "quality_score": 84.0,
+      "final_rating": "Hold",
+      "reason_codes": [
+        "AUDIT_BLOCKER",
+        "PERIOD_BUG",
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "primary_root_cause": "period_denominator_or_reconciliation_gap",
+      "secondary_root_causes": [
+        "AUDIT_BLOCKER",
+        "PERIOD_BUG",
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "counts": {
+        "audit_errors": 1,
+        "period_bug": 1,
+        "true_anomaly": 0,
+        "substantive_claim_count": 16,
+        "current_period_kpi_claim_count": 1,
+        "ticker_specific_kpi_claim_count": 7,
+        "financial_sanity_errors": 0
+      },
+      "recommended_next_action": "Fix current-period denominator and SEC/IR reconciliation before considering publishability; do not loosen guards."
+    },
+    {
+      "ticker": "NOW",
+      "quality_score": 78.0,
+      "final_rating": "Hold",
+      "reason_codes": [
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "primary_root_cause": "current_period_kpi_coverage_gap",
+      "secondary_root_causes": [
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "counts": {
+        "audit_errors": 0,
+        "period_bug": 0,
+        "true_anomaly": 0,
+        "substantive_claim_count": 13,
+        "current_period_kpi_claim_count": 1,
+        "ticker_specific_kpi_claim_count": 1,
+        "financial_sanity_errors": 0
+      },
+      "recommended_next_action": "Add real current-period IR/KPI coverage and ticker-specific interpretation; keep manual_review if data is unavailable."
+    },
+    {
+      "ticker": "ORCL",
+      "quality_score": 78.0,
+      "final_rating": "Hold",
+      "reason_codes": [
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "primary_root_cause": "current_period_kpi_coverage_gap",
+      "secondary_root_causes": [
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "counts": {
+        "audit_errors": 0,
+        "period_bug": 0,
+        "true_anomaly": 0,
+        "substantive_claim_count": 13,
+        "current_period_kpi_claim_count": 1,
+        "ticker_specific_kpi_claim_count": 1,
+        "financial_sanity_errors": 0
+      },
+      "recommended_next_action": "Add real current-period IR/KPI coverage and ticker-specific interpretation; keep manual_review if data is unavailable."
+    },
+    {
+      "ticker": "ADBE",
+      "quality_score": 78.0,
+      "final_rating": "Hold",
+      "reason_codes": [
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "primary_root_cause": "current_period_kpi_coverage_gap",
+      "secondary_root_causes": [
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "counts": {
+        "audit_errors": 0,
+        "period_bug": 0,
+        "true_anomaly": 0,
+        "substantive_claim_count": 13,
+        "current_period_kpi_claim_count": 1,
+        "ticker_specific_kpi_claim_count": 1,
+        "financial_sanity_errors": 0
+      },
+      "recommended_next_action": "Add real current-period IR/KPI coverage and ticker-specific interpretation; keep manual_review if data is unavailable."
+    },
+    {
+      "ticker": "INTU",
+      "quality_score": 78.0,
+      "final_rating": "Hold",
+      "reason_codes": [
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "primary_root_cause": "current_period_kpi_coverage_gap",
+      "secondary_root_causes": [
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "counts": {
+        "audit_errors": 0,
+        "period_bug": 0,
+        "true_anomaly": 0,
+        "substantive_claim_count": 13,
+        "current_period_kpi_claim_count": 1,
+        "ticker_specific_kpi_claim_count": 1,
+        "financial_sanity_errors": 0
+      },
+      "recommended_next_action": "Add real current-period IR/KPI coverage and ticker-specific interpretation; keep manual_review if data is unavailable."
+    },
+    {
+      "ticker": "UBER",
+      "quality_score": 78.0,
+      "final_rating": "Hold",
+      "reason_codes": [
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "primary_root_cause": "current_period_kpi_coverage_gap",
+      "secondary_root_causes": [
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "counts": {
+        "audit_errors": 0,
+        "period_bug": 0,
+        "true_anomaly": 0,
+        "substantive_claim_count": 13,
+        "current_period_kpi_claim_count": 1,
+        "ticker_specific_kpi_claim_count": 1,
+        "financial_sanity_errors": 0
+      },
+      "recommended_next_action": "Add real current-period IR/KPI coverage and ticker-specific interpretation; keep manual_review if data is unavailable."
+    },
+    {
+      "ticker": "TSLA",
+      "quality_score": 78.0,
+      "final_rating": "Hold",
+      "reason_codes": [
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "primary_root_cause": "current_period_kpi_coverage_gap",
+      "secondary_root_causes": [
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "counts": {
+        "audit_errors": 0,
+        "period_bug": 0,
+        "true_anomaly": 0,
+        "substantive_claim_count": 13,
+        "current_period_kpi_claim_count": 1,
+        "ticker_specific_kpi_claim_count": 1,
+        "financial_sanity_errors": 0
+      },
+      "recommended_next_action": "Add real current-period IR/KPI coverage and ticker-specific interpretation; keep manual_review if data is unavailable."
+    },
+    {
+      "ticker": "PLTR",
+      "quality_score": 71.0,
+      "final_rating": "Hold",
+      "reason_codes": [
+        "AUDIT_BLOCKER",
+        "TRUE_FINANCIAL_ANOMALY",
+        "FINANCIAL_SANITY_ERROR",
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "primary_root_cause": "true_financial_anomaly",
+      "secondary_root_causes": [
+        "AUDIT_BLOCKER",
+        "TRUE_FINANCIAL_ANOMALY",
+        "FINANCIAL_SANITY_ERROR",
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "counts": {
+        "audit_errors": 2,
+        "period_bug": 0,
+        "true_anomaly": 1,
+        "substantive_claim_count": 13,
+        "current_period_kpi_claim_count": 1,
+        "ticker_specific_kpi_claim_count": 1,
+        "financial_sanity_errors": 2
+      },
+      "recommended_next_action": "Keep manual_review until the anomaly is either explained by IR/SEC evidence or the valuation/action stance is explicitly constrained."
+    },
+    {
+      "ticker": "IBM",
+      "quality_score": 78.0,
+      "final_rating": "Hold",
+      "reason_codes": [
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "primary_root_cause": "current_period_kpi_coverage_gap",
+      "secondary_root_causes": [
+        "LOW_CURRENT_PERIOD_KPI_COUNT",
+        "LOW_TICKER_SPECIFIC_KPI_COUNT",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "counts": {
+        "audit_errors": 0,
+        "period_bug": 0,
+        "true_anomaly": 0,
+        "substantive_claim_count": 13,
+        "current_period_kpi_claim_count": 1,
+        "ticker_specific_kpi_claim_count": 1,
+        "financial_sanity_errors": 0
+      },
+      "recommended_next_action": "Add real current-period IR/KPI coverage and ticker-specific interpretation; keep manual_review if data is unavailable."
+    },
+    {
+      "ticker": "NFLX",
+      "quality_score": 80.0,
+      "final_rating": "Hold",
+      "reason_codes": [
+        "AUDIT_BLOCKER",
+        "HARD_CLAIMS_WITHOUT_EVIDENCE",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "primary_root_cause": "post_audit_or_evidence_blocker",
+      "secondary_root_causes": [
+        "AUDIT_BLOCKER",
+        "HARD_CLAIMS_WITHOUT_EVIDENCE",
+        "QUALITY_BELOW_PUBLISH_GATE"
+      ],
+      "counts": {
+        "audit_errors": 1,
+        "period_bug": 0,
+        "true_anomaly": 0,
+        "substantive_claim_count": 16,
+        "current_period_kpi_claim_count": 4,
+        "ticker_specific_kpi_claim_count": 4,
+        "financial_sanity_errors": 0
+      },
+      "recommended_next_action": "Map the hard claim to EvidenceItems or remove the hard number from the main report; keep publish blocked until audit is clean."
+    }
+  ],
+  "false_pass_candidates": [],
+  "reports_with_missing_valuation_sensitivity": [],
+  "reports_with_missing_action_triggers": [],
+  "mechanical_language_count": 4,
+  "current_period_kpi_claim_counts": {
+    "AMZN": 1,
+    "MSFT": 3,
+    "GOOGL": 4,
+    "META": 4,
+    "AAPL": 3,
+    "NVDA": 1,
+    "AMD": 1,
+    "AVGO": 5,
+    "INTC": 1,
+    "QCOM": 1,
+    "MU": 1,
+    "MRVL": 1,
+    "ANET": 1,
+    "DDOG": 1,
+    "MDB": 1,
+    "SNOW": 4,
+    "CRWD": 1,
+    "NET": 1,
+    "PANW": 1,
+    "ZS": 1,
+    "CRM": 1,
+    "NOW": 1,
+    "ORCL": 1,
+    "ADBE": 1,
+    "INTU": 1,
+    "UBER": 1,
+    "TSLA": 1,
+    "PLTR": 1,
+    "IBM": 1,
+    "NFLX": 4
+  },
+  "recommendation": "pilotfaehig_weiter_haerten"
+}

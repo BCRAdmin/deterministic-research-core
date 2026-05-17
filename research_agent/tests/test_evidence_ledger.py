@@ -1,0 +1,78 @@
+from research_agent.evidence.evidence_item import EvidenceItem
+from research_agent.evidence.evidence_ledger import EvidenceLedger, build_evidence_ledger_from_source_registry
+from research_agent.research_core.ingestion.source_registry import SourceRegistry, SourceRegistryEntry
+
+
+def test_evidence_ledger_finds_metric_and_primary_evidence():
+    ledger = EvidenceLedger(
+        ticker="MDB",
+        as_of_date="2026-05-01",
+        evidence_items=[
+            EvidenceItem(
+                evidence_id="MDB_IR_Q4_FY2026_FREE_CASH_FLOW",
+                ticker="MDB",
+                claim_type="financial_metric",
+                source_id="MDB_IR_Q4_FY2026",
+                source_type="company_ir",
+                authority_rank=1,
+                statement="FY2026 FCF was 492.6M.",
+                value=492600000,
+                unit="usd",
+                period="FY2026",
+                supports_metrics=["free_cash_flow_ttm"],
+            )
+        ],
+    )
+
+    assert ledger.find_by_metric("free_cash_flow_ttm")
+    assert ledger.find_by_metric("fcf")
+    assert ledger.has_primary_evidence_for_metric("free_cash_flow")
+
+
+def test_evidence_ledger_finds_claim_evidence():
+    ledger = EvidenceLedger(
+        ticker="DDOG",
+        as_of_date="2026-05-01",
+        evidence_items=[
+            EvidenceItem(
+                evidence_id="DDOG_PRESS_GPU_MONITORING_2026_04_22",
+                ticker="DDOG",
+                claim_type="news",
+                source_id="DDOG_PRESS_GPU_MONITORING",
+                source_type="official_press_release",
+                authority_rank=2,
+                statement="GPU monitoring launched on April 22, 2026.",
+                date="2026-04-22",
+                supports_claims=["claim_gpu_monitoring_launch"],
+            )
+        ],
+    )
+
+    assert ledger.find_by_claim("claim_gpu_monitoring_launch")[0].evidence_id == "DDOG_PRESS_GPU_MONITORING_2026_04_22"
+
+
+def test_eps_source_registry_does_not_create_pseudo_guidance_or_consensus():
+    registry = SourceRegistry(
+        registry_id="TEST",
+        sources=[
+            SourceRegistryEntry(
+                source_id="TEST_SEC_COMPANYFACTS",
+                ticker="TEST",
+                source_type="sec_filing",
+                authority_rank=1,
+                url="https://data.sec.gov",
+                retrieved_at="2026-05-06T00:00:00Z",
+                used_for=["eps"],
+            )
+        ],
+    )
+
+    ledger = build_evidence_ledger_from_source_registry(
+        ticker="TEST",
+        as_of_date="2026-05-06",
+        source_registry=registry,
+    )
+
+    assert ledger.find_by_metric("eps")
+    assert not ledger.find_by_metric("company_guidance_eps")
+    assert not ledger.find_by_metric("consensus_forward_eps")

@@ -1,0 +1,25 @@
+{
+  "as_of_date": "2026-05-08",
+  "company_guidance_eps": null,
+  "company_name": "Salesforce, Inc.",
+  "fiscal_context": {
+    "fiscal_year_end": null,
+    "latest_fiscal_year": null,
+    "latest_quarter": null
+  },
+  "forward_eps": null,
+  "next_events": {
+    "confirmed": false,
+    "next_earnings_date": null,
+    "source": null,
+    "status": "unavailable"
+  },
+  "price_basis": {
+    "close": 181.82000732421875,
+    "currency": "USD",
+    "date": "2026-05-08",
+    "source": "csv_price_provider"
+  },
+  "source_registry_id": "CRM_2026-05-08",
+  "ticker": "CRM"
+}

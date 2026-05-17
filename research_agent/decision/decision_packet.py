@@ -1,0 +1,33 @@
+from typing import Dict, List
+
+from pydantic import BaseModel, Field
+
+from research_agent.decision.rating_taxonomy import Rating
+
+
+class SignalScores(BaseModel):
+    fundamental_score: float
+    technical_score: float
+    valuation_score: float
+    risk_score: float
+    composite_score: float
+
+
+class RatingPermission(BaseModel):
+    allowed_ratings: List[Rating]
+    blocked_ratings: List[Rating]
+    preferred_rating: Rating
+    reason: str
+
+
+class DecisionPacket(BaseModel):
+    ticker: str
+    as_of_date: str
+    signal_scores: SignalScores
+    rating_permission: RatingPermission
+    action_policy: Dict[str, object] = Field(default_factory=dict)
+    key_reasons: List[str] = Field(default_factory=list)
+    key_risks: List[str] = Field(default_factory=list)
+    triggered_rules: List[str] = Field(default_factory=list)
+    score_version: str = "v1"
+    calibration_mode: str = "live"

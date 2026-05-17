@@ -1,0 +1,105 @@
+{
+  "batch_id": "guardrail_coverage_batch_004_ir_coverage",
+  "records": [
+    {
+      "affects_manual_review": true,
+      "blocks_publish": true,
+      "estimated_impact": "high",
+      "next_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "priority": "P0",
+      "ticker": "IONQ",
+      "why_it_matters": "High: quantum comparator; direct IR helps avoid misreading SEC-derived scale/context."
+    },
+    {
+      "affects_manual_review": true,
+      "blocks_publish": true,
+      "estimated_impact": "high",
+      "next_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "priority": "P0",
+      "ticker": "NVDA",
+      "why_it_matters": "High: AI-infrastructure benchmark; direct guidance/capex details affect semi-cycle interpretation."
+    },
+    {
+      "affects_manual_review": true,
+      "blocks_publish": true,
+      "estimated_impact": "high",
+      "next_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "priority": "P0",
+      "ticker": "QBTS",
+      "why_it_matters": "High: speculative deep-tech comparator and valuation/anomaly sanity case."
+    },
+    {
+      "affects_manual_review": false,
+      "blocks_publish": true,
+      "estimated_impact": "high",
+      "next_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "priority": "P0",
+      "ticker": "QCOM",
+      "why_it_matters": "High: display rule and FCF support regression anchor."
+    },
+    {
+      "affects_manual_review": true,
+      "blocks_publish": true,
+      "estimated_impact": "high",
+      "next_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "priority": "P0",
+      "ticker": "RGTI",
+      "why_it_matters": "High: speculative deep-tech guardrail anchor; direct current-period source improves manual-review quality."
+    },
+    {
+      "affects_manual_review": true,
+      "blocks_publish": true,
+      "estimated_impact": "medium",
+      "next_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "priority": "P1",
+      "ticker": "ACHR",
+      "why_it_matters": "Medium-high: eVTOL early-commercial evidence and milestone risk."
+    },
+    {
+      "affects_manual_review": true,
+      "blocks_publish": false,
+      "estimated_impact": "medium",
+      "next_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "priority": "P1",
+      "ticker": "AMD",
+      "why_it_matters": "Medium-high: AI/semi cycle comparator, guidance-sensitive."
+    },
+    {
+      "affects_manual_review": true,
+      "blocks_publish": true,
+      "estimated_impact": "medium",
+      "next_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "priority": "P1",
+      "ticker": "ASTS",
+      "why_it_matters": "Medium-high: early-commercial/deep-tech infrastructure evidence and contract/materiality context."
+    },
+    {
+      "affects_manual_review": true,
+      "blocks_publish": false,
+      "estimated_impact": "medium",
+      "next_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "priority": "P1",
+      "ticker": "INTC",
+      "why_it_matters": "Medium-high: turnaround/semi capex and FCF context."
+    },
+    {
+      "affects_manual_review": true,
+      "blocks_publish": true,
+      "estimated_impact": "medium",
+      "next_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "priority": "P1",
+      "ticker": "JOBY",
+      "why_it_matters": "Medium-high: eVTOL early-commercial evidence and cashburn/milestone risk."
+    },
+    {
+      "affects_manual_review": true,
+      "blocks_publish": false,
+      "estimated_impact": "medium",
+      "next_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "priority": "P1",
+      "ticker": "MU",
+      "why_it_matters": "Medium-high: cyclical semi memory case; direct release helps cyclicality review."
+    }
+  ],
+  "remaining_count": 11
+}

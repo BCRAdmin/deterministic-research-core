@@ -1,0 +1,84 @@
+{
+  "has_blocking_errors": true,
+  "issues": [
+    {
+      "code": "FINANCIAL_SANITY_EV_SALES_ABSURD",
+      "line_number": null,
+      "message": "EV/Sales above 100x indicates a likely unit, share-count, or revenue-period anomaly.",
+      "metric": "ev_to_sales",
+      "raw_text": null,
+      "reported": 117.8511582021208,
+      "severity": "error",
+      "validated": null
+    },
+    {
+      "code": "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+      "line_number": null,
+      "message": "P/FCF above 100x requires explicit explanation before publish.",
+      "metric": "price_to_fcf",
+      "raw_text": null,
+      "reported": 109.06770473632896,
+      "severity": "error",
+      "validated": null
+    },
+    {
+      "code": "FINANCIAL_SANITY_FCF_MARGIN_ANOMALY",
+      "line_number": null,
+      "message": "FCF margin above 40% for this company profile indicates a likely FCF or period reconciliation anomaly.",
+      "metric": "fcf_margin_ttm",
+      "raw_text": null,
+      "reported": 1.0965729650775327,
+      "severity": "error",
+      "validated": null
+    },
+    {
+      "code": "FINANCIAL_SANITY_EV_SALES_ABSURD",
+      "line_number": null,
+      "message": "Market cap to revenue above 100x indicates a likely unit or period anomaly.",
+      "metric": "market_cap_to_revenue",
+      "raw_text": null,
+      "reported": 119.6006963769171,
+      "severity": "error",
+      "validated": null
+    }
+  ],
+  "numeric_claims": [
+    {
+      "line_number": 4,
+      "nearby_text": "- Report as-of date: `2026-05-05`",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 5,
+      "nearby_text": "- Price basis: `170.22 USD` close from `2026-05-05` via `csv_price_provider`",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 5,
+      "nearby_text": "- Price basis: `170.22 USD` close from `2026-05-05` via `csv_price_provider`",
+      "normalized_value": 170.22,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "170.22 USD",
+      "unit": "usd"
+    },
+    {
+      "line_number": 18,
+      "nearby_text": "| SBC / Revenue | 17.1% |",
+      "normalized_value": 17.1,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "17.1%",
+      "unit": "percent"
+    }
+  ],
+  "ticker": "ANET"
+}

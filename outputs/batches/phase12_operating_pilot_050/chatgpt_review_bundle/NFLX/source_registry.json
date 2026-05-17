@@ -1,0 +1,40 @@
+{
+  "registry_id": "NFLX_2026-05-05",
+  "sources": [
+    {
+      "authority_rank": 1,
+      "retrieved_at": "2026-05-06T03:30:57Z",
+      "source_id": "NFLX_SEC_COMPANYFACTS_1065280",
+      "source_type": "sec_filing",
+      "ticker": "NFLX",
+      "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001065280.json",
+      "used_for": [
+        "revenue",
+        "gross_profit",
+        "operating_income",
+        "net_income",
+        "operating_cash_flow",
+        "capex",
+        "free_cash_flow",
+        "sbc",
+        "cash",
+        "debt",
+        "shares",
+        "eps"
+      ]
+    },
+    {
+      "authority_rank": 2,
+      "retrieved_at": "2026-05-06T03:30:57Z",
+      "source_id": "NFLX_YAHOO_CHART_PRICE_CSV",
+      "source_type": "exchange_ohlcv",
+      "ticker": "NFLX",
+      "url": "https://query2.finance.yahoo.com/v8/finance/chart/",
+      "used_for": [
+        "price",
+        "volume",
+        "technical_indicators"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "batch_id": "guardrail_coverage_batch_003_current_research",
+  "current_operating_readiness": "usable_with_review",
+  "current_reports_can_be_used_internally": true,
+  "decision": "YELLOW",
+  "generated_at": "2026-05-17T01:51:29Z",
+  "next_7_day_plan": [
+    "Review Vivi false-block candidates if any.",
+    "Backfill sourced IR fixtures for priority manual-review guardrail names.",
+    "Run a compact affected-ticker rerun after IR backfill.",
+    "Keep public routing blocked until Promotion Gate exists per report.",
+    "Promote only clean current reports to internal review queues."
+  ],
+  "public_output_blocked": true,
+  "top_5_data_coverage_priorities": [
+    "Add sourced IR/current-period fixtures for RGTI/IONQ/QBTS if primary evidence is needed beyond SEC facts.",
+    "Add sourced IR/current-period fixtures for ACHR/JOBY/ASTS before stronger early-commercial conclusions.",
+    "Decide whether QUBT/SOUN/BBAI belong in the next speculative story-stock batch.",
+    "Decide whether TSM/ASML need a foreign-issuer lane before inclusion.",
+    "Add earnings-calendar coverage for Batch-003 names."
+  ],
+  "top_5_system_fixes": [
+    "No immediate P0/P1 system fix; prioritize source coverage and human review of manual cases."
+  ]
+}

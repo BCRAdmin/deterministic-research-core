@@ -1,0 +1,541 @@
+{
+  "manual_review_items": [
+    {
+      "counts": {
+        "audit_errors": 2,
+        "company_defined_fcf_mismatch_count": 0,
+        "data_limitation_claim_count": 0,
+        "fcf_unavailable_block_count": 0,
+        "financial_sanity_errors": 2,
+        "guard_threshold_review": 0,
+        "missing_current_period_context_count": 0,
+        "period_bug": 0,
+        "ticker_specific_kpi_claim_count": 4,
+        "true_anomaly": 1
+      },
+      "primary_root_cause": "true_financial_anomaly",
+      "quality_score": 76.0,
+      "reason_codes": [
+        "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+        "TRUE_FINANCIAL_ANOMALY"
+      ],
+      "recommended_next_action": "Keep manual review unless investment committee explicitly accepts the extreme valuation/ratio context.",
+      "status": "manual_review",
+      "ticker": "AMZN"
+    },
+    {
+      "counts": {
+        "audit_errors": 2,
+        "company_defined_fcf_mismatch_count": 0,
+        "data_limitation_claim_count": 0,
+        "fcf_unavailable_block_count": 0,
+        "financial_sanity_errors": 2,
+        "guard_threshold_review": 0,
+        "missing_current_period_context_count": 0,
+        "period_bug": 0,
+        "ticker_specific_kpi_claim_count": 4,
+        "true_anomaly": 1
+      },
+      "primary_root_cause": "true_financial_anomaly",
+      "quality_score": 75.0,
+      "reason_codes": [
+        "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+        "TRUE_FINANCIAL_ANOMALY"
+      ],
+      "recommended_next_action": "Keep manual review unless investment committee explicitly accepts the extreme valuation/ratio context.",
+      "status": "manual_review",
+      "ticker": "NVDA"
+    },
+    {
+      "counts": {
+        "audit_errors": 2,
+        "company_defined_fcf_mismatch_count": 0,
+        "data_limitation_claim_count": 0,
+        "fcf_unavailable_block_count": 0,
+        "financial_sanity_errors": 2,
+        "guard_threshold_review": 0,
+        "missing_current_period_context_count": 0,
+        "period_bug": 0,
+        "ticker_specific_kpi_claim_count": 1,
+        "true_anomaly": 1
+      },
+      "primary_root_cause": "true_financial_anomaly",
+      "quality_score": 74.0,
+      "reason_codes": [
+        "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+        "TRUE_FINANCIAL_ANOMALY"
+      ],
+      "recommended_next_action": "Keep manual review unless investment committee explicitly accepts the extreme valuation/ratio context.",
+      "status": "manual_review",
+      "ticker": "AMD"
+    },
+    {
+      "counts": {
+        "audit_errors": 0,
+        "company_defined_fcf_mismatch_count": 0,
+        "data_limitation_claim_count": 1,
+        "fcf_unavailable_block_count": 0,
+        "financial_sanity_errors": 0,
+        "guard_threshold_review": 0,
+        "missing_current_period_context_count": 0,
+        "period_bug": 0,
+        "ticker_specific_kpi_claim_count": 1,
+        "true_anomaly": 0
+      },
+      "primary_root_cause": "claim_semantics_gap",
+      "quality_score": 78.0,
+      "reason_codes": [],
+      "recommended_next_action": "Add current-period company-specific KPI claims; do not count data availability notes as substance.",
+      "status": "manual_review",
+      "ticker": "INTC"
+    },
+    {
+      "counts": {
+        "audit_errors": 1,
+        "company_defined_fcf_mismatch_count": 0,
+        "data_limitation_claim_count": 2,
+        "fcf_unavailable_block_count": 0,
+        "financial_sanity_errors": 0,
+        "guard_threshold_review": 0,
+        "missing_current_period_context_count": 0,
+        "period_bug": 0,
+        "ticker_specific_kpi_claim_count": 1,
+        "true_anomaly": 0
+      },
+      "primary_root_cause": "claim_semantics_gap",
+      "quality_score": 78.0,
+      "reason_codes": [
+        "MISSING_FCF_SUPPORT_FOR_ACCUMULATE"
+      ],
+      "recommended_next_action": "Add current-period company-specific KPI claims; do not count data availability notes as substance.",
+      "status": "manual_review",
+      "ticker": "QCOM"
+    },
+    {
+      "counts": {
+        "audit_errors": 2,
+        "company_defined_fcf_mismatch_count": 0,
+        "data_limitation_claim_count": 0,
+        "fcf_unavailable_block_count": 0,
+        "financial_sanity_errors": 2,
+        "guard_threshold_review": 0,
+        "missing_current_period_context_count": 0,
+        "period_bug": 0,
+        "ticker_specific_kpi_claim_count": 1,
+        "true_anomaly": 1
+      },
+      "primary_root_cause": "true_financial_anomaly",
+      "quality_score": 74.0,
+      "reason_codes": [
+        "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+        "TRUE_FINANCIAL_ANOMALY"
+      ],
+      "recommended_next_action": "Keep manual review unless investment committee explicitly accepts the extreme valuation/ratio context.",
+      "status": "manual_review",
+      "ticker": "MU"
+    },
+    {
+      "counts": {
+        "audit_errors": 0,
+        "company_defined_fcf_mismatch_count": 0,
+        "data_limitation_claim_count": 0,
+        "fcf_unavailable_block_count": 0,
+        "financial_sanity_errors": 0,
+        "guard_threshold_review": 0,
+        "missing_current_period_context_count": 0,
+        "period_bug": 0,
+        "ticker_specific_kpi_claim_count": 1,
+        "true_anomaly": 0
+      },
+      "primary_root_cause": "claim_semantics_gap",
+      "quality_score": 78.0,
+      "reason_codes": [],
+      "recommended_next_action": "Add current-period company-specific KPI claims; do not count data availability notes as substance.",
+      "status": "manual_review",
+      "ticker": "MRVL"
+    },
+    {
+      "counts": {
+        "audit_errors": 2,
+        "company_defined_fcf_mismatch_count": 0,
+        "data_limitation_claim_count": 0,
+        "fcf_unavailable_block_count": 0,
+        "financial_sanity_errors": 2,
+        "guard_threshold_review": 0,
+        "missing_current_period_context_count": 0,
+        "period_bug": 0,
+        "ticker_specific_kpi_claim_count": 1,
+        "true_anomaly": 1
+      },
+      "primary_root_cause": "true_financial_anomaly",
+      "quality_score": 74.0,
+      "reason_codes": [
+        "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+        "TRUE_FINANCIAL_ANOMALY"
+      ],
+      "recommended_next_action": "Keep manual review unless investment committee explicitly accepts the extreme valuation/ratio context.",
+      "status": "manual_review",
+      "ticker": "ANET"
+    },
+    {
+      "counts": {
+        "audit_errors": 2,
+        "company_defined_fcf_mismatch_count": 0,
+        "data_limitation_claim_count": 0,
+        "fcf_unavailable_block_count": 0,
+        "financial_sanity_errors": 0,
+        "guard_threshold_review": 0,
+        "missing_current_period_context_count": 0,
+        "period_bug": 1,
+        "ticker_specific_kpi_claim_count": 1,
+        "true_anomaly": 0
+      },
+      "primary_root_cause": "period_denominator_bug",
+      "quality_score": 78.0,
+      "reason_codes": [
+        "CURRENT_PERIOD_IR_RECONCILIATION_REQUIRED"
+      ],
+      "recommended_next_action": "Fix compatible denominator/source-period selection before recalculating ratios.",
+      "status": "manual_review",
+      "ticker": "DDOG"
+    },
+    {
+      "counts": {
+        "audit_errors": 0,
+        "company_defined_fcf_mismatch_count": 0,
+        "data_limitation_claim_count": 0,
+        "fcf_unavailable_block_count": 0,
+        "financial_sanity_errors": 0,
+        "guard_threshold_review": 0,
+        "missing_current_period_context_count": 0,
+        "period_bug": 0,
+        "ticker_specific_kpi_claim_count": 1,
+        "true_anomaly": 0
+      },
+      "primary_root_cause": "claim_semantics_gap",
+      "quality_score": 78.0,
+      "reason_codes": [],
+      "recommended_next_action": "Add current-period company-specific KPI claims; do not count data availability notes as substance.",
+      "status": "manual_review",
+      "ticker": "MDB"
+    },
+    {
+      "counts": {
+        "audit_errors": 2,
+        "company_defined_fcf_mismatch_count": 0,
+        "data_limitation_claim_count": 6,
+        "fcf_unavailable_block_count": 0,
+        "financial_sanity_errors": 2,
+        "guard_threshold_review": 0,
+        "missing_current_period_context_count": 0,
+        "period_bug": 0,
+        "ticker_specific_kpi_claim_count": 1,
+        "true_anomaly": 1
+      },
+      "primary_root_cause": "true_financial_anomaly",
+      "quality_score": 60.0,
+      "reason_codes": [
+        "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+        "TRUE_FINANCIAL_ANOMALY"
+      ],
+      "recommended_next_action": "Keep manual review unless investment committee explicitly accepts the extreme valuation/ratio context.",
+      "status": "manual_review",
+      "ticker": "CRWD"
+    },
+    {
+      "counts": {
+        "audit_errors": 0,
+        "company_defined_fcf_mismatch_count": 0,
+        "data_limitation_claim_count": 0,
+        "fcf_unavailable_block_count": 0,
+        "financial_sanity_errors": 0,
+        "guard_threshold_review": 1,
+        "missing_current_period_context_count": 0,
+        "period_bug": 0,
+        "ticker_specific_kpi_claim_count": 1,
+        "true_anomaly": 0
+      },
+      "primary_root_cause": "claim_semantics_gap",
+      "quality_score": 78.0,
+      "reason_codes": [
+        "GUARD_THRESHOLD_REVIEW"
+      ],
+      "recommended_next_action": "Add current-period company-specific KPI claims; do not count data availability notes as substance.",
+      "status": "manual_review",
+      "ticker": "NET"
+    },
+    {
+      "counts": {
+        "audit_errors": 2,
+        "company_defined_fcf_mismatch_count": 0,
+        "data_limitation_claim_count": 2,
+        "fcf_unavailable_block_count": 1,
+        "financial_sanity_errors": 0,
+        "guard_threshold_review": 0,
+        "missing_current_period_context_count": 1,
+        "period_bug": 0,
+        "ticker_specific_kpi_claim_count": 1,
+        "true_anomaly": 0
+      },
+      "primary_root_cause": "fcf_unavailable_without_ir_support",
+      "quality_score": 62.0,
+      "reason_codes": [
+        "FCF_UNAVAILABLE_WITHOUT_IR_SUPPORT",
+        "MISSING_CURRENT_PERIOD_CONTEXT"
+      ],
+      "recommended_next_action": "Ingest current IR adjusted FCF / FCF-margin support or keep manual review with explicit data limitation.",
+      "status": "manual_review",
+      "ticker": "PANW"
+    },
+    {
+      "counts": {
+        "audit_errors": 0,
+        "company_defined_fcf_mismatch_count": 0,
+        "data_limitation_claim_count": 0,
+        "fcf_unavailable_block_count": 0,
+        "financial_sanity_errors": 0,
+        "guard_threshold_review": 0,
+        "missing_current_period_context_count": 0,
+        "period_bug": 0,
+        "ticker_specific_kpi_claim_count": 1,
+        "true_anomaly": 0
+      },
+      "primary_root_cause": "claim_semantics_gap",
+      "quality_score": 78.0,
+      "reason_codes": [],
+      "recommended_next_action": "Add current-period company-specific KPI claims; do not count data availability notes as substance.",
+      "status": "manual_review",
+      "ticker": "ZS"
+    },
+    {
+      "counts": {
+        "audit_errors": 1,
+        "company_defined_fcf_mismatch_count": 0,
+        "data_limitation_claim_count": 0,
+        "fcf_unavailable_block_count": 0,
+        "financial_sanity_errors": 0,
+        "guard_threshold_review": 0,
+        "missing_current_period_context_count": 0,
+        "period_bug": 1,
+        "ticker_specific_kpi_claim_count": 6,
+        "true_anomaly": 0
+      },
+      "primary_root_cause": "period_denominator_bug",
+      "quality_score": 92.0,
+      "reason_codes": [
+        "CURRENT_PERIOD_IR_RECONCILIATION_REQUIRED"
+      ],
+      "recommended_next_action": "Fix compatible denominator/source-period selection before recalculating ratios.",
+      "status": "manual_review",
+      "ticker": "CRM"
+    },
+    {
+      "counts": {
+        "audit_errors": 0,
+        "company_defined_fcf_mismatch_count": 0,
+        "data_limitation_claim_count": 0,
+        "fcf_unavailable_block_count": 0,
+        "financial_sanity_errors": 0,
+        "guard_threshold_review": 0,
+        "missing_current_period_context_count": 0,
+        "period_bug": 0,
+        "ticker_specific_kpi_claim_count": 1,
+        "true_anomaly": 0
+      },
+      "primary_root_cause": "claim_semantics_gap",
+      "quality_score": 78.0,
+      "reason_codes": [],
+      "recommended_next_action": "Add current-period company-specific KPI claims; do not count data availability notes as substance.",
+      "status": "manual_review",
+      "ticker": "NOW"
+    },
+    {
+      "counts": {
+        "audit_errors": 0,
+        "company_defined_fcf_mismatch_count": 0,
+        "data_limitation_claim_count": 0,
+        "fcf_unavailable_block_count": 0,
+        "financial_sanity_errors": 0,
+        "guard_threshold_review": 0,
+        "missing_current_period_context_count": 0,
+        "period_bug": 0,
+        "ticker_specific_kpi_claim_count": 1,
+        "true_anomaly": 0
+      },
+      "primary_root_cause": "claim_semantics_gap",
+      "quality_score": 78.0,
+      "reason_codes": [],
+      "recommended_next_action": "Add current-period company-specific KPI claims; do not count data availability notes as substance.",
+      "status": "manual_review",
+      "ticker": "ORCL"
+    },
+    {
+      "counts": {
+        "audit_errors": 0,
+        "company_defined_fcf_mismatch_count": 0,
+        "data_limitation_claim_count": 0,
+        "fcf_unavailable_block_count": 0,
+        "financial_sanity_errors": 0,
+        "guard_threshold_review": 0,
+        "missing_current_period_context_count": 0,
+        "period_bug": 0,
+        "ticker_specific_kpi_claim_count": 1,
+        "true_anomaly": 0
+      },
+      "primary_root_cause": "claim_semantics_gap",
+      "quality_score": 78.0,
+      "reason_codes": [],
+      "recommended_next_action": "Add current-period company-specific KPI claims; do not count data availability notes as substance.",
+      "status": "manual_review",
+      "ticker": "ADBE"
+    },
+    {
+      "counts": {
+        "audit_errors": 0,
+        "company_defined_fcf_mismatch_count": 0,
+        "data_limitation_claim_count": 0,
+        "fcf_unavailable_block_count": 0,
+        "financial_sanity_errors": 0,
+        "guard_threshold_review": 0,
+        "missing_current_period_context_count": 0,
+        "period_bug": 0,
+        "ticker_specific_kpi_claim_count": 1,
+        "true_anomaly": 0
+      },
+      "primary_root_cause": "claim_semantics_gap",
+      "quality_score": 78.0,
+      "reason_codes": [],
+      "recommended_next_action": "Add current-period company-specific KPI claims; do not count data availability notes as substance.",
+      "status": "manual_review",
+      "ticker": "INTU"
+    },
+    {
+      "counts": {
+        "audit_errors": 0,
+        "company_defined_fcf_mismatch_count": 0,
+        "data_limitation_claim_count": 0,
+        "fcf_unavailable_block_count": 0,
+        "financial_sanity_errors": 0,
+        "guard_threshold_review": 0,
+        "missing_current_period_context_count": 0,
+        "period_bug": 0,
+        "ticker_specific_kpi_claim_count": 1,
+        "true_anomaly": 0
+      },
+      "primary_root_cause": "claim_semantics_gap",
+      "quality_score": 78.0,
+      "reason_codes": [],
+      "recommended_next_action": "Add current-period company-specific KPI claims; do not count data availability notes as substance.",
+      "status": "manual_review",
+      "ticker": "UBER"
+    },
+    {
+      "counts": {
+        "audit_errors": 0,
+        "company_defined_fcf_mismatch_count": 0,
+        "data_limitation_claim_count": 0,
+        "fcf_unavailable_block_count": 0,
+        "financial_sanity_errors": 0,
+        "guard_threshold_review": 0,
+        "missing_current_period_context_count": 0,
+        "period_bug": 0,
+        "ticker_specific_kpi_claim_count": 1,
+        "true_anomaly": 0
+      },
+      "primary_root_cause": "claim_semantics_gap",
+      "quality_score": 78.0,
+      "reason_codes": [],
+      "recommended_next_action": "Add current-period company-specific KPI claims; do not count data availability notes as substance.",
+      "status": "manual_review",
+      "ticker": "TSLA"
+    },
+    {
+      "counts": {
+        "audit_errors": 2,
+        "company_defined_fcf_mismatch_count": 0,
+        "data_limitation_claim_count": 0,
+        "fcf_unavailable_block_count": 0,
+        "financial_sanity_errors": 2,
+        "guard_threshold_review": 1,
+        "missing_current_period_context_count": 0,
+        "period_bug": 0,
+        "ticker_specific_kpi_claim_count": 1,
+        "true_anomaly": 1
+      },
+      "primary_root_cause": "true_financial_anomaly",
+      "quality_score": 74.0,
+      "reason_codes": [
+        "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+        "GUARD_THRESHOLD_REVIEW",
+        "TRUE_FINANCIAL_ANOMALY"
+      ],
+      "recommended_next_action": "Keep manual review unless investment committee explicitly accepts the extreme valuation/ratio context.",
+      "status": "manual_review",
+      "ticker": "PLTR"
+    },
+    {
+      "counts": {
+        "audit_errors": 0,
+        "company_defined_fcf_mismatch_count": 0,
+        "data_limitation_claim_count": 0,
+        "fcf_unavailable_block_count": 0,
+        "financial_sanity_errors": 0,
+        "guard_threshold_review": 0,
+        "missing_current_period_context_count": 0,
+        "period_bug": 0,
+        "ticker_specific_kpi_claim_count": 1,
+        "true_anomaly": 0
+      },
+      "primary_root_cause": "claim_semantics_gap",
+      "quality_score": 78.0,
+      "reason_codes": [],
+      "recommended_next_action": "Add current-period company-specific KPI claims; do not count data availability notes as substance.",
+      "status": "manual_review",
+      "ticker": "IBM"
+    }
+  ],
+  "summary": {
+    "batch_id": "phase12_real_pilot_035_current_ir_claim_semantics",
+    "count_by_reason": {
+      "CURRENT_PERIOD_IR_RECONCILIATION_REQUIRED": 3,
+      "FCF_UNAVAILABLE_WITHOUT_IR_SUPPORT": 1,
+      "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY": 7,
+      "GUARD_THRESHOLD_REVIEW": 2,
+      "MISSING_CURRENT_PERIOD_CONTEXT": 1,
+      "MISSING_FCF_SUPPORT_FOR_ACCUMULATE": 1,
+      "TRUE_FINANCIAL_ANOMALY": 7
+    },
+    "count_by_root_cause": {
+      "claim_semantics_gap": 13,
+      "fcf_unavailable_without_ir_support": 1,
+      "period_denominator_bug": 2,
+      "true_financial_anomaly": 7
+    },
+    "quick_wins": [
+      "INTC",
+      "QCOM",
+      "MRVL",
+      "MDB",
+      "NET",
+      "PANW",
+      "ZS",
+      "NOW",
+      "ORCL",
+      "ADBE",
+      "INTU",
+      "UBER",
+      "TSLA",
+      "IBM"
+    ],
+    "should_remain_manual_review": [
+      "AMZN",
+      "NVDA",
+      "AMD",
+      "MU",
+      "ANET",
+      "CRWD",
+      "PLTR"
+    ],
+    "total_manual_review": 23
+  }
+}

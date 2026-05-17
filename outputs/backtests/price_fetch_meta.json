@@ -1,0 +1,200 @@
+{
+  "AAPL": {
+    "first": "2026-05-01",
+    "last": "2026-05-08",
+    "rows": 6,
+    "status": "ok"
+  },
+  "ADBE": {
+    "first": "2026-05-01",
+    "last": "2026-05-08",
+    "rows": 6,
+    "status": "ok"
+  },
+  "AMD": {
+    "first": "2026-05-01",
+    "last": "2026-05-08",
+    "rows": 6,
+    "status": "ok"
+  },
+  "AMZN": {
+    "first": "2026-05-01",
+    "last": "2026-05-08",
+    "rows": 6,
+    "status": "ok"
+  },
+  "ANET": {
+    "first": "2026-05-01",
+    "last": "2026-05-08",
+    "rows": 6,
+    "status": "ok"
+  },
+  "AVGO": {
+    "first": "2026-05-01",
+    "last": "2026-05-08",
+    "rows": 6,
+    "status": "ok"
+  },
+  "CRM": {
+    "first": "2026-05-01",
+    "last": "2026-05-08",
+    "rows": 6,
+    "status": "ok"
+  },
+  "CRWD": {
+    "first": "2026-05-01",
+    "last": "2026-05-08",
+    "rows": 6,
+    "status": "ok"
+  },
+  "DDOG": {
+    "first": "2026-05-01",
+    "last": "2026-05-08",
+    "rows": 6,
+    "status": "ok"
+  },
+  "GOOGL": {
+    "first": "2026-05-01",
+    "last": "2026-05-08",
+    "rows": 6,
+    "status": "ok"
+  },
+  "IBM": {
+    "first": "2026-05-01",
+    "last": "2026-05-08",
+    "rows": 6,
+    "status": "ok"
+  },
+  "INTC": {
+    "first": "2026-05-01",
+    "last": "2026-05-08",
+    "rows": 6,
+    "status": "ok"
+  },
+  "INTU": {
+    "first": "2026-05-01",
+    "last": "2026-05-08",
+    "rows": 6,
+    "status": "ok"
+  },
+  "MDB": {
+    "first": "2026-05-01",
+    "last": "2026-05-08",
+    "rows": 6,
+    "status": "ok"
+  },
+  "META": {
+    "first": "2026-05-01",
+    "last": "2026-05-08",
+    "rows": 6,
+    "status": "ok"
+  },
+  "MRVL": {
+    "first": "2026-05-01",
+    "last": "2026-05-08",
+    "rows": 6,
+    "status": "ok"
+  },
+  "MSFT": {
+    "first": "2026-05-01",
+    "last": "2026-05-08",
+    "rows": 6,
+    "status": "ok"
+  },
+  "MU": {
+    "first": "2026-05-01",
+    "last": "2026-05-08",
+    "rows": 6,
+    "status": "ok"
+  },
+  "NET": {
+    "first": "2026-05-01",
+    "last": "2026-05-08",
+    "rows": 6,
+    "status": "ok"
+  },
+  "NFLX": {
+    "first": "2026-05-01",
+    "last": "2026-05-08",
+    "rows": 6,
+    "status": "ok"
+  },
+  "NOW": {
+    "first": "2026-05-01",
+    "last": "2026-05-08",
+    "rows": 6,
+    "status": "ok"
+  },
+  "NVDA": {
+    "first": "2026-05-01",
+    "last": "2026-05-08",
+    "rows": 6,
+    "status": "ok"
+  },
+  "ORCL": {
+    "first": "2026-05-01",
+    "last": "2026-05-08",
+    "rows": 6,
+    "status": "ok"
+  },
+  "PANW": {
+    "first": "2026-05-01",
+    "last": "2026-05-08",
+    "rows": 6,
+    "status": "ok"
+  },
+  "PLTR": {
+    "first": "2026-05-01",
+    "last": "2026-05-08",
+    "rows": 6,
+    "status": "ok"
+  },
+  "QCOM": {
+    "first": "2026-05-01",
+    "last": "2026-05-08",
+    "rows": 6,
+    "status": "ok"
+  },
+  "QQQ": {
+    "first": "2026-05-01",
+    "last": "2026-05-08",
+    "rows": 6,
+    "status": "ok"
+  },
+  "SMH": {
+    "first": "2026-05-01",
+    "last": "2026-05-08",
+    "rows": 6,
+    "status": "ok"
+  },
+  "SNOW": {
+    "first": "2026-05-01",
+    "last": "2026-05-08",
+    "rows": 6,
+    "status": "ok"
+  },
+  "SPY": {
+    "first": "2026-05-01",
+    "last": "2026-05-08",
+    "rows": 6,
+    "status": "ok"
+  },
+  "TSLA": {
+    "first": "2026-05-01",
+    "last": "2026-05-08",
+    "rows": 6,
+    "status": "ok"
+  },
+  "UBER": {
+    "first": "2026-05-01",
+    "last": "2026-05-08",
+    "rows": 6,
+    "status": "ok"
+  },
+  "ZS": {
+    "first": "2026-05-01",
+    "last": "2026-05-08",
+    "rows": 6,
+    "status": "ok"
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "has_blocking_errors": true,
+  "issues": [
+    {
+      "code": "SPECULATIVE_DEEP_TECH_MANUAL_REVIEW_PROFILE",
+      "line_number": null,
+      "message": "Speculative deep-tech early-commercial company archetype requires manual review.",
+      "metric": null,
+      "raw_text": null,
+      "reported": null,
+      "severity": "warning",
+      "validated": null
+    },
+    {
+      "code": "VENDOR_ONLY_HARD_METRICS",
+      "line_number": null,
+      "message": "Hard financial metrics rely on vendor/manual evidence without current-period SEC/IR support.",
+      "metric": null,
+      "raw_text": null,
+      "reported": null,
+      "severity": "warning",
+      "validated": null
+    },
+    {
+      "code": "ACCOUNTING_GAIN_NOT_OPERATING_TURNAROUND",
+      "line_number": null,
+      "message": "Net income improvement language needs a clear non-operating fair-value caveat.",
+      "metric": null,
+      "raw_text": null,
+      "reported": null,
+      "severity": "warning",
+      "validated": null
+    },
+    {
+      "code": "ORDER_MATERIALITY_MISSING",
+      "line_number": null,
+      "message": "Orders/contracts/roadmap milestones need a materiality section.",
+      "metric": null,
+      "raw_text": null,
+      "reported": null,
+      "severity": "warning",
+      "validated": null
+    }
+  ],
+  "ticker": "IONQ"
+}

@@ -1,0 +1,27 @@
+{
+  "actual_archetype": "UNKNOWN",
+  "archetype_confidence": 0,
+  "artifact_consistency_status": "not_applicable_data_unavailable",
+  "company_name": "Archer Aviation Inc.",
+  "concerns": [
+    "coverage_not_evaluable_source_inputs_missing"
+  ],
+  "data_confidence_score": null,
+  "evidence_status": "data_unavailable",
+  "expected_archetype": "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH / DISTRESSED_CAPITAL_INTENSIVE",
+  "external_display_rating": null,
+  "internal_research_quality_score": null,
+  "likely_false_negative": "no",
+  "likely_false_positive": "no",
+  "manual_review_reasons": [],
+  "primary_blockers": [
+    "Missing CSV price history: outputs/source_inputs/phase12_operating_pilot_050/prices/ACHR.csv"
+  ],
+  "public_ready": false,
+  "publish_quality_score": null,
+  "publishable": false,
+  "recommended_next_action": "Ingest missing price/SEC/companyfacts/IR inputs and rerun source_ingestion_mode.",
+  "review_status": "data_unavailable",
+  "sector_bucket": "Early-Commercial Capital-Intensive Tech / Space / Mobility / Energy",
+  "ticker": "ACHR"
+}

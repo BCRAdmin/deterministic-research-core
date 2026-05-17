@@ -1,0 +1,126 @@
+{
+  "has_blocking_errors": true,
+  "issues": [
+    {
+      "code": "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+      "line_number": null,
+      "message": "P/FCF above 100x requires explicit explanation before publish.",
+      "metric": "price_to_fcf",
+      "raw_text": null,
+      "reported": 186.08073411943704,
+      "severity": "error",
+      "validated": null
+    }
+  ],
+  "numeric_claims": [
+    {
+      "line_number": 8,
+      "nearby_text": "- Report as-of date: `2026-05-05`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 9,
+      "nearby_text": "- Price basis: `2026-05-05` close via `csv_price_provider`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": "close",
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 21,
+      "nearby_text": "| SBC / Revenue | 7.5% |",
+      "normalized_value": 7.5,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "7.5%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 29,
+      "nearby_text": "- **MRVL_CLAIM_002**: MRVL has validated revenue TTM of $7.49B, so the business discussion should focus on semiconductor cycle, product mix, inventory, gross margin and management forecast quality rather than generic scale language.",
+      "normalized_value": 7490000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$7.49B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 33,
+      "nearby_text": "- **MRVL_CLAIM_003**: Validated FCF TTM is $788.7M, making cash conversion a direct rating input for MRVL.",
+      "normalized_value": 788700000.0,
+      "period_hint": "ttm",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$788.7M",
+      "unit": "usd"
+    },
+    {
+      "line_number": 37,
+      "nearby_text": "- **MRVL_CLAIM_004**: SBC/Revenue is 7.5%, which should be interpreted through semiconductor-cycle, segment-mix and balance-sheet context rather than a one-size-fits-all compensation lens.",
+      "normalized_value": 7.5,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "7.5%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 41,
+      "nearby_text": "- **MRVL_CLAIM_005**: Balance-sheet flexibility is anchored in validated net cash of $868.1M and debt evidence, which affects how much downside tolerance the action plan can carry.",
+      "normalized_value": 868100000.0,
+      "period_hint": "unknown",
+      "possible_metric": "net_cash",
+      "raw_text": "$868.1M",
+      "unit": "usd"
+    },
+    {
+      "line_number": 46,
+      "nearby_text": "- **MRVL_CLAIM_006**: Valuation is framed by validated EV/Sales of 19.47x; this directly limits how aggressive the Hold stance should be.",
+      "normalized_value": 19.47,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "19.47x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 50,
+      "nearby_text": "- **MRVL_CLAIM_007**: For MRVL, validated P/FCF is 186.08x and should be read against cycle-adjusted earnings and FCF support; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+      "normalized_value": 186.08,
+      "period_hint": "unknown",
+      "possible_metric": "price_to_fcf",
+      "raw_text": "186.08x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 64,
+      "nearby_text": "- **MRVL_CLAIM_010**: The bull case is that cycle recovery, AI/datacenter mix and margin leverage combines with revenue of $7.49B to support the allowed upside rating path when cash conversion quality also holds.",
+      "normalized_value": 7490000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$7.49B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 73,
+      "nearby_text": "- **MRVL_CLAIM_012**: The bear case is that inventory correction, gross-margin pressure or weak management forecast overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 7.5% or source-quality issues persist.",
+      "normalized_value": 7.5,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "7.5%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 84,
+      "nearby_text": "- **MRVL_CLAIM_015**: Source disagreement or current-period mismatch can reduce conviction for MRVL, especially where revenue $7.49B is a key valuation denominator.",
+      "normalized_value": 7490000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$7.49B",
+      "unit": "usd"
+    }
+  ],
+  "ticker": "MRVL"
+}

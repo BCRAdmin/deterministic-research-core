@@ -1,0 +1,786 @@
+[
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "MSFT enters the report at a frozen close of 421.92 with a Hold stance; the action should reflect mega-cap platform growth, AI/cloud investment, margin durability and regulatory risk, valuation discipline and the current technical setup.",
+    "claim_id": "MSFT_CLAIM_001",
+    "claim_text": "MSFT enters the report at a frozen close of 421.92 with a Hold stance; the action should reflect mega-cap platform growth, AI/cloud investment, margin durability and regulatory risk, valuation discipline and the current technical setup.",
+    "claim_type": "price_data",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "MSFT_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "MSFT_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "MSFT_YAHOO_CHART_PRICE_CSV_PRICE",
+      "MSFT_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "MSFT_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "MSFT_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "The action language should stay consistent with the Hold stance.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Executive Summary",
+    "source_ids": [
+      "MSFT_YAHOO_CHART_PRICE_CSV",
+      "MSFT_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "MSFT's Q3 revenue of $82.89B and Microsoft Cloud revenue of $54.50B show that cloud scale remains the core business driver.",
+    "claim_id": "MSFT_CLAIM_002",
+    "claim_text": "MSFT's Q3 revenue of $82.89B and Microsoft Cloud revenue of $54.50B show that cloud scale remains the core business driver.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "Large cloud scale does not automatically solve AI capacity cost.",
+    "evidence_ids": [
+      "MSFT_MSFT_IR_Q3_FY2026_RELEASE_current_q_revenue_Q3_FY2026",
+      "MSFT_MSFT_IR_Q3_FY2026_RELEASE_microsoft_cloud_revenue_Q3_FY2026"
+    ],
+    "evidence_metrics": [
+      "current_q_revenue",
+      "microsoft_cloud_revenue"
+    ],
+    "importance": "high",
+    "investment_implication": "Cloud scale supports Hold rather than a bearish rating.",
+    "metric_refs": [
+      "current_q_revenue",
+      "microsoft_cloud_revenue"
+    ],
+    "section": "Business & Segment Context",
+    "source_ids": [
+      "MSFT_IR_Q3_FY2026_RELEASE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Microsoft Cloud growth of 29.0% and Azure growth of 40.0% show current-period demand strength.",
+    "claim_id": "MSFT_CLAIM_003",
+    "claim_text": "Microsoft Cloud growth of 29.0% and Azure growth of 40.0% show current-period demand strength.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "Growth can still be offset by capex and margin pressure.",
+    "evidence_ids": [
+      "MSFT_MSFT_IR_Q3_FY2026_RELEASE_microsoft_cloud_growth_Q3_FY2026",
+      "MSFT_MSFT_IR_Q3_FY2026_RELEASE_azure_growth_Q3_FY2026"
+    ],
+    "evidence_metrics": [
+      "microsoft_cloud_growth",
+      "azure_growth"
+    ],
+    "importance": "high",
+    "investment_implication": "A more bullish rating needs cloud growth to convert into cleaner FCF expansion.",
+    "metric_refs": [
+      "microsoft_cloud_growth",
+      "azure_growth"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "MSFT_IR_Q3_FY2026_RELEASE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "MSFT's AI business annual revenue run-rate above $37.00B is the key catalyst yardstick for whether AI demand is becoming material enough to offset infrastructure spend.",
+    "claim_id": "MSFT_CLAIM_004",
+    "claim_text": "MSFT's AI business annual revenue run-rate above $37.00B is the key catalyst yardstick for whether AI demand is becoming material enough to offset infrastructure spend.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "Run-rate disclosures can outpace realized margin contribution.",
+    "evidence_ids": [
+      "MSFT_MSFT_IR_Q3_FY2026_RELEASE_ai_run_rate_Q3_FY2026"
+    ],
+    "evidence_metrics": [
+      "ai_run_rate"
+    ],
+    "importance": "high",
+    "investment_implication": "Upgrade requires AI revenue to scale with durable margin and FCF support.",
+    "metric_refs": [
+      "ai_run_rate"
+    ],
+    "section": "Catalysts & Triggers",
+    "source_ids": [
+      "MSFT_IR_Q3_FY2026_RELEASE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "MSFT has revenue TTM of $311.90B, so the business discussion should focus on mega-cap platform growth, AI/cloud investment, margin durability and regulatory risk rather than generic scale language.",
+    "claim_id": "MSFT_CLAIM_005",
+    "claim_text": "MSFT has revenue TTM of $311.90B, so the business discussion should focus on mega-cap platform growth, AI/cloud investment, margin durability and regulatory risk rather than generic scale language.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "Revenue scale alone does not prove attractive returns or valuation discipline.",
+    "evidence_ids": [
+      "MSFT_SEC_COMPANYFACTS_789019_REVENUE",
+      "MSFT_SEC_COMPANYFACTS_789019_REVENUE_TTM",
+      "MSFT_SEC_COMPANYFACTS_789019_SALES",
+      "MSFT_SEC_COMPANYFACTS_789019_UMSATZ",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_REVENUE",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_REVENUE_TTM",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_SALES",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_UMSATZ",
+      "MSFT_SEC_revenue_FY2025_FY_0000950170-25-100235",
+      "MSFT_SEC_revenue_FY2026_Q2_0001193125-26-027207",
+      "MSFT_SEC_revenue_FY2026_Q3_0001193125-26-191507"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm"
+    ],
+    "importance": "high",
+    "investment_implication": "Use revenue evidence as context, not as a standalone buy signal.",
+    "metric_refs": [
+      "revenue_ttm"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "MSFT_SEC_COMPANYFACTS_789019",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE",
+      "SEC_0000789019_0000950170-25-100235",
+      "SEC_0000789019_0001193125-26-027207",
+      "SEC_0000789019_0001193125-26-191507"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "FCF TTM is $67.65B, making cash conversion a direct rating input for MSFT.",
+    "claim_id": "MSFT_CLAIM_006",
+    "claim_text": "FCF TTM is $67.65B, making cash conversion a direct rating input for MSFT.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "FCF may be company-defined or period-sensitive and can require reconciliation review.",
+    "evidence_ids": [
+      "MSFT_SEC_COMPANYFACTS_789019_CASHFLOW",
+      "MSFT_SEC_COMPANYFACTS_789019_FCF",
+      "MSFT_SEC_COMPANYFACTS_789019_FREE_CASH_FLOW",
+      "MSFT_SEC_COMPANYFACTS_789019_FREE_CASH_FLOW_TTM",
+      "MSFT_SEC_COMPANYFACTS_789019_FREE_CASHFLOW",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_CASHFLOW",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_FCF",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_FREE_CASH_FLOW",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_FREE_CASH_FLOW_TTM",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_FREE_CASHFLOW",
+      "MSFT_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm"
+    ],
+    "importance": "high",
+    "investment_implication": "FCF quality supports the thesis only if no sanity guard blocks the report.",
+    "metric_refs": [
+      "free_cash_flow_ttm"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "MSFT_SEC_COMPANYFACTS_789019",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE",
+      "SEC_0000789019_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "SBC/Revenue is 3.9%, which should be interpreted through mega-cap platform, capex and capital-return context rather than a one-size-fits-all compensation lens.",
+    "claim_id": "MSFT_CLAIM_007",
+    "claim_text": "SBC/Revenue is 3.9%, which should be interpreted through mega-cap platform, capex and capital-return context rather than a one-size-fits-all compensation lens.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": "Sector and lifecycle matter, but persistent dilution can still reduce equity quality.",
+    "evidence_ids": [
+      "MSFT_SEC_COMPANYFACTS_789019_SBC_TO_REVENUE",
+      "MSFT_SEC_DERIVED_SBC_TO_REVENUE"
+    ],
+    "evidence_metrics": [
+      "sbc_to_revenue"
+    ],
+    "importance": "medium",
+    "investment_implication": "Treat SBC as a risk modifier rather than an automatic rating override.",
+    "metric_refs": [
+      "sbc_to_revenue"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "MSFT_SEC_COMPANYFACTS_789019",
+      "SEC_0000789019_DERIVED_SBC_TO_REVENUE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Balance-sheet flexibility is anchored in net cash of $70.46B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+    "claim_id": "MSFT_CLAIM_008",
+    "claim_text": "Balance-sheet flexibility is anchored in net cash of $70.46B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "MSFT_SEC_COMPANYFACTS_789019_CASH",
+      "MSFT_SEC_COMPANYFACTS_789019_CASH_AND_EQUIVALENTS",
+      "MSFT_SEC_COMPANYFACTS_789019_CASH_AND_INVESTMENTS",
+      "MSFT_SEC_COMPANYFACTS_789019_NET_CASH",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_CASH",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_CASH_AND_EQUIVALENTS",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_CASH_AND_INVESTMENTS",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_NET_CASH",
+      "MSFT_SEC_cash_and_equivalents_FY2025_FY_0000950170-25-100235",
+      "MSFT_SEC_cash_and_equivalents_FY2026_Q2_0001193125-26-027207",
+      "MSFT_SEC_cash_and_equivalents_FY2026_Q3_0001193125-26-191507",
+      "MSFT_SEC_COMPANYFACTS_789019_DEBT",
+      "MSFT_SEC_COMPANYFACTS_789019_NET_DEBT",
+      "MSFT_SEC_COMPANYFACTS_789019_TOTAL_DEBT"
+    ],
+    "evidence_metrics": [
+      "net_cash",
+      "total_debt"
+    ],
+    "importance": "medium",
+    "investment_implication": "A stronger liquidity position can widen the acceptable holding corridor.",
+    "metric_refs": [
+      "net_cash",
+      "total_debt"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "MSFT_SEC_COMPANYFACTS_789019",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE",
+      "SEC_0000789019_0000950170-25-100235",
+      "SEC_0000789019_0001193125-26-027207",
+      "SEC_0000789019_0001193125-26-191507"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Valuation is framed by EV/Sales of 9.85x; this directly limits how aggressive the Hold stance should be.",
+    "claim_id": "MSFT_CLAIM_009",
+    "claim_text": "Valuation is framed by EV/Sales of 9.85x; this directly limits how aggressive the Hold stance should be.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": "Packet-derived valuation can still be blocked by sanity guards when source reconciliation is suspect.",
+    "evidence_ids": [
+      "MSFT_SEC_COMPANYFACTS_789019_REVENUE",
+      "MSFT_SEC_COMPANYFACTS_789019_REVENUE_TTM",
+      "MSFT_SEC_COMPANYFACTS_789019_SALES",
+      "MSFT_SEC_COMPANYFACTS_789019_UMSATZ",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_REVENUE",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_REVENUE_TTM",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_SALES",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_UMSATZ",
+      "MSFT_SEC_revenue_FY2025_FY_0000950170-25-100235",
+      "MSFT_SEC_revenue_FY2026_Q2_0001193125-26-027207",
+      "MSFT_SEC_revenue_FY2026_Q3_0001193125-26-191507",
+      "MSFT_SEC_COMPANYFACTS_789019_CASHFLOW",
+      "MSFT_SEC_COMPANYFACTS_789019_FCF",
+      "MSFT_SEC_COMPANYFACTS_789019_FREE_CASH_FLOW",
+      "MSFT_SEC_COMPANYFACTS_789019_FREE_CASH_FLOW_TTM",
+      "MSFT_SEC_COMPANYFACTS_789019_FREE_CASHFLOW",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_CASHFLOW",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_FCF",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_FREE_CASH_FLOW",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_FREE_CASH_FLOW_TTM",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_FREE_CASHFLOW",
+      "MSFT_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "MSFT_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "MSFT_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "MSFT_YAHOO_CHART_PRICE_CSV_PRICE",
+      "MSFT_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "MSFT_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "MSFT_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm",
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Do not upgrade rating solely from valuation language if audit has financial-sanity errors.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm",
+      "close"
+    ],
+    "section": "Valuation / Multiples",
+    "source_ids": [
+      "MSFT_SEC_COMPANYFACTS_789019",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE",
+      "SEC_0000789019_0000950170-25-100235",
+      "SEC_0000789019_0001193125-26-027207",
+      "SEC_0000789019_0001193125-26-191507",
+      "SEC_0000789019_DERIVED_FCF",
+      "MSFT_YAHOO_CHART_PRICE_CSV",
+      "MSFT_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "For MSFT, P/FCF is 46.44x and should be read against platform growth, FCF durability and capex intensity; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+    "claim_id": "MSFT_CLAIM_010",
+    "claim_text": "For MSFT, P/FCF is 46.44x and should be read against platform growth, FCF durability and capex intensity; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "MSFT_SEC_COMPANYFACTS_789019_CASHFLOW",
+      "MSFT_SEC_COMPANYFACTS_789019_FCF",
+      "MSFT_SEC_COMPANYFACTS_789019_FREE_CASH_FLOW",
+      "MSFT_SEC_COMPANYFACTS_789019_FREE_CASH_FLOW_TTM",
+      "MSFT_SEC_COMPANYFACTS_789019_FREE_CASHFLOW",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_CASHFLOW",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_FCF",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_FREE_CASH_FLOW",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_FREE_CASH_FLOW_TTM",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_FREE_CASHFLOW",
+      "MSFT_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "MSFT_SEC_COMPANYFACTS_789019_REVENUE",
+      "MSFT_SEC_COMPANYFACTS_789019_REVENUE_TTM",
+      "MSFT_SEC_COMPANYFACTS_789019_SALES",
+      "MSFT_SEC_COMPANYFACTS_789019_UMSATZ",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_REVENUE",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_REVENUE_TTM",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_SALES",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_UMSATZ",
+      "MSFT_SEC_revenue_FY2025_FY_0000950170-25-100235",
+      "MSFT_SEC_revenue_FY2026_Q2_0001193125-26-027207",
+      "MSFT_SEC_revenue_FY2026_Q3_0001193125-26-191507"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm",
+      "revenue_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "The rating should stay conservative when multiples are expensive, missing or flagged.",
+    "metric_refs": [
+      "free_cash_flow_ttm",
+      "revenue_ttm"
+    ],
+    "section": "Valuation / Multiples",
+    "source_ids": [
+      "MSFT_SEC_COMPANYFACTS_789019",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE",
+      "SEC_0000789019_DERIVED_FCF",
+      "SEC_0000789019_0000950170-25-100235",
+      "SEC_0000789019_0001193125-26-027207",
+      "SEC_0000789019_0001193125-26-191507"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The technical setup uses close 421.92, 50-SMA 399.06, 200-SMA 463.13 and RSI 57.90, creating timing risk if price cannot reclaim trend support.",
+    "claim_id": "MSFT_CLAIM_011",
+    "claim_text": "The technical setup uses close 421.92, 50-SMA 399.06, 200-SMA 463.13 and RSI 57.90, creating timing risk if price cannot reclaim trend support.",
+    "claim_type": "technical_metric",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "MSFT_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "MSFT_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "MSFT_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "MSFT_YAHOO_CHART_PRICE_CSV_PRICE",
+      "MSFT_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "MSFT_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "MSFT_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Timing language should follow the validated technical trend state.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Technical Setup",
+    "source_ids": [
+      "MSFT_YAHOO_CHART_PRICE_CSV",
+      "MSFT_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "MSFT's close of 421.92 and moving-average position imply a damaged trend that requires confirmation before adding exposure, so entries should be staged, delayed or trimmed according to business evidence and risk/reward.",
+    "claim_id": "MSFT_CLAIM_012",
+    "claim_text": "MSFT's close of 421.92 and moving-average position imply a damaged trend that requires confirmation before adding exposure, so entries should be staged, delayed or trimmed according to business evidence and risk/reward.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": "Technical weakness can be temporary if fundamentals and catalysts improve.",
+    "evidence_ids": [
+      "MSFT_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "MSFT_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "MSFT_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "MSFT_YAHOO_CHART_PRICE_CSV_PRICE",
+      "MSFT_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "MSFT_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "MSFT_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Use staged entries or trims when technical and fundamental signals diverge.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Technical Setup",
+    "source_ids": [
+      "MSFT_YAHOO_CHART_PRICE_CSV",
+      "MSFT_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The bull case is that platform scale, ecosystem monetization and operating leverage combines with revenue of $311.90B to support the allowed upside rating path when cash conversion quality also holds.",
+    "claim_id": "MSFT_CLAIM_013",
+    "claim_text": "The bull case is that platform scale, ecosystem monetization and operating leverage combines with revenue of $311.90B to support the allowed upside rating path when cash conversion quality also holds.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": "Strong scale does not resolve valuation or reconciliation anomalies.",
+    "evidence_ids": [
+      "MSFT_SEC_COMPANYFACTS_789019_REVENUE",
+      "MSFT_SEC_COMPANYFACTS_789019_REVENUE_TTM",
+      "MSFT_SEC_COMPANYFACTS_789019_SALES",
+      "MSFT_SEC_COMPANYFACTS_789019_UMSATZ",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_REVENUE",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_REVENUE_TTM",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_SALES",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_UMSATZ",
+      "MSFT_SEC_revenue_FY2025_FY_0000950170-25-100235",
+      "MSFT_SEC_revenue_FY2026_Q2_0001193125-26-027207",
+      "MSFT_SEC_revenue_FY2026_Q3_0001193125-26-191507",
+      "MSFT_SEC_COMPANYFACTS_789019_CASHFLOW",
+      "MSFT_SEC_COMPANYFACTS_789019_FCF",
+      "MSFT_SEC_COMPANYFACTS_789019_FREE_CASH_FLOW",
+      "MSFT_SEC_COMPANYFACTS_789019_FREE_CASH_FLOW_TTM",
+      "MSFT_SEC_COMPANYFACTS_789019_FREE_CASHFLOW",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_CASHFLOW",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_FCF",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_FREE_CASH_FLOW",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_FREE_CASH_FLOW_TTM",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_FREE_CASHFLOW",
+      "MSFT_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Bullish language should remain bounded by the evidence-backed action plan.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Bull Case",
+    "source_ids": [
+      "MSFT_SEC_COMPANYFACTS_789019",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE",
+      "SEC_0000789019_0000950170-25-100235",
+      "SEC_0000789019_0001193125-26-027207",
+      "SEC_0000789019_0001193125-26-191507",
+      "SEC_0000789019_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "A constructive technical bull path for MSFT requires confirmation beyond the current RSI of 57.90 and moving-average setup.",
+    "claim_id": "MSFT_CLAIM_014",
+    "claim_text": "A constructive technical bull path for MSFT requires confirmation beyond the current RSI of 57.90 and moving-average setup.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "MSFT_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "MSFT_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "MSFT_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "MSFT_YAHOO_CHART_PRICE_CSV_PRICE",
+      "MSFT_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "MSFT_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "MSFT_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Add or accumulate language should require confirmation when the preferred rating is not Buy.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Bull Case",
+    "source_ids": [
+      "MSFT_YAHOO_CHART_PRICE_CSV",
+      "MSFT_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The bear case is that regulatory pressure, capex intensity, growth deceleration or multiple compression overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 3.9% or source-quality issues persist.",
+    "claim_id": "MSFT_CLAIM_015",
+    "claim_text": "The bear case is that regulatory pressure, capex intensity, growth deceleration or multiple compression overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 3.9% or source-quality issues persist.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "MSFT_SEC_COMPANYFACTS_789019_CASHFLOW",
+      "MSFT_SEC_COMPANYFACTS_789019_FCF",
+      "MSFT_SEC_COMPANYFACTS_789019_FREE_CASH_FLOW",
+      "MSFT_SEC_COMPANYFACTS_789019_FREE_CASH_FLOW_TTM",
+      "MSFT_SEC_COMPANYFACTS_789019_FREE_CASHFLOW",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_CASHFLOW",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_FCF",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_FREE_CASH_FLOW",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_FREE_CASH_FLOW_TTM",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_FREE_CASHFLOW",
+      "MSFT_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "MSFT_SEC_COMPANYFACTS_789019_SBC_TO_REVENUE",
+      "MSFT_SEC_DERIVED_SBC_TO_REVENUE"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm",
+      "sbc_to_revenue"
+    ],
+    "importance": "high",
+    "investment_implication": "Manual review remains appropriate when financial-sanity guards fire.",
+    "metric_refs": [
+      "free_cash_flow_ttm",
+      "sbc_to_revenue"
+    ],
+    "section": "Bear Case",
+    "source_ids": [
+      "MSFT_SEC_COMPANYFACTS_789019",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE",
+      "SEC_0000789019_DERIVED_FCF",
+      "SEC_0000789019_DERIVED_SBC_TO_REVENUE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Valuation risk for MSFT is a discipline constraint; expensive or missing EV/Sales and P/FCF context should not be translated into a blocked rating.",
+    "claim_id": "MSFT_CLAIM_016",
+    "claim_text": "Valuation risk for MSFT is a discipline constraint; expensive or missing EV/Sales and P/FCF context should not be translated into a blocked rating.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "MSFT_SEC_COMPANYFACTS_789019_REVENUE",
+      "MSFT_SEC_COMPANYFACTS_789019_REVENUE_TTM",
+      "MSFT_SEC_COMPANYFACTS_789019_SALES",
+      "MSFT_SEC_COMPANYFACTS_789019_UMSATZ",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_REVENUE",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_REVENUE_TTM",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_SALES",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_UMSATZ",
+      "MSFT_SEC_revenue_FY2025_FY_0000950170-25-100235",
+      "MSFT_SEC_revenue_FY2026_Q2_0001193125-26-027207",
+      "MSFT_SEC_revenue_FY2026_Q3_0001193125-26-191507",
+      "MSFT_SEC_COMPANYFACTS_789019_CASHFLOW",
+      "MSFT_SEC_COMPANYFACTS_789019_FCF",
+      "MSFT_SEC_COMPANYFACTS_789019_FREE_CASH_FLOW",
+      "MSFT_SEC_COMPANYFACTS_789019_FREE_CASH_FLOW_TTM",
+      "MSFT_SEC_COMPANYFACTS_789019_FREE_CASHFLOW",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_CASHFLOW",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_FCF",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_FREE_CASH_FLOW",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_FREE_CASH_FLOW_TTM",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_FREE_CASHFLOW",
+      "MSFT_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Avoid full-exit language when the evidence supports only trim or hold actions.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Bear Case",
+    "source_ids": [
+      "MSFT_SEC_COMPANYFACTS_789019",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE",
+      "SEC_0000789019_0000950170-25-100235",
+      "SEC_0000789019_0001193125-26-027207",
+      "SEC_0000789019_0001193125-26-191507",
+      "SEC_0000789019_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Validation and audit issues are part of the MSFT research view; any blocking data issue should override a superficially complete report.",
+    "claim_id": "MSFT_CLAIM_017",
+    "claim_text": "Validation and audit issues are part of the MSFT research view; any blocking data issue should override a superficially complete report.",
+    "claim_type": "risk",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "MSFT_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "MSFT_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "MSFT_YAHOO_CHART_PRICE_CSV_PRICE",
+      "MSFT_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "MSFT_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "MSFT_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Blocking audit errors should keep the report in manual review.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Key Risks",
+    "source_ids": [
+      "MSFT_YAHOO_CHART_PRICE_CSV",
+      "MSFT_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Source disagreement or current-period mismatch can reduce conviction for MSFT, especially where revenue $311.90B is a key valuation denominator.",
+    "claim_id": "MSFT_CLAIM_018",
+    "claim_text": "Source disagreement or current-period mismatch can reduce conviction for MSFT, especially where revenue $311.90B is a key valuation denominator.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "MSFT_SEC_COMPANYFACTS_789019_REVENUE",
+      "MSFT_SEC_COMPANYFACTS_789019_REVENUE_TTM",
+      "MSFT_SEC_COMPANYFACTS_789019_SALES",
+      "MSFT_SEC_COMPANYFACTS_789019_UMSATZ",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_REVENUE",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_REVENUE_TTM",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_SALES",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_UMSATZ",
+      "MSFT_SEC_revenue_FY2025_FY_0000950170-25-100235",
+      "MSFT_SEC_revenue_FY2026_Q2_0001193125-26-027207",
+      "MSFT_SEC_revenue_FY2026_Q3_0001193125-26-191507",
+      "MSFT_SEC_COMPANYFACTS_789019_CASHFLOW",
+      "MSFT_SEC_COMPANYFACTS_789019_FCF",
+      "MSFT_SEC_COMPANYFACTS_789019_FREE_CASH_FLOW",
+      "MSFT_SEC_COMPANYFACTS_789019_FREE_CASH_FLOW_TTM",
+      "MSFT_SEC_COMPANYFACTS_789019_FREE_CASHFLOW",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_CASHFLOW",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_FCF",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_FREE_CASH_FLOW",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_FREE_CASH_FLOW_TTM",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE_FREE_CASHFLOW",
+      "MSFT_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Source-quality limitations belong in the final action plan.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Key Risks",
+    "source_ids": [
+      "MSFT_SEC_COMPANYFACTS_789019",
+      "MSFT_IR_CURRENT_PERIOD_FIXTURE",
+      "SEC_0000789019_0000950170-25-100235",
+      "SEC_0000789019_0001193125-26-027207",
+      "SEC_0000789019_0001193125-26-191507",
+      "SEC_0000789019_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Catalysts for MSFT at the validated close of 421.92 should be limited to confirmed packet inputs; missing earnings or forward company data should be stated as unavailable rather than converted into event-risk claims.",
+    "claim_id": "MSFT_CLAIM_019",
+    "claim_text": "Catalysts for MSFT at the validated close of 421.92 should be limited to confirmed packet inputs; missing earnings or forward company data should be stated as unavailable rather than converted into event-risk claims.",
+    "claim_type": "price_data",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "MSFT_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "MSFT_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "MSFT_YAHOO_CHART_PRICE_CSV_PRICE",
+      "MSFT_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "MSFT_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "MSFT_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "If earnings are unavailable, the report should state that limitation rather than inventing timing.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Catalysts & Triggers",
+    "source_ids": [
+      "MSFT_YAHOO_CHART_PRICE_CSV",
+      "MSFT_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Trigger language should use evidence-backed levels such as 50-SMA 399.06 and 200-SMA 463.13, not unvalidated price targets.",
+    "claim_id": "MSFT_CLAIM_020",
+    "claim_text": "Trigger language should use evidence-backed levels such as 50-SMA 399.06 and 200-SMA 463.13, not unvalidated price targets.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "MSFT_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "MSFT_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "MSFT_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "MSFT_YAHOO_CHART_PRICE_CSV_PRICE",
+      "MSFT_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "MSFT_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "MSFT_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Use confirmation language instead of hard price targets unless risk/reward levels are validated.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Catalysts & Triggers",
+    "source_ids": [
+      "MSFT_YAHOO_CHART_PRICE_CSV",
+      "MSFT_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "We rate MSFT Hold at the validated close of 421.92 because mega-cap platform growth, AI/cloud investment, margin durability and regulatory risk supports the base case, while valuation and technical risk limit the case for a more bullish rating.",
+    "claim_id": "MSFT_CLAIM_021",
+    "claim_text": "We rate MSFT Hold at the validated close of 421.92 because mega-cap platform growth, AI/cloud investment, margin durability and regulatory risk supports the base case, while valuation and technical risk limit the case for a more bullish rating.",
+    "claim_type": "rating",
+    "confidence": "high",
+    "counterargument": "A more bullish rating needs cleaner valuation and technical confirmation; a more bearish rating needs evidence of deteriorating fundamentals or unresolved data errors.",
+    "evidence_ids": [
+      "MSFT_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "MSFT_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "MSFT_YAHOO_CHART_PRICE_CSV_PRICE",
+      "MSFT_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "MSFT_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "MSFT_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Hold MSFT; maintain core exposure but require better valuation, technical setup or current-period KPI proof before adding.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Final Rating & Action Plan",
+    "source_ids": [
+      "MSFT_YAHOO_CHART_PRICE_CSV",
+      "MSFT_CSV_PRICE_PROVIDER"
+    ]
+  }
+]

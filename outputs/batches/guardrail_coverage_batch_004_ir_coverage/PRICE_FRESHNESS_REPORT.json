@@ -1,0 +1,401 @@
+{
+  "batch_id": "guardrail_coverage_batch_004_ir_coverage",
+  "benchmarks": [
+    {
+      "benchmark_date": null,
+      "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/QQQ.csv",
+      "current_report_allowed": true,
+      "is_fresh": true,
+      "issue": null,
+      "latest_price_date": "2026-05-15",
+      "ticker": "QQQ",
+      "trading_days_old": 0
+    },
+    {
+      "benchmark_date": null,
+      "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/SMH.csv",
+      "current_report_allowed": true,
+      "is_fresh": true,
+      "issue": null,
+      "latest_price_date": "2026-05-15",
+      "ticker": "SMH",
+      "trading_days_old": 0
+    },
+    {
+      "benchmark_date": null,
+      "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/SPY.csv",
+      "current_report_allowed": true,
+      "is_fresh": true,
+      "issue": null,
+      "latest_price_date": "2026-05-15",
+      "ticker": "SPY",
+      "trading_days_old": 0
+    }
+  ],
+  "generated_at": "2026-05-17T02:08:39Z",
+  "price_dir": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices",
+  "price_source": "Yahoo Finance chart API",
+  "rows": [
+    {
+      "benchmark": "QQQ",
+      "benchmark_date": "2026-05-15",
+      "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/GOOGL.csv",
+      "current_report_allowed": true,
+      "is_fresh": true,
+      "issue": null,
+      "latest_price_date": "2026-05-15",
+      "ticker": "GOOGL",
+      "trading_days_old": 0
+    },
+    {
+      "benchmark": "QQQ",
+      "benchmark_date": "2026-05-15",
+      "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/SNOW.csv",
+      "current_report_allowed": true,
+      "is_fresh": true,
+      "issue": null,
+      "latest_price_date": "2026-05-15",
+      "ticker": "SNOW",
+      "trading_days_old": 0
+    },
+    {
+      "benchmark": "QQQ",
+      "benchmark_date": "2026-05-15",
+      "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/MSFT.csv",
+      "current_report_allowed": true,
+      "is_fresh": true,
+      "issue": null,
+      "latest_price_date": "2026-05-15",
+      "ticker": "MSFT",
+      "trading_days_old": 0
+    },
+    {
+      "benchmark": "QQQ",
+      "benchmark_date": "2026-05-15",
+      "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/AAPL.csv",
+      "current_report_allowed": true,
+      "is_fresh": true,
+      "issue": null,
+      "latest_price_date": "2026-05-15",
+      "ticker": "AAPL",
+      "trading_days_old": 0
+    },
+    {
+      "benchmark": "QQQ",
+      "benchmark_date": "2026-05-15",
+      "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/META.csv",
+      "current_report_allowed": true,
+      "is_fresh": true,
+      "issue": null,
+      "latest_price_date": "2026-05-15",
+      "ticker": "META",
+      "trading_days_old": 0
+    },
+    {
+      "benchmark": "QQQ",
+      "benchmark_date": "2026-05-15",
+      "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/AMZN.csv",
+      "current_report_allowed": true,
+      "is_fresh": true,
+      "issue": null,
+      "latest_price_date": "2026-05-15",
+      "ticker": "AMZN",
+      "trading_days_old": 0
+    },
+    {
+      "benchmark": "QQQ",
+      "benchmark_date": "2026-05-15",
+      "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/NFLX.csv",
+      "current_report_allowed": true,
+      "is_fresh": true,
+      "issue": null,
+      "latest_price_date": "2026-05-15",
+      "ticker": "NFLX",
+      "trading_days_old": 0
+    },
+    {
+      "benchmark": "QQQ",
+      "benchmark_date": "2026-05-15",
+      "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/CRM.csv",
+      "current_report_allowed": true,
+      "is_fresh": true,
+      "issue": null,
+      "latest_price_date": "2026-05-15",
+      "ticker": "CRM",
+      "trading_days_old": 0
+    },
+    {
+      "benchmark": "QQQ",
+      "benchmark_date": "2026-05-15",
+      "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/DDOG.csv",
+      "current_report_allowed": true,
+      "is_fresh": true,
+      "issue": null,
+      "latest_price_date": "2026-05-15",
+      "ticker": "DDOG",
+      "trading_days_old": 0
+    },
+    {
+      "benchmark": "QQQ",
+      "benchmark_date": "2026-05-15",
+      "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/NOW.csv",
+      "current_report_allowed": true,
+      "is_fresh": true,
+      "issue": null,
+      "latest_price_date": "2026-05-15",
+      "ticker": "NOW",
+      "trading_days_old": 0
+    },
+    {
+      "benchmark": "QQQ",
+      "benchmark_date": "2026-05-15",
+      "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/MDB.csv",
+      "current_report_allowed": true,
+      "is_fresh": true,
+      "issue": null,
+      "latest_price_date": "2026-05-15",
+      "ticker": "MDB",
+      "trading_days_old": 0
+    },
+    {
+      "benchmark": "QQQ",
+      "benchmark_date": "2026-05-15",
+      "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/NET.csv",
+      "current_report_allowed": true,
+      "is_fresh": true,
+      "issue": null,
+      "latest_price_date": "2026-05-15",
+      "ticker": "NET",
+      "trading_days_old": 0
+    },
+    {
+      "benchmark": "QQQ",
+      "benchmark_date": "2026-05-15",
+      "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/ZS.csv",
+      "current_report_allowed": true,
+      "is_fresh": true,
+      "issue": null,
+      "latest_price_date": "2026-05-15",
+      "ticker": "ZS",
+      "trading_days_old": 0
+    },
+    {
+      "benchmark": "QQQ",
+      "benchmark_date": "2026-05-15",
+      "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/CRWD.csv",
+      "current_report_allowed": true,
+      "is_fresh": true,
+      "issue": null,
+      "latest_price_date": "2026-05-15",
+      "ticker": "CRWD",
+      "trading_days_old": 0
+    },
+    {
+      "benchmark": "QQQ",
+      "benchmark_date": "2026-05-15",
+      "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/PANW.csv",
+      "current_report_allowed": true,
+      "is_fresh": true,
+      "issue": null,
+      "latest_price_date": "2026-05-15",
+      "ticker": "PANW",
+      "trading_days_old": 0
+    },
+    {
+      "benchmark": "SMH",
+      "benchmark_date": "2026-05-15",
+      "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/NVDA.csv",
+      "current_report_allowed": true,
+      "is_fresh": true,
+      "issue": null,
+      "latest_price_date": "2026-05-15",
+      "ticker": "NVDA",
+      "trading_days_old": 0
+    },
+    {
+      "benchmark": "SMH",
+      "benchmark_date": "2026-05-15",
+      "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/AMD.csv",
+      "current_report_allowed": true,
+      "is_fresh": true,
+      "issue": null,
+      "latest_price_date": "2026-05-15",
+      "ticker": "AMD",
+      "trading_days_old": 0
+    },
+    {
+      "benchmark": "SMH",
+      "benchmark_date": "2026-05-15",
+      "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/AVGO.csv",
+      "current_report_allowed": true,
+      "is_fresh": true,
+      "issue": null,
+      "latest_price_date": "2026-05-15",
+      "ticker": "AVGO",
+      "trading_days_old": 0
+    },
+    {
+      "benchmark": "SMH",
+      "benchmark_date": "2026-05-15",
+      "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/QCOM.csv",
+      "current_report_allowed": true,
+      "is_fresh": true,
+      "issue": null,
+      "latest_price_date": "2026-05-15",
+      "ticker": "QCOM",
+      "trading_days_old": 0
+    },
+    {
+      "benchmark": "SMH",
+      "benchmark_date": "2026-05-15",
+      "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/MU.csv",
+      "current_report_allowed": true,
+      "is_fresh": true,
+      "issue": null,
+      "latest_price_date": "2026-05-15",
+      "ticker": "MU",
+      "trading_days_old": 0
+    },
+    {
+      "benchmark": "SMH",
+      "benchmark_date": "2026-05-15",
+      "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/MRVL.csv",
+      "current_report_allowed": true,
+      "is_fresh": true,
+      "issue": null,
+      "latest_price_date": "2026-05-15",
+      "ticker": "MRVL",
+      "trading_days_old": 0
+    },
+    {
+      "benchmark": "SMH",
+      "benchmark_date": "2026-05-15",
+      "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/INTC.csv",
+      "current_report_allowed": true,
+      "is_fresh": true,
+      "issue": null,
+      "latest_price_date": "2026-05-15",
+      "ticker": "INTC",
+      "trading_days_old": 0
+    },
+    {
+      "benchmark": "QQQ",
+      "benchmark_date": "2026-05-15",
+      "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/RGTI.csv",
+      "current_report_allowed": true,
+      "is_fresh": true,
+      "issue": null,
+      "latest_price_date": "2026-05-15",
+      "ticker": "RGTI",
+      "trading_days_old": 0
+    },
+    {
+      "benchmark": "QQQ",
+      "benchmark_date": "2026-05-15",
+      "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/IONQ.csv",
+      "current_report_allowed": true,
+      "is_fresh": true,
+      "issue": null,
+      "latest_price_date": "2026-05-15",
+      "ticker": "IONQ",
+      "trading_days_old": 0
+    },
+    {
+      "benchmark": "QQQ",
+      "benchmark_date": "2026-05-15",
+      "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/QBTS.csv",
+      "current_report_allowed": true,
+      "is_fresh": true,
+      "issue": null,
+      "latest_price_date": "2026-05-15",
+      "ticker": "QBTS",
+      "trading_days_old": 0
+    },
+    {
+      "benchmark": "QQQ",
+      "benchmark_date": "2026-05-15",
+      "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/RKLB.csv",
+      "current_report_allowed": true,
+      "is_fresh": true,
+      "issue": null,
+      "latest_price_date": "2026-05-15",
+      "ticker": "RKLB",
+      "trading_days_old": 0
+    },
+    {
+      "benchmark": "QQQ",
+      "benchmark_date": "2026-05-15",
+      "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/ASTS.csv",
+      "current_report_allowed": true,
+      "is_fresh": true,
+      "issue": null,
+      "latest_price_date": "2026-05-15",
+      "ticker": "ASTS",
+      "trading_days_old": 0
+    },
+    {
+      "benchmark": "QQQ",
+      "benchmark_date": "2026-05-15",
+      "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/ACHR.csv",
+      "current_report_allowed": true,
+      "is_fresh": true,
+      "issue": null,
+      "latest_price_date": "2026-05-15",
+      "ticker": "ACHR",
+      "trading_days_old": 0
+    },
+    {
+      "benchmark": "QQQ",
+      "benchmark_date": "2026-05-15",
+      "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/JOBY.csv",
+      "current_report_allowed": true,
+      "is_fresh": true,
+      "issue": null,
+      "latest_price_date": "2026-05-15",
+      "ticker": "JOBY",
+      "trading_days_old": 0
+    },
+    {
+      "benchmark": "QQQ",
+      "benchmark_date": "2026-05-15",
+      "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/RIVN.csv",
+      "current_report_allowed": true,
+      "is_fresh": true,
+      "issue": null,
+      "latest_price_date": "2026-05-15",
+      "ticker": "RIVN",
+      "trading_days_old": 0
+    },
+    {
+      "benchmark": "QQQ",
+      "benchmark_date": "2026-05-15",
+      "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/LCID.csv",
+      "current_report_allowed": true,
+      "is_fresh": true,
+      "issue": null,
+      "latest_price_date": "2026-05-15",
+      "ticker": "LCID",
+      "trading_days_old": 0
+    },
+    {
+      "benchmark": "QQQ",
+      "benchmark_date": "2026-05-15",
+      "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/PLUG.csv",
+      "current_report_allowed": true,
+      "is_fresh": true,
+      "issue": null,
+      "latest_price_date": "2026-05-15",
+      "ticker": "PLUG",
+      "trading_days_old": 0
+    }
+  ],
+  "summary": {
+    "current_report_allowed_count": 32,
+    "fresh_count": 32,
+    "latest_price_dates": {
+      "2026-05-15": 32
+    },
+    "stale_count": 0,
+    "ticker_count": 32
+  }
+}

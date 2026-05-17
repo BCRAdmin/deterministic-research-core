@@ -1,0 +1,75 @@
+{
+  "has_blocking_errors": true,
+  "issues": [
+    {
+      "code": "RATING_TOO_HARSH_FOR_ACTION",
+      "line_number": null,
+      "message": "Final rating is Sell, but operative actions imply tactical trim rather than full exit.",
+      "metric": "rating",
+      "raw_text": null,
+      "reported": null,
+      "severity": "error",
+      "validated": null
+    },
+    {
+      "code": "OVERSTATED_CAUSALITY",
+      "line_number": null,
+      "message": "Report implies direct causality between news and price movement, but validator did not confirm same-day relationship.",
+      "metric": null,
+      "raw_text": null,
+      "reported": null,
+      "severity": "warning",
+      "validated": null
+    },
+    {
+      "code": "FORWARD_EPS_GUIDANCE_MISMATCH",
+      "line_number": null,
+      "message": "Consensus EPS differs from company guidance midpoint by 20.7%.",
+      "metric": "forward_eps",
+      "raw_text": null,
+      "reported": null,
+      "severity": "warning",
+      "validated": null
+    },
+    {
+      "code": "WEAK_NEWS_CAUSALITY",
+      "line_number": null,
+      "message": "News date and price move date are 7 days apart. Do not imply direct causality without additional evidence.",
+      "metric": null,
+      "raw_text": null,
+      "reported": null,
+      "severity": "warning",
+      "validated": null
+    }
+  ],
+  "numeric_claims": [
+    {
+      "line_number": 5,
+      "nearby_text": "Operative Action: reduce 20-30%, hold core position, and consider re-entry after confirmation.",
+      "normalized_value": 30.0,
+      "period_hint": "unknown",
+      "possible_metric": "entry",
+      "raw_text": "30%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 7,
+      "nearby_text": "The stock fell on 2026-04-30 because of the Ireland news from 2026-04-23, proving distribution.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-04-30",
+      "unit": "date"
+    },
+    {
+      "line_number": 7,
+      "nearby_text": "The stock fell on 2026-04-30 because of the Ireland news from 2026-04-23, proving distribution.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-04-23",
+      "unit": "date"
+    }
+  ],
+  "ticker": "MDB"
+}

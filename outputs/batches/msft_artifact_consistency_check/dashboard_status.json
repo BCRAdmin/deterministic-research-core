@@ -1,0 +1,35 @@
+{
+  "artifact_consistency_error_count": 0,
+  "artifact_consistency_status": "clean",
+  "batch_id": "msft_display_sync_fix",
+  "generated_at": "2026-05-16T15:34:08",
+  "items": [
+    {
+      "archetype_confidence": 0.2,
+      "archetype_triggered_rules": [
+        "vendor_only_hard_financial_metrics",
+        "no_sec_ir_current_period_evidence"
+      ],
+      "artifacts": {
+        "evidence_report": "/Users/BjornRosinger/Documents/New project/company-dossier-lab/reports/room16/runs/20260516-144258-msft-6fdeaa7c/MSFT/generated/evidence_report.md",
+        "internal_best_report": "/Users/BjornRosinger/Documents/New project/company-dossier-lab/reports/room16/runs/20260516-144258-msft-6fdeaa7c/MSFT/generated/internal_best_report.md",
+        "publish_report": null,
+        "quality_report": "/Users/BjornRosinger/Documents/New project/company-dossier-lab/reports/room16/runs/20260516-144258-msft-6fdeaa7c/MSFT/quality/2026-05-16-room16-quality-report.md",
+        "raw_report": "/Users/BjornRosinger/Documents/New project/company-dossier-lab/reports/room16/runs/20260516-144258-msft-6fdeaa7c/MSFT/generated/raw_room16_report.md"
+      },
+      "company_archetype": "MEGA_CAP_PLATFORM",
+      "external_display_rating": "Manual Review / Hold Pending Primary Evidence",
+      "internal_rating": "Hold",
+      "public_rating": null,
+      "publishable": false,
+      "review_status": "manual_review",
+      "ticker": "MSFT"
+    }
+  ],
+  "summary": {
+    "artifact_consistency_errors": 0,
+    "stale_archetype_artifacts": 0,
+    "stale_artifact_issues": 0,
+    "stale_rating_artifacts": 0
+  }
+}

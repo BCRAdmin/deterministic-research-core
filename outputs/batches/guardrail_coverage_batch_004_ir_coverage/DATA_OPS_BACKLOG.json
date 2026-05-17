@@ -1,0 +1,118 @@
+{
+  "batch_id": "guardrail_coverage_batch_004_ir_coverage",
+  "generated_at": "2026-05-17T02:08:51Z",
+  "next_7_day_plan": [
+    "Replace SEC-derived semi fixtures with direct earnings release metrics where FCF/guidance is central.",
+    "Add direct company releases for speculative/early-commercial names before any public promotion discussion.",
+    "Keep all unresolved direct-IR gaps as manual_review or internal-only."
+  ],
+  "records": [
+    {
+      "blocker_type": "source_collection",
+      "estimated_effort": "medium",
+      "needed_for": "publish/manual_review/archetype",
+      "next_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "priority": "P0",
+      "remaining_gap": "direct IR/earnings-release fixture preferred",
+      "ticker": "NVDA"
+    },
+    {
+      "blocker_type": "source_collection",
+      "estimated_effort": "medium",
+      "needed_for": "publish/manual_review/archetype",
+      "next_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "priority": "P1",
+      "remaining_gap": "direct IR/earnings-release fixture preferred",
+      "ticker": "AMD"
+    },
+    {
+      "blocker_type": "source_collection",
+      "estimated_effort": "medium",
+      "needed_for": "publish/manual_review/archetype",
+      "next_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "priority": "P0",
+      "remaining_gap": "direct IR/earnings-release fixture preferred",
+      "ticker": "QCOM"
+    },
+    {
+      "blocker_type": "source_collection",
+      "estimated_effort": "medium",
+      "needed_for": "publish/manual_review/archetype",
+      "next_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "priority": "P1",
+      "remaining_gap": "direct IR/earnings-release fixture preferred",
+      "ticker": "MU"
+    },
+    {
+      "blocker_type": "source_collection",
+      "estimated_effort": "medium",
+      "needed_for": "publish/manual_review/archetype",
+      "next_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "priority": "P1",
+      "remaining_gap": "direct IR/earnings-release fixture preferred",
+      "ticker": "INTC"
+    },
+    {
+      "blocker_type": "source_collection",
+      "estimated_effort": "medium",
+      "needed_for": "publish/manual_review/archetype",
+      "next_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "priority": "P0",
+      "remaining_gap": "direct IR/earnings-release fixture preferred",
+      "ticker": "RGTI"
+    },
+    {
+      "blocker_type": "source_collection",
+      "estimated_effort": "medium",
+      "needed_for": "publish/manual_review/archetype",
+      "next_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "priority": "P0",
+      "remaining_gap": "direct IR/earnings-release fixture preferred",
+      "ticker": "IONQ"
+    },
+    {
+      "blocker_type": "source_collection",
+      "estimated_effort": "medium",
+      "needed_for": "publish/manual_review/archetype",
+      "next_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "priority": "P0",
+      "remaining_gap": "direct IR/earnings-release fixture preferred",
+      "ticker": "QBTS"
+    },
+    {
+      "blocker_type": "source_collection",
+      "estimated_effort": "medium",
+      "needed_for": "publish/manual_review/archetype",
+      "next_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "priority": "P1",
+      "remaining_gap": "direct IR/earnings-release fixture preferred",
+      "ticker": "ASTS"
+    },
+    {
+      "blocker_type": "source_collection",
+      "estimated_effort": "medium",
+      "needed_for": "publish/manual_review/archetype",
+      "next_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "priority": "P1",
+      "remaining_gap": "direct IR/earnings-release fixture preferred",
+      "ticker": "ACHR"
+    },
+    {
+      "blocker_type": "source_collection",
+      "estimated_effort": "medium",
+      "needed_for": "publish/manual_review/archetype",
+      "next_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "priority": "P1",
+      "remaining_gap": "direct IR/earnings-release fixture preferred",
+      "ticker": "JOBY"
+    }
+  ],
+  "remaining_count": 11,
+  "summary": {
+    "count_by_priority": {
+      "P0": 5,
+      "P1": 6
+    },
+    "direct_ir_preferred_count": 11
+  }
+}

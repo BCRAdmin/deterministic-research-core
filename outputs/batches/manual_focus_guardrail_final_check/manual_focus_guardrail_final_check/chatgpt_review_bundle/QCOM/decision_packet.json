@@ -1,0 +1,60 @@
+{
+  "action_policy": {
+    "add_conditions": [
+      "Pullback to support",
+      "Reclaim of short-term moving average",
+      "Positive fundamental catalyst"
+    ],
+    "initial_position": "20-30%",
+    "primary_action": "Staged accumulation",
+    "risk_controls": {
+      "stop_reference": 148.98220031738282
+    }
+  },
+  "as_of_date": "2026-05-17",
+  "calibration_mode": "live",
+  "key_reasons": [
+    "Fundamental score: 2.0",
+    "Technical score: 2.0",
+    "Valuation score: 0.0"
+  ],
+  "key_risks": [
+    "Risk score: -1.0",
+    "Validation issues: 1"
+  ],
+  "rating_permission": {
+    "allowed_ratings": [
+      "Buy",
+      "Accumulate",
+      "Hold"
+    ],
+    "blocked_ratings": [
+      "Strong Buy",
+      "Tactical Trim",
+      "Tactical Underweight",
+      "Underweight",
+      "Sell",
+      "Avoid"
+    ],
+    "preferred_rating": "Accumulate",
+    "reason": "Strong business quality and constructive technical setup support staged accumulation."
+  },
+  "score_version": "v1",
+  "signal_scores": {
+    "composite_score": 3.0,
+    "fundamental_score": 2.0,
+    "risk_score": -1.0,
+    "technical_score": 2.0,
+    "valuation_score": 0.0
+  },
+  "ticker": "QCOM",
+  "triggered_rules": [
+    "OPERATING_MARGIN_GT_10",
+    "NET_CASH_POSITIVE",
+    "PRICE_ABOVE_200SMA",
+    "DEATH_CROSS",
+    "PRICE_ABOVE_EMA10",
+    "MACD_HISTOGRAM_POSITIVE",
+    "ATR_PCT_GT_5"
+  ]
+}

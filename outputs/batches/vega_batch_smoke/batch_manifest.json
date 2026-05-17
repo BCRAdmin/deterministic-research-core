@@ -1,0 +1,81 @@
+{
+  "as_of_date": "2026-05-01",
+  "batch_id": "vega_batch_smoke",
+  "finished_at": "2026-05-06T03:03:48Z",
+  "items": [
+    {
+      "artifacts": {
+        "audit_report.json": "outputs/batches/vega_batch_smoke/AMZN/amzn_2026_05_01/audit_report.json",
+        "decision_packet.json": "outputs/batches/vega_batch_smoke/AMZN/amzn_2026_05_01/decision_packet.json",
+        "evidence_report.md": "outputs/batches/vega_batch_smoke/AMZN/amzn_2026_05_01/evidence_report.md",
+        "final_repaired_report.md": "outputs/batches/vega_batch_smoke/AMZN/amzn_2026_05_01/final_repaired_report.md",
+        "quality_score.json": "outputs/batches/vega_batch_smoke/AMZN/amzn_2026_05_01/quality_score.json"
+      },
+      "error_message": null,
+      "failure_type": null,
+      "final_rating": "Hold",
+      "output_path": "outputs/batches/vega_batch_smoke/AMZN/amzn_2026_05_01",
+      "preferred_rating": "Hold",
+      "publishable": true,
+      "quality_score": 96.0,
+      "status": "repaired",
+      "ticker": "AMZN"
+    },
+    {
+      "artifacts": {
+        "audit_report.json": "outputs/batches/vega_batch_smoke/NVDA/nvda_2026_05_01/audit_report.json",
+        "decision_packet.json": "outputs/batches/vega_batch_smoke/NVDA/nvda_2026_05_01/decision_packet.json",
+        "evidence_report.md": "outputs/batches/vega_batch_smoke/NVDA/nvda_2026_05_01/evidence_report.md",
+        "final_repaired_report.md": "outputs/batches/vega_batch_smoke/NVDA/nvda_2026_05_01/final_repaired_report.md",
+        "quality_score.json": "outputs/batches/vega_batch_smoke/NVDA/nvda_2026_05_01/quality_score.json"
+      },
+      "error_message": null,
+      "failure_type": null,
+      "final_rating": "Accumulate",
+      "output_path": "outputs/batches/vega_batch_smoke/NVDA/nvda_2026_05_01",
+      "preferred_rating": "Accumulate",
+      "publishable": true,
+      "quality_score": 96.0,
+      "status": "repaired",
+      "ticker": "NVDA"
+    },
+    {
+      "artifacts": {
+        "audit_report.json": "outputs/batches/vega_batch_smoke/DDOG/ddog_2026_05_01/audit_report.json",
+        "decision_packet.json": "outputs/batches/vega_batch_smoke/DDOG/ddog_2026_05_01/decision_packet.json",
+        "evidence_report.md": "outputs/batches/vega_batch_smoke/DDOG/ddog_2026_05_01/evidence_report.md",
+        "final_repaired_report.md": "outputs/batches/vega_batch_smoke/DDOG/ddog_2026_05_01/final_repaired_report.md",
+        "quality_score.json": "outputs/batches/vega_batch_smoke/DDOG/ddog_2026_05_01/quality_score.json"
+      },
+      "error_message": null,
+      "failure_type": null,
+      "final_rating": "Tactical Trim",
+      "output_path": "outputs/batches/vega_batch_smoke/DDOG/ddog_2026_05_01",
+      "preferred_rating": "Tactical Trim",
+      "publishable": true,
+      "quality_score": 100.0,
+      "status": "repaired",
+      "ticker": "DDOG"
+    },
+    {
+      "artifacts": {
+        "audit_report.json": "outputs/batches/vega_batch_smoke/MDB/mdb_2026_05_01/audit_report.json",
+        "decision_packet.json": "outputs/batches/vega_batch_smoke/MDB/mdb_2026_05_01/decision_packet.json",
+        "evidence_report.md": "outputs/batches/vega_batch_smoke/MDB/mdb_2026_05_01/evidence_report.md",
+        "final_repaired_report.md": "outputs/batches/vega_batch_smoke/MDB/mdb_2026_05_01/final_repaired_report.md",
+        "quality_score.json": "outputs/batches/vega_batch_smoke/MDB/mdb_2026_05_01/quality_score.json"
+      },
+      "error_message": null,
+      "failure_type": null,
+      "final_rating": "Tactical Trim",
+      "output_path": "outputs/batches/vega_batch_smoke/MDB/mdb_2026_05_01",
+      "preferred_rating": "Tactical Trim",
+      "publishable": true,
+      "quality_score": 90.0,
+      "status": "repaired",
+      "ticker": "MDB"
+    }
+  ],
+  "started_at": "2026-05-06T03:03:48Z",
+  "status": "completed"
+}

@@ -1,0 +1,43 @@
+{
+  "has_blocking_errors": false,
+  "issues": [],
+  "numeric_claims": [
+    {
+      "line_number": 4,
+      "nearby_text": "- Report as-of date: `2026-05-05`",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 5,
+      "nearby_text": "- Price basis: `389.37 USD` close from `2026-05-05` via `csv_price_provider`",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 5,
+      "nearby_text": "- Price basis: `389.37 USD` close from `2026-05-05` via `csv_price_provider`",
+      "normalized_value": 389.37,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "389.37 USD",
+      "unit": "usd"
+    },
+    {
+      "line_number": 18,
+      "nearby_text": "| SBC / Revenue | 2.9% |",
+      "normalized_value": 2.9,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "2.9%",
+      "unit": "percent"
+    }
+  ],
+  "ticker": "TSLA"
+}

@@ -1,0 +1,38 @@
+{
+  "batch_id": "guardrail_coverage_batch_003_current_research",
+  "fixes_planned": [
+    {
+      "acceptance_test": "RKLB triggers EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH; RGTI remains SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL; no public-ready leak.",
+      "affected_tickers": [
+        "RKLB"
+      ],
+      "do_not_touch_boundaries": [
+        "No guard loosening.",
+        "No ticker hardcoding.",
+        "No report-template changes.",
+        "No publishability changes from internal quality alone."
+      ],
+      "file_or_module": "research_agent/quality/deeptech_manual_review.py",
+      "priority": "P1",
+      "problem": "RKLB current-research run had source-registry tags such as product_platform_still_scaling, but archetype detection matched only space-separated prose.",
+      "root_cause": "Source registry used_for tags were not normalized from snake_case before context matching."
+    },
+    {
+      "acceptance_test": "IONQ is not marked as a high-confidence false block unless revenue/op income/FCF/valuation metrics match the speculative deep-tech profile.",
+      "affected_tickers": [
+        "IONQ"
+      ],
+      "do_not_touch_boundaries": [
+        "No archetype guard loosening.",
+        "No ticker-specific rating changes.",
+        "No publishability changes."
+      ],
+      "file_or_module": "research_agent/batch/current_research_recovery.py",
+      "priority": "P1",
+      "problem": "Batch false-block detection treated every quantum ticker as speculative deep-tech even when current metrics no longer met the revenue boundary.",
+      "root_cause": "Review matrix expected-bucket logic did not enforce the existing 'if metrics fit' condition before flagging false-block candidates."
+    }
+  ],
+  "generated_at": "2026-05-17T01:51:29Z",
+  "reason": "Two bounded P1 fixes were applied after Batch 003 exposed source-tag normalization and review-matrix false-block precision issues."
+}

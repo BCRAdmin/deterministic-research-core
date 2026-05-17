@@ -1,0 +1,244 @@
+{
+  "has_blocking_errors": true,
+  "issues": [
+    {
+      "code": "UNVERIFIED_HARD_METRIC",
+      "line_number": 95,
+      "message": "Report contains a hard numeric metric that could not be mapped to MetricsPacket.",
+      "metric": null,
+      "raw_text": "$125.00B",
+      "reported": null,
+      "severity": "warning",
+      "validated": null
+    },
+    {
+      "code": "UNVERIFIED_HARD_METRIC",
+      "line_number": 95,
+      "message": "Report contains a hard numeric metric that could not be mapped to MetricsPacket.",
+      "metric": null,
+      "raw_text": "$145.00B",
+      "reported": null,
+      "severity": "warning",
+      "validated": null
+    }
+  ],
+  "numeric_claims": [
+    {
+      "line_number": 9,
+      "nearby_text": "- Fundamental basis: revenue scale is `$197.38B`.",
+      "normalized_value": 197380000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$197.38B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 10,
+      "nearby_text": "- Cash-conversion basis: free cash flow is `$44.34B`.",
+      "normalized_value": 44340000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$44.34B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 11,
+      "nearby_text": "- Valuation constraint: EV/Sales is `7.34x`.",
+      "normalized_value": 7.34,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "7.34x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 15,
+      "nearby_text": "- Report as-of date: `2026-05-05`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 16,
+      "nearby_text": "- Price basis: `2026-05-05` close via `csv_price_provider`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": "close",
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 28,
+      "nearby_text": "| SBC / Revenue | 8.5% |",
+      "normalized_value": 8.5,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "8.5%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 33,
+      "nearby_text": "- **META_CLAIM_002**: META's Q1 revenue of $56.31B shows that the ad platform still has substantial current-period growth power.",
+      "normalized_value": 56310000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$56.31B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 39,
+      "nearby_text": "- **META_CLAIM_003**: META's Q1 operating margin of 41.0% and Q1 FCF of $12.39B show strong ad-platform economics and cash generation.",
+      "normalized_value": 12390000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$12.39B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 39,
+      "nearby_text": "- **META_CLAIM_003**: META's Q1 operating margin of 41.0% and Q1 FCF of $12.39B show strong ad-platform economics and cash generation.",
+      "normalized_value": 41.0,
+      "period_hint": "unknown",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "41.0%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 43,
+      "nearby_text": "- **META_CLAIM_005**: META has revenue TTM of $197.38B, so the business discussion should focus on mega-cap platform growth, AI/cloud investment, margin durability and regulatory risk rather than generic scale language.",
+      "normalized_value": 197380000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$197.38B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 47,
+      "nearby_text": "- **META_CLAIM_006**: FCF TTM is $44.34B, making cash conversion a direct rating input for META.",
+      "normalized_value": 44340000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$44.34B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 51,
+      "nearby_text": "- **META_CLAIM_007**: SBC/Revenue is 8.5%, which should be interpreted through mega-cap platform, capex and capital-return context rather than a one-size-fits-all compensation lens.",
+      "normalized_value": 8.5,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "8.5%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 55,
+      "nearby_text": "- **META_CLAIM_008**: Balance-sheet flexibility is anchored in net cash of $103.19B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+      "normalized_value": 103190000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "net_cash",
+      "raw_text": "$103.19B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 60,
+      "nearby_text": "- **META_CLAIM_009**: Valuation is framed by EV/Sales of 7.34x; this directly limits how aggressive the Hold stance should be.",
+      "normalized_value": 7.34,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "7.34x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 64,
+      "nearby_text": "- **META_CLAIM_010**: For META, P/FCF is 34.99x and should be read against platform growth, FCF durability and capex intensity; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+      "normalized_value": 34.99,
+      "period_hint": "unknown",
+      "possible_metric": "price_to_fcf",
+      "raw_text": "34.99x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 78,
+      "nearby_text": "- **META_CLAIM_013**: The bull case is that platform scale, ecosystem monetization and operating leverage combines with revenue of $197.38B to support the allowed upside rating path when cash conversion quality also holds.",
+      "normalized_value": 197380000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$197.38B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 87,
+      "nearby_text": "- **META_CLAIM_015**: The bear case is that regulatory pressure, capex intensity, growth deceleration or multiple compression overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 8.5% or source-quality issues persist.",
+      "normalized_value": 8.5,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "8.5%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 95,
+      "nearby_text": "- **META_CLAIM_004**: META's FY2026 capex guidance range of $125.00B-$145.00B keeps AI infrastructure ROI risk central to the Hold rating.",
+      "normalized_value": 125000000000.0,
+      "period_hint": "forward",
+      "possible_metric": null,
+      "raw_text": "$125.00B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 95,
+      "nearby_text": "- **META_CLAIM_004**: META's FY2026 capex guidance range of $125.00B-$145.00B keeps AI infrastructure ROI risk central to the Hold rating.",
+      "normalized_value": 145000000000.0,
+      "period_hint": "forward",
+      "possible_metric": null,
+      "raw_text": "$145.00B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 102,
+      "nearby_text": "- **META_CLAIM_018**: Source disagreement or current-period mismatch can reduce conviction for META, especially where revenue $197.38B is a key valuation denominator.",
+      "normalized_value": 197380000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$197.38B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 124,
+      "nearby_text": "- Why this rating? `Hold` balances revenue of `$197.38B` against valuation and technical timing.",
+      "normalized_value": 197380000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$197.38B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 125,
+      "nearby_text": "- Cash conversion: FCF is `$44.34B` and determines whether growth converts into equity value.",
+      "normalized_value": 44340000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$44.34B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 126,
+      "nearby_text": "- Why not more bullish? EV/Sales `7.34x` limits new-money urgency unless current-period KPIs accelerate.",
+      "normalized_value": 7.34,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "7.34x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 127,
+      "nearby_text": "- Additional valuation/technical constraint: P/FCF `34.99x` and RSI `39.90` argue against chasing without a better setup.",
+      "normalized_value": 34.99,
+      "period_hint": "unknown",
+      "possible_metric": "price_to_fcf",
+      "raw_text": "34.99x",
+      "unit": "multiple"
+    }
+  ],
+  "ticker": "META"
+}

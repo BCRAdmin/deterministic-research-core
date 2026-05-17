@@ -1,0 +1,75 @@
+{
+  "as_of_date": "2026-05-17",
+  "batch_id": "manual_focus_guardrail_fix_check",
+  "batch_mode": "current_research",
+  "cik_records_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/cik_records.json",
+  "freshness_max_trading_days": 2,
+  "freshness_reference_date": "2026-05-17",
+  "ir_release_dir": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/ir_releases",
+  "max_parallel_jobs": 1,
+  "model_name": "research_agent_v0.1.0",
+  "model_provider": "deterministic",
+  "output_dir": "outputs/batches/manual_focus_guardrail_fix_check",
+  "pipeline_version": "manual_focus_guardrail_fix_check",
+  "price_csv_dir": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices",
+  "price_start_date": "2024-01-01",
+  "sec_companyfacts_dir": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/sec_companyfacts",
+  "sec_user_agent": "QuellwertResearchAgent/0.1 codex-pilot@example.com",
+  "tickers": [
+    {
+      "benchmark": "QQQ",
+      "company_name": null,
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "tags": [
+        "guardrail_coverage_004_ir_coverage",
+        "speculative_deep_tech"
+      ],
+      "ticker": "IONQ"
+    },
+    {
+      "benchmark": "SMH",
+      "company_name": null,
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "tags": [
+        "guardrail_coverage_004_ir_coverage",
+        "semiconductor_ai_infra"
+      ],
+      "ticker": "NVDA"
+    },
+    {
+      "benchmark": "QQQ",
+      "company_name": null,
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "tags": [
+        "guardrail_coverage_004_ir_coverage",
+        "speculative_deep_tech"
+      ],
+      "ticker": "QBTS"
+    },
+    {
+      "benchmark": "SMH",
+      "company_name": null,
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "tags": [
+        "guardrail_coverage_004_ir_coverage",
+        "semiconductor_ai_infra"
+      ],
+      "ticker": "QCOM"
+    },
+    {
+      "benchmark": "QQQ",
+      "company_name": null,
+      "mode": "source_ingestion_mode",
+      "priority": "normal",
+      "tags": [
+        "guardrail_coverage_004_ir_coverage",
+        "speculative_deep_tech"
+      ],
+      "ticker": "RGTI"
+    }
+  ]
+}

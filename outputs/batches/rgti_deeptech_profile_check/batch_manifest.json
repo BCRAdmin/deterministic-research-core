@@ -1,0 +1,32 @@
+{
+  "as_of_date": "2026-05-16",
+  "batch_id": "rgti_deeptech_profile_check",
+  "finished_at": "2026-05-15T23:32:00.814488+00:00",
+  "items": [
+    {
+      "artifacts": {
+        "audit_report.json": "outputs/batches/rgti_deeptech_profile_check/reports/RGTI/audit_report.json",
+        "quality_score.json": "outputs/batches/rgti_deeptech_profile_check/reports/RGTI/quality_score.json",
+        "sanity_case.json": "outputs/batches/rgti_deeptech_profile_check/reports/RGTI/sanity_case.json"
+      },
+      "counts": {
+        "accounting_gain_not_operating_turnaround_count": 1,
+        "order_materiality_missing_count": 1,
+        "speculative_deep_tech_profile_count": 1,
+        "technical_overweight_in_thesis_count": 1,
+        "vendor_only_hard_metrics_count": 1
+      },
+      "error_message": null,
+      "failure_type": null,
+      "final_rating": "Underweight",
+      "output_path": "outputs/batches/rgti_deeptech_profile_check/reports/RGTI",
+      "preferred_rating": "Underweight",
+      "publishable": false,
+      "quality_score": 70.0,
+      "status": "manual_review",
+      "ticker": "RGTI"
+    }
+  ],
+  "started_at": "2026-05-15T23:32:00.814230+00:00",
+  "status": "completed_with_manual_review"
+}

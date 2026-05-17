@@ -1,0 +1,61 @@
+{
+  "coverage_note": "Carried forward from Batch 003 sourced current-period fixture.",
+  "metrics": [
+    {
+      "basis": "gaap",
+      "fiscal_period": "Q1",
+      "fiscal_year": 2026,
+      "metric_name": "current_q_revenue",
+      "period": "Q1_2026",
+      "period_bucket": "quarterly",
+      "statement": "Netflix reported Q1 2026 revenue of approximately $12.25 billion.",
+      "statement_type": "income_statement",
+      "unit": "usd",
+      "value": 12250000000
+    },
+    {
+      "basis": "gaap",
+      "fiscal_period": "Q1",
+      "fiscal_year": 2026,
+      "metric_name": "operating_income",
+      "period": "Q1_2026",
+      "period_bucket": "quarterly",
+      "statement": "Netflix reported Q1 2026 operating income of approximately $4.0 billion.",
+      "statement_type": "income_statement",
+      "unit": "usd",
+      "value": 4000000000
+    },
+    {
+      "basis": "gaap",
+      "fiscal_period": "Q1",
+      "fiscal_year": 2026,
+      "metric_name": "operating_margin",
+      "period": "Q1_2026",
+      "period_bucket": "quarterly",
+      "statement": "Netflix reported Q1 2026 operating margin of approximately 32.3%.",
+      "statement_type": "income_statement",
+      "unit": "ratio",
+      "value": 0.323
+    },
+    {
+      "basis": "company_defined",
+      "fiscal_period": "Q1",
+      "fiscal_year": 2026,
+      "metric_name": "current_q_free_cash_flow",
+      "period": "Q1_2026",
+      "period_bucket": "quarterly",
+      "statement": "Netflix reported Q1 2026 free cash flow of approximately $5.1 billion.",
+      "statement_type": "cash_flow",
+      "unit": "usd",
+      "value": 5100000000
+    }
+  ],
+  "period": "Q1_2026",
+  "retrieved_at": "2026-05-06",
+  "source_confidence": "high",
+  "source_id": "NFLX_IR_Q1_2026_RELEASE",
+  "source_type": "earnings_release",
+  "source_url": "https://ir.netflix.net/",
+  "text": "",
+  "url": "https://ir.netflix.net/"
+}

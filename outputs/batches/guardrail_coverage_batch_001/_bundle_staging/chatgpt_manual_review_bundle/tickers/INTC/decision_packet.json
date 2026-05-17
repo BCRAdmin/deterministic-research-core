@@ -1,0 +1,58 @@
+{
+  "action_policy": {
+    "new_money": "Wait for confirmation or better entry",
+    "primary_action": "Maintain existing position",
+    "risk_controls": {
+      "hard_stop_reference": 40.94905003547669,
+      "review_level": 57.93199996948242
+    }
+  },
+  "as_of_date": "2026-05-05",
+  "calibration_mode": "live",
+  "key_reasons": [
+    "Fundamental score: -1.0",
+    "Technical score: 3.0",
+    "Valuation score: 0.0"
+  ],
+  "key_risks": [
+    "Risk score: -1.0",
+    "Validation issues: 1"
+  ],
+  "rating_permission": {
+    "allowed_ratings": [
+      "Hold",
+      "Accumulate",
+      "Tactical Trim"
+    ],
+    "blocked_ratings": [
+      "Strong Buy",
+      "Buy",
+      "Tactical Underweight",
+      "Underweight",
+      "Sell",
+      "Avoid"
+    ],
+    "preferred_rating": "Hold",
+    "reason": "Mixed signals require a neutral-to-tactical rating corridor."
+  },
+  "score_version": "v1",
+  "signal_scores": {
+    "composite_score": 1.0,
+    "fundamental_score": -1.0,
+    "risk_score": -1.0,
+    "technical_score": 3.0,
+    "valuation_score": 0.0
+  },
+  "ticker": "INTC",
+  "triggered_rules": [
+    "FCF_MARGIN_NEGATIVE",
+    "OPERATING_MARGIN_NEGATIVE",
+    "NET_CASH_POSITIVE",
+    "PRICE_ABOVE_200SMA",
+    "GOLDEN_CROSS",
+    "PRICE_ABOVE_EMA10",
+    "RSI_GT_75",
+    "MACD_HISTOGRAM_POSITIVE",
+    "ATR_PCT_GT_5"
+  ]
+}

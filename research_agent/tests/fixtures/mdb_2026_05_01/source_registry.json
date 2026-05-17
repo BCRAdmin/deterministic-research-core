@@ -1,0 +1,24 @@
+{
+  "registry_id": "MDB_2026_05_01",
+  "sources": [
+    {
+      "source_id": "MDB_IR_Q4_FY2026",
+      "ticker": "MDB",
+      "source_type": "company_ir",
+      "authority_rank": 1,
+      "url": "https://investors.mongodb.com/",
+      "retrieved_at": "2026-05-01T10:00:00Z",
+      "used_for": ["free_cash_flow_ttm", "guidance", "sbc_to_revenue"]
+    },
+    {
+      "source_id": "MDB_REUTERS_2026_04_23",
+      "ticker": "MDB",
+      "source_type": "reuters",
+      "authority_rank": 3,
+      "url": "https://www.reuters.com/",
+      "retrieved_at": "2026-05-01T10:00:00Z",
+      "used_for": ["news"]
+    }
+  ]
+}
+

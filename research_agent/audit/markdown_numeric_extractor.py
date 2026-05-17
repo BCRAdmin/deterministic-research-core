@@ -1,0 +1,166 @@
+from __future__ import annotations
+
+import re
+from typing import Iterable, Optional
+
+from research_agent.audit.audit_report import ExtractedNumericClaim
+from research_agent.audit.claim_mapper import infer_possible_metric
+
+
+DATE_RE = re.compile(r"\b(?:\d{4}-\d{2}-\d{2}|\d{1,2}\.\d{1,2}\.\d{4})\b")
+PERCENT_RE = re.compile(r"(?<![\w$])([+-]?\d+(?:[.,]\d+)?)\s*(?:%|Prozent)", re.IGNORECASE)
+MULTIPLE_RE = re.compile(r"(?<![\w$])([+-]?\d+(?:[.,]\d+)?)\s*-?\s*(?:x|faches|fach|fache)\b", re.IGNORECASE)
+USD_PREFIX_RE = re.compile(
+    r"(?:\$|USD\s*)\s*([+-]?\d+(?:[.,]\d{1,3})*)\s*(B|bn|billion|Mrd\.?|Mio\.?|million|M|k)?(?=\W|$)",
+    re.IGNORECASE,
+)
+USD_SUFFIX_RE = re.compile(
+    r"(?<![\w])([+-]?\d+(?:[.,]\d{1,3})*)\s*(B|bn|billion|Mrd\.?|Mio\.?|million|M|k)?\s*(?:\$|USD|US-Dollar)(?=\W|$)",
+    re.IGNORECASE,
+)
+
+
+def extract_numeric_claims(markdown: str) -> list[ExtractedNumericClaim]:
+    claims: list[ExtractedNumericClaim] = []
+    for line_number, line in enumerate(markdown.splitlines(), start=1):
+        if line.strip().lower().startswith("## evidence appendix"):
+            break
+        claims.extend(_extract_line_claims(line, line_number))
+    return _dedupe_claims(claims)
+
+
+def _extract_line_claims(line: str, line_number: int) -> list[ExtractedNumericClaim]:
+    nearby = line.strip()
+    claims: list[ExtractedNumericClaim] = []
+
+    for match in DATE_RE.finditer(line):
+        claims.append(
+            _claim(
+                raw_text=match.group(0),
+                value=None,
+                unit="date",
+                nearby_text=nearby,
+                line_number=line_number,
+            )
+        )
+
+    for match in _iter_currency_matches(line):
+        raw_text, number, scale = match
+        claims.append(
+            _claim(
+                raw_text=raw_text,
+                value=_normalize_number(number, scale),
+                unit="usd",
+                nearby_text=nearby,
+                line_number=line_number,
+            )
+        )
+
+    for match in PERCENT_RE.finditer(line):
+        claims.append(
+            _claim(
+                raw_text=match.group(0),
+                value=_normalize_plain_number(match.group(1)),
+                unit="percent",
+                nearby_text=nearby,
+                line_number=line_number,
+            )
+        )
+
+    for match in MULTIPLE_RE.finditer(line):
+        claims.append(
+            _claim(
+                raw_text=match.group(0),
+                value=_normalize_plain_number(match.group(1)),
+                unit="multiple",
+                nearby_text=nearby,
+                line_number=line_number,
+            )
+        )
+
+    return claims
+
+
+def _iter_currency_matches(line: str) -> Iterable[tuple[str, str, Optional[str]]]:
+    seen_spans: set[tuple[int, int]] = set()
+    for regex in [USD_PREFIX_RE, USD_SUFFIX_RE]:
+        for match in regex.finditer(line):
+            if match.span() in seen_spans:
+                continue
+            seen_spans.add(match.span())
+            yield match.group(0), match.group(1), match.group(2)
+
+
+def _claim(
+    raw_text: str,
+    value: Optional[float],
+    unit: str,
+    nearby_text: str,
+    line_number: int,
+) -> ExtractedNumericClaim:
+    return ExtractedNumericClaim(
+        raw_text=raw_text,
+        normalized_value=value,
+        unit=unit,
+        nearby_text=nearby_text,
+        line_number=line_number,
+        possible_metric=infer_possible_metric(nearby_text),
+        period_hint=_infer_period_hint(nearby_text),
+    )
+
+
+def _normalize_number(number_text: str, scale_text: Optional[str]) -> float:
+    value = _normalize_plain_number(number_text)
+    scale = (scale_text or "").lower().replace(".", "")
+    if scale in {"b", "bn", "billion", "mrd"}:
+        return value * 1_000_000_000
+    if scale in {"m", "mio", "million"}:
+        return value * 1_000_000
+    if scale == "k":
+        return value * 1_000
+    return value
+
+
+def _normalize_plain_number(number_text: str) -> float:
+    text = number_text.strip().replace(" ", "")
+    if "," in text and "." in text:
+        if text.rfind(",") > text.rfind("."):
+            text = text.replace(".", "").replace(",", ".")
+        else:
+            text = text.replace(",", "")
+    elif "," in text:
+        after = text.split(",")[-1]
+        if len(after) == 3 and text.count(",") >= 1:
+            text = text.replace(",", "")
+        else:
+            text = text.replace(",", ".")
+    return float(text)
+
+
+def _infer_period_hint(text: str) -> str:
+    lower = text.lower()
+    has_q4 = bool(re.search(r"\bq4\b|fourth quarter|4\. quartal", lower))
+    has_ttm = "ttm" in lower or "trailing twelve" in lower
+    if has_q4 and has_ttm:
+        return "mixed"
+    if has_q4:
+        return "q4"
+    if has_ttm:
+        return "ttm"
+    if "forward" in lower or "konsens" in lower or "consensus" in lower or "guidance" in lower:
+        return "forward"
+    if re.search(r"\bfy\d{4}\b|\bfy\b|fiscal year|geschäftsjahr", lower):
+        return "fy"
+    return "unknown"
+
+
+def _dedupe_claims(claims: list[ExtractedNumericClaim]) -> list[ExtractedNumericClaim]:
+    deduped: list[ExtractedNumericClaim] = []
+    seen: set[tuple[int, str, str]] = set()
+    for claim in claims:
+        key = (claim.line_number, claim.raw_text, claim.unit or "")
+        if key in seen:
+            continue
+        seen.add(key)
+        deduped.append(claim)
+    return deduped

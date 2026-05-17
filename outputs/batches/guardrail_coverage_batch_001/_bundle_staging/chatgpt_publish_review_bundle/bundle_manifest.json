@@ -1,0 +1,20 @@
+{
+  "batch_id": "guardrail_coverage_batch_001",
+  "bundle": "chatgpt_publish_review_bundle",
+  "consistency_status": "clean_review_bundle_not_public_final",
+  "created_at": "2026-05-17T00:45:41Z",
+  "promotion_gate_required": true,
+  "public_ready_default": false,
+  "ticker_count": 9,
+  "tickers": [
+    "GOOGL",
+    "SNOW",
+    "MSFT",
+    "AAPL",
+    "META",
+    "NFLX",
+    "CRM",
+    "DDOG",
+    "AVGO"
+  ]
+}

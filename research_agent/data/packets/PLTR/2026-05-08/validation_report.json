@@ -1,0 +1,31 @@
+{
+  "as_of_date": "2026-05-08",
+  "has_blocking_errors": true,
+  "issues": [
+    {
+      "code": "PRICE_DATE_BEFORE_AS_OF_DATE",
+      "computed": null,
+      "message": "Report uses a prior close. Must disclose this in report.",
+      "metric": null,
+      "reported": null,
+      "severity": "warning"
+    },
+    {
+      "code": "EARNINGS_DATE_UNAVAILABLE",
+      "computed": null,
+      "message": "Next earnings date is unavailable; report must state that it is unconfirmed.",
+      "metric": null,
+      "reported": null,
+      "severity": "warning"
+    },
+    {
+      "code": "MISSING_PRIMARY_FINANCIAL_SOURCE",
+      "computed": null,
+      "message": "Source registry with primary financial sources is required before report generation.",
+      "metric": null,
+      "reported": null,
+      "severity": "error"
+    }
+  ],
+  "ticker": "PLTR"
+}

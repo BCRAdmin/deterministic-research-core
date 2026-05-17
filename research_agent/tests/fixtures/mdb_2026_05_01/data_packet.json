@@ -1,0 +1,38 @@
+{
+  "ticker": "MDB",
+  "company_name": "MongoDB Inc.",
+  "as_of_date": "2026-05-01",
+  "price_basis": {
+    "close": 250.83,
+    "date": "2026-04-30",
+    "currency": "USD",
+    "source": "exchange_ohlcv"
+  },
+  "fiscal_context": {
+    "latest_fiscal_year": "FY2026",
+    "latest_quarter": "Q4 FY2026",
+    "fiscal_year_end": "2026-01-31"
+  },
+  "next_events": {
+    "next_earnings_date": null,
+    "confirmed": false,
+    "source": null
+  },
+  "source_registry_id": "MDB_2026_05_01",
+  "forward_eps": {
+    "value": 7.05,
+    "source_type": "consensus",
+    "source_name": "market_data_provider",
+    "period": "FY2027",
+    "basis": "non_gaap",
+    "confirmed_by_company": false
+  },
+  "company_guidance_eps": {
+    "low": 5.75,
+    "high": 5.93,
+    "source_type": "company_ir",
+    "period": "FY2027",
+    "basis": "non_gaap"
+  }
+}
+

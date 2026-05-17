@@ -1,0 +1,223 @@
+{
+  "has_blocking_errors": false,
+  "issues": [],
+  "numeric_claims": [
+    {
+      "line_number": 9,
+      "nearby_text": "- Fundamental basis: revenue scale is `$444.33B`.",
+      "normalized_value": 444330000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$444.33B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 10,
+      "nearby_text": "- Cash-conversion basis: free cash flow is `$146.27B`.",
+      "normalized_value": 146270000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$146.27B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 11,
+      "nearby_text": "- Valuation constraint: EV/Sales is `9.30x`.",
+      "normalized_value": 9.3,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "9.30x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 15,
+      "nearby_text": "- Report as-of date: `2026-05-05`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 16,
+      "nearby_text": "- Price basis: `2026-05-05` close via `csv_price_provider`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": "close",
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 28,
+      "nearby_text": "| SBC / Revenue | 2.9% |",
+      "normalized_value": 2.9,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "2.9%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 33,
+      "nearby_text": "- **AAPL_CLAIM_002**: AAPL's latest-quarter revenue of $111.18B and EPS of $2.01 support the ecosystem-quality thesis.",
+      "normalized_value": 111180000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$111.18B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 33,
+      "nearby_text": "- **AAPL_CLAIM_002**: AAPL's latest-quarter revenue of $111.18B and EPS of $2.01 support the ecosystem-quality thesis.",
+      "normalized_value": 2.01,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$2.01",
+      "unit": "usd"
+    },
+    {
+      "line_number": 39,
+      "nearby_text": "- **AAPL_CLAIM_003**: AAPL generated operating cash flow above $28.00B in the latest quarter, reinforcing the capital-return quality of the franchise.",
+      "normalized_value": 28000000000.0,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "$28.00B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 43,
+      "nearby_text": "- **AAPL_CLAIM_005**: AAPL has revenue TTM of $444.33B, so the business discussion should focus on mega-cap platform growth, AI/cloud investment, margin durability and regulatory risk rather than generic scale language.",
+      "normalized_value": 444330000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$444.33B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 47,
+      "nearby_text": "- **AAPL_CLAIM_006**: FCF TTM is $146.27B, making cash conversion a direct rating input for AAPL.",
+      "normalized_value": 146270000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$146.27B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 51,
+      "nearby_text": "- **AAPL_CLAIM_007**: SBC/Revenue is 2.9%, which should be interpreted through mega-cap platform, capex and capital-return context rather than a one-size-fits-all compensation lens.",
+      "normalized_value": 2.9,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "2.9%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 55,
+      "nearby_text": "- **AAPL_CLAIM_008**: Balance-sheet flexibility is anchored in net cash of $51.10B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+      "normalized_value": 51100000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "net_cash",
+      "raw_text": "$51.10B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 60,
+      "nearby_text": "- **AAPL_CLAIM_009**: Valuation is framed by EV/Sales of 9.30x; this directly limits how aggressive the Accumulate stance should be.",
+      "normalized_value": 9.3,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "9.30x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 64,
+      "nearby_text": "- **AAPL_CLAIM_010**: For AAPL, P/FCF is 28.61x and should be read against platform growth, FCF durability and capex intensity; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+      "normalized_value": 28.61,
+      "period_hint": "unknown",
+      "possible_metric": "price_to_fcf",
+      "raw_text": "28.61x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 78,
+      "nearby_text": "- **AAPL_CLAIM_013**: The bull case is that platform scale, ecosystem monetization and operating leverage combines with revenue of $444.33B to support the allowed upside rating path when cash conversion quality also holds.",
+      "normalized_value": 444330000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$444.33B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 87,
+      "nearby_text": "- **AAPL_CLAIM_015**: The bear case is that regulatory pressure, capex intensity, growth deceleration or multiple compression overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 2.9% or source-quality issues persist.",
+      "normalized_value": 2.9,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "2.9%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 98,
+      "nearby_text": "- **AAPL_CLAIM_018**: Source disagreement or current-period mismatch can reduce conviction for AAPL, especially where revenue $444.33B is a key valuation denominator.",
+      "normalized_value": 444330000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$444.33B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 103,
+      "nearby_text": "- **AAPL_CLAIM_004**: AAPL's additional buyback authorization of $100.00B is a shareholder-return catalyst that can support EPS resilience.",
+      "normalized_value": 100000000000.0,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "$100.00B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 124,
+      "nearby_text": "- Why this rating? `Accumulate` balances revenue of `$444.33B` against valuation and technical timing.",
+      "normalized_value": 444330000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$444.33B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 125,
+      "nearby_text": "- Cash conversion: FCF is `$146.27B` and determines whether growth converts into equity value.",
+      "normalized_value": 146270000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$146.27B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 126,
+      "nearby_text": "- Why not more bullish? EV/Sales `9.30x` limits new-money urgency unless current-period KPIs accelerate.",
+      "normalized_value": 9.3,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "9.30x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 127,
+      "nearby_text": "- Additional valuation/technical constraint: P/FCF `28.61x` and RSI `67.26` argue against chasing without a better setup.",
+      "normalized_value": 28.61,
+      "period_hint": "unknown",
+      "possible_metric": "price_to_fcf",
+      "raw_text": "28.61x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 133,
+      "nearby_text": "Initial position: 20-30%.",
+      "normalized_value": 30.0,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "30%",
+      "unit": "percent"
+    }
+  ],
+  "ticker": "AAPL"
+}

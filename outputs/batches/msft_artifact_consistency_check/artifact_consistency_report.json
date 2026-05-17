@@ -1,0 +1,24 @@
+{
+  "bundle_dir": "/Users/BjornRosinger/Documents/New project/company-dossier-lab/reports/room16/runs/20260516-144258-msft-6fdeaa7c/MSFT/MSFT-Gold-Candidate-Review-Bundle",
+  "counts": {
+    "artifact_consistency_errors": 0,
+    "stale_archetype_artifacts": 0,
+    "stale_artifact_issues": 0,
+    "stale_rating_artifacts": 0
+  },
+  "error_count": 0,
+  "generated_at": "2026-05-16T14:34:04.112298+00:00",
+  "issues": [],
+  "legacy_ignored": [],
+  "legacy_ignored_count": 0,
+  "source_of_truth_files": [
+    "decision_packet.json",
+    "quality_score.json",
+    "report_manifest.json"
+  ],
+  "stale_artifact_issue_count": 0,
+  "status": "clean",
+  "tickers": [
+    "MSFT"
+  ]
+}

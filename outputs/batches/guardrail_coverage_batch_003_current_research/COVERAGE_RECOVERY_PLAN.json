@@ -1,0 +1,361 @@
+{
+  "batch_id": "guardrail_coverage_batch_003_current_research",
+  "generated_at": "2026-05-17T01:51:07Z",
+  "records": [
+    {
+      "expected_archetype_bucket": "SEMICONDUCTOR_AI_INFRA OR SEMICONDUCTOR_CYCLICAL",
+      "fixability": "unsupported_skip",
+      "include_in_batch_003": false,
+      "missing_CIK": true,
+      "missing_CompanyFacts": true,
+      "missing_IR_current_period_evidence": true,
+      "missing_benchmark": false,
+      "missing_news_vendor_fallback": true,
+      "missing_price_CSV": true,
+      "priority": "P3",
+      "provider_unsupported": true,
+      "recommended_action": "Exclude from Batch 003 until foreign-issuer/ADR support is explicit.",
+      "ticker": "TSM"
+    },
+    {
+      "expected_archetype_bucket": "SEMICONDUCTOR_AI_INFRA OR SEMICONDUCTOR_CYCLICAL",
+      "fixability": "unsupported_skip",
+      "include_in_batch_003": false,
+      "missing_CIK": true,
+      "missing_CompanyFacts": true,
+      "missing_IR_current_period_evidence": true,
+      "missing_benchmark": false,
+      "missing_news_vendor_fallback": true,
+      "missing_price_CSV": true,
+      "priority": "P3",
+      "provider_unsupported": true,
+      "recommended_action": "Exclude from Batch 003 until foreign-issuer/ADR support is explicit.",
+      "ticker": "ASML"
+    },
+    {
+      "expected_archetype_bucket": "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL",
+      "fixability": "quick_fix",
+      "include_in_batch_003": true,
+      "missing_CIK": true,
+      "missing_CompanyFacts": true,
+      "missing_IR_current_period_evidence": true,
+      "missing_benchmark": false,
+      "missing_news_vendor_fallback": true,
+      "missing_price_CSV": true,
+      "priority": "P0",
+      "provider_unsupported": false,
+      "recommended_action": "Fetch fresh price CSV, CIK mapping and SEC CompanyFacts; run with current_research gates active.",
+      "ticker": "RGTI"
+    },
+    {
+      "expected_archetype_bucket": "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL",
+      "fixability": "quick_fix",
+      "include_in_batch_003": true,
+      "missing_CIK": true,
+      "missing_CompanyFacts": true,
+      "missing_IR_current_period_evidence": true,
+      "missing_benchmark": false,
+      "missing_news_vendor_fallback": true,
+      "missing_price_CSV": true,
+      "priority": "P0",
+      "provider_unsupported": false,
+      "recommended_action": "Fetch fresh price CSV, CIK mapping and SEC CompanyFacts; run with current_research gates active.",
+      "ticker": "IONQ"
+    },
+    {
+      "expected_archetype_bucket": "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL",
+      "fixability": "quick_fix",
+      "include_in_batch_003": true,
+      "missing_CIK": true,
+      "missing_CompanyFacts": true,
+      "missing_IR_current_period_evidence": true,
+      "missing_benchmark": false,
+      "missing_news_vendor_fallback": true,
+      "missing_price_CSV": true,
+      "priority": "P0",
+      "provider_unsupported": false,
+      "recommended_action": "Fetch fresh price CSV, CIK mapping and SEC CompanyFacts; run with current_research gates active.",
+      "ticker": "QBTS"
+    },
+    {
+      "expected_archetype_bucket": "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL / UNKNOWN MANUAL_REVIEW",
+      "fixability": "keep_manual_review",
+      "include_in_batch_003": false,
+      "missing_CIK": true,
+      "missing_CompanyFacts": true,
+      "missing_IR_current_period_evidence": true,
+      "missing_benchmark": false,
+      "missing_news_vendor_fallback": true,
+      "missing_price_CSV": true,
+      "priority": "P2",
+      "provider_unsupported": false,
+      "recommended_action": "Keep documented for later coverage expansion; exclude from Batch 003 if target universe is already full.",
+      "ticker": "QUBT"
+    },
+    {
+      "expected_archetype_bucket": "SPECULATIVE_AI_STORY_STOCK / UNKNOWN MANUAL_REVIEW",
+      "fixability": "keep_manual_review",
+      "include_in_batch_003": false,
+      "missing_CIK": true,
+      "missing_CompanyFacts": true,
+      "missing_IR_current_period_evidence": true,
+      "missing_benchmark": false,
+      "missing_news_vendor_fallback": true,
+      "missing_price_CSV": true,
+      "priority": "P2",
+      "provider_unsupported": false,
+      "recommended_action": "Keep documented for later coverage expansion; exclude from Batch 003 if target universe is already full.",
+      "ticker": "SOUN"
+    },
+    {
+      "expected_archetype_bucket": "SPECULATIVE_AI_STORY_STOCK / UNKNOWN MANUAL_REVIEW",
+      "fixability": "keep_manual_review",
+      "include_in_batch_003": false,
+      "missing_CIK": true,
+      "missing_CompanyFacts": true,
+      "missing_IR_current_period_evidence": true,
+      "missing_benchmark": false,
+      "missing_news_vendor_fallback": true,
+      "missing_price_CSV": true,
+      "priority": "P2",
+      "provider_unsupported": false,
+      "recommended_action": "Keep documented for later coverage expansion; exclude from Batch 003 if target universe is already full.",
+      "ticker": "BBAI"
+    },
+    {
+      "expected_archetype_bucket": "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH",
+      "fixability": "needs_ir_fixture",
+      "include_in_batch_003": true,
+      "missing_CIK": true,
+      "missing_CompanyFacts": true,
+      "missing_IR_current_period_evidence": true,
+      "missing_benchmark": false,
+      "missing_news_vendor_fallback": true,
+      "missing_price_CSV": true,
+      "priority": "P0",
+      "provider_unsupported": false,
+      "recommended_action": "Fetch fresh price/SEC coverage and attach existing sourced RKLB company-IR current-period fixture; keep manual_review if execution/FCF evidence is incomplete.",
+      "ticker": "RKLB"
+    },
+    {
+      "expected_archetype_bucket": "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH / DISTRESSED_CAPITAL_INTENSIVE",
+      "fixability": "needs_ir_fixture",
+      "include_in_batch_003": true,
+      "missing_CIK": true,
+      "missing_CompanyFacts": true,
+      "missing_IR_current_period_evidence": true,
+      "missing_benchmark": false,
+      "missing_news_vendor_fallback": true,
+      "missing_price_CSV": true,
+      "priority": "P0",
+      "provider_unsupported": false,
+      "recommended_action": "Fetch fresh price/SEC coverage; run as manual_review/data_gap unless a sourced IR/current-period fixture exists.",
+      "ticker": "ASTS"
+    },
+    {
+      "expected_archetype_bucket": "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH / DISTRESSED_CAPITAL_INTENSIVE",
+      "fixability": "needs_ir_fixture",
+      "include_in_batch_003": true,
+      "missing_CIK": true,
+      "missing_CompanyFacts": true,
+      "missing_IR_current_period_evidence": true,
+      "missing_benchmark": false,
+      "missing_news_vendor_fallback": true,
+      "missing_price_CSV": true,
+      "priority": "P0",
+      "provider_unsupported": false,
+      "recommended_action": "Fetch fresh price/SEC coverage; run as manual_review/data_gap unless a sourced IR/current-period fixture exists.",
+      "ticker": "ACHR"
+    },
+    {
+      "expected_archetype_bucket": "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH / DISTRESSED_CAPITAL_INTENSIVE",
+      "fixability": "needs_ir_fixture",
+      "include_in_batch_003": true,
+      "missing_CIK": true,
+      "missing_CompanyFacts": true,
+      "missing_IR_current_period_evidence": true,
+      "missing_benchmark": false,
+      "missing_news_vendor_fallback": true,
+      "missing_price_CSV": true,
+      "priority": "P0",
+      "provider_unsupported": false,
+      "recommended_action": "Fetch fresh price/SEC coverage; run as manual_review/data_gap unless a sourced IR/current-period fixture exists.",
+      "ticker": "JOBY"
+    },
+    {
+      "expected_archetype_bucket": "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH / DISTRESSED_CAPITAL_INTENSIVE",
+      "fixability": "quick_fix",
+      "include_in_batch_003": true,
+      "missing_CIK": true,
+      "missing_CompanyFacts": true,
+      "missing_IR_current_period_evidence": true,
+      "missing_benchmark": false,
+      "missing_news_vendor_fallback": true,
+      "missing_price_CSV": true,
+      "priority": "P1",
+      "provider_unsupported": false,
+      "recommended_action": "Fetch fresh price CSV, CIK mapping and SEC CompanyFacts; run with current_research gates active.",
+      "ticker": "RIVN"
+    },
+    {
+      "expected_archetype_bucket": "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH / DISTRESSED_CAPITAL_INTENSIVE",
+      "fixability": "quick_fix",
+      "include_in_batch_003": true,
+      "missing_CIK": true,
+      "missing_CompanyFacts": true,
+      "missing_IR_current_period_evidence": true,
+      "missing_benchmark": false,
+      "missing_news_vendor_fallback": true,
+      "missing_price_CSV": true,
+      "priority": "P1",
+      "provider_unsupported": false,
+      "recommended_action": "Fetch fresh price CSV, CIK mapping and SEC CompanyFacts; run with current_research gates active.",
+      "ticker": "LCID"
+    },
+    {
+      "expected_archetype_bucket": "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH / DISTRESSED_CAPITAL_INTENSIVE",
+      "fixability": "quick_fix",
+      "include_in_batch_003": true,
+      "missing_CIK": true,
+      "missing_CompanyFacts": true,
+      "missing_IR_current_period_evidence": true,
+      "missing_benchmark": false,
+      "missing_news_vendor_fallback": true,
+      "missing_price_CSV": true,
+      "priority": "P1",
+      "provider_unsupported": false,
+      "recommended_action": "Fetch fresh price CSV, CIK mapping and SEC CompanyFacts; run with current_research gates active.",
+      "ticker": "PLUG"
+    },
+    {
+      "expected_archetype_bucket": "TURNAROUND / BUSINESS_MODEL_PRESSURE / STANDARD_WITH_RISK",
+      "fixability": "keep_manual_review",
+      "include_in_batch_003": false,
+      "missing_CIK": true,
+      "missing_CompanyFacts": true,
+      "missing_IR_current_period_evidence": true,
+      "missing_benchmark": false,
+      "missing_news_vendor_fallback": true,
+      "missing_price_CSV": true,
+      "priority": "P2",
+      "provider_unsupported": false,
+      "recommended_action": "Keep documented for later coverage expansion; exclude from Batch 003 if target universe is already full.",
+      "ticker": "PYPL"
+    },
+    {
+      "expected_archetype_bucket": "TURNAROUND / BUSINESS_MODEL_PRESSURE / STANDARD_WITH_RISK",
+      "fixability": "keep_manual_review",
+      "include_in_batch_003": false,
+      "missing_CIK": true,
+      "missing_CompanyFacts": true,
+      "missing_IR_current_period_evidence": true,
+      "missing_benchmark": false,
+      "missing_news_vendor_fallback": true,
+      "missing_price_CSV": true,
+      "priority": "P2",
+      "provider_unsupported": false,
+      "recommended_action": "Keep documented for later coverage expansion; exclude from Batch 003 if target universe is already full.",
+      "ticker": "SNAP"
+    },
+    {
+      "expected_archetype_bucket": "TURNAROUND / BUSINESS_MODEL_PRESSURE / STANDARD_WITH_RISK",
+      "fixability": "keep_manual_review",
+      "include_in_batch_003": false,
+      "missing_CIK": true,
+      "missing_CompanyFacts": true,
+      "missing_IR_current_period_evidence": true,
+      "missing_benchmark": false,
+      "missing_news_vendor_fallback": true,
+      "missing_price_CSV": true,
+      "priority": "P2",
+      "provider_unsupported": false,
+      "recommended_action": "Keep documented for later coverage expansion; exclude from Batch 003 if target universe is already full.",
+      "ticker": "WBA"
+    },
+    {
+      "expected_archetype_bucket": "TURNAROUND / BUSINESS_MODEL_PRESSURE / STANDARD_WITH_RISK",
+      "fixability": "keep_manual_review",
+      "include_in_batch_003": false,
+      "missing_CIK": true,
+      "missing_CompanyFacts": true,
+      "missing_IR_current_period_evidence": true,
+      "missing_benchmark": false,
+      "missing_news_vendor_fallback": true,
+      "missing_price_CSV": true,
+      "priority": "P2",
+      "provider_unsupported": false,
+      "recommended_action": "Keep documented for later coverage expansion; exclude from Batch 003 if target universe is already full.",
+      "ticker": "PARA"
+    }
+  ],
+  "source": [
+    "outputs/batches/guardrail_coverage_batch_001/DATA_AVAILABILITY_ROOT_CAUSE.json",
+    "outputs/source_inventory/SOURCE_INPUT_INVENTORY.json"
+  ],
+  "summary": {
+    "count_by_fixability": {
+      "keep_manual_review": 7,
+      "needs_ir_fixture": 4,
+      "quick_fix": 6,
+      "unsupported_skip": 2
+    },
+    "count_by_priority": {
+      "P0": 7,
+      "P1": 3,
+      "P2": 7,
+      "P3": 2
+    },
+    "highest_coverage_priority": [
+      "RGTI",
+      "IONQ",
+      "QBTS",
+      "RKLB",
+      "ASTS",
+      "ACHR",
+      "JOBY",
+      "RIVN",
+      "LCID",
+      "PLUG"
+    ],
+    "intentionally_excluded": 9,
+    "not_in_batch_003": [
+      {
+        "reason": "Foreign issuer / ADR support is not explicit in this deterministic source-ingestion lane.",
+        "ticker": "TSM"
+      },
+      {
+        "reason": "Foreign issuer / ADR support is not explicit in this deterministic source-ingestion lane.",
+        "ticker": "ASML"
+      },
+      {
+        "reason": "Lower-priority speculative case; keep out until the higher-value quantum set is current-data-ready.",
+        "ticker": "QUBT"
+      },
+      {
+        "reason": "Lower-priority speculative AI story-stock; keep out until core deep-tech coverage is stable.",
+        "ticker": "SOUN"
+      },
+      {
+        "reason": "Lower-priority speculative AI story-stock; keep out until core deep-tech coverage is stable.",
+        "ticker": "BBAI"
+      },
+      {
+        "reason": "Useful turnaround case, but lower priority than the required Batch-003 guardrail universe.",
+        "ticker": "PYPL"
+      },
+      {
+        "reason": "Useful turnaround case, but lower priority than the required Batch-003 guardrail universe.",
+        "ticker": "SNAP"
+      },
+      {
+        "reason": "Useful distressed case, but lower priority than the required Batch-003 guardrail universe.",
+        "ticker": "WBA"
+      },
+      {
+        "reason": "Useful distressed case, but lower priority than the required Batch-003 guardrail universe.",
+        "ticker": "PARA"
+      }
+    ],
+    "short_term_repairable": 17
+  }
+}

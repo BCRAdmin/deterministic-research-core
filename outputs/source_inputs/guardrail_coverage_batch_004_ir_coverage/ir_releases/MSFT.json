@@ -1,0 +1,73 @@
+{
+  "coverage_note": "Carried forward from Batch 003 sourced current-period fixture.",
+  "metrics": [
+    {
+      "basis": "gaap",
+      "fiscal_period": "Q3",
+      "fiscal_year": 2026,
+      "metric_name": "current_q_revenue",
+      "period": "Q3_FY2026",
+      "period_bucket": "quarterly",
+      "statement": "Microsoft reported FY2026 Q3 revenue of $82.886 billion.",
+      "statement_type": "income_statement",
+      "unit": "usd",
+      "value": 82886000000
+    },
+    {
+      "basis": "company_defined",
+      "fiscal_period": "Q3",
+      "fiscal_year": 2026,
+      "metric_name": "microsoft_cloud_revenue",
+      "period": "Q3_FY2026",
+      "period_bucket": "quarterly",
+      "statement": "Microsoft reported Microsoft Cloud revenue of $54.5 billion.",
+      "statement_type": "income_statement",
+      "unit": "usd",
+      "value": 54500000000
+    },
+    {
+      "basis": "company_defined",
+      "fiscal_period": "Q3",
+      "fiscal_year": 2026,
+      "metric_name": "microsoft_cloud_growth",
+      "period": "Q3_FY2026",
+      "period_bucket": "quarterly",
+      "statement": "Microsoft reported Microsoft Cloud revenue growth of 29%.",
+      "statement_type": "income_statement",
+      "unit": "ratio",
+      "value": 0.29
+    },
+    {
+      "basis": "company_defined",
+      "fiscal_period": "Q3",
+      "fiscal_year": 2026,
+      "metric_name": "azure_growth",
+      "period": "Q3_FY2026",
+      "period_bucket": "quarterly",
+      "statement": "Microsoft reported Azure and other cloud services growth of 40%.",
+      "statement_type": "income_statement",
+      "unit": "ratio",
+      "value": 0.4
+    },
+    {
+      "basis": "company_defined",
+      "fiscal_period": "Q3",
+      "fiscal_year": 2026,
+      "metric_name": "ai_run_rate",
+      "period": "Q3_FY2026",
+      "period_bucket": "annualized",
+      "statement": "Microsoft disclosed AI business annual revenue run rate above $37 billion.",
+      "statement_type": "income_statement",
+      "unit": "usd",
+      "value": 37000000000
+    }
+  ],
+  "period": "Q3_FY2026",
+  "retrieved_at": "2026-05-06",
+  "source_confidence": "high",
+  "source_id": "MSFT_IR_Q3_FY2026_RELEASE",
+  "source_type": "earnings_release",
+  "source_url": "https://www.microsoft.com/en-us/investor/earnings",
+  "text": "",
+  "url": "https://www.microsoft.com/en-us/investor/earnings"
+}

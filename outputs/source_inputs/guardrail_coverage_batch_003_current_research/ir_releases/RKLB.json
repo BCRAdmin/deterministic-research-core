@@ -1,0 +1,82 @@
+{
+  "metrics": [
+    {
+      "basis": "gaap",
+      "fiscal_period": "Q1",
+      "fiscal_year": 2026,
+      "metric_name": "current_q_revenue",
+      "period": "Q1_2026",
+      "period_bucket": "quarterly",
+      "statement": "Rocket Lab reported Q1 2026 revenue of $200.3 million.",
+      "statement_type": "income_statement",
+      "unit": "usd",
+      "value": 200300000
+    },
+    {
+      "basis": "company_defined",
+      "fiscal_period": "Q1",
+      "fiscal_year": 2026,
+      "metric_name": "backlog",
+      "period": "Q1_2026",
+      "period_bucket": "instant",
+      "statement": "Rocket Lab reported backlog above $2.2 billion.",
+      "statement_type": "income_statement",
+      "unit": "usd",
+      "value": 2200000000
+    },
+    {
+      "basis": "company_defined",
+      "fiscal_period": "Q1",
+      "fiscal_year": 2026,
+      "metric_name": "space_systems_revenue",
+      "period": "Q1_2026",
+      "period_bucket": "quarterly",
+      "statement": "Rocket Lab reported Space Systems revenue of $127.5 million.",
+      "statement_type": "income_statement",
+      "unit": "usd",
+      "value": 127500000
+    },
+    {
+      "basis": "company_defined",
+      "fiscal_period": "Q1",
+      "fiscal_year": 2026,
+      "metric_name": "launch_services_revenue",
+      "period": "Q1_2026",
+      "period_bucket": "quarterly",
+      "statement": "Rocket Lab reported Launch Services revenue of $72.9 million.",
+      "statement_type": "income_statement",
+      "unit": "usd",
+      "value": 72900000
+    },
+    {
+      "basis": "company_defined",
+      "fiscal_period": "Q1",
+      "fiscal_year": 2026,
+      "metric_name": "cash_and_marketable_securities",
+      "period": "Q1_2026",
+      "period_bucket": "instant",
+      "statement": "Rocket Lab reported cash and securities of approximately $1.48 billion.",
+      "statement_type": "balance_sheet",
+      "unit": "usd",
+      "value": 1480000000
+    },
+    {
+      "basis": "company_defined",
+      "fiscal_period": "Q1",
+      "fiscal_year": 2026,
+      "metric_name": "free_cash_flow",
+      "period": "TTM_Q1_2026",
+      "period_bucket": "ttm",
+      "statement": "Rocket Lab trailing free cash flow remained negative at approximately -$220.1 million.",
+      "statement_type": "cash_flow",
+      "unit": "usd",
+      "value": -220123000
+    }
+  ],
+  "period": "Q1_2026",
+  "retrieved_at": "2026-05-16T16:58:10Z",
+  "source_id": "RKLB_Q1_2026_RESULTS_GLOBENEWSWIRE",
+  "source_type": "company_ir",
+  "text": "Rocket Lab reported Q1 revenue, backlog above $2.2B, Electron/HASTE execution, Space Systems and Launch Services segment revenue, and Neutron development risk.",
+  "url": "https://www.globenewswire.com/news-release/2026/05/07/3290563/0/en/rocket-lab-announces-first-quarter-2026-financial-results-surpasses-all-guidance-metrics-including-revenue-margin-and-adjusted-ebitda-posts-record-200m-quarterly-revenue-and-over-2.html"
+}

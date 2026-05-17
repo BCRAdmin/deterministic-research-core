@@ -1,0 +1,124 @@
+{
+  "has_blocking_errors": false,
+  "issues": [],
+  "numeric_claims": [
+    {
+      "line_number": 8,
+      "nearby_text": "- Report as-of date: `2026-05-05`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 9,
+      "nearby_text": "- Price basis: `2026-05-05` close via `csv_price_provider`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": "close",
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 21,
+      "nearby_text": "| SBC / Revenue | 2.8% |",
+      "normalized_value": 2.8,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "2.8%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 29,
+      "nearby_text": "- **AMZN_CLAIM_002**: AMZN has validated revenue TTM of $685.06B, so the business discussion should focus on mega-cap platform growth, AI/cloud investment, margin durability and regulatory risk rather than generic scale language.",
+      "normalized_value": 685060000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$685.06B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 33,
+      "nearby_text": "- **AMZN_CLAIM_003**: Validated FCF TTM is $104.50B, making cash conversion a direct rating input for AMZN.",
+      "normalized_value": 104500000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$104.50B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 37,
+      "nearby_text": "- **AMZN_CLAIM_004**: SBC/Revenue is 2.8%, which should be interpreted through mega-cap platform, capex and capital-return context rather than a one-size-fits-all compensation lens.",
+      "normalized_value": 2.8,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "2.8%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 41,
+      "nearby_text": "- **AMZN_CLAIM_005**: Balance-sheet flexibility is anchored in validated net cash of $102.73B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+      "normalized_value": 102730000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "net_cash",
+      "raw_text": "$102.73B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 46,
+      "nearby_text": "- **AMZN_CLAIM_006**: Valuation is framed by validated EV/Sales of 4.19x; this directly limits how aggressive the Accumulate stance should be.",
+      "normalized_value": 4.19,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "4.19x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 50,
+      "nearby_text": "- **AMZN_CLAIM_007**: For AMZN, validated P/FCF is 28.47x and should be read against platform growth, FCF durability and capex intensity; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+      "normalized_value": 28.47,
+      "period_hint": "unknown",
+      "possible_metric": "price_to_fcf",
+      "raw_text": "28.47x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 64,
+      "nearby_text": "- **AMZN_CLAIM_010**: The bull case is that platform scale, ecosystem monetization and operating leverage combines with revenue of $685.06B to support the allowed upside rating path when cash conversion quality also holds.",
+      "normalized_value": 685060000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$685.06B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 73,
+      "nearby_text": "- **AMZN_CLAIM_012**: The bear case is that regulatory pressure, capex intensity, growth deceleration or multiple compression overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 2.8% or source-quality issues persist.",
+      "normalized_value": 2.8,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "2.8%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 84,
+      "nearby_text": "- **AMZN_CLAIM_015**: Source disagreement or current-period mismatch can reduce conviction for AMZN, especially where revenue $685.06B is a key valuation denominator.",
+      "normalized_value": 685060000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$685.06B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 109,
+      "nearby_text": "Initial position: 20-30%.",
+      "normalized_value": 30.0,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "30%",
+      "unit": "percent"
+    }
+  ],
+  "ticker": "AMZN"
+}

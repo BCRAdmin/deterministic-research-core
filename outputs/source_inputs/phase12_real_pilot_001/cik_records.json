@@ -1,0 +1,52 @@
+[
+  {
+    "cik": "1018724",
+    "company_name": "Amazon.com, Inc.",
+    "ticker": "AMZN"
+  },
+  {
+    "cik": "1045810",
+    "company_name": "NVIDIA Corporation",
+    "ticker": "NVDA"
+  },
+  {
+    "cik": "1561550",
+    "company_name": "Datadog, Inc.",
+    "ticker": "DDOG"
+  },
+  {
+    "cik": "1441816",
+    "company_name": "MongoDB, Inc.",
+    "ticker": "MDB"
+  },
+  {
+    "cik": "789019",
+    "company_name": "Microsoft Corporation",
+    "ticker": "MSFT"
+  },
+  {
+    "cik": "1652044",
+    "company_name": "Alphabet Inc.",
+    "ticker": "GOOGL"
+  },
+  {
+    "cik": "1326801",
+    "company_name": "Meta Platforms, Inc.",
+    "ticker": "META"
+  },
+  {
+    "cik": "1535527",
+    "company_name": "CrowdStrike Holdings, Inc.",
+    "ticker": "CRWD"
+  },
+  {
+    "cik": "1640147",
+    "company_name": "Snowflake Inc.",
+    "ticker": "SNOW"
+  },
+  {
+    "cik": "1321655",
+    "company_name": "Palantir Technologies Inc.",
+    "ticker": "PLTR"
+  }
+]

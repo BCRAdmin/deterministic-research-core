@@ -1,0 +1,6 @@
+{
+  "schema_path": "/Users/BjornRosinger/Documents/New project/company-dossier-lab/docs/VIVI_REVIEW_OUTPUT_SCHEMA.json",
+  "status": "valid",
+  "validated_at": "2026-05-17T00:45:41Z",
+  "validator": "jsonschema.Draft202012Validator(format_checker=jsonschema.FormatChecker())"
+}

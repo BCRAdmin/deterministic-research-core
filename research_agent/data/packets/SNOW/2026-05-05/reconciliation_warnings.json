@@ -1,0 +1,82 @@
+[
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 12,
+    "message": "Ignored 12 annual/quarterly/YTD period-type variants for revenue.",
+    "metric": "revenue",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 12,
+    "message": "Ignored 12 annual/quarterly/YTD period-type variants for gross_profit.",
+    "metric": "gross_profit",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 12,
+    "message": "Ignored 12 annual/quarterly/YTD period-type variants for operating_income.",
+    "metric": "operating_income",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 12,
+    "message": "Ignored 12 annual/quarterly/YTD period-type variants for net_income.",
+    "metric": "net_income",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 1,
+    "message": "Ignored 1 annual/quarterly/YTD period-type variants for operating_cash_flow.",
+    "metric": "operating_cash_flow",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 1,
+    "message": "Ignored 1 annual/quarterly/YTD period-type variants for capex.",
+    "metric": "capex",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 1,
+    "message": "Ignored 1 annual/quarterly/YTD period-type variants for sbc.",
+    "metric": "sbc",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 9,
+    "message": "Ignored 9 annual/quarterly/YTD period-type variants for shares_diluted.",
+    "metric": "shares_diluted",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 1,
+    "message": "Ignored YTD source disagreement for shares_diluted (Q2_FY2022_ytd); YTD facts are kept separate and are not used as quarterly/annual canonical metrics.",
+    "metric": "shares_diluted",
+    "period_type": "ytd",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 1,
+    "message": "Ignored YTD source disagreement for shares_diluted (Q3_FY2022_ytd); YTD facts are kept separate and are not used as quarterly/annual canonical metrics.",
+    "metric": "shares_diluted",
+    "period_type": "ytd",
+    "severity": "info"
+  },
+  {
+    "basis": "gaap",
+    "code": "TRUE_SOURCE_VALUE_DISAGREEMENT",
+    "message": "Comparable sources disagree for shares_diluted (gaap, annual, FY2022).",
+    "metric": "shares_diluted",
+    "period_type": "annual",
+    "severity": "warning"
+  }
+]

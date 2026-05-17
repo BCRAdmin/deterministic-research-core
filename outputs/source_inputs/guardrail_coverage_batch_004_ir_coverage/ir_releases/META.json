@@ -1,0 +1,73 @@
+{
+  "coverage_note": "Carried forward from Batch 003 sourced current-period fixture.",
+  "metrics": [
+    {
+      "basis": "gaap",
+      "fiscal_period": "Q1",
+      "fiscal_year": 2026,
+      "metric_name": "current_q_revenue",
+      "period": "Q1_2026",
+      "period_bucket": "quarterly",
+      "statement": "Meta reported Q1 2026 revenue of $56.311 billion.",
+      "statement_type": "income_statement",
+      "unit": "usd",
+      "value": 56311000000
+    },
+    {
+      "basis": "gaap",
+      "fiscal_period": "Q1",
+      "fiscal_year": 2026,
+      "metric_name": "operating_margin",
+      "period": "Q1_2026",
+      "period_bucket": "quarterly",
+      "statement": "Meta reported Q1 2026 operating margin of 41%.",
+      "statement_type": "income_statement",
+      "unit": "ratio",
+      "value": 0.41
+    },
+    {
+      "basis": "company_defined",
+      "fiscal_period": "Q1",
+      "fiscal_year": 2026,
+      "metric_name": "current_q_free_cash_flow",
+      "period": "Q1_2026",
+      "period_bucket": "quarterly",
+      "statement": "Meta reported Q1 2026 free cash flow of $12.386 billion.",
+      "statement_type": "cash_flow",
+      "unit": "usd",
+      "value": 12386000000
+    },
+    {
+      "basis": "company_defined",
+      "fiscal_period": "FY",
+      "fiscal_year": 2026,
+      "metric_name": "capex_guidance_low",
+      "period": "FY2026_GUIDANCE",
+      "period_bucket": "guidance",
+      "statement": "Meta guided FY2026 capital expenditures to a range beginning at $125 billion.",
+      "statement_type": "guidance",
+      "unit": "usd",
+      "value": 125000000000
+    },
+    {
+      "basis": "company_defined",
+      "fiscal_period": "FY",
+      "fiscal_year": 2026,
+      "metric_name": "capex_guidance_high",
+      "period": "FY2026_GUIDANCE",
+      "period_bucket": "guidance",
+      "statement": "Meta guided FY2026 capital expenditures to a range up to $145 billion.",
+      "statement_type": "guidance",
+      "unit": "usd",
+      "value": 145000000000
+    }
+  ],
+  "period": "Q1_2026",
+  "retrieved_at": "2026-05-06",
+  "source_confidence": "high",
+  "source_id": "META_IR_Q1_2026_RELEASE",
+  "source_type": "earnings_release",
+  "source_url": "https://investor.fb.com/",
+  "text": "",
+  "url": "https://investor.fb.com/"
+}

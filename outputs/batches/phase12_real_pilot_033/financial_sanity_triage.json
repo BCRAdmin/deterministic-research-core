@@ -1,0 +1,4759 @@
+{
+  "records": [
+    {
+      "enterprise_value": 2871856567260.742,
+      "ev_sales": 13.798710233084647,
+      "fcf_margin": 0.502078078078078,
+      "fcf_ttm": 104495000000.0,
+      "fix_recommendation": "FCF margin is implausibly high for this profile; prioritize company-defined FCF where available and reconcile revenue/FCF periods before publish.",
+      "manual_review_reason_codes": [
+        {
+          "code": "FINANCIAL_SANITY_FCF_MARGIN_ANOMALY",
+          "message": "FCF margin above 40% for this company profile indicates a likely FCF or period reconciliation anomaly.",
+          "metric": "fcf_margin_ttm",
+          "reported": 0.502078078078078
+        }
+      ],
+      "market_cap": 2974582567260.742,
+      "price_to_fcf": 28.46626697220673,
+      "price_used": 273.54998779296875,
+      "quality_score": 76.0,
+      "revenue_ttm": 208125000000.0,
+      "sbc_to_revenue": 0.09178138138138138,
+      "sbc_ttm": 19102000000.0,
+      "shares_used": 10874000000.0,
+      "source_evidence": {
+        "cash": [
+          {
+            "confidence": "high",
+            "evidence_id": "AMZN_SEC_COMPANYFACTS_1018724_CASH_AND_EQUIVALENTS",
+            "period": null,
+            "source_id": "AMZN_SEC_COMPANYFACTS_1018724",
+            "source_type": "sec_filing",
+            "value": 61453000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMZN_SEC_COMPANYFACTS_1018724_CASH_AND_INVESTMENTS",
+            "period": null,
+            "source_id": "AMZN_SEC_COMPANYFACTS_1018724",
+            "source_type": "sec_filing",
+            "value": 102726000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMZN_SEC_cash_and_equivalents_FY2025_FY_0001018724-26-000004",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0001018724_0001018724-26-000004",
+            "source_type": "sec_filing",
+            "value": 90106000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMZN_SEC_cash_and_equivalents_FY2026_Q1_0001018724-26-000014",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0001018724_0001018724-26-000014",
+            "source_type": "sec_filing",
+            "value": 86810000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMZN_SEC_cash_and_equivalents_FY2026_Q1_0001018724-26-000014",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0001018724_0001018724-26-000014",
+            "source_type": "sec_filing",
+            "value": 90106000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMZN_SEC_cash_and_equivalents_FY2026_Q1_0001018724-26-000014",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0001018724_0001018724-26-000014",
+            "source_type": "sec_filing",
+            "value": 101816000000.0
+          }
+        ],
+        "debt": [
+          {
+            "confidence": "high",
+            "evidence_id": "AMZN_SEC_COMPANYFACTS_1018724_DEBT",
+            "period": null,
+            "source_id": "AMZN_SEC_COMPANYFACTS_1018724",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMZN_SEC_COMPANYFACTS_1018724_TOTAL_DEBT",
+            "period": null,
+            "source_id": "AMZN_SEC_COMPANYFACTS_1018724",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ],
+        "fcf": [
+          {
+            "confidence": "high",
+            "evidence_id": "AMZN_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+            "period": "TTM",
+            "source_id": "SEC_0001018724_DERIVED_FCF",
+            "source_type": "sec_filing",
+            "value": 279293000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMZN_SEC_COMPANYFACTS_1018724_FREE_CASH_FLOW_TTM",
+            "period": null,
+            "source_id": "AMZN_SEC_COMPANYFACTS_1018724",
+            "source_type": "sec_filing",
+            "value": 104495000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMZN_SEC_COMPANYFACTS_1018724_FCF",
+            "period": null,
+            "source_id": "AMZN_SEC_COMPANYFACTS_1018724",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMZN_SEC_COMPANYFACTS_1018724_FREE_CASH_FLOW",
+            "period": null,
+            "source_id": "AMZN_SEC_COMPANYFACTS_1018724",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ],
+        "revenue": [
+          {
+            "confidence": "high",
+            "evidence_id": "AMZN_SEC_COMPANYFACTS_1018724_REVENUE_TTM",
+            "period": null,
+            "source_id": "AMZN_SEC_COMPANYFACTS_1018724",
+            "source_type": "sec_filing",
+            "value": 208125000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMZN_SEC_revenue_FY2025_FY_0001018724-26-000004",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0001018724_0001018724-26-000004",
+            "source_type": "sec_filing",
+            "value": 716924000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMZN_SEC_revenue_FY2025_Q2_0001018724-25-000086",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0001018724_0001018724-25-000086",
+            "source_type": "sec_filing",
+            "value": 167702000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMZN_SEC_revenue_FY2025_Q3_0001018724-25-000123",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001018724_0001018724-25-000123",
+            "source_type": "sec_filing",
+            "value": 503538000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMZN_SEC_revenue_FY2025_Q3_0001018724-25-000123",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001018724_0001018724-25-000123",
+            "source_type": "sec_filing",
+            "value": 180169000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMZN_SEC_revenue_FY2026_Q1_0001018724-26-000014",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0001018724_0001018724-26-000014",
+            "source_type": "sec_filing",
+            "value": 181519000000.0
+          }
+        ],
+        "sbc": [
+          {
+            "confidence": "high",
+            "evidence_id": "AMZN_SEC_DERIVED_SBC_TO_REVENUE",
+            "period": "TTM",
+            "source_id": "SEC_0001018724_DERIVED_SBC_TO_REVENUE",
+            "source_type": "sec_filing",
+            "value": 0.0423640369899935
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMZN_SEC_COMPANYFACTS_1018724_SBC_TO_REVENUE",
+            "period": null,
+            "source_id": "AMZN_SEC_COMPANYFACTS_1018724",
+            "source_type": "sec_filing",
+            "value": 0.09178138138138138
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMZN_SEC_COMPANYFACTS_1018724_SBC_TTM",
+            "period": null,
+            "source_id": "AMZN_SEC_COMPANYFACTS_1018724",
+            "source_type": "sec_filing",
+            "value": 19102000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMZN_SEC_sbc_FY2025_FY_0001018724-26-000004",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0001018724_0001018724-26-000004",
+            "source_type": "sec_filing",
+            "value": 19467000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMZN_SEC_sbc_FY2025_Q3_0001018724-25-000123",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001018724_0001018724-25-000123",
+            "source_type": "sec_filing",
+            "value": 15070000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMZN_SEC_sbc_FY2025_Q3_0001018724-25-000123",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001018724_0001018724-25-000123",
+            "source_type": "sec_filing",
+            "value": 4847000000.0
+          }
+        ],
+        "shares": [
+          {
+            "confidence": "high",
+            "evidence_id": "AMZN_SEC_shares_diluted_FY2025_FY_0001018724-26-000004",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0001018724_0001018724-26-000004",
+            "source_type": "sec_filing",
+            "value": 10827000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMZN_SEC_shares_diluted_FY2025_Q2_0001018724-25-000086",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0001018724_0001018724-25-000086",
+            "source_type": "sec_filing",
+            "value": 10806000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMZN_SEC_shares_diluted_FY2025_Q3_0001018724-25-000123",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001018724_0001018724-25-000123",
+            "source_type": "sec_filing",
+            "value": 10815000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMZN_SEC_shares_diluted_FY2025_Q3_0001018724-25-000123",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001018724_0001018724-25-000123",
+            "source_type": "sec_filing",
+            "value": 10845000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMZN_SEC_shares_diluted_FY2026_Q1_0001018724-26-000014",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0001018724_0001018724-26-000014",
+            "source_type": "sec_filing",
+            "value": 10874000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMZN_SEC_COMPANYFACTS_1018724_SHARES",
+            "period": null,
+            "source_id": "AMZN_SEC_COMPANYFACTS_1018724",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ]
+      },
+      "ticker": "AMZN",
+      "verdict": "period_bug"
+    },
+    {
+      "enterprise_value": 2992261136352.539,
+      "ev_sales": 28.885060008036714,
+      "fcf_margin": 0.6530137462352306,
+      "fcf_ttm": 67647000000.0,
+      "fix_recommendation": "FCF margin is implausibly high for this profile; prioritize company-defined FCF where available and reconcile revenue/FCF periods before publish.",
+      "manual_review_reason_codes": [
+        {
+          "code": "FINANCIAL_SANITY_FCF_MARGIN_ANOMALY",
+          "message": "FCF margin above 40% for this company profile indicates a likely FCF or period reconciliation anomaly.",
+          "metric": "fcf_margin_ttm",
+          "reported": 0.6530137462352306
+        }
+      ],
+      "market_cap": 3062724136352.539,
+      "price_to_fcf": 45.2750918200739,
+      "price_used": 411.3800048828125,
+      "quality_score": 76.0,
+      "revenue_ttm": 103592000000.0,
+      "sbc_to_revenue": 0.11837786701675805,
+      "sbc_ttm": 12263000000.0,
+      "shares_used": 7445000000.0,
+      "source_evidence": {
+        "cash": [
+          {
+            "confidence": "high",
+            "evidence_id": "MSFT_SEC_COMPANYFACTS_789019_CASH_AND_EQUIVALENTS",
+            "period": null,
+            "source_id": "MSFT_SEC_COMPANYFACTS_789019",
+            "source_type": "sec_filing",
+            "value": 24296000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MSFT_SEC_COMPANYFACTS_789019_CASH_AND_INVESTMENTS",
+            "period": null,
+            "source_id": "MSFT_SEC_COMPANYFACTS_789019",
+            "source_type": "sec_filing",
+            "value": 70463000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MSFT_SEC_cash_and_equivalents_FY2025_FY_0000950170-25-100235",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0000789019_0000950170-25-100235",
+            "source_type": "sec_filing",
+            "value": 30242000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MSFT_SEC_cash_and_equivalents_FY2026_Q2_0001193125-26-027207",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0000789019_0001193125-26-027207",
+            "source_type": "sec_filing",
+            "value": 24296000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MSFT_SEC_cash_and_equivalents_FY2026_Q3_0001193125-26-191507",
+            "period": "FY2026_Q3",
+            "source_id": "SEC_0000789019_0001193125-26-191507",
+            "source_type": "sec_filing",
+            "value": 24296000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MSFT_SEC_cash_and_equivalents_FY2026_Q3_0001193125-26-191507",
+            "period": "FY2026_Q3",
+            "source_id": "SEC_0000789019_0001193125-26-191507",
+            "source_type": "sec_filing",
+            "value": 32105000000.0
+          }
+        ],
+        "debt": [
+          {
+            "confidence": "high",
+            "evidence_id": "MSFT_SEC_COMPANYFACTS_789019_DEBT",
+            "period": null,
+            "source_id": "MSFT_SEC_COMPANYFACTS_789019",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MSFT_SEC_COMPANYFACTS_789019_TOTAL_DEBT",
+            "period": null,
+            "source_id": "MSFT_SEC_COMPANYFACTS_789019",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ],
+        "fcf": [
+          {
+            "confidence": "high",
+            "evidence_id": "MSFT_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+            "period": "TTM",
+            "source_id": "SEC_0000789019_DERIVED_FCF",
+            "source_type": "sec_filing",
+            "value": 100578000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MSFT_SEC_COMPANYFACTS_789019_FREE_CASH_FLOW_TTM",
+            "period": null,
+            "source_id": "MSFT_SEC_COMPANYFACTS_789019",
+            "source_type": "sec_filing",
+            "value": 67647000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MSFT_SEC_COMPANYFACTS_789019_FCF",
+            "period": null,
+            "source_id": "MSFT_SEC_COMPANYFACTS_789019",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MSFT_SEC_COMPANYFACTS_789019_FREE_CASH_FLOW",
+            "period": null,
+            "source_id": "MSFT_SEC_COMPANYFACTS_789019",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ],
+        "revenue": [
+          {
+            "confidence": "high",
+            "evidence_id": "MSFT_SEC_COMPANYFACTS_789019_REVENUE_TTM",
+            "period": null,
+            "source_id": "MSFT_SEC_COMPANYFACTS_789019",
+            "source_type": "sec_filing",
+            "value": 103592000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MSFT_SEC_revenue_FY2025_FY_0000950170-25-100235",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0000789019_0000950170-25-100235",
+            "source_type": "sec_filing",
+            "value": 281724000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MSFT_SEC_revenue_FY2026_Q2_0001193125-26-027207",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0000789019_0001193125-26-027207",
+            "source_type": "sec_filing",
+            "value": 158946000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MSFT_SEC_revenue_FY2026_Q2_0001193125-26-027207",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0000789019_0001193125-26-027207",
+            "source_type": "sec_filing",
+            "value": 81273000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MSFT_SEC_revenue_FY2026_Q3_0001193125-26-191507",
+            "period": "FY2026_Q3",
+            "source_id": "SEC_0000789019_0001193125-26-191507",
+            "source_type": "sec_filing",
+            "value": 241832000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MSFT_SEC_revenue_FY2026_Q3_0001193125-26-191507",
+            "period": "FY2026_Q3",
+            "source_id": "SEC_0000789019_0001193125-26-191507",
+            "source_type": "sec_filing",
+            "value": 82886000000.0
+          }
+        ],
+        "sbc": [
+          {
+            "confidence": "high",
+            "evidence_id": "MSFT_SEC_DERIVED_SBC_TO_REVENUE",
+            "period": "TTM",
+            "source_id": "SEC_0000789019_DERIVED_SBC_TO_REVENUE",
+            "source_type": "sec_filing",
+            "value": 0.038561821937667384
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MSFT_SEC_COMPANYFACTS_789019_SBC_TO_REVENUE",
+            "period": null,
+            "source_id": "MSFT_SEC_COMPANYFACTS_789019",
+            "source_type": "sec_filing",
+            "value": 0.11837786701675805
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MSFT_SEC_COMPANYFACTS_789019_SBC_TTM",
+            "period": null,
+            "source_id": "MSFT_SEC_COMPANYFACTS_789019",
+            "source_type": "sec_filing",
+            "value": 12263000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MSFT_SEC_sbc_FY2025_FY_0000950170-25-100235",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0000789019_0000950170-25-100235",
+            "source_type": "sec_filing",
+            "value": 11974000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MSFT_SEC_sbc_FY2026_Q2_0001193125-26-027207",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0000789019_0001193125-26-027207",
+            "source_type": "sec_filing",
+            "value": 6202000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MSFT_SEC_sbc_FY2026_Q2_0001193125-26-027207",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0000789019_0001193125-26-027207",
+            "source_type": "sec_filing",
+            "value": 3219000000.0
+          }
+        ],
+        "shares": [
+          {
+            "confidence": "high",
+            "evidence_id": "MSFT_SEC_shares_diluted_FY2025_FY_0000950170-25-100235",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0000789019_0000950170-25-100235",
+            "source_type": "sec_filing",
+            "value": 7465000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MSFT_SEC_shares_diluted_FY2026_Q2_0001193125-26-027207",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0000789019_0001193125-26-027207",
+            "source_type": "sec_filing",
+            "value": 7463000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MSFT_SEC_shares_diluted_FY2026_Q2_0001193125-26-027207",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0000789019_0001193125-26-027207",
+            "source_type": "sec_filing",
+            "value": 7460000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MSFT_SEC_shares_diluted_FY2026_Q3_0001193125-26-191507",
+            "period": "FY2026_Q3",
+            "source_id": "SEC_0000789019_0001193125-26-191507",
+            "source_type": "sec_filing",
+            "value": 7457000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MSFT_SEC_shares_diluted_FY2026_Q3_0001193125-26-191507",
+            "period": "FY2026_Q3",
+            "source_id": "SEC_0000789019_0001193125-26-191507",
+            "source_type": "sec_filing",
+            "value": 7445000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MSFT_SEC_COMPANYFACTS_789019_SHARES",
+            "period": null,
+            "source_id": "MSFT_SEC_COMPANYFACTS_789019",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ]
+      },
+      "ticker": "MSFT",
+      "verdict": "period_bug"
+    },
+    {
+      "enterprise_value": 4133701481284.485,
+      "ev_sales": 16.193194298222636,
+      "fcf_margin": 0.5603586734254173,
+      "fcf_ttm": 143045000000.0,
+      "fix_recommendation": "FCF margin is implausibly high for this profile; prioritize company-defined FCF where available and reconcile revenue/FCF periods before publish.",
+      "manual_review_reason_codes": [
+        {
+          "code": "FINANCIAL_SANITY_FCF_MARGIN_ANOMALY",
+          "message": "FCF margin above 40% for this company profile indicates a likely FCF or period reconciliation anomaly.",
+          "metric": "fcf_margin_ttm",
+          "reported": 0.5603586734254173
+        }
+      ],
+      "market_cap": 4184798481284.485,
+      "price_to_fcf": 29.255118887654127,
+      "price_used": 284.17999267578125,
+      "quality_score": 76.0,
+      "revenue_ttm": 255274000000.0,
+      "sbc_to_revenue": 0.05156420160298346,
+      "sbc_ttm": 13163000000.0,
+      "shares_used": 14725873000.0,
+      "source_evidence": {
+        "cash": [
+          {
+            "confidence": "high",
+            "evidence_id": "AAPL_SEC_COMPANYFACTS_320193_CASH_AND_EQUIVALENTS",
+            "period": null,
+            "source_id": "AAPL_SEC_COMPANYFACTS_320193",
+            "source_type": "sec_filing",
+            "value": 28162000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AAPL_SEC_COMPANYFACTS_320193_CASH_AND_INVESTMENTS",
+            "period": null,
+            "source_id": "AAPL_SEC_COMPANYFACTS_320193",
+            "source_type": "sec_filing",
+            "value": 51097000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AAPL_SEC_cash_and_equivalents_FY2025_FY_0000320193-25-000079",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0000320193_0000320193-25-000079",
+            "source_type": "sec_filing",
+            "value": 35934000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AAPL_SEC_cash_and_equivalents_FY2026_Q1_0000320193-26-000006",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0000320193_0000320193-26-000006",
+            "source_type": "sec_filing",
+            "value": 45317000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AAPL_SEC_cash_and_equivalents_FY2026_Q1_0000320193-26-000006",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0000320193_0000320193-26-000006",
+            "source_type": "sec_filing",
+            "value": 45317000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AAPL_SEC_cash_and_equivalents_FY2026_Q2_0000320193-26-000013",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0000320193_0000320193-26-000013",
+            "source_type": "sec_filing",
+            "value": 45572000000.0
+          }
+        ],
+        "debt": [
+          {
+            "confidence": "high",
+            "evidence_id": "AAPL_SEC_COMPANYFACTS_320193_DEBT",
+            "period": null,
+            "source_id": "AAPL_SEC_COMPANYFACTS_320193",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AAPL_SEC_COMPANYFACTS_320193_TOTAL_DEBT",
+            "period": null,
+            "source_id": "AAPL_SEC_COMPANYFACTS_320193",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ],
+        "fcf": [
+          {
+            "confidence": "high",
+            "evidence_id": "AAPL_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+            "period": "TTM",
+            "source_id": "SEC_0000320193_DERIVED_FCF",
+            "source_type": "sec_filing",
+            "value": 249992000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AAPL_SEC_COMPANYFACTS_320193_FREE_CASH_FLOW_TTM",
+            "period": null,
+            "source_id": "AAPL_SEC_COMPANYFACTS_320193",
+            "source_type": "sec_filing",
+            "value": 143045000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AAPL_SEC_COMPANYFACTS_320193_FCF",
+            "period": null,
+            "source_id": "AAPL_SEC_COMPANYFACTS_320193",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AAPL_SEC_COMPANYFACTS_320193_FREE_CASH_FLOW",
+            "period": null,
+            "source_id": "AAPL_SEC_COMPANYFACTS_320193",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ],
+        "revenue": [
+          {
+            "confidence": "high",
+            "evidence_id": "AAPL_SEC_COMPANYFACTS_320193_REVENUE_TTM",
+            "period": null,
+            "source_id": "AAPL_SEC_COMPANYFACTS_320193",
+            "source_type": "sec_filing",
+            "value": 255274000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AAPL_SEC_revenue_FY2025_FY_0000320193-25-000079",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0000320193_0000320193-25-000079",
+            "source_type": "sec_filing",
+            "value": 416161000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AAPL_SEC_revenue_FY2025_Q3_0000320193-25-000073",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0000320193_0000320193-25-000073",
+            "source_type": "sec_filing",
+            "value": 94036000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AAPL_SEC_revenue_FY2026_Q1_0000320193-26-000006",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0000320193_0000320193-26-000006",
+            "source_type": "sec_filing",
+            "value": 143756000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AAPL_SEC_revenue_FY2026_Q2_0000320193-26-000013",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0000320193_0000320193-26-000013",
+            "source_type": "sec_filing",
+            "value": 254940000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AAPL_SEC_revenue_FY2026_Q2_0000320193-26-000013",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0000320193_0000320193-26-000013",
+            "source_type": "sec_filing",
+            "value": 111184000000.0
+          }
+        ],
+        "sbc": [
+          {
+            "confidence": "high",
+            "evidence_id": "AAPL_SEC_DERIVED_SBC_TO_REVENUE",
+            "period": "TTM",
+            "source_id": "SEC_0000320193_DERIVED_SBC_TO_REVENUE",
+            "source_type": "sec_filing",
+            "value": 0.044555865385252254
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AAPL_SEC_COMPANYFACTS_320193_SBC_TO_REVENUE",
+            "period": null,
+            "source_id": "AAPL_SEC_COMPANYFACTS_320193",
+            "source_type": "sec_filing",
+            "value": 0.05156420160298346
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AAPL_SEC_COMPANYFACTS_320193_SBC_TTM",
+            "period": null,
+            "source_id": "AAPL_SEC_COMPANYFACTS_320193",
+            "source_type": "sec_filing",
+            "value": 13163000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AAPL_SEC_sbc_FY2025_FY_0000320193-25-000079",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0000320193_0000320193-25-000079",
+            "source_type": "sec_filing",
+            "value": 12863000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AAPL_SEC_sbc_FY2025_Q3_0000320193-25-000073",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0000320193_0000320193-25-000073",
+            "source_type": "sec_filing",
+            "value": 9680000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AAPL_SEC_sbc_FY2026_Q1_0000320193-26-000006",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0000320193_0000320193-26-000006",
+            "source_type": "sec_filing",
+            "value": 3594000000.0
+          }
+        ],
+        "shares": [
+          {
+            "confidence": "high",
+            "evidence_id": "AAPL_SEC_shares_diluted_FY2025_FY_0000320193-25-000079",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0000320193_0000320193-25-000079",
+            "source_type": "sec_filing",
+            "value": 15004697000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AAPL_SEC_shares_diluted_FY2025_Q3_0000320193-25-000073",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0000320193_0000320193-25-000073",
+            "source_type": "sec_filing",
+            "value": 14948179000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AAPL_SEC_shares_diluted_FY2026_Q1_0000320193-26-000006",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0000320193_0000320193-26-000006",
+            "source_type": "sec_filing",
+            "value": 14810356000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AAPL_SEC_shares_diluted_FY2026_Q2_0000320193-26-000013",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0000320193_0000320193-26-000013",
+            "source_type": "sec_filing",
+            "value": 14768115000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AAPL_SEC_shares_diluted_FY2026_Q2_0000320193-26-000013",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0000320193_0000320193-26-000013",
+            "source_type": "sec_filing",
+            "value": 14725873000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AAPL_SEC_COMPANYFACTS_320193_SHARES",
+            "period": null,
+            "source_id": "AAPL_SEC_COMPANYFACTS_320193",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ]
+      },
+      "ticker": "AAPL",
+      "verdict": "period_bug"
+    },
+    {
+      "enterprise_value": 4758772000000.0,
+      "ev_sales": 435.8648104048361,
+      "fcf_margin": 5.540941564389082,
+      "fcf_ttm": 60496000000.0,
+      "fix_recommendation": "Revenue denominator is likely not a true TTM/annual comparable period; rerun PeriodResolver for annual vs quarterly/YTD facts and only derive TTM from four comparable duration facts.",
+      "manual_review_reason_codes": [
+        {
+          "code": "FINANCIAL_SANITY_EV_SALES_ABSURD",
+          "message": "EV/Sales above 100x indicates a likely unit, share-count, or revenue-period anomaly.",
+          "metric": "ev_to_sales",
+          "reported": 435.8648104048361
+        },
+        {
+          "code": "FINANCIAL_SANITY_SBC_REVENUE_ANOMALY",
+          "message": "SBC/Revenue above 30% for a mega-cap or non-SaaS profile requires manual reconciliation.",
+          "metric": "sbc_to_revenue",
+          "reported": 0.3875251877633266
+        },
+        {
+          "code": "FINANCIAL_SANITY_FCF_MARGIN_ANOMALY",
+          "message": "FCF margin above 40% for this company profile indicates a likely FCF or period reconciliation anomaly.",
+          "metric": "fcf_margin_ttm",
+          "reported": 5.540941564389082
+        },
+        {
+          "code": "FINANCIAL_SANITY_EV_SALES_ABSURD",
+          "message": "Market cap to revenue above 100x indicates a likely unit or period anomaly.",
+          "metric": "market_cap_to_revenue",
+          "reported": 441.1981132075472
+        }
+      ],
+      "market_cap": 4817001000000.0,
+      "price_to_fcf": 79.62511571012959,
+      "price_used": 196.5,
+      "quality_score": 34.0,
+      "revenue_ttm": 10918000000.0,
+      "sbc_to_revenue": 0.3875251877633266,
+      "sbc_ttm": 4231000000.0,
+      "shares_used": 24514000000.0,
+      "source_evidence": {
+        "cash": [
+          {
+            "confidence": "high",
+            "evidence_id": "NVDA_SEC_COMPANYFACTS_1045810_CASH_AND_EQUIVALENTS",
+            "period": null,
+            "source_id": "NVDA_SEC_COMPANYFACTS_1045810",
+            "source_type": "sec_filing",
+            "value": 9107000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NVDA_SEC_COMPANYFACTS_1045810_CASH_AND_INVESTMENTS",
+            "period": null,
+            "source_id": "NVDA_SEC_COMPANYFACTS_1045810",
+            "source_type": "sec_filing",
+            "value": 58229000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NVDA_SEC_cash_and_equivalents_FY2026_FY_0001045810-26-000021",
+            "period": "FY2026_FY",
+            "source_id": "SEC_0001045810_0001045810-26-000021",
+            "source_type": "sec_filing",
+            "value": 10605000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NVDA_SEC_cash_and_equivalents_FY2026_Q2_0001045810-25-000209",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0001045810_0001045810-25-000209",
+            "source_type": "sec_filing",
+            "value": 11639000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NVDA_SEC_cash_and_equivalents_FY2026_Q2_0001045810-25-000209",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0001045810_0001045810-25-000209",
+            "source_type": "sec_filing",
+            "value": 11639000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NVDA_SEC_cash_and_equivalents_FY2026_Q3_0001045810-25-000230",
+            "period": "FY2026_Q3",
+            "source_id": "SEC_0001045810_0001045810-25-000230",
+            "source_type": "sec_filing",
+            "value": 11486000000.0
+          }
+        ],
+        "debt": [
+          {
+            "confidence": "high",
+            "evidence_id": "NVDA_SEC_COMPANYFACTS_1045810_DEBT",
+            "period": null,
+            "source_id": "NVDA_SEC_COMPANYFACTS_1045810",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NVDA_SEC_COMPANYFACTS_1045810_TOTAL_DEBT",
+            "period": null,
+            "source_id": "NVDA_SEC_COMPANYFACTS_1045810",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ],
+        "fcf": [
+          {
+            "confidence": "high",
+            "evidence_id": "NVDA_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+            "period": "TTM",
+            "source_id": "SEC_0001045810_DERIVED_FCF",
+            "source_type": "sec_filing",
+            "value": 183071000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NVDA_SEC_COMPANYFACTS_1045810_FREE_CASH_FLOW_TTM",
+            "period": null,
+            "source_id": "NVDA_SEC_COMPANYFACTS_1045810",
+            "source_type": "sec_filing",
+            "value": 60496000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NVDA_SEC_COMPANYFACTS_1045810_FCF",
+            "period": null,
+            "source_id": "NVDA_SEC_COMPANYFACTS_1045810",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NVDA_SEC_COMPANYFACTS_1045810_FREE_CASH_FLOW",
+            "period": null,
+            "source_id": "NVDA_SEC_COMPANYFACTS_1045810",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ],
+        "revenue": [
+          {
+            "confidence": "high",
+            "evidence_id": "NVDA_SEC_COMPANYFACTS_1045810_REVENUE_TTM",
+            "period": null,
+            "source_id": "NVDA_SEC_COMPANYFACTS_1045810",
+            "source_type": "sec_filing",
+            "value": 10918000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NVDA_SEC_revenue_FY2026_FY_0001045810-26-000021",
+            "period": "FY2026_FY",
+            "source_id": "SEC_0001045810_0001045810-26-000021",
+            "source_type": "sec_filing",
+            "value": 215938000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NVDA_SEC_revenue_FY2026_Q2_0001045810-25-000209",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0001045810_0001045810-25-000209",
+            "source_type": "sec_filing",
+            "value": 90805000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NVDA_SEC_revenue_FY2026_Q2_0001045810-25-000209",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0001045810_0001045810-25-000209",
+            "source_type": "sec_filing",
+            "value": 46743000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NVDA_SEC_revenue_FY2026_Q3_0001045810-25-000230",
+            "period": "FY2026_Q3",
+            "source_id": "SEC_0001045810_0001045810-25-000230",
+            "source_type": "sec_filing",
+            "value": 147811000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NVDA_SEC_revenue_FY2026_Q3_0001045810-25-000230",
+            "period": "FY2026_Q3",
+            "source_id": "SEC_0001045810_0001045810-25-000230",
+            "source_type": "sec_filing",
+            "value": 57006000000.0
+          }
+        ],
+        "sbc": [
+          {
+            "confidence": "high",
+            "evidence_id": "NVDA_SEC_DERIVED_SBC_TO_REVENUE",
+            "period": "TTM",
+            "source_id": "SEC_0001045810_DERIVED_SBC_TO_REVENUE",
+            "source_type": "sec_filing",
+            "value": 0.03721758941480584
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NVDA_SEC_COMPANYFACTS_1045810_SBC_TO_REVENUE",
+            "period": null,
+            "source_id": "NVDA_SEC_COMPANYFACTS_1045810",
+            "source_type": "sec_filing",
+            "value": 0.3875251877633266
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NVDA_SEC_COMPANYFACTS_1045810_SBC_TTM",
+            "period": null,
+            "source_id": "NVDA_SEC_COMPANYFACTS_1045810",
+            "source_type": "sec_filing",
+            "value": 4231000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NVDA_SEC_sbc_FY2026_FY_0001045810-26-000021",
+            "period": "FY2026_FY",
+            "source_id": "SEC_0001045810_0001045810-26-000021",
+            "source_type": "sec_filing",
+            "value": 6386000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NVDA_SEC_sbc_FY2026_Q1_0001045810-25-000116",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0001045810_0001045810-25-000116",
+            "source_type": "sec_filing",
+            "value": 1474000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NVDA_SEC_sbc_FY2026_Q2_0001045810-25-000209",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0001045810_0001045810-25-000209",
+            "source_type": "sec_filing",
+            "value": 3099000000.0
+          }
+        ],
+        "shares": [
+          {
+            "confidence": "high",
+            "evidence_id": "NVDA_SEC_shares_diluted_FY2026_FY_0001045810-26-000021",
+            "period": "FY2026_FY",
+            "source_id": "SEC_0001045810_0001045810-26-000021",
+            "source_type": "sec_filing",
+            "value": 24514000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NVDA_SEC_shares_diluted_FY2026_Q2_0001045810-25-000209",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0001045810_0001045810-25-000209",
+            "source_type": "sec_filing",
+            "value": 24571000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NVDA_SEC_shares_diluted_FY2026_Q2_0001045810-25-000209",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0001045810_0001045810-25-000209",
+            "source_type": "sec_filing",
+            "value": 24532000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NVDA_SEC_shares_diluted_FY2026_Q3_0001045810-25-000230",
+            "period": "FY2026_Q3",
+            "source_id": "SEC_0001045810_0001045810-25-000230",
+            "source_type": "sec_filing",
+            "value": 24542000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NVDA_SEC_shares_diluted_FY2026_Q3_0001045810-25-000230",
+            "period": "FY2026_Q3",
+            "source_id": "SEC_0001045810_0001045810-25-000230",
+            "source_type": "sec_filing",
+            "value": 24483000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NVDA_SEC_COMPANYFACTS_1045810_SHARES",
+            "period": null,
+            "source_id": "NVDA_SEC_COMPANYFACTS_1045810",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ]
+      },
+      "ticker": "NVDA",
+      "verdict": "period_bug"
+    },
+    {
+      "enterprise_value": 577092375976.5625,
+      "ev_sales": 89.98789583292725,
+      "fcf_margin": 0.2827070014033993,
+      "fcf_ttm": 1813000000.0,
+      "fix_recommendation": "P/FCF is extremely high even without other period red flags; keep as valuation-risk manual review unless FCF source/period is proven wrong.",
+      "manual_review_reason_codes": [
+        {
+          "code": "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+          "message": "P/FCF above 100x requires explicit explanation before publish.",
+          "metric": "price_to_fcf",
+          "reported": 320.5766000973869
+        }
+      ],
+      "market_cap": 581205375976.5625,
+      "price_to_fcf": 320.5766000973869,
+      "price_used": 355.260009765625,
+      "quality_score": 76.0,
+      "revenue_ttm": 6413000000.0,
+      "sbc_to_revenue": 0.22064556369873695,
+      "sbc_ttm": 1415000000.0,
+      "shares_used": 1636000000.0,
+      "source_evidence": {
+        "cash": [
+          {
+            "confidence": "high",
+            "evidence_id": "AMD_SEC_COMPANYFACTS_2488_CASH_AND_EQUIVALENTS",
+            "period": null,
+            "source_id": "AMD_SEC_COMPANYFACTS_2488",
+            "source_type": "sec_filing",
+            "value": 4113000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMD_SEC_COMPANYFACTS_2488_CASH_AND_INVESTMENTS",
+            "period": null,
+            "source_id": "AMD_SEC_COMPANYFACTS_2488",
+            "source_type": "sec_filing",
+            "value": 4113000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMD_SEC_cash_and_equivalents_FY2025_FY_0000002488-26-000018",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0000002488_0000002488-26-000018",
+            "source_type": "sec_filing",
+            "value": 5556000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMD_SEC_cash_and_equivalents_FY2025_Q1_0000002488-25-000047",
+            "period": "FY2025_Q1",
+            "source_id": "SEC_0000002488_0000002488-25-000047",
+            "source_type": "sec_filing",
+            "value": 6059000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMD_SEC_cash_and_equivalents_FY2025_Q2_0000002488-25-000108",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0000002488_0000002488-25-000108",
+            "source_type": "sec_filing",
+            "value": 4442000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMD_SEC_cash_and_equivalents_FY2025_Q2_0000002488-25-000108",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0000002488_0000002488-25-000108",
+            "source_type": "sec_filing",
+            "value": 4453000000.0
+          }
+        ],
+        "debt": [
+          {
+            "confidence": "high",
+            "evidence_id": "AMD_SEC_COMPANYFACTS_2488_DEBT",
+            "period": null,
+            "source_id": "AMD_SEC_COMPANYFACTS_2488",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMD_SEC_COMPANYFACTS_2488_TOTAL_DEBT",
+            "period": null,
+            "source_id": "AMD_SEC_COMPANYFACTS_2488",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ],
+        "fcf": [
+          {
+            "confidence": "high",
+            "evidence_id": "AMD_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+            "period": "TTM",
+            "source_id": "SEC_0000002488_DERIVED_FCF",
+            "source_type": "sec_filing",
+            "value": 8854000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMD_SEC_COMPANYFACTS_2488_FREE_CASH_FLOW_TTM",
+            "period": null,
+            "source_id": "AMD_SEC_COMPANYFACTS_2488",
+            "source_type": "sec_filing",
+            "value": 1813000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMD_SEC_COMPANYFACTS_2488_FCF",
+            "period": null,
+            "source_id": "AMD_SEC_COMPANYFACTS_2488",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMD_SEC_COMPANYFACTS_2488_FREE_CASH_FLOW",
+            "period": null,
+            "source_id": "AMD_SEC_COMPANYFACTS_2488",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ],
+        "revenue": [
+          {
+            "confidence": "high",
+            "evidence_id": "AMD_SEC_COMPANYFACTS_2488_REVENUE_TTM",
+            "period": null,
+            "source_id": "AMD_SEC_COMPANYFACTS_2488",
+            "source_type": "sec_filing",
+            "value": 6413000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMD_SEC_revenue_FY2025_FY_0000002488-26-000018",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0000002488_0000002488-26-000018",
+            "source_type": "sec_filing",
+            "value": 34639000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMD_SEC_revenue_FY2025_Q2_0000002488-25-000108",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0000002488_0000002488-25-000108",
+            "source_type": "sec_filing",
+            "value": 15123000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMD_SEC_revenue_FY2025_Q2_0000002488-25-000108",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0000002488_0000002488-25-000108",
+            "source_type": "sec_filing",
+            "value": 7685000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMD_SEC_revenue_FY2025_Q3_0000002488-25-000166",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0000002488_0000002488-25-000166",
+            "source_type": "sec_filing",
+            "value": 24369000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMD_SEC_revenue_FY2025_Q3_0000002488-25-000166",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0000002488_0000002488-25-000166",
+            "source_type": "sec_filing",
+            "value": 9246000000.0
+          }
+        ],
+        "sbc": [
+          {
+            "confidence": "high",
+            "evidence_id": "AMD_SEC_DERIVED_SBC_TO_REVENUE",
+            "period": "TTM",
+            "source_id": "SEC_0000002488_DERIVED_SBC_TO_REVENUE",
+            "source_type": "sec_filing",
+            "value": 0.05878808287400528
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMD_SEC_COMPANYFACTS_2488_SBC_TO_REVENUE",
+            "period": null,
+            "source_id": "AMD_SEC_COMPANYFACTS_2488",
+            "source_type": "sec_filing",
+            "value": 0.22064556369873695
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMD_SEC_COMPANYFACTS_2488_SBC_TTM",
+            "period": null,
+            "source_id": "AMD_SEC_COMPANYFACTS_2488",
+            "source_type": "sec_filing",
+            "value": 1415000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMD_SEC_sbc_FY2025_FY_0000002488-26-000018",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0000002488_0000002488-26-000018",
+            "source_type": "sec_filing",
+            "value": 1638000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMD_SEC_sbc_FY2025_Q1_0000002488-25-000047",
+            "period": "FY2025_Q1",
+            "source_id": "SEC_0000002488_0000002488-25-000047",
+            "source_type": "sec_filing",
+            "value": 364000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMD_SEC_sbc_FY2025_Q2_0000002488-25-000108",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0000002488_0000002488-25-000108",
+            "source_type": "sec_filing",
+            "value": 733000000.0
+          }
+        ],
+        "shares": [
+          {
+            "confidence": "high",
+            "evidence_id": "AMD_SEC_shares_diluted_FY2025_FY_0000002488-26-000018",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0000002488_0000002488-26-000018",
+            "source_type": "sec_filing",
+            "value": 1636000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMD_SEC_shares_diluted_FY2025_Q2_0000002488-25-000108",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0000002488_0000002488-25-000108",
+            "source_type": "sec_filing",
+            "value": 1628000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMD_SEC_shares_diluted_FY2025_Q2_0000002488-25-000108",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0000002488_0000002488-25-000108",
+            "source_type": "sec_filing",
+            "value": 1630000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMD_SEC_shares_diluted_FY2025_Q3_0000002488-25-000166",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0000002488_0000002488-25-000166",
+            "source_type": "sec_filing",
+            "value": 1632000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMD_SEC_shares_diluted_FY2025_Q3_0000002488-25-000166",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0000002488_0000002488-25-000166",
+            "source_type": "sec_filing",
+            "value": 1641000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "AMD_SEC_COMPANYFACTS_2488_SHARES",
+            "period": null,
+            "source_id": "AMD_SEC_COMPANYFACTS_2488",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ]
+      },
+      "ticker": "AMD",
+      "verdict": "true_anomaly"
+    },
+    {
+      "enterprise_value": 723545413940.4297,
+      "ev_sales": 25.759030721650102,
+      "fcf_margin": 0.09622984086297127,
+      "fcf_ttm": 2703000000.0,
+      "fix_recommendation": "P/FCF is above hard threshold but could be a growth/semiconductor/software context issue; consider sector-aware warning band after validating FCF period.",
+      "manual_review_reason_codes": [
+        {
+          "code": "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+          "message": "P/FCF above 100x requires explicit explanation before publish.",
+          "metric": "price_to_fcf",
+          "reported": 270.48036031832396
+        }
+      ],
+      "market_cap": 731108413940.4297,
+      "price_to_fcf": 270.48036031832396,
+      "price_used": 640.2000122070312,
+      "quality_score": 76.0,
+      "revenue_ttm": 28089000000.0,
+      "sbc_to_revenue": 0.03268183274591477,
+      "sbc_ttm": 918000000.0,
+      "shares_used": 1142000000.0,
+      "source_evidence": {
+        "cash": [
+          {
+            "confidence": "high",
+            "evidence_id": "MU_SEC_COMPANYFACTS_723125_CASH_AND_EQUIVALENTS",
+            "period": null,
+            "source_id": "MU_SEC_COMPANYFACTS_723125",
+            "source_type": "sec_filing",
+            "value": 7563000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MU_SEC_COMPANYFACTS_723125_CASH_AND_INVESTMENTS",
+            "period": null,
+            "source_id": "MU_SEC_COMPANYFACTS_723125",
+            "source_type": "sec_filing",
+            "value": 7563000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MU_SEC_cash_and_equivalents_FY2025_FY_0000723125-25-000028",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0000723125_0000723125-25-000028",
+            "source_type": "sec_filing",
+            "value": 9646000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MU_SEC_cash_and_equivalents_FY2026_Q1_0000723125-25-000046",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0000723125_0000723125-25-000046",
+            "source_type": "sec_filing",
+            "value": 9731000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MU_SEC_cash_and_equivalents_FY2026_Q1_0000723125-25-000046",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0000723125_0000723125-25-000046",
+            "source_type": "sec_filing",
+            "value": 9732000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MU_SEC_cash_and_equivalents_FY2026_Q2_0000723125-26-000006",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0000723125_0000723125-26-000006",
+            "source_type": "sec_filing",
+            "value": 13908000000.0
+          }
+        ],
+        "debt": [
+          {
+            "confidence": "high",
+            "evidence_id": "MU_SEC_COMPANYFACTS_723125_DEBT",
+            "period": null,
+            "source_id": "MU_SEC_COMPANYFACTS_723125",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MU_SEC_COMPANYFACTS_723125_TOTAL_DEBT",
+            "period": null,
+            "source_id": "MU_SEC_COMPANYFACTS_723125",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ],
+        "fcf": [
+          {
+            "confidence": "high",
+            "evidence_id": "MU_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+            "period": "TTM",
+            "source_id": "SEC_0000723125_DERIVED_FCF",
+            "source_type": "sec_filing",
+            "value": 13081000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MU_SEC_COMPANYFACTS_723125_FREE_CASH_FLOW_TTM",
+            "period": null,
+            "source_id": "MU_SEC_COMPANYFACTS_723125",
+            "source_type": "sec_filing",
+            "value": 2703000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MU_SEC_COMPANYFACTS_723125_FCF",
+            "period": null,
+            "source_id": "MU_SEC_COMPANYFACTS_723125",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MU_SEC_COMPANYFACTS_723125_FREE_CASH_FLOW",
+            "period": null,
+            "source_id": "MU_SEC_COMPANYFACTS_723125",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ],
+        "revenue": [
+          {
+            "confidence": "high",
+            "evidence_id": "MU_SEC_COMPANYFACTS_723125_REVENUE_TTM",
+            "period": null,
+            "source_id": "MU_SEC_COMPANYFACTS_723125",
+            "source_type": "sec_filing",
+            "value": 28089000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MU_SEC_revenue_FY2025_FY_0000723125-25-000028",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0000723125_0000723125-25-000028",
+            "source_type": "sec_filing",
+            "value": 37378000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MU_SEC_revenue_FY2025_Q3_0000723125-25-000021",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0000723125_0000723125-25-000021",
+            "source_type": "sec_filing",
+            "value": 9301000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MU_SEC_revenue_FY2026_Q1_0000723125-25-000046",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0000723125_0000723125-25-000046",
+            "source_type": "sec_filing",
+            "value": 13643000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MU_SEC_revenue_FY2026_Q2_0000723125-26-000006",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0000723125_0000723125-26-000006",
+            "source_type": "sec_filing",
+            "value": 37503000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MU_SEC_revenue_FY2026_Q2_0000723125-26-000006",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0000723125_0000723125-26-000006",
+            "source_type": "sec_filing",
+            "value": 23860000000.0
+          }
+        ],
+        "sbc": [
+          {
+            "confidence": "high",
+            "evidence_id": "MU_SEC_DERIVED_SBC_TO_REVENUE",
+            "period": "TTM",
+            "source_id": "SEC_0000723125_DERIVED_SBC_TO_REVENUE",
+            "source_type": "sec_filing",
+            "value": 0.02467173544308302
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MU_SEC_COMPANYFACTS_723125_SBC_TO_REVENUE",
+            "period": null,
+            "source_id": "MU_SEC_COMPANYFACTS_723125",
+            "source_type": "sec_filing",
+            "value": 0.03268183274591477
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MU_SEC_COMPANYFACTS_723125_SBC_TTM",
+            "period": null,
+            "source_id": "MU_SEC_COMPANYFACTS_723125",
+            "source_type": "sec_filing",
+            "value": 918000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MU_SEC_sbc_FY2025_FY_0000723125-25-000028",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0000723125_0000723125-25-000028",
+            "source_type": "sec_filing",
+            "value": 972000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MU_SEC_sbc_FY2025_Q3_0000723125-25-000021",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0000723125_0000723125-25-000021",
+            "source_type": "sec_filing",
+            "value": 722000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MU_SEC_sbc_FY2026_Q1_0000723125-25-000046",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0000723125_0000723125-25-000046",
+            "source_type": "sec_filing",
+            "value": 290000000.0
+          }
+        ],
+        "shares": [
+          {
+            "confidence": "high",
+            "evidence_id": "MU_SEC_shares_diluted_FY2025_FY_0000723125-25-000028",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0000723125_0000723125-25-000028",
+            "source_type": "sec_filing",
+            "value": 1125000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MU_SEC_shares_diluted_FY2025_Q3_0000723125-25-000021",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0000723125_0000723125-25-000021",
+            "source_type": "sec_filing",
+            "value": 1125000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MU_SEC_shares_diluted_FY2026_Q1_0000723125-25-000046",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0000723125_0000723125-25-000046",
+            "source_type": "sec_filing",
+            "value": 1138000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MU_SEC_shares_diluted_FY2026_Q2_0000723125-26-000006",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0000723125_0000723125-26-000006",
+            "source_type": "sec_filing",
+            "value": 1140000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MU_SEC_shares_diluted_FY2026_Q2_0000723125-26-000006",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0000723125_0000723125-26-000006",
+            "source_type": "sec_filing",
+            "value": 1142000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MU_SEC_COMPANYFACTS_723125_SHARES",
+            "period": null,
+            "source_id": "MU_SEC_COMPANYFACTS_723125",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ]
+      },
+      "ticker": "MU",
+      "verdict": "guard_too_strict"
+    },
+    {
+      "enterprise_value": 145893775000.0,
+      "ev_sales": 19.473274826481582,
+      "fcf_margin": 0.10527229044313935,
+      "fcf_ttm": 788700000.0,
+      "fix_recommendation": "P/FCF is above hard threshold but could be a growth/semiconductor/software context issue; consider sector-aware warning band after validating FCF period.",
+      "manual_review_reason_codes": [
+        {
+          "code": "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+          "message": "P/FCF above 100x requires explicit explanation before publish.",
+          "metric": "price_to_fcf",
+          "reported": 186.08073411943704
+        }
+      ],
+      "market_cap": 146761875000.0,
+      "price_to_fcf": 186.08073411943704,
+      "price_used": 168.75,
+      "quality_score": 76.0,
+      "revenue_ttm": 7492000000.0,
+      "sbc_to_revenue": 0.0745194874532835,
+      "sbc_ttm": 558300000.0,
+      "shares_used": 869700000.0,
+      "source_evidence": {
+        "cash": [
+          {
+            "confidence": "high",
+            "evidence_id": "MRVL_SEC_COMPANYFACTS_1835632_CASH_AND_EQUIVALENTS",
+            "period": null,
+            "source_id": "MRVL_SEC_COMPANYFACTS_1835632",
+            "source_type": "sec_filing",
+            "value": 868100000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MRVL_SEC_COMPANYFACTS_1835632_CASH_AND_INVESTMENTS",
+            "period": null,
+            "source_id": "MRVL_SEC_COMPANYFACTS_1835632",
+            "source_type": "sec_filing",
+            "value": 868100000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MRVL_SEC_cash_and_equivalents_FY2026_FY_0001835632-26-000011",
+            "period": "FY2026_FY",
+            "source_id": "SEC_0001835632_0001835632-26-000011",
+            "source_type": "sec_filing",
+            "value": 2638800000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MRVL_SEC_cash_and_equivalents_FY2026_Q2_0001835632-25-000189",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0001835632_0001835632-25-000189",
+            "source_type": "sec_filing",
+            "value": 1224400000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MRVL_SEC_cash_and_equivalents_FY2026_Q2_0001835632-25-000189",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0001835632_0001835632-25-000189",
+            "source_type": "sec_filing",
+            "value": 1224400000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MRVL_SEC_cash_and_equivalents_FY2026_Q3_0001835632-25-000197",
+            "period": "FY2026_Q3",
+            "source_id": "SEC_0001835632_0001835632-25-000197",
+            "source_type": "sec_filing",
+            "value": 2714500000.0
+          }
+        ],
+        "debt": [
+          {
+            "confidence": "high",
+            "evidence_id": "MRVL_SEC_COMPANYFACTS_1835632_DEBT",
+            "period": null,
+            "source_id": "MRVL_SEC_COMPANYFACTS_1835632",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MRVL_SEC_COMPANYFACTS_1835632_TOTAL_DEBT",
+            "period": null,
+            "source_id": "MRVL_SEC_COMPANYFACTS_1835632",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ],
+        "fcf": [
+          {
+            "confidence": "high",
+            "evidence_id": "MRVL_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+            "period": "TTM",
+            "source_id": "SEC_0001835632_DERIVED_FCF",
+            "source_type": "sec_filing",
+            "value": 2931800000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MRVL_SEC_COMPANYFACTS_1835632_FREE_CASH_FLOW_TTM",
+            "period": null,
+            "source_id": "MRVL_SEC_COMPANYFACTS_1835632",
+            "source_type": "sec_filing",
+            "value": 788700000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MRVL_SEC_COMPANYFACTS_1835632_FCF",
+            "period": null,
+            "source_id": "MRVL_SEC_COMPANYFACTS_1835632",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MRVL_SEC_COMPANYFACTS_1835632_FREE_CASH_FLOW",
+            "period": null,
+            "source_id": "MRVL_SEC_COMPANYFACTS_1835632",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ],
+        "revenue": [
+          {
+            "confidence": "high",
+            "evidence_id": "MRVL_SEC_COMPANYFACTS_1835632_REVENUE_TTM",
+            "period": null,
+            "source_id": "MRVL_SEC_COMPANYFACTS_1835632",
+            "source_type": "sec_filing",
+            "value": 7492000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MRVL_SEC_revenue_FY2026_FY_0001835632-26-000011",
+            "period": "FY2026_FY",
+            "source_id": "SEC_0001835632_0001835632-26-000011",
+            "source_type": "sec_filing",
+            "value": 8194600000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MRVL_SEC_revenue_FY2026_Q2_0001835632-25-000189",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0001835632_0001835632-25-000189",
+            "source_type": "sec_filing",
+            "value": 3901400000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MRVL_SEC_revenue_FY2026_Q2_0001835632-25-000189",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0001835632_0001835632-25-000189",
+            "source_type": "sec_filing",
+            "value": 2006100000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MRVL_SEC_revenue_FY2026_Q3_0001835632-25-000197",
+            "period": "FY2026_Q3",
+            "source_id": "SEC_0001835632_0001835632-25-000197",
+            "source_type": "sec_filing",
+            "value": 5975900000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MRVL_SEC_revenue_FY2026_Q3_0001835632-25-000197",
+            "period": "FY2026_Q3",
+            "source_id": "SEC_0001835632_0001835632-25-000197",
+            "source_type": "sec_filing",
+            "value": 2074500000.0
+          }
+        ],
+        "sbc": [
+          {
+            "confidence": "high",
+            "evidence_id": "MRVL_SEC_DERIVED_SBC_TO_REVENUE",
+            "period": "TTM",
+            "source_id": "SEC_0001835632_DERIVED_SBC_TO_REVENUE",
+            "source_type": "sec_filing",
+            "value": 0.09567341792103397
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MRVL_SEC_COMPANYFACTS_1835632_SBC_TO_REVENUE",
+            "period": null,
+            "source_id": "MRVL_SEC_COMPANYFACTS_1835632",
+            "source_type": "sec_filing",
+            "value": 0.0745194874532835
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MRVL_SEC_COMPANYFACTS_1835632_SBC_TTM",
+            "period": null,
+            "source_id": "MRVL_SEC_COMPANYFACTS_1835632",
+            "source_type": "sec_filing",
+            "value": 558300000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MRVL_SEC_sbc_FY2026_FY_0001835632-26-000011",
+            "period": "FY2026_FY",
+            "source_id": "SEC_0001835632_0001835632-26-000011",
+            "source_type": "sec_filing",
+            "value": 590800000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MRVL_SEC_sbc_FY2026_Q1_0001835632-25-000117",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0001835632_0001835632-25-000117",
+            "source_type": "sec_filing",
+            "value": 142100000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MRVL_SEC_sbc_FY2026_Q2_0001835632-25-000189",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0001835632_0001835632-25-000189",
+            "source_type": "sec_filing",
+            "value": 295700000.0
+          }
+        ],
+        "shares": [
+          {
+            "confidence": "high",
+            "evidence_id": "MRVL_SEC_shares_diluted_FY2026_FY_0001835632-26-000011",
+            "period": "FY2026_FY",
+            "source_id": "SEC_0001835632_0001835632-26-000011",
+            "source_type": "sec_filing",
+            "value": 869700000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MRVL_SEC_shares_diluted_FY2026_Q2_0001835632-25-000189",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0001835632_0001835632-25-000189",
+            "source_type": "sec_filing",
+            "value": 873000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MRVL_SEC_shares_diluted_FY2026_Q2_0001835632-25-000189",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0001835632_0001835632-25-000189",
+            "source_type": "sec_filing",
+            "value": 870400000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MRVL_SEC_shares_diluted_FY2026_Q3_0001835632-25-000197",
+            "period": "FY2026_Q3",
+            "source_id": "SEC_0001835632_0001835632-25-000197",
+            "source_type": "sec_filing",
+            "value": 869900000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MRVL_SEC_shares_diluted_FY2026_Q3_0001835632-25-000197",
+            "period": "FY2026_Q3",
+            "source_id": "SEC_0001835632_0001835632-25-000197",
+            "source_type": "sec_filing",
+            "value": 863700000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MRVL_SEC_COMPANYFACTS_1835632_SHARES",
+            "period": null,
+            "source_id": "MRVL_SEC_COMPANYFACTS_1835632",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ]
+      },
+      "ticker": "MRVL",
+      "verdict": "guard_too_strict"
+    },
+    {
+      "enterprise_value": 213973155557.25098,
+      "ev_sales": 117.8511582021208,
+      "fcf_margin": 1.0965729650775327,
+      "fcf_ttm": 1990962000.0,
+      "fix_recommendation": "Revenue denominator is likely not a true TTM/annual comparable period; rerun PeriodResolver for annual vs quarterly/YTD facts and only derive TTM from four comparable duration facts.",
+      "manual_review_reason_codes": [
+        {
+          "code": "FINANCIAL_SANITY_EV_SALES_ABSURD",
+          "message": "EV/Sales above 100x indicates a likely unit, share-count, or revenue-period anomaly.",
+          "metric": "ev_to_sales",
+          "reported": 117.8511582021208
+        },
+        {
+          "code": "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+          "message": "P/FCF above 100x requires explicit explanation before publish.",
+          "metric": "price_to_fcf",
+          "reported": 109.06770473632896
+        },
+        {
+          "code": "FINANCIAL_SANITY_FCF_MARGIN_ANOMALY",
+          "message": "FCF margin above 40% for this company profile indicates a likely FCF or period reconciliation anomaly.",
+          "metric": "fcf_margin_ttm",
+          "reported": 1.0965729650775327
+        },
+        {
+          "code": "FINANCIAL_SANITY_EV_SALES_ABSURD",
+          "message": "Market cap to revenue above 100x indicates a likely unit or period anomaly.",
+          "metric": "market_cap_to_revenue",
+          "reported": 119.6006963769171
+        }
+      ],
+      "market_cap": 217149655557.25098,
+      "price_to_fcf": 109.06770473632896,
+      "price_used": 170.22000122070312,
+      "quality_score": 34.0,
+      "revenue_ttm": 1815622000.0,
+      "sbc_to_revenue": 0.17090341491786287,
+      "sbc_ttm": 310296000.0,
+      "shares_used": 1275700000.0,
+      "source_evidence": {
+        "cash": [
+          {
+            "confidence": "high",
+            "evidence_id": "ANET_SEC_COMPANYFACTS_1596532_CASH_AND_EQUIVALENTS",
+            "period": null,
+            "source_id": "ANET_SEC_COMPANYFACTS_1596532",
+            "source_type": "sec_filing",
+            "value": 3176500000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "ANET_SEC_COMPANYFACTS_1596532_CASH_AND_INVESTMENTS",
+            "period": null,
+            "source_id": "ANET_SEC_COMPANYFACTS_1596532",
+            "source_type": "sec_filing",
+            "value": 3176500000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "ANET_SEC_cash_and_equivalents_FY2025_FY_0001596532-26-000013",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0001596532_0001596532-26-000013",
+            "source_type": "sec_filing",
+            "value": 1965300000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "ANET_SEC_cash_and_equivalents_FY2025_Q2_0001596532-25-000216",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0001596532_0001596532-25-000216",
+            "source_type": "sec_filing",
+            "value": 2225500000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "ANET_SEC_cash_and_equivalents_FY2025_Q2_0001596532-25-000216",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0001596532_0001596532-25-000216",
+            "source_type": "sec_filing",
+            "value": 2226900000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "ANET_SEC_cash_and_equivalents_FY2025_Q3_0001596532-25-000286",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001596532_0001596532-25-000286",
+            "source_type": "sec_filing",
+            "value": 2326600000.0
+          }
+        ],
+        "debt": [
+          {
+            "confidence": "high",
+            "evidence_id": "ANET_SEC_COMPANYFACTS_1596532_DEBT",
+            "period": null,
+            "source_id": "ANET_SEC_COMPANYFACTS_1596532",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "ANET_SEC_COMPANYFACTS_1596532_TOTAL_DEBT",
+            "period": null,
+            "source_id": "ANET_SEC_COMPANYFACTS_1596532",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ],
+        "fcf": [
+          {
+            "confidence": "high",
+            "evidence_id": "ANET_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+            "period": "TTM",
+            "source_id": "SEC_0001596532_DERIVED_FCF",
+            "source_type": "sec_filing",
+            "value": 8087900000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "ANET_SEC_COMPANYFACTS_1596532_FREE_CASH_FLOW_TTM",
+            "period": null,
+            "source_id": "ANET_SEC_COMPANYFACTS_1596532",
+            "source_type": "sec_filing",
+            "value": 1990962000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "ANET_SEC_COMPANYFACTS_1596532_FCF",
+            "period": null,
+            "source_id": "ANET_SEC_COMPANYFACTS_1596532",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "ANET_SEC_COMPANYFACTS_1596532_FREE_CASH_FLOW",
+            "period": null,
+            "source_id": "ANET_SEC_COMPANYFACTS_1596532",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ],
+        "revenue": [
+          {
+            "confidence": "high",
+            "evidence_id": "ANET_SEC_COMPANYFACTS_1596532_REVENUE_TTM",
+            "period": null,
+            "source_id": "ANET_SEC_COMPANYFACTS_1596532",
+            "source_type": "sec_filing",
+            "value": 1815622000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "ANET_SEC_revenue_FY2025_FY_0001596532-26-000013",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0001596532_0001596532-26-000013",
+            "source_type": "sec_filing",
+            "value": 9005700000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "ANET_SEC_revenue_FY2025_Q2_0001596532-25-000216",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0001596532_0001596532-25-000216",
+            "source_type": "sec_filing",
+            "value": 4209600000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "ANET_SEC_revenue_FY2025_Q2_0001596532-25-000216",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0001596532_0001596532-25-000216",
+            "source_type": "sec_filing",
+            "value": 2204800000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "ANET_SEC_revenue_FY2025_Q3_0001596532-25-000286",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001596532_0001596532-25-000286",
+            "source_type": "sec_filing",
+            "value": 6517900000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "ANET_SEC_revenue_FY2025_Q3_0001596532-25-000286",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001596532_0001596532-25-000286",
+            "source_type": "sec_filing",
+            "value": 2308300000.0
+          }
+        ],
+        "sbc": [
+          {
+            "confidence": "high",
+            "evidence_id": "ANET_SEC_DERIVED_SBC_TO_REVENUE",
+            "period": "TTM",
+            "source_id": "SEC_0001596532_DERIVED_SBC_TO_REVENUE",
+            "source_type": "sec_filing",
+            "value": 0.054584465178536275
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "ANET_SEC_COMPANYFACTS_1596532_SBC_TO_REVENUE",
+            "period": null,
+            "source_id": "ANET_SEC_COMPANYFACTS_1596532",
+            "source_type": "sec_filing",
+            "value": 0.17090341491786287
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "ANET_SEC_COMPANYFACTS_1596532_SBC_TTM",
+            "period": null,
+            "source_id": "ANET_SEC_COMPANYFACTS_1596532",
+            "source_type": "sec_filing",
+            "value": 310296000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "ANET_SEC_sbc_FY2025_FY_0001596532-26-000013",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0001596532_0001596532-26-000013",
+            "source_type": "sec_filing",
+            "value": 439200000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "ANET_SEC_sbc_FY2025_Q1_0001596532-25-000106",
+            "period": "FY2025_Q1",
+            "source_id": "SEC_0001596532_0001596532-25-000106",
+            "source_type": "sec_filing",
+            "value": 93000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "ANET_SEC_sbc_FY2025_Q2_0001596532-25-000216",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0001596532_0001596532-25-000216",
+            "source_type": "sec_filing",
+            "value": 178200000.0
+          }
+        ],
+        "shares": [
+          {
+            "confidence": "high",
+            "evidence_id": "ANET_SEC_shares_diluted_FY2025_FY_0001596532-26-000013",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0001596532_0001596532-26-000013",
+            "source_type": "sec_filing",
+            "value": 1275700000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "ANET_SEC_shares_diluted_FY2025_Q2_0001596532-25-000216",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0001596532_0001596532-25-000216",
+            "source_type": "sec_filing",
+            "value": 1275200000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "ANET_SEC_shares_diluted_FY2025_Q2_0001596532-25-000216",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0001596532_0001596532-25-000216",
+            "source_type": "sec_filing",
+            "value": 1271200000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "ANET_SEC_shares_diluted_FY2025_Q3_0001596532-25-000286",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001596532_0001596532-25-000286",
+            "source_type": "sec_filing",
+            "value": 1275700000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "ANET_SEC_shares_diluted_FY2025_Q3_0001596532-25-000286",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001596532_0001596532-25-000286",
+            "source_type": "sec_filing",
+            "value": 1276600000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "ANET_SEC_COMPANYFACTS_1596532_SHARES",
+            "period": null,
+            "source_id": "ANET_SEC_COMPANYFACTS_1596532",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ]
+      },
+      "ticker": "ANET",
+      "verdict": "period_bug"
+    },
+    {
+      "enterprise_value": 21210482358.532715,
+      "ev_sales": 116.03108511232338,
+      "fcf_margin": 1.573156455142232,
+      "fcf_ttm": 287573000.0,
+      "fix_recommendation": "Revenue denominator is likely not a true TTM/annual comparable period; rerun PeriodResolver for annual vs quarterly/YTD facts and only derive TTM from four comparable duration facts.",
+      "manual_review_reason_codes": [
+        {
+          "code": "FINANCIAL_SANITY_EV_SALES_ABSURD",
+          "message": "EV/Sales above 100x indicates a likely unit, share-count, or revenue-period anomaly.",
+          "metric": "ev_to_sales",
+          "reported": 116.03108511232338
+        },
+        {
+          "code": "FINANCIAL_SANITY_EV_SALES_ABSURD",
+          "message": "Market cap to revenue above 100x indicates a likely unit or period anomaly.",
+          "metric": "market_cap_to_revenue",
+          "reported": 118.5274691385816
+        }
+      ],
+      "market_cap": 21666821358.532715,
+      "price_to_fcf": 75.3437261444319,
+      "price_used": 266.67999267578125,
+      "quality_score": 54.0,
+      "revenue_ttm": 182800000.0,
+      "sbc_to_revenue": 2.614398249452954,
+      "sbc_ttm": 477912000.0,
+      "shares_used": 81246520.0,
+      "source_evidence": {
+        "cash": [
+          {
+            "confidence": "high",
+            "evidence_id": "MDB_SEC_COMPANYFACTS_1441816_CASH_AND_EQUIVALENTS",
+            "period": null,
+            "source_id": "MDB_SEC_COMPANYFACTS_1441816",
+            "source_type": "sec_filing",
+            "value": 456339000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MDB_SEC_COMPANYFACTS_1441816_CASH_AND_INVESTMENTS",
+            "period": null,
+            "source_id": "MDB_SEC_COMPANYFACTS_1441816",
+            "source_type": "sec_filing",
+            "value": 456339000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MDB_SEC_cash_and_equivalents_FY2026_FY_0001628280-26-016799",
+            "period": "FY2026_FY",
+            "source_id": "SEC_0001441816_0001628280-26-016799",
+            "source_type": "sec_filing",
+            "value": 1086625000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MDB_SEC_cash_and_equivalents_FY2026_Q2_0001441816-25-000181",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0001441816_0001441816-25-000181",
+            "source_type": "sec_filing",
+            "value": 647139000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MDB_SEC_cash_and_equivalents_FY2026_Q2_0001441816-25-000181",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0001441816_0001441816-25-000181",
+            "source_type": "sec_filing",
+            "value": 650206000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MDB_SEC_cash_and_equivalents_FY2026_Q3_0001628280-25-054768",
+            "period": "FY2026_Q3",
+            "source_id": "SEC_0001441816_0001628280-25-054768",
+            "source_type": "sec_filing",
+            "value": 834092000.0
+          }
+        ],
+        "debt": [
+          {
+            "confidence": "high",
+            "evidence_id": "MDB_SEC_COMPANYFACTS_1441816_DEBT",
+            "period": null,
+            "source_id": "MDB_SEC_COMPANYFACTS_1441816",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MDB_SEC_COMPANYFACTS_1441816_TOTAL_DEBT",
+            "period": null,
+            "source_id": "MDB_SEC_COMPANYFACTS_1441816",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ],
+        "fcf": [
+          {
+            "confidence": "high",
+            "evidence_id": "MDB_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+            "period": "TTM",
+            "source_id": "SEC_0001441816_DERIVED_FCF",
+            "source_type": "sec_filing",
+            "value": 706004000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MDB_SEC_COMPANYFACTS_1441816_FREE_CASH_FLOW_TTM",
+            "period": null,
+            "source_id": "MDB_SEC_COMPANYFACTS_1441816",
+            "source_type": "sec_filing",
+            "value": 287573000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MDB_SEC_COMPANYFACTS_1441816_FCF",
+            "period": null,
+            "source_id": "MDB_SEC_COMPANYFACTS_1441816",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MDB_SEC_COMPANYFACTS_1441816_FREE_CASH_FLOW",
+            "period": null,
+            "source_id": "MDB_SEC_COMPANYFACTS_1441816",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ],
+        "revenue": [
+          {
+            "confidence": "high",
+            "evidence_id": "MDB_SEC_COMPANYFACTS_1441816_REVENUE_TTM",
+            "period": null,
+            "source_id": "MDB_SEC_COMPANYFACTS_1441816",
+            "source_type": "sec_filing",
+            "value": 182800000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MDB_SEC_revenue_FY2026_FY_0001628280-26-016799",
+            "period": "FY2026_FY",
+            "source_id": "SEC_0001441816_0001628280-26-016799",
+            "source_type": "sec_filing",
+            "value": 2463797000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MDB_SEC_revenue_FY2026_Q2_0001441816-25-000181",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0001441816_0001441816-25-000181",
+            "source_type": "sec_filing",
+            "value": 1140416000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MDB_SEC_revenue_FY2026_Q2_0001441816-25-000181",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0001441816_0001441816-25-000181",
+            "source_type": "sec_filing",
+            "value": 591402000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MDB_SEC_revenue_FY2026_Q3_0001628280-25-054768",
+            "period": "FY2026_Q3",
+            "source_id": "SEC_0001441816_0001628280-25-054768",
+            "source_type": "sec_filing",
+            "value": 1768725000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MDB_SEC_revenue_FY2026_Q3_0001628280-25-054768",
+            "period": "FY2026_Q3",
+            "source_id": "SEC_0001441816_0001628280-25-054768",
+            "source_type": "sec_filing",
+            "value": 628309000.0
+          }
+        ],
+        "sbc": [
+          {
+            "confidence": "high",
+            "evidence_id": "MDB_SEC_DERIVED_SBC_TO_REVENUE",
+            "period": "TTM",
+            "source_id": "SEC_0001441816_DERIVED_SBC_TO_REVENUE",
+            "source_type": "sec_filing",
+            "value": 0.2859441316859989
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MDB_SEC_COMPANYFACTS_1441816_SBC_TO_REVENUE",
+            "period": null,
+            "source_id": "MDB_SEC_COMPANYFACTS_1441816",
+            "source_type": "sec_filing",
+            "value": 2.614398249452954
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MDB_SEC_COMPANYFACTS_1441816_SBC_TTM",
+            "period": null,
+            "source_id": "MDB_SEC_COMPANYFACTS_1441816",
+            "source_type": "sec_filing",
+            "value": 477912000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MDB_SEC_sbc_FY2026_FY_0001628280-26-016799",
+            "period": "FY2026_FY",
+            "source_id": "SEC_0001441816_0001628280-26-016799",
+            "source_type": "sec_filing",
+            "value": 550454000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MDB_SEC_sbc_FY2026_Q1_0001441816-25-000118",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0001441816_0001441816-25-000118",
+            "source_type": "sec_filing",
+            "value": 132431000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MDB_SEC_sbc_FY2026_Q2_0001441816-25-000181",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0001441816_0001441816-25-000181",
+            "source_type": "sec_filing",
+            "value": 272831000.0
+          }
+        ],
+        "shares": [
+          {
+            "confidence": "high",
+            "evidence_id": "MDB_SEC_shares_diluted_FY2026_FY_0001628280-26-016799",
+            "period": "FY2026_FY",
+            "source_id": "SEC_0001441816_0001628280-26-016799",
+            "source_type": "sec_filing",
+            "value": 81246520.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "MDB_SEC_COMPANYFACTS_1441816_SHARES",
+            "period": null,
+            "source_id": "MDB_SEC_COMPANYFACTS_1441816",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ]
+      },
+      "ticker": "MDB",
+      "verdict": "period_bug"
+    },
+    {
+      "enterprise_value": 116302790974.1211,
+      "ev_sales": null,
+      "fcf_margin": null,
+      "fcf_ttm": 1109157000.0,
+      "fix_recommendation": "P/FCF is above hard threshold but could be a growth/semiconductor/software context issue; consider sector-aware warning band after validating FCF period.",
+      "manual_review_reason_codes": [
+        {
+          "code": "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+          "message": "P/FCF above 100x requires explicit explanation before publish.",
+          "metric": "price_to_fcf",
+          "reported": 107.65561680999272
+        }
+      ],
+      "market_cap": 119406980974.1211,
+      "price_to_fcf": 107.65561680999272,
+      "price_used": 476.5299987792969,
+      "quality_score": 76.0,
+      "revenue_ttm": null,
+      "sbc_to_revenue": null,
+      "sbc_ttm": 698441000.0,
+      "shares_used": 250576000.0,
+      "source_evidence": {
+        "cash": [
+          {
+            "confidence": "high",
+            "evidence_id": "CRWD_SEC_COMPANYFACTS_1535527_CASH_AND_EQUIVALENTS",
+            "period": null,
+            "source_id": "CRWD_SEC_COMPANYFACTS_1535527",
+            "source_type": "sec_filing",
+            "value": 2456924000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "CRWD_SEC_COMPANYFACTS_1535527_CASH_AND_INVESTMENTS",
+            "period": null,
+            "source_id": "CRWD_SEC_COMPANYFACTS_1535527",
+            "source_type": "sec_filing",
+            "value": 3104190000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "CRWD_SEC_cash_and_equivalents_FY2026_FY_0001535527-26-000010",
+            "period": "FY2026_FY",
+            "source_id": "SEC_0001535527_0001535527-26-000010",
+            "source_type": "sec_filing",
+            "value": 5314617000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "CRWD_SEC_cash_and_equivalents_FY2026_Q2_0001535527-25-000025",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0001535527_0001535527-25-000025",
+            "source_type": "sec_filing",
+            "value": 4972436000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "CRWD_SEC_cash_and_equivalents_FY2026_Q2_0001535527-25-000025",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0001535527_0001535527-25-000025",
+            "source_type": "sec_filing",
+            "value": 4973912000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "CRWD_SEC_cash_and_equivalents_FY2026_Q3_0001535527-25-000033",
+            "period": "FY2026_Q3",
+            "source_id": "SEC_0001535527_0001535527-25-000033",
+            "source_type": "sec_filing",
+            "value": 4801083000.0
+          }
+        ],
+        "debt": [
+          {
+            "confidence": "high",
+            "evidence_id": "CRWD_SEC_COMPANYFACTS_1535527_DEBT",
+            "period": null,
+            "source_id": "CRWD_SEC_COMPANYFACTS_1535527",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "CRWD_SEC_COMPANYFACTS_1535527_TOTAL_DEBT",
+            "period": null,
+            "source_id": "CRWD_SEC_COMPANYFACTS_1535527",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ],
+        "fcf": [
+          {
+            "confidence": "high",
+            "evidence_id": "CRWD_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+            "period": "TTM",
+            "source_id": "SEC_0001535527_DERIVED_FCF",
+            "source_type": "sec_filing",
+            "value": 2682248000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "CRWD_SEC_COMPANYFACTS_1535527_FREE_CASH_FLOW_TTM",
+            "period": null,
+            "source_id": "CRWD_SEC_COMPANYFACTS_1535527",
+            "source_type": "sec_filing",
+            "value": 1109157000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "CRWD_SEC_COMPANYFACTS_1535527_FCF",
+            "period": null,
+            "source_id": "CRWD_SEC_COMPANYFACTS_1535527",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "CRWD_SEC_COMPANYFACTS_1535527_FREE_CASH_FLOW",
+            "period": null,
+            "source_id": "CRWD_SEC_COMPANYFACTS_1535527",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ],
+        "revenue": [
+          {
+            "confidence": "high",
+            "evidence_id": "CRWD_SEC_COMPANYFACTS_1535527_REVENUE",
+            "period": null,
+            "source_id": "CRWD_SEC_COMPANYFACTS_1535527",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "CRWD_SEC_COMPANYFACTS_1535527_REVENUE_TTM",
+            "period": null,
+            "source_id": "CRWD_SEC_COMPANYFACTS_1535527",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "CRWD_SEC_COMPANYFACTS_1535527_SALES",
+            "period": null,
+            "source_id": "CRWD_SEC_COMPANYFACTS_1535527",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ],
+        "sbc": [
+          {
+            "confidence": "high",
+            "evidence_id": "CRWD_SEC_COMPANYFACTS_1535527_SBC_TTM",
+            "period": null,
+            "source_id": "CRWD_SEC_COMPANYFACTS_1535527",
+            "source_type": "sec_filing",
+            "value": 698441000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "CRWD_SEC_sbc_FY2025_Q1_0001535527-25-000019",
+            "period": "FY2025_Q1",
+            "source_id": "SEC_0001535527_0001535527-25-000019",
+            "source_type": "sec_filing",
+            "value": 253604000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "CRWD_SEC_sbc_FY2026_FY_0001535527-26-000010",
+            "period": "FY2026_FY",
+            "source_id": "SEC_0001535527_0001535527-26-000010",
+            "source_type": "sec_filing",
+            "value": 1096679000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "CRWD_SEC_sbc_FY2026_Q2_0001535527-25-000025",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0001535527_0001535527-25-000025",
+            "source_type": "sec_filing",
+            "value": 540757000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "CRWD_SEC_sbc_FY2026_Q3_0001535527-25-000033",
+            "period": "FY2026_Q3",
+            "source_id": "SEC_0001535527_0001535527-25-000033",
+            "source_type": "sec_filing",
+            "value": 592890000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "CRWD_SEC_sbc_FY2026_Q3_0001535527-25-000033",
+            "period": "FY2026_Q3",
+            "source_id": "SEC_0001535527_0001535527-25-000033",
+            "source_type": "sec_filing",
+            "value": 822728000.0
+          }
+        ],
+        "shares": [
+          {
+            "confidence": "high",
+            "evidence_id": "CRWD_SEC_shares_diluted_FY2026_FY_0001535527-26-000010",
+            "period": "FY2026_FY",
+            "source_id": "SEC_0001535527_0001535527-26-000010",
+            "source_type": "sec_filing",
+            "value": 250576000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "CRWD_SEC_shares_diluted_FY2026_Q2_0001535527-25-000025",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0001535527_0001535527-25-000025",
+            "source_type": "sec_filing",
+            "value": 249182000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "CRWD_SEC_shares_diluted_FY2026_Q2_0001535527-25-000025",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0001535527_0001535527-25-000025",
+            "source_type": "sec_filing",
+            "value": 249909000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "CRWD_SEC_shares_diluted_FY2026_Q3_0001535527-25-000033",
+            "period": "FY2026_Q3",
+            "source_id": "SEC_0001535527_0001535527-25-000033",
+            "source_type": "sec_filing",
+            "value": 249905000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "CRWD_SEC_shares_diluted_FY2026_Q3_0001535527-25-000033",
+            "period": "FY2026_Q3",
+            "source_id": "SEC_0001535527_0001535527-25-000033",
+            "source_type": "sec_filing",
+            "value": 251326000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "CRWD_SEC_COMPANYFACTS_1535527_SHARES",
+            "period": null,
+            "source_id": "CRWD_SEC_COMPANYFACTS_1535527",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ]
+      },
+      "ticker": "CRWD",
+      "verdict": "guard_too_strict"
+    },
+    {
+      "enterprise_value": 84978636478.08838,
+      "ev_sales": 42.842511907207204,
+      "fcf_margin": 0.08157954174212205,
+      "fcf_ttm": 161814000.0,
+      "fix_recommendation": "P/FCF is extremely high even without other period red flags; keep as valuation-risk manual review unless FCF source/period is proven wrong.",
+      "manual_review_reason_codes": [
+        {
+          "code": "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+          "message": "P/FCF above 100x requires explicit explanation before publish.",
+          "metric": "price_to_fcf",
+          "reported": 526.3113357193345
+        }
+      ],
+      "market_cap": 85164542478.08838,
+      "price_to_fcf": 526.3113357193345,
+      "price_used": 244.42999267578125,
+      "quality_score": 77.0,
+      "revenue_ttm": 1983512000.0,
+      "sbc_to_revenue": 0.1474062168517256,
+      "sbc_ttm": 292382000.0,
+      "shares_used": 348421000.0,
+      "source_evidence": {
+        "cash": [
+          {
+            "confidence": "high",
+            "evidence_id": "NET_SEC_COMPANYFACTS_1477333_CASH_AND_EQUIVALENTS",
+            "period": null,
+            "source_id": "NET_SEC_COMPANYFACTS_1477333",
+            "source_type": "sec_filing",
+            "value": 185906000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NET_SEC_COMPANYFACTS_1477333_CASH_AND_INVESTMENTS",
+            "period": null,
+            "source_id": "NET_SEC_COMPANYFACTS_1477333",
+            "source_type": "sec_filing",
+            "value": 185906000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NET_SEC_cash_and_equivalents_FY2025_FY_0001477333-26-000016",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0001477333_0001477333-26-000016",
+            "source_type": "sec_filing",
+            "value": 954357000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NET_SEC_cash_and_equivalents_FY2025_Q2_0001477333-25-000137",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0001477333_0001477333-25-000137",
+            "source_type": "sec_filing",
+            "value": 1518608000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NET_SEC_cash_and_equivalents_FY2025_Q2_0001477333-25-000137",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0001477333_0001477333-25-000137",
+            "source_type": "sec_filing",
+            "value": 1525456000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NET_SEC_cash_and_equivalents_FY2025_Q3_0001477333-25-000141",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001477333_0001477333-25-000141",
+            "source_type": "sec_filing",
+            "value": 1052644000.0
+          }
+        ],
+        "debt": [
+          {
+            "confidence": "high",
+            "evidence_id": "NET_SEC_COMPANYFACTS_1477333_DEBT",
+            "period": null,
+            "source_id": "NET_SEC_COMPANYFACTS_1477333",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NET_SEC_COMPANYFACTS_1477333_TOTAL_DEBT",
+            "period": null,
+            "source_id": "NET_SEC_COMPANYFACTS_1477333",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ],
+        "fcf": [
+          {
+            "confidence": "high",
+            "evidence_id": "NET_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+            "period": "TTM",
+            "source_id": "SEC_0001477333_DERIVED_FCF",
+            "source_type": "sec_filing",
+            "value": 483202000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NET_SEC_COMPANYFACTS_1477333_FREE_CASH_FLOW_TTM",
+            "period": null,
+            "source_id": "NET_SEC_COMPANYFACTS_1477333",
+            "source_type": "sec_filing",
+            "value": 161814000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NET_SEC_COMPANYFACTS_1477333_FCF",
+            "period": null,
+            "source_id": "NET_SEC_COMPANYFACTS_1477333",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NET_SEC_COMPANYFACTS_1477333_FREE_CASH_FLOW",
+            "period": null,
+            "source_id": "NET_SEC_COMPANYFACTS_1477333",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ],
+        "revenue": [
+          {
+            "confidence": "high",
+            "evidence_id": "NET_SEC_COMPANYFACTS_1477333_REVENUE_TTM",
+            "period": null,
+            "source_id": "NET_SEC_COMPANYFACTS_1477333",
+            "source_type": "sec_filing",
+            "value": 1983512000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NET_SEC_revenue_FY2025_FY_0001477333-26-000016",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0001477333_0001477333-26-000016",
+            "source_type": "sec_filing",
+            "value": 2167937000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NET_SEC_revenue_FY2025_Q2_0001477333-25-000137",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0001477333_0001477333-25-000137",
+            "source_type": "sec_filing",
+            "value": 991403000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NET_SEC_revenue_FY2025_Q2_0001477333-25-000137",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0001477333_0001477333-25-000137",
+            "source_type": "sec_filing",
+            "value": 512316000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NET_SEC_revenue_FY2025_Q3_0001477333-25-000141",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001477333_0001477333-25-000141",
+            "source_type": "sec_filing",
+            "value": 1553430000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NET_SEC_revenue_FY2025_Q3_0001477333-25-000141",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001477333_0001477333-25-000141",
+            "source_type": "sec_filing",
+            "value": 562027000.0
+          }
+        ],
+        "sbc": [
+          {
+            "confidence": "high",
+            "evidence_id": "NET_SEC_DERIVED_SBC_TO_REVENUE",
+            "period": "TTM",
+            "source_id": "SEC_0001477333_DERIVED_SBC_TO_REVENUE",
+            "source_type": "sec_filing",
+            "value": 0.24459849424288843
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NET_SEC_COMPANYFACTS_1477333_SBC_TO_REVENUE",
+            "period": null,
+            "source_id": "NET_SEC_COMPANYFACTS_1477333",
+            "source_type": "sec_filing",
+            "value": 0.1474062168517256
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NET_SEC_COMPANYFACTS_1477333_SBC_TTM",
+            "period": null,
+            "source_id": "NET_SEC_COMPANYFACTS_1477333",
+            "source_type": "sec_filing",
+            "value": 292382000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NET_SEC_sbc_FY2025_FY_0001477333-26-000016",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0001477333_0001477333-26-000016",
+            "source_type": "sec_filing",
+            "value": 451454000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NET_SEC_sbc_FY2025_Q1_0001477333-25-000082",
+            "period": "FY2025_Q1",
+            "source_id": "SEC_0001477333_0001477333-25-000082",
+            "source_type": "sec_filing",
+            "value": 95535000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NET_SEC_sbc_FY2025_Q2_0001477333-25-000137",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0001477333_0001477333-25-000137",
+            "source_type": "sec_filing",
+            "value": 217912000.0
+          }
+        ],
+        "shares": [
+          {
+            "confidence": "high",
+            "evidence_id": "NET_SEC_shares_diluted_FY2025_FY_0001477333-26-000016",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0001477333_0001477333-26-000016",
+            "source_type": "sec_filing",
+            "value": 348421000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NET_SEC_shares_diluted_FY2025_Q2_0001477333-25-000137",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0001477333_0001477333-25-000137",
+            "source_type": "sec_filing",
+            "value": 346605000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NET_SEC_shares_diluted_FY2025_Q2_0001477333-25-000137",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0001477333_0001477333-25-000137",
+            "source_type": "sec_filing",
+            "value": 347489000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NET_SEC_shares_diluted_FY2025_Q3_0001477333-25-000141",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001477333_0001477333-25-000141",
+            "source_type": "sec_filing",
+            "value": 347519000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NET_SEC_shares_diluted_FY2025_Q3_0001477333-25-000141",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001477333_0001477333-25-000141",
+            "source_type": "sec_filing",
+            "value": 349312000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NET_SEC_COMPANYFACTS_1477333_SHARES",
+            "period": null,
+            "source_id": "NET_SEC_COMPANYFACTS_1477333",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ]
+      },
+      "ticker": "NET",
+      "verdict": "true_anomaly"
+    },
+    {
+      "enterprise_value": 128884776962.28026,
+      "ev_sales": 55.20399921286686,
+      "fcf_margin": null,
+      "fcf_ttm": null,
+      "fix_recommendation": "SBC/Revenue guard fired near software profile boundaries; verify revenue period first, then either add sector context or keep manual review if ratio remains above 30%.",
+      "manual_review_reason_codes": [
+        {
+          "code": "FINANCIAL_SANITY_SBC_REVENUE_ANOMALY",
+          "message": "SBC/Revenue above 30% for a mega-cap or non-SaaS profile requires manual reconciliation.",
+          "metric": "sbc_to_revenue",
+          "reported": 0.5269627789437615
+        }
+      ],
+      "market_cap": 130809776962.28026,
+      "price_to_fcf": null,
+      "price_used": 183.97999572753903,
+      "quality_score": 73.0,
+      "revenue_ttm": 2334700000.0,
+      "sbc_to_revenue": 0.5269627789437615,
+      "sbc_ttm": 1230300000.0,
+      "shares_used": 711000000.0,
+      "source_evidence": {
+        "cash": [
+          {
+            "confidence": "high",
+            "evidence_id": "PANW_SEC_COMPANYFACTS_1327567_CASH_AND_EQUIVALENTS",
+            "period": null,
+            "source_id": "PANW_SEC_COMPANYFACTS_1327567",
+            "source_type": "sec_filing",
+            "value": 1547000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PANW_SEC_COMPANYFACTS_1327567_CASH_AND_INVESTMENTS",
+            "period": null,
+            "source_id": "PANW_SEC_COMPANYFACTS_1327567",
+            "source_type": "sec_filing",
+            "value": 1925000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PANW_SEC_cash_and_equivalents_FY2025_FY_0001327567-25-000027",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0001327567_0001327567-25-000027",
+            "source_type": "sec_filing",
+            "value": 2279200000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PANW_SEC_cash_and_equivalents_FY2026_Q1_0001327567-25-000035",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0001327567_0001327567-25-000035",
+            "source_type": "sec_filing",
+            "value": 3066000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PANW_SEC_cash_and_equivalents_FY2026_Q1_0001327567-25-000035",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0001327567_0001327567-25-000035",
+            "source_type": "sec_filing",
+            "value": 3075000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PANW_SEC_cash_and_equivalents_FY2026_Q2_0001327567-26-000005",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0001327567_0001327567-26-000005",
+            "source_type": "sec_filing",
+            "value": 4158000000.0
+          }
+        ],
+        "debt": [
+          {
+            "confidence": "high",
+            "evidence_id": "PANW_SEC_COMPANYFACTS_1327567_DEBT",
+            "period": null,
+            "source_id": "PANW_SEC_COMPANYFACTS_1327567",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PANW_SEC_COMPANYFACTS_1327567_TOTAL_DEBT",
+            "period": null,
+            "source_id": "PANW_SEC_COMPANYFACTS_1327567",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ],
+        "fcf": [
+          {
+            "confidence": "high",
+            "evidence_id": "PANW_SEC_COMPANYFACTS_1327567_FCF",
+            "period": null,
+            "source_id": "PANW_SEC_COMPANYFACTS_1327567",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PANW_SEC_COMPANYFACTS_1327567_FREE_CASH_FLOW",
+            "period": null,
+            "source_id": "PANW_SEC_COMPANYFACTS_1327567",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PANW_SEC_COMPANYFACTS_1327567_FREE_CASH_FLOW_TTM",
+            "period": null,
+            "source_id": "PANW_SEC_COMPANYFACTS_1327567",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ],
+        "revenue": [
+          {
+            "confidence": "high",
+            "evidence_id": "PANW_SEC_COMPANYFACTS_1327567_REVENUE_TTM",
+            "period": null,
+            "source_id": "PANW_SEC_COMPANYFACTS_1327567",
+            "source_type": "sec_filing",
+            "value": 2334700000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PANW_SEC_revenue_FY2025_FY_0001327567-25-000027",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0001327567_0001327567-25-000027",
+            "source_type": "sec_filing",
+            "value": 9221500000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PANW_SEC_revenue_FY2025_Q3_0001327567-25-000017",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001327567_0001327567-25-000017",
+            "source_type": "sec_filing",
+            "value": 2289000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PANW_SEC_revenue_FY2026_Q1_0001327567-25-000035",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0001327567_0001327567-25-000035",
+            "source_type": "sec_filing",
+            "value": 2474000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PANW_SEC_revenue_FY2026_Q2_0001327567-26-000005",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0001327567_0001327567-26-000005",
+            "source_type": "sec_filing",
+            "value": 5068000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PANW_SEC_revenue_FY2026_Q2_0001327567-26-000005",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0001327567_0001327567-26-000005",
+            "source_type": "sec_filing",
+            "value": 2594000000.0
+          }
+        ],
+        "sbc": [
+          {
+            "confidence": "high",
+            "evidence_id": "PANW_SEC_DERIVED_SBC_TO_REVENUE",
+            "period": "TTM",
+            "source_id": "SEC_0001327567_DERIVED_SBC_TO_REVENUE",
+            "source_type": "sec_filing",
+            "value": 0.20898993963782697
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PANW_SEC_COMPANYFACTS_1327567_SBC_TO_REVENUE",
+            "period": null,
+            "source_id": "PANW_SEC_COMPANYFACTS_1327567",
+            "source_type": "sec_filing",
+            "value": 0.5269627789437615
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PANW_SEC_COMPANYFACTS_1327567_SBC_TTM",
+            "period": null,
+            "source_id": "PANW_SEC_COMPANYFACTS_1327567",
+            "source_type": "sec_filing",
+            "value": 1230300000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PANW_SEC_sbc_FY2025_FY_0001327567-25-000027",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0001327567_0001327567-25-000027",
+            "source_type": "sec_filing",
+            "value": 1295100000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PANW_SEC_sbc_FY2025_Q3_0001327567-25-000017",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001327567_0001327567-25-000017",
+            "source_type": "sec_filing",
+            "value": 940700000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PANW_SEC_sbc_FY2026_Q1_0001327567-25-000035",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0001327567_0001327567-25-000035",
+            "source_type": "sec_filing",
+            "value": 370000000.0
+          }
+        ],
+        "shares": [
+          {
+            "confidence": "high",
+            "evidence_id": "PANW_SEC_shares_diluted_FY2025_FY_0001327567-25-000027",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0001327567_0001327567-25-000027",
+            "source_type": "sec_filing",
+            "value": 709300000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PANW_SEC_shares_diluted_FY2025_Q3_0001327567-25-000017",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001327567_0001327567-25-000017",
+            "source_type": "sec_filing",
+            "value": 707400000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PANW_SEC_shares_diluted_FY2026_Q1_0001327567-25-000035",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0001327567_0001327567-25-000035",
+            "source_type": "sec_filing",
+            "value": 709000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PANW_SEC_shares_diluted_FY2026_Q2_0001327567-26-000005",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0001327567_0001327567-26-000005",
+            "source_type": "sec_filing",
+            "value": 713000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PANW_SEC_shares_diluted_FY2026_Q2_0001327567-26-000005",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0001327567_0001327567-26-000005",
+            "source_type": "sec_filing",
+            "value": 711000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PANW_SEC_COMPANYFACTS_1327567_SHARES",
+            "period": null,
+            "source_id": "PANW_SEC_COMPANYFACTS_1327567",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ]
+      },
+      "ticker": "PANW",
+      "verdict": "guard_too_strict"
+    },
+    {
+      "enterprise_value": 93369729061.4319,
+      "ev_sales": 301.8938471981114,
+      "fcf_margin": 18.362002069322298,
+      "fcf_ttm": 5679000000.0,
+      "fix_recommendation": "Revenue denominator is likely not a true TTM/annual comparable period; rerun PeriodResolver for annual vs quarterly/YTD facts and only derive TTM from four comparable duration facts.",
+      "manual_review_reason_codes": [
+        {
+          "code": "FINANCIAL_SANITY_EV_SALES_ABSURD",
+          "message": "EV/Sales above 100x indicates a likely unit, share-count, or revenue-period anomaly.",
+          "metric": "ev_to_sales",
+          "reported": 301.8938471981114
+        },
+        {
+          "code": "FINANCIAL_SANITY_SBC_REVENUE_ANOMALY",
+          "message": "SBC/Revenue above 30% for a mega-cap or non-SaaS profile requires manual reconciliation.",
+          "metric": "sbc_to_revenue",
+          "reported": 6.17240041386446
+        },
+        {
+          "code": "FINANCIAL_SANITY_FCF_MARGIN_ANOMALY",
+          "message": "FCF margin above 40% for this company profile indicates a likely FCF or period reconciliation anomaly.",
+          "metric": "fcf_margin_ttm",
+          "reported": 18.362002069322298
+        },
+        {
+          "code": "FINANCIAL_SANITY_EV_SALES_ABSURD",
+          "message": "Market cap to revenue above 100x indicates a likely unit or period anomaly.",
+          "metric": "market_cap_to_revenue",
+          "reported": 309.3628073636572
+        }
+      ],
+      "market_cap": 95679729061.4319,
+      "price_to_fcf": 16.847988917315003,
+      "price_used": 92.01000213623048,
+      "quality_score": 34.0,
+      "revenue_ttm": 309280000.0,
+      "sbc_to_revenue": 6.17240041386446,
+      "sbc_ttm": 1909000000.0,
+      "shares_used": 1039884000.0,
+      "source_evidence": {
+        "cash": [
+          {
+            "confidence": "high",
+            "evidence_id": "NOW_SEC_COMPANYFACTS_1373715_CASH_AND_EQUIVALENTS",
+            "period": null,
+            "source_id": "NOW_SEC_COMPANYFACTS_1373715",
+            "source_type": "sec_filing",
+            "value": 2310000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NOW_SEC_COMPANYFACTS_1373715_CASH_AND_INVESTMENTS",
+            "period": null,
+            "source_id": "NOW_SEC_COMPANYFACTS_1373715",
+            "source_type": "sec_filing",
+            "value": 2310000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NOW_SEC_cash_and_equivalents_FY2025_FY_0001373715-26-000007",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0001373715_0001373715-26-000007",
+            "source_type": "sec_filing",
+            "value": 3732000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NOW_SEC_cash_and_equivalents_FY2026_Q1_0001373715-26-000056",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0001373715_0001373715-26-000056",
+            "source_type": "sec_filing",
+            "value": 3726000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NOW_SEC_cash_and_equivalents_FY2026_Q1_0001373715-26-000056",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0001373715_0001373715-26-000056",
+            "source_type": "sec_filing",
+            "value": 3732000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NOW_SEC_cash_and_equivalents_FY2026_Q1_0001373715-26-000056",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0001373715_0001373715-26-000056",
+            "source_type": "sec_filing",
+            "value": 2702000000.0
+          }
+        ],
+        "debt": [
+          {
+            "confidence": "high",
+            "evidence_id": "NOW_SEC_COMPANYFACTS_1373715_DEBT",
+            "period": null,
+            "source_id": "NOW_SEC_COMPANYFACTS_1373715",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NOW_SEC_COMPANYFACTS_1373715_TOTAL_DEBT",
+            "period": null,
+            "source_id": "NOW_SEC_COMPANYFACTS_1373715",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ],
+        "fcf": [
+          {
+            "confidence": "high",
+            "evidence_id": "NOW_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+            "period": "TTM",
+            "source_id": "SEC_0001373715_DERIVED_FCF",
+            "source_type": "sec_filing",
+            "value": 7575000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NOW_SEC_COMPANYFACTS_1373715_FREE_CASH_FLOW_TTM",
+            "period": null,
+            "source_id": "NOW_SEC_COMPANYFACTS_1373715",
+            "source_type": "sec_filing",
+            "value": 5679000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NOW_SEC_COMPANYFACTS_1373715_FCF",
+            "period": null,
+            "source_id": "NOW_SEC_COMPANYFACTS_1373715",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NOW_SEC_COMPANYFACTS_1373715_FREE_CASH_FLOW",
+            "period": null,
+            "source_id": "NOW_SEC_COMPANYFACTS_1373715",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ],
+        "revenue": [
+          {
+            "confidence": "high",
+            "evidence_id": "NOW_SEC_COMPANYFACTS_1373715_REVENUE_TTM",
+            "period": null,
+            "source_id": "NOW_SEC_COMPANYFACTS_1373715",
+            "source_type": "sec_filing",
+            "value": 309280000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NOW_SEC_revenue_FY2025_FY_0001373715-26-000007",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0001373715_0001373715-26-000007",
+            "source_type": "sec_filing",
+            "value": 13278000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NOW_SEC_revenue_FY2025_Q2_0001373715-25-000276",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0001373715_0001373715-25-000276",
+            "source_type": "sec_filing",
+            "value": 3215000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NOW_SEC_revenue_FY2025_Q3_0001373715-25-000309",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001373715_0001373715-25-000309",
+            "source_type": "sec_filing",
+            "value": 9710000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NOW_SEC_revenue_FY2025_Q3_0001373715-25-000309",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001373715_0001373715-25-000309",
+            "source_type": "sec_filing",
+            "value": 3407000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NOW_SEC_revenue_FY2026_Q1_0001373715-26-000056",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0001373715_0001373715-26-000056",
+            "source_type": "sec_filing",
+            "value": 3770000000.0
+          }
+        ],
+        "sbc": [
+          {
+            "confidence": "high",
+            "evidence_id": "NOW_SEC_DERIVED_SBC_TO_REVENUE",
+            "period": "TTM",
+            "source_id": "SEC_0001373715_DERIVED_SBC_TO_REVENUE",
+            "source_type": "sec_filing",
+            "value": 0.17147547507710675
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NOW_SEC_COMPANYFACTS_1373715_SBC_TO_REVENUE",
+            "period": null,
+            "source_id": "NOW_SEC_COMPANYFACTS_1373715",
+            "source_type": "sec_filing",
+            "value": 6.17240041386446
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NOW_SEC_COMPANYFACTS_1373715_SBC_TTM",
+            "period": null,
+            "source_id": "NOW_SEC_COMPANYFACTS_1373715",
+            "source_type": "sec_filing",
+            "value": 1909000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NOW_SEC_sbc_FY2025_FY_0001373715-26-000007",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0001373715_0001373715-26-000007",
+            "source_type": "sec_filing",
+            "value": 1955000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NOW_SEC_sbc_FY2025_Q2_0001373715-25-000276",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0001373715_0001373715-25-000276",
+            "source_type": "sec_filing",
+            "value": 969000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NOW_SEC_sbc_FY2025_Q3_0001373715-25-000309",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001373715_0001373715-25-000309",
+            "source_type": "sec_filing",
+            "value": 1461000000.0
+          }
+        ],
+        "shares": [
+          {
+            "confidence": "high",
+            "evidence_id": "NOW_SEC_shares_diluted_FY2025_FY_0001373715-26-000007",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0001373715_0001373715-26-000007",
+            "source_type": "sec_filing",
+            "value": 1046691000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NOW_SEC_shares_diluted_FY2025_Q2_0001373715-25-000276",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0001373715_0001373715-25-000276",
+            "source_type": "sec_filing",
+            "value": 209322000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NOW_SEC_shares_diluted_FY2025_Q3_0001373715-25-000309",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001373715_0001373715-25-000309",
+            "source_type": "sec_filing",
+            "value": 209370000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NOW_SEC_shares_diluted_FY2025_Q3_0001373715-25-000309",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001373715_0001373715-25-000309",
+            "source_type": "sec_filing",
+            "value": 209505000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NOW_SEC_shares_diluted_FY2026_Q1_0001373715-26-000056",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0001373715_0001373715-26-000056",
+            "source_type": "sec_filing",
+            "value": 1039884000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "NOW_SEC_COMPANYFACTS_1373715_SHARES",
+            "period": null,
+            "source_id": "NOW_SEC_COMPANYFACTS_1373715",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ]
+      },
+      "ticker": "NOW",
+      "verdict": "period_bug"
+    },
+    {
+      "enterprise_value": 104430602050.78123,
+      "ev_sales": 17.949570651560887,
+      "fcf_margin": 0.18494327947748368,
+      "fcf_ttm": 1076000000.0,
+      "fix_recommendation": "SBC/Revenue guard fired near software profile boundaries; verify revenue period first, then either add sector context or keep manual review if ratio remains above 30%.",
+      "manual_review_reason_codes": [
+        {
+          "code": "FINANCIAL_SANITY_SBC_REVENUE_ANOMALY",
+          "message": "SBC/Revenue above 30% for a mega-cap or non-SaaS profile requires manual reconciliation.",
+          "metric": "sbc_to_revenue",
+          "reported": 0.3490890340323135
+        },
+        {
+          "code": "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+          "message": "P/FCF above 100x requires explicit explanation before publish.",
+          "metric": "price_to_fcf",
+          "reported": 103.65204651559594
+        }
+      ],
+      "market_cap": 111529602050.78123,
+      "price_to_fcf": 103.65204651559594,
+      "price_used": 398.3200073242187,
+      "quality_score": 51.0,
+      "revenue_ttm": 5818000000.0,
+      "sbc_to_revenue": 0.3490890340323135,
+      "sbc_ttm": 2031000000.0,
+      "shares_used": 280000000.0,
+      "source_evidence": {
+        "cash": [
+          {
+            "confidence": "high",
+            "evidence_id": "INTU_SEC_COMPANYFACTS_896878_CASH_AND_EQUIVALENTS",
+            "period": null,
+            "source_id": "INTU_SEC_COMPANYFACTS_896878",
+            "source_type": "sec_filing",
+            "value": 7099000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "INTU_SEC_COMPANYFACTS_896878_CASH_AND_INVESTMENTS",
+            "period": null,
+            "source_id": "INTU_SEC_COMPANYFACTS_896878",
+            "source_type": "sec_filing",
+            "value": 7099000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "INTU_SEC_cash_and_equivalents_FY2025_FY_0000896878-25-000035",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0000896878_0000896878-25-000035",
+            "source_type": "sec_filing",
+            "value": 9481000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "INTU_SEC_cash_and_equivalents_FY2026_Q1_0000896878-25-000048",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0000896878_0000896878-25-000048",
+            "source_type": "sec_filing",
+            "value": 3506000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "INTU_SEC_cash_and_equivalents_FY2026_Q1_0000896878-25-000048",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0000896878_0000896878-25-000048",
+            "source_type": "sec_filing",
+            "value": 6943000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "INTU_SEC_cash_and_equivalents_FY2026_Q2_0000896878-26-000014",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0000896878_0000896878-26-000014",
+            "source_type": "sec_filing",
+            "value": 2942000000.0
+          }
+        ],
+        "debt": [
+          {
+            "confidence": "high",
+            "evidence_id": "INTU_SEC_COMPANYFACTS_896878_DEBT",
+            "period": null,
+            "source_id": "INTU_SEC_COMPANYFACTS_896878",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "INTU_SEC_COMPANYFACTS_896878_TOTAL_DEBT",
+            "period": null,
+            "source_id": "INTU_SEC_COMPANYFACTS_896878",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ],
+        "fcf": [
+          {
+            "confidence": "high",
+            "evidence_id": "INTU_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+            "period": "TTM",
+            "source_id": "SEC_0000896878_DERIVED_FCF",
+            "source_type": "sec_filing",
+            "value": 9816000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "INTU_SEC_COMPANYFACTS_896878_FREE_CASH_FLOW_TTM",
+            "period": null,
+            "source_id": "INTU_SEC_COMPANYFACTS_896878",
+            "source_type": "sec_filing",
+            "value": 1076000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "INTU_SEC_COMPANYFACTS_896878_FCF",
+            "period": null,
+            "source_id": "INTU_SEC_COMPANYFACTS_896878",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "INTU_SEC_COMPANYFACTS_896878_FREE_CASH_FLOW",
+            "period": null,
+            "source_id": "INTU_SEC_COMPANYFACTS_896878",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ],
+        "revenue": [
+          {
+            "confidence": "high",
+            "evidence_id": "INTU_SEC_COMPANYFACTS_896878_REVENUE_TTM",
+            "period": null,
+            "source_id": "INTU_SEC_COMPANYFACTS_896878",
+            "source_type": "sec_filing",
+            "value": 5818000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "INTU_SEC_revenue_FY2025_FY_0000896878-25-000035",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0000896878_0000896878-25-000035",
+            "source_type": "sec_filing",
+            "value": 18831000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "INTU_SEC_revenue_FY2026_Q2_0000896878-26-000014",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0000896878_0000896878-26-000014",
+            "source_type": "sec_filing",
+            "value": 8536000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "INTU_SEC_revenue_FY2026_Q2_0000896878-26-000014",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0000896878_0000896878-26-000014",
+            "source_type": "sec_filing",
+            "value": 4651000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "INTU_SEC_revenue_FY2026_Q2_0000896878-26-000014",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0000896878_0000896878-26-000014",
+            "source_type": "sec_filing",
+            "value": 8536000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "INTU_SEC_revenue_FY2026_Q2_0000896878-26-000014",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0000896878_0000896878-26-000014",
+            "source_type": "sec_filing",
+            "value": 4651000000.0
+          }
+        ],
+        "sbc": [
+          {
+            "confidence": "high",
+            "evidence_id": "INTU_SEC_DERIVED_SBC_TO_REVENUE",
+            "period": "TTM",
+            "source_id": "SEC_0000896878_DERIVED_SBC_TO_REVENUE",
+            "source_type": "sec_filing",
+            "value": 0.09846818836733147
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "INTU_SEC_COMPANYFACTS_896878_SBC_TO_REVENUE",
+            "period": null,
+            "source_id": "INTU_SEC_COMPANYFACTS_896878",
+            "source_type": "sec_filing",
+            "value": 0.3490890340323135
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "INTU_SEC_COMPANYFACTS_896878_SBC_TTM",
+            "period": null,
+            "source_id": "INTU_SEC_COMPANYFACTS_896878",
+            "source_type": "sec_filing",
+            "value": 2031000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "INTU_SEC_sbc_FY2025_FY_0000896878-25-000035",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0000896878_0000896878-25-000035",
+            "source_type": "sec_filing",
+            "value": 1968000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "INTU_SEC_sbc_FY2025_Q3_0000896878-25-000022",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0000896878_0000896878-25-000022",
+            "source_type": "sec_filing",
+            "value": 469000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "INTU_SEC_sbc_FY2026_Q1_0000896878-25-000048",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0000896878_0000896878-25-000048",
+            "source_type": "sec_filing",
+            "value": 543000000.0
+          }
+        ],
+        "shares": [
+          {
+            "confidence": "high",
+            "evidence_id": "INTU_SEC_shares_diluted_FY2025_FY_0000896878-25-000035",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0000896878_0000896878-25-000035",
+            "source_type": "sec_filing",
+            "value": 283000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "INTU_SEC_shares_diluted_FY2025_Q3_0000896878-25-000022",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0000896878_0000896878-25-000022",
+            "source_type": "sec_filing",
+            "value": 282000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "INTU_SEC_shares_diluted_FY2026_Q1_0000896878-25-000048",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0000896878_0000896878-25-000048",
+            "source_type": "sec_filing",
+            "value": 281000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "INTU_SEC_shares_diluted_FY2026_Q2_0000896878-26-000014",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0000896878_0000896878-26-000014",
+            "source_type": "sec_filing",
+            "value": 281000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "INTU_SEC_shares_diluted_FY2026_Q2_0000896878-26-000014",
+            "period": "FY2026_Q2",
+            "source_id": "SEC_0000896878_0000896878-26-000014",
+            "source_type": "sec_filing",
+            "value": 280000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "INTU_SEC_COMPANYFACTS_896878_SHARES",
+            "period": null,
+            "source_id": "INTU_SEC_COMPANYFACTS_896878",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ]
+      },
+      "ticker": "INTU",
+      "verdict": "guard_too_strict"
+    },
+    {
+      "enterprise_value": 147426306081.22253,
+      "ev_sales": 12.690566073962515,
+      "fcf_margin": 0.47490746320048205,
+      "fcf_ttm": 5517000000.0,
+      "fix_recommendation": "FCF margin is implausibly high for this profile; prioritize company-defined FCF where available and reconcile revenue/FCF periods before publish.",
+      "manual_review_reason_codes": [
+        {
+          "code": "FINANCIAL_SANITY_FCF_MARGIN_ANOMALY",
+          "message": "FCF margin above 40% for this company profile indicates a likely FCF or period reconciliation anomaly.",
+          "metric": "fcf_margin_ttm",
+          "reported": 0.47490746320048205
+        }
+      ],
+      "market_cap": 154631306081.22253,
+      "price_to_fcf": 28.028150458804156,
+      "price_used": 72.94999694824219,
+      "quality_score": 76.0,
+      "revenue_ttm": 11617000000.0,
+      "sbc_to_revenue": 0.1612292330205733,
+      "sbc_ttm": 1873000000.0,
+      "shares_used": 2119689000.0,
+      "source_evidence": {
+        "cash": [
+          {
+            "confidence": "high",
+            "evidence_id": "UBER_SEC_COMPANYFACTS_1543151_CASH_AND_EQUIVALENTS",
+            "period": null,
+            "source_id": "UBER_SEC_COMPANYFACTS_1543151",
+            "source_type": "sec_filing",
+            "value": 6677000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "UBER_SEC_COMPANYFACTS_1543151_CASH_AND_INVESTMENTS",
+            "period": null,
+            "source_id": "UBER_SEC_COMPANYFACTS_1543151",
+            "source_type": "sec_filing",
+            "value": 7205000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "UBER_SEC_cash_and_equivalents_FY2025_FY_0001543151-26-000015",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0001543151_0001543151-26-000015",
+            "source_type": "sec_filing",
+            "value": 9647000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "UBER_SEC_cash_and_equivalents_FY2025_Q2_0001543151-25-000023",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0001543151_0001543151-25-000023",
+            "source_type": "sec_filing",
+            "value": 6438000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "UBER_SEC_cash_and_equivalents_FY2025_Q2_0001543151-25-000023",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0001543151_0001543151-25-000023",
+            "source_type": "sec_filing",
+            "value": 9667000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "UBER_SEC_cash_and_equivalents_FY2025_Q3_0001543151-25-000033",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001543151_0001543151-25-000033",
+            "source_type": "sec_filing",
+            "value": 8432000000.0
+          }
+        ],
+        "debt": [
+          {
+            "confidence": "high",
+            "evidence_id": "UBER_SEC_COMPANYFACTS_1543151_DEBT",
+            "period": null,
+            "source_id": "UBER_SEC_COMPANYFACTS_1543151",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "UBER_SEC_COMPANYFACTS_1543151_TOTAL_DEBT",
+            "period": null,
+            "source_id": "UBER_SEC_COMPANYFACTS_1543151",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ],
+        "fcf": [
+          {
+            "confidence": "high",
+            "evidence_id": "UBER_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+            "period": "TTM",
+            "source_id": "SEC_0001543151_DERIVED_FCF",
+            "source_type": "sec_filing",
+            "value": 19119000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "UBER_SEC_COMPANYFACTS_1543151_FREE_CASH_FLOW_TTM",
+            "period": null,
+            "source_id": "UBER_SEC_COMPANYFACTS_1543151",
+            "source_type": "sec_filing",
+            "value": 5517000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "UBER_SEC_COMPANYFACTS_1543151_FCF",
+            "period": null,
+            "source_id": "UBER_SEC_COMPANYFACTS_1543151",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "UBER_SEC_COMPANYFACTS_1543151_FREE_CASH_FLOW",
+            "period": null,
+            "source_id": "UBER_SEC_COMPANYFACTS_1543151",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ],
+        "revenue": [
+          {
+            "confidence": "high",
+            "evidence_id": "UBER_SEC_COMPANYFACTS_1543151_REVENUE_TTM",
+            "period": null,
+            "source_id": "UBER_SEC_COMPANYFACTS_1543151",
+            "source_type": "sec_filing",
+            "value": 11617000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "UBER_SEC_revenue_FY2025_FY_0001543151-26-000015",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0001543151_0001543151-26-000015",
+            "source_type": "sec_filing",
+            "value": 52017000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "UBER_SEC_revenue_FY2025_Q2_0001543151-25-000023",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0001543151_0001543151-25-000023",
+            "source_type": "sec_filing",
+            "value": 24184000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "UBER_SEC_revenue_FY2025_Q2_0001543151-25-000023",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0001543151_0001543151-25-000023",
+            "source_type": "sec_filing",
+            "value": 12651000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "UBER_SEC_revenue_FY2025_Q3_0001543151-25-000033",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001543151_0001543151-25-000033",
+            "source_type": "sec_filing",
+            "value": 37651000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "UBER_SEC_revenue_FY2025_Q3_0001543151-25-000033",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001543151_0001543151-25-000033",
+            "source_type": "sec_filing",
+            "value": 13467000000.0
+          }
+        ],
+        "sbc": [
+          {
+            "confidence": "high",
+            "evidence_id": "UBER_SEC_DERIVED_SBC_TO_REVENUE",
+            "period": "TTM",
+            "source_id": "SEC_0001543151_DERIVED_SBC_TO_REVENUE",
+            "source_type": "sec_filing",
+            "value": 0.046581697042738734
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "UBER_SEC_COMPANYFACTS_1543151_SBC_TO_REVENUE",
+            "period": null,
+            "source_id": "UBER_SEC_COMPANYFACTS_1543151",
+            "source_type": "sec_filing",
+            "value": 0.1612292330205733
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "UBER_SEC_COMPANYFACTS_1543151_SBC_TTM",
+            "period": null,
+            "source_id": "UBER_SEC_COMPANYFACTS_1543151",
+            "source_type": "sec_filing",
+            "value": 1873000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "UBER_SEC_sbc_FY2025_FY_0001543151-26-000015",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0001543151_0001543151-26-000015",
+            "source_type": "sec_filing",
+            "value": 1826000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "UBER_SEC_sbc_FY2025_Q1_0001543151-25-000015",
+            "period": "FY2025_Q1",
+            "source_id": "SEC_0001543151_0001543151-25-000015",
+            "source_type": "sec_filing",
+            "value": 435000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "UBER_SEC_sbc_FY2025_Q2_0001543151-25-000023",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0001543151_0001543151-25-000023",
+            "source_type": "sec_filing",
+            "value": 910000000.0
+          }
+        ],
+        "shares": [
+          {
+            "confidence": "high",
+            "evidence_id": "UBER_SEC_shares_diluted_FY2025_FY_0001543151-26-000015",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0001543151_0001543151-26-000015",
+            "source_type": "sec_filing",
+            "value": 2119689000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "UBER_SEC_shares_diluted_FY2025_Q2_0001543151-25-000023",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0001543151_0001543151-25-000023",
+            "source_type": "sec_filing",
+            "value": 2124181000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "UBER_SEC_shares_diluted_FY2025_Q2_0001543151-25-000023",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0001543151_0001543151-25-000023",
+            "source_type": "sec_filing",
+            "value": 2125628000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "UBER_SEC_shares_diluted_FY2025_Q3_0001543151-25-000033",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001543151_0001543151-25-000033",
+            "source_type": "sec_filing",
+            "value": 2124293000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "UBER_SEC_shares_diluted_FY2025_Q3_0001543151-25-000033",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001543151_0001543151-25-000033",
+            "source_type": "sec_filing",
+            "value": 2124391000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "UBER_SEC_COMPANYFACTS_1543151_SHARES",
+            "period": null,
+            "source_id": "UBER_SEC_COMPANYFACTS_1543151",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ]
+      },
+      "ticker": "UBER",
+      "verdict": "period_bug"
+    },
+    {
+      "enterprise_value": 1359413042724.6094,
+      "ev_sales": 14.726127877163664,
+      "fcf_margin": 0.002567352377238309,
+      "fcf_ttm": 237000000.0,
+      "fix_recommendation": "P/FCF is extremely high even without other period red flags; keep as valuation-risk manual review unless FCF source/period is proven wrong.",
+      "manual_review_reason_codes": [
+        {
+          "code": "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+          "message": "P/FCF above 100x requires explicit explanation before publish.",
+          "metric": "price_to_fcf",
+          "reported": 5812.6204334371705
+        }
+      ],
+      "market_cap": 1377591042724.6094,
+      "price_to_fcf": 5812.6204334371705,
+      "price_used": 389.3699951171875,
+      "quality_score": 75.0,
+      "revenue_ttm": 92313000000.0,
+      "sbc_to_revenue": 0.029248318221702253,
+      "sbc_ttm": 2700000000.0,
+      "shares_used": 3538000000.0,
+      "source_evidence": {
+        "cash": [
+          {
+            "confidence": "high",
+            "evidence_id": "TSLA_SEC_COMPANYFACTS_1318605_CASH_AND_EQUIVALENTS",
+            "period": null,
+            "source_id": "TSLA_SEC_COMPANYFACTS_1318605",
+            "source_type": "sec_filing",
+            "value": 16603000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "TSLA_SEC_COMPANYFACTS_1318605_CASH_AND_INVESTMENTS",
+            "period": null,
+            "source_id": "TSLA_SEC_COMPANYFACTS_1318605",
+            "source_type": "sec_filing",
+            "value": 18178000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "TSLA_SEC_cash_and_equivalents_FY2025_FY_0001628280-26-003952",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0001318605_0001628280-26-003952",
+            "source_type": "sec_filing",
+            "value": 16513000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "TSLA_SEC_cash_and_equivalents_FY2025_Q2_0001628280-25-035806",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0001318605_0001628280-25-035806",
+            "source_type": "sec_filing",
+            "value": 15587000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "TSLA_SEC_cash_and_equivalents_FY2025_Q3_0001628280-25-045968",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001318605_0001628280-25-045968",
+            "source_type": "sec_filing",
+            "value": 18289000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "TSLA_SEC_cash_and_equivalents_FY2026_Q1_0001628280-26-026673",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0001318605_0001628280-26-026673",
+            "source_type": "sec_filing",
+            "value": 16513000000.0
+          }
+        ],
+        "debt": [
+          {
+            "confidence": "high",
+            "evidence_id": "TSLA_SEC_COMPANYFACTS_1318605_DEBT",
+            "period": null,
+            "source_id": "TSLA_SEC_COMPANYFACTS_1318605",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "TSLA_SEC_COMPANYFACTS_1318605_TOTAL_DEBT",
+            "period": null,
+            "source_id": "TSLA_SEC_COMPANYFACTS_1318605",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ],
+        "fcf": [
+          {
+            "confidence": "high",
+            "evidence_id": "TSLA_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+            "period": "TTM",
+            "source_id": "SEC_0001318605_DERIVED_FCF",
+            "source_type": "sec_filing",
+            "value": 7718000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "TSLA_SEC_COMPANYFACTS_1318605_FREE_CASH_FLOW_TTM",
+            "period": null,
+            "source_id": "TSLA_SEC_COMPANYFACTS_1318605",
+            "source_type": "sec_filing",
+            "value": 237000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "TSLA_SEC_COMPANYFACTS_1318605_FCF",
+            "period": null,
+            "source_id": "TSLA_SEC_COMPANYFACTS_1318605",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "TSLA_SEC_COMPANYFACTS_1318605_FREE_CASH_FLOW",
+            "period": null,
+            "source_id": "TSLA_SEC_COMPANYFACTS_1318605",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ],
+        "revenue": [
+          {
+            "confidence": "high",
+            "evidence_id": "TSLA_SEC_COMPANYFACTS_1318605_REVENUE_TTM",
+            "period": null,
+            "source_id": "TSLA_SEC_COMPANYFACTS_1318605",
+            "source_type": "sec_filing",
+            "value": 92313000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "TSLA_SEC_revenue_FY2025_FY_0001628280-26-003952",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0001318605_0001628280-26-003952",
+            "source_type": "sec_filing",
+            "value": 94827000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "TSLA_SEC_revenue_FY2025_Q3_0001628280-25-045968",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001318605_0001628280-25-045968",
+            "source_type": "sec_filing",
+            "value": 69926000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "TSLA_SEC_revenue_FY2025_Q3_0001628280-25-045968",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001318605_0001628280-25-045968",
+            "source_type": "sec_filing",
+            "value": 28095000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "TSLA_SEC_revenue_FY2026_Q1_0001628280-26-026673",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0001318605_0001628280-26-026673",
+            "source_type": "sec_filing",
+            "value": 22387000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "TSLA_SEC_revenue_FY2026_Q1_0001628280-26-026673",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0001318605_0001628280-26-026673",
+            "source_type": "sec_filing",
+            "value": 22387000000.0
+          }
+        ],
+        "sbc": [
+          {
+            "confidence": "high",
+            "evidence_id": "TSLA_SEC_DERIVED_SBC_TO_REVENUE",
+            "period": "TTM",
+            "source_id": "SEC_0001318605_DERIVED_SBC_TO_REVENUE",
+            "source_type": "sec_filing",
+            "value": 0.032788262894359044
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "TSLA_SEC_COMPANYFACTS_1318605_SBC_TO_REVENUE",
+            "period": null,
+            "source_id": "TSLA_SEC_COMPANYFACTS_1318605",
+            "source_type": "sec_filing",
+            "value": 0.029248318221702253
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "TSLA_SEC_COMPANYFACTS_1318605_SBC_TTM",
+            "period": null,
+            "source_id": "TSLA_SEC_COMPANYFACTS_1318605",
+            "source_type": "sec_filing",
+            "value": 2700000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "TSLA_SEC_sbc_FY2025_FY_0001628280-26-003952",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0001318605_0001628280-26-003952",
+            "source_type": "sec_filing",
+            "value": 2825000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "TSLA_SEC_sbc_FY2025_Q2_0001628280-25-035806",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0001318605_0001628280-25-035806",
+            "source_type": "sec_filing",
+            "value": 1208000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "TSLA_SEC_sbc_FY2025_Q3_0001628280-25-045968",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001318605_0001628280-25-045968",
+            "source_type": "sec_filing",
+            "value": 1871000000.0
+          }
+        ],
+        "shares": [
+          {
+            "confidence": "high",
+            "evidence_id": "TSLA_SEC_shares_diluted_FY2025_FY_0001628280-26-003952",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0001318605_0001628280-26-003952",
+            "source_type": "sec_filing",
+            "value": 3528000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "TSLA_SEC_shares_diluted_FY2025_Q2_0001628280-25-035806",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0001318605_0001628280-25-035806",
+            "source_type": "sec_filing",
+            "value": 3519000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "TSLA_SEC_shares_diluted_FY2025_Q3_0001628280-25-045968",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001318605_0001628280-25-045968",
+            "source_type": "sec_filing",
+            "value": 3523000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "TSLA_SEC_shares_diluted_FY2025_Q3_0001628280-25-045968",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001318605_0001628280-25-045968",
+            "source_type": "sec_filing",
+            "value": 3526000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "TSLA_SEC_shares_diluted_FY2026_Q1_0001628280-26-026673",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0001318605_0001628280-26-026673",
+            "source_type": "sec_filing",
+            "value": 3538000000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "TSLA_SEC_COMPANYFACTS_1318605_SHARES",
+            "period": null,
+            "source_id": "TSLA_SEC_COMPANYFACTS_1318605",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ]
+      },
+      "ticker": "TSLA",
+      "verdict": "true_anomaly"
+    },
+    {
+      "enterprise_value": 341559572255.0049,
+      "ev_sales": 72.65328227184199,
+      "fcf_margin": 0.34604519203178236,
+      "fcf_ttm": 1626837000.0,
+      "fix_recommendation": "P/FCF is above hard threshold but could be a growth/semiconductor/software context issue; consider sector-aware warning band after validating FCF period.",
+      "manual_review_reason_codes": [
+        {
+          "code": "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+          "message": "P/FCF above 100x requires explicit explanation before publish.",
+          "metric": "price_to_fcf",
+          "reported": 214.78137653311603
+        }
+      ],
+      "market_cap": 349414290255.0049,
+      "price_to_fcf": 214.78137653311603,
+      "price_used": 135.91000366210938,
+      "quality_score": 76.0,
+      "revenue_ttm": 4701227000.0,
+      "sbc_to_revenue": 0.13569244795029042,
+      "sbc_ttm": 637921000.0,
+      "shares_used": 2570924000.0,
+      "source_evidence": {
+        "cash": [
+          {
+            "confidence": "high",
+            "evidence_id": "PLTR_SEC_COMPANYFACTS_1321655_CASH_AND_EQUIVALENTS",
+            "period": null,
+            "source_id": "PLTR_SEC_COMPANYFACTS_1321655",
+            "source_type": "sec_filing",
+            "value": 2119936000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PLTR_SEC_COMPANYFACTS_1321655_CASH_AND_INVESTMENTS",
+            "period": null,
+            "source_id": "PLTR_SEC_COMPANYFACTS_1321655",
+            "source_type": "sec_filing",
+            "value": 7854718000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PLTR_SEC_cash_and_equivalents_FY2025_FY_0001321655-26-000011",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0001321655_0001321655-26-000011",
+            "source_type": "sec_filing",
+            "value": 1451425000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PLTR_SEC_cash_and_equivalents_FY2026_Q1_0001321655-26-000028",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0001321655_0001321655-26-000028",
+            "source_type": "sec_filing",
+            "value": 1423796000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PLTR_SEC_cash_and_equivalents_FY2026_Q1_0001321655-26-000028",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0001321655_0001321655-26-000028",
+            "source_type": "sec_filing",
+            "value": 1451425000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PLTR_SEC_cash_and_equivalents_FY2026_Q1_0001321655-26-000028",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0001321655_0001321655-26-000028",
+            "source_type": "sec_filing",
+            "value": 2291631000.0
+          }
+        ],
+        "debt": [
+          {
+            "confidence": "high",
+            "evidence_id": "PLTR_SEC_COMPANYFACTS_1321655_DEBT",
+            "period": null,
+            "source_id": "PLTR_SEC_COMPANYFACTS_1321655",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PLTR_SEC_COMPANYFACTS_1321655_TOTAL_DEBT",
+            "period": null,
+            "source_id": "PLTR_SEC_COMPANYFACTS_1321655",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ],
+        "fcf": [
+          {
+            "confidence": "high",
+            "evidence_id": "PLTR_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+            "period": "TTM",
+            "source_id": "SEC_0001321655_DERIVED_FCF",
+            "source_type": "sec_filing",
+            "value": 3368107000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PLTR_SEC_COMPANYFACTS_1321655_FREE_CASH_FLOW_TTM",
+            "period": null,
+            "source_id": "PLTR_SEC_COMPANYFACTS_1321655",
+            "source_type": "sec_filing",
+            "value": 1626837000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PLTR_SEC_COMPANYFACTS_1321655_FCF",
+            "period": null,
+            "source_id": "PLTR_SEC_COMPANYFACTS_1321655",
+            "source_type": "sec_filing",
+            "value": null
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PLTR_SEC_COMPANYFACTS_1321655_FREE_CASH_FLOW",
+            "period": null,
+            "source_id": "PLTR_SEC_COMPANYFACTS_1321655",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ],
+        "revenue": [
+          {
+            "confidence": "high",
+            "evidence_id": "PLTR_SEC_COMPANYFACTS_1321655_REVENUE_TTM",
+            "period": null,
+            "source_id": "PLTR_SEC_COMPANYFACTS_1321655",
+            "source_type": "sec_filing",
+            "value": 4701227000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PLTR_SEC_revenue_FY2025_FY_0001321655-26-000011",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0001321655_0001321655-26-000011",
+            "source_type": "sec_filing",
+            "value": 4475446000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PLTR_SEC_revenue_FY2025_Q2_0001321655-25-000106",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0001321655_0001321655-25-000106",
+            "source_type": "sec_filing",
+            "value": 1003697000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PLTR_SEC_revenue_FY2025_Q3_0001321655-25-000131",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001321655_0001321655-25-000131",
+            "source_type": "sec_filing",
+            "value": 3068644000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PLTR_SEC_revenue_FY2025_Q3_0001321655-25-000131",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001321655_0001321655-25-000131",
+            "source_type": "sec_filing",
+            "value": 1181092000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PLTR_SEC_revenue_FY2026_Q1_0001321655-26-000028",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0001321655_0001321655-26-000028",
+            "source_type": "sec_filing",
+            "value": 1632583000.0
+          }
+        ],
+        "sbc": [
+          {
+            "confidence": "high",
+            "evidence_id": "PLTR_SEC_DERIVED_SBC_TO_REVENUE",
+            "period": "TTM",
+            "source_id": "SEC_0001321655_DERIVED_SBC_TO_REVENUE",
+            "source_type": "sec_filing",
+            "value": 0.1684383248601223
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PLTR_SEC_COMPANYFACTS_1321655_SBC_TO_REVENUE",
+            "period": null,
+            "source_id": "PLTR_SEC_COMPANYFACTS_1321655",
+            "source_type": "sec_filing",
+            "value": 0.13569244795029042
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PLTR_SEC_COMPANYFACTS_1321655_SBC_TTM",
+            "period": null,
+            "source_id": "PLTR_SEC_COMPANYFACTS_1321655",
+            "source_type": "sec_filing",
+            "value": 637921000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PLTR_SEC_sbc_FY2025_FY_0001321655-26-000011",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0001321655_0001321655-26-000011",
+            "source_type": "sec_filing",
+            "value": 684033000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PLTR_SEC_sbc_FY2025_Q2_0001321655-25-000106",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0001321655_0001321655-25-000106",
+            "source_type": "sec_filing",
+            "value": 315310000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PLTR_SEC_sbc_FY2025_Q3_0001321655-25-000131",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001321655_0001321655-25-000131",
+            "source_type": "sec_filing",
+            "value": 487628000.0
+          }
+        ],
+        "shares": [
+          {
+            "confidence": "high",
+            "evidence_id": "PLTR_SEC_shares_diluted_FY2025_FY_0001321655-26-000011",
+            "period": "FY2025_FY",
+            "source_id": "SEC_0001321655_0001321655-26-000011",
+            "source_type": "sec_filing",
+            "value": 2565197000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PLTR_SEC_shares_diluted_FY2025_Q2_0001321655-25-000106",
+            "period": "FY2025_Q2",
+            "source_id": "SEC_0001321655_0001321655-25-000106",
+            "source_type": "sec_filing",
+            "value": 2562912000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PLTR_SEC_shares_diluted_FY2025_Q3_0001321655-25-000131",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001321655_0001321655-25-000131",
+            "source_type": "sec_filing",
+            "value": 2562367000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PLTR_SEC_shares_diluted_FY2025_Q3_0001321655-25-000131",
+            "period": "FY2025_Q3",
+            "source_id": "SEC_0001321655_0001321655-25-000131",
+            "source_type": "sec_filing",
+            "value": 2571057000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PLTR_SEC_shares_diluted_FY2026_Q1_0001321655-26-000028",
+            "period": "FY2026_Q1",
+            "source_id": "SEC_0001321655_0001321655-26-000028",
+            "source_type": "sec_filing",
+            "value": 2570924000.0
+          },
+          {
+            "confidence": "high",
+            "evidence_id": "PLTR_SEC_COMPANYFACTS_1321655_SHARES",
+            "period": null,
+            "source_id": "PLTR_SEC_COMPANYFACTS_1321655",
+            "source_type": "sec_filing",
+            "value": null
+          }
+        ]
+      },
+      "ticker": "PLTR",
+      "verdict": "guard_too_strict"
+    }
+  ],
+  "summary": {
+    "generated_at": "2026-05-06T13:58:58Z",
+    "manual_review_tickers": 17,
+    "source_batch_dir": "outputs/batches/phase12_real_pilot_033_content_generation",
+    "verdict_counts": {
+      "guard_too_strict": 6,
+      "period_bug": 8,
+      "true_anomaly": 3
+    }
+  }
+}

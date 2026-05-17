@@ -1,0 +1,567 @@
+{
+  "batch_id": "guardrail_coverage_batch_003_current_research",
+  "generated_at": "2026-05-17T01:51:29Z",
+  "records": [
+    {
+      "IR_current_period_evidence_present": true,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": true,
+      "earnings_calendar_present": false,
+      "flags": [],
+      "historical_QA_only": false,
+      "latest_price_date": "2026-05-15",
+      "minimum_viable_report_possible": true,
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "GOOGL"
+    },
+    {
+      "IR_current_period_evidence_present": true,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": true,
+      "earnings_calendar_present": false,
+      "flags": [],
+      "historical_QA_only": false,
+      "latest_price_date": "2026-05-15",
+      "minimum_viable_report_possible": true,
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "SNOW"
+    },
+    {
+      "IR_current_period_evidence_present": true,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": true,
+      "earnings_calendar_present": false,
+      "flags": [],
+      "historical_QA_only": false,
+      "latest_price_date": "2026-05-15",
+      "minimum_viable_report_possible": true,
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "MSFT"
+    },
+    {
+      "IR_current_period_evidence_present": true,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": true,
+      "earnings_calendar_present": false,
+      "flags": [],
+      "historical_QA_only": false,
+      "latest_price_date": "2026-05-15",
+      "minimum_viable_report_possible": true,
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "AAPL"
+    },
+    {
+      "IR_current_period_evidence_present": true,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": true,
+      "earnings_calendar_present": false,
+      "flags": [],
+      "historical_QA_only": false,
+      "latest_price_date": "2026-05-15",
+      "minimum_viable_report_possible": true,
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "META"
+    },
+    {
+      "IR_current_period_evidence_present": true,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": true,
+      "earnings_calendar_present": false,
+      "flags": [],
+      "historical_QA_only": false,
+      "latest_price_date": "2026-05-15",
+      "minimum_viable_report_possible": true,
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "AMZN"
+    },
+    {
+      "IR_current_period_evidence_present": true,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": true,
+      "earnings_calendar_present": false,
+      "flags": [],
+      "historical_QA_only": false,
+      "latest_price_date": "2026-05-15",
+      "minimum_viable_report_possible": true,
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "NFLX"
+    },
+    {
+      "IR_current_period_evidence_present": true,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": true,
+      "earnings_calendar_present": false,
+      "flags": [],
+      "historical_QA_only": false,
+      "latest_price_date": "2026-05-15",
+      "minimum_viable_report_possible": true,
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "CRM"
+    },
+    {
+      "IR_current_period_evidence_present": true,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": true,
+      "earnings_calendar_present": false,
+      "flags": [],
+      "historical_QA_only": false,
+      "latest_price_date": "2026-05-15",
+      "minimum_viable_report_possible": true,
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "DDOG"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": true,
+      "earnings_calendar_present": false,
+      "flags": [
+        "no_current_period_context"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": "2026-05-15",
+      "minimum_viable_report_possible": true,
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "NOW"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": true,
+      "earnings_calendar_present": false,
+      "flags": [
+        "no_current_period_context"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": "2026-05-15",
+      "minimum_viable_report_possible": true,
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "MDB"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": true,
+      "earnings_calendar_present": false,
+      "flags": [
+        "no_current_period_context"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": "2026-05-15",
+      "minimum_viable_report_possible": true,
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "NET"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": true,
+      "earnings_calendar_present": false,
+      "flags": [
+        "no_current_period_context"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": "2026-05-15",
+      "minimum_viable_report_possible": true,
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "ZS"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": true,
+      "earnings_calendar_present": false,
+      "flags": [
+        "no_current_period_context"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": "2026-05-15",
+      "minimum_viable_report_possible": true,
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "CRWD"
+    },
+    {
+      "IR_current_period_evidence_present": true,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": true,
+      "earnings_calendar_present": false,
+      "flags": [],
+      "historical_QA_only": false,
+      "latest_price_date": "2026-05-15",
+      "minimum_viable_report_possible": true,
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "PANW"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": true,
+      "earnings_calendar_present": false,
+      "flags": [
+        "no_current_period_context"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": "2026-05-15",
+      "minimum_viable_report_possible": true,
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "NVDA"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": true,
+      "earnings_calendar_present": false,
+      "flags": [
+        "no_current_period_context"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": "2026-05-15",
+      "minimum_viable_report_possible": true,
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "AMD"
+    },
+    {
+      "IR_current_period_evidence_present": true,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": true,
+      "earnings_calendar_present": false,
+      "flags": [],
+      "historical_QA_only": false,
+      "latest_price_date": "2026-05-15",
+      "minimum_viable_report_possible": true,
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "AVGO"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": true,
+      "earnings_calendar_present": false,
+      "flags": [
+        "no_current_period_context"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": "2026-05-15",
+      "minimum_viable_report_possible": true,
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "QCOM"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": true,
+      "earnings_calendar_present": false,
+      "flags": [
+        "no_current_period_context"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": "2026-05-15",
+      "minimum_viable_report_possible": true,
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "MU"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": true,
+      "earnings_calendar_present": false,
+      "flags": [
+        "no_current_period_context"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": "2026-05-15",
+      "minimum_viable_report_possible": true,
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "MRVL"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": true,
+      "earnings_calendar_present": false,
+      "flags": [
+        "no_current_period_context"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": "2026-05-15",
+      "minimum_viable_report_possible": true,
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "INTC"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": true,
+      "earnings_calendar_present": false,
+      "flags": [
+        "no_current_period_context"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": "2026-05-15",
+      "minimum_viable_report_possible": true,
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "RGTI"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": true,
+      "earnings_calendar_present": false,
+      "flags": [
+        "no_current_period_context"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": "2026-05-15",
+      "minimum_viable_report_possible": true,
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "IONQ"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": true,
+      "earnings_calendar_present": false,
+      "flags": [
+        "no_current_period_context"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": "2026-05-15",
+      "minimum_viable_report_possible": true,
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "QBTS"
+    },
+    {
+      "IR_current_period_evidence_present": true,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": true,
+      "earnings_calendar_present": false,
+      "flags": [],
+      "historical_QA_only": false,
+      "latest_price_date": "2026-05-15",
+      "minimum_viable_report_possible": true,
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "RKLB"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": true,
+      "earnings_calendar_present": false,
+      "flags": [
+        "no_current_period_context"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": "2026-05-15",
+      "minimum_viable_report_possible": true,
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "ASTS"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": true,
+      "earnings_calendar_present": false,
+      "flags": [
+        "no_current_period_context"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": "2026-05-15",
+      "minimum_viable_report_possible": true,
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "ACHR"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": true,
+      "earnings_calendar_present": false,
+      "flags": [
+        "no_current_period_context"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": "2026-05-15",
+      "minimum_viable_report_possible": true,
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "JOBY"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": true,
+      "earnings_calendar_present": false,
+      "flags": [
+        "no_current_period_context"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": "2026-05-15",
+      "minimum_viable_report_possible": true,
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "RIVN"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": true,
+      "earnings_calendar_present": false,
+      "flags": [
+        "no_current_period_context"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": "2026-05-15",
+      "minimum_viable_report_possible": true,
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "LCID"
+    },
+    {
+      "IR_current_period_evidence_present": false,
+      "SEC_CIK_present": true,
+      "benchmark_present": true,
+      "canonical_financials_present": true,
+      "companyfacts_present": true,
+      "current_report_possible": true,
+      "earnings_calendar_present": false,
+      "flags": [
+        "no_current_period_context"
+      ],
+      "historical_QA_only": false,
+      "latest_price_date": "2026-05-15",
+      "minimum_viable_report_possible": true,
+      "news_fallback_present": false,
+      "price_source_present": true,
+      "ticker": "PLUG"
+    }
+  ],
+  "summary": {
+    "current_report_possible": 32,
+    "flags": {
+      "no_current_period_context": 20
+    },
+    "historical_QA_only": 0,
+    "minimum_viable_report_possible": 32
+  },
+  "ticker_count": 32
+}

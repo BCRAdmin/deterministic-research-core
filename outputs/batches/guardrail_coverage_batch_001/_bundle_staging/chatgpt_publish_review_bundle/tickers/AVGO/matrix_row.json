@@ -1,0 +1,23 @@
+{
+  "actual_archetype": "SEMICONDUCTOR_AI_INFRA",
+  "archetype_confidence": 0.2,
+  "artifact_consistency_status": "clean",
+  "company_name": "Broadcom Inc.",
+  "concerns": [],
+  "data_confidence_score": 83,
+  "evidence_status": "clean",
+  "expected_archetype": "SEMICONDUCTOR_AI_INFRA or SEMICONDUCTOR_CYCLICAL",
+  "external_display_rating": "Hold",
+  "internal_research_quality_score": 100,
+  "likely_false_negative": "no",
+  "likely_false_positive": "no",
+  "manual_review_reasons": [],
+  "primary_blockers": [],
+  "public_ready": false,
+  "publish_quality_score": 90,
+  "publishable": true,
+  "recommended_next_action": "Keep in passed review bundle; no public routing without Promotion Gate.",
+  "review_status": "passed",
+  "sector_bucket": "Semiconductors / AI Infrastructure / Cyclical AI",
+  "ticker": "AVGO"
+}

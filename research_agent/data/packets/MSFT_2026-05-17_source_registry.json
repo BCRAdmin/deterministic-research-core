@@ -1,0 +1,55 @@
+{
+  "registry_id": "MSFT_2026-05-17",
+  "sources": [
+    {
+      "authority_rank": 1,
+      "retrieved_at": "2026-05-17T02:08:45Z",
+      "source_id": "MSFT_SEC_COMPANYFACTS_789019",
+      "source_type": "sec_filing",
+      "ticker": "MSFT",
+      "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000789019.json",
+      "used_for": [
+        "revenue",
+        "financial",
+        "cash",
+        "operating_income",
+        "free_cash_flow",
+        "fcf",
+        "sbc",
+        "debt",
+        "eps"
+      ]
+    },
+    {
+      "authority_rank": 1,
+      "retrieved_at": "2026-05-17T02:08:45Z",
+      "source_id": "MSFT_IR_Q3_FY2026_RELEASE",
+      "source_type": "company_ir",
+      "ticker": "MSFT",
+      "url": "https://www.microsoft.com/en-us/investor/earnings",
+      "used_for": [
+        "ai_run_rate",
+        "azure_growth",
+        "current_period_kpis",
+        "current_q_revenue",
+        "financial",
+        "microsoft_cloud_growth",
+        "microsoft_cloud_revenue",
+        "revenue"
+      ]
+    },
+    {
+      "authority_rank": 2,
+      "retrieved_at": "2026-05-17T02:08:45Z",
+      "source_id": "MSFT_YAHOO_CHART_PRICE_CSV",
+      "source_type": "exchange_ohlcv",
+      "ticker": "MSFT",
+      "url": "https://query1.finance.yahoo.com/v8/finance/chart/MSFT",
+      "used_for": [
+        "price",
+        "volume",
+        "technical_indicators"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "ticker": "AMZN",
+  "company_name": "Amazon.com Inc.",
+  "as_of_date": "2026-05-01",
+  "price_basis": {
+    "close": 180.0,
+    "date": "2026-04-30",
+    "currency": "USD",
+    "source": "exchange_ohlcv"
+  },
+  "fiscal_context": {
+    "latest_fiscal_year": "FY2025",
+    "latest_quarter": "Q1 FY2026",
+    "fiscal_year_end": "2025-12-31"
+  },
+  "next_events": {
+    "next_earnings_date": "2026-07-31",
+    "confirmed": false,
+    "source": "market_data_provider"
+  },
+  "source_registry_id": "AMZN_2026_05_01"
+}
+

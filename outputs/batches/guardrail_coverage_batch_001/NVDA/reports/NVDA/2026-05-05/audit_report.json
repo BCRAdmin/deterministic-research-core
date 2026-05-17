@@ -1,0 +1,199 @@
+{
+  "has_blocking_errors": true,
+  "issues": [
+    {
+      "code": "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+      "line_number": null,
+      "message": "P/FCF above 100x on positive, non-near-zero FCF requires explicit explanation before publish.",
+      "metric": "price_to_fcf",
+      "raw_text": null,
+      "reported": 102.60727218506369,
+      "severity": "error",
+      "validated": null
+    },
+    {
+      "code": "TRUE_FINANCIAL_ANOMALY",
+      "line_number": null,
+      "message": "P/FCF above 100x on positive, non-near-zero FCF requires explicit explanation before publish.",
+      "metric": "price_to_fcf",
+      "raw_text": null,
+      "reported": 102.60727218506369,
+      "severity": "error",
+      "validated": null
+    }
+  ],
+  "numeric_claims": [
+    {
+      "line_number": 9,
+      "nearby_text": "- Fundamental basis: revenue scale is `$182.89B`.",
+      "normalized_value": 182890000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$182.89B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 10,
+      "nearby_text": "- Cash-conversion basis: free cash flow is `$46.95B`.",
+      "normalized_value": 46950000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$46.95B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 11,
+      "nearby_text": "- Valuation constraint: EV/Sales is `26.02x`.",
+      "normalized_value": 26.02,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "26.02x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 15,
+      "nearby_text": "- Report as-of date: `2026-05-05`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 16,
+      "nearby_text": "- Price basis: `2026-05-05` close via `csv_price_provider`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": "close",
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 28,
+      "nearby_text": "| SBC / Revenue | 2.1% |",
+      "normalized_value": 2.1,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "2.1%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 36,
+      "nearby_text": "- **NVDA_CLAIM_002**: NVDA has revenue TTM of $182.89B, so the business discussion should focus on accelerated-computing demand, datacenter mix, supply constraints and AI capex durability rather than generic scale language.",
+      "normalized_value": 182890000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$182.89B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 40,
+      "nearby_text": "- **NVDA_CLAIM_003**: FCF TTM is $46.95B, making cash conversion a direct rating input for NVDA.",
+      "normalized_value": 46950000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$46.95B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 44,
+      "nearby_text": "- **NVDA_CLAIM_004**: SBC/Revenue is 2.1%, which should be interpreted through semiconductor margin, supply-chain and AI infrastructure context rather than a one-size-fits-all compensation lens.",
+      "normalized_value": 2.1,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "2.1%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 48,
+      "nearby_text": "- **NVDA_CLAIM_005**: Balance-sheet flexibility is anchored in net cash of $58.23B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+      "normalized_value": 58230000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "net_cash",
+      "raw_text": "$58.23B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 53,
+      "nearby_text": "- **NVDA_CLAIM_006**: Valuation is framed by EV/Sales of 26.02x; this directly limits how aggressive the Hold stance should be.",
+      "normalized_value": 26.02,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "26.02x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 57,
+      "nearby_text": "- **NVDA_CLAIM_007**: For NVDA, P/FCF is 102.61x and should be read against AI-infrastructure growth durability and cycle risk; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+      "normalized_value": 102.61,
+      "period_hint": "unknown",
+      "possible_metric": "price_to_fcf",
+      "raw_text": "102.61x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 71,
+      "nearby_text": "- **NVDA_CLAIM_010**: The bull case is that datacenter AI demand and operating leverage combines with revenue of $182.89B to support the allowed upside rating path when cash conversion quality also holds.",
+      "normalized_value": 182890000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$182.89B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 80,
+      "nearby_text": "- **NVDA_CLAIM_012**: The bear case is that AI capex digestion, export limits, supply risk or multiple compression overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 2.1% or source concerns persist.",
+      "normalized_value": 2.1,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "2.1%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 91,
+      "nearby_text": "- **NVDA_CLAIM_015**: Source disagreement or current-period mismatch can reduce conviction for NVDA, especially where revenue $182.89B is a key valuation denominator.",
+      "normalized_value": 182890000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$182.89B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 113,
+      "nearby_text": "- Why this rating? `Hold` balances revenue of `$182.89B` against valuation and technical timing.",
+      "normalized_value": 182890000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$182.89B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 114,
+      "nearby_text": "- Cash conversion: FCF is `$46.95B` and determines whether growth converts into equity value.",
+      "normalized_value": 46950000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$46.95B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 115,
+      "nearby_text": "- Why not more bullish? EV/Sales `26.02x` limits new-money urgency unless current-period KPIs accelerate.",
+      "normalized_value": 26.02,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "26.02x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 116,
+      "nearby_text": "- Additional valuation/technical constraint: P/FCF `102.61x` and RSI `50.82` argue against chasing without a better setup.",
+      "normalized_value": 102.61,
+      "period_hint": "unknown",
+      "possible_metric": "price_to_fcf",
+      "raw_text": "102.61x",
+      "unit": "multiple"
+    }
+  ],
+  "ticker": "NVDA"
+}

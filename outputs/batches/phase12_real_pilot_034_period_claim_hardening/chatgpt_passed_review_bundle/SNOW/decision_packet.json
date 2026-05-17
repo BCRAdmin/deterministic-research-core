@@ -1,0 +1,59 @@
+{
+  "action_policy": {
+    "new_money": "Wait for confirmation or better entry",
+    "primary_action": "Maintain existing position",
+    "risk_controls": {
+      "hard_stop_reference": 206.401650390625,
+      "review_level": 157.05260070800782
+    }
+  },
+  "as_of_date": "2026-05-05",
+  "calibration_mode": "live",
+  "key_reasons": [
+    "Fundamental score: 0.0",
+    "Technical score: -2.0",
+    "Valuation score: -1.0"
+  ],
+  "key_risks": [
+    "Risk score: -2.0",
+    "Validation issues: 1"
+  ],
+  "rating_permission": {
+    "allowed_ratings": [
+      "Hold",
+      "Accumulate",
+      "Tactical Trim"
+    ],
+    "blocked_ratings": [
+      "Strong Buy",
+      "Buy",
+      "Tactical Underweight",
+      "Underweight",
+      "Sell",
+      "Avoid"
+    ],
+    "preferred_rating": "Hold",
+    "reason": "Mixed signals require a neutral-to-tactical rating corridor."
+  },
+  "score_version": "v1",
+  "signal_scores": {
+    "composite_score": -3.0,
+    "fundamental_score": 0.0,
+    "risk_score": -2.0,
+    "technical_score": -2.0,
+    "valuation_score": -1.0
+  },
+  "ticker": "SNOW",
+  "triggered_rules": [
+    "FCF_TTM_POSITIVE",
+    "OPERATING_MARGIN_NEGATIVE",
+    "SBC_TO_REVENUE_GT_20",
+    "NET_CASH_POSITIVE",
+    "PRICE_BELOW_200SMA",
+    "DEATH_CROSS",
+    "PRICE_BELOW_EMA10",
+    "MACD_HISTOGRAM_POSITIVE",
+    "SBC_TO_FCF_GT_100",
+    "ATR_PCT_GT_5"
+  ]
+}

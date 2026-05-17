@@ -1,0 +1,16 @@
+{
+  "analyst_claim_count": 18,
+  "content_score": 92,
+  "event_awareness": 9,
+  "evidence_mapped_claim_ratio": 1.0,
+  "grade": "A",
+  "hard_claim_evidence_ratio": 1.0,
+  "logic_consistency": 20,
+  "numerical_accuracy": 25,
+  "publishable": true,
+  "rating_discipline": 15,
+  "source_quality": 18,
+  "status": "Publishable",
+  "total_score": 97,
+  "writing_structure": 10
+}

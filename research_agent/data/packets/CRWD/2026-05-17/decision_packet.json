@@ -1,0 +1,57 @@
+{
+  "action_policy": {
+    "new_money": "Wait for confirmation or better entry",
+    "primary_action": "Maintain existing position",
+    "risk_controls": {
+      "hard_stop_reference": 460.4652003479004,
+      "review_level": 442.5375994873047
+    }
+  },
+  "as_of_date": "2026-05-17",
+  "calibration_mode": "live",
+  "key_reasons": [
+    "Fundamental score: 2.0",
+    "Technical score: 1.0",
+    "Valuation score: -1.0"
+  ],
+  "key_risks": [
+    "Risk score: 0.0",
+    "Validation issues: 2"
+  ],
+  "rating_permission": {
+    "allowed_ratings": [
+      "Hold",
+      "Accumulate",
+      "Tactical Trim"
+    ],
+    "blocked_ratings": [
+      "Strong Buy",
+      "Buy",
+      "Tactical Underweight",
+      "Underweight",
+      "Sell",
+      "Avoid"
+    ],
+    "preferred_rating": "Hold",
+    "reason": "Mixed signals require a neutral-to-tactical rating corridor."
+  },
+  "score_version": "v1",
+  "signal_scores": {
+    "composite_score": 2.0,
+    "fundamental_score": 2.0,
+    "risk_score": 0.0,
+    "technical_score": 1.0,
+    "valuation_score": -1.0
+  },
+  "ticker": "CRWD",
+  "triggered_rules": [
+    "FCF_TTM_POSITIVE",
+    "NET_CASH_POSITIVE",
+    "PRICE_ABOVE_200SMA",
+    "DEATH_CROSS",
+    "PRICE_ABOVE_EMA10",
+    "RSI_GT_75",
+    "MACD_HISTOGRAM_POSITIVE",
+    "PRICE_TO_FCF_GT_60"
+  ]
+}

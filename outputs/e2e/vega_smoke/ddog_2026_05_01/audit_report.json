@@ -1,0 +1,43 @@
+{
+  "has_blocking_errors": false,
+  "issues": [],
+  "numeric_claims": [
+    {
+      "line_number": 5,
+      "nearby_text": "Operative Action: reduce 25%, hold core position for long-term investors.",
+      "normalized_value": 25.0,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "25%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 7,
+      "nearby_text": "Long Setup: Entry $132, Stop-Loss $120.00, Take-Profit $150.",
+      "normalized_value": 132.0,
+      "period_hint": "unknown",
+      "possible_metric": "stop_loss",
+      "raw_text": "$132",
+      "unit": "usd"
+    },
+    {
+      "line_number": 7,
+      "nearby_text": "Long Setup: Entry $132, Stop-Loss $120.00, Take-Profit $150.",
+      "normalized_value": 120.0,
+      "period_hint": "unknown",
+      "possible_metric": "stop_loss",
+      "raw_text": "$120.00",
+      "unit": "usd"
+    },
+    {
+      "line_number": 7,
+      "nearby_text": "Long Setup: Entry $132, Stop-Loss $120.00, Take-Profit $150.",
+      "normalized_value": 150.0,
+      "period_hint": "unknown",
+      "possible_metric": "stop_loss",
+      "raw_text": "$150",
+      "unit": "usd"
+    }
+  ],
+  "ticker": "DDOG"
+}

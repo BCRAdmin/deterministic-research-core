@@ -1,0 +1,18 @@
+{
+  "ticker": "MDB",
+  "as_of_date": "2026-05-01",
+  "has_blocking_errors": false,
+  "issues": [
+    {
+      "severity": "warning",
+      "code": "FORWARD_EPS_GUIDANCE_MISMATCH",
+      "message": "Consensus EPS differs from company guidance midpoint by 20.7%."
+    },
+    {
+      "severity": "warning",
+      "code": "WEAK_NEWS_PRICE_CAUSALITY",
+      "message": "News date and price move date are 7 days apart. Do not imply direct causality without additional evidence."
+    }
+  ]
+}
+

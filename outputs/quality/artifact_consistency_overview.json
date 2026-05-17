@@ -1,0 +1,102 @@
+{
+  "checked_batches": [
+    {
+      "batch_id": "phase12_current_batch_002",
+      "bundle_dir": "/Users/BjornRosinger/Documents/New project 2/outputs/batches/phase12_current_batch_002/chatgpt_review_bundle",
+      "counts": {
+        "artifact_consistency_errors": 0,
+        "stale_archetype_artifacts": 0,
+        "stale_artifact_issues": 0,
+        "stale_rating_artifacts": 0
+      },
+      "error_count": 0,
+      "generated_at": "2026-05-16T14:35:02.359955+00:00",
+      "issues": [],
+      "legacy_ignored": [],
+      "legacy_ignored_count": 0,
+      "source_of_truth_files": [
+        "dashboard_status.json",
+        "report_manifest.json"
+      ],
+      "stale_artifact_issue_count": 0,
+      "status": "clean",
+      "tickers": [
+        "AAPL",
+        "CRM",
+        "DDOG",
+        "GOOGL",
+        "META",
+        "MSFT",
+        "NFLX",
+        "SNOW"
+      ]
+    },
+    {
+      "batch_id": "phase12_operating_pilot_050",
+      "bundle_dir": "/Users/BjornRosinger/Documents/New project 2/outputs/batches/phase12_operating_pilot_050/chatgpt_review_bundle",
+      "counts": {
+        "artifact_consistency_errors": 0,
+        "stale_archetype_artifacts": 0,
+        "stale_artifact_issues": 0,
+        "stale_rating_artifacts": 0
+      },
+      "error_count": 0,
+      "generated_at": "2026-05-16T14:35:02.402212+00:00",
+      "issues": [],
+      "legacy_ignored": [],
+      "legacy_ignored_count": 0,
+      "source_of_truth_files": [
+        "dashboard_status.json",
+        "report_manifest.json"
+      ],
+      "stale_artifact_issue_count": 0,
+      "status": "clean",
+      "tickers": [
+        "AAPL",
+        "AVGO",
+        "CRM",
+        "DDOG",
+        "GOOGL",
+        "META",
+        "MSFT",
+        "NFLX",
+        "SNOW"
+      ]
+    },
+    {
+      "batch_id": "phase12_real_pilot_041_final_prose_polish",
+      "bundle_dir": "/Users/BjornRosinger/Documents/New project 2/outputs/batches/phase12_real_pilot_041_final_prose_polish/chatgpt_review_bundle",
+      "counts": {
+        "artifact_consistency_errors": 0,
+        "stale_archetype_artifacts": 0,
+        "stale_artifact_issues": 0,
+        "stale_rating_artifacts": 0
+      },
+      "error_count": 0,
+      "generated_at": "2026-05-16T14:35:02.441240+00:00",
+      "issues": [],
+      "legacy_ignored": [],
+      "legacy_ignored_count": 0,
+      "source_of_truth_files": [
+        "dashboard_status.json",
+        "report_manifest.json"
+      ],
+      "stale_artifact_issue_count": 0,
+      "status": "clean",
+      "tickers": [
+        "AAPL",
+        "AVGO",
+        "CRM",
+        "DDOG",
+        "GOOGL",
+        "META",
+        "MSFT",
+        "NFLX",
+        "SNOW"
+      ]
+    }
+  ],
+  "generated_at": "2026-05-16T14:35:02.441301+00:00",
+  "inconsistent_count": 0,
+  "missing_count": 0
+}

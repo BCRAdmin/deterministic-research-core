@@ -1,0 +1,36 @@
+{
+  "actual_archetype": "SEMICONDUCTOR_AI_INFRA",
+  "archetype_confidence": 0.2,
+  "artifact_consistency_status": "clean",
+  "company_name": "QUALCOMM Incorporated",
+  "concerns": [],
+  "data_confidence_score": 75,
+  "evidence_status": "clean",
+  "expected_archetype": "SEMICONDUCTOR_AI_INFRA or SEMICONDUCTOR_CYCLICAL",
+  "external_display_rating": "Hold Pending FCF Support",
+  "internal_research_quality_score": 100,
+  "likely_false_negative": "no",
+  "likely_false_positive": "no",
+  "manual_review_reasons": [
+    "MISSING_FCF_SUPPORT_FOR_ACCUMULATE",
+    "EARNINGS_DATE_UNAVAILABLE",
+    "PERIOD_TYPE_MISMATCH_IGNORED",
+    "TRUE_SOURCE_VALUE_DISAGREEMENT",
+    "SOURCE_FRAME_VARIANT_IGNORED"
+  ],
+  "primary_blockers": [
+    "MISSING_FCF_SUPPORT_FOR_ACCUMULATE",
+    "EARNINGS_DATE_UNAVAILABLE",
+    "PERIOD_TYPE_MISMATCH_IGNORED",
+    "TRUE_SOURCE_VALUE_DISAGREEMENT",
+    "SOURCE_FRAME_VARIANT_IGNORED",
+    "audit_errors=1"
+  ],
+  "public_ready": false,
+  "publish_quality_score": 87,
+  "publishable": false,
+  "recommended_next_action": "Keep manual_review and resolve blockers before any promotion.",
+  "review_status": "manual_review",
+  "sector_bucket": "Semiconductors / AI Infrastructure / Cyclical AI",
+  "ticker": "QCOM"
+}

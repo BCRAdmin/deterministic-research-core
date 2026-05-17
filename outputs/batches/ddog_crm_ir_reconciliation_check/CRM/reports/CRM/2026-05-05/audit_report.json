@@ -1,0 +1,115 @@
+{
+  "has_blocking_errors": false,
+  "issues": [],
+  "numeric_claims": [
+    {
+      "line_number": 8,
+      "nearby_text": "- Report as-of date: `2026-05-05`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 9,
+      "nearby_text": "- Price basis: `2026-05-05` close via `csv_price_provider`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": "close",
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 21,
+      "nearby_text": "| SBC / Revenue | 8.5% |",
+      "normalized_value": 8.5,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "8.5%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 29,
+      "nearby_text": "- **CRM_CLAIM_002**: CRM has validated revenue TTM of $41.50B, so the business discussion should focus on Agentforce, Data Cloud, RPO/cRPO, margin discipline, buybacks and FY plan rather than generic scale language.",
+      "normalized_value": 41500000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$41.50B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 33,
+      "nearby_text": "- **CRM_CLAIM_003**: Validated FCF TTM is $14.40B, making cash conversion a direct rating input for CRM.",
+      "normalized_value": 14400000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$14.40B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 37,
+      "nearby_text": "- **CRM_CLAIM_004**: SBC/Revenue is 8.5%, which should be interpreted through enterprise SaaS margin, RPO, AI product adoption and capital-return context rather than a one-size-fits-all compensation lens.",
+      "normalized_value": 8.5,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "8.5%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 41,
+      "nearby_text": "- **CRM_CLAIM_005**: Balance-sheet flexibility is anchored in validated net cash of $9.56B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+      "normalized_value": 9560000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "net_cash",
+      "raw_text": "$9.56B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 46,
+      "nearby_text": "- **CRM_CLAIM_006**: Valuation is framed by validated EV/Sales of 4.08x; this directly limits how aggressive the Hold stance should be.",
+      "normalized_value": 4.08,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "4.08x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 50,
+      "nearby_text": "- **CRM_CLAIM_007**: For CRM, validated P/FCF is 12.41x and should be read against enterprise SaaS FCF durability, growth reacceleration and capital returns; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+      "normalized_value": 12.41,
+      "period_hint": "unknown",
+      "possible_metric": "price_to_fcf",
+      "raw_text": "12.41x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 64,
+      "nearby_text": "- **CRM_CLAIM_010**: The bull case is that Agentforce/Data Cloud adoption, RPO conversion and operating-margin discipline combines with revenue of $41.50B to support the allowed upside rating path when cash conversion quality also holds.",
+      "normalized_value": 41500000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$41.50B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 73,
+      "nearby_text": "- **CRM_CLAIM_012**: The bear case is that AI adoption disappointment, integration risk, weak cRPO or FCF reconciliation gaps overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 8.5% or source-quality issues persist.",
+      "normalized_value": 8.5,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "8.5%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 84,
+      "nearby_text": "- **CRM_CLAIM_015**: Source disagreement or current-period mismatch can reduce conviction for CRM, especially where revenue $41.50B is a key valuation denominator.",
+      "normalized_value": 41500000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$41.50B",
+      "unit": "usd"
+    }
+  ],
+  "ticker": "CRM"
+}

@@ -1,0 +1,37 @@
+{
+  "date": "2026-05-12",
+  "failed_count": 0,
+  "gold_templates": [
+    "GOOGL",
+    "SNOW"
+  ],
+  "known_manual_review_groups": [
+    "EARNINGS_DATE_UNAVAILABLE",
+    "FCF_UNAVAILABLE_WITHOUT_IR_SUPPORT",
+    "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+    "GUARD_THRESHOLD_REVIEW",
+    "MISSING_CURRENT_PERIOD_KPI_CONTEXT",
+    "MISSING_FCF_SUPPORT_FOR_ACCUMULATE",
+    "PERIOD_TYPE_MISMATCH_IGNORED",
+    "SOURCE_FRAME_VARIANT_IGNORED",
+    "TRUE_FINANCIAL_ANOMALY",
+    "TRUE_SOURCE_VALUE_DISAGREEMENT"
+  ],
+  "latest_batch_id": "phase12_operating_pilot_050",
+  "manual_review_count": 21,
+  "near_gold_templates": [
+    "MSFT"
+  ],
+  "passed_count": 9,
+  "pilot_ready": true,
+  "publish_ready": false,
+  "release_name": "Pilot-v1 Operating Baseline",
+  "usable_internal_drafts": [
+    "AAPL",
+    "META",
+    "NFLX",
+    "DDOG",
+    "CRM",
+    "AVGO"
+  ]
+}

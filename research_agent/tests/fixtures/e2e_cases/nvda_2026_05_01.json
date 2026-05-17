@@ -1,0 +1,20 @@
+{
+  "case_id": "nvda_2026_05_01",
+  "ticker": "NVDA",
+  "as_of_date": "2026-05-01",
+  "original_report_path": "research_agent/tests/fixtures/nvda_2026_05_01/bad_report.md",
+  "data_packet_path": "research_agent/tests/fixtures/nvda_2026_05_01/data_packet.json",
+  "metrics_packet_path": "research_agent/tests/fixtures/nvda_2026_05_01/metrics_packet.json",
+  "validation_report_path": "research_agent/tests/fixtures/nvda_2026_05_01/validation_report.json",
+  "source_registry_path": "research_agent/tests/fixtures/nvda_2026_05_01/source_registry.json",
+  "expected_issues": [
+    {"code": "NUMERIC_MISMATCH"},
+    {"code": "PERIOD_MISMATCH"}
+  ],
+  "expected_rating": {
+    "preferred_rating": "Accumulate",
+    "blocked_ratings": ["Sell", "Underweight"]
+  },
+  "minimum_quality_score": 85.0,
+  "expected_final_status": "repaired_publishable"
+}

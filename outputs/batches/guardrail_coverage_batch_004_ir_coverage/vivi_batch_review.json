@@ -1,0 +1,22 @@
+{
+  "blocking_issues": [],
+  "do_not_change": [
+    "No guard loosening.",
+    "No ticker hardcoding.",
+    "No public-ready routing without Promotion Gate.",
+    "No pseudo-IR or invented data."
+  ],
+  "false_block_candidates": [],
+  "false_pass_candidates": [],
+  "fix_list_for_codex": [],
+  "human_review_required": false,
+  "non_blocking_issues": [],
+  "review_metadata": {
+    "batch_id": "guardrail_coverage_batch_004_ir_coverage",
+    "bundle_id": "guardrail_coverage_batch_004_ir_coverage",
+    "reviewed_at": "2026-05-17T02:08:51Z",
+    "reviewer": "Vivi",
+    "schema_version": "v1.1"
+  },
+  "review_status": "pass"
+}

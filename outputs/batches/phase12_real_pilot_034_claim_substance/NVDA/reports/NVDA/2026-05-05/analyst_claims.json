@@ -1,0 +1,636 @@
+[
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "NVDA enters the report with a validated Hold rating corridor at a frozen close of 196.50; the action should reflect accelerated-computing demand, datacenter mix, supply constraints and AI capex durability and the current technical setup.",
+    "claim_id": "NVDA_CLAIM_001",
+    "claim_text": "NVDA enters the report with a validated Hold rating corridor at a frozen close of 196.50; the action should reflect accelerated-computing demand, datacenter mix, supply constraints and AI capex durability and the current technical setup.",
+    "claim_type": "price_data",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "NVDA_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "NVDA_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "NVDA_YAHOO_CHART_PRICE_CSV_PRICE",
+      "NVDA_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "NVDA_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "NVDA_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "The committee text should stay inside the Hold action frame.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Executive Summary",
+    "source_ids": [
+      "NVDA_YAHOO_CHART_PRICE_CSV",
+      "NVDA_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "NVDA has validated revenue TTM of $10.92B, so the business discussion should focus on accelerated-computing demand, datacenter mix, supply constraints and AI capex durability rather than generic scale language.",
+    "claim_id": "NVDA_CLAIM_002",
+    "claim_text": "NVDA has validated revenue TTM of $10.92B, so the business discussion should focus on accelerated-computing demand, datacenter mix, supply constraints and AI capex durability rather than generic scale language.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "Revenue scale alone does not prove attractive returns or valuation discipline.",
+    "evidence_ids": [
+      "NVDA_SEC_COMPANYFACTS_1045810_REVENUE",
+      "NVDA_SEC_COMPANYFACTS_1045810_REVENUE_TTM",
+      "NVDA_SEC_COMPANYFACTS_1045810_SALES",
+      "NVDA_SEC_COMPANYFACTS_1045810_UMSATZ",
+      "NVDA_SEC_revenue_FY2026_FY_0001045810-26-000021",
+      "NVDA_SEC_revenue_FY2026_Q2_0001045810-25-000209",
+      "NVDA_SEC_revenue_FY2026_Q3_0001045810-25-000230"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm"
+    ],
+    "importance": "high",
+    "investment_implication": "Use revenue evidence as context, not as a standalone buy signal.",
+    "metric_refs": [
+      "revenue_ttm"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "NVDA_SEC_COMPANYFACTS_1045810",
+      "SEC_0001045810_0001045810-26-000021",
+      "SEC_0001045810_0001045810-25-000209",
+      "SEC_0001045810_0001045810-25-000230"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Validated FCF TTM is $60.50B, making cash conversion a direct rating input for NVDA.",
+    "claim_id": "NVDA_CLAIM_003",
+    "claim_text": "Validated FCF TTM is $60.50B, making cash conversion a direct rating input for NVDA.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "FCF may be company-defined or period-sensitive and can require reconciliation review.",
+    "evidence_ids": [
+      "NVDA_SEC_COMPANYFACTS_1045810_CASHFLOW",
+      "NVDA_SEC_COMPANYFACTS_1045810_FCF",
+      "NVDA_SEC_COMPANYFACTS_1045810_FREE_CASH_FLOW",
+      "NVDA_SEC_COMPANYFACTS_1045810_FREE_CASH_FLOW_TTM",
+      "NVDA_SEC_COMPANYFACTS_1045810_FREE_CASHFLOW",
+      "NVDA_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm"
+    ],
+    "importance": "high",
+    "investment_implication": "FCF quality supports the thesis only if no sanity guard blocks the report.",
+    "metric_refs": [
+      "free_cash_flow_ttm"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "NVDA_SEC_COMPANYFACTS_1045810",
+      "SEC_0001045810_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "SBC/Revenue is 38.8%, which should be interpreted through semiconductor margin, supply-chain and AI infrastructure context rather than a one-size-fits-all compensation lens.",
+    "claim_id": "NVDA_CLAIM_004",
+    "claim_text": "SBC/Revenue is 38.8%, which should be interpreted through semiconductor margin, supply-chain and AI infrastructure context rather than a one-size-fits-all compensation lens.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": "Sector and lifecycle matter, but persistent dilution can still reduce equity quality.",
+    "evidence_ids": [
+      "NVDA_SEC_COMPANYFACTS_1045810_SBC_TO_REVENUE",
+      "NVDA_SEC_DERIVED_SBC_TO_REVENUE"
+    ],
+    "evidence_metrics": [
+      "sbc_to_revenue"
+    ],
+    "importance": "medium",
+    "investment_implication": "Treat SBC as a risk modifier rather than an automatic rating override.",
+    "metric_refs": [
+      "sbc_to_revenue"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "NVDA_SEC_COMPANYFACTS_1045810",
+      "SEC_0001045810_DERIVED_SBC_TO_REVENUE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Balance-sheet flexibility is anchored in validated net cash of $58.23B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+    "claim_id": "NVDA_CLAIM_005",
+    "claim_text": "Balance-sheet flexibility is anchored in validated net cash of $58.23B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "NVDA_SEC_COMPANYFACTS_1045810_CASH",
+      "NVDA_SEC_COMPANYFACTS_1045810_CASH_AND_EQUIVALENTS",
+      "NVDA_SEC_COMPANYFACTS_1045810_CASH_AND_INVESTMENTS",
+      "NVDA_SEC_COMPANYFACTS_1045810_NET_CASH",
+      "NVDA_SEC_cash_and_equivalents_FY2026_FY_0001045810-26-000021",
+      "NVDA_SEC_cash_and_equivalents_FY2026_Q2_0001045810-25-000209",
+      "NVDA_SEC_cash_and_equivalents_FY2026_Q3_0001045810-25-000230",
+      "NVDA_SEC_COMPANYFACTS_1045810_DEBT",
+      "NVDA_SEC_COMPANYFACTS_1045810_NET_DEBT",
+      "NVDA_SEC_COMPANYFACTS_1045810_TOTAL_DEBT"
+    ],
+    "evidence_metrics": [
+      "net_cash",
+      "total_debt"
+    ],
+    "importance": "medium",
+    "investment_implication": "A stronger liquidity position can widen the acceptable holding corridor.",
+    "metric_refs": [
+      "net_cash",
+      "total_debt"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "NVDA_SEC_COMPANYFACTS_1045810",
+      "SEC_0001045810_0001045810-26-000021",
+      "SEC_0001045810_0001045810-25-000209",
+      "SEC_0001045810_0001045810-25-000230"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Valuation is framed by validated EV/Sales of 435.86x; this directly limits how aggressive the Hold stance should be.",
+    "claim_id": "NVDA_CLAIM_006",
+    "claim_text": "Valuation is framed by validated EV/Sales of 435.86x; this directly limits how aggressive the Hold stance should be.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": "Packet-derived valuation can still be blocked by sanity guards when source reconciliation is suspect.",
+    "evidence_ids": [
+      "NVDA_SEC_COMPANYFACTS_1045810_REVENUE",
+      "NVDA_SEC_COMPANYFACTS_1045810_REVENUE_TTM",
+      "NVDA_SEC_COMPANYFACTS_1045810_SALES",
+      "NVDA_SEC_COMPANYFACTS_1045810_UMSATZ",
+      "NVDA_SEC_revenue_FY2026_FY_0001045810-26-000021",
+      "NVDA_SEC_revenue_FY2026_Q2_0001045810-25-000209",
+      "NVDA_SEC_revenue_FY2026_Q3_0001045810-25-000230",
+      "NVDA_SEC_COMPANYFACTS_1045810_CASHFLOW",
+      "NVDA_SEC_COMPANYFACTS_1045810_FCF",
+      "NVDA_SEC_COMPANYFACTS_1045810_FREE_CASH_FLOW",
+      "NVDA_SEC_COMPANYFACTS_1045810_FREE_CASH_FLOW_TTM",
+      "NVDA_SEC_COMPANYFACTS_1045810_FREE_CASHFLOW",
+      "NVDA_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "NVDA_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "NVDA_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "NVDA_YAHOO_CHART_PRICE_CSV_PRICE",
+      "NVDA_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "NVDA_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "NVDA_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm",
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Do not upgrade rating solely from valuation language if audit has financial-sanity errors.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm",
+      "close"
+    ],
+    "section": "Valuation / Multiples",
+    "source_ids": [
+      "NVDA_SEC_COMPANYFACTS_1045810",
+      "SEC_0001045810_0001045810-26-000021",
+      "SEC_0001045810_0001045810-25-000209",
+      "SEC_0001045810_0001045810-25-000230",
+      "SEC_0001045810_DERIVED_FCF",
+      "NVDA_YAHOO_CHART_PRICE_CSV",
+      "NVDA_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "For NVDA, validated P/FCF is 79.63x and should be read against AI-infrastructure growth durability and cycle risk; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+    "claim_id": "NVDA_CLAIM_007",
+    "claim_text": "For NVDA, validated P/FCF is 79.63x and should be read against AI-infrastructure growth durability and cycle risk; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "NVDA_SEC_COMPANYFACTS_1045810_CASHFLOW",
+      "NVDA_SEC_COMPANYFACTS_1045810_FCF",
+      "NVDA_SEC_COMPANYFACTS_1045810_FREE_CASH_FLOW",
+      "NVDA_SEC_COMPANYFACTS_1045810_FREE_CASH_FLOW_TTM",
+      "NVDA_SEC_COMPANYFACTS_1045810_FREE_CASHFLOW",
+      "NVDA_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "NVDA_SEC_COMPANYFACTS_1045810_REVENUE",
+      "NVDA_SEC_COMPANYFACTS_1045810_REVENUE_TTM",
+      "NVDA_SEC_COMPANYFACTS_1045810_SALES",
+      "NVDA_SEC_COMPANYFACTS_1045810_UMSATZ",
+      "NVDA_SEC_revenue_FY2026_FY_0001045810-26-000021",
+      "NVDA_SEC_revenue_FY2026_Q2_0001045810-25-000209",
+      "NVDA_SEC_revenue_FY2026_Q3_0001045810-25-000230"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm",
+      "revenue_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "The rating should stay conservative when multiples are expensive, missing or flagged.",
+    "metric_refs": [
+      "free_cash_flow_ttm",
+      "revenue_ttm"
+    ],
+    "section": "Valuation / Multiples",
+    "source_ids": [
+      "NVDA_SEC_COMPANYFACTS_1045810",
+      "SEC_0001045810_DERIVED_FCF",
+      "SEC_0001045810_0001045810-26-000021",
+      "SEC_0001045810_0001045810-25-000209",
+      "SEC_0001045810_0001045810-25-000230"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The technical setup uses validated levels: close 196.50, 50-SMA 187.43, 200-SMA 184.10 and RSI 50.82.",
+    "claim_id": "NVDA_CLAIM_008",
+    "claim_text": "The technical setup uses validated levels: close 196.50, 50-SMA 187.43, 200-SMA 184.10 and RSI 50.82.",
+    "claim_type": "technical_metric",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "NVDA_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "NVDA_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "NVDA_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "NVDA_YAHOO_CHART_PRICE_CSV_PRICE",
+      "NVDA_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "NVDA_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "NVDA_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Timing language should follow the validated technical trend state.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Technical Setup",
+    "source_ids": [
+      "NVDA_YAHOO_CHART_PRICE_CSV",
+      "NVDA_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "NVDA's RSI and moving-average position imply constructive momentum but still requires valuation and risk discipline, so entries should be staged, delayed or trimmed according to the allowed rating corridor.",
+    "claim_id": "NVDA_CLAIM_009",
+    "claim_text": "NVDA's RSI and moving-average position imply constructive momentum but still requires valuation and risk discipline, so entries should be staged, delayed or trimmed according to the allowed rating corridor.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": "Technical weakness can be temporary if fundamentals and catalysts improve.",
+    "evidence_ids": [
+      "NVDA_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "NVDA_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "NVDA_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "NVDA_YAHOO_CHART_PRICE_CSV_PRICE",
+      "NVDA_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "NVDA_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "NVDA_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Use staged entries or trims when technical and fundamental signals diverge.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Technical Setup",
+    "source_ids": [
+      "NVDA_YAHOO_CHART_PRICE_CSV",
+      "NVDA_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The bull case is that datacenter AI demand and operating leverage combines with revenue of $10.92B to support the allowed upside rating path when cash conversion quality also holds.",
+    "claim_id": "NVDA_CLAIM_010",
+    "claim_text": "The bull case is that datacenter AI demand and operating leverage combines with revenue of $10.92B to support the allowed upside rating path when cash conversion quality also holds.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": "Strong scale does not resolve valuation or reconciliation anomalies.",
+    "evidence_ids": [
+      "NVDA_SEC_COMPANYFACTS_1045810_REVENUE",
+      "NVDA_SEC_COMPANYFACTS_1045810_REVENUE_TTM",
+      "NVDA_SEC_COMPANYFACTS_1045810_SALES",
+      "NVDA_SEC_COMPANYFACTS_1045810_UMSATZ",
+      "NVDA_SEC_revenue_FY2026_FY_0001045810-26-000021",
+      "NVDA_SEC_revenue_FY2026_Q2_0001045810-25-000209",
+      "NVDA_SEC_revenue_FY2026_Q3_0001045810-25-000230",
+      "NVDA_SEC_COMPANYFACTS_1045810_CASHFLOW",
+      "NVDA_SEC_COMPANYFACTS_1045810_FCF",
+      "NVDA_SEC_COMPANYFACTS_1045810_FREE_CASH_FLOW",
+      "NVDA_SEC_COMPANYFACTS_1045810_FREE_CASH_FLOW_TTM",
+      "NVDA_SEC_COMPANYFACTS_1045810_FREE_CASHFLOW",
+      "NVDA_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Bullish language must remain bounded by DecisionPacket permissions.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Bull Case",
+    "source_ids": [
+      "NVDA_SEC_COMPANYFACTS_1045810",
+      "SEC_0001045810_0001045810-26-000021",
+      "SEC_0001045810_0001045810-25-000209",
+      "SEC_0001045810_0001045810-25-000230",
+      "SEC_0001045810_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "A constructive technical bull path for NVDA requires confirmation beyond the current RSI of 50.82 and moving-average setup.",
+    "claim_id": "NVDA_CLAIM_011",
+    "claim_text": "A constructive technical bull path for NVDA requires confirmation beyond the current RSI of 50.82 and moving-average setup.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "NVDA_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "NVDA_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "NVDA_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "NVDA_YAHOO_CHART_PRICE_CSV_PRICE",
+      "NVDA_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "NVDA_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "NVDA_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Add or accumulate language should require confirmation when the preferred rating is not Buy.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Bull Case",
+    "source_ids": [
+      "NVDA_YAHOO_CHART_PRICE_CSV",
+      "NVDA_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The bear case is that AI capex digestion, export limits, supply risk or multiple compression overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 38.8% or source-quality issues persist.",
+    "claim_id": "NVDA_CLAIM_012",
+    "claim_text": "The bear case is that AI capex digestion, export limits, supply risk or multiple compression overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 38.8% or source-quality issues persist.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "NVDA_SEC_COMPANYFACTS_1045810_CASHFLOW",
+      "NVDA_SEC_COMPANYFACTS_1045810_FCF",
+      "NVDA_SEC_COMPANYFACTS_1045810_FREE_CASH_FLOW",
+      "NVDA_SEC_COMPANYFACTS_1045810_FREE_CASH_FLOW_TTM",
+      "NVDA_SEC_COMPANYFACTS_1045810_FREE_CASHFLOW",
+      "NVDA_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "NVDA_SEC_COMPANYFACTS_1045810_SBC_TO_REVENUE",
+      "NVDA_SEC_DERIVED_SBC_TO_REVENUE"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm",
+      "sbc_to_revenue"
+    ],
+    "importance": "high",
+    "investment_implication": "Manual review remains appropriate when financial-sanity guards fire.",
+    "metric_refs": [
+      "free_cash_flow_ttm",
+      "sbc_to_revenue"
+    ],
+    "section": "Bear Case",
+    "source_ids": [
+      "NVDA_SEC_COMPANYFACTS_1045810",
+      "SEC_0001045810_DERIVED_FCF",
+      "SEC_0001045810_DERIVED_SBC_TO_REVENUE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Valuation risk for NVDA is a discipline constraint; expensive or missing EV/Sales and P/FCF context should not be translated into a blocked rating.",
+    "claim_id": "NVDA_CLAIM_013",
+    "claim_text": "Valuation risk for NVDA is a discipline constraint; expensive or missing EV/Sales and P/FCF context should not be translated into a blocked rating.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "NVDA_SEC_COMPANYFACTS_1045810_REVENUE",
+      "NVDA_SEC_COMPANYFACTS_1045810_REVENUE_TTM",
+      "NVDA_SEC_COMPANYFACTS_1045810_SALES",
+      "NVDA_SEC_COMPANYFACTS_1045810_UMSATZ",
+      "NVDA_SEC_revenue_FY2026_FY_0001045810-26-000021",
+      "NVDA_SEC_revenue_FY2026_Q2_0001045810-25-000209",
+      "NVDA_SEC_revenue_FY2026_Q3_0001045810-25-000230",
+      "NVDA_SEC_COMPANYFACTS_1045810_CASHFLOW",
+      "NVDA_SEC_COMPANYFACTS_1045810_FCF",
+      "NVDA_SEC_COMPANYFACTS_1045810_FREE_CASH_FLOW",
+      "NVDA_SEC_COMPANYFACTS_1045810_FREE_CASH_FLOW_TTM",
+      "NVDA_SEC_COMPANYFACTS_1045810_FREE_CASHFLOW",
+      "NVDA_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Avoid blocked Sell language when the DecisionPacket allows only trim or hold actions.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Bear Case",
+    "source_ids": [
+      "NVDA_SEC_COMPANYFACTS_1045810",
+      "SEC_0001045810_0001045810-26-000021",
+      "SEC_0001045810_0001045810-25-000209",
+      "SEC_0001045810_0001045810-25-000230",
+      "SEC_0001045810_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Validation and audit issues are part of the NVDA research view; any blocking data issue should override a superficially complete report.",
+    "claim_id": "NVDA_CLAIM_014",
+    "claim_text": "Validation and audit issues are part of the NVDA research view; any blocking data issue should override a superficially complete report.",
+    "claim_type": "risk",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "NVDA_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "NVDA_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "NVDA_YAHOO_CHART_PRICE_CSV_PRICE",
+      "NVDA_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "NVDA_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "NVDA_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Blocking audit errors should keep the report in manual review.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Key Risks",
+    "source_ids": [
+      "NVDA_YAHOO_CHART_PRICE_CSV",
+      "NVDA_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Source disagreement or current-period mismatch can reduce conviction for NVDA, especially where revenue $10.92B is a key valuation denominator.",
+    "claim_id": "NVDA_CLAIM_015",
+    "claim_text": "Source disagreement or current-period mismatch can reduce conviction for NVDA, especially where revenue $10.92B is a key valuation denominator.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "NVDA_SEC_COMPANYFACTS_1045810_REVENUE",
+      "NVDA_SEC_COMPANYFACTS_1045810_REVENUE_TTM",
+      "NVDA_SEC_COMPANYFACTS_1045810_SALES",
+      "NVDA_SEC_COMPANYFACTS_1045810_UMSATZ",
+      "NVDA_SEC_revenue_FY2026_FY_0001045810-26-000021",
+      "NVDA_SEC_revenue_FY2026_Q2_0001045810-25-000209",
+      "NVDA_SEC_revenue_FY2026_Q3_0001045810-25-000230",
+      "NVDA_SEC_COMPANYFACTS_1045810_CASHFLOW",
+      "NVDA_SEC_COMPANYFACTS_1045810_FCF",
+      "NVDA_SEC_COMPANYFACTS_1045810_FREE_CASH_FLOW",
+      "NVDA_SEC_COMPANYFACTS_1045810_FREE_CASH_FLOW_TTM",
+      "NVDA_SEC_COMPANYFACTS_1045810_FREE_CASHFLOW",
+      "NVDA_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Source-quality limitations belong in the final action plan.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Key Risks",
+    "source_ids": [
+      "NVDA_SEC_COMPANYFACTS_1045810",
+      "SEC_0001045810_0001045810-26-000021",
+      "SEC_0001045810_0001045810-25-000209",
+      "SEC_0001045810_0001045810-25-000230",
+      "SEC_0001045810_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Catalysts for NVDA should be limited to confirmed packet inputs; missing earnings or forward company data should be stated as unavailable rather than converted into event-risk claims.",
+    "claim_id": "NVDA_CLAIM_016",
+    "claim_text": "Catalysts for NVDA should be limited to confirmed packet inputs; missing earnings or forward company data should be stated as unavailable rather than converted into event-risk claims.",
+    "claim_type": "price_data",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "NVDA_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "NVDA_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "NVDA_YAHOO_CHART_PRICE_CSV_PRICE",
+      "NVDA_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "NVDA_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "NVDA_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "If earnings are unavailable, the report should state that limitation rather than inventing timing.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Catalysts & Triggers",
+    "source_ids": [
+      "NVDA_YAHOO_CHART_PRICE_CSV",
+      "NVDA_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Trigger language should use validated levels such as 50-SMA 187.43 and 200-SMA 184.10, not unvalidated price targets.",
+    "claim_id": "NVDA_CLAIM_017",
+    "claim_text": "Trigger language should use validated levels such as 50-SMA 187.43 and 200-SMA 184.10, not unvalidated price targets.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "NVDA_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "NVDA_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "NVDA_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "NVDA_YAHOO_CHART_PRICE_CSV_PRICE",
+      "NVDA_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "NVDA_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "NVDA_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Use confirmation language instead of hard price targets unless risk/reward levels are validated.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Catalysts & Triggers",
+    "source_ids": [
+      "NVDA_YAHOO_CHART_PRICE_CSV",
+      "NVDA_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The final action should use Hold, because DecisionPacket permissions connect NVDA's fundamental score, technical score and risk score to that allowed rating corridor.",
+    "claim_id": "NVDA_CLAIM_018",
+    "claim_text": "The final action should use Hold, because DecisionPacket permissions connect NVDA's fundamental score, technical score and risk score to that allowed rating corridor.",
+    "claim_type": "rating",
+    "confidence": "high",
+    "counterargument": "Another allowed rating may be defensible, but blocked ratings are not allowed.",
+    "evidence_ids": [
+      "NVDA_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "NVDA_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "NVDA_YAHOO_CHART_PRICE_CSV_PRICE",
+      "NVDA_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "NVDA_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "NVDA_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Final report wording must choose Hold or another allowed rating with explicit justification.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Final Rating & Action Plan",
+    "source_ids": [
+      "NVDA_YAHOO_CHART_PRICE_CSV",
+      "NVDA_CSV_PRICE_PROVIDER"
+    ]
+  }
+]

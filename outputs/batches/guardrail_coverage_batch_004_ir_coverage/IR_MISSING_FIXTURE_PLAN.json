@@ -1,0 +1,398 @@
+{
+  "batch_id": "guardrail_coverage_batch_004_ir_coverage",
+  "generated_at": "2026-05-17T02:08:16Z",
+  "missing_fixture_count": 20,
+  "records": [
+    {
+      "IR_release_required": false,
+      "SEC_CompanyFacts_already_covers_enough": true,
+      "archetype": "STANDARD_GROWTH",
+      "company_name": "ServiceNow, Inc.",
+      "current_period_KPIs_required_for_publish_manual_review_logic": false,
+      "latest_available_fiscal_period_needed": "latest SEC CompanyFacts / latest 10-Q or 10-K period",
+      "missing": {
+        "10_K": false,
+        "10_Q": false,
+        "company_defined_FCF": true,
+        "earnings_release": true,
+        "guidance": true,
+        "segment_KPIs": true
+      },
+      "priority": "P2",
+      "recommended_action": "Create SEC-derived fixture if coverage target needs it; otherwise document as lower priority.",
+      "ticker": "NOW"
+    },
+    {
+      "IR_release_required": false,
+      "SEC_CompanyFacts_already_covers_enough": true,
+      "archetype": "SAAS_CONSUMPTION",
+      "company_name": "MongoDB, Inc.",
+      "current_period_KPIs_required_for_publish_manual_review_logic": true,
+      "latest_available_fiscal_period_needed": "latest SEC CompanyFacts / latest 10-Q or 10-K period",
+      "missing": {
+        "10_K": false,
+        "10_Q": false,
+        "company_defined_FCF": true,
+        "earnings_release": true,
+        "guidance": true,
+        "segment_KPIs": true
+      },
+      "priority": "P1",
+      "recommended_action": "Create SEC-derived current-period fixture now; prefer direct IR/earnings release later.",
+      "ticker": "MDB"
+    },
+    {
+      "IR_release_required": false,
+      "SEC_CompanyFacts_already_covers_enough": true,
+      "archetype": "STANDARD_GROWTH",
+      "company_name": "Cloudflare, Inc.",
+      "current_period_KPIs_required_for_publish_manual_review_logic": true,
+      "latest_available_fiscal_period_needed": "latest SEC CompanyFacts / latest 10-Q or 10-K period",
+      "missing": {
+        "10_K": false,
+        "10_Q": false,
+        "company_defined_FCF": true,
+        "earnings_release": true,
+        "guidance": true,
+        "segment_KPIs": true
+      },
+      "priority": "P1",
+      "recommended_action": "Create SEC-derived current-period fixture now; prefer direct IR/earnings release later.",
+      "ticker": "NET"
+    },
+    {
+      "IR_release_required": false,
+      "SEC_CompanyFacts_already_covers_enough": true,
+      "archetype": "STANDARD_GROWTH",
+      "company_name": "Zscaler, Inc.",
+      "current_period_KPIs_required_for_publish_manual_review_logic": false,
+      "latest_available_fiscal_period_needed": "latest SEC CompanyFacts / latest 10-Q or 10-K period",
+      "missing": {
+        "10_K": false,
+        "10_Q": false,
+        "company_defined_FCF": true,
+        "earnings_release": true,
+        "guidance": true,
+        "segment_KPIs": true
+      },
+      "priority": "P2",
+      "recommended_action": "Create SEC-derived fixture if coverage target needs it; otherwise document as lower priority.",
+      "ticker": "ZS"
+    },
+    {
+      "IR_release_required": false,
+      "SEC_CompanyFacts_already_covers_enough": true,
+      "archetype": "STANDARD_GROWTH",
+      "company_name": "CrowdStrike Holdings, Inc.",
+      "current_period_KPIs_required_for_publish_manual_review_logic": true,
+      "latest_available_fiscal_period_needed": "latest SEC CompanyFacts / latest 10-Q or 10-K period",
+      "missing": {
+        "10_K": false,
+        "10_Q": false,
+        "company_defined_FCF": true,
+        "earnings_release": true,
+        "guidance": true,
+        "segment_KPIs": true
+      },
+      "priority": "P1",
+      "recommended_action": "Create SEC-derived current-period fixture now; prefer direct IR/earnings release later.",
+      "ticker": "CRWD"
+    },
+    {
+      "IR_release_required": false,
+      "SEC_CompanyFacts_already_covers_enough": true,
+      "archetype": "SEMICONDUCTOR_AI_INFRA",
+      "company_name": "NVIDIA CORP",
+      "current_period_KPIs_required_for_publish_manual_review_logic": true,
+      "latest_available_fiscal_period_needed": "latest SEC CompanyFacts / latest 10-Q or 10-K period",
+      "missing": {
+        "10_K": false,
+        "10_Q": false,
+        "company_defined_FCF": true,
+        "earnings_release": true,
+        "guidance": true,
+        "segment_KPIs": true
+      },
+      "priority": "P0",
+      "recommended_action": "Create SEC-derived current-period fixture now; prefer direct IR/earnings release later.",
+      "ticker": "NVDA"
+    },
+    {
+      "IR_release_required": false,
+      "SEC_CompanyFacts_already_covers_enough": true,
+      "archetype": "SEMICONDUCTOR_AI_INFRA",
+      "company_name": "ADVANCED MICRO DEVICES INC",
+      "current_period_KPIs_required_for_publish_manual_review_logic": true,
+      "latest_available_fiscal_period_needed": "latest SEC CompanyFacts / latest 10-Q or 10-K period",
+      "missing": {
+        "10_K": false,
+        "10_Q": false,
+        "company_defined_FCF": true,
+        "earnings_release": true,
+        "guidance": true,
+        "segment_KPIs": true
+      },
+      "priority": "P1",
+      "recommended_action": "Create SEC-derived current-period fixture now; prefer direct IR/earnings release later.",
+      "ticker": "AMD"
+    },
+    {
+      "IR_release_required": false,
+      "SEC_CompanyFacts_already_covers_enough": true,
+      "archetype": "SEMICONDUCTOR_AI_INFRA",
+      "company_name": "QUALCOMM INC/DE",
+      "current_period_KPIs_required_for_publish_manual_review_logic": true,
+      "latest_available_fiscal_period_needed": "latest SEC CompanyFacts / latest 10-Q or 10-K period",
+      "missing": {
+        "10_K": false,
+        "10_Q": false,
+        "company_defined_FCF": true,
+        "earnings_release": true,
+        "guidance": true,
+        "segment_KPIs": true
+      },
+      "priority": "P0",
+      "recommended_action": "Create SEC-derived current-period fixture now; prefer direct IR/earnings release later.",
+      "ticker": "QCOM"
+    },
+    {
+      "IR_release_required": false,
+      "SEC_CompanyFacts_already_covers_enough": true,
+      "archetype": "SEMICONDUCTOR_AI_INFRA",
+      "company_name": "MICRON TECHNOLOGY INC",
+      "current_period_KPIs_required_for_publish_manual_review_logic": true,
+      "latest_available_fiscal_period_needed": "latest SEC CompanyFacts / latest 10-Q or 10-K period",
+      "missing": {
+        "10_K": false,
+        "10_Q": false,
+        "company_defined_FCF": true,
+        "earnings_release": true,
+        "guidance": true,
+        "segment_KPIs": true
+      },
+      "priority": "P1",
+      "recommended_action": "Create SEC-derived current-period fixture now; prefer direct IR/earnings release later.",
+      "ticker": "MU"
+    },
+    {
+      "IR_release_required": false,
+      "SEC_CompanyFacts_already_covers_enough": true,
+      "archetype": "SEMICONDUCTOR_AI_INFRA",
+      "company_name": "Marvell Technology, Inc.",
+      "current_period_KPIs_required_for_publish_manual_review_logic": false,
+      "latest_available_fiscal_period_needed": "latest SEC CompanyFacts / latest 10-Q or 10-K period",
+      "missing": {
+        "10_K": false,
+        "10_Q": false,
+        "company_defined_FCF": true,
+        "earnings_release": true,
+        "guidance": true,
+        "segment_KPIs": true
+      },
+      "priority": "P1",
+      "recommended_action": "Create SEC-derived current-period fixture now; prefer direct IR/earnings release later.",
+      "ticker": "MRVL"
+    },
+    {
+      "IR_release_required": false,
+      "SEC_CompanyFacts_already_covers_enough": true,
+      "archetype": "SEMICONDUCTOR_AI_INFRA",
+      "company_name": "INTEL CORP",
+      "current_period_KPIs_required_for_publish_manual_review_logic": false,
+      "latest_available_fiscal_period_needed": "latest SEC CompanyFacts / latest 10-Q or 10-K period",
+      "missing": {
+        "10_K": false,
+        "10_Q": false,
+        "company_defined_FCF": true,
+        "earnings_release": true,
+        "guidance": true,
+        "segment_KPIs": true
+      },
+      "priority": "P1",
+      "recommended_action": "Create SEC-derived current-period fixture now; prefer direct IR/earnings release later.",
+      "ticker": "INTC"
+    },
+    {
+      "IR_release_required": true,
+      "SEC_CompanyFacts_already_covers_enough": true,
+      "archetype": "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL",
+      "company_name": "Rigetti Computing, Inc.",
+      "current_period_KPIs_required_for_publish_manual_review_logic": true,
+      "latest_available_fiscal_period_needed": "latest SEC CompanyFacts / latest 10-Q or 10-K period",
+      "missing": {
+        "10_K": false,
+        "10_Q": false,
+        "company_defined_FCF": true,
+        "earnings_release": true,
+        "guidance": true,
+        "segment_KPIs": true
+      },
+      "priority": "P0",
+      "recommended_action": "Create SEC-derived current-period fixture now; prefer direct IR/earnings release later.",
+      "ticker": "RGTI"
+    },
+    {
+      "IR_release_required": true,
+      "SEC_CompanyFacts_already_covers_enough": true,
+      "archetype": "STANDARD_GROWTH",
+      "company_name": "IonQ, Inc.",
+      "current_period_KPIs_required_for_publish_manual_review_logic": true,
+      "latest_available_fiscal_period_needed": "latest SEC CompanyFacts / latest 10-Q or 10-K period",
+      "missing": {
+        "10_K": false,
+        "10_Q": false,
+        "company_defined_FCF": true,
+        "earnings_release": true,
+        "guidance": true,
+        "segment_KPIs": true
+      },
+      "priority": "P0",
+      "recommended_action": "Create SEC-derived current-period fixture now; prefer direct IR/earnings release later.",
+      "ticker": "IONQ"
+    },
+    {
+      "IR_release_required": true,
+      "SEC_CompanyFacts_already_covers_enough": true,
+      "archetype": "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL",
+      "company_name": "D-Wave Quantum Inc.",
+      "current_period_KPIs_required_for_publish_manual_review_logic": true,
+      "latest_available_fiscal_period_needed": "latest SEC CompanyFacts / latest 10-Q or 10-K period",
+      "missing": {
+        "10_K": false,
+        "10_Q": false,
+        "company_defined_FCF": true,
+        "earnings_release": true,
+        "guidance": true,
+        "segment_KPIs": true
+      },
+      "priority": "P0",
+      "recommended_action": "Create SEC-derived current-period fixture now; prefer direct IR/earnings release later.",
+      "ticker": "QBTS"
+    },
+    {
+      "IR_release_required": true,
+      "SEC_CompanyFacts_already_covers_enough": true,
+      "archetype": "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL",
+      "company_name": "AST SpaceMobile, Inc.",
+      "current_period_KPIs_required_for_publish_manual_review_logic": true,
+      "latest_available_fiscal_period_needed": "latest SEC CompanyFacts / latest 10-Q or 10-K period",
+      "missing": {
+        "10_K": false,
+        "10_Q": false,
+        "company_defined_FCF": true,
+        "earnings_release": true,
+        "guidance": true,
+        "segment_KPIs": true
+      },
+      "priority": "P1",
+      "recommended_action": "Create SEC-derived current-period fixture now; prefer direct IR/earnings release later.",
+      "ticker": "ASTS"
+    },
+    {
+      "IR_release_required": true,
+      "SEC_CompanyFacts_already_covers_enough": true,
+      "archetype": "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL",
+      "company_name": "Archer Aviation Inc.",
+      "current_period_KPIs_required_for_publish_manual_review_logic": true,
+      "latest_available_fiscal_period_needed": "latest SEC CompanyFacts / latest 10-Q or 10-K period",
+      "missing": {
+        "10_K": false,
+        "10_Q": false,
+        "company_defined_FCF": true,
+        "earnings_release": true,
+        "guidance": true,
+        "segment_KPIs": true
+      },
+      "priority": "P1",
+      "recommended_action": "Create SEC-derived current-period fixture now; prefer direct IR/earnings release later.",
+      "ticker": "ACHR"
+    },
+    {
+      "IR_release_required": true,
+      "SEC_CompanyFacts_already_covers_enough": true,
+      "archetype": "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL",
+      "company_name": "Joby Aviation, Inc.",
+      "current_period_KPIs_required_for_publish_manual_review_logic": true,
+      "latest_available_fiscal_period_needed": "latest SEC CompanyFacts / latest 10-Q or 10-K period",
+      "missing": {
+        "10_K": false,
+        "10_Q": false,
+        "company_defined_FCF": true,
+        "earnings_release": true,
+        "guidance": true,
+        "segment_KPIs": true
+      },
+      "priority": "P1",
+      "recommended_action": "Create SEC-derived current-period fixture now; prefer direct IR/earnings release later.",
+      "ticker": "JOBY"
+    },
+    {
+      "IR_release_required": false,
+      "SEC_CompanyFacts_already_covers_enough": true,
+      "archetype": "STANDARD_GROWTH",
+      "company_name": "Rivian Automotive, Inc. / DE",
+      "current_period_KPIs_required_for_publish_manual_review_logic": false,
+      "latest_available_fiscal_period_needed": "latest SEC CompanyFacts / latest 10-Q or 10-K period",
+      "missing": {
+        "10_K": false,
+        "10_Q": false,
+        "company_defined_FCF": true,
+        "earnings_release": true,
+        "guidance": true,
+        "segment_KPIs": true
+      },
+      "priority": "P2",
+      "recommended_action": "Create SEC-derived fixture if coverage target needs it; otherwise document as lower priority.",
+      "ticker": "RIVN"
+    },
+    {
+      "IR_release_required": false,
+      "SEC_CompanyFacts_already_covers_enough": true,
+      "archetype": "STANDARD_GROWTH",
+      "company_name": "Lucid Group, Inc.",
+      "current_period_KPIs_required_for_publish_manual_review_logic": false,
+      "latest_available_fiscal_period_needed": "latest SEC CompanyFacts / latest 10-Q or 10-K period",
+      "missing": {
+        "10_K": false,
+        "10_Q": false,
+        "company_defined_FCF": true,
+        "earnings_release": true,
+        "guidance": true,
+        "segment_KPIs": true
+      },
+      "priority": "P2",
+      "recommended_action": "Create SEC-derived fixture if coverage target needs it; otherwise document as lower priority.",
+      "ticker": "LCID"
+    },
+    {
+      "IR_release_required": false,
+      "SEC_CompanyFacts_already_covers_enough": true,
+      "archetype": "STANDARD_GROWTH",
+      "company_name": "PLUG POWER INC",
+      "current_period_KPIs_required_for_publish_manual_review_logic": false,
+      "latest_available_fiscal_period_needed": "latest SEC CompanyFacts / latest 10-Q or 10-K period",
+      "missing": {
+        "10_K": false,
+        "10_Q": false,
+        "company_defined_FCF": true,
+        "earnings_release": true,
+        "guidance": true,
+        "segment_KPIs": true
+      },
+      "priority": "P2",
+      "recommended_action": "Create SEC-derived fixture if coverage target needs it; otherwise document as lower priority.",
+      "ticker": "PLUG"
+    }
+  ],
+  "source_batch": "guardrail_coverage_batch_003_current_research",
+  "summary": {
+    "count_by_priority": {
+      "P0": 5,
+      "P1": 10,
+      "P2": 5
+    },
+    "ir_release_required_count": 6,
+    "sec_derived_quick_fix_candidates": 20,
+    "target_additional_fixtures": 20
+  }
+}

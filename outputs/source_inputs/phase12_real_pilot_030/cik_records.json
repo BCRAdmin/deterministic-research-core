@@ -1,0 +1,152 @@
+[
+  {
+    "cik": "1018724",
+    "company_name": "AMAZON COM INC",
+    "ticker": "AMZN"
+  },
+  {
+    "cik": "789019",
+    "company_name": "MICROSOFT CORP",
+    "ticker": "MSFT"
+  },
+  {
+    "cik": "1652044",
+    "company_name": "Alphabet Inc.",
+    "ticker": "GOOGL"
+  },
+  {
+    "cik": "1326801",
+    "company_name": "Meta Platforms, Inc.",
+    "ticker": "META"
+  },
+  {
+    "cik": "320193",
+    "company_name": "Apple Inc.",
+    "ticker": "AAPL"
+  },
+  {
+    "cik": "1045810",
+    "company_name": "NVIDIA CORP",
+    "ticker": "NVDA"
+  },
+  {
+    "cik": "2488",
+    "company_name": "ADVANCED MICRO DEVICES INC",
+    "ticker": "AMD"
+  },
+  {
+    "cik": "1730168",
+    "company_name": "Broadcom Inc.",
+    "ticker": "AVGO"
+  },
+  {
+    "cik": "50863",
+    "company_name": "INTEL CORP",
+    "ticker": "INTC"
+  },
+  {
+    "cik": "804328",
+    "company_name": "QUALCOMM INC/DE",
+    "ticker": "QCOM"
+  },
+  {
+    "cik": "723125",
+    "company_name": "MICRON TECHNOLOGY INC",
+    "ticker": "MU"
+  },
+  {
+    "cik": "1835632",
+    "company_name": "Marvell Technology, Inc.",
+    "ticker": "MRVL"
+  },
+  {
+    "cik": "1596532",
+    "company_name": "Arista Networks, Inc.",
+    "ticker": "ANET"
+  },
+  {
+    "cik": "1561550",
+    "company_name": "Datadog, Inc.",
+    "ticker": "DDOG"
+  },
+  {
+    "cik": "1441816",
+    "company_name": "MongoDB, Inc.",
+    "ticker": "MDB"
+  },
+  {
+    "cik": "1640147",
+    "company_name": "Snowflake Inc.",
+    "ticker": "SNOW"
+  },
+  {
+    "cik": "1535527",
+    "company_name": "CrowdStrike Holdings, Inc.",
+    "ticker": "CRWD"
+  },
+  {
+    "cik": "1477333",
+    "company_name": "Cloudflare, Inc.",
+    "ticker": "NET"
+  },
+  {
+    "cik": "1327567",
+    "company_name": "Palo Alto Networks Inc",
+    "ticker": "PANW"
+  },
+  {
+    "cik": "1713683",
+    "company_name": "Zscaler, Inc.",
+    "ticker": "ZS"
+  },
+  {
+    "cik": "1108524",
+    "company_name": "Salesforce, Inc.",
+    "ticker": "CRM"
+  },
+  {
+    "cik": "1373715",
+    "company_name": "ServiceNow, Inc.",
+    "ticker": "NOW"
+  },
+  {
+    "cik": "1341439",
+    "company_name": "ORACLE CORP",
+    "ticker": "ORCL"
+  },
+  {
+    "cik": "796343",
+    "company_name": "ADOBE INC.",
+    "ticker": "ADBE"
+  },
+  {
+    "cik": "896878",
+    "company_name": "INTUIT INC.",
+    "ticker": "INTU"
+  },
+  {
+    "cik": "1543151",
+    "company_name": "Uber Technologies, Inc",
+    "ticker": "UBER"
+  },
+  {
+    "cik": "1318605",
+    "company_name": "Tesla, Inc.",
+    "ticker": "TSLA"
+  },
+  {
+    "cik": "1321655",
+    "company_name": "Palantir Technologies Inc.",
+    "ticker": "PLTR"
+  },
+  {
+    "cik": "51143",
+    "company_name": "INTERNATIONAL BUSINESS MACHINES CORP",
+    "ticker": "IBM"
+  },
+  {
+    "cik": "1065280",
+    "company_name": "NETFLIX INC",
+    "ticker": "NFLX"
+  }
+]

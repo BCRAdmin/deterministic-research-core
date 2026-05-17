@@ -1,0 +1,40 @@
+{
+  "registry_id": "CRM_2026-05-08",
+  "sources": [
+    {
+      "authority_rank": 1,
+      "retrieved_at": "2026-05-10T00:31:00Z",
+      "source_id": "CRM_SEC_COMPANYFACTS_1108524",
+      "source_type": "sec_filing",
+      "ticker": "CRM",
+      "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001108524.json",
+      "used_for": [
+        "revenue",
+        "gross_profit",
+        "operating_income",
+        "net_income",
+        "operating_cash_flow",
+        "capex",
+        "free_cash_flow",
+        "sbc",
+        "cash",
+        "debt",
+        "shares",
+        "eps"
+      ]
+    },
+    {
+      "authority_rank": 2,
+      "retrieved_at": "2026-05-10T00:31:00Z",
+      "source_id": "CRM_YAHOO_CHART_PRICE_CSV",
+      "source_type": "exchange_ohlcv",
+      "ticker": "CRM",
+      "url": "https://query2.finance.yahoo.com/v8/finance/chart/",
+      "used_for": [
+        "price",
+        "volume",
+        "technical_indicators"
+      ]
+    }
+  ]
+}

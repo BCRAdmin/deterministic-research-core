@@ -1,0 +1,25 @@
+{
+  "as_of_date": "2026-05-17",
+  "company_guidance_eps": null,
+  "company_name": "AST SpaceMobile, Inc.",
+  "fiscal_context": {
+    "fiscal_year_end": null,
+    "latest_fiscal_year": null,
+    "latest_quarter": null
+  },
+  "forward_eps": null,
+  "next_events": {
+    "confirmed": false,
+    "next_earnings_date": null,
+    "source": null,
+    "status": "unavailable"
+  },
+  "price_basis": {
+    "close": 83.66999816894531,
+    "currency": "USD",
+    "date": "2026-05-15",
+    "source": "csv_price_provider"
+  },
+  "source_registry_id": "ASTS_2026-05-17",
+  "ticker": "ASTS"
+}

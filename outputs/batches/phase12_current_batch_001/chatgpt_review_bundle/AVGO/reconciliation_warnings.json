@@ -1,0 +1,83 @@
+[
+  {
+    "code": "SOURCE_FRAME_VARIANT_IGNORED",
+    "count": 11,
+    "message": "Ignored 11 SEC frame/concept variants across distinct periods for revenue.",
+    "metric": "revenue",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 19,
+    "message": "Ignored 19 annual/quarterly/YTD period-type variants for revenue.",
+    "metric": "revenue",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 19,
+    "message": "Ignored 19 annual/quarterly/YTD period-type variants for gross_profit.",
+    "metric": "gross_profit",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 19,
+    "message": "Ignored 19 annual/quarterly/YTD period-type variants for operating_income.",
+    "metric": "operating_income",
+    "severity": "info"
+  },
+  {
+    "basis": "gaap",
+    "code": "TRUE_SOURCE_VALUE_DISAGREEMENT",
+    "message": "Comparable sources disagree for operating_income (gaap, annual, FY2018).",
+    "metric": "operating_income",
+    "period_type": "annual",
+    "severity": "warning"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 5,
+    "message": "Ignored 5 annual/quarterly/YTD period-type variants for net_income.",
+    "metric": "net_income",
+    "severity": "info"
+  },
+  {
+    "code": "SOURCE_FRAME_VARIANT_IGNORED",
+    "count": 7,
+    "message": "Ignored 7 SEC frame/concept variants across distinct periods for cash_and_equivalents.",
+    "metric": "cash_and_equivalents",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 16,
+    "message": "Ignored 16 annual/quarterly/YTD period-type variants for shares_diluted.",
+    "metric": "shares_diluted",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 1,
+    "message": "Ignored YTD source disagreement for shares_diluted (Q3_FY2023_ytd); YTD facts are kept separate and are not used as quarterly/annual canonical metrics.",
+    "metric": "shares_diluted",
+    "period_type": "ytd",
+    "severity": "info"
+  },
+  {
+    "basis": "gaap",
+    "code": "TRUE_SOURCE_VALUE_DISAGREEMENT",
+    "message": "Comparable sources disagree for shares_diluted (gaap, annual, FY2023).",
+    "metric": "shares_diluted",
+    "period_type": "annual",
+    "severity": "warning"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 1,
+    "message": "Ignored YTD source disagreement for shares_diluted (Q2_FY2024_ytd); YTD facts are kept separate and are not used as quarterly/annual canonical metrics.",
+    "metric": "shares_diluted",
+    "period_type": "ytd",
+    "severity": "info"
+  }
+]

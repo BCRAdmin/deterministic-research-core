@@ -1,0 +1,26 @@
+{
+  "batch_id": "guardrail_coverage_batch_004_ir_coverage",
+  "current_operating_readiness": "usable_with_review",
+  "current_reports_can_be_used_internally": true,
+  "decision": "GREEN",
+  "generated_at": "2026-05-17T02:08:51Z",
+  "ir_current_period_coverage": "32/32",
+  "next_7_day_plan": [
+    "Replace SEC-derived fixtures with direct IR/earnings-release fixtures for names where guidance or segment KPIs matter.",
+    "Prioritize QCOM/NVDA/AMD/MU/INTC semi current-period release detail.",
+    "Prioritize RGTI/IONQ/QBTS/ASTS/ACHR/JOBY direct company release or 10-Q extracts before public promotion.",
+    "Keep Promotion Gate closed for all manual_review reports.",
+    "Run a compact Batch 004 affected-subset regression after any new direct IR fixtures."
+  ],
+  "public_output_blocked": true,
+  "top_5_data_coverage_priorities": [
+    "NVDA: direct IR/guidance or explicit no-guidance evidence",
+    "AMD: direct IR/guidance or explicit no-guidance evidence",
+    "QCOM: direct IR/guidance or explicit no-guidance evidence",
+    "MU: direct IR/guidance or explicit no-guidance evidence",
+    "INTC: direct IR/guidance or explicit no-guidance evidence"
+  ],
+  "top_5_system_fixes": [
+    "No immediate P0/P1 system fix; remaining work is data ops coverage."
+  ]
+}

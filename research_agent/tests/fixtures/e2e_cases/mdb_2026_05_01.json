@@ -1,0 +1,21 @@
+{
+  "case_id": "mdb_2026_05_01",
+  "ticker": "MDB",
+  "as_of_date": "2026-05-01",
+  "original_report_path": "research_agent/tests/fixtures/mdb_2026_05_01/bad_report.md",
+  "data_packet_path": "research_agent/tests/fixtures/mdb_2026_05_01/data_packet.json",
+  "metrics_packet_path": "research_agent/tests/fixtures/mdb_2026_05_01/metrics_packet.json",
+  "validation_report_path": "research_agent/tests/fixtures/mdb_2026_05_01/validation_report.json",
+  "source_registry_path": "research_agent/tests/fixtures/mdb_2026_05_01/source_registry.json",
+  "expected_issues": [
+    {"code": "OVERSTATED_CAUSALITY"},
+    {"code": "FORWARD_EPS_GUIDANCE_MISMATCH"},
+    {"code": "RATING_TOO_HARSH_FOR_ACTION"}
+  ],
+  "expected_rating": {
+    "preferred_rating": "Tactical Trim",
+    "blocked_ratings": ["Sell", "Strong Buy"]
+  },
+  "minimum_quality_score": 85.0,
+  "expected_final_status": "repaired_publishable"
+}

@@ -1,0 +1,178 @@
+{
+  "has_blocking_errors": false,
+  "issues": [],
+  "numeric_claims": [
+    {
+      "line_number": 9,
+      "nearby_text": "- Fundamental basis: revenue scale is `$7.49B`.",
+      "normalized_value": 7490000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$7.49B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 10,
+      "nearby_text": "- Cash-conversion basis: free cash flow is `$713.6M`.",
+      "normalized_value": 713600000.0,
+      "period_hint": "unknown",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$713.6M",
+      "unit": "usd"
+    },
+    {
+      "line_number": 11,
+      "nearby_text": "- Valuation constraint: EV/Sales is `19.47x`.",
+      "normalized_value": 19.47,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "19.47x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 15,
+      "nearby_text": "- Report as-of date: `2026-05-05`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 16,
+      "nearby_text": "- Price basis: `2026-05-05` close via `csv_price_provider`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": "close",
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 28,
+      "nearby_text": "| SBC / Revenue | 7.4% |",
+      "normalized_value": 7.4,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "7.4%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 36,
+      "nearby_text": "- **MRVL_CLAIM_002**: MRVL has revenue TTM of $7.49B, so the business discussion should focus on semiconductor cycle, product mix, inventory, gross margin and management forecast quality rather than generic scale language.",
+      "normalized_value": 7490000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$7.49B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 40,
+      "nearby_text": "- **MRVL_CLAIM_003**: FCF TTM is $713.6M, making cash conversion a direct rating input for MRVL.",
+      "normalized_value": 713600000.0,
+      "period_hint": "ttm",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$713.6M",
+      "unit": "usd"
+    },
+    {
+      "line_number": 44,
+      "nearby_text": "- **MRVL_CLAIM_004**: SBC/Revenue is 7.4%, which should be interpreted through semiconductor-cycle, segment-mix and balance-sheet context rather than a one-size-fits-all compensation lens.",
+      "normalized_value": 7.4,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "7.4%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 48,
+      "nearby_text": "- **MRVL_CLAIM_005**: Balance-sheet flexibility is anchored in net cash of $868.1M and debt evidence, which affects how much downside tolerance the action plan can carry.",
+      "normalized_value": 868100000.0,
+      "period_hint": "unknown",
+      "possible_metric": "net_cash",
+      "raw_text": "$868.1M",
+      "unit": "usd"
+    },
+    {
+      "line_number": 53,
+      "nearby_text": "- **MRVL_CLAIM_006**: Valuation is framed by EV/Sales of 19.47x; this directly limits how aggressive the Hold stance should be.",
+      "normalized_value": 19.47,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "19.47x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 57,
+      "nearby_text": "- **MRVL_CLAIM_007**: For MRVL, P/FCF is 205.66x and should be read against cycle-adjusted earnings and FCF support; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+      "normalized_value": 205.66,
+      "period_hint": "unknown",
+      "possible_metric": "price_to_fcf",
+      "raw_text": "205.66x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 71,
+      "nearby_text": "- **MRVL_CLAIM_010**: The bull case is that cycle recovery, AI/datacenter mix and margin leverage combines with revenue of $7.49B to support the allowed upside rating path when cash conversion quality also holds.",
+      "normalized_value": 7490000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$7.49B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 80,
+      "nearby_text": "- **MRVL_CLAIM_012**: The bear case is that inventory correction, gross-margin pressure or weak management forecast overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 7.4% or source-quality issues persist.",
+      "normalized_value": 7.4,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "7.4%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 91,
+      "nearby_text": "- **MRVL_CLAIM_015**: Source disagreement or current-period mismatch can reduce conviction for MRVL, especially where revenue $7.49B is a key valuation denominator.",
+      "normalized_value": 7490000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$7.49B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 113,
+      "nearby_text": "- Why this rating? `Hold` balances revenue of `$7.49B` against valuation and technical timing.",
+      "normalized_value": 7490000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$7.49B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 114,
+      "nearby_text": "- Cash conversion: FCF is `$713.6M` and determines whether growth converts into equity value.",
+      "normalized_value": 713600000.0,
+      "period_hint": "unknown",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$713.6M",
+      "unit": "usd"
+    },
+    {
+      "line_number": 115,
+      "nearby_text": "- Why not more bullish? EV/Sales `19.47x` limits new-money urgency unless current-period KPIs accelerate.",
+      "normalized_value": 19.47,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "19.47x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 116,
+      "nearby_text": "- Additional valuation/technical constraint: P/FCF `205.66x` and RSI `77.12` argue against chasing without a better setup.",
+      "normalized_value": 205.66,
+      "period_hint": "unknown",
+      "possible_metric": "price_to_fcf",
+      "raw_text": "205.66x",
+      "unit": "multiple"
+    }
+  ],
+  "ticker": "MRVL"
+}

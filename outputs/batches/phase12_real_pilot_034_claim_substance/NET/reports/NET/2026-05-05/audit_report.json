@@ -1,0 +1,136 @@
+{
+  "has_blocking_errors": true,
+  "issues": [
+    {
+      "code": "NUMERIC_MISMATCH",
+      "line_number": 29,
+      "message": "Report states free_cash_flow_ttm as $1.98B but validated MetricsPacket has 161814000.0.",
+      "metric": "free_cash_flow_ttm",
+      "raw_text": "$1.98B",
+      "reported": 1980000000.0,
+      "severity": "error",
+      "validated": 161814000.0
+    },
+    {
+      "code": "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+      "line_number": null,
+      "message": "P/FCF above 100x requires explicit explanation before publish.",
+      "metric": "price_to_fcf",
+      "raw_text": null,
+      "reported": 526.3113357193345,
+      "severity": "error",
+      "validated": null
+    }
+  ],
+  "numeric_claims": [
+    {
+      "line_number": 8,
+      "nearby_text": "- Report as-of date: `2026-05-05`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 9,
+      "nearby_text": "- Price basis: `2026-05-05` close via `csv_price_provider`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": "close",
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 21,
+      "nearby_text": "| SBC / Revenue | 14.7% |",
+      "normalized_value": 14.7,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "14.7%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 29,
+      "nearby_text": "- **NET_CLAIM_002**: NET has validated revenue TTM of $1.98B, so the business discussion should focus on company-specific growth, margin, FCF and source-quality drivers rather than generic scale language.",
+      "normalized_value": 1980000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$1.98B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 33,
+      "nearby_text": "- **NET_CLAIM_003**: Validated FCF TTM is $161.8M, making cash conversion a direct rating input for NET.",
+      "normalized_value": 161800000.0,
+      "period_hint": "ttm",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$161.8M",
+      "unit": "usd"
+    },
+    {
+      "line_number": 37,
+      "nearby_text": "- **NET_CLAIM_004**: SBC/Revenue is 14.7%, which should be interpreted through sector-specific quality and valuation context rather than a one-size-fits-all compensation lens.",
+      "normalized_value": 14.7,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "14.7%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 41,
+      "nearby_text": "- **NET_CLAIM_005**: Balance-sheet flexibility is anchored in validated net cash of $185.9M and debt evidence, which affects how much downside tolerance the action plan can carry.",
+      "normalized_value": 185900000.0,
+      "period_hint": "unknown",
+      "possible_metric": "net_cash",
+      "raw_text": "$185.9M",
+      "unit": "usd"
+    },
+    {
+      "line_number": 46,
+      "nearby_text": "- **NET_CLAIM_006**: Valuation is framed by validated EV/Sales of 42.84x; this directly limits how aggressive the Hold stance should be.",
+      "normalized_value": 42.84,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "42.84x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 50,
+      "nearby_text": "- **NET_CLAIM_007**: For NET, validated P/FCF is 526.31x and should be read against validated growth, cash-flow and risk context; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+      "normalized_value": 526.31,
+      "period_hint": "unknown",
+      "possible_metric": "price_to_fcf",
+      "raw_text": "526.31x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 64,
+      "nearby_text": "- **NET_CLAIM_010**: The bull case is that validated growth and cash-flow quality combines with revenue of $1.98B to support the allowed upside rating path when cash conversion quality also holds.",
+      "normalized_value": 1980000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$1.98B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 73,
+      "nearby_text": "- **NET_CLAIM_012**: The bear case is that source-quality issues, valuation risk or technical weakness overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 14.7% or source-quality issues persist.",
+      "normalized_value": 14.7,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "14.7%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 84,
+      "nearby_text": "- **NET_CLAIM_015**: Source disagreement or current-period mismatch can reduce conviction for NET, especially where revenue $1.98B is a key valuation denominator.",
+      "normalized_value": 1980000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$1.98B",
+      "unit": "usd"
+    }
+  ],
+  "ticker": "NET"
+}

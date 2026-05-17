@@ -1,0 +1,214 @@
+{
+  "has_blocking_errors": false,
+  "issues": [],
+  "numeric_claims": [
+    {
+      "line_number": 9,
+      "nearby_text": "- Fundamental basis: revenue scale is `$45.38B`.",
+      "normalized_value": 45380000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$45.38B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 10,
+      "nearby_text": "- Cash-conversion basis: free cash flow is `$12.68B`.",
+      "normalized_value": 12680000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$12.68B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 11,
+      "nearby_text": "- Valuation constraint: EV/Sales is `8.11x`.",
+      "normalized_value": 8.11,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "8.11x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 15,
+      "nearby_text": "- Report as-of date: `2026-05-08`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-08",
+      "unit": "date"
+    },
+    {
+      "line_number": 16,
+      "nearby_text": "- Price basis: `2026-05-08` close via `csv_price_provider`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": "close",
+      "raw_text": "2026-05-08",
+      "unit": "date"
+    },
+    {
+      "line_number": 28,
+      "nearby_text": "| SBC / Revenue | 0.8% |",
+      "normalized_value": 0.8,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "0.8%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 33,
+      "nearby_text": "- **NFLX_CLAIM_002**: NFLX's Q1 revenue of $12.25B shows that the streaming scale and monetization base remain strong.",
+      "normalized_value": 12250000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$12.25B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 39,
+      "nearby_text": "- **NFLX_CLAIM_003**: NFLX's Q1 operating income of $3.96B and operating margin of 32.3% show strong current-period profitability.",
+      "normalized_value": 3960000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "operating_income_ttm",
+      "raw_text": "$3.96B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 39,
+      "nearby_text": "- **NFLX_CLAIM_003**: NFLX's Q1 operating income of $3.96B and operating margin of 32.3% show strong current-period profitability.",
+      "normalized_value": 32.3,
+      "period_hint": "unknown",
+      "possible_metric": "operating_income_ttm",
+      "raw_text": "32.3%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 43,
+      "nearby_text": "- **NFLX_CLAIM_005**: NFLX has revenue TTM of $45.38B, so the business discussion should focus on mega-cap platform growth, AI/cloud investment, margin durability and regulatory risk rather than generic scale language.",
+      "normalized_value": 45380000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$45.38B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 47,
+      "nearby_text": "- **NFLX_CLAIM_006**: FCF TTM is $12.68B, making cash conversion a direct rating input for NFLX.",
+      "normalized_value": 12680000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$12.68B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 51,
+      "nearby_text": "- **NFLX_CLAIM_007**: SBC/Revenue is 0.8%, which should be interpreted through mega-cap platform, capex and capital-return context rather than a one-size-fits-all compensation lens.",
+      "normalized_value": 0.8,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "0.8%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 55,
+      "nearby_text": "- **NFLX_CLAIM_008**: Balance-sheet flexibility is anchored in net cash of $8.21B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+      "normalized_value": 8210000000.000001,
+      "period_hint": "unknown",
+      "possible_metric": "net_cash",
+      "raw_text": "$8.21B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 60,
+      "nearby_text": "- **NFLX_CLAIM_009**: Valuation is framed by EV/Sales of 8.11x; this directly limits how aggressive the Hold stance should be.",
+      "normalized_value": 8.11,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "8.11x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 64,
+      "nearby_text": "- **NFLX_CLAIM_010**: For NFLX, P/FCF is 29.65x and should be read against platform growth, FCF durability and capex intensity; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+      "normalized_value": 29.65,
+      "period_hint": "unknown",
+      "possible_metric": "price_to_fcf",
+      "raw_text": "29.65x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 78,
+      "nearby_text": "- **NFLX_CLAIM_013**: The bull case is that platform scale, ecosystem monetization and operating leverage combines with revenue of $45.38B to support the allowed upside rating path when cash conversion quality also holds.",
+      "normalized_value": 45380000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$45.38B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 87,
+      "nearby_text": "- **NFLX_CLAIM_015**: The bear case is that regulatory pressure, capex intensity, growth deceleration or multiple compression overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 0.8% or source-quality issues persist.",
+      "normalized_value": 0.8,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "0.8%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 98,
+      "nearby_text": "- **NFLX_CLAIM_018**: Source disagreement or current-period mismatch can reduce conviction for NFLX, especially where revenue $45.38B is a key valuation denominator.",
+      "normalized_value": 45380000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$45.38B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 103,
+      "nearby_text": "- **NFLX_CLAIM_004**: NFLX's Q1 FCF of $5.10B is the key cash-flow proof point for whether operating leverage is translating into shareholder value.",
+      "normalized_value": 5100000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$5.10B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 124,
+      "nearby_text": "- Why this rating? `Hold` balances revenue of `$45.38B` against valuation and technical timing.",
+      "normalized_value": 45380000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$45.38B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 125,
+      "nearby_text": "- Cash conversion: FCF is `$12.68B` and determines whether growth converts into equity value.",
+      "normalized_value": 12680000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$12.68B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 126,
+      "nearby_text": "- Why not more bullish? EV/Sales `8.11x` limits new-money urgency unless current-period KPIs accelerate.",
+      "normalized_value": 8.11,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "8.11x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 127,
+      "nearby_text": "- Additional valuation/technical constraint: P/FCF `29.65x` and RSI `33.89` argue against chasing without a better setup.",
+      "normalized_value": 29.65,
+      "period_hint": "unknown",
+      "possible_metric": "price_to_fcf",
+      "raw_text": "29.65x",
+      "unit": "multiple"
+    }
+  ],
+  "ticker": "NFLX"
+}

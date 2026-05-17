@@ -1,0 +1,632 @@
+{
+  "batch_id": "phase12_real_pilot_034_period_claim_hardening",
+  "manual_review_count": 9,
+  "verdict_counts": {
+    "true_anomaly": 6,
+    "guard_too_strict": 1,
+    "period_bug": 2
+  },
+  "rows": [
+    {
+      "ticker": "NVDA",
+      "manual_review_reason_codes": [
+        "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+        "TRUE_FINANCIAL_ANOMALY"
+      ],
+      "market_cap": 4817001000000.0,
+      "enterprise_value": 4758772000000.0,
+      "revenue_ttm": 182893000000.0,
+      "fcf_ttm": 46946000000.0,
+      "sbc_ttm": 3798000000.0,
+      "shares_used": null,
+      "price_used": 196.5,
+      "ev_sales": 26.01943212698135,
+      "price_to_fcf": 102.60727218506369,
+      "fcf_margin": 0.2566856030575254,
+      "sbc_to_revenue": 0.020766240370052435,
+      "evidence_ids": {
+        "revenue": [
+          "NVDA_SEC_COMPANYFACTS_1045810_REVENUE",
+          "NVDA_SEC_COMPANYFACTS_1045810_REVENUE_TTM",
+          "NVDA_SEC_revenue_FY2026_FY_0001045810-26-000021",
+          "NVDA_SEC_revenue_FY2026_Q2_0001045810-25-000209",
+          "NVDA_SEC_revenue_FY2026_Q3_0001045810-25-000230"
+        ],
+        "fcf": [
+          "NVDA_SEC_COMPANYFACTS_1045810_CAPEX",
+          "NVDA_SEC_COMPANYFACTS_1045810_FREE_CASH_FLOW",
+          "NVDA_SEC_COMPANYFACTS_1045810_FREE_CASH_FLOW_TTM",
+          "NVDA_SEC_COMPANYFACTS_1045810_OPERATING_CASH_FLOW",
+          "NVDA_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+          "NVDA_SEC_capex_FY2011_FY_0001045810-12-000013",
+          "NVDA_SEC_capex_FY2020_Q1_0001045810-20-000065",
+          "NVDA_SEC_capex_FY2020_Q2_0001045810-20-000147"
+        ],
+        "sbc": [
+          "NVDA_SEC_COMPANYFACTS_1045810_SBC",
+          "NVDA_SEC_COMPANYFACTS_1045810_SBC_TO_REVENUE",
+          "NVDA_SEC_COMPANYFACTS_1045810_SBC_TTM",
+          "NVDA_SEC_DERIVED_SBC_TO_REVENUE",
+          "NVDA_SEC_sbc_FY2026_FY_0001045810-26-000021",
+          "NVDA_SEC_sbc_FY2026_Q1_0001045810-25-000116",
+          "NVDA_SEC_sbc_FY2026_Q2_0001045810-25-000209",
+          "NVDA_SEC_sbc_FY2026_Q3_0001045810-25-000230"
+        ],
+        "shares": [
+          "NVDA_CSV_PRICE_CLOSE_2026-05-05",
+          "NVDA_SEC_shares_diluted_FY2026_FY_0001045810-26-000021",
+          "NVDA_SEC_shares_diluted_FY2026_Q2_0001045810-25-000209",
+          "NVDA_SEC_shares_diluted_FY2026_Q3_0001045810-25-000230",
+          "NVDA_YAHOO_CHART_PRICE_CSV_CLOSE",
+          "NVDA_YAHOO_CHART_PRICE_CSV_PRICE_DATA"
+        ],
+        "debt": [
+          "NVDA_SEC_COMPANYFACTS_1045810_DEBT",
+          "NVDA_SEC_COMPANYFACTS_1045810_TOTAL_DEBT"
+        ],
+        "cash": [
+          "NVDA_SEC_COMPANYFACTS_1045810_CASH",
+          "NVDA_SEC_COMPANYFACTS_1045810_CASH_AND_EQUIVALENTS",
+          "NVDA_SEC_COMPANYFACTS_1045810_NET_CASH",
+          "NVDA_SEC_cash_and_equivalents_FY2026_FY_0001045810-26-000021",
+          "NVDA_SEC_cash_and_equivalents_FY2026_Q2_0001045810-25-000209",
+          "NVDA_SEC_cash_and_equivalents_FY2026_Q3_0001045810-25-000230"
+        ]
+      },
+      "verdict": "true_anomaly",
+      "fix_recommendation": "Keep manual review. Verify whether the extreme multiple is a real valuation/business outlier or whether FCF denominator should be marked unavailable."
+    },
+    {
+      "ticker": "AMD",
+      "manual_review_reason_codes": [
+        "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+        "TRUE_FINANCIAL_ANOMALY"
+      ],
+      "market_cap": 581205375976.5625,
+      "enterprise_value": 577092375976.5625,
+      "revenue_ttm": 31188000000.0,
+      "fcf_ttm": 2358000000.0,
+      "sbc_ttm": 1243000000.0,
+      "shares_used": null,
+      "price_used": 355.260009765625,
+      "ev_sales": 18.50366730718746,
+      "price_to_fcf": 246.48234774239293,
+      "fcf_margin": 0.07560600230858022,
+      "sbc_to_revenue": 0.03985507246376811,
+      "evidence_ids": {
+        "revenue": [
+          "AMD_SEC_COMPANYFACTS_2488_REVENUE",
+          "AMD_SEC_COMPANYFACTS_2488_REVENUE_TTM",
+          "AMD_SEC_revenue_FY2025_FY_0000002488-26-000018",
+          "AMD_SEC_revenue_FY2025_Q2_0000002488-25-000108",
+          "AMD_SEC_revenue_FY2025_Q3_0000002488-25-000166"
+        ],
+        "fcf": [
+          "AMD_SEC_COMPANYFACTS_2488_CAPEX",
+          "AMD_SEC_COMPANYFACTS_2488_FREE_CASH_FLOW",
+          "AMD_SEC_COMPANYFACTS_2488_FREE_CASH_FLOW_TTM",
+          "AMD_SEC_COMPANYFACTS_2488_OPERATING_CASH_FLOW",
+          "AMD_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+          "AMD_SEC_capex_FY2025_FY_0000002488-26-000018",
+          "AMD_SEC_capex_FY2025_Q1_0000002488-25-000047",
+          "AMD_SEC_capex_FY2025_Q2_0000002488-25-000108"
+        ],
+        "sbc": [
+          "AMD_SEC_COMPANYFACTS_2488_SBC",
+          "AMD_SEC_COMPANYFACTS_2488_SBC_TO_REVENUE",
+          "AMD_SEC_COMPANYFACTS_2488_SBC_TTM",
+          "AMD_SEC_DERIVED_SBC_TO_REVENUE",
+          "AMD_SEC_sbc_FY2025_FY_0000002488-26-000018",
+          "AMD_SEC_sbc_FY2025_Q1_0000002488-25-000047",
+          "AMD_SEC_sbc_FY2025_Q2_0000002488-25-000108",
+          "AMD_SEC_sbc_FY2025_Q3_0000002488-25-000166"
+        ],
+        "shares": [
+          "AMD_CSV_PRICE_CLOSE_2026-05-05",
+          "AMD_SEC_shares_diluted_FY2025_FY_0000002488-26-000018",
+          "AMD_SEC_shares_diluted_FY2025_Q2_0000002488-25-000108",
+          "AMD_SEC_shares_diluted_FY2025_Q3_0000002488-25-000166",
+          "AMD_YAHOO_CHART_PRICE_CSV_CLOSE",
+          "AMD_YAHOO_CHART_PRICE_CSV_PRICE_DATA"
+        ],
+        "debt": [
+          "AMD_SEC_COMPANYFACTS_2488_DEBT",
+          "AMD_SEC_COMPANYFACTS_2488_TOTAL_DEBT"
+        ],
+        "cash": [
+          "AMD_SEC_COMPANYFACTS_2488_CASH",
+          "AMD_SEC_COMPANYFACTS_2488_CASH_AND_EQUIVALENTS",
+          "AMD_SEC_COMPANYFACTS_2488_NET_CASH",
+          "AMD_SEC_cash_and_equivalents_FY2025_FY_0000002488-26-000018",
+          "AMD_SEC_cash_and_equivalents_FY2025_Q1_0000002488-25-000047",
+          "AMD_SEC_cash_and_equivalents_FY2025_Q2_0000002488-25-000108",
+          "AMD_SEC_cash_and_equivalents_FY2025_Q3_0000002488-25-000166"
+        ]
+      },
+      "verdict": "true_anomaly",
+      "fix_recommendation": "Keep manual review. Verify whether the extreme multiple is a real valuation/business outlier or whether FCF denominator should be marked unavailable."
+    },
+    {
+      "ticker": "QCOM",
+      "manual_review_reason_codes": [
+        "MISSING_FCF_SUPPORT_FOR_ACCUMULATE"
+      ],
+      "market_cap": 199981603271.48438,
+      "enterprise_value": 188414603271.48438,
+      "revenue_ttm": 44195000000.0,
+      "fcf_ttm": null,
+      "sbc_ttm": 2883000000.0,
+      "shares_used": null,
+      "price_used": 186.5500030517578,
+      "ev_sales": 4.263256098461011,
+      "price_to_fcf": null,
+      "fcf_margin": null,
+      "sbc_to_revenue": 0.06523362371308972,
+      "evidence_ids": {
+        "revenue": [
+          "QCOM_SEC_COMPANYFACTS_804328_REVENUE",
+          "QCOM_SEC_COMPANYFACTS_804328_REVENUE_TTM",
+          "QCOM_SEC_revenue_FY2025_FY_0000804328-25-000085",
+          "QCOM_SEC_revenue_FY2025_Q3_0000804328-25-000045",
+          "QCOM_SEC_revenue_FY2026_Q1_0000804328-26-000017",
+          "QCOM_SEC_revenue_FY2026_Q2_0000804328-26-000061"
+        ],
+        "fcf": [
+          "QCOM_SEC_COMPANYFACTS_804328_CAPEX",
+          "QCOM_SEC_COMPANYFACTS_804328_FREE_CASH_FLOW",
+          "QCOM_SEC_COMPANYFACTS_804328_FREE_CASH_FLOW_TTM",
+          "QCOM_SEC_COMPANYFACTS_804328_OPERATING_CASH_FLOW",
+          "QCOM_SEC_operating_cash_flow_FY2025_FY_0000804328-25-000085",
+          "QCOM_SEC_operating_cash_flow_FY2025_Q3_0000804328-25-000045",
+          "QCOM_SEC_operating_cash_flow_FY2026_Q1_0000804328-26-000017",
+          "QCOM_SEC_operating_cash_flow_FY2026_Q2_0000804328-26-000061"
+        ],
+        "sbc": [
+          "QCOM_SEC_COMPANYFACTS_804328_SBC",
+          "QCOM_SEC_COMPANYFACTS_804328_SBC_TO_REVENUE",
+          "QCOM_SEC_COMPANYFACTS_804328_SBC_TTM",
+          "QCOM_SEC_DERIVED_SBC_TO_REVENUE",
+          "QCOM_SEC_sbc_FY2025_FY_0000804328-25-000085",
+          "QCOM_SEC_sbc_FY2025_Q3_0000804328-25-000045",
+          "QCOM_SEC_sbc_FY2026_Q1_0000804328-26-000017",
+          "QCOM_SEC_sbc_FY2026_Q2_0000804328-26-000061"
+        ],
+        "shares": [
+          "QCOM_CSV_PRICE_CLOSE_2026-05-05",
+          "QCOM_SEC_shares_diluted_FY2025_FY_0000804328-25-000085",
+          "QCOM_SEC_shares_diluted_FY2025_Q3_0000804328-25-000045",
+          "QCOM_SEC_shares_diluted_FY2026_Q1_0000804328-26-000017",
+          "QCOM_SEC_shares_diluted_FY2026_Q2_0000804328-26-000061",
+          "QCOM_YAHOO_CHART_PRICE_CSV_CLOSE",
+          "QCOM_YAHOO_CHART_PRICE_CSV_PRICE_DATA"
+        ],
+        "debt": [
+          "QCOM_SEC_COMPANYFACTS_804328_DEBT",
+          "QCOM_SEC_COMPANYFACTS_804328_TOTAL_DEBT"
+        ],
+        "cash": [
+          "QCOM_SEC_COMPANYFACTS_804328_CASH",
+          "QCOM_SEC_COMPANYFACTS_804328_CASH_AND_EQUIVALENTS",
+          "QCOM_SEC_COMPANYFACTS_804328_NET_CASH",
+          "QCOM_SEC_cash_and_equivalents_FY2025_FY_0000804328-25-000085",
+          "QCOM_SEC_cash_and_equivalents_FY2026_Q1_0000804328-26-000017",
+          "QCOM_SEC_cash_and_equivalents_FY2026_Q2_0000804328-26-000061"
+        ]
+      },
+      "verdict": "guard_too_strict",
+      "fix_recommendation": "Keep QCOM-style rating constrained to Hold / pullback-only accumulation until validated FCF or explicit cash-flow support is available."
+    },
+    {
+      "ticker": "MU",
+      "manual_review_reason_codes": [
+        "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+        "TRUE_FINANCIAL_ANOMALY"
+      ],
+      "market_cap": 731108413940.4297,
+      "enterprise_value": 723545413940.4297,
+      "revenue_ttm": 54857000000.0,
+      "fcf_ttm": 1159000000.0,
+      "sbc_ttm": 844000000.0,
+      "shares_used": null,
+      "price_used": 640.2000122070312,
+      "ev_sales": 13.189664289706505,
+      "price_to_fcf": 630.8096755310006,
+      "fcf_margin": 0.021127659186612465,
+      "sbc_to_revenue": 0.015385456732960242,
+      "evidence_ids": {
+        "revenue": [
+          "MU_SEC_COMPANYFACTS_723125_REVENUE",
+          "MU_SEC_COMPANYFACTS_723125_REVENUE_TTM",
+          "MU_SEC_revenue_FY2025_FY_0000723125-25-000028",
+          "MU_SEC_revenue_FY2025_Q3_0000723125-25-000021",
+          "MU_SEC_revenue_FY2026_Q1_0000723125-25-000046",
+          "MU_SEC_revenue_FY2026_Q2_0000723125-26-000006"
+        ],
+        "fcf": [
+          "MU_SEC_COMPANYFACTS_723125_CAPEX",
+          "MU_SEC_COMPANYFACTS_723125_FREE_CASH_FLOW",
+          "MU_SEC_COMPANYFACTS_723125_FREE_CASH_FLOW_TTM",
+          "MU_SEC_COMPANYFACTS_723125_OPERATING_CASH_FLOW",
+          "MU_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+          "MU_SEC_capex_FY2025_FY_0000723125-25-000028",
+          "MU_SEC_capex_FY2025_Q3_0000723125-25-000021",
+          "MU_SEC_capex_FY2026_Q1_0000723125-25-000046"
+        ],
+        "sbc": [
+          "MU_SEC_COMPANYFACTS_723125_SBC",
+          "MU_SEC_COMPANYFACTS_723125_SBC_TO_REVENUE",
+          "MU_SEC_COMPANYFACTS_723125_SBC_TTM",
+          "MU_SEC_DERIVED_SBC_TO_REVENUE",
+          "MU_SEC_sbc_FY2025_FY_0000723125-25-000028",
+          "MU_SEC_sbc_FY2025_Q3_0000723125-25-000021",
+          "MU_SEC_sbc_FY2026_Q1_0000723125-25-000046",
+          "MU_SEC_sbc_FY2026_Q2_0000723125-26-000006"
+        ],
+        "shares": [
+          "MU_CSV_PRICE_CLOSE_2026-05-05",
+          "MU_SEC_shares_diluted_FY2025_FY_0000723125-25-000028",
+          "MU_SEC_shares_diluted_FY2025_Q3_0000723125-25-000021",
+          "MU_SEC_shares_diluted_FY2026_Q1_0000723125-25-000046",
+          "MU_SEC_shares_diluted_FY2026_Q2_0000723125-26-000006",
+          "MU_YAHOO_CHART_PRICE_CSV_CLOSE",
+          "MU_YAHOO_CHART_PRICE_CSV_PRICE_DATA"
+        ],
+        "debt": [
+          "MU_SEC_COMPANYFACTS_723125_DEBT",
+          "MU_SEC_COMPANYFACTS_723125_TOTAL_DEBT"
+        ],
+        "cash": [
+          "MU_SEC_COMPANYFACTS_723125_CASH",
+          "MU_SEC_COMPANYFACTS_723125_CASH_AND_EQUIVALENTS",
+          "MU_SEC_COMPANYFACTS_723125_NET_CASH",
+          "MU_SEC_cash_and_equivalents_FY2025_FY_0000723125-25-000028",
+          "MU_SEC_cash_and_equivalents_FY2026_Q1_0000723125-25-000046",
+          "MU_SEC_cash_and_equivalents_FY2026_Q2_0000723125-26-000006"
+        ]
+      },
+      "verdict": "true_anomaly",
+      "fix_recommendation": "Keep manual review. Verify whether the extreme multiple is a real valuation/business outlier or whether FCF denominator should be marked unavailable."
+    },
+    {
+      "ticker": "ANET",
+      "manual_review_reason_codes": [
+        "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+        "TRUE_FINANCIAL_ANOMALY"
+      ],
+      "market_cap": 217149655557.25098,
+      "enterprise_value": 213973155557.25098,
+      "revenue_ttm": 8328800000.0,
+      "fcf_ttm": 1688814000.0,
+      "sbc_ttm": 283360000.0,
+      "shares_used": null,
+      "price_used": 170.22000122070312,
+      "ev_sales": 25.690754437284,
+      "price_to_fcf": 128.58115550750466,
+      "fcf_margin": 0.20276798578426664,
+      "sbc_to_revenue": 0.034021707809048125,
+      "evidence_ids": {
+        "revenue": [
+          "ANET_SEC_COMPANYFACTS_1596532_REVENUE",
+          "ANET_SEC_COMPANYFACTS_1596532_REVENUE_TTM",
+          "ANET_SEC_revenue_FY2025_FY_0001596532-26-000013",
+          "ANET_SEC_revenue_FY2025_Q2_0001596532-25-000216",
+          "ANET_SEC_revenue_FY2025_Q3_0001596532-25-000286"
+        ],
+        "fcf": [
+          "ANET_SEC_COMPANYFACTS_1596532_CAPEX",
+          "ANET_SEC_COMPANYFACTS_1596532_FREE_CASH_FLOW",
+          "ANET_SEC_COMPANYFACTS_1596532_FREE_CASH_FLOW_TTM",
+          "ANET_SEC_COMPANYFACTS_1596532_OPERATING_CASH_FLOW",
+          "ANET_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+          "ANET_SEC_capex_FY2019_FY_0001596532-20-000024",
+          "ANET_SEC_capex_FY2025_Q1_0001596532-25-000106",
+          "ANET_SEC_capex_FY2025_Q2_0001596532-25-000216"
+        ],
+        "sbc": [
+          "ANET_SEC_COMPANYFACTS_1596532_SBC",
+          "ANET_SEC_COMPANYFACTS_1596532_SBC_TO_REVENUE",
+          "ANET_SEC_COMPANYFACTS_1596532_SBC_TTM",
+          "ANET_SEC_DERIVED_SBC_TO_REVENUE",
+          "ANET_SEC_sbc_FY2025_FY_0001596532-26-000013",
+          "ANET_SEC_sbc_FY2025_Q1_0001596532-25-000106",
+          "ANET_SEC_sbc_FY2025_Q2_0001596532-25-000216",
+          "ANET_SEC_sbc_FY2025_Q3_0001596532-25-000286"
+        ],
+        "shares": [
+          "ANET_CSV_PRICE_CLOSE_2026-05-05",
+          "ANET_SEC_shares_diluted_FY2025_FY_0001596532-26-000013",
+          "ANET_SEC_shares_diluted_FY2025_Q2_0001596532-25-000216",
+          "ANET_SEC_shares_diluted_FY2025_Q3_0001596532-25-000286",
+          "ANET_YAHOO_CHART_PRICE_CSV_CLOSE",
+          "ANET_YAHOO_CHART_PRICE_CSV_PRICE_DATA"
+        ],
+        "debt": [
+          "ANET_SEC_COMPANYFACTS_1596532_DEBT",
+          "ANET_SEC_COMPANYFACTS_1596532_TOTAL_DEBT"
+        ],
+        "cash": [
+          "ANET_SEC_COMPANYFACTS_1596532_CASH",
+          "ANET_SEC_COMPANYFACTS_1596532_CASH_AND_EQUIVALENTS",
+          "ANET_SEC_COMPANYFACTS_1596532_NET_CASH",
+          "ANET_SEC_cash_and_equivalents_FY2025_FY_0001596532-26-000013",
+          "ANET_SEC_cash_and_equivalents_FY2025_Q2_0001596532-25-000216",
+          "ANET_SEC_cash_and_equivalents_FY2025_Q3_0001596532-25-000286"
+        ]
+      },
+      "verdict": "true_anomaly",
+      "fix_recommendation": "Keep manual review. Verify whether the extreme multiple is a real valuation/business outlier or whether FCF denominator should be marked unavailable."
+    },
+    {
+      "ticker": "DDOG",
+      "manual_review_reason_codes": [
+        "CURRENT_PERIOD_IR_RECONCILIATION_REQUIRED"
+      ],
+      "market_cap": 52968773007.08008,
+      "enterprise_value": 52567468007.08008,
+      "revenue_ttm": 3163980000.0,
+      "fcf_ttm": 723827000.0,
+      "sbc_ttm": 478910000.0,
+      "shares_used": null,
+      "price_used": 145.72999572753906,
+      "ev_sales": 16.61434901835033,
+      "price_to_fcf": 73.17877477225923,
+      "fcf_margin": 0.2287710415362929,
+      "sbc_to_revenue": 0.15136315653069868,
+      "evidence_ids": {
+        "revenue": [
+          "DDOG_SEC_COMPANYFACTS_1561550_REVENUE",
+          "DDOG_SEC_COMPANYFACTS_1561550_REVENUE_TTM",
+          "DDOG_SEC_revenue_FY2025_FY_0001628280-26-008819",
+          "DDOG_SEC_revenue_FY2025_Q2_0001561550-25-000220",
+          "DDOG_SEC_revenue_FY2025_Q3_0001561550-25-000313"
+        ],
+        "fcf": [
+          "DDOG_SEC_COMPANYFACTS_1561550_CAPEX",
+          "DDOG_SEC_COMPANYFACTS_1561550_FREE_CASH_FLOW",
+          "DDOG_SEC_COMPANYFACTS_1561550_FREE_CASH_FLOW_TTM",
+          "DDOG_SEC_COMPANYFACTS_1561550_OPERATING_CASH_FLOW",
+          "DDOG_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+          "DDOG_SEC_capex_FY2025_FY_0001628280-26-008819",
+          "DDOG_SEC_capex_FY2025_Q1_0001561550-25-000123",
+          "DDOG_SEC_capex_FY2025_Q2_0001561550-25-000220"
+        ],
+        "sbc": [
+          "DDOG_SEC_COMPANYFACTS_1561550_SBC",
+          "DDOG_SEC_COMPANYFACTS_1561550_SBC_TO_REVENUE",
+          "DDOG_SEC_COMPANYFACTS_1561550_SBC_TTM",
+          "DDOG_SEC_DERIVED_SBC_TO_REVENUE",
+          "DDOG_SEC_sbc_FY2025_FY_0001628280-26-008819",
+          "DDOG_SEC_sbc_FY2025_Q1_0001561550-25-000123",
+          "DDOG_SEC_sbc_FY2025_Q2_0001561550-25-000220",
+          "DDOG_SEC_sbc_FY2025_Q3_0001561550-25-000313"
+        ],
+        "shares": [
+          "DDOG_CSV_PRICE_CLOSE_2026-05-05",
+          "DDOG_SEC_shares_diluted_FY2025_FY_0001628280-26-008819",
+          "DDOG_SEC_shares_diluted_FY2025_Q2_0001561550-25-000220",
+          "DDOG_SEC_shares_diluted_FY2025_Q3_0001561550-25-000313",
+          "DDOG_YAHOO_CHART_PRICE_CSV_CLOSE",
+          "DDOG_YAHOO_CHART_PRICE_CSV_PRICE_DATA"
+        ],
+        "debt": [
+          "DDOG_SEC_COMPANYFACTS_1561550_DEBT",
+          "DDOG_SEC_COMPANYFACTS_1561550_TOTAL_DEBT"
+        ],
+        "cash": [
+          "DDOG_SEC_COMPANYFACTS_1561550_CASH",
+          "DDOG_SEC_COMPANYFACTS_1561550_CASH_AND_EQUIVALENTS",
+          "DDOG_SEC_COMPANYFACTS_1561550_NET_CASH",
+          "DDOG_SEC_cash_and_equivalents_FY2025_FY_0001628280-26-008819",
+          "DDOG_SEC_cash_and_equivalents_FY2025_Q1_0001561550-25-000123",
+          "DDOG_SEC_cash_and_equivalents_FY2025_Q2_0001561550-25-000220",
+          "DDOG_SEC_cash_and_equivalents_FY2025_Q3_0001561550-25-000313"
+        ]
+      },
+      "verdict": "period_bug",
+      "fix_recommendation": "Reconcile current-period IR/company-defined values before publish; keep report blocked until the canonical metric explains SEC-vs-IR period/basis."
+    },
+    {
+      "ticker": "CRWD",
+      "manual_review_reason_codes": [
+        "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+        "TRUE_FINANCIAL_ANOMALY"
+      ],
+      "market_cap": 119406980974.1211,
+      "enterprise_value": 116302790974.1211,
+      "revenue_ttm": null,
+      "fcf_ttm": 1033275000.0,
+      "sbc_ttm": 670079000.0,
+      "shares_used": null,
+      "price_used": 476.5299987792969,
+      "ev_sales": null,
+      "price_to_fcf": 115.56166652064658,
+      "fcf_margin": null,
+      "sbc_to_revenue": null,
+      "evidence_ids": {
+        "revenue": [
+          "CRWD_SEC_COMPANYFACTS_1535527_REVENUE",
+          "CRWD_SEC_COMPANYFACTS_1535527_REVENUE_TTM"
+        ],
+        "fcf": [
+          "CRWD_SEC_COMPANYFACTS_1535527_CAPEX",
+          "CRWD_SEC_COMPANYFACTS_1535527_FREE_CASH_FLOW",
+          "CRWD_SEC_COMPANYFACTS_1535527_FREE_CASH_FLOW_TTM",
+          "CRWD_SEC_COMPANYFACTS_1535527_OPERATING_CASH_FLOW",
+          "CRWD_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+          "CRWD_SEC_capex_FY2025_Q1_0001535527-25-000019",
+          "CRWD_SEC_capex_FY2026_FY_0001535527-26-000010",
+          "CRWD_SEC_capex_FY2026_Q2_0001535527-25-000025"
+        ],
+        "sbc": [
+          "CRWD_SEC_COMPANYFACTS_1535527_SBC",
+          "CRWD_SEC_COMPANYFACTS_1535527_SBC_TO_REVENUE",
+          "CRWD_SEC_COMPANYFACTS_1535527_SBC_TTM",
+          "CRWD_SEC_sbc_FY2025_Q1_0001535527-25-000019",
+          "CRWD_SEC_sbc_FY2026_FY_0001535527-26-000010",
+          "CRWD_SEC_sbc_FY2026_Q2_0001535527-25-000025",
+          "CRWD_SEC_sbc_FY2026_Q3_0001535527-25-000033"
+        ],
+        "shares": [
+          "CRWD_CSV_PRICE_CLOSE_2026-05-05",
+          "CRWD_SEC_shares_diluted_FY2026_FY_0001535527-26-000010",
+          "CRWD_SEC_shares_diluted_FY2026_Q2_0001535527-25-000025",
+          "CRWD_SEC_shares_diluted_FY2026_Q3_0001535527-25-000033",
+          "CRWD_YAHOO_CHART_PRICE_CSV_CLOSE",
+          "CRWD_YAHOO_CHART_PRICE_CSV_PRICE_DATA"
+        ],
+        "debt": [
+          "CRWD_SEC_COMPANYFACTS_1535527_DEBT",
+          "CRWD_SEC_COMPANYFACTS_1535527_TOTAL_DEBT"
+        ],
+        "cash": [
+          "CRWD_SEC_COMPANYFACTS_1535527_CASH",
+          "CRWD_SEC_COMPANYFACTS_1535527_CASH_AND_EQUIVALENTS",
+          "CRWD_SEC_COMPANYFACTS_1535527_NET_CASH",
+          "CRWD_SEC_cash_and_equivalents_FY2026_FY_0001535527-26-000010",
+          "CRWD_SEC_cash_and_equivalents_FY2026_Q2_0001535527-25-000025",
+          "CRWD_SEC_cash_and_equivalents_FY2026_Q3_0001535527-25-000033"
+        ]
+      },
+      "verdict": "true_anomaly",
+      "fix_recommendation": "Keep manual review. Verify whether the extreme multiple is a real valuation/business outlier or whether FCF denominator should be marked unavailable."
+    },
+    {
+      "ticker": "CRM",
+      "manual_review_reason_codes": [
+        "CURRENT_PERIOD_IR_RECONCILIATION_REQUIRED"
+      ],
+      "market_cap": 178762445251.46487,
+      "enterprise_value": 168317666251.46487,
+      "revenue_ttm": 39768000000.0,
+      "fcf_ttm": 10858000000.0,
+      "sbc_ttm": 3246000000.0,
+      "shares_used": null,
+      "price_used": 186.9900054931641,
+      "ev_sales": 4.23249009886001,
+      "price_to_fcf": 16.463662299821777,
+      "fcf_margin": 0.27303359485013073,
+      "sbc_to_revenue": 0.0816234158117079,
+      "evidence_ids": {
+        "revenue": [
+          "CRM_SEC_COMPANYFACTS_1108524_REVENUE",
+          "CRM_SEC_COMPANYFACTS_1108524_REVENUE_TTM",
+          "CRM_SEC_revenue_FY2025_FY_0001108524-26-000060",
+          "CRM_SEC_revenue_FY2026_Q2_0001108524-25-000088",
+          "CRM_SEC_revenue_FY2026_Q3_0001108524-25-000238"
+        ],
+        "fcf": [
+          "CRM_SEC_COMPANYFACTS_1108524_CAPEX",
+          "CRM_SEC_COMPANYFACTS_1108524_FREE_CASH_FLOW",
+          "CRM_SEC_COMPANYFACTS_1108524_FREE_CASH_FLOW_TTM",
+          "CRM_SEC_COMPANYFACTS_1108524_OPERATING_CASH_FLOW",
+          "CRM_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+          "CRM_SEC_capex_FY2025_FY_0001108524-26-000060",
+          "CRM_SEC_capex_FY2026_Q2_0001108524-25-000088",
+          "CRM_SEC_capex_FY2026_Q3_0001108524-25-000238"
+        ],
+        "sbc": [
+          "CRM_SEC_COMPANYFACTS_1108524_SBC",
+          "CRM_SEC_COMPANYFACTS_1108524_SBC_TO_REVENUE",
+          "CRM_SEC_COMPANYFACTS_1108524_SBC_TTM",
+          "CRM_SEC_DERIVED_SBC_TO_REVENUE",
+          "CRM_SEC_sbc_FY2025_FY_0001108524-26-000060",
+          "CRM_SEC_sbc_FY2026_Q2_0001108524-25-000088",
+          "CRM_SEC_sbc_FY2026_Q3_0001108524-25-000238"
+        ],
+        "shares": [
+          "CRM_CSV_PRICE_CLOSE_2026-05-05",
+          "CRM_SEC_shares_diluted_FY2025_FY_0001108524-26-000060",
+          "CRM_SEC_shares_diluted_FY2026_Q2_0001108524-25-000088",
+          "CRM_SEC_shares_diluted_FY2026_Q3_0001108524-25-000238",
+          "CRM_YAHOO_CHART_PRICE_CSV_CLOSE",
+          "CRM_YAHOO_CHART_PRICE_CSV_PRICE_DATA"
+        ],
+        "debt": [
+          "CRM_SEC_COMPANYFACTS_1108524_DEBT",
+          "CRM_SEC_COMPANYFACTS_1108524_TOTAL_DEBT"
+        ],
+        "cash": [
+          "CRM_SEC_COMPANYFACTS_1108524_CASH",
+          "CRM_SEC_COMPANYFACTS_1108524_CASH_AND_EQUIVALENTS",
+          "CRM_SEC_COMPANYFACTS_1108524_NET_CASH",
+          "CRM_SEC_cash_and_equivalents_FY2025_FY_0001108524-26-000060",
+          "CRM_SEC_cash_and_equivalents_FY2026_Q2_0001108524-25-000088",
+          "CRM_SEC_cash_and_equivalents_FY2026_Q3_0001108524-25-000238"
+        ]
+      },
+      "verdict": "period_bug",
+      "fix_recommendation": "Reconcile current-period IR/company-defined values before publish; keep report blocked until the canonical metric explains SEC-vs-IR period/basis."
+    },
+    {
+      "ticker": "PLTR",
+      "manual_review_reason_codes": [
+        "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+        "GUARD_THRESHOLD_REVIEW",
+        "TRUE_FINANCIAL_ANOMALY"
+      ],
+      "market_cap": 349414290255.0049,
+      "enterprise_value": 341559572255.0049,
+      "revenue_ttm": 4701227000.0,
+      "fcf_ttm": 1505379000.0,
+      "sbc_ttm": 597296000.0,
+      "shares_used": null,
+      "price_used": 135.91000366210938,
+      "ev_sales": 72.65328227184199,
+      "price_to_fcf": 232.11051187442158,
+      "fcf_margin": 0.3202098090562315,
+      "sbc_to_revenue": 0.1270510868758305,
+      "evidence_ids": {
+        "revenue": [
+          "PLTR_SEC_COMPANYFACTS_1321655_REVENUE",
+          "PLTR_SEC_COMPANYFACTS_1321655_REVENUE_TTM",
+          "PLTR_SEC_revenue_FY2025_FY_0001321655-26-000011",
+          "PLTR_SEC_revenue_FY2025_Q2_0001321655-25-000106",
+          "PLTR_SEC_revenue_FY2025_Q3_0001321655-25-000131",
+          "PLTR_SEC_revenue_FY2026_Q1_0001321655-26-000028"
+        ],
+        "fcf": [
+          "PLTR_SEC_COMPANYFACTS_1321655_CAPEX",
+          "PLTR_SEC_COMPANYFACTS_1321655_FREE_CASH_FLOW",
+          "PLTR_SEC_COMPANYFACTS_1321655_FREE_CASH_FLOW_TTM",
+          "PLTR_SEC_COMPANYFACTS_1321655_OPERATING_CASH_FLOW",
+          "PLTR_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+          "PLTR_SEC_capex_FY2025_FY_0001321655-26-000011",
+          "PLTR_SEC_capex_FY2025_Q2_0001321655-25-000106",
+          "PLTR_SEC_capex_FY2025_Q3_0001321655-25-000131"
+        ],
+        "sbc": [
+          "PLTR_SEC_COMPANYFACTS_1321655_SBC",
+          "PLTR_SEC_COMPANYFACTS_1321655_SBC_TO_REVENUE",
+          "PLTR_SEC_COMPANYFACTS_1321655_SBC_TTM",
+          "PLTR_SEC_DERIVED_SBC_TO_REVENUE",
+          "PLTR_SEC_sbc_FY2025_FY_0001321655-26-000011",
+          "PLTR_SEC_sbc_FY2025_Q2_0001321655-25-000106",
+          "PLTR_SEC_sbc_FY2025_Q3_0001321655-25-000131",
+          "PLTR_SEC_sbc_FY2026_Q1_0001321655-26-000028"
+        ],
+        "shares": [
+          "PLTR_CSV_PRICE_CLOSE_2026-05-05",
+          "PLTR_SEC_shares_diluted_FY2025_FY_0001321655-26-000011",
+          "PLTR_SEC_shares_diluted_FY2025_Q2_0001321655-25-000106",
+          "PLTR_SEC_shares_diluted_FY2025_Q3_0001321655-25-000131",
+          "PLTR_SEC_shares_diluted_FY2026_Q1_0001321655-26-000028",
+          "PLTR_YAHOO_CHART_PRICE_CSV_CLOSE",
+          "PLTR_YAHOO_CHART_PRICE_CSV_PRICE_DATA"
+        ],
+        "debt": [
+          "PLTR_SEC_COMPANYFACTS_1321655_DEBT",
+          "PLTR_SEC_COMPANYFACTS_1321655_TOTAL_DEBT"
+        ],
+        "cash": [
+          "PLTR_SEC_COMPANYFACTS_1321655_CASH",
+          "PLTR_SEC_COMPANYFACTS_1321655_CASH_AND_EQUIVALENTS",
+          "PLTR_SEC_COMPANYFACTS_1321655_NET_CASH",
+          "PLTR_SEC_cash_and_equivalents_FY2025_FY_0001321655-26-000011",
+          "PLTR_SEC_cash_and_equivalents_FY2026_Q1_0001321655-26-000028"
+        ]
+      },
+      "verdict": "true_anomaly",
+      "fix_recommendation": "Keep manual review. Verify whether the extreme multiple is a real valuation/business outlier or whether FCF denominator should be marked unavailable."
+    }
+  ]
+}

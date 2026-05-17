@@ -1,0 +1,646 @@
+[
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "IBM enters the report with a validated Hold rating corridor at a frozen close of 229.03; the action should reflect company-specific growth, margin, FCF and source-quality drivers and the current technical setup.",
+    "claim_id": "IBM_CLAIM_001",
+    "claim_text": "IBM enters the report with a validated Hold rating corridor at a frozen close of 229.03; the action should reflect company-specific growth, margin, FCF and source-quality drivers and the current technical setup.",
+    "claim_type": "price_data",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "IBM_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "IBM_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "IBM_YAHOO_CHART_PRICE_CSV_PRICE",
+      "IBM_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "IBM_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "IBM_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "The committee text should stay inside the Hold action frame.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Executive Summary",
+    "source_ids": [
+      "IBM_YAHOO_CHART_PRICE_CSV",
+      "IBM_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "IBM has validated revenue TTM of $63.77B, so the business discussion should focus on company-specific growth, margin, FCF and source-quality drivers rather than generic scale language.",
+    "claim_id": "IBM_CLAIM_002",
+    "claim_text": "IBM has validated revenue TTM of $63.77B, so the business discussion should focus on company-specific growth, margin, FCF and source-quality drivers rather than generic scale language.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "Revenue scale alone does not prove attractive returns or valuation discipline.",
+    "evidence_ids": [
+      "IBM_SEC_COMPANYFACTS_51143_REVENUE",
+      "IBM_SEC_COMPANYFACTS_51143_REVENUE_TTM",
+      "IBM_SEC_COMPANYFACTS_51143_SALES",
+      "IBM_SEC_COMPANYFACTS_51143_UMSATZ",
+      "IBM_SEC_revenue_FY2025_FY_0000051143-26-000010",
+      "IBM_SEC_revenue_FY2025_Q2_0000051143-25-000052",
+      "IBM_SEC_revenue_FY2025_Q3_0000051143-25-000064",
+      "IBM_SEC_revenue_FY2026_Q1_0000051143-26-000038"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm"
+    ],
+    "importance": "high",
+    "investment_implication": "Use revenue evidence as context, not as a standalone buy signal.",
+    "metric_refs": [
+      "revenue_ttm"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "IBM_SEC_COMPANYFACTS_51143",
+      "SEC_0000051143_0000051143-26-000010",
+      "SEC_0000051143_0000051143-25-000052",
+      "SEC_0000051143_0000051143-25-000064",
+      "SEC_0000051143_0000051143-26-000038"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Validated FCF TTM is $17.12B, making cash conversion a direct rating input for IBM.",
+    "claim_id": "IBM_CLAIM_003",
+    "claim_text": "Validated FCF TTM is $17.12B, making cash conversion a direct rating input for IBM.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "FCF may be company-defined or period-sensitive and can require reconciliation review.",
+    "evidence_ids": [
+      "IBM_SEC_COMPANYFACTS_51143_CASHFLOW",
+      "IBM_SEC_COMPANYFACTS_51143_FCF",
+      "IBM_SEC_COMPANYFACTS_51143_FREE_CASH_FLOW",
+      "IBM_SEC_COMPANYFACTS_51143_FREE_CASH_FLOW_TTM",
+      "IBM_SEC_COMPANYFACTS_51143_FREE_CASHFLOW",
+      "IBM_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm"
+    ],
+    "importance": "high",
+    "investment_implication": "FCF quality supports the thesis only if no sanity guard blocks the report.",
+    "metric_refs": [
+      "free_cash_flow_ttm"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "IBM_SEC_COMPANYFACTS_51143",
+      "SEC_0000051143_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "SBC/Revenue is 2.6%, which should be interpreted through sector-specific quality and valuation context rather than a one-size-fits-all compensation lens.",
+    "claim_id": "IBM_CLAIM_004",
+    "claim_text": "SBC/Revenue is 2.6%, which should be interpreted through sector-specific quality and valuation context rather than a one-size-fits-all compensation lens.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": "Sector and lifecycle matter, but persistent dilution can still reduce equity quality.",
+    "evidence_ids": [
+      "IBM_SEC_COMPANYFACTS_51143_SBC_TO_REVENUE",
+      "IBM_SEC_DERIVED_SBC_TO_REVENUE"
+    ],
+    "evidence_metrics": [
+      "sbc_to_revenue"
+    ],
+    "importance": "medium",
+    "investment_implication": "Treat SBC as a risk modifier rather than an automatic rating override.",
+    "metric_refs": [
+      "sbc_to_revenue"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "IBM_SEC_COMPANYFACTS_51143",
+      "SEC_0000051143_DERIVED_SBC_TO_REVENUE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Balance-sheet flexibility is anchored in validated net cash of $12.05B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+    "claim_id": "IBM_CLAIM_005",
+    "claim_text": "Balance-sheet flexibility is anchored in validated net cash of $12.05B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "IBM_SEC_COMPANYFACTS_51143_CASH",
+      "IBM_SEC_COMPANYFACTS_51143_CASH_AND_EQUIVALENTS",
+      "IBM_SEC_COMPANYFACTS_51143_CASH_AND_INVESTMENTS",
+      "IBM_SEC_COMPANYFACTS_51143_NET_CASH",
+      "IBM_SEC_cash_and_equivalents_FY2025_FY_0000051143-26-000010",
+      "IBM_SEC_cash_and_equivalents_FY2026_Q1_0000051143-26-000038",
+      "IBM_SEC_COMPANYFACTS_51143_DEBT",
+      "IBM_SEC_COMPANYFACTS_51143_NET_DEBT",
+      "IBM_SEC_COMPANYFACTS_51143_TOTAL_DEBT"
+    ],
+    "evidence_metrics": [
+      "net_cash",
+      "total_debt"
+    ],
+    "importance": "medium",
+    "investment_implication": "A stronger liquidity position can widen the acceptable holding corridor.",
+    "metric_refs": [
+      "net_cash",
+      "total_debt"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "IBM_SEC_COMPANYFACTS_51143",
+      "SEC_0000051143_0000051143-26-000010",
+      "SEC_0000051143_0000051143-26-000038"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Valuation is framed by validated EV/Sales of 3.23x; this directly limits how aggressive the Hold stance should be.",
+    "claim_id": "IBM_CLAIM_006",
+    "claim_text": "Valuation is framed by validated EV/Sales of 3.23x; this directly limits how aggressive the Hold stance should be.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": "Packet-derived valuation can still be blocked by sanity guards when source reconciliation is suspect.",
+    "evidence_ids": [
+      "IBM_SEC_COMPANYFACTS_51143_REVENUE",
+      "IBM_SEC_COMPANYFACTS_51143_REVENUE_TTM",
+      "IBM_SEC_COMPANYFACTS_51143_SALES",
+      "IBM_SEC_COMPANYFACTS_51143_UMSATZ",
+      "IBM_SEC_revenue_FY2025_FY_0000051143-26-000010",
+      "IBM_SEC_revenue_FY2025_Q2_0000051143-25-000052",
+      "IBM_SEC_revenue_FY2025_Q3_0000051143-25-000064",
+      "IBM_SEC_revenue_FY2026_Q1_0000051143-26-000038",
+      "IBM_SEC_COMPANYFACTS_51143_CASHFLOW",
+      "IBM_SEC_COMPANYFACTS_51143_FCF",
+      "IBM_SEC_COMPANYFACTS_51143_FREE_CASH_FLOW",
+      "IBM_SEC_COMPANYFACTS_51143_FREE_CASH_FLOW_TTM",
+      "IBM_SEC_COMPANYFACTS_51143_FREE_CASHFLOW",
+      "IBM_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "IBM_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "IBM_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "IBM_YAHOO_CHART_PRICE_CSV_PRICE",
+      "IBM_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "IBM_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "IBM_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm",
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Do not upgrade rating solely from valuation language if audit has financial-sanity errors.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm",
+      "close"
+    ],
+    "section": "Valuation / Multiples",
+    "source_ids": [
+      "IBM_SEC_COMPANYFACTS_51143",
+      "SEC_0000051143_0000051143-26-000010",
+      "SEC_0000051143_0000051143-25-000052",
+      "SEC_0000051143_0000051143-25-000064",
+      "SEC_0000051143_0000051143-26-000038",
+      "SEC_0000051143_DERIVED_FCF",
+      "IBM_YAHOO_CHART_PRICE_CSV",
+      "IBM_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "For IBM, validated P/FCF is 12.74x and should be read against validated growth, cash-flow and risk context; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+    "claim_id": "IBM_CLAIM_007",
+    "claim_text": "For IBM, validated P/FCF is 12.74x and should be read against validated growth, cash-flow and risk context; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "IBM_SEC_COMPANYFACTS_51143_CASHFLOW",
+      "IBM_SEC_COMPANYFACTS_51143_FCF",
+      "IBM_SEC_COMPANYFACTS_51143_FREE_CASH_FLOW",
+      "IBM_SEC_COMPANYFACTS_51143_FREE_CASH_FLOW_TTM",
+      "IBM_SEC_COMPANYFACTS_51143_FREE_CASHFLOW",
+      "IBM_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "IBM_SEC_COMPANYFACTS_51143_REVENUE",
+      "IBM_SEC_COMPANYFACTS_51143_REVENUE_TTM",
+      "IBM_SEC_COMPANYFACTS_51143_SALES",
+      "IBM_SEC_COMPANYFACTS_51143_UMSATZ",
+      "IBM_SEC_revenue_FY2025_FY_0000051143-26-000010",
+      "IBM_SEC_revenue_FY2025_Q2_0000051143-25-000052",
+      "IBM_SEC_revenue_FY2025_Q3_0000051143-25-000064",
+      "IBM_SEC_revenue_FY2026_Q1_0000051143-26-000038"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm",
+      "revenue_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "The rating should stay conservative when multiples are expensive, missing or flagged.",
+    "metric_refs": [
+      "free_cash_flow_ttm",
+      "revenue_ttm"
+    ],
+    "section": "Valuation / Multiples",
+    "source_ids": [
+      "IBM_SEC_COMPANYFACTS_51143",
+      "SEC_0000051143_DERIVED_FCF",
+      "SEC_0000051143_0000051143-26-000010",
+      "SEC_0000051143_0000051143-25-000052",
+      "SEC_0000051143_0000051143-25-000064",
+      "SEC_0000051143_0000051143-26-000038"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The technical setup uses validated levels: close 229.03, 50-SMA 242.74, 200-SMA 272.24 and RSI 40.34.",
+    "claim_id": "IBM_CLAIM_008",
+    "claim_text": "The technical setup uses validated levels: close 229.03, 50-SMA 242.74, 200-SMA 272.24 and RSI 40.34.",
+    "claim_type": "technical_metric",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "IBM_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "IBM_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "IBM_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "IBM_YAHOO_CHART_PRICE_CSV_PRICE",
+      "IBM_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "IBM_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "IBM_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Timing language should follow the validated technical trend state.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Technical Setup",
+    "source_ids": [
+      "IBM_YAHOO_CHART_PRICE_CSV",
+      "IBM_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "IBM's RSI and moving-average position imply a damaged trend that requires confirmation before adding exposure, so entries should be staged, delayed or trimmed according to the allowed rating corridor.",
+    "claim_id": "IBM_CLAIM_009",
+    "claim_text": "IBM's RSI and moving-average position imply a damaged trend that requires confirmation before adding exposure, so entries should be staged, delayed or trimmed according to the allowed rating corridor.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": "Technical weakness can be temporary if fundamentals and catalysts improve.",
+    "evidence_ids": [
+      "IBM_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "IBM_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "IBM_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "IBM_YAHOO_CHART_PRICE_CSV_PRICE",
+      "IBM_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "IBM_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "IBM_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Use staged entries or trims when technical and fundamental signals diverge.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Technical Setup",
+    "source_ids": [
+      "IBM_YAHOO_CHART_PRICE_CSV",
+      "IBM_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The bull case is that validated growth and cash-flow quality combines with revenue of $63.77B to support the allowed upside rating path when cash conversion quality also holds.",
+    "claim_id": "IBM_CLAIM_010",
+    "claim_text": "The bull case is that validated growth and cash-flow quality combines with revenue of $63.77B to support the allowed upside rating path when cash conversion quality also holds.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": "Strong scale does not resolve valuation or reconciliation anomalies.",
+    "evidence_ids": [
+      "IBM_SEC_COMPANYFACTS_51143_REVENUE",
+      "IBM_SEC_COMPANYFACTS_51143_REVENUE_TTM",
+      "IBM_SEC_COMPANYFACTS_51143_SALES",
+      "IBM_SEC_COMPANYFACTS_51143_UMSATZ",
+      "IBM_SEC_revenue_FY2025_FY_0000051143-26-000010",
+      "IBM_SEC_revenue_FY2025_Q2_0000051143-25-000052",
+      "IBM_SEC_revenue_FY2025_Q3_0000051143-25-000064",
+      "IBM_SEC_revenue_FY2026_Q1_0000051143-26-000038",
+      "IBM_SEC_COMPANYFACTS_51143_CASHFLOW",
+      "IBM_SEC_COMPANYFACTS_51143_FCF",
+      "IBM_SEC_COMPANYFACTS_51143_FREE_CASH_FLOW",
+      "IBM_SEC_COMPANYFACTS_51143_FREE_CASH_FLOW_TTM",
+      "IBM_SEC_COMPANYFACTS_51143_FREE_CASHFLOW",
+      "IBM_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Bullish language must remain bounded by DecisionPacket permissions.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Bull Case",
+    "source_ids": [
+      "IBM_SEC_COMPANYFACTS_51143",
+      "SEC_0000051143_0000051143-26-000010",
+      "SEC_0000051143_0000051143-25-000052",
+      "SEC_0000051143_0000051143-25-000064",
+      "SEC_0000051143_0000051143-26-000038",
+      "SEC_0000051143_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "A constructive technical bull path for IBM requires confirmation beyond the current RSI of 40.34 and moving-average setup.",
+    "claim_id": "IBM_CLAIM_011",
+    "claim_text": "A constructive technical bull path for IBM requires confirmation beyond the current RSI of 40.34 and moving-average setup.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "IBM_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "IBM_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "IBM_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "IBM_YAHOO_CHART_PRICE_CSV_PRICE",
+      "IBM_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "IBM_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "IBM_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Add or accumulate language should require confirmation when the preferred rating is not Buy.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Bull Case",
+    "source_ids": [
+      "IBM_YAHOO_CHART_PRICE_CSV",
+      "IBM_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The bear case is that source-quality issues, valuation risk or technical weakness overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 2.6% or source-quality issues persist.",
+    "claim_id": "IBM_CLAIM_012",
+    "claim_text": "The bear case is that source-quality issues, valuation risk or technical weakness overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 2.6% or source-quality issues persist.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "IBM_SEC_COMPANYFACTS_51143_CASHFLOW",
+      "IBM_SEC_COMPANYFACTS_51143_FCF",
+      "IBM_SEC_COMPANYFACTS_51143_FREE_CASH_FLOW",
+      "IBM_SEC_COMPANYFACTS_51143_FREE_CASH_FLOW_TTM",
+      "IBM_SEC_COMPANYFACTS_51143_FREE_CASHFLOW",
+      "IBM_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "IBM_SEC_COMPANYFACTS_51143_SBC_TO_REVENUE",
+      "IBM_SEC_DERIVED_SBC_TO_REVENUE"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm",
+      "sbc_to_revenue"
+    ],
+    "importance": "high",
+    "investment_implication": "Manual review remains appropriate when financial-sanity guards fire.",
+    "metric_refs": [
+      "free_cash_flow_ttm",
+      "sbc_to_revenue"
+    ],
+    "section": "Bear Case",
+    "source_ids": [
+      "IBM_SEC_COMPANYFACTS_51143",
+      "SEC_0000051143_DERIVED_FCF",
+      "SEC_0000051143_DERIVED_SBC_TO_REVENUE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Valuation risk for IBM is a discipline constraint; expensive or missing EV/Sales and P/FCF context should not be translated into a blocked rating.",
+    "claim_id": "IBM_CLAIM_013",
+    "claim_text": "Valuation risk for IBM is a discipline constraint; expensive or missing EV/Sales and P/FCF context should not be translated into a blocked rating.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "IBM_SEC_COMPANYFACTS_51143_REVENUE",
+      "IBM_SEC_COMPANYFACTS_51143_REVENUE_TTM",
+      "IBM_SEC_COMPANYFACTS_51143_SALES",
+      "IBM_SEC_COMPANYFACTS_51143_UMSATZ",
+      "IBM_SEC_revenue_FY2025_FY_0000051143-26-000010",
+      "IBM_SEC_revenue_FY2025_Q2_0000051143-25-000052",
+      "IBM_SEC_revenue_FY2025_Q3_0000051143-25-000064",
+      "IBM_SEC_revenue_FY2026_Q1_0000051143-26-000038",
+      "IBM_SEC_COMPANYFACTS_51143_CASHFLOW",
+      "IBM_SEC_COMPANYFACTS_51143_FCF",
+      "IBM_SEC_COMPANYFACTS_51143_FREE_CASH_FLOW",
+      "IBM_SEC_COMPANYFACTS_51143_FREE_CASH_FLOW_TTM",
+      "IBM_SEC_COMPANYFACTS_51143_FREE_CASHFLOW",
+      "IBM_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Avoid blocked Sell language when the DecisionPacket allows only trim or hold actions.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Bear Case",
+    "source_ids": [
+      "IBM_SEC_COMPANYFACTS_51143",
+      "SEC_0000051143_0000051143-26-000010",
+      "SEC_0000051143_0000051143-25-000052",
+      "SEC_0000051143_0000051143-25-000064",
+      "SEC_0000051143_0000051143-26-000038",
+      "SEC_0000051143_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Validation and audit issues are part of the IBM research view; any blocking data issue should override a superficially complete report.",
+    "claim_id": "IBM_CLAIM_014",
+    "claim_text": "Validation and audit issues are part of the IBM research view; any blocking data issue should override a superficially complete report.",
+    "claim_type": "risk",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "IBM_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "IBM_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "IBM_YAHOO_CHART_PRICE_CSV_PRICE",
+      "IBM_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "IBM_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "IBM_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Blocking audit errors should keep the report in manual review.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Key Risks",
+    "source_ids": [
+      "IBM_YAHOO_CHART_PRICE_CSV",
+      "IBM_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Source disagreement or current-period mismatch can reduce conviction for IBM, especially where revenue $63.77B is a key valuation denominator.",
+    "claim_id": "IBM_CLAIM_015",
+    "claim_text": "Source disagreement or current-period mismatch can reduce conviction for IBM, especially where revenue $63.77B is a key valuation denominator.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "IBM_SEC_COMPANYFACTS_51143_REVENUE",
+      "IBM_SEC_COMPANYFACTS_51143_REVENUE_TTM",
+      "IBM_SEC_COMPANYFACTS_51143_SALES",
+      "IBM_SEC_COMPANYFACTS_51143_UMSATZ",
+      "IBM_SEC_revenue_FY2025_FY_0000051143-26-000010",
+      "IBM_SEC_revenue_FY2025_Q2_0000051143-25-000052",
+      "IBM_SEC_revenue_FY2025_Q3_0000051143-25-000064",
+      "IBM_SEC_revenue_FY2026_Q1_0000051143-26-000038",
+      "IBM_SEC_COMPANYFACTS_51143_CASHFLOW",
+      "IBM_SEC_COMPANYFACTS_51143_FCF",
+      "IBM_SEC_COMPANYFACTS_51143_FREE_CASH_FLOW",
+      "IBM_SEC_COMPANYFACTS_51143_FREE_CASH_FLOW_TTM",
+      "IBM_SEC_COMPANYFACTS_51143_FREE_CASHFLOW",
+      "IBM_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Source-quality limitations belong in the final action plan.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Key Risks",
+    "source_ids": [
+      "IBM_SEC_COMPANYFACTS_51143",
+      "SEC_0000051143_0000051143-26-000010",
+      "SEC_0000051143_0000051143-25-000052",
+      "SEC_0000051143_0000051143-25-000064",
+      "SEC_0000051143_0000051143-26-000038",
+      "SEC_0000051143_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Catalysts for IBM should be limited to confirmed packet inputs; missing earnings or forward company data should be stated as unavailable rather than converted into event-risk claims.",
+    "claim_id": "IBM_CLAIM_016",
+    "claim_text": "Catalysts for IBM should be limited to confirmed packet inputs; missing earnings or forward company data should be stated as unavailable rather than converted into event-risk claims.",
+    "claim_type": "price_data",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "IBM_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "IBM_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "IBM_YAHOO_CHART_PRICE_CSV_PRICE",
+      "IBM_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "IBM_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "IBM_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "If earnings are unavailable, the report should state that limitation rather than inventing timing.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Catalysts & Triggers",
+    "source_ids": [
+      "IBM_YAHOO_CHART_PRICE_CSV",
+      "IBM_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Trigger language should use validated levels such as 50-SMA 242.74 and 200-SMA 272.24, not unvalidated price targets.",
+    "claim_id": "IBM_CLAIM_017",
+    "claim_text": "Trigger language should use validated levels such as 50-SMA 242.74 and 200-SMA 272.24, not unvalidated price targets.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "IBM_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "IBM_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "IBM_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "IBM_YAHOO_CHART_PRICE_CSV_PRICE",
+      "IBM_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "IBM_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "IBM_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Use confirmation language instead of hard price targets unless risk/reward levels are validated.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Catalysts & Triggers",
+    "source_ids": [
+      "IBM_YAHOO_CHART_PRICE_CSV",
+      "IBM_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The final action should use Hold, because DecisionPacket permissions connect IBM's fundamental score, technical score and risk score to that allowed rating corridor.",
+    "claim_id": "IBM_CLAIM_018",
+    "claim_text": "The final action should use Hold, because DecisionPacket permissions connect IBM's fundamental score, technical score and risk score to that allowed rating corridor.",
+    "claim_type": "rating",
+    "confidence": "high",
+    "counterargument": "Another allowed rating may be defensible, but blocked ratings are not allowed.",
+    "evidence_ids": [
+      "IBM_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "IBM_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "IBM_YAHOO_CHART_PRICE_CSV_PRICE",
+      "IBM_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "IBM_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "IBM_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Final report wording must choose Hold or another allowed rating with explicit justification.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Final Rating & Action Plan",
+    "source_ids": [
+      "IBM_YAHOO_CHART_PRICE_CSV",
+      "IBM_CSV_PRICE_PROVIDER"
+    ]
+  }
+]

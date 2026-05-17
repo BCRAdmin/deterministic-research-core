@@ -1,0 +1,124 @@
+{
+  "has_blocking_errors": false,
+  "issues": [],
+  "numeric_claims": [
+    {
+      "line_number": 8,
+      "nearby_text": "- Report as-of date: `2026-05-05`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 9,
+      "nearby_text": "- Price basis: `2026-05-05` close via `csv_price_provider`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": "close",
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 21,
+      "nearby_text": "| SBC / Revenue | 30.1% |",
+      "normalized_value": 30.1,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "30.1%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 29,
+      "nearby_text": "- **SNOW_CLAIM_002**: SNOW has validated revenue TTM of $4.34B, so the business discussion should focus on product revenue, NRR, RPO, AI Data Cloud adoption and consumption growth rather than generic scale language.",
+      "normalized_value": 4340000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$4.34B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 33,
+      "nearby_text": "- **SNOW_CLAIM_003**: Validated FCF TTM is $1.15B, making cash conversion a direct rating input for SNOW.",
+      "normalized_value": 1150000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$1.15B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 37,
+      "nearby_text": "- **SNOW_CLAIM_004**: SBC/Revenue is 30.1%, which should be interpreted through SaaS consumption, RPO/NRR, SBC and GAAP-vs-non-GAAP context rather than a one-size-fits-all compensation lens.",
+      "normalized_value": 30.1,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "30.1%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 41,
+      "nearby_text": "- **SNOW_CLAIM_005**: Balance-sheet flexibility is anchored in validated net cash of $956.7M and debt evidence, which affects how much downside tolerance the action plan can carry.",
+      "normalized_value": 956700000.0,
+      "period_hint": "unknown",
+      "possible_metric": "net_cash",
+      "raw_text": "$956.7M",
+      "unit": "usd"
+    },
+    {
+      "line_number": 46,
+      "nearby_text": "- **SNOW_CLAIM_006**: Valuation is framed by validated EV/Sales of 10.79x; this directly limits how aggressive the Tactical Underweight stance should be.",
+      "normalized_value": 10.79,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "10.79x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 50,
+      "nearby_text": "- **SNOW_CLAIM_007**: For SNOW, validated P/FCF is 41.45x and should be read against consumption growth, FCF quality and SBC dilution; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+      "normalized_value": 41.45,
+      "period_hint": "unknown",
+      "possible_metric": "price_to_fcf",
+      "raw_text": "41.45x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 64,
+      "nearby_text": "- **SNOW_CLAIM_010**: The bull case is that AI Data Cloud adoption, product revenue growth and RPO conversion combines with revenue of $4.34B to support the allowed upside rating path when cash conversion quality also holds.",
+      "normalized_value": 4340000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$4.34B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 73,
+      "nearby_text": "- **SNOW_CLAIM_012**: The bear case is that consumption slowdown, GAAP losses, SBC dilution or weak FY plan overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 30.1% or source-quality issues persist.",
+      "normalized_value": 30.1,
+      "period_hint": "fy",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "30.1%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 84,
+      "nearby_text": "- **SNOW_CLAIM_015**: Source disagreement or current-period mismatch can reduce conviction for SNOW, especially where revenue $4.34B is a key valuation denominator.",
+      "normalized_value": 4340000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$4.34B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 109,
+      "nearby_text": "Trim sizing: 20-30%.",
+      "normalized_value": 30.0,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "30%",
+      "unit": "percent"
+    }
+  ],
+  "ticker": "SNOW"
+}

@@ -1,0 +1,58 @@
+{
+  "registry_id": "META_2026-05-17",
+  "sources": [
+    {
+      "authority_rank": 1,
+      "retrieved_at": "2026-05-17T02:08:45Z",
+      "source_id": "META_SEC_COMPANYFACTS_1326801",
+      "source_type": "sec_filing",
+      "ticker": "META",
+      "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001326801.json",
+      "used_for": [
+        "revenue",
+        "financial",
+        "cash",
+        "operating_income",
+        "free_cash_flow",
+        "fcf",
+        "sbc",
+        "debt",
+        "eps"
+      ]
+    },
+    {
+      "authority_rank": 1,
+      "retrieved_at": "2026-05-17T02:08:45Z",
+      "source_id": "META_IR_Q1_2026_RELEASE",
+      "source_type": "company_ir",
+      "ticker": "META",
+      "url": "https://investor.fb.com/",
+      "used_for": [
+        "capex_guidance_high",
+        "capex_guidance_low",
+        "cash",
+        "current_period_kpis",
+        "current_q_free_cash_flow",
+        "current_q_revenue",
+        "fcf",
+        "financial",
+        "free_cash_flow",
+        "operating_margin",
+        "revenue"
+      ]
+    },
+    {
+      "authority_rank": 2,
+      "retrieved_at": "2026-05-17T02:08:45Z",
+      "source_id": "META_YAHOO_CHART_PRICE_CSV",
+      "source_type": "exchange_ohlcv",
+      "ticker": "META",
+      "url": "https://query1.finance.yahoo.com/v8/finance/chart/META",
+      "used_for": [
+        "price",
+        "volume",
+        "technical_indicators"
+      ]
+    }
+  ]
+}

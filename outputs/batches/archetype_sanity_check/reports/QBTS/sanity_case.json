@@ -1,0 +1,28 @@
+{
+  "active_deeptech_profile": true,
+  "archetype_confidence": 1.0,
+  "archetype_triggered_rules": [
+    "market_cap_revenue_gt_100",
+    "revenue_ttm_lt_50m",
+    "operating_income_ttm_lt_0",
+    "free_cash_flow_ttm_lt_0",
+    "sbc_to_revenue_gt_050",
+    "vendor_only_hard_financial_metrics",
+    "derivative_warrant_fair_value_effects_detected",
+    "no_sec_ir_current_period_evidence",
+    "lumpy_revenue_non_scaled_adoption_language",
+    "share_dilution_yoy_gt_010",
+    "technical_milestone_language_dominates_news",
+    "high_volatility_or_beta_gt_15"
+  ],
+  "company_archetype": "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL",
+  "expected_role": "Deep-Tech pruefen",
+  "issue_codes": [
+    "SPECULATIVE_DEEP_TECH_MANUAL_REVIEW_PROFILE",
+    "VENDOR_ONLY_HARD_METRICS",
+    "ACCOUNTING_GAIN_NOT_OPERATING_TURNAROUND",
+    "ORDER_MATERIALITY_MISSING"
+  ],
+  "publishable": false,
+  "ticker": "QBTS"
+}

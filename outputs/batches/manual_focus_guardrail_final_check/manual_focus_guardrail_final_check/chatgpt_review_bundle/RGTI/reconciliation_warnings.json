@@ -1,0 +1,139 @@
+[
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 2,
+    "message": "Ignored 2 annual/quarterly/YTD period-type variants for revenue.",
+    "metric": "revenue",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 8,
+    "message": "Ignored 8 annual/quarterly/YTD period-type variants for gross_profit.",
+    "metric": "gross_profit",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 11,
+    "message": "Ignored 11 annual/quarterly/YTD period-type variants for operating_income.",
+    "metric": "operating_income",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 1,
+    "message": "Ignored YTD source disagreement for operating_income (Q2_FY2021_ytd); YTD facts are kept separate and are not used as quarterly/annual canonical metrics.",
+    "metric": "operating_income",
+    "period_type": "ytd",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 1,
+    "message": "Ignored YTD source disagreement for operating_income (Q3_FY2021_ytd); YTD facts are kept separate and are not used as quarterly/annual canonical metrics.",
+    "metric": "operating_income",
+    "period_type": "ytd",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 11,
+    "message": "Ignored 11 annual/quarterly/YTD period-type variants for net_income.",
+    "metric": "net_income",
+    "severity": "info"
+  },
+  {
+    "basis": "gaap",
+    "code": "TRUE_SOURCE_VALUE_DISAGREEMENT",
+    "message": "Comparable sources disagree for net_income (gaap, quarterly, Q1_FY2021_quarterly).",
+    "metric": "net_income",
+    "period_type": "quarterly",
+    "severity": "warning"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 1,
+    "message": "Ignored YTD source disagreement for net_income (Q2_FY2021_ytd); YTD facts are kept separate and are not used as quarterly/annual canonical metrics.",
+    "metric": "net_income",
+    "period_type": "ytd",
+    "severity": "info"
+  },
+  {
+    "basis": "gaap",
+    "code": "TRUE_SOURCE_VALUE_DISAGREEMENT",
+    "message": "Comparable sources disagree for net_income (gaap, quarterly, Q2_FY2021_quarterly).",
+    "metric": "net_income",
+    "period_type": "quarterly",
+    "severity": "warning"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 1,
+    "message": "Ignored YTD source disagreement for net_income (Q3_FY2021_ytd); YTD facts are kept separate and are not used as quarterly/annual canonical metrics.",
+    "metric": "net_income",
+    "period_type": "ytd",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 1,
+    "message": "Ignored 1 annual/quarterly/YTD period-type variants for operating_cash_flow.",
+    "metric": "operating_cash_flow",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 1,
+    "message": "Ignored YTD source disagreement for operating_cash_flow (Q2_FY2021_ytd); YTD facts are kept separate and are not used as quarterly/annual canonical metrics.",
+    "metric": "operating_cash_flow",
+    "period_type": "ytd",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 1,
+    "message": "Ignored YTD source disagreement for operating_cash_flow (Q3_FY2021_ytd); YTD facts are kept separate and are not used as quarterly/annual canonical metrics.",
+    "metric": "operating_cash_flow",
+    "period_type": "ytd",
+    "severity": "info"
+  },
+  {
+    "code": "SOURCE_FRAME_VARIANT_IGNORED",
+    "count": 1,
+    "message": "Ignored 1 SEC frame/concept variants across distinct periods for cash_and_equivalents.",
+    "metric": "cash_and_equivalents",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 7,
+    "message": "Ignored 7 annual/quarterly/YTD period-type variants for shares_diluted.",
+    "metric": "shares_diluted",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 1,
+    "message": "Ignored YTD source disagreement for shares_diluted (Q2_FY2022_ytd); YTD facts are kept separate and are not used as quarterly/annual canonical metrics.",
+    "metric": "shares_diluted",
+    "period_type": "ytd",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 1,
+    "message": "Ignored YTD source disagreement for shares_diluted (Q3_FY2022_ytd); YTD facts are kept separate and are not used as quarterly/annual canonical metrics.",
+    "metric": "shares_diluted",
+    "period_type": "ytd",
+    "severity": "info"
+  },
+  {
+    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+    "count": 1,
+    "message": "Ignored YTD source disagreement for shares_diluted (Q2_FY2023_ytd); YTD facts are kept separate and are not used as quarterly/annual canonical metrics.",
+    "metric": "shares_diluted",
+    "period_type": "ytd",
+    "severity": "info"
+  }
+]

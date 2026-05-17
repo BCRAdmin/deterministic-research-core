@@ -1,0 +1,57 @@
+{
+  "freeze_id": "pilot_v1",
+  "created_at": "2026-05-10T00:20:33.191595+00:00",
+  "source_batch_id": "phase12_real_pilot_041_final_prose_polish",
+  "source_batch_path": "outputs/batches/phase12_real_pilot_041_final_prose_polish",
+  "status": "frozen_for_blind_test",
+  "policy": {
+    "no_more_backbone_changes": true,
+    "no_new_features": true,
+    "no_guard_relaxation": true,
+    "blind_test_requires_first_run_only": true
+  },
+  "source_summary": {
+    "avg_quality_score": 80.5,
+    "failed": 0,
+    "manual_review": 21,
+    "passed": 9,
+    "pending": 0,
+    "repaired": 0,
+    "running": 0,
+    "total": 30
+  },
+  "passed_tickers": [
+    "MSFT",
+    "GOOGL",
+    "META",
+    "AAPL",
+    "AVGO",
+    "DDOG",
+    "SNOW",
+    "CRM",
+    "NFLX"
+  ],
+  "manual_review_tickers": [
+    "AMZN",
+    "NVDA",
+    "AMD",
+    "INTC",
+    "QCOM",
+    "MU",
+    "MRVL",
+    "ANET",
+    "MDB",
+    "CRWD",
+    "NET",
+    "PANW",
+    "ZS",
+    "NOW",
+    "ORCL",
+    "ADBE",
+    "INTU",
+    "UBER",
+    "TSLA",
+    "PLTR",
+    "IBM"
+  ]
+}

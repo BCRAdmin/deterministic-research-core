@@ -1,0 +1,64 @@
+{
+  "has_blocking_errors": true,
+  "issues": [
+    {
+      "code": "INVALID_TRADE_LEVEL",
+      "line_number": null,
+      "message": "For a long position, stop-loss must be below entry.",
+      "metric": "trade_levels",
+      "raw_text": null,
+      "reported": null,
+      "severity": "error",
+      "validated": null
+    },
+    {
+      "code": "RATING_TOO_HARSH_FOR_ACTION",
+      "line_number": null,
+      "message": "Final rating is Sell, but operative actions imply tactical trim rather than full exit.",
+      "metric": "rating",
+      "raw_text": null,
+      "reported": null,
+      "severity": "error",
+      "validated": null
+    }
+  ],
+  "numeric_claims": [
+    {
+      "line_number": 5,
+      "nearby_text": "Operative Action: reduce 25%, hold core position for long-term investors.",
+      "normalized_value": 25.0,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "25%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 7,
+      "nearby_text": "Long Setup: Entry $132, Stop-Loss $140, Take-Profit $150.",
+      "normalized_value": 132.0,
+      "period_hint": "unknown",
+      "possible_metric": "stop_loss",
+      "raw_text": "$132",
+      "unit": "usd"
+    },
+    {
+      "line_number": 7,
+      "nearby_text": "Long Setup: Entry $132, Stop-Loss $140, Take-Profit $150.",
+      "normalized_value": 140.0,
+      "period_hint": "unknown",
+      "possible_metric": "stop_loss",
+      "raw_text": "$140",
+      "unit": "usd"
+    },
+    {
+      "line_number": 7,
+      "nearby_text": "Long Setup: Entry $132, Stop-Loss $140, Take-Profit $150.",
+      "normalized_value": 150.0,
+      "period_hint": "unknown",
+      "possible_metric": "stop_loss",
+      "raw_text": "$150",
+      "unit": "usd"
+    }
+  ],
+  "ticker": "DDOG"
+}

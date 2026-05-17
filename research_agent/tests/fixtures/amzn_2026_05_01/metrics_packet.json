@@ -1,0 +1,24 @@
+{
+  "ticker": "AMZN",
+  "as_of_date": "2026-05-01",
+  "technical": {
+    "indicator_date": "2026-04-30",
+    "close": 180.0,
+    "sma_50": 190.0,
+    "sma_200": 175.0,
+    "ema_10": 170.0,
+    "rsi_14": 78.0,
+    "macd_histogram": 0.5,
+    "atr_14": 16.0
+  },
+  "fundamentals": {
+    "fiscal_period": "Q1 FY2026",
+    "revenue_growth_yoy": 0.18,
+    "free_cash_flow_ttm": 32000000000,
+    "fcf_margin_ttm": 0.12,
+    "operating_margin_ttm": 0.09
+  },
+  "valuation": {
+    "forward_pe_consensus": 45.0
+  }
+}

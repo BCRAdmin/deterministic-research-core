@@ -1,0 +1,45 @@
+{
+  "blocking_issues": [],
+  "do_not_change": [
+    "No guard loosening.",
+    "No ticker hardcoding.",
+    "No public-ready routing without Promotion Gate.",
+    "No pseudo-IR or invented data."
+  ],
+  "false_block_candidates": [],
+  "false_pass_candidates": [],
+  "fix_list_for_codex": [
+    {
+      "acceptance_test": "IR_FIXTURE_PRIORITY.json shows fixture availability for priority names, and manual_review remains for missing evidence.",
+      "do_not_touch_boundaries": [
+        "Do not invent IR metrics.",
+        "Do not relax evidence gates.",
+        "Do not mark manual_review reports public-ready."
+      ],
+      "expected_behavior": "Add only sourced IR/current-period fixtures or keep affected reports manual_review/data_gap.",
+      "file_or_module": "outputs/source_inputs/guardrail_coverage_batch_003_current_research/ir_releases",
+      "issue": "Some current-research names lack current-period IR fixtures.",
+      "priority": "P1"
+    }
+  ],
+  "human_review_required": true,
+  "non_blocking_issues": [
+    {
+      "artifact": "SOURCE_INPUT_INVENTORY.json",
+      "category": "Evidence Coverage",
+      "confidence": "high",
+      "evidence": "{\"no_current_period_context\": 20}",
+      "expected_behavior": "Use manual_review/data_gap where archetype requires current-period evidence.",
+      "issue": "Some current-research names lack IR/current-period context.",
+      "severity": "major"
+    }
+  ],
+  "review_metadata": {
+    "batch_id": "guardrail_coverage_batch_003_current_research",
+    "bundle_id": "guardrail_coverage_batch_003_current_research",
+    "reviewed_at": "2026-05-17T01:51:29Z",
+    "reviewer": "Vivi",
+    "schema_version": "v1.1"
+  },
+  "review_status": "manual_human_review"
+}

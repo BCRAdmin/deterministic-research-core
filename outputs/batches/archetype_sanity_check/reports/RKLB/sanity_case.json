@@ -1,0 +1,25 @@
+{
+  "active_deeptech_profile": false,
+  "archetype_confidence": 1.0,
+  "archetype_triggered_rules": [
+    "revenue_ttm_gt_100m",
+    "revenue_ttm_lt_5b",
+    "operating_income_ttm_lt_0",
+    "free_cash_flow_ttm_lt_0",
+    "market_cap_revenue_gt_20",
+    "ev_sales_gt_20",
+    "backlog_contracts_or_contracted_missions_present",
+    "capital_intensive_development_program_present",
+    "major_execution_milestone_risk_present",
+    "product_platform_still_scaling",
+    "beta_high_volatility",
+    "current_period_evidence_exists_but_fcf_path_negative"
+  ],
+  "company_archetype": "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH",
+  "expected_role": "Early-commercial capital-intensive tech",
+  "issue_codes": [
+    "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH_MANUAL_REVIEW_PROFILE"
+  ],
+  "publishable": false,
+  "ticker": "RKLB"
+}

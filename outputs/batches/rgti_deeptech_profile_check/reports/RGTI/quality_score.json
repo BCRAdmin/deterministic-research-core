@@ -1,0 +1,42 @@
+{
+  "accounting_gain_not_operating_turnaround_count": 1,
+  "archetype_confidence": 1.0,
+  "archetype_triggered_rules": [
+    "market_cap_revenue_gt_100",
+    "revenue_ttm_lt_50m",
+    "operating_income_ttm_lt_0",
+    "free_cash_flow_ttm_lt_0",
+    "sbc_to_revenue_gt_050",
+    "vendor_only_hard_financial_metrics",
+    "derivative_warrant_fair_value_effects_detected",
+    "no_sec_ir_current_period_evidence",
+    "lumpy_revenue_non_scaled_adoption_language",
+    "share_dilution_yoy_gt_010",
+    "technical_milestone_language_dominates_news",
+    "high_volatility_or_beta_gt_15"
+  ],
+  "as_of_date": "2026-05-16",
+  "company_archetype": "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL",
+  "deeptech_quality_score_cap": 70,
+  "deeptech_sec_ir_current_period_evidence_complete": false,
+  "external_display_rating": "Manual Review / Preliminary Underweight",
+  "manual_review_reasons": [
+    "SPECULATIVE_DEEP_TECH_MANUAL_REVIEW_PROFILE",
+    "VENDOR_ONLY_HARD_METRICS",
+    "ACCOUNTING_GAIN_NOT_OPERATING_TURNAROUND",
+    "ORDER_MATERIALITY_MISSING",
+    "TECHNICAL_OVERWEIGHT_IN_FUNDAMENTAL_THESIS"
+  ],
+  "order_materiality_missing_count": 1,
+  "publishable": false,
+  "risk_profiles": [
+    "SPECULATIVE_DEEP_TECH_MANUAL_REVIEW_PROFILE"
+  ],
+  "sec_ir_current_period_evidence_complete": false,
+  "speculative_deep_tech_profile_count": 1,
+  "status": "manual_review",
+  "technical_overweight_in_thesis_count": 1,
+  "ticker": "RGTI",
+  "total_score": 70.0,
+  "vendor_only_hard_metrics_count": 1
+}

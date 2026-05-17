@@ -1,0 +1,807 @@
+[
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "NFLX enters the report at a frozen close of 87.02 with a Hold stance; the action should reflect mega-cap platform growth, AI/cloud investment, margin durability and regulatory risk, valuation discipline and the current technical setup.",
+    "claim_id": "NFLX_CLAIM_001",
+    "claim_text": "NFLX enters the report at a frozen close of 87.02 with a Hold stance; the action should reflect mega-cap platform growth, AI/cloud investment, margin durability and regulatory risk, valuation discipline and the current technical setup.",
+    "claim_type": "price_data",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "NFLX_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "NFLX_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "NFLX_YAHOO_CHART_PRICE_CSV_PRICE",
+      "NFLX_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "NFLX_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "NFLX_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "The action language should stay consistent with the Hold stance.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Executive Summary",
+    "source_ids": [
+      "NFLX_YAHOO_CHART_PRICE_CSV",
+      "NFLX_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "NFLX's Q1 revenue of $12.25B shows that the streaming scale and monetization base remain strong.",
+    "claim_id": "NFLX_CLAIM_002",
+    "claim_text": "NFLX's Q1 revenue of $12.25B shows that the streaming scale and monetization base remain strong.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "Revenue scale can be offset if engagement weakens or content costs rise.",
+    "evidence_ids": [
+      "NFLX_NFLX_IR_Q1_2026_RELEASE_current_q_revenue_Q1_2026"
+    ],
+    "evidence_metrics": [
+      "current_q_revenue"
+    ],
+    "importance": "high",
+    "investment_implication": "Revenue quality supports Hold rather than a bearish rating.",
+    "metric_refs": [
+      "current_q_revenue"
+    ],
+    "section": "Business & Segment Context",
+    "source_ids": [
+      "NFLX_IR_Q1_2026_RELEASE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "NFLX's Q1 operating income of $3.96B and operating margin of 32.3% show strong current-period profitability.",
+    "claim_id": "NFLX_CLAIM_003",
+    "claim_text": "NFLX's Q1 operating income of $3.96B and operating margin of 32.3% show strong current-period profitability.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "Margin strength can fade if content spend or competition accelerates.",
+    "evidence_ids": [
+      "NFLX_SEC_COMPANYFACTS_1065280_OPERATING_INCOME",
+      "NFLX_SEC_COMPANYFACTS_1065280_OPERATING_INCOME_TTM",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_OPERATING_INCOME",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_OPERATING_INCOME_TTM",
+      "NFLX_SEC_operating_income_FY2025_FY_0001065280-26-000034",
+      "NFLX_SEC_operating_income_FY2025_Q2_0001065280-25-000323",
+      "NFLX_SEC_operating_income_FY2025_Q3_0001065280-25-000406",
+      "NFLX_SEC_operating_income_FY2026_Q1_0001065280-26-000138",
+      "NFLX_NFLX_IR_Q1_2026_RELEASE_operating_income_Q1_2026",
+      "NFLX_NFLX_IR_Q1_2026_RELEASE_operating_margin_Q1_2026"
+    ],
+    "evidence_metrics": [
+      "operating_income",
+      "operating_margin"
+    ],
+    "importance": "high",
+    "investment_implication": "A more bullish stance needs sustained margin durability, not just one strong quarter.",
+    "metric_refs": [
+      "operating_income",
+      "operating_margin"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "NFLX_SEC_COMPANYFACTS_1065280",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE",
+      "SEC_0001065280_0001065280-26-000034",
+      "SEC_0001065280_0001065280-25-000323",
+      "SEC_0001065280_0001065280-25-000406",
+      "SEC_0001065280_0001065280-26-000138",
+      "NFLX_IR_Q1_2026_RELEASE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "NFLX's Q1 FCF of $5.10B is the key cash-flow proof point for whether operating leverage is translating into shareholder value.",
+    "claim_id": "NFLX_CLAIM_004",
+    "claim_text": "NFLX's Q1 FCF of $5.10B is the key cash-flow proof point for whether operating leverage is translating into shareholder value.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "FCF can be period-sensitive if content cash timing changes.",
+    "evidence_ids": [
+      "NFLX_NFLX_IR_Q1_2026_RELEASE_current_q_free_cash_flow_Q1_2026"
+    ],
+    "evidence_metrics": [
+      "current_q_free_cash_flow"
+    ],
+    "importance": "high",
+    "investment_implication": "Hold remains appropriate until FCF durability and ad-tier execution are clearer.",
+    "metric_refs": [
+      "current_q_free_cash_flow"
+    ],
+    "section": "Catalysts & Triggers",
+    "source_ids": [
+      "NFLX_IR_Q1_2026_RELEASE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "NFLX has revenue TTM of $45.38B, so the business discussion should focus on mega-cap platform growth, AI/cloud investment, margin durability and regulatory risk rather than generic scale language.",
+    "claim_id": "NFLX_CLAIM_005",
+    "claim_text": "NFLX has revenue TTM of $45.38B, so the business discussion should focus on mega-cap platform growth, AI/cloud investment, margin durability and regulatory risk rather than generic scale language.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "Revenue scale alone does not prove attractive returns or valuation discipline.",
+    "evidence_ids": [
+      "NFLX_SEC_COMPANYFACTS_1065280_REVENUE",
+      "NFLX_SEC_COMPANYFACTS_1065280_REVENUE_TTM",
+      "NFLX_SEC_COMPANYFACTS_1065280_SALES",
+      "NFLX_SEC_COMPANYFACTS_1065280_UMSATZ",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_REVENUE",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_REVENUE_TTM",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_SALES",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_UMSATZ",
+      "NFLX_SEC_revenue_FY2025_FY_0001065280-26-000034",
+      "NFLX_SEC_revenue_FY2025_Q2_0001065280-25-000323",
+      "NFLX_SEC_revenue_FY2025_Q3_0001065280-25-000406",
+      "NFLX_SEC_revenue_FY2026_Q1_0001065280-26-000138"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm"
+    ],
+    "importance": "high",
+    "investment_implication": "Use revenue evidence as context, not as a standalone buy signal.",
+    "metric_refs": [
+      "revenue_ttm"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "NFLX_SEC_COMPANYFACTS_1065280",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE",
+      "SEC_0001065280_0001065280-26-000034",
+      "SEC_0001065280_0001065280-25-000323",
+      "SEC_0001065280_0001065280-25-000406",
+      "SEC_0001065280_0001065280-26-000138"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "FCF TTM is $12.68B, making cash conversion a direct rating input for NFLX.",
+    "claim_id": "NFLX_CLAIM_006",
+    "claim_text": "FCF TTM is $12.68B, making cash conversion a direct rating input for NFLX.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "FCF may be company-defined or period-sensitive and can require reconciliation review.",
+    "evidence_ids": [
+      "NFLX_SEC_COMPANYFACTS_1065280_CASHFLOW",
+      "NFLX_SEC_COMPANYFACTS_1065280_FCF",
+      "NFLX_SEC_COMPANYFACTS_1065280_FREE_CASH_FLOW",
+      "NFLX_SEC_COMPANYFACTS_1065280_FREE_CASH_FLOW_TTM",
+      "NFLX_SEC_COMPANYFACTS_1065280_FREE_CASHFLOW",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_CASHFLOW",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_FCF",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_FREE_CASH_FLOW",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_FREE_CASH_FLOW_TTM",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_FREE_CASHFLOW",
+      "NFLX_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm"
+    ],
+    "importance": "high",
+    "investment_implication": "FCF quality supports the thesis only if no sanity guard blocks the report.",
+    "metric_refs": [
+      "free_cash_flow_ttm"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "NFLX_SEC_COMPANYFACTS_1065280",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE",
+      "SEC_0001065280_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "SBC/Revenue is 0.8%, which should be interpreted through mega-cap platform, capex and capital-return context rather than a one-size-fits-all compensation lens.",
+    "claim_id": "NFLX_CLAIM_007",
+    "claim_text": "SBC/Revenue is 0.8%, which should be interpreted through mega-cap platform, capex and capital-return context rather than a one-size-fits-all compensation lens.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": "Sector and lifecycle matter, but persistent dilution can still reduce equity quality.",
+    "evidence_ids": [
+      "NFLX_SEC_COMPANYFACTS_1065280_SBC_TO_REVENUE",
+      "NFLX_SEC_DERIVED_SBC_TO_REVENUE"
+    ],
+    "evidence_metrics": [
+      "sbc_to_revenue"
+    ],
+    "importance": "medium",
+    "investment_implication": "Treat SBC as a risk modifier rather than an automatic rating override.",
+    "metric_refs": [
+      "sbc_to_revenue"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "NFLX_SEC_COMPANYFACTS_1065280",
+      "SEC_0001065280_DERIVED_SBC_TO_REVENUE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Balance-sheet flexibility is anchored in net cash of $8.21B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+    "claim_id": "NFLX_CLAIM_008",
+    "claim_text": "Balance-sheet flexibility is anchored in net cash of $8.21B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "NFLX_SEC_COMPANYFACTS_1065280_CASH",
+      "NFLX_SEC_COMPANYFACTS_1065280_CASH_AND_EQUIVALENTS",
+      "NFLX_SEC_COMPANYFACTS_1065280_CASH_AND_INVESTMENTS",
+      "NFLX_SEC_COMPANYFACTS_1065280_NET_CASH",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_CASH",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_CASH_AND_EQUIVALENTS",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_CASH_AND_INVESTMENTS",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_NET_CASH",
+      "NFLX_SEC_cash_and_equivalents_FY2025_FY_0001065280-26-000034",
+      "NFLX_SEC_cash_and_equivalents_FY2026_Q1_0001065280-26-000138",
+      "NFLX_SEC_COMPANYFACTS_1065280_DEBT",
+      "NFLX_SEC_COMPANYFACTS_1065280_NET_DEBT",
+      "NFLX_SEC_COMPANYFACTS_1065280_TOTAL_DEBT"
+    ],
+    "evidence_metrics": [
+      "net_cash",
+      "total_debt"
+    ],
+    "importance": "medium",
+    "investment_implication": "A stronger liquidity position can widen the acceptable holding corridor.",
+    "metric_refs": [
+      "net_cash",
+      "total_debt"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "NFLX_SEC_COMPANYFACTS_1065280",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE",
+      "SEC_0001065280_0001065280-26-000034",
+      "SEC_0001065280_0001065280-26-000138"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Valuation is framed by EV/Sales of 8.06x; this directly limits how aggressive the Hold stance should be.",
+    "claim_id": "NFLX_CLAIM_009",
+    "claim_text": "Valuation is framed by EV/Sales of 8.06x; this directly limits how aggressive the Hold stance should be.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": "Packet-derived valuation can still be blocked by sanity guards when source reconciliation is suspect.",
+    "evidence_ids": [
+      "NFLX_SEC_COMPANYFACTS_1065280_REVENUE",
+      "NFLX_SEC_COMPANYFACTS_1065280_REVENUE_TTM",
+      "NFLX_SEC_COMPANYFACTS_1065280_SALES",
+      "NFLX_SEC_COMPANYFACTS_1065280_UMSATZ",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_REVENUE",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_REVENUE_TTM",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_SALES",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_UMSATZ",
+      "NFLX_SEC_revenue_FY2025_FY_0001065280-26-000034",
+      "NFLX_SEC_revenue_FY2025_Q2_0001065280-25-000323",
+      "NFLX_SEC_revenue_FY2025_Q3_0001065280-25-000406",
+      "NFLX_SEC_revenue_FY2026_Q1_0001065280-26-000138",
+      "NFLX_SEC_COMPANYFACTS_1065280_CASHFLOW",
+      "NFLX_SEC_COMPANYFACTS_1065280_FCF",
+      "NFLX_SEC_COMPANYFACTS_1065280_FREE_CASH_FLOW",
+      "NFLX_SEC_COMPANYFACTS_1065280_FREE_CASH_FLOW_TTM",
+      "NFLX_SEC_COMPANYFACTS_1065280_FREE_CASHFLOW",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_CASHFLOW",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_FCF",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_FREE_CASH_FLOW",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_FREE_CASH_FLOW_TTM",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_FREE_CASHFLOW",
+      "NFLX_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "NFLX_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "NFLX_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "NFLX_YAHOO_CHART_PRICE_CSV_PRICE",
+      "NFLX_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "NFLX_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "NFLX_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm",
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Do not upgrade rating solely from valuation language if audit has financial-sanity errors.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm",
+      "close"
+    ],
+    "section": "Valuation / Multiples",
+    "source_ids": [
+      "NFLX_SEC_COMPANYFACTS_1065280",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE",
+      "SEC_0001065280_0001065280-26-000034",
+      "SEC_0001065280_0001065280-25-000323",
+      "SEC_0001065280_0001065280-25-000406",
+      "SEC_0001065280_0001065280-26-000138",
+      "SEC_0001065280_DERIVED_FCF",
+      "NFLX_YAHOO_CHART_PRICE_CSV",
+      "NFLX_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "For NFLX, P/FCF is 29.49x and should be read against platform growth, FCF durability and capex intensity; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+    "claim_id": "NFLX_CLAIM_010",
+    "claim_text": "For NFLX, P/FCF is 29.49x and should be read against platform growth, FCF durability and capex intensity; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "NFLX_SEC_COMPANYFACTS_1065280_CASHFLOW",
+      "NFLX_SEC_COMPANYFACTS_1065280_FCF",
+      "NFLX_SEC_COMPANYFACTS_1065280_FREE_CASH_FLOW",
+      "NFLX_SEC_COMPANYFACTS_1065280_FREE_CASH_FLOW_TTM",
+      "NFLX_SEC_COMPANYFACTS_1065280_FREE_CASHFLOW",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_CASHFLOW",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_FCF",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_FREE_CASH_FLOW",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_FREE_CASH_FLOW_TTM",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_FREE_CASHFLOW",
+      "NFLX_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "NFLX_SEC_COMPANYFACTS_1065280_REVENUE",
+      "NFLX_SEC_COMPANYFACTS_1065280_REVENUE_TTM",
+      "NFLX_SEC_COMPANYFACTS_1065280_SALES",
+      "NFLX_SEC_COMPANYFACTS_1065280_UMSATZ",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_REVENUE",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_REVENUE_TTM",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_SALES",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_UMSATZ",
+      "NFLX_SEC_revenue_FY2025_FY_0001065280-26-000034",
+      "NFLX_SEC_revenue_FY2025_Q2_0001065280-25-000323",
+      "NFLX_SEC_revenue_FY2025_Q3_0001065280-25-000406",
+      "NFLX_SEC_revenue_FY2026_Q1_0001065280-26-000138"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm",
+      "revenue_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "The rating should stay conservative when multiples are expensive, missing or flagged.",
+    "metric_refs": [
+      "free_cash_flow_ttm",
+      "revenue_ttm"
+    ],
+    "section": "Valuation / Multiples",
+    "source_ids": [
+      "NFLX_SEC_COMPANYFACTS_1065280",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE",
+      "SEC_0001065280_DERIVED_FCF",
+      "SEC_0001065280_0001065280-26-000034",
+      "SEC_0001065280_0001065280-25-000323",
+      "SEC_0001065280_0001065280-25-000406",
+      "SEC_0001065280_0001065280-26-000138"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The technical setup uses close 87.02, 50-SMA 94.45, 200-SMA 102.56 and RSI 36.73, creating timing risk if price cannot reclaim trend support.",
+    "claim_id": "NFLX_CLAIM_011",
+    "claim_text": "The technical setup uses close 87.02, 50-SMA 94.45, 200-SMA 102.56 and RSI 36.73, creating timing risk if price cannot reclaim trend support.",
+    "claim_type": "technical_metric",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "NFLX_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "NFLX_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "NFLX_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "NFLX_YAHOO_CHART_PRICE_CSV_PRICE",
+      "NFLX_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "NFLX_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "NFLX_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Timing language should follow the validated technical trend state.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Technical Setup",
+    "source_ids": [
+      "NFLX_YAHOO_CHART_PRICE_CSV",
+      "NFLX_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "NFLX's close of 87.02 and moving-average position imply a damaged trend that requires confirmation before adding exposure, so entries should be staged, delayed or trimmed according to business evidence and risk/reward.",
+    "claim_id": "NFLX_CLAIM_012",
+    "claim_text": "NFLX's close of 87.02 and moving-average position imply a damaged trend that requires confirmation before adding exposure, so entries should be staged, delayed or trimmed according to business evidence and risk/reward.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": "Technical weakness can be temporary if fundamentals and catalysts improve.",
+    "evidence_ids": [
+      "NFLX_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "NFLX_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "NFLX_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "NFLX_YAHOO_CHART_PRICE_CSV_PRICE",
+      "NFLX_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "NFLX_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "NFLX_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Use staged entries or trims when technical and fundamental signals diverge.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Technical Setup",
+    "source_ids": [
+      "NFLX_YAHOO_CHART_PRICE_CSV",
+      "NFLX_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The bull case is that platform scale, ecosystem monetization and operating leverage combines with revenue of $45.38B to support the allowed upside rating path when cash conversion quality also holds.",
+    "claim_id": "NFLX_CLAIM_013",
+    "claim_text": "The bull case is that platform scale, ecosystem monetization and operating leverage combines with revenue of $45.38B to support the allowed upside rating path when cash conversion quality also holds.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": "Strong scale does not resolve valuation or reconciliation anomalies.",
+    "evidence_ids": [
+      "NFLX_SEC_COMPANYFACTS_1065280_REVENUE",
+      "NFLX_SEC_COMPANYFACTS_1065280_REVENUE_TTM",
+      "NFLX_SEC_COMPANYFACTS_1065280_SALES",
+      "NFLX_SEC_COMPANYFACTS_1065280_UMSATZ",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_REVENUE",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_REVENUE_TTM",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_SALES",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_UMSATZ",
+      "NFLX_SEC_revenue_FY2025_FY_0001065280-26-000034",
+      "NFLX_SEC_revenue_FY2025_Q2_0001065280-25-000323",
+      "NFLX_SEC_revenue_FY2025_Q3_0001065280-25-000406",
+      "NFLX_SEC_revenue_FY2026_Q1_0001065280-26-000138",
+      "NFLX_SEC_COMPANYFACTS_1065280_CASHFLOW",
+      "NFLX_SEC_COMPANYFACTS_1065280_FCF",
+      "NFLX_SEC_COMPANYFACTS_1065280_FREE_CASH_FLOW",
+      "NFLX_SEC_COMPANYFACTS_1065280_FREE_CASH_FLOW_TTM",
+      "NFLX_SEC_COMPANYFACTS_1065280_FREE_CASHFLOW",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_CASHFLOW",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_FCF",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_FREE_CASH_FLOW",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_FREE_CASH_FLOW_TTM",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_FREE_CASHFLOW",
+      "NFLX_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Bullish language should remain bounded by the evidence-backed action plan.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Bull Case",
+    "source_ids": [
+      "NFLX_SEC_COMPANYFACTS_1065280",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE",
+      "SEC_0001065280_0001065280-26-000034",
+      "SEC_0001065280_0001065280-25-000323",
+      "SEC_0001065280_0001065280-25-000406",
+      "SEC_0001065280_0001065280-26-000138",
+      "SEC_0001065280_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "A constructive technical bull path for NFLX requires confirmation beyond the current RSI of 36.73 and moving-average setup.",
+    "claim_id": "NFLX_CLAIM_014",
+    "claim_text": "A constructive technical bull path for NFLX requires confirmation beyond the current RSI of 36.73 and moving-average setup.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "NFLX_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "NFLX_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "NFLX_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "NFLX_YAHOO_CHART_PRICE_CSV_PRICE",
+      "NFLX_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "NFLX_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "NFLX_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Add or accumulate language should require confirmation when the preferred rating is not Buy.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Bull Case",
+    "source_ids": [
+      "NFLX_YAHOO_CHART_PRICE_CSV",
+      "NFLX_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The bear case is that regulatory pressure, capex intensity, growth deceleration or multiple compression overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 0.8% or source-quality issues persist.",
+    "claim_id": "NFLX_CLAIM_015",
+    "claim_text": "The bear case is that regulatory pressure, capex intensity, growth deceleration or multiple compression overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 0.8% or source-quality issues persist.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "NFLX_SEC_COMPANYFACTS_1065280_CASHFLOW",
+      "NFLX_SEC_COMPANYFACTS_1065280_FCF",
+      "NFLX_SEC_COMPANYFACTS_1065280_FREE_CASH_FLOW",
+      "NFLX_SEC_COMPANYFACTS_1065280_FREE_CASH_FLOW_TTM",
+      "NFLX_SEC_COMPANYFACTS_1065280_FREE_CASHFLOW",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_CASHFLOW",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_FCF",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_FREE_CASH_FLOW",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_FREE_CASH_FLOW_TTM",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_FREE_CASHFLOW",
+      "NFLX_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "NFLX_SEC_COMPANYFACTS_1065280_SBC_TO_REVENUE",
+      "NFLX_SEC_DERIVED_SBC_TO_REVENUE"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm",
+      "sbc_to_revenue"
+    ],
+    "importance": "high",
+    "investment_implication": "Manual review remains appropriate when financial-sanity guards fire.",
+    "metric_refs": [
+      "free_cash_flow_ttm",
+      "sbc_to_revenue"
+    ],
+    "section": "Bear Case",
+    "source_ids": [
+      "NFLX_SEC_COMPANYFACTS_1065280",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE",
+      "SEC_0001065280_DERIVED_FCF",
+      "SEC_0001065280_DERIVED_SBC_TO_REVENUE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Valuation risk for NFLX is a discipline constraint; expensive or missing EV/Sales and P/FCF context should not be translated into a blocked rating.",
+    "claim_id": "NFLX_CLAIM_016",
+    "claim_text": "Valuation risk for NFLX is a discipline constraint; expensive or missing EV/Sales and P/FCF context should not be translated into a blocked rating.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "NFLX_SEC_COMPANYFACTS_1065280_REVENUE",
+      "NFLX_SEC_COMPANYFACTS_1065280_REVENUE_TTM",
+      "NFLX_SEC_COMPANYFACTS_1065280_SALES",
+      "NFLX_SEC_COMPANYFACTS_1065280_UMSATZ",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_REVENUE",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_REVENUE_TTM",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_SALES",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_UMSATZ",
+      "NFLX_SEC_revenue_FY2025_FY_0001065280-26-000034",
+      "NFLX_SEC_revenue_FY2025_Q2_0001065280-25-000323",
+      "NFLX_SEC_revenue_FY2025_Q3_0001065280-25-000406",
+      "NFLX_SEC_revenue_FY2026_Q1_0001065280-26-000138",
+      "NFLX_SEC_COMPANYFACTS_1065280_CASHFLOW",
+      "NFLX_SEC_COMPANYFACTS_1065280_FCF",
+      "NFLX_SEC_COMPANYFACTS_1065280_FREE_CASH_FLOW",
+      "NFLX_SEC_COMPANYFACTS_1065280_FREE_CASH_FLOW_TTM",
+      "NFLX_SEC_COMPANYFACTS_1065280_FREE_CASHFLOW",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_CASHFLOW",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_FCF",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_FREE_CASH_FLOW",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_FREE_CASH_FLOW_TTM",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_FREE_CASHFLOW",
+      "NFLX_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Avoid full-exit language when the evidence supports only trim or hold actions.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Bear Case",
+    "source_ids": [
+      "NFLX_SEC_COMPANYFACTS_1065280",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE",
+      "SEC_0001065280_0001065280-26-000034",
+      "SEC_0001065280_0001065280-25-000323",
+      "SEC_0001065280_0001065280-25-000406",
+      "SEC_0001065280_0001065280-26-000138",
+      "SEC_0001065280_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Validation and audit issues are part of the NFLX research view; any blocking data issue should override a superficially complete report.",
+    "claim_id": "NFLX_CLAIM_017",
+    "claim_text": "Validation and audit issues are part of the NFLX research view; any blocking data issue should override a superficially complete report.",
+    "claim_type": "risk",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "NFLX_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "NFLX_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "NFLX_YAHOO_CHART_PRICE_CSV_PRICE",
+      "NFLX_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "NFLX_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "NFLX_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Blocking audit errors should keep the report in manual review.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Key Risks",
+    "source_ids": [
+      "NFLX_YAHOO_CHART_PRICE_CSV",
+      "NFLX_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Source disagreement or current-period mismatch can reduce conviction for NFLX, especially where revenue $45.38B is a key valuation denominator.",
+    "claim_id": "NFLX_CLAIM_018",
+    "claim_text": "Source disagreement or current-period mismatch can reduce conviction for NFLX, especially where revenue $45.38B is a key valuation denominator.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "NFLX_SEC_COMPANYFACTS_1065280_REVENUE",
+      "NFLX_SEC_COMPANYFACTS_1065280_REVENUE_TTM",
+      "NFLX_SEC_COMPANYFACTS_1065280_SALES",
+      "NFLX_SEC_COMPANYFACTS_1065280_UMSATZ",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_REVENUE",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_REVENUE_TTM",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_SALES",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_UMSATZ",
+      "NFLX_SEC_revenue_FY2025_FY_0001065280-26-000034",
+      "NFLX_SEC_revenue_FY2025_Q2_0001065280-25-000323",
+      "NFLX_SEC_revenue_FY2025_Q3_0001065280-25-000406",
+      "NFLX_SEC_revenue_FY2026_Q1_0001065280-26-000138",
+      "NFLX_SEC_COMPANYFACTS_1065280_CASHFLOW",
+      "NFLX_SEC_COMPANYFACTS_1065280_FCF",
+      "NFLX_SEC_COMPANYFACTS_1065280_FREE_CASH_FLOW",
+      "NFLX_SEC_COMPANYFACTS_1065280_FREE_CASH_FLOW_TTM",
+      "NFLX_SEC_COMPANYFACTS_1065280_FREE_CASHFLOW",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_CASHFLOW",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_FCF",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_FREE_CASH_FLOW",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_FREE_CASH_FLOW_TTM",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE_FREE_CASHFLOW",
+      "NFLX_SEC_DERIVED_FREE_CASH_FLOW_TTM"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Source-quality limitations belong in the final action plan.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Key Risks",
+    "source_ids": [
+      "NFLX_SEC_COMPANYFACTS_1065280",
+      "NFLX_IR_CURRENT_PERIOD_FIXTURE",
+      "SEC_0001065280_0001065280-26-000034",
+      "SEC_0001065280_0001065280-25-000323",
+      "SEC_0001065280_0001065280-25-000406",
+      "SEC_0001065280_0001065280-26-000138",
+      "SEC_0001065280_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Catalysts for NFLX at the validated close of 87.02 should be limited to confirmed packet inputs; missing earnings or forward company data should be stated as unavailable rather than converted into event-risk claims.",
+    "claim_id": "NFLX_CLAIM_019",
+    "claim_text": "Catalysts for NFLX at the validated close of 87.02 should be limited to confirmed packet inputs; missing earnings or forward company data should be stated as unavailable rather than converted into event-risk claims.",
+    "claim_type": "price_data",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "NFLX_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "NFLX_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "NFLX_YAHOO_CHART_PRICE_CSV_PRICE",
+      "NFLX_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "NFLX_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "NFLX_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "If earnings are unavailable, the report should state that limitation rather than inventing timing.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Catalysts & Triggers",
+    "source_ids": [
+      "NFLX_YAHOO_CHART_PRICE_CSV",
+      "NFLX_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Trigger language should use evidence-backed levels such as 50-SMA 94.45 and 200-SMA 102.56, not unvalidated price targets.",
+    "claim_id": "NFLX_CLAIM_020",
+    "claim_text": "Trigger language should use evidence-backed levels such as 50-SMA 94.45 and 200-SMA 102.56, not unvalidated price targets.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "NFLX_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "NFLX_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "NFLX_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "NFLX_YAHOO_CHART_PRICE_CSV_PRICE",
+      "NFLX_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "NFLX_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "NFLX_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Use confirmation language instead of hard price targets unless risk/reward levels are validated.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Catalysts & Triggers",
+    "source_ids": [
+      "NFLX_YAHOO_CHART_PRICE_CSV",
+      "NFLX_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "We rate NFLX Hold at the validated close of 87.02 because mega-cap platform growth, AI/cloud investment, margin durability and regulatory risk supports the base case, while valuation and technical risk limit the case for a more bullish rating.",
+    "claim_id": "NFLX_CLAIM_021",
+    "claim_text": "We rate NFLX Hold at the validated close of 87.02 because mega-cap platform growth, AI/cloud investment, margin durability and regulatory risk supports the base case, while valuation and technical risk limit the case for a more bullish rating.",
+    "claim_type": "rating",
+    "confidence": "high",
+    "counterargument": "A more bullish rating needs cleaner valuation and technical confirmation; a more bearish rating needs evidence of deteriorating fundamentals or unresolved data errors.",
+    "evidence_ids": [
+      "NFLX_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "NFLX_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "NFLX_YAHOO_CHART_PRICE_CSV_PRICE",
+      "NFLX_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "NFLX_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "NFLX_CSV_PRICE_CLOSE_2026-05-15"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Hold NFLX; maintain core exposure but require better valuation, technical setup or current-period KPI proof before adding.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Final Rating & Action Plan",
+    "source_ids": [
+      "NFLX_YAHOO_CHART_PRICE_CSV",
+      "NFLX_CSV_PRICE_PROVIDER"
+    ]
+  }
+]

@@ -1,0 +1,23 @@
+{
+  "as_of_date": "2026-05-17",
+  "has_blocking_errors": false,
+  "issues": [
+    {
+      "code": "PRICE_DATE_BEFORE_AS_OF_DATE",
+      "computed": null,
+      "message": "Report uses a prior close. Must disclose this in report.",
+      "metric": null,
+      "reported": null,
+      "severity": "warning"
+    },
+    {
+      "code": "EARNINGS_DATE_UNAVAILABLE",
+      "computed": null,
+      "message": "Next earnings date is unavailable; report must state that it is unconfirmed.",
+      "metric": null,
+      "reported": null,
+      "severity": "warning"
+    }
+  ],
+  "ticker": "PANW"
+}

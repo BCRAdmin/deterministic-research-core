@@ -1,0 +1,11 @@
+{
+  "batch_id": "guardrail_coverage_batch_003_current_research",
+  "data_unavailable_count": 0,
+  "failed_count": 0,
+  "generated_at": "2026-05-17T01:51:29Z",
+  "records": [],
+  "summary": {
+    "count_by_root_cause": {},
+    "source_coverage_recovery_reference": "outputs/batches/guardrail_coverage_batch_003_current_research/COVERAGE_RECOVERY_PLAN.json"
+  }
+}

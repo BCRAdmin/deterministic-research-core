@@ -1,0 +1,25 @@
+{
+  "has_blocking_errors": false,
+  "issues": [],
+  "numeric_claims": [
+    {
+      "line_number": 3,
+      "nearby_text": "FCF TTM: $96.575B.",
+      "normalized_value": 96575000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$96.575B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 5,
+      "nearby_text": "Operating Margin TTM: 62.0%.",
+      "normalized_value": 62.0,
+      "period_hint": "ttm",
+      "possible_metric": "operating_margin_ttm",
+      "raw_text": "62.0%",
+      "unit": "percent"
+    }
+  ],
+  "ticker": "NVDA"
+}

@@ -1,0 +1,166 @@
+{
+  "has_blocking_errors": true,
+  "issues": [
+    {
+      "code": "NUMERIC_MISMATCH",
+      "line_number": 29,
+      "message": "Report states free_cash_flow_ttm as $1.82B but validated MetricsPacket has 1990962000.0.",
+      "metric": "free_cash_flow_ttm",
+      "raw_text": "$1.82B",
+      "reported": 1820000000.0,
+      "severity": "error",
+      "validated": 1990962000.0
+    },
+    {
+      "code": "FINANCIAL_SANITY_EV_SALES_ABSURD",
+      "line_number": null,
+      "message": "EV/Sales above 100x indicates a likely unit, share-count, or revenue-period anomaly.",
+      "metric": "ev_to_sales",
+      "raw_text": null,
+      "reported": 117.8511582021208,
+      "severity": "error",
+      "validated": null
+    },
+    {
+      "code": "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+      "line_number": null,
+      "message": "P/FCF above 100x requires explicit explanation before publish.",
+      "metric": "price_to_fcf",
+      "raw_text": null,
+      "reported": 109.06770473632896,
+      "severity": "error",
+      "validated": null
+    },
+    {
+      "code": "FINANCIAL_SANITY_FCF_MARGIN_ANOMALY",
+      "line_number": null,
+      "message": "FCF margin above 40% for this company profile indicates a likely FCF or period reconciliation anomaly.",
+      "metric": "fcf_margin_ttm",
+      "raw_text": null,
+      "reported": 1.0965729650775327,
+      "severity": "error",
+      "validated": null
+    },
+    {
+      "code": "FINANCIAL_SANITY_EV_SALES_ABSURD",
+      "line_number": null,
+      "message": "Market cap to revenue above 100x indicates a likely unit or period anomaly.",
+      "metric": "market_cap_to_revenue",
+      "raw_text": null,
+      "reported": 119.6006963769171,
+      "severity": "error",
+      "validated": null
+    }
+  ],
+  "numeric_claims": [
+    {
+      "line_number": 8,
+      "nearby_text": "- Report as-of date: `2026-05-05`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 9,
+      "nearby_text": "- Price basis: `2026-05-05` close via `csv_price_provider`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": "close",
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 21,
+      "nearby_text": "| SBC / Revenue | 17.1% |",
+      "normalized_value": 17.1,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "17.1%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 29,
+      "nearby_text": "- **ANET_CLAIM_002**: ANET has validated revenue TTM of $1.82B, so the business discussion should focus on company-specific growth, margin, FCF and source-quality drivers rather than generic scale language.",
+      "normalized_value": 1820000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$1.82B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 33,
+      "nearby_text": "- **ANET_CLAIM_003**: Validated FCF TTM is $1.99B, making cash conversion a direct rating input for ANET.",
+      "normalized_value": 1990000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$1.99B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 37,
+      "nearby_text": "- **ANET_CLAIM_004**: SBC/Revenue is 17.1%, which should be interpreted through sector-specific quality and valuation context rather than a one-size-fits-all compensation lens.",
+      "normalized_value": 17.1,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "17.1%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 41,
+      "nearby_text": "- **ANET_CLAIM_005**: Balance-sheet flexibility is anchored in validated net cash of $3.18B and debt evidence, which affects how much downside tolerance the action plan can carry.",
+      "normalized_value": 3180000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "net_cash",
+      "raw_text": "$3.18B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 46,
+      "nearby_text": "- **ANET_CLAIM_006**: Valuation is framed by validated EV/Sales of 117.85x; this directly limits how aggressive the Hold stance should be.",
+      "normalized_value": 117.85,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "117.85x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 50,
+      "nearby_text": "- **ANET_CLAIM_007**: For ANET, validated P/FCF is 109.07x and should be read against validated growth, cash-flow and risk context; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+      "normalized_value": 109.07,
+      "period_hint": "unknown",
+      "possible_metric": "price_to_fcf",
+      "raw_text": "109.07x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 64,
+      "nearby_text": "- **ANET_CLAIM_010**: The bull case is that validated growth and cash-flow quality combines with revenue of $1.82B to support the allowed upside rating path when cash conversion quality also holds.",
+      "normalized_value": 1820000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$1.82B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 73,
+      "nearby_text": "- **ANET_CLAIM_012**: The bear case is that source-quality issues, valuation risk or technical weakness overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 17.1% or source-quality issues persist.",
+      "normalized_value": 17.1,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "17.1%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 84,
+      "nearby_text": "- **ANET_CLAIM_015**: Source disagreement or current-period mismatch can reduce conviction for ANET, especially where revenue $1.82B is a key valuation denominator.",
+      "normalized_value": 1820000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$1.82B",
+      "unit": "usd"
+    }
+  ],
+  "ticker": "ANET"
+}

@@ -1,0 +1,61 @@
+{
+  "coverage_note": "Carried forward from Batch 003 sourced current-period fixture.",
+  "metrics": [
+    {
+      "basis": "gaap",
+      "fiscal_period": "Q2",
+      "fiscal_year": 2026,
+      "metric_name": "current_q_revenue",
+      "period": "Q2_FY2026",
+      "period_bucket": "quarterly",
+      "statement": "Apple reported fiscal Q2 2026 revenue of $111.2 billion.",
+      "statement_type": "income_statement",
+      "unit": "usd",
+      "value": 111200000000
+    },
+    {
+      "basis": "gaap",
+      "fiscal_period": "Q2",
+      "fiscal_year": 2026,
+      "metric_name": "current_q_eps",
+      "period": "Q2_FY2026",
+      "period_bucket": "quarterly",
+      "statement": "Apple reported fiscal Q2 2026 diluted EPS of $2.01.",
+      "statement_type": "income_statement",
+      "unit": "usd_per_share",
+      "value": 2.01
+    },
+    {
+      "basis": "gaap",
+      "fiscal_period": "Q2",
+      "fiscal_year": 2026,
+      "metric_name": "current_q_operating_cash_flow",
+      "period": "Q2_FY2026",
+      "period_bucket": "quarterly",
+      "statement": "Apple generated more than $28 billion of operating cash flow in fiscal Q2 2026.",
+      "statement_type": "cash_flow",
+      "unit": "usd",
+      "value": 28000000000
+    },
+    {
+      "basis": "company_defined",
+      "fiscal_period": "Q2",
+      "fiscal_year": 2026,
+      "metric_name": "buyback_authorization",
+      "period": "Q2_FY2026",
+      "period_bucket": "instant",
+      "statement": "Apple authorized an additional $100 billion share repurchase program.",
+      "statement_type": "guidance",
+      "unit": "usd",
+      "value": 100000000000
+    }
+  ],
+  "period": "Q2_FY2026",
+  "retrieved_at": "2026-05-06",
+  "source_confidence": "high",
+  "source_id": "AAPL_IR_Q2_FY2026_RELEASE",
+  "source_type": "earnings_release",
+  "source_url": "https://www.apple.com/newsroom/",
+  "text": "",
+  "url": "https://www.apple.com/newsroom/"
+}

@@ -1,0 +1,27 @@
+{
+  "ticker": "MDB",
+  "as_of_date": "2026-05-01",
+  "technical": {
+    "indicator_date": "2026-04-30",
+    "close": 250.83,
+    "sma_50": 265.07,
+    "sma_200": 317.0,
+    "ema_10": 257.53,
+    "rsi_14": 52.36,
+    "macd_histogram": 0.2,
+    "atr_14": 22.0
+  },
+  "fundamentals": {
+    "fiscal_period": "FY2026",
+    "revenue_growth_yoy": 0.28,
+    "free_cash_flow_ttm": 492600000,
+    "fcf_margin_ttm": 0.20,
+    "operating_margin_ttm": -0.03,
+    "sbc_to_revenue": 0.224,
+    "net_cash": 1800000000
+  },
+  "valuation": {
+    "forward_pe_consensus": 35.58,
+    "forward_pe_guidance": 42.95
+  }
+}

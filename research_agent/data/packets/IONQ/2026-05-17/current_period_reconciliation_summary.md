@@ -1,0 +1,21 @@
+# Current Period Reconciliation Summary - IONQ
+
+- As-of date: `2026-05-17`
+- True unresolved disagreements: `0`
+- Ignored frame / period variants: `45`
+
+## Final Metrics Used
+
+| Metric | Value | Period | Basis | Source | Confidence |
+|---|---:|---|---|---|---|
+| revenue_ttm | 132,794,000.00 | latest_companyfacts_ttm | gaap | IONQ_SEC_CURRENT_PERIOD_COMPANYFACTS_2026_05_08 | high |
+| free_cash_flow_ttm | -233,331,000.00 | latest_companyfacts_ttm | gaap | IONQ_SEC_CURRENT_PERIOD_COMPANYFACTS_2026_05_08 | high |
+| sbc_to_revenue | 146.2% | latest_companyfacts_ttm | gaap | IONQ_SEC_CURRENT_PERIOD_COMPANYFACTS_2026_05_08 | high |
+| operating_income_ttm | -676,591,000.00 | CY2026Q1 | gaap | SEC_0001193125-26-211876 | high |
+| net_income_ttm | -458,685,000.00 | CY2026Q1 | gaap | SEC_0001193125-26-211876 | high |
+| ev_to_sales | 132.41x | MetricsPacket | derived | metrics_packet | medium |
+| price_to_fcf | n/a | MetricsPacket | derived | metrics_packet | medium |
+
+## Top Unresolved Disagreements
+
+- No true unresolved source disagreements.

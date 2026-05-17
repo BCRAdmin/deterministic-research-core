@@ -1,0 +1,754 @@
+[
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "SNOW enters the report at a frozen close of 141.71 with a Tactical Underweight stance; the action should reflect product revenue, NRR, RPO, AI Data Cloud adoption and consumption growth, valuation discipline and the current technical setup.",
+    "claim_id": "SNOW_CLAIM_001",
+    "claim_text": "SNOW enters the report at a frozen close of 141.71 with a Tactical Underweight stance; the action should reflect product revenue, NRR, RPO, AI Data Cloud adoption and consumption growth, valuation discipline and the current technical setup.",
+    "claim_type": "price_data",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "SNOW_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "SNOW_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "SNOW_YAHOO_CHART_PRICE_CSV_PRICE",
+      "SNOW_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "SNOW_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "SNOW_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "The action language should stay consistent with the Tactical Underweight stance.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Executive Summary",
+    "source_ids": [
+      "SNOW_YAHOO_CHART_PRICE_CSV",
+      "SNOW_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "SNOW's product revenue of $4.47B, NRR of 125.0% and RPO of $9.77B are the current-period proof points for AI Data Cloud demand; they support the growth story but do not eliminate valuation and technical-trend risk.",
+    "claim_id": "SNOW_CLAIM_002",
+    "claim_text": "SNOW's product revenue of $4.47B, NRR of 125.0% and RPO of $9.77B are the current-period proof points for AI Data Cloud demand; they support the growth story but do not eliminate valuation and technical-trend risk.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "Consumption revenue can slow quickly if customer optimization returns.",
+    "evidence_ids": [
+      "SNOW_SNOW_IR_FY2026_Q4_RELEASE_product_revenue_FY2026",
+      "SNOW_SNOW_IR_FY2026_Q4_RELEASE_net_revenue_retention_FY2026",
+      "SNOW_SNOW_IR_FY2026_Q4_RELEASE_remaining_performance_obligations_FY2026"
+    ],
+    "evidence_metrics": [
+      "product_revenue",
+      "net_revenue_retention",
+      "remaining_performance_obligations"
+    ],
+    "importance": "high",
+    "investment_implication": "Hold or Tactical Underweight language should depend on product-revenue durability and RPO conversion.",
+    "metric_refs": [
+      "product_revenue",
+      "net_revenue_retention",
+      "remaining_performance_obligations"
+    ],
+    "section": "Business & Segment Context",
+    "source_ids": [
+      "SNOW_IR_FY2026_Q4_RELEASE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "SNOW's FY2026 733 customers above $1M product revenue and adjusted FCF of $1.19B show enterprise depth and cash conversion, but SBC and GAAP/non-GAAP gaps still justify a Tactical Underweight or cautious Hold rather than an upgrade.",
+    "claim_id": "SNOW_CLAIM_003",
+    "claim_text": "SNOW's FY2026 733 customers above $1M product revenue and adjusted FCF of $1.19B show enterprise depth and cash conversion, but SBC and GAAP/non-GAAP gaps still justify a Tactical Underweight or cautious Hold rather than an upgrade.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "High FCF can coexist with GAAP losses and elevated SBC.",
+    "evidence_ids": [
+      "SNOW_SNOW_IR_FY2026_Q4_RELEASE_customers_gt_1m_FY2026",
+      "SNOW_SNOW_IR_FY2026_Q4_RELEASE_adjusted_free_cash_flow_FY2026",
+      "SNOW_SEC_COMPANYFACTS_1640147_SBC_TO_REVENUE",
+      "SNOW_SEC_DERIVED_SBC_TO_REVENUE"
+    ],
+    "evidence_metrics": [
+      "customers_gt_1m",
+      "adjusted_free_cash_flow",
+      "sbc_to_revenue"
+    ],
+    "importance": "high",
+    "investment_implication": "Do not upgrade without NRR/RPO/product-revenue confirmation.",
+    "metric_refs": [
+      "customers_gt_1m",
+      "adjusted_free_cash_flow",
+      "sbc_to_revenue"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "SNOW_IR_FY2026_Q4_RELEASE",
+      "SNOW_SEC_COMPANYFACTS_1640147",
+      "SEC_0001640147_DERIVED_SBC_TO_REVENUE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "SNOW's FY2027 product revenue guide of $5.66B is the key catalyst yardstick: upside requires sustained RPO conversion and stable NRR, while downside appears if consumption weakens.",
+    "claim_id": "SNOW_CLAIM_004",
+    "claim_text": "SNOW's FY2027 product revenue guide of $5.66B is the key catalyst yardstick: upside requires sustained RPO conversion and stable NRR, while downside appears if consumption weakens.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "Guidance can be revised if consumption trends change.",
+    "evidence_ids": [
+      "SNOW_SNOW_IR_FY2026_Q4_RELEASE_fy2027_product_revenue_guidance_FY2027_GUIDANCE",
+      "SNOW_SNOW_IR_FY2026_Q4_RELEASE_remaining_performance_obligations_FY2026"
+    ],
+    "evidence_metrics": [
+      "fy2027_product_revenue_guidance",
+      "remaining_performance_obligations"
+    ],
+    "importance": "high",
+    "investment_implication": "Re-rate only if product revenue and RPO conversion improve against this guide.",
+    "metric_refs": [
+      "fy2027_product_revenue_guidance",
+      "remaining_performance_obligations"
+    ],
+    "section": "Catalysts & Triggers",
+    "source_ids": [
+      "SNOW_IR_FY2026_Q4_RELEASE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "SNOW has revenue TTM of $4.34B, so the business discussion should focus on product revenue, NRR, RPO, AI Data Cloud adoption and consumption growth rather than generic scale language.",
+    "claim_id": "SNOW_CLAIM_005",
+    "claim_text": "SNOW has revenue TTM of $4.34B, so the business discussion should focus on product revenue, NRR, RPO, AI Data Cloud adoption and consumption growth rather than generic scale language.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "Revenue scale alone does not prove attractive returns or valuation discipline.",
+    "evidence_ids": [
+      "SNOW_SEC_COMPANYFACTS_1640147_REVENUE",
+      "SNOW_SEC_COMPANYFACTS_1640147_REVENUE_TTM",
+      "SNOW_SEC_COMPANYFACTS_1640147_SALES",
+      "SNOW_SEC_COMPANYFACTS_1640147_UMSATZ",
+      "SNOW_SEC_revenue_FY2026_FY_0001640147-26-000008",
+      "SNOW_SEC_revenue_FY2026_Q2_0001640147-25-000187",
+      "SNOW_SEC_revenue_FY2026_Q3_0001640147-25-000211",
+      "SNOW_SNOW_IR_FY2026_Q4_RELEASE_revenue_FY2026"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm"
+    ],
+    "importance": "high",
+    "investment_implication": "Use revenue evidence as context, not as a standalone buy signal.",
+    "metric_refs": [
+      "revenue_ttm"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "SNOW_SEC_COMPANYFACTS_1640147",
+      "SEC_0001640147_0001640147-26-000008",
+      "SEC_0001640147_0001640147-25-000187",
+      "SEC_0001640147_0001640147-25-000211",
+      "SNOW_IR_FY2026_Q4_RELEASE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "FCF TTM is $1.12B, making cash conversion a direct rating input for SNOW.",
+    "claim_id": "SNOW_CLAIM_006",
+    "claim_text": "FCF TTM is $1.12B, making cash conversion a direct rating input for SNOW.",
+    "claim_type": "financial_metric",
+    "confidence": "high",
+    "counterargument": "FCF may be company-defined or period-sensitive and can require reconciliation review.",
+    "evidence_ids": [
+      "SNOW_SEC_COMPANYFACTS_1640147_CASHFLOW",
+      "SNOW_SEC_COMPANYFACTS_1640147_FCF",
+      "SNOW_SEC_COMPANYFACTS_1640147_FREE_CASH_FLOW",
+      "SNOW_SEC_COMPANYFACTS_1640147_FREE_CASH_FLOW_TTM",
+      "SNOW_SEC_COMPANYFACTS_1640147_FREE_CASHFLOW",
+      "SNOW_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "SNOW_SNOW_IR_FY2026_Q4_RELEASE_free_cash_flow_FY2026",
+      "SNOW_SNOW_IR_FY2026_Q4_RELEASE_adjusted_free_cash_flow_FY2026"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm"
+    ],
+    "importance": "high",
+    "investment_implication": "FCF quality supports the thesis only if no sanity guard blocks the report.",
+    "metric_refs": [
+      "free_cash_flow_ttm"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "SNOW_SEC_COMPANYFACTS_1640147",
+      "SEC_0001640147_DERIVED_FCF",
+      "SNOW_IR_FY2026_Q4_RELEASE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "SBC/Revenue is 26.4%, which should be interpreted through SaaS consumption, RPO/NRR, SBC and GAAP-vs-non-GAAP context rather than a one-size-fits-all compensation lens.",
+    "claim_id": "SNOW_CLAIM_007",
+    "claim_text": "SBC/Revenue is 26.4%, which should be interpreted through SaaS consumption, RPO/NRR, SBC and GAAP-vs-non-GAAP context rather than a one-size-fits-all compensation lens.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": "Sector and lifecycle matter, but persistent dilution can still reduce equity quality.",
+    "evidence_ids": [
+      "SNOW_SEC_COMPANYFACTS_1640147_SBC_TO_REVENUE",
+      "SNOW_SEC_DERIVED_SBC_TO_REVENUE"
+    ],
+    "evidence_metrics": [
+      "sbc_to_revenue"
+    ],
+    "importance": "medium",
+    "investment_implication": "Treat SBC as a risk modifier rather than an automatic rating override.",
+    "metric_refs": [
+      "sbc_to_revenue"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "SNOW_SEC_COMPANYFACTS_1640147",
+      "SEC_0001640147_DERIVED_SBC_TO_REVENUE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Balance-sheet flexibility is anchored in net cash of $956.7M and debt evidence, which affects how much downside tolerance the action plan can carry.",
+    "claim_id": "SNOW_CLAIM_008",
+    "claim_text": "Balance-sheet flexibility is anchored in net cash of $956.7M and debt evidence, which affects how much downside tolerance the action plan can carry.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "SNOW_SEC_COMPANYFACTS_1640147_CASH",
+      "SNOW_SEC_COMPANYFACTS_1640147_CASH_AND_EQUIVALENTS",
+      "SNOW_SEC_COMPANYFACTS_1640147_CASH_AND_INVESTMENTS",
+      "SNOW_SEC_COMPANYFACTS_1640147_NET_CASH",
+      "SNOW_SEC_cash_and_equivalents_FY2026_FY_0001640147-26-000008",
+      "SNOW_SEC_cash_and_equivalents_FY2026_Q2_0001640147-25-000187",
+      "SNOW_SEC_cash_and_equivalents_FY2026_Q3_0001640147-25-000211",
+      "SNOW_SEC_COMPANYFACTS_1640147_DEBT",
+      "SNOW_SEC_COMPANYFACTS_1640147_NET_DEBT",
+      "SNOW_SEC_COMPANYFACTS_1640147_TOTAL_DEBT"
+    ],
+    "evidence_metrics": [
+      "net_cash",
+      "total_debt"
+    ],
+    "importance": "medium",
+    "investment_implication": "A stronger liquidity position can widen the acceptable holding corridor.",
+    "metric_refs": [
+      "net_cash",
+      "total_debt"
+    ],
+    "section": "Fundamental Analysis",
+    "source_ids": [
+      "SNOW_SEC_COMPANYFACTS_1640147",
+      "SEC_0001640147_0001640147-26-000008",
+      "SEC_0001640147_0001640147-25-000187",
+      "SEC_0001640147_0001640147-25-000211"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Valuation is framed by EV/Sales of 10.79x; this directly limits how aggressive the Tactical Underweight stance should be.",
+    "claim_id": "SNOW_CLAIM_009",
+    "claim_text": "Valuation is framed by EV/Sales of 10.79x; this directly limits how aggressive the Tactical Underweight stance should be.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": "Packet-derived valuation can still be blocked by sanity guards when source reconciliation is suspect.",
+    "evidence_ids": [
+      "SNOW_SEC_COMPANYFACTS_1640147_REVENUE",
+      "SNOW_SEC_COMPANYFACTS_1640147_REVENUE_TTM",
+      "SNOW_SEC_COMPANYFACTS_1640147_SALES",
+      "SNOW_SEC_COMPANYFACTS_1640147_UMSATZ",
+      "SNOW_SEC_revenue_FY2026_FY_0001640147-26-000008",
+      "SNOW_SEC_revenue_FY2026_Q2_0001640147-25-000187",
+      "SNOW_SEC_revenue_FY2026_Q3_0001640147-25-000211",
+      "SNOW_SNOW_IR_FY2026_Q4_RELEASE_revenue_FY2026",
+      "SNOW_SEC_COMPANYFACTS_1640147_CASHFLOW",
+      "SNOW_SEC_COMPANYFACTS_1640147_FCF",
+      "SNOW_SEC_COMPANYFACTS_1640147_FREE_CASH_FLOW",
+      "SNOW_SEC_COMPANYFACTS_1640147_FREE_CASH_FLOW_TTM",
+      "SNOW_SEC_COMPANYFACTS_1640147_FREE_CASHFLOW",
+      "SNOW_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "SNOW_SNOW_IR_FY2026_Q4_RELEASE_free_cash_flow_FY2026",
+      "SNOW_SNOW_IR_FY2026_Q4_RELEASE_adjusted_free_cash_flow_FY2026",
+      "SNOW_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "SNOW_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "SNOW_YAHOO_CHART_PRICE_CSV_PRICE",
+      "SNOW_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "SNOW_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "SNOW_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm",
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Do not upgrade rating solely from valuation language if audit has financial-sanity errors.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm",
+      "close"
+    ],
+    "section": "Valuation / Multiples",
+    "source_ids": [
+      "SNOW_SEC_COMPANYFACTS_1640147",
+      "SEC_0001640147_0001640147-26-000008",
+      "SEC_0001640147_0001640147-25-000187",
+      "SEC_0001640147_0001640147-25-000211",
+      "SNOW_IR_FY2026_Q4_RELEASE",
+      "SEC_0001640147_DERIVED_FCF",
+      "SNOW_YAHOO_CHART_PRICE_CSV",
+      "SNOW_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "For SNOW, P/FCF is 42.70x and should be read against consumption growth, FCF quality and SBC dilution; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+    "claim_id": "SNOW_CLAIM_010",
+    "claim_text": "For SNOW, P/FCF is 42.70x and should be read against consumption growth, FCF quality and SBC dilution; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "SNOW_SEC_COMPANYFACTS_1640147_CASHFLOW",
+      "SNOW_SEC_COMPANYFACTS_1640147_FCF",
+      "SNOW_SEC_COMPANYFACTS_1640147_FREE_CASH_FLOW",
+      "SNOW_SEC_COMPANYFACTS_1640147_FREE_CASH_FLOW_TTM",
+      "SNOW_SEC_COMPANYFACTS_1640147_FREE_CASHFLOW",
+      "SNOW_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "SNOW_SNOW_IR_FY2026_Q4_RELEASE_free_cash_flow_FY2026",
+      "SNOW_SNOW_IR_FY2026_Q4_RELEASE_adjusted_free_cash_flow_FY2026",
+      "SNOW_SEC_COMPANYFACTS_1640147_REVENUE",
+      "SNOW_SEC_COMPANYFACTS_1640147_REVENUE_TTM",
+      "SNOW_SEC_COMPANYFACTS_1640147_SALES",
+      "SNOW_SEC_COMPANYFACTS_1640147_UMSATZ",
+      "SNOW_SEC_revenue_FY2026_FY_0001640147-26-000008",
+      "SNOW_SEC_revenue_FY2026_Q2_0001640147-25-000187",
+      "SNOW_SEC_revenue_FY2026_Q3_0001640147-25-000211",
+      "SNOW_SNOW_IR_FY2026_Q4_RELEASE_revenue_FY2026"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm",
+      "revenue_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "The rating should stay conservative when multiples are expensive, missing or flagged.",
+    "metric_refs": [
+      "free_cash_flow_ttm",
+      "revenue_ttm"
+    ],
+    "section": "Valuation / Multiples",
+    "source_ids": [
+      "SNOW_SEC_COMPANYFACTS_1640147",
+      "SEC_0001640147_DERIVED_FCF",
+      "SNOW_IR_FY2026_Q4_RELEASE",
+      "SEC_0001640147_0001640147-26-000008",
+      "SEC_0001640147_0001640147-25-000187",
+      "SEC_0001640147_0001640147-25-000211"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The technical setup uses close 141.71, 50-SMA 157.05, 200-SMA 206.40 and RSI 44.76, creating timing risk if price cannot reclaim trend support.",
+    "claim_id": "SNOW_CLAIM_011",
+    "claim_text": "The technical setup uses close 141.71, 50-SMA 157.05, 200-SMA 206.40 and RSI 44.76, creating timing risk if price cannot reclaim trend support.",
+    "claim_type": "technical_metric",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "SNOW_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "SNOW_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "SNOW_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "SNOW_YAHOO_CHART_PRICE_CSV_PRICE",
+      "SNOW_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "SNOW_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "SNOW_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Timing language should follow the validated technical trend state.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Technical Setup",
+    "source_ids": [
+      "SNOW_YAHOO_CHART_PRICE_CSV",
+      "SNOW_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "SNOW's close of 141.71 and moving-average position imply a damaged trend that requires confirmation before adding exposure, so entries should be staged, delayed or trimmed according to business evidence and risk/reward.",
+    "claim_id": "SNOW_CLAIM_012",
+    "claim_text": "SNOW's close of 141.71 and moving-average position imply a damaged trend that requires confirmation before adding exposure, so entries should be staged, delayed or trimmed according to business evidence and risk/reward.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": "Technical weakness can be temporary if fundamentals and catalysts improve.",
+    "evidence_ids": [
+      "SNOW_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "SNOW_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "SNOW_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "SNOW_YAHOO_CHART_PRICE_CSV_PRICE",
+      "SNOW_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "SNOW_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "SNOW_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Use staged entries or trims when technical and fundamental signals diverge.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Technical Setup",
+    "source_ids": [
+      "SNOW_YAHOO_CHART_PRICE_CSV",
+      "SNOW_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The bull case is that AI Data Cloud adoption, product revenue growth and RPO conversion combines with revenue of $4.34B to support the allowed upside rating path when cash conversion quality also holds.",
+    "claim_id": "SNOW_CLAIM_013",
+    "claim_text": "The bull case is that AI Data Cloud adoption, product revenue growth and RPO conversion combines with revenue of $4.34B to support the allowed upside rating path when cash conversion quality also holds.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": "Strong scale does not resolve valuation or reconciliation anomalies.",
+    "evidence_ids": [
+      "SNOW_SEC_COMPANYFACTS_1640147_REVENUE",
+      "SNOW_SEC_COMPANYFACTS_1640147_REVENUE_TTM",
+      "SNOW_SEC_COMPANYFACTS_1640147_SALES",
+      "SNOW_SEC_COMPANYFACTS_1640147_UMSATZ",
+      "SNOW_SEC_revenue_FY2026_FY_0001640147-26-000008",
+      "SNOW_SEC_revenue_FY2026_Q2_0001640147-25-000187",
+      "SNOW_SEC_revenue_FY2026_Q3_0001640147-25-000211",
+      "SNOW_SNOW_IR_FY2026_Q4_RELEASE_revenue_FY2026",
+      "SNOW_SEC_COMPANYFACTS_1640147_CASHFLOW",
+      "SNOW_SEC_COMPANYFACTS_1640147_FCF",
+      "SNOW_SEC_COMPANYFACTS_1640147_FREE_CASH_FLOW",
+      "SNOW_SEC_COMPANYFACTS_1640147_FREE_CASH_FLOW_TTM",
+      "SNOW_SEC_COMPANYFACTS_1640147_FREE_CASHFLOW",
+      "SNOW_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "SNOW_SNOW_IR_FY2026_Q4_RELEASE_free_cash_flow_FY2026",
+      "SNOW_SNOW_IR_FY2026_Q4_RELEASE_adjusted_free_cash_flow_FY2026"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Bullish language should remain bounded by the evidence-backed action plan.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Bull Case",
+    "source_ids": [
+      "SNOW_SEC_COMPANYFACTS_1640147",
+      "SEC_0001640147_0001640147-26-000008",
+      "SEC_0001640147_0001640147-25-000187",
+      "SEC_0001640147_0001640147-25-000211",
+      "SNOW_IR_FY2026_Q4_RELEASE",
+      "SEC_0001640147_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "A constructive technical bull path for SNOW requires confirmation beyond the current RSI of 44.76 and moving-average setup.",
+    "claim_id": "SNOW_CLAIM_014",
+    "claim_text": "A constructive technical bull path for SNOW requires confirmation beyond the current RSI of 44.76 and moving-average setup.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "SNOW_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "SNOW_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "SNOW_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "SNOW_YAHOO_CHART_PRICE_CSV_PRICE",
+      "SNOW_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "SNOW_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "SNOW_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Add or accumulate language should require confirmation when the preferred rating is not Buy.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Bull Case",
+    "source_ids": [
+      "SNOW_YAHOO_CHART_PRICE_CSV",
+      "SNOW_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "The bear case is that consumption slowdown, GAAP losses, SBC dilution or weak FY plan overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 26.4% or source-quality issues persist.",
+    "claim_id": "SNOW_CLAIM_015",
+    "claim_text": "The bear case is that consumption slowdown, GAAP losses, SBC dilution or weak FY plan overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 26.4% or source-quality issues persist.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "SNOW_SEC_COMPANYFACTS_1640147_CASHFLOW",
+      "SNOW_SEC_COMPANYFACTS_1640147_FCF",
+      "SNOW_SEC_COMPANYFACTS_1640147_FREE_CASH_FLOW",
+      "SNOW_SEC_COMPANYFACTS_1640147_FREE_CASH_FLOW_TTM",
+      "SNOW_SEC_COMPANYFACTS_1640147_FREE_CASHFLOW",
+      "SNOW_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "SNOW_SNOW_IR_FY2026_Q4_RELEASE_free_cash_flow_FY2026",
+      "SNOW_SNOW_IR_FY2026_Q4_RELEASE_adjusted_free_cash_flow_FY2026",
+      "SNOW_SEC_COMPANYFACTS_1640147_SBC_TO_REVENUE",
+      "SNOW_SEC_DERIVED_SBC_TO_REVENUE"
+    ],
+    "evidence_metrics": [
+      "free_cash_flow_ttm",
+      "sbc_to_revenue"
+    ],
+    "importance": "high",
+    "investment_implication": "Manual review remains appropriate when financial-sanity guards fire.",
+    "metric_refs": [
+      "free_cash_flow_ttm",
+      "sbc_to_revenue"
+    ],
+    "section": "Bear Case",
+    "source_ids": [
+      "SNOW_SEC_COMPANYFACTS_1640147",
+      "SEC_0001640147_DERIVED_FCF",
+      "SNOW_IR_FY2026_Q4_RELEASE",
+      "SEC_0001640147_DERIVED_SBC_TO_REVENUE"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Valuation risk for SNOW is a discipline constraint; expensive or missing EV/Sales and P/FCF context should not be translated into a blocked rating.",
+    "claim_id": "SNOW_CLAIM_016",
+    "claim_text": "Valuation risk for SNOW is a discipline constraint; expensive or missing EV/Sales and P/FCF context should not be translated into a blocked rating.",
+    "claim_type": "valuation_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "SNOW_SEC_COMPANYFACTS_1640147_REVENUE",
+      "SNOW_SEC_COMPANYFACTS_1640147_REVENUE_TTM",
+      "SNOW_SEC_COMPANYFACTS_1640147_SALES",
+      "SNOW_SEC_COMPANYFACTS_1640147_UMSATZ",
+      "SNOW_SEC_revenue_FY2026_FY_0001640147-26-000008",
+      "SNOW_SEC_revenue_FY2026_Q2_0001640147-25-000187",
+      "SNOW_SEC_revenue_FY2026_Q3_0001640147-25-000211",
+      "SNOW_SNOW_IR_FY2026_Q4_RELEASE_revenue_FY2026",
+      "SNOW_SEC_COMPANYFACTS_1640147_CASHFLOW",
+      "SNOW_SEC_COMPANYFACTS_1640147_FCF",
+      "SNOW_SEC_COMPANYFACTS_1640147_FREE_CASH_FLOW",
+      "SNOW_SEC_COMPANYFACTS_1640147_FREE_CASH_FLOW_TTM",
+      "SNOW_SEC_COMPANYFACTS_1640147_FREE_CASHFLOW",
+      "SNOW_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "SNOW_SNOW_IR_FY2026_Q4_RELEASE_free_cash_flow_FY2026",
+      "SNOW_SNOW_IR_FY2026_Q4_RELEASE_adjusted_free_cash_flow_FY2026"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Avoid full-exit language when the evidence supports only trim or hold actions.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Bear Case",
+    "source_ids": [
+      "SNOW_SEC_COMPANYFACTS_1640147",
+      "SEC_0001640147_0001640147-26-000008",
+      "SEC_0001640147_0001640147-25-000187",
+      "SEC_0001640147_0001640147-25-000211",
+      "SNOW_IR_FY2026_Q4_RELEASE",
+      "SEC_0001640147_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Validation and audit issues are part of the SNOW research view; any blocking data issue should override a superficially complete report.",
+    "claim_id": "SNOW_CLAIM_017",
+    "claim_text": "Validation and audit issues are part of the SNOW research view; any blocking data issue should override a superficially complete report.",
+    "claim_type": "risk",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "SNOW_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "SNOW_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "SNOW_YAHOO_CHART_PRICE_CSV_PRICE",
+      "SNOW_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "SNOW_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "SNOW_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Blocking audit errors should keep the report in manual review.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Key Risks",
+    "source_ids": [
+      "SNOW_YAHOO_CHART_PRICE_CSV",
+      "SNOW_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Source disagreement or current-period mismatch can reduce conviction for SNOW, especially where revenue $4.34B is a key valuation denominator.",
+    "claim_id": "SNOW_CLAIM_018",
+    "claim_text": "Source disagreement or current-period mismatch can reduce conviction for SNOW, especially where revenue $4.34B is a key valuation denominator.",
+    "claim_type": "financial_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "SNOW_SEC_COMPANYFACTS_1640147_REVENUE",
+      "SNOW_SEC_COMPANYFACTS_1640147_REVENUE_TTM",
+      "SNOW_SEC_COMPANYFACTS_1640147_SALES",
+      "SNOW_SEC_COMPANYFACTS_1640147_UMSATZ",
+      "SNOW_SEC_revenue_FY2026_FY_0001640147-26-000008",
+      "SNOW_SEC_revenue_FY2026_Q2_0001640147-25-000187",
+      "SNOW_SEC_revenue_FY2026_Q3_0001640147-25-000211",
+      "SNOW_SNOW_IR_FY2026_Q4_RELEASE_revenue_FY2026",
+      "SNOW_SEC_COMPANYFACTS_1640147_CASHFLOW",
+      "SNOW_SEC_COMPANYFACTS_1640147_FCF",
+      "SNOW_SEC_COMPANYFACTS_1640147_FREE_CASH_FLOW",
+      "SNOW_SEC_COMPANYFACTS_1640147_FREE_CASH_FLOW_TTM",
+      "SNOW_SEC_COMPANYFACTS_1640147_FREE_CASHFLOW",
+      "SNOW_SEC_DERIVED_FREE_CASH_FLOW_TTM",
+      "SNOW_SNOW_IR_FY2026_Q4_RELEASE_free_cash_flow_FY2026",
+      "SNOW_SNOW_IR_FY2026_Q4_RELEASE_adjusted_free_cash_flow_FY2026"
+    ],
+    "evidence_metrics": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "importance": "medium",
+    "investment_implication": "Source-quality limitations belong in the final action plan.",
+    "metric_refs": [
+      "revenue_ttm",
+      "free_cash_flow_ttm"
+    ],
+    "section": "Key Risks",
+    "source_ids": [
+      "SNOW_SEC_COMPANYFACTS_1640147",
+      "SEC_0001640147_0001640147-26-000008",
+      "SEC_0001640147_0001640147-25-000187",
+      "SEC_0001640147_0001640147-25-000211",
+      "SNOW_IR_FY2026_Q4_RELEASE",
+      "SEC_0001640147_DERIVED_FCF"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Catalysts for SNOW at the validated close of 141.71 should be limited to confirmed packet inputs; missing earnings or forward company data should be stated as unavailable rather than converted into event-risk claims.",
+    "claim_id": "SNOW_CLAIM_019",
+    "claim_text": "Catalysts for SNOW at the validated close of 141.71 should be limited to confirmed packet inputs; missing earnings or forward company data should be stated as unavailable rather than converted into event-risk claims.",
+    "claim_type": "price_data",
+    "confidence": "high",
+    "counterargument": null,
+    "evidence_ids": [
+      "SNOW_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "SNOW_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "SNOW_YAHOO_CHART_PRICE_CSV_PRICE",
+      "SNOW_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "SNOW_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "SNOW_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "If earnings are unavailable, the report should state that limitation rather than inventing timing.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Catalysts & Triggers",
+    "source_ids": [
+      "SNOW_YAHOO_CHART_PRICE_CSV",
+      "SNOW_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "Trigger language should use evidence-backed levels such as 50-SMA 157.05 and 200-SMA 206.40, not unvalidated price targets.",
+    "claim_id": "SNOW_CLAIM_020",
+    "claim_text": "Trigger language should use evidence-backed levels such as 50-SMA 157.05 and 200-SMA 206.40, not unvalidated price targets.",
+    "claim_type": "technical_metric",
+    "confidence": "medium",
+    "counterargument": null,
+    "evidence_ids": [
+      "SNOW_YAHOO_CHART_PRICE_CSV_TECHNICAL_INDICATORS",
+      "SNOW_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "SNOW_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "SNOW_YAHOO_CHART_PRICE_CSV_PRICE",
+      "SNOW_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "SNOW_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "SNOW_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "technical_indicators",
+      "close"
+    ],
+    "importance": "medium",
+    "investment_implication": "Use confirmation language instead of hard price targets unless risk/reward levels are validated.",
+    "metric_refs": [
+      "technical_indicators",
+      "close"
+    ],
+    "section": "Catalysts & Triggers",
+    "source_ids": [
+      "SNOW_YAHOO_CHART_PRICE_CSV",
+      "SNOW_CSV_PRICE_PROVIDER"
+    ]
+  },
+  {
+    "agent": "deterministic_content_generator",
+    "claim": "We rate SNOW Tactical Underweight at the validated close of 141.71 because product revenue, NRR, RPO, AI Data Cloud adoption and consumption growth supports the base case, while valuation and technical risk limit the case for a more bullish rating.",
+    "claim_id": "SNOW_CLAIM_021",
+    "claim_text": "We rate SNOW Tactical Underweight at the validated close of 141.71 because product revenue, NRR, RPO, AI Data Cloud adoption and consumption growth supports the base case, while valuation and technical risk limit the case for a more bullish rating.",
+    "claim_type": "rating",
+    "confidence": "high",
+    "counterargument": "A more bullish rating would require current-period KPI acceleration plus valuation or technical confirmation.",
+    "evidence_ids": [
+      "SNOW_YAHOO_CHART_PRICE_CSV_CLOSE",
+      "SNOW_YAHOO_CHART_PRICE_CSV_OHLCV",
+      "SNOW_YAHOO_CHART_PRICE_CSV_PRICE",
+      "SNOW_YAHOO_CHART_PRICE_CSV_PRICE_BASIS",
+      "SNOW_YAHOO_CHART_PRICE_CSV_PRICE_DATA",
+      "SNOW_CSV_PRICE_CLOSE_2026-05-05"
+    ],
+    "evidence_metrics": [
+      "close"
+    ],
+    "importance": "high",
+    "investment_implication": "Keep SNOW below target weight until valuation, trend or current-period KPIs improve.",
+    "metric_refs": [
+      "close"
+    ],
+    "section": "Final Rating & Action Plan",
+    "source_ids": [
+      "SNOW_YAHOO_CHART_PRICE_CSV",
+      "SNOW_CSV_PRICE_PROVIDER"
+    ]
+  }
+]

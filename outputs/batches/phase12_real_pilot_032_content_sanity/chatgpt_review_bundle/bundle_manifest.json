@@ -1,0 +1,27 @@
+{
+  "all_required_files_present": true,
+  "missing": [],
+  "required_files": [
+    "final_report.md",
+    "quality_score.json",
+    "decision_packet.json",
+    "audit_report.json",
+    "evidence_report.md",
+    "reconciliation_report.md",
+    "report_manifest.json",
+    "metrics_packet.json",
+    "canonical_financials.json",
+    "reconciliation_warnings.json",
+    "source_registry.json",
+    "data_packet.json",
+    "current_period_reconciliation_summary.md"
+  ],
+  "selected_tickers": [
+    "DDOG",
+    "INTU",
+    "NVDA",
+    "SNOW",
+    "AMZN"
+  ],
+  "source_batch_id": "phase12_real_pilot_032_content_sanity"
+}

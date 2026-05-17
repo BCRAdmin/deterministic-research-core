@@ -1,0 +1,136 @@
+{
+  "has_blocking_errors": true,
+  "issues": [
+    {
+      "code": "CURRENT_PERIOD_IR_RECONCILIATION_REQUIRED",
+      "line_number": null,
+      "message": "DDOG revenue_ttm differs materially from company FY2025 release; current-period IR/company-defined values must be reconciled before publish.",
+      "metric": "revenue_ttm",
+      "raw_text": null,
+      "reported": 3163980000.0,
+      "severity": "error",
+      "validated": 3430000000.0
+    },
+    {
+      "code": "CURRENT_PERIOD_IR_RECONCILIATION_REQUIRED",
+      "line_number": null,
+      "message": "DDOG free_cash_flow_ttm differs materially from company FY2025 release; current-period IR/company-defined values must be reconciled before publish.",
+      "metric": "free_cash_flow_ttm",
+      "raw_text": null,
+      "reported": 784065000.0,
+      "severity": "error",
+      "validated": 915000000.0
+    }
+  ],
+  "numeric_claims": [
+    {
+      "line_number": 8,
+      "nearby_text": "- Report as-of date: `2026-05-05`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 9,
+      "nearby_text": "- Price basis: `2026-05-05` close via `csv_price_provider`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": "close",
+      "raw_text": "2026-05-05",
+      "unit": "date"
+    },
+    {
+      "line_number": 21,
+      "nearby_text": "| SBC / Revenue | 17.3% |",
+      "normalized_value": 17.3,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "17.3%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 29,
+      "nearby_text": "- **DDOG_CLAIM_002**: DDOG has validated revenue TTM of $3.16B, so the business discussion should focus on observability platform expansion, large-customer growth, AI monitoring and usage-based demand rather than generic scale language.",
+      "normalized_value": 3160000000.0,
+      "period_hint": "ttm",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$3.16B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 33,
+      "nearby_text": "- **DDOG_CLAIM_003**: Validated FCF TTM is $784.1M, making cash conversion a direct rating input for DDOG.",
+      "normalized_value": 784100000.0,
+      "period_hint": "ttm",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$784.1M",
+      "unit": "usd"
+    },
+    {
+      "line_number": 37,
+      "nearby_text": "- **DDOG_CLAIM_004**: SBC/Revenue is 17.3%, which should be interpreted through SaaS usage growth, ARR/customer expansion, SBC and FCF context rather than a one-size-fits-all compensation lens.",
+      "normalized_value": 17.3,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "17.3%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 41,
+      "nearby_text": "- **DDOG_CLAIM_005**: Balance-sheet flexibility is anchored in validated net cash of $401.3M and debt evidence, which affects how much downside tolerance the action plan can carry.",
+      "normalized_value": 401300000.0,
+      "period_hint": "unknown",
+      "possible_metric": "net_cash",
+      "raw_text": "$401.3M",
+      "unit": "usd"
+    },
+    {
+      "line_number": 46,
+      "nearby_text": "- **DDOG_CLAIM_006**: Valuation is framed by validated EV/Sales of 16.61x; this directly limits how aggressive the Hold stance should be.",
+      "normalized_value": 16.61,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "16.61x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 50,
+      "nearby_text": "- **DDOG_CLAIM_007**: For DDOG, validated P/FCF is 67.56x and should be read against growth durability versus high FCF multiple; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+      "normalized_value": 67.56,
+      "period_hint": "unknown",
+      "possible_metric": "price_to_fcf",
+      "raw_text": "67.56x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 64,
+      "nearby_text": "- **DDOG_CLAIM_010**: The bull case is that observability consolidation, AI monitoring demand and large-customer expansion combines with revenue of $3.16B to support the allowed upside rating path when cash conversion quality also holds.",
+      "normalized_value": 3160000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$3.16B",
+      "unit": "usd"
+    },
+    {
+      "line_number": 73,
+      "nearby_text": "- **DDOG_CLAIM_012**: The bear case is that usage slowdown, valuation compression, SBC dilution or weaker company forecast overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 17.3% or source-quality issues persist.",
+      "normalized_value": 17.3,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "17.3%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 84,
+      "nearby_text": "- **DDOG_CLAIM_015**: Source disagreement or current-period mismatch can reduce conviction for DDOG, especially where revenue $3.16B is a key valuation denominator.",
+      "normalized_value": 3160000000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$3.16B",
+      "unit": "usd"
+    }
+  ],
+  "ticker": "DDOG"
+}

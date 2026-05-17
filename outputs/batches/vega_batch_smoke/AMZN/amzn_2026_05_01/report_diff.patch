@@ -1,0 +1,11 @@
+--- original_report.md
++++ final_report.md
+@@ -1,6 +1,5 @@
+ # AMZN Bad Report
+ 
+-No company-specific news found in the period.
++SourceRegistry contains relevant company/news sources; the report should discuss sourced events rather than claiming no news.
+ 
+-FCF TTM is $20B, but another section says FCF TTM is $32B.
+-
++FCF TTM: $32.000B.

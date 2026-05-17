@@ -1,0 +1,37 @@
+{
+  "allowed_ratings": [
+    "Buy",
+    "Accumulate",
+    "Hold"
+  ],
+  "as_of_date": "2026-05-05",
+  "audit_report_path": "outputs/batches/phase12_real_pilot_032_content_sanity/AMZN/reports/AMZN/2026-05-05/audit_report.json",
+  "company_name": "AMAZON COM INC",
+  "decision_packet_path": "research_agent/data/packets/AMZN/2026-05-05/decision_packet.json",
+  "final_rating": "Accumulate",
+  "final_report_path": "outputs/batches/phase12_real_pilot_032_content_sanity/AMZN/reports/AMZN_2026-05-05_report.md",
+  "metadata": {
+    "canonical_financials_path": "research_agent/data/packets/AMZN/2026-05-05/canonical_financials.json",
+    "current_period_reconciliation_summary_path": "research_agent/data/packets/AMZN/2026-05-05/current_period_reconciliation_summary.md",
+    "data_packet_path": "research_agent/data/packets/AMZN/2026-05-05/data_packet.json",
+    "evidence_ledger_path": "research_agent/data/packets/AMZN/2026-05-05/evidence_ledger.json",
+    "evidence_report_path": "research_agent/data/packets/AMZN/2026-05-05/evidence_report.md",
+    "quality_score_path": "outputs/batches/phase12_real_pilot_032_content_sanity/AMZN/reports/AMZN/2026-05-05/quality_score.json",
+    "reconciliation_report_path": "research_agent/data/packets/AMZN/2026-05-05/reconciliation_report.md",
+    "reconciliation_warnings_path": "research_agent/data/packets/AMZN/2026-05-05/reconciliation_warnings.json",
+    "source_registry_path": "research_agent/data/packets/AMZN_2026-05-05_source_registry.json"
+  },
+  "metrics_packet_path": "research_agent/data/packets/AMZN/2026-05-05/metrics_packet.json",
+  "model_name": null,
+  "model_provider": null,
+  "pipeline_version": "research_agent_v0.1.0",
+  "preferred_rating": "Accumulate",
+  "price_basis_close": 273.54998779296875,
+  "price_basis_date": "2026-05-05",
+  "publishable": false,
+  "quality_score": 40.0,
+  "report_id": "AMZN_2026-05-05",
+  "tags": [],
+  "ticker": "AMZN",
+  "validation_report_path": "research_agent/data/packets/AMZN/2026-05-05/validation_report.json"
+}

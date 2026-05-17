@@ -1,0 +1,53 @@
+{
+  "action_policy": {
+    "primary_action": "Manual review required"
+  },
+  "as_of_date": "2026-05-17",
+  "calibration_mode": "live",
+  "key_reasons": [
+    "Fundamental score: -2.0",
+    "Technical score: -3.0",
+    "Valuation score: 0.0"
+  ],
+  "key_risks": [
+    "Risk score: -3.0",
+    "Validation issues: 1"
+  ],
+  "rating_permission": {
+    "allowed_ratings": [
+      "Tactical Underweight",
+      "Underweight",
+      "Sell"
+    ],
+    "blocked_ratings": [
+      "Strong Buy",
+      "Buy",
+      "Accumulate",
+      "Hold",
+      "Tactical Trim",
+      "Avoid"
+    ],
+    "preferred_rating": "Underweight",
+    "reason": "Weak business score and weak technicals restrict the rating to underweight or sell territory."
+  },
+  "score_version": "v1",
+  "signal_scores": {
+    "composite_score": -3.0,
+    "fundamental_score": -2.0,
+    "risk_score": -3.0,
+    "technical_score": -3.0,
+    "valuation_score": 0.0
+  },
+  "ticker": "RGTI",
+  "triggered_rules": [
+    "FCF_MARGIN_NEGATIVE",
+    "OPERATING_MARGIN_NEGATIVE",
+    "SBC_TO_REVENUE_GT_20",
+    "NET_CASH_POSITIVE",
+    "PRICE_BELOW_200SMA",
+    "DEATH_CROSS",
+    "PRICE_BELOW_EMA10",
+    "MACD_HISTOGRAM_NEGATIVE",
+    "ATR_PCT_GT_8"
+  ]
+}
