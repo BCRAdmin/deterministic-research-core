@@ -9,9 +9,14 @@ dependencies = [
   "pydantic>=2.0",
 ]
 
+[tool.setuptools.packages.find]
+include = ["research_agent*"]
+
 [project.optional-dependencies]
 dev = [
   "pytest>=8.0",
+  "ruff>=0.8",
+  "coverage[toml]>=7.6",
 ]
 
 [tool.pytest.ini_options]
@@ -19,3 +24,21 @@ testpaths = ["research_agent/tests"]
 pythonpath = ["."]
 addopts = "-q"
 
+[tool.ruff]
+target-version = "py39"
+line-length = 100
+extend-exclude = [
+  "outputs",
+  "source_inputs",
+]
+
+[tool.ruff.lint]
+select = ["E9", "F63", "F7", "F82"]
+
+[tool.coverage.run]
+source = ["research_agent"]
+branch = true
+
+[tool.coverage.report]
+skip_empty = true
+show_missing = true

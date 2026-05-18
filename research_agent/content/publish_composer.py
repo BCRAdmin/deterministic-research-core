@@ -321,15 +321,6 @@ def _speculative_deep_tech_internal_best_report(
         _evidence_appendix(claim_list, evidence_ledger),
     ]
     return "\n".join(part for part in lines if part is not None)
-    return bool(
-        has_required_sections
-        and f.revenue_ttm is not None
-        and 100_000_000 < f.revenue_ttm < 5_000_000_000
-        and (f.operating_income_ttm or 0) < 0
-        and (f.free_cash_flow_ttm or 0) < 0
-        and v.ev_to_sales is not None
-        and v.ev_to_sales > 20
-    )
 
 
 def _early_commercial_capital_intensive_internal_best_report(
