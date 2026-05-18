@@ -1,0 +1,26 @@
+{
+  "scenario_id": "pending_5d",
+  "instrument": "PEND",
+  "decision_date": "2026-05-01",
+  "decision_type": "approved_internal",
+  "basis_price": 100.0,
+  "benchmark": "SPY",
+  "benchmark_basis_price": 100.0,
+  "as_of_date": "2026-05-06",
+  "instrument_prices": [
+    { "date": "2026-05-04", "close": 101.0 },
+    { "date": "2026-05-05", "close": 102.0 },
+    { "date": "2026-05-06", "close": 103.0 }
+  ],
+  "benchmark_prices": [
+    { "date": "2026-05-04", "close": 100.5 },
+    { "date": "2026-05-05", "close": 101.0 },
+    { "date": "2026-05-06", "close": 101.5 }
+  ],
+  "expected_status_by_horizon": {
+    "5D": "pending",
+    "10D": "pending",
+    "20D": "pending",
+    "60D": "pending"
+  }
+}

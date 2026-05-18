@@ -1,0 +1,31 @@
+{
+  "scenario_id": "manual_review_no_auto_publish",
+  "instrument": "MANR",
+  "decision_date": "2026-05-01",
+  "decision_type": "manual_review",
+  "basis_price": 100.0,
+  "benchmark": "SPY",
+  "benchmark_basis_price": 100.0,
+  "as_of_date": "2026-05-08",
+  "manual_review_reason": "MISSING_FCF_SUPPORT_FOR_ACCUMULATE",
+  "instrument_prices": [
+    { "date": "2026-05-04", "close": 101.0 },
+    { "date": "2026-05-05", "close": 100.0 },
+    { "date": "2026-05-06", "close": 99.0 },
+    { "date": "2026-05-07", "close": 98.0 },
+    { "date": "2026-05-08", "close": 97.0 }
+  ],
+  "benchmark_prices": [
+    { "date": "2026-05-04", "close": 100.5 },
+    { "date": "2026-05-05", "close": 101.0 },
+    { "date": "2026-05-06", "close": 102.0 },
+    { "date": "2026-05-07", "close": 103.0 },
+    { "date": "2026-05-08", "close": 104.0 }
+  ],
+  "expected_status_by_horizon": {
+    "5D": "matured",
+    "10D": "pending",
+    "20D": "pending",
+    "60D": "pending"
+  }
+}

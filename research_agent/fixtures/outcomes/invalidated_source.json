@@ -1,0 +1,31 @@
+{
+  "scenario_id": "invalidated_source",
+  "instrument": "BADHASH",
+  "decision_date": "2026-05-01",
+  "decision_type": "approved_internal",
+  "basis_price": 100.0,
+  "benchmark": "SPY",
+  "benchmark_basis_price": 100.0,
+  "as_of_date": "2026-05-08",
+  "source_hash": "sha256:not-the-fixture-hash",
+  "instrument_prices": [
+    { "date": "2026-05-04", "close": 101.0 },
+    { "date": "2026-05-05", "close": 102.0 },
+    { "date": "2026-05-06", "close": 103.0 },
+    { "date": "2026-05-07", "close": 104.0 },
+    { "date": "2026-05-08", "close": 105.0 }
+  ],
+  "benchmark_prices": [
+    { "date": "2026-05-04", "close": 100.5 },
+    { "date": "2026-05-05", "close": 101.0 },
+    { "date": "2026-05-06", "close": 102.0 },
+    { "date": "2026-05-07", "close": 104.0 },
+    { "date": "2026-05-08", "close": 105.0 }
+  ],
+  "expected_status_by_horizon": {
+    "5D": "invalidated",
+    "10D": "invalidated",
+    "20D": "invalidated",
+    "60D": "invalidated"
+  }
+}

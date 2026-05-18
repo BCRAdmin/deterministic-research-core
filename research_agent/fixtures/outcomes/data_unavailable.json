@@ -1,0 +1,25 @@
+{
+  "scenario_id": "data_unavailable",
+  "instrument": "NODATA",
+  "decision_date": "2026-05-01",
+  "decision_type": "approved_internal",
+  "basis_price": 100.0,
+  "benchmark": "SPY",
+  "benchmark_basis_price": 100.0,
+  "as_of_date": "2026-05-08",
+  "instrument_prices": [],
+  "benchmark_prices": [
+    { "date": "2026-05-04", "close": 100.5 },
+    { "date": "2026-05-05", "close": 101.0 },
+    { "date": "2026-05-06", "close": 102.0 },
+    { "date": "2026-05-07", "close": 104.0 },
+    { "date": "2026-05-08", "close": 105.0 }
+  ],
+  "expected_status_by_horizon": {
+    "5D": "data_unavailable",
+    "10D": "data_unavailable",
+    "20D": "data_unavailable",
+    "60D": "data_unavailable"
+  },
+  "notes": ["instrument_price_history_missing"]
+}
