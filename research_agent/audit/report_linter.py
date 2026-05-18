@@ -220,12 +220,16 @@ def _lint_trade_levels(markdown: str) -> list[AuditIssue]:
     return [
         AuditIssue(
             severity=issue["severity"],
-            code="INVALID_TRADE_LEVEL" if issue["code"] in {"LONG_STOP_ABOVE_ENTRY", "SHORT_STOP_BELOW_ENTRY"} else issue["code"],
+            code=_audit_trade_rule_code(issue["code"]),
             message=issue["message"],
             metric="trade_levels",
         )
         for issue in validate_trade_levels(**setup)
     ]
+
+
+def _audit_trade_rule_code(_: str) -> str:
+    return "INVALID_TRADE_LEVEL"
 
 
 def _lint_rating_action(markdown: str) -> list[AuditIssue]:

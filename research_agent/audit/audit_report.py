@@ -4,6 +4,8 @@ from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
+from research_agent.audit.rule_registry import assert_registered_audit_rule_ids
+
 
 BLOCKING_AUDIT_CODES = {
     "NUMERIC_MISMATCH",
@@ -71,6 +73,7 @@ class AuditReport(BaseModel):
         numeric_claims: Optional[List[ExtractedNumericClaim]] = None,
         ticker: Optional[str] = None,
     ) -> "AuditReport":
+        assert_registered_audit_rule_ids((issue.code for issue in issues), source="AuditReport")
         return cls(
             ticker=ticker,
             has_blocking_errors=any(
