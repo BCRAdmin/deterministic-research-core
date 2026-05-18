@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from typing import Iterable, Optional
 
 from pydantic import BaseModel
@@ -106,7 +107,7 @@ def build_shadow_weight_config(
 
 def _avg(values: list[Optional[float]]) -> Optional[float]:
     available = [value for value in values if value is not None]
-    return sum(available) / len(available) if available else None
+    return round(math.fsum(available) / len(available), 12) if available else None
 
 
 def _positive_rate(values: list[Optional[float]]) -> Optional[float]:
