@@ -13,6 +13,12 @@
       "status": "captured"
     },
     {
+      "capability": "openswarm_deliverable_benchmark",
+      "evidence": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/DreamFactory System/Agent Stack/OpenSwarm Benchmark - 2026-05-21.md",
+      "next_action": "Use OpenSwarm as a deliverable-lane pattern source, not a runtime package.",
+      "status": "captured"
+    },
+    {
       "capability": "external_skill_intake",
       "evidence": "/Users/BjornRosinger/Documents/New project 2/docs/skills/EXTERNAL_SKILL_INTAKE_SOP.md",
       "next_action": "Keep all external skills behind source verification, risk class, and operator gate.",
@@ -35,6 +41,12 @@
       "evidence": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/AUTOMATION_JOB_CARDS.md",
       "next_action": "Create real app automations only after operator review.",
       "status": "implemented_proposal_artifact"
+    },
+    {
+      "capability": "deliverable_swarm_contract",
+      "evidence": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/DELIVERABLE_SWARM_CONTRACT.md",
+      "next_action": "Use as the visible lane/output contract before adding any new runtime rights.",
+      "status": "implemented_local_artifact"
     },
     {
       "capability": "guardrails_as_code",

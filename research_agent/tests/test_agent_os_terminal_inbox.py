@@ -26,6 +26,7 @@ def test_operator_inbox_items_are_valid_when_sources_exist(tmp_path: Path) -> No
         "MEMORY_INBOX_CANDIDATES.md",
         "GUARDRAIL_SCAN.md",
         "AUTOMATION_JOB_CARDS.md",
+        "DELIVERABLE_SWARM_CONTRACT.md",
     ):
         (out / name).write_text("ok", encoding="utf-8")
 
@@ -35,9 +36,12 @@ def test_operator_inbox_items_are_valid_when_sources_exist(tmp_path: Path) -> No
         memory_candidate_count=3,
         skill_record_count=4,
         automation_cards_valid=True,
+        deliverable_contract_valid=True,
+        deliverable_lane_count=8,
     )
     validation = validate_operator_inbox(items)
 
     assert validation.valid is True
     assert not validation.warnings
     assert any(item.lane == "runtime_gate" and item.operator_gate_required for item in items)
+    assert any(item.lane == "deliverable_surface" and item.priority == "P0" for item in items)

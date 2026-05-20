@@ -36,12 +36,17 @@ def test_session_search_index_returns_hits(tmp_path: Path) -> None:
 def test_default_automation_cards_are_valid(tmp_path: Path) -> None:
     (tmp_path / "docs" / "agent_os").mkdir(parents=True)
     (tmp_path / "docs" / "agent_os" / "AGENT_OS_READINESS_PACK.md").write_text("pack", encoding="utf-8")
+    (tmp_path / "docs" / "agent_os" / "DELIVERABLE_SWARM_CONTRACT.md").write_text(
+        "contract",
+        encoding="utf-8",
+    )
     (tmp_path / "outputs" / "agent_os_readiness").mkdir(parents=True)
     for name in (
         "AGENT_OS_READINESS_REPORT.md",
         "MEMORY_INBOX_CANDIDATES.md",
         "SKILL_REGISTRY.md",
         "GUARDRAIL_SCAN.md",
+        "DELIVERABLE_SWARM_CONTRACT.md",
     ):
         (tmp_path / "outputs" / "agent_os_readiness" / name).write_text("output", encoding="utf-8")
 

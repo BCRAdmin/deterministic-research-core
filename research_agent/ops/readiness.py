@@ -61,6 +61,15 @@ def build_capability_matrix(
             "Use as pattern source only; no external runtime install.",
         ),
         CapabilityCheck(
+            "openswarm_deliverable_benchmark",
+            "captured",
+            str(
+                vault
+                / "DreamFactory System/Agent Stack/OpenSwarm Benchmark - 2026-05-21.md"
+            ),
+            "Use OpenSwarm as a deliverable-lane pattern source, not a runtime package.",
+        ),
+        CapabilityCheck(
             "external_skill_intake",
             "active",
             str(root / "docs/skills/EXTERNAL_SKILL_INTAKE_SOP.md"),
@@ -83,6 +92,12 @@ def build_capability_matrix(
             "implemented_proposal_artifact",
             str(root / "outputs/agent_os_readiness/AUTOMATION_JOB_CARDS.md"),
             "Create real app automations only after operator review.",
+        ),
+        CapabilityCheck(
+            "deliverable_swarm_contract",
+            "implemented_local_artifact",
+            str(root / "outputs/agent_os_readiness/DELIVERABLE_SWARM_CONTRACT.md"),
+            "Use as the visible lane/output contract before adding any new runtime rights.",
         ),
         CapabilityCheck(
             "guardrails_as_code",

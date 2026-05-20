@@ -7,10 +7,10 @@
       "snippet": "Scope: LIONCOM / Vega / Vivi / OpenClaw / Hermes pattern adoption"
     },
     {
-      "line": 29,
+      "line": 28,
       "path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
       "score": -5.7153496983870715,
-      "snippet": "Default outputs are written to `outputs/agent_os_readiness/`."
+      "snippet": "```"
     },
     {
       "line": 9,
@@ -22,45 +22,45 @@
       "line": 49,
       "path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
       "score": -5.424031294657932,
-      "snippet": "- No Obsidian canonical note is updated by the script."
+      "snippet": "- No API keys or secret values are read into output."
     },
     {
       "line": 1,
-      "path": "docs/media_ingest/VIVI_MEDIA_INGEST_REVIEW.md",
+      "path": "docs/media_ingest/TRANSCRIPTION_WORKFLOW.md",
       "score": -3.742254418854729,
-      "snippet": "# Vivi Media Ingest Review"
+      "snippet": "# Transcription Workflow"
     },
     {
-      "line": 69,
-      "path": "docs/media_ingest/TRANSCRIPTION_WORKFLOW.md",
+      "line": 51,
+      "path": "docs/media_ingest/ROOM16_MEDIA_INGEST_INTEGRATION.md",
       "score": -3.6670987282384284,
       "snippet": "## Acceptance"
     },
     {
       "line": 3,
-      "path": "docs/media_ingest/VIVI_MEDIA_INGEST_REVIEW.md",
-      "score": -3.6670987282384284,
-      "snippet": "Status: review contract"
-    },
-    {
-      "line": 18,
-      "path": "docs/skills/VIVI_EXTERNAL_SKILL_REVIEW_CONTRACT.md",
-      "score": -3.6670987282384284,
-      "snippet": "- source verification status"
-    },
-    {
-      "line": 66,
       "path": "docs/media_ingest/TRANSCRIPTION_WORKFLOW.md",
-      "score": -3.5949023098355055,
-      "snippet": "- the source requires login/paywall/DRM circumvention"
+      "score": -3.6670987282384284,
+      "snippet": "Status: internal workflow"
     },
     {
-      "line": 113,
+      "line": 60,
+      "path": "docs/skills/SKILL_AUTHORING_POLICY.md",
+      "score": -3.6670987282384284,
+      "snippet": "- `updated`"
+    },
+    {
+      "line": 47,
+      "path": "docs/media_ingest/ROOM16_MEDIA_INGEST_INTEGRATION.md",
+      "score": -3.5949023098355055,
+      "snippet": "## Public Report Boundary"
+    },
+    {
+      "line": 41,
       "path": "docs/skills/SKILL_AUTHORING_POLICY.md",
       "score": -3.5254937552549364,
-      "snippet": "- JSON/YAML/schema artifacts parse if present"
+      "snippet": "Every internal skill/playbook must declare:"
     }
   ],
-  "indexed_rows": 1865,
+  "indexed_rows": 1922,
   "query": "Hermes OR OpenClaw OR Vivi"
 }

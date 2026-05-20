@@ -8,6 +8,7 @@ These are proposed safe automation cards. They are not installed automations.
 | `Memory Inbox Promotion Review` | `proposed_local_review_only` | true | weekly, manual creation required | `local_file_only` | `read_file, search_files` |
 | `Skill Registry Drift Review` | `proposed_local_review_only` | true | weekly, manual creation required | `local_file_only` | `read_file, search_files, terminal_read_only` |
 | `Guardrail Coverage Smoke` | `proposed_local_review_only` | true | on demand before agent-os runtime changes | `local_file_only` | `read_file, search_files, terminal_read_only` |
+| `Deliverable Swarm Contract Review` | `proposed_local_review_only` | true | on demand before new user-facing agent surfaces | `local_file_only` | `read_file, search_files, terminal_read_only` |
 
 ## Validation Details
 
@@ -30,6 +31,12 @@ These are proposed safe automation cards. They are not installed automations.
 - warnings: `none`
 
 ### guardrail-coverage-smoke-6bebf3fb
+
+- valid: `true`
+- errors: `none`
+- warnings: `none`
+
+### deliverable-swarm-contract-review-2f84bfa1
 
 - valid: `true`
 - errors: `none`

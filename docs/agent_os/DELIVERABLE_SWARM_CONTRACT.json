@@ -1,0 +1,41 @@
+{
+  "name": "Deliverable Swarm Contract",
+  "status": "active_local_v1",
+  "source_pattern": "VRSEN/OpenSwarm",
+  "runtime_changes": "none",
+  "command": "python3 scripts/ops/agent_os_readiness.py",
+  "required_lanes": [
+    "orchestrator",
+    "assistant",
+    "research",
+    "data",
+    "docs",
+    "slides",
+    "images",
+    "video"
+  ],
+  "required_output_metadata": [
+    "artifact_id",
+    "lane_id",
+    "artifact_type",
+    "output_path",
+    "status",
+    "verifier",
+    "blocked_gates",
+    "next_action"
+  ],
+  "hard_boundaries": [
+    "no_auto_install_external_runtime",
+    "no_auto_install_system_packages",
+    "no_auto_connect_external_accounts",
+    "no_auto_import_secrets",
+    "no_auto_publish_public_outputs",
+    "no_auto_write_canonical_memory",
+    "no_auto_create_background_automation",
+    "no_unbounded_all_to_all_handoff"
+  ],
+  "generated_outputs": [
+    "outputs/agent_os_readiness/DELIVERABLE_SWARM_CONTRACT.md",
+    "outputs/agent_os_readiness/DELIVERABLE_SWARM_CONTRACT.json"
+  ]
+}

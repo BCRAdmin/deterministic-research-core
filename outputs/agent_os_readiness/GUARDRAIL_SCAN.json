@@ -25,7 +25,7 @@
       "check_id": "skill_background_or_self_modify",
       "evidence": "network, credentials, background execution, desktop/browser control, or canonical",
       "file": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
-      "line": 56,
+      "line": 58,
       "message": "Background, self-update, or self-modifying behavior must stay gated.",
       "operator_gate_required": true,
       "severity": "high"

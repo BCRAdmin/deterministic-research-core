@@ -43,6 +43,8 @@ def build_operator_inbox_items(
     memory_candidate_count: int,
     skill_record_count: int,
     automation_cards_valid: bool,
+    deliverable_contract_valid: bool = True,
+    deliverable_lane_count: int = 0,
 ) -> list[InboxItem]:
     root = root.resolve()
     base = root / "outputs/agent_os_readiness"
@@ -96,6 +98,19 @@ def build_operator_inbox_items(
             summary="Automation job cards are proposals only and are not installed automations.",
             required_action="create_real_automation_only_after_operator_go",
             operator_gate_required=True,
+        ),
+        InboxItem(
+            item_id="deliverable-swarm-review",
+            lane="deliverable_surface",
+            priority="P0",
+            status="ready_for_review" if deliverable_contract_valid else "blocked",
+            source=str(base / "DELIVERABLE_SWARM_CONTRACT.md"),
+            summary=(
+                f"{deliverable_lane_count} deliverable lanes define owners, output paths, "
+                "verifiers, handoffs, and gates."
+            ),
+            required_action="use_as_primary_agent_team_surface_before_runtime_expansion",
+            operator_gate_required=not deliverable_contract_valid,
         ),
     ]
     return items

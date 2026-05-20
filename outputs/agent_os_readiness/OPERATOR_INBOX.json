@@ -28,7 +28,7 @@
       "required_action": "promote_only_after_obsidian_route_check",
       "source": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/MEMORY_INBOX_CANDIDATES.md",
       "status": "candidate_review",
-      "summary": "63 memory candidates need promote/reject/merge review."
+      "summary": "64 memory candidates need promote/reject/merge review."
     },
     {
       "item_id": "guardrail-gate-review",
@@ -49,6 +49,16 @@
       "source": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/AUTOMATION_JOB_CARDS.md",
       "status": "ready_for_review",
       "summary": "Automation job cards are proposals only and are not installed automations."
+    },
+    {
+      "item_id": "deliverable-swarm-review",
+      "lane": "deliverable_surface",
+      "operator_gate_required": false,
+      "priority": "P0",
+      "required_action": "use_as_primary_agent_team_surface_before_runtime_expansion",
+      "source": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/DELIVERABLE_SWARM_CONTRACT.md",
+      "status": "ready_for_review",
+      "summary": "8 deliverable lanes define owners, output paths, verifiers, handoffs, and gates."
     }
   ],
   "validation": {

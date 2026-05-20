@@ -23,6 +23,12 @@ from research_agent.ops.automation_cards import (
     render_job_cards_markdown,
     validate_job_card,
 )
+from research_agent.ops.deliverable_swarm import (
+    default_deliverable_lanes,
+    default_delivery_contracts,
+    render_deliverable_swarm_markdown,
+    validate_deliverable_swarm,
+)
 from research_agent.ops.guardrails import render_findings_markdown, scan_paths
 from research_agent.ops.memory_inbox import (
     build_search_index,
@@ -97,6 +103,30 @@ def run_all(args: argparse.Namespace) -> int:
         },
     )
 
+    deliverable_lanes = default_deliverable_lanes(root)
+    delivery_contracts = default_delivery_contracts(root)
+    deliverable_validation = validate_deliverable_swarm(
+        deliverable_lanes,
+        delivery_contracts,
+        root,
+    )
+    write_json(
+        out / "DELIVERABLE_SWARM_CONTRACT.json",
+        {
+            "lanes": [lane.to_dict() for lane in deliverable_lanes],
+            "delivery_contracts": [contract.to_dict() for contract in delivery_contracts],
+            "validation": deliverable_validation.to_dict(),
+        },
+    )
+    write_text(
+        out / "DELIVERABLE_SWARM_CONTRACT.md",
+        render_deliverable_swarm_markdown(
+            deliverable_lanes,
+            delivery_contracts,
+            deliverable_validation,
+        ),
+    )
+
     job_cards = default_job_cards(root)
     validations = [validate_job_card(card, root) for card in job_cards]
     write_json(
@@ -128,6 +158,8 @@ def run_all(args: argparse.Namespace) -> int:
         memory_candidate_count=len(memory_candidates),
         skill_record_count=len(skill_records),
         automation_cards_valid=all(validation.valid for validation in validations),
+        deliverable_contract_valid=deliverable_validation.valid,
+        deliverable_lane_count=len(deliverable_lanes),
     )
     inbox_validation = validate_operator_inbox(inbox_items)
     write_json(
@@ -159,6 +191,9 @@ def run_all(args: argparse.Namespace) -> int:
         "session_search_indexed_rows": indexed_rows,
         "automation_cards": len(job_cards),
         "automation_cards_valid": all(validation.valid for validation in validations),
+        "deliverable_lanes": len(deliverable_lanes),
+        "delivery_contracts": len(delivery_contracts),
+        "deliverable_contract_valid": deliverable_validation.valid,
         "terminal_backends": len(backend_specs),
         "terminal_backends_valid": all(validation.valid for validation in backend_validations),
         "operator_inbox_items": len(inbox_items),

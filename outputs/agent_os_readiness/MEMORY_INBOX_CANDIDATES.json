@@ -19,31 +19,40 @@
       "summary": "This pack translates the useful Hermes Agent patterns into safe local operating"
     },
     {
-      "candidate_id": "mem-056946a3e04a",
+      "candidate_id": "mem-7af332be6a5f",
       "kind": "agent_stack_learning",
-      "line": 33,
+      "line": 34,
       "route": "DreamFactory System/Agent Stack",
       "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
       "status": "candidate_needs_promotion_review",
       "summary": "`AGENT_OS_READINESS_REPORT.md/json`: capability matrix and OpenClaw migration dry-run."
     },
     {
-      "candidate_id": "mem-f19b32ca766e",
+      "candidate_id": "mem-6fca15169856",
       "kind": "general_learning",
-      "line": 41,
+      "line": 43,
       "route": "Memory/Learnings and Fixes",
       "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
       "status": "candidate_needs_promotion_review",
       "summary": "`GUARDRAIL_SCAN.md/json`: local static guardrail findings."
     },
     {
-      "candidate_id": "mem-8c7a13fec8e3",
+      "candidate_id": "mem-be1417a1d39f",
       "kind": "agent_stack_learning",
-      "line": 55,
+      "line": 57,
       "route": "DreamFactory System/Agent Stack",
       "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
       "status": "candidate_needs_promotion_review",
       "summary": "Hermes is treated as a product-pattern benchmark. Any feature that would add"
+    },
+    {
+      "candidate_id": "mem-3d689a5c3de6",
+      "kind": "agent_stack_learning",
+      "line": 10,
+      "route": "DreamFactory System/Agent Stack",
+      "source_path": "docs/agent_os/DELIVERABLE_SWARM_CONTRACT.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "surface for Vega, Vivi, LIONCOM, and OpenClaw work."
     },
     {
       "candidate_id": "mem-3b42a5fd595b",

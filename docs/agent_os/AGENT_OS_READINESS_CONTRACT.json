@@ -9,6 +9,7 @@
     "outputs/agent_os_readiness/MEMORY_INBOX_CANDIDATES.md",
     "outputs/agent_os_readiness/SESSION_SEARCH.sqlite",
     "outputs/agent_os_readiness/AUTOMATION_JOB_CARDS.md",
+    "outputs/agent_os_readiness/DELIVERABLE_SWARM_CONTRACT.md",
     "outputs/agent_os_readiness/OPERATOR_INBOX.md",
     "outputs/agent_os_readiness/TERMINAL_BACKENDS.md",
     "outputs/agent_os_readiness/GUARDRAIL_SCAN.md",
@@ -20,12 +21,15 @@
     "no_runtime_config_mutation",
     "no_obsidian_autowrite",
     "no_automation_creation",
-    "no_network_calls"
+    "no_network_calls",
+    "no_unbounded_all_to_all_handoff",
+    "no_auto_provider_runtime"
   ],
   "gates": [
     "External Skill Intake SOP",
     "Operator Gate for R3+ runtime behavior",
     "Obsidian promotion review for durable memory",
-    "sandbox plan before desktop/browser/gateway expansion"
+    "sandbox plan before desktop/browser/gateway expansion",
+    "Deliverable Swarm Contract before user-facing lane expansion"
   ]
 }

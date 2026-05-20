@@ -204,6 +204,31 @@ def default_job_cards(root: Path) -> list[AutomationJobCard]:
                 "Do not print secret values."
             ),
         ),
+        AutomationJobCard(
+            job_id=make_job_id("Deliverable Swarm Contract Review"),
+            name="Deliverable Swarm Contract Review",
+            status="proposed_local_review_only",
+            schedule="on demand before new user-facing agent surfaces",
+            workdir=workdir,
+            profile="default",
+            allowed_toolsets=("read_file", "search_files", "terminal_read_only"),
+            skills=("deliverable-swarm-contract", "agent-os-readiness"),
+            context_from=(
+                "docs/agent_os/DELIVERABLE_SWARM_CONTRACT.md",
+                "outputs/agent_os_readiness/DELIVERABLE_SWARM_CONTRACT.md",
+            ),
+            delivery="local_file_only",
+            stop_conditions=(
+                "stop_if_external_runtime_install_is_required",
+                "stop_if_media_provider_or_account_gate_is_needed",
+                "stop_if_output_contract_lacks_verifier",
+            ),
+            prompt=(
+                "Review the deliverable swarm lane matrix and output contracts. Report gaps in "
+                "owners, output paths, verifiers, gates, or handoffs. Do not create accounts, "
+                "install runtimes, or mutate canonical memory."
+            ),
+        ),
     ]
 
 

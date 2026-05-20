@@ -13,6 +13,7 @@ surfaces:
 - local skill registry
 - memory inbox and local search
 - automation job cards
+- deliverable swarm lane and output contracts
 - guardrails-as-code
 - operator inbox contract
 - terminal backend contracts
@@ -36,6 +37,7 @@ Default outputs are written to `outputs/agent_os_readiness/`.
 - `SESSION_SEARCH.sqlite`: local markdown search index.
 - `SESSION_SEARCH_SAMPLE.json`: sample search result set.
 - `AUTOMATION_JOB_CARDS.md/json`: proposed safe automation cards, not installed automations.
+- `DELIVERABLE_SWARM_CONTRACT.md/json`: OpenSwarm-inspired lane matrix and output contract.
 - `OPERATOR_INBOX.md/json`: local review inbox, not a chat gateway.
 - `TERMINAL_BACKENDS.md/json`: local/Docker backend contracts, not running backends.
 - `GUARDRAIL_SCAN.md/json`: local static guardrail findings.
@@ -56,3 +58,7 @@ Hermes is treated as a product-pattern benchmark. Any feature that would add
 network, credentials, background execution, desktop/browser control, or canonical
 memory mutation remains behind the existing External Skill Intake SOP and
 Operator Gate.
+
+OpenSwarm is treated as a deliverable-surface benchmark. Its useful pattern is
+visible specialist lanes and explicit final artifact contracts. Its auto-install,
+Composio-wide, full-mesh, and provider-runtime behavior is not adopted.

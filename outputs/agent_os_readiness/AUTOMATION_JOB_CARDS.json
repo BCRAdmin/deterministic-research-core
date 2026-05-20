@@ -179,6 +179,53 @@
         "stop_if_context_injection_is_detected"
       ],
       "workdir": "/Users/BjornRosinger/Documents/New project 2"
+    },
+    {
+      "allowed_toolsets": [
+        "read_file",
+        "search_files",
+        "terminal_read_only"
+      ],
+      "context_from": [
+        "docs/agent_os/DELIVERABLE_SWARM_CONTRACT.md",
+        "outputs/agent_os_readiness/DELIVERABLE_SWARM_CONTRACT.md"
+      ],
+      "delivery": "local_file_only",
+      "forbidden_actions": [
+        "automatically_change_code",
+        "automatically_release_reports",
+        "automatically_enable_ads_or_affiliate",
+        "automatically_loosen_guards",
+        "automatically_update_obsidian_backbone",
+        "automatically_publish",
+        "automatically_create_runtime_rights_api_keys_or_background_agents"
+      ],
+      "job_id": "deliverable-swarm-contract-review-2f84bfa1",
+      "name": "Deliverable Swarm Contract Review",
+      "no_action_if_not_mature": true,
+      "operator_gate_required": false,
+      "output_contract": [
+        "status",
+        "missing_data",
+        "allowed_next_action",
+        "blocked_gates",
+        "no_action_if_not_mature"
+      ],
+      "profile": "default",
+      "prompt": "Review the deliverable swarm lane matrix and output contracts. Report gaps in owners, output paths, verifiers, gates, or handoffs. Do not create accounts, install runtimes, or mutate canonical memory.",
+      "risk_class": "R6_scheduled_review_constrained",
+      "schedule": "on demand before new user-facing agent surfaces",
+      "skills": [
+        "deliverable-swarm-contract",
+        "agent-os-readiness"
+      ],
+      "status": "proposed_local_review_only",
+      "stop_conditions": [
+        "stop_if_external_runtime_install_is_required",
+        "stop_if_media_provider_or_account_gate_is_needed",
+        "stop_if_output_contract_lacks_verifier"
+      ],
+      "workdir": "/Users/BjornRosinger/Documents/New project 2"
     }
   ],
   "validations": [
@@ -203,6 +250,12 @@
     {
       "errors": [],
       "job_id": "guardrail-coverage-smoke-6bebf3fb",
+      "valid": true,
+      "warnings": []
+    },
+    {
+      "errors": [],
+      "job_id": "deliverable-swarm-contract-review-2f84bfa1",
       "valid": true,
       "warnings": []
     }

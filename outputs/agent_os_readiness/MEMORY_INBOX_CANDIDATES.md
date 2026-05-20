@@ -2,15 +2,16 @@
 
 These are promotion candidates. They are not canonical memory until reviewed.
 
-Candidates: 63
+Candidates: 64
 
 | Candidate | Route | Kind | Source | Line | Summary |
 | --- | --- | --- | --- | ---: | --- |
 | `mem-51ed52dab869` | `DreamFactory System/Agent Stack` | `agent_stack_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 4 | Scope: LIONCOM / Vega / Vivi / OpenClaw / Hermes pattern adoption |
 | `mem-d6b24eb78bf1` | `DreamFactory System/Agent Stack` | `agent_stack_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 9 | This pack translates the useful Hermes Agent patterns into safe local operating |
-| `mem-056946a3e04a` | `DreamFactory System/Agent Stack` | `agent_stack_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 33 | `AGENT_OS_READINESS_REPORT.md/json`: capability matrix and OpenClaw migration dry-run. |
-| `mem-f19b32ca766e` | `Memory/Learnings and Fixes` | `general_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 41 | `GUARDRAIL_SCAN.md/json`: local static guardrail findings. |
-| `mem-8c7a13fec8e3` | `DreamFactory System/Agent Stack` | `agent_stack_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 55 | Hermes is treated as a product-pattern benchmark. Any feature that would add |
+| `mem-7af332be6a5f` | `DreamFactory System/Agent Stack` | `agent_stack_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 34 | `AGENT_OS_READINESS_REPORT.md/json`: capability matrix and OpenClaw migration dry-run. |
+| `mem-6fca15169856` | `Memory/Learnings and Fixes` | `general_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 43 | `GUARDRAIL_SCAN.md/json`: local static guardrail findings. |
+| `mem-be1417a1d39f` | `DreamFactory System/Agent Stack` | `agent_stack_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 57 | Hermes is treated as a product-pattern benchmark. Any feature that would add |
+| `mem-3d689a5c3de6` | `DreamFactory System/Agent Stack` | `agent_stack_learning` | `docs/agent_os/DELIVERABLE_SWARM_CONTRACT.md` | 10 | surface for Vega, Vivi, LIONCOM, and OpenClaw work. |
 | `mem-3b42a5fd595b` | `Memory/Learnings and Fixes` | `workflow_learning` | `docs/documents/DOCX_WORKFLOW_PLAYBOOK.md` | 4 | Scope: LIONCOM / Vega / Vivi document workflows |
 | `mem-b9cf0898075a` | `Memory/Learnings and Fixes` | `workflow_learning` | `docs/documents/DOCX_WORKFLOW_PLAYBOOK.md` | 61 | Vivi must not report a DOCX as final without a validation report. |
 | `mem-5251756e2a09` | `Memory/Learnings and Fixes` | `workflow_learning` | `docs/media_ingest/MEDIA_INGEST_USE_CASES.md` | 8 | This playbook defines safe media-ingest use cases for Quellwert, Room16, Vivi and Obsidian. Media may help create transcript drafts, source notes and evidence candidates, but it must not directly change reports, ratings, guards, calibration, `MetricsPacket`, `DecisionPacket` or public output. |
