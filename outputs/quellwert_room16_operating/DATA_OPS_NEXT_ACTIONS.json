@@ -1,0 +1,270 @@
+{
+  "generated_at": "2026-05-19T02:28:39Z",
+  "records": [
+    {
+      "can_vega_solve_without_login_or_api": "yes_if_public_company_ir_or_sec_page_is_accessible",
+      "current_source": {
+        "fixture_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/ir_releases/IONQ.json",
+        "source_form": "SEC_10Q_or_10K_companyfacts_current_period",
+        "source_type": "sec_filing",
+        "status": "valid"
+      },
+      "desired_source": "Direct company IR/earnings release for current period; SEC 10-Q extract is acceptable only when labeled as SEC-derived and not misrepresented as IR.",
+      "impact_on_manual_review": "affects_manual_review",
+      "impact_on_publishability": "blocks_publish",
+      "priority": "P0",
+      "reason": "High: quantum comparator; direct IR helps avoid misreading SEC-derived scale/context.",
+      "required_operator_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "ticker": "IONQ"
+    },
+    {
+      "can_vega_solve_without_login_or_api": "yes_if_public_company_ir_or_sec_page_is_accessible",
+      "current_source": {
+        "fixture_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/ir_releases/NVDA.json",
+        "source_form": "SEC_10Q_or_10K_companyfacts_current_period",
+        "source_type": "sec_filing",
+        "status": "valid"
+      },
+      "desired_source": "Direct company IR/earnings release for current period; SEC 10-Q extract is acceptable only when labeled as SEC-derived and not misrepresented as IR.",
+      "impact_on_manual_review": "affects_manual_review",
+      "impact_on_publishability": "blocks_publish",
+      "priority": "P0",
+      "reason": "High: AI-infrastructure benchmark; direct guidance/capex details affect semi-cycle interpretation.",
+      "required_operator_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "ticker": "NVDA"
+    },
+    {
+      "can_vega_solve_without_login_or_api": "yes_if_public_company_ir_or_sec_page_is_accessible",
+      "current_source": {
+        "fixture_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/ir_releases/QBTS.json",
+        "source_form": "SEC_10Q_or_10K_companyfacts_current_period",
+        "source_type": "sec_filing",
+        "status": "valid"
+      },
+      "desired_source": "Direct company IR/earnings release for current period; SEC 10-Q extract is acceptable only when labeled as SEC-derived and not misrepresented as IR.",
+      "impact_on_manual_review": "affects_manual_review",
+      "impact_on_publishability": "blocks_publish",
+      "priority": "P0",
+      "reason": "High: speculative deep-tech comparator and valuation/anomaly sanity case.",
+      "required_operator_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "ticker": "QBTS"
+    },
+    {
+      "can_vega_solve_without_login_or_api": "yes_if_public_company_ir_or_sec_page_is_accessible",
+      "current_source": {
+        "fixture_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/ir_releases/QCOM.json",
+        "source_form": "SEC_10Q_or_10K_companyfacts_current_period",
+        "source_type": "sec_filing",
+        "status": "valid"
+      },
+      "desired_source": "Direct company IR/earnings release for current period; SEC 10-Q extract is acceptable only when labeled as SEC-derived and not misrepresented as IR.",
+      "impact_on_manual_review": "does_not_currently_drive_manual_review_but_blocks_or_hardens_promotion",
+      "impact_on_publishability": "blocks_publish",
+      "priority": "P0",
+      "reason": "High: display rule and FCF support regression anchor.",
+      "required_operator_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "ticker": "QCOM"
+    },
+    {
+      "can_vega_solve_without_login_or_api": "yes_if_public_company_ir_or_sec_page_is_accessible",
+      "current_source": {
+        "fixture_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/ir_releases/RGTI.json",
+        "source_form": "SEC_10Q_or_10K_companyfacts_current_period",
+        "source_type": "sec_filing",
+        "status": "valid"
+      },
+      "desired_source": "Direct company IR/earnings release for current period; SEC 10-Q extract is acceptable only when labeled as SEC-derived and not misrepresented as IR.",
+      "impact_on_manual_review": "affects_manual_review",
+      "impact_on_publishability": "blocks_publish",
+      "priority": "P0",
+      "reason": "High: speculative deep-tech guardrail anchor; direct current-period source improves manual-review quality.",
+      "required_operator_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "ticker": "RGTI"
+    },
+    {
+      "can_vega_solve_without_login_or_api": "yes_if_public_company_ir_or_sec_page_is_accessible",
+      "current_source": {
+        "fixture_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/ir_releases/ACHR.json",
+        "source_form": "SEC_10Q_or_10K_companyfacts_current_period",
+        "source_type": "sec_filing",
+        "status": "valid"
+      },
+      "desired_source": "Direct company IR/earnings release for current period; SEC 10-Q extract is acceptable only when labeled as SEC-derived and not misrepresented as IR.",
+      "impact_on_manual_review": "affects_manual_review",
+      "impact_on_publishability": "blocks_publish",
+      "priority": "P1",
+      "reason": "Medium-high: eVTOL early-commercial evidence and milestone risk.",
+      "required_operator_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "ticker": "ACHR"
+    },
+    {
+      "can_vega_solve_without_login_or_api": "yes_if_public_company_ir_or_sec_page_is_accessible",
+      "current_source": {
+        "fixture_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/ir_releases/AMD.json",
+        "source_form": "SEC_10Q_or_10K_companyfacts_current_period",
+        "source_type": "sec_filing",
+        "status": "valid"
+      },
+      "desired_source": "Direct company IR/earnings release for current period; SEC 10-Q extract is acceptable only when labeled as SEC-derived and not misrepresented as IR.",
+      "impact_on_manual_review": "affects_manual_review",
+      "impact_on_publishability": "improves_publish_quality_or_future_promotion",
+      "priority": "P1",
+      "reason": "Medium-high: AI/semi cycle comparator, guidance-sensitive.",
+      "required_operator_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "ticker": "AMD"
+    },
+    {
+      "can_vega_solve_without_login_or_api": "yes_if_public_company_ir_or_sec_page_is_accessible",
+      "current_source": {
+        "fixture_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/ir_releases/ASTS.json",
+        "source_form": "SEC_10Q_or_10K_companyfacts_current_period",
+        "source_type": "sec_filing",
+        "status": "valid"
+      },
+      "desired_source": "Direct company IR/earnings release for current period; SEC 10-Q extract is acceptable only when labeled as SEC-derived and not misrepresented as IR.",
+      "impact_on_manual_review": "affects_manual_review",
+      "impact_on_publishability": "blocks_publish",
+      "priority": "P1",
+      "reason": "Medium-high: early-commercial/deep-tech infrastructure evidence and contract/materiality context.",
+      "required_operator_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "ticker": "ASTS"
+    },
+    {
+      "can_vega_solve_without_login_or_api": "yes_if_public_company_ir_or_sec_page_is_accessible",
+      "current_source": {
+        "fixture_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/ir_releases/INTC.json",
+        "source_form": "SEC_10Q_or_10K_companyfacts_current_period",
+        "source_type": "sec_filing",
+        "status": "valid"
+      },
+      "desired_source": "Direct company IR/earnings release for current period; SEC 10-Q extract is acceptable only when labeled as SEC-derived and not misrepresented as IR.",
+      "impact_on_manual_review": "affects_manual_review",
+      "impact_on_publishability": "improves_publish_quality_or_future_promotion",
+      "priority": "P1",
+      "reason": "Medium-high: turnaround/semi capex and FCF context.",
+      "required_operator_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "ticker": "INTC"
+    },
+    {
+      "can_vega_solve_without_login_or_api": "yes_if_public_company_ir_or_sec_page_is_accessible",
+      "current_source": {
+        "fixture_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/ir_releases/JOBY.json",
+        "source_form": "SEC_10Q_or_10K_companyfacts_current_period",
+        "source_type": "sec_filing",
+        "status": "valid"
+      },
+      "desired_source": "Direct company IR/earnings release for current period; SEC 10-Q extract is acceptable only when labeled as SEC-derived and not misrepresented as IR.",
+      "impact_on_manual_review": "affects_manual_review",
+      "impact_on_publishability": "blocks_publish",
+      "priority": "P1",
+      "reason": "Medium-high: eVTOL early-commercial evidence and cashburn/milestone risk.",
+      "required_operator_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "ticker": "JOBY"
+    },
+    {
+      "can_vega_solve_without_login_or_api": "yes_if_public_company_ir_or_sec_page_is_accessible",
+      "current_source": {
+        "fixture_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/ir_releases/MU.json",
+        "source_form": "SEC_10Q_or_10K_companyfacts_current_period",
+        "source_type": "sec_filing",
+        "status": "valid"
+      },
+      "desired_source": "Direct company IR/earnings release for current period; SEC 10-Q extract is acceptable only when labeled as SEC-derived and not misrepresented as IR.",
+      "impact_on_manual_review": "affects_manual_review",
+      "impact_on_publishability": "improves_publish_quality_or_future_promotion",
+      "priority": "P1",
+      "reason": "Medium-high: cyclical semi memory case; direct release helps cyclicality review.",
+      "required_operator_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "ticker": "MU"
+    }
+  ],
+  "remaining_count": 11,
+  "rules": [
+    "No data invention.",
+    "No vendor data labeled as IR.",
+    "Do not infer guidance."
+  ],
+  "status": "prioritized",
+  "top_5": [
+    {
+      "can_vega_solve_without_login_or_api": "yes_if_public_company_ir_or_sec_page_is_accessible",
+      "current_source": {
+        "fixture_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/ir_releases/IONQ.json",
+        "source_form": "SEC_10Q_or_10K_companyfacts_current_period",
+        "source_type": "sec_filing",
+        "status": "valid"
+      },
+      "desired_source": "Direct company IR/earnings release for current period; SEC 10-Q extract is acceptable only when labeled as SEC-derived and not misrepresented as IR.",
+      "impact_on_manual_review": "affects_manual_review",
+      "impact_on_publishability": "blocks_publish",
+      "priority": "P0",
+      "reason": "High: quantum comparator; direct IR helps avoid misreading SEC-derived scale/context.",
+      "required_operator_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "ticker": "IONQ"
+    },
+    {
+      "can_vega_solve_without_login_or_api": "yes_if_public_company_ir_or_sec_page_is_accessible",
+      "current_source": {
+        "fixture_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/ir_releases/NVDA.json",
+        "source_form": "SEC_10Q_or_10K_companyfacts_current_period",
+        "source_type": "sec_filing",
+        "status": "valid"
+      },
+      "desired_source": "Direct company IR/earnings release for current period; SEC 10-Q extract is acceptable only when labeled as SEC-derived and not misrepresented as IR.",
+      "impact_on_manual_review": "affects_manual_review",
+      "impact_on_publishability": "blocks_publish",
+      "priority": "P0",
+      "reason": "High: AI-infrastructure benchmark; direct guidance/capex details affect semi-cycle interpretation.",
+      "required_operator_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "ticker": "NVDA"
+    },
+    {
+      "can_vega_solve_without_login_or_api": "yes_if_public_company_ir_or_sec_page_is_accessible",
+      "current_source": {
+        "fixture_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/ir_releases/QBTS.json",
+        "source_form": "SEC_10Q_or_10K_companyfacts_current_period",
+        "source_type": "sec_filing",
+        "status": "valid"
+      },
+      "desired_source": "Direct company IR/earnings release for current period; SEC 10-Q extract is acceptable only when labeled as SEC-derived and not misrepresented as IR.",
+      "impact_on_manual_review": "affects_manual_review",
+      "impact_on_publishability": "blocks_publish",
+      "priority": "P0",
+      "reason": "High: speculative deep-tech comparator and valuation/anomaly sanity case.",
+      "required_operator_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "ticker": "QBTS"
+    },
+    {
+      "can_vega_solve_without_login_or_api": "yes_if_public_company_ir_or_sec_page_is_accessible",
+      "current_source": {
+        "fixture_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/ir_releases/QCOM.json",
+        "source_form": "SEC_10Q_or_10K_companyfacts_current_period",
+        "source_type": "sec_filing",
+        "status": "valid"
+      },
+      "desired_source": "Direct company IR/earnings release for current period; SEC 10-Q extract is acceptable only when labeled as SEC-derived and not misrepresented as IR.",
+      "impact_on_manual_review": "does_not_currently_drive_manual_review_but_blocks_or_hardens_promotion",
+      "impact_on_publishability": "blocks_publish",
+      "priority": "P0",
+      "reason": "High: display rule and FCF support regression anchor.",
+      "required_operator_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "ticker": "QCOM"
+    },
+    {
+      "can_vega_solve_without_login_or_api": "yes_if_public_company_ir_or_sec_page_is_accessible",
+      "current_source": {
+        "fixture_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/ir_releases/RGTI.json",
+        "source_form": "SEC_10Q_or_10K_companyfacts_current_period",
+        "source_type": "sec_filing",
+        "status": "valid"
+      },
+      "desired_source": "Direct company IR/earnings release for current period; SEC 10-Q extract is acceptable only when labeled as SEC-derived and not misrepresented as IR.",
+      "impact_on_manual_review": "affects_manual_review",
+      "impact_on_publishability": "blocks_publish",
+      "priority": "P0",
+      "reason": "High: speculative deep-tech guardrail anchor; direct current-period source improves manual-review quality.",
+      "required_operator_action": "Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance.",
+      "ticker": "RGTI"
+    }
+  ]
+}

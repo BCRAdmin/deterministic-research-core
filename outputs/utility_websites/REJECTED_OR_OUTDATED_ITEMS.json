@@ -1,0 +1,87 @@
+{
+  "generated_at": "2026-05-21T00:00:00+02:00",
+  "status": "computed",
+  "items": [
+    {
+      "original_claim": "AdSense can be a short-term revenue lever.",
+      "decision": "reject",
+      "reason": "Ads remain disabled because CMP evidence is missing and paid CMP is not economic.",
+      "current_system_status": "ads disabled; free Google CMP not viable; paid CMP deferred",
+      "next_action": "none before threshold",
+      "priority": "blocked"
+    },
+    {
+      "original_claim": "Buy or activate a paid CMP now.",
+      "decision": "reject",
+      "reason": "Current traffic/revenue economics do not justify paid CMP.",
+      "current_system_status": "paid CMP deferred",
+      "next_action": "revisit only at 20k-30k pageviews/month or AdSense forecast >= 2x CMP cost",
+      "priority": "blocked"
+    },
+    {
+      "original_claim": "Continue debugging the free Google CMP path.",
+      "decision": "outdated",
+      "reason": "Free path failed and branch is closed.",
+      "current_system_status": "Funding Choices carrier loads safely but no dialog, TC-string, or Purpose/Vendor map",
+      "next_action": "no further debug unless conditions change",
+      "priority": "blocked"
+    },
+    {
+      "original_claim": "Use FAQ schema as a primary traffic lever.",
+      "decision": "reject",
+      "reason": "FAQ can help users, but schema is not a primary SEO strategy.",
+      "current_system_status": "FAQ/copy improved",
+      "next_action": "use FAQ only as user help",
+      "priority": "P3"
+    },
+    {
+      "original_claim": "Target fixed 1500-2000 word page length.",
+      "decision": "reject",
+      "reason": "Word count is not a quality or revenue signal.",
+      "current_system_status": "no new copy without data",
+      "next_action": "use search intent and measured data instead",
+      "priority": "blocked"
+    },
+    {
+      "original_claim": "Add sticky affiliate CTA.",
+      "decision": "reject",
+      "reason": "Too aggressive and partner/readiness gates are not met.",
+      "current_system_status": "affiliate readiness_only; no live links",
+      "next_action": "none",
+      "priority": "blocked"
+    },
+    {
+      "original_claim": "Add Elterngeld email opt-in/funnel now.",
+      "decision": "reject",
+      "reason": "Conflicts with trust/monitor mode and legal sensitivity.",
+      "current_system_status": "no funnel; monetization blocked",
+      "next_action": "none",
+      "priority": "blocked"
+    },
+    {
+      "original_claim": "Use aggressive monetization.",
+      "decision": "reject",
+      "reason": "Violates current Utility operating mode.",
+      "current_system_status": "Materialbedarf no-ads readiness; Elterngeld monitor",
+      "next_action": "none",
+      "priority": "blocked"
+    },
+    {
+      "original_claim": "Publish new mass SEO articles without data.",
+      "decision": "reject",
+      "reason": "No evidence that mass content is the next lever.",
+      "current_system_status": "no new copy without data",
+      "next_action": "wait for GSC/event signals",
+      "priority": "blocked"
+    },
+    {
+      "original_claim": "Install external skills or activate new runtime capabilities.",
+      "decision": "reject",
+      "reason": "External Skill Intake package is read-only reference and no runtime rights are approved.",
+      "current_system_status": "no installs; no new rights",
+      "next_action": "none",
+      "priority": "blocked"
+    }
+  ],
+  "runtime_changes": "none"
+}

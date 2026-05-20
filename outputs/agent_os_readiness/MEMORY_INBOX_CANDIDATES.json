@@ -1,0 +1,571 @@
+{
+  "candidates": [
+    {
+      "candidate_id": "mem-51ed52dab869",
+      "kind": "agent_stack_learning",
+      "line": 4,
+      "route": "DreamFactory System/Agent Stack",
+      "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Scope: LIONCOM / Vega / Vivi / OpenClaw / Hermes pattern adoption"
+    },
+    {
+      "candidate_id": "mem-d6b24eb78bf1",
+      "kind": "agent_stack_learning",
+      "line": 9,
+      "route": "DreamFactory System/Agent Stack",
+      "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "This pack translates the useful Hermes Agent patterns into safe local operating"
+    },
+    {
+      "candidate_id": "mem-056946a3e04a",
+      "kind": "agent_stack_learning",
+      "line": 33,
+      "route": "DreamFactory System/Agent Stack",
+      "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`AGENT_OS_READINESS_REPORT.md/json`: capability matrix and OpenClaw migration dry-run."
+    },
+    {
+      "candidate_id": "mem-f19b32ca766e",
+      "kind": "general_learning",
+      "line": 41,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`GUARDRAIL_SCAN.md/json`: local static guardrail findings."
+    },
+    {
+      "candidate_id": "mem-8c7a13fec8e3",
+      "kind": "agent_stack_learning",
+      "line": 55,
+      "route": "DreamFactory System/Agent Stack",
+      "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Hermes is treated as a product-pattern benchmark. Any feature that would add"
+    },
+    {
+      "candidate_id": "mem-3b42a5fd595b",
+      "kind": "workflow_learning",
+      "line": 4,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/documents/DOCX_WORKFLOW_PLAYBOOK.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Scope: LIONCOM / Vega / Vivi document workflows"
+    },
+    {
+      "candidate_id": "mem-b9cf0898075a",
+      "kind": "workflow_learning",
+      "line": 61,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/documents/DOCX_WORKFLOW_PLAYBOOK.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Vivi must not report a DOCX as final without a validation report."
+    },
+    {
+      "candidate_id": "mem-5251756e2a09",
+      "kind": "workflow_learning",
+      "line": 8,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/media_ingest/MEDIA_INGEST_USE_CASES.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "This playbook defines safe media-ingest use cases for Quellwert, Room16, Vivi and Obsidian. Media may help create transcript drafts, source notes and evidence candidates, but it must not directly change reports, ratings, guards, calibration, `MetricsPacket`, `DecisionPacket` or public output."
+    },
+    {
+      "candidate_id": "mem-e15c82accbf4",
+      "kind": "operator_gate_learning",
+      "line": 25,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/media_ingest/MEDIA_INGEST_USE_CASES.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "| Earnings Call Audio/Video transcribe | yes | source URL or local file, company, date, rights status, download approval if needed | medium | high if official IR source, medium otherwise | candidate only | only after source authenticity and hard-claim verification | Vivi Media Review plus Room16 Evidence Gate |"
+    },
+    {
+      "candidate_id": "mem-d03d7405df4a",
+      "kind": "operator_gate_learning",
+      "line": 26,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/media_ingest/MEDIA_INGEST_USE_CASES.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "| Investor Day / Company Presentation transcribe | yes | source URL or local file, company, event date, rights status | medium | high if official IR source | candidate only | only after source authenticity and hard-claim verification | Vivi Media Review plus Room16 Evidence Gate |"
+    },
+    {
+      "candidate_id": "mem-b94e2c8477d3",
+      "kind": "workflow_learning",
+      "line": 27,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/media_ingest/MEDIA_INGEST_USE_CASES.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "| YouTube interview pre-triage as research source | yes | URL, channel identity, intended use, quote limits | medium to high | low to medium unless official company/IR channel | candidate only | only for paraphrase or timestamped context after review | Vivi Media Review plus source rank check |"
+    },
+    {
+      "candidate_id": "mem-1a79ba776a6d",
+      "kind": "workflow_learning",
+      "line": 28,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/media_ingest/MEDIA_INGEST_USE_CASES.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "| Podcast / audio source pre-triage | yes | source, owner, episode date, rights status, intended use | medium to high | low to medium unless official source | candidate only | only after verification against primary/official evidence | Vivi Media Review plus primary-source check |"
+    },
+    {
+      "candidate_id": "mem-3af959bd22f2",
+      "kind": "operator_gate_learning",
+      "line": 35,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/media_ingest/MEDIA_INGEST_USE_CASES.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Media ingest is considered safe only when it stays in draft/candidate lanes, preserves source metadata, and keeps all promotion steps gated by Vivi, Room16 Evidence Review or explicit Operator-Go."
+    },
+    {
+      "candidate_id": "mem-7b65424bb8d5",
+      "kind": "workflow_learning",
+      "line": 4,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/media_ingest/MEDIA_SOURCE_POLICY.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Applies to: Whisper / YouTube Watcher derived workflows, Room16, Quellwert, Vivi and Obsidian"
+    },
+    {
+      "candidate_id": "mem-3e2a3d14d659",
+      "kind": "workflow_learning",
+      "line": 41,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/media_ingest/NEXT_MEDIA_SAMPLE_BACKLOG.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`VIVI_MEDIA_INGEST_SAMPLE_REVIEW.json`"
+    },
+    {
+      "candidate_id": "mem-0ff5259703e6",
+      "kind": "workflow_learning",
+      "line": 32,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/media_ingest/OBSIDIAN_MEDIA_NOTE_POLICY.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Vivi Review or Operator-Go"
+    },
+    {
+      "candidate_id": "mem-74eb607f49b8",
+      "kind": "workflow_learning",
+      "line": 38,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/media_ingest/ROOM16_MEDIA_INGEST_INTEGRATION.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Vivi or human reviewer approval"
+    },
+    {
+      "candidate_id": "mem-ea7d8323ba3e",
+      "kind": "workflow_learning",
+      "line": 71,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/media_ingest/TRANSCRIPTION_WORKFLOW.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "A transcription packet is complete only when the three core outputs exist, metadata validates, known gaps are documented and Vivi can review the packet without fetching or guessing missing source data."
+    },
+    {
+      "candidate_id": "mem-093e205e68c2",
+      "kind": "workflow_learning",
+      "line": 1,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/media_ingest/VIVI_MEDIA_INGEST_REVIEW.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Vivi Media Ingest Review"
+    },
+    {
+      "candidate_id": "mem-fcc55f923c56",
+      "kind": "workflow_learning",
+      "line": 49,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/media_ingest/VIVI_MEDIA_INGEST_REVIEW.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Vivi must not pass the packet if:"
+    },
+    {
+      "candidate_id": "mem-b693869af44c",
+      "kind": "operator_gate_learning",
+      "line": 59,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/media_ingest/VIVI_MEDIA_INGEST_REVIEW.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "The review contract is satisfied when Vivi can classify the packet without extra source guessing and every recommendation remains monitoring, fixing, candidate review or human gate."
+    },
+    {
+      "candidate_id": "mem-6df4b2d18532",
+      "kind": "workflow_learning",
+      "line": 4,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/memory/OBSIDIAN_MEMORY_PROMOTION_MAP.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Scope: LIONCOM / Vega / Vivi / Obsidian / Room16"
+    },
+    {
+      "candidate_id": "mem-c43225751792",
+      "kind": "workflow_learning",
+      "line": 42,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/memory/OBSIDIAN_MEMORY_PROMOTION_MAP.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "| 3 repetitions plus evidence | `promotion candidate` | Prepare Vivi Review or Operator-Go. |"
+    },
+    {
+      "candidate_id": "mem-7a3c8d3a9741",
+      "kind": "workflow_learning",
+      "line": 43,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/memory/OBSIDIAN_MEMORY_PROMOTION_MAP.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "| Vivi Review or Operator-Go plus evidence | `BACKBONE` | Write the smallest durable rule into Obsidian. |"
+    },
+    {
+      "candidate_id": "mem-f2d72e9a1b2d",
+      "kind": "workflow_learning",
+      "line": 66,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/memory/OBSIDIAN_MEMORY_PROMOTION_MAP.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`vivi.source_research.slug_only_overclaim`"
+    },
+    {
+      "candidate_id": "mem-638731bada70",
+      "kind": "workflow_learning",
+      "line": 85,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/memory/OBSIDIAN_MEMORY_PROMOTION_MAP.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "durable Vivi/Vega behavior rules"
+    },
+    {
+      "candidate_id": "mem-545b43bdb3f8",
+      "kind": "workflow_learning",
+      "line": 115,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/memory/OBSIDIAN_MEMORY_PROMOTION_MAP.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "VQG or Vega review result"
+    },
+    {
+      "candidate_id": "mem-614bf8e73a15",
+      "kind": "workflow_learning",
+      "line": 14,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/skills/EXTERNAL_SKILL_INTAKE_PACKAGE_README.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`docs/skills/VIVI_EXTERNAL_SKILL_REVIEW_CONTRACT.md`"
+    },
+    {
+      "candidate_id": "mem-84f66d67d5c0",
+      "kind": "workflow_learning",
+      "line": 15,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/skills/EXTERNAL_SKILL_INTAKE_PACKAGE_README.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`docs/skills/VIVI_EXTERNAL_SKILL_REVIEW_CONTRACT.json`"
+    },
+    {
+      "candidate_id": "mem-9145063911f4",
+      "kind": "workflow_learning",
+      "line": 4,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/skills/EXTERNAL_SKILL_INTAKE_SOP.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Scope: LIONCOM / Vega / Vivi / Obsidian / Room16"
+    },
+    {
+      "candidate_id": "mem-49c82d500168",
+      "kind": "workflow_learning",
+      "line": 27,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/skills/EXTERNAL_SKILL_INTAKE_SOP.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Obsidian and existing LIONCOM/Vega/Vivi/Room16 capabilities considered before adoption"
+    },
+    {
+      "candidate_id": "mem-f876a95fa29b",
+      "kind": "operator_gate_learning",
+      "line": 44,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/skills/EXTERNAL_SKILL_INTAKE_SOP.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "| `approved_runtime_candidate` | Candidate for future runtime proposal. | Separate Operator Gate plus Vega verification. |"
+    },
+    {
+      "candidate_id": "mem-67337202b18a",
+      "kind": "operator_gate_learning",
+      "line": 106,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/skills/EXTERNAL_SKILL_INTAKE_SOP.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "autonomous background behavior that bypasses LIONCOM/Vega gates"
+    },
+    {
+      "candidate_id": "mem-d69fc12a0366",
+      "kind": "workflow_learning",
+      "line": 125,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/skills/EXTERNAL_SKILL_INTAKE_SOP.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "background memory mutation outside Vivi/Vega review"
+    },
+    {
+      "candidate_id": "mem-5dd050c0f97c",
+      "kind": "workflow_learning",
+      "line": 34,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/skills/HIGH_RISK_SKILLS_HOLD_REGISTER.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Vivi or Vega review evidence"
+    },
+    {
+      "candidate_id": "mem-4c28e4a43226",
+      "kind": "workflow_learning",
+      "line": 62,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/skills/LOCAL_SKILL_INVENTORY_RISK_SCAN.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "This scan is a triage aid. It does not replace External Skill Intake SOP, Vivi review or Operator-Go."
+    },
+    {
+      "candidate_id": "mem-34e12e1e20c6",
+      "kind": "workflow_learning",
+      "line": 4,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/skills/SKILL_AUTHORING_POLICY.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Scope: internal LIONCOM / Vega / Vivi / Room16 playbooks"
+    },
+    {
+      "candidate_id": "mem-132778e351a2",
+      "kind": "workflow_learning",
+      "line": 9,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/skills/SKILL_AUTHORING_POLICY.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Internal skills and playbooks must be short, maintainable, operator-safe and compatible with the existing LIONCOM/Vega/Vivi/Obsidian system."
+    },
+    {
+      "candidate_id": "mem-73e230412d8b",
+      "kind": "workflow_learning",
+      "line": 86,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/skills/SKILL_AUTHORING_POLICY.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "| `codex handoff` | Generates bounded technical handoff for Vega/Codex. | None by itself. |"
+    },
+    {
+      "candidate_id": "mem-f877f9fdda66",
+      "kind": "workflow_learning",
+      "line": 1,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/skills/VIVI_EXTERNAL_SKILL_REVIEW_CONTRACT.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Vivi External Skill Review Contract"
+    },
+    {
+      "candidate_id": "mem-a9fa904d5c58",
+      "kind": "operator_gate_learning",
+      "line": 9,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/skills/VIVI_EXTERNAL_SKILL_REVIEW_CONTRACT.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Vivi reviews external skills as untrusted source material. Her review may approve pattern extraction, SOP adoption or sandbox consideration, but it must not approve direct runtime installation unless source and local artifacts were fully reviewed and a separate Operator Gate exists."
+    },
+    {
+      "candidate_id": "mem-75fcd52658e3",
+      "kind": "workflow_learning",
+      "line": 20,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/skills/VIVI_EXTERNAL_SKILL_REVIEW_CONTRACT.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "relevant existing LIONCOM/Vega/Vivi/Obsidian capabilities"
+    },
+    {
+      "candidate_id": "mem-86837a82880a",
+      "kind": "workflow_learning",
+      "line": 68,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/skills/VIVI_EXTERNAL_SKILL_REVIEW_CONTRACT.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "A skill with credentials, API writes, desktop control or autonomous behavior cannot be marked safe for normal runtime by Vivi alone."
+    },
+    {
+      "candidate_id": "mem-f5d5a078c229",
+      "kind": "operator_gate_learning",
+      "line": 69,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/skills/VIVI_EXTERNAL_SKILL_REVIEW_CONTRACT.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Direct install remains blocked unless a separate Operator Gate and Vega verification path exist."
+    },
+    {
+      "candidate_id": "mem-e7118c72211b",
+      "kind": "general_learning",
+      "line": 17,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/spreadsheets/XLSX_WORKFLOW_PLAYBOOK.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Export Batch, Outcome or Guardrail matrices."
+    },
+    {
+      "candidate_id": "mem-de1833bb9ea9",
+      "kind": "general_learning",
+      "line": 52,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/spreadsheets/XLSX_WORKFLOW_PLAYBOOK.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Guardrail Coverage Matrix XLSX."
+    },
+    {
+      "candidate_id": "mem-3da01a0fde9d",
+      "kind": "operator_gate_learning",
+      "line": 67,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/writing/HUMANIZER_LINT_PLAYBOOK.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Vivi should check whether suggested rewrites preserve facts, evidence, uncertainty and project gates before any user-facing copy is changed."
+    },
+    {
+      "candidate_id": "mem-f0c8e9205169",
+      "kind": "general_learning",
+      "line": 5,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/quellwert_room16_operating/BASELINE_VERIFY.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "QCOM raw Batch004 is now visibly superseded: Superseded by manual_focus_guardrail_final_check. Do not use for promotion."
+    },
+    {
+      "candidate_id": "mem-c5f312bf8c60",
+      "kind": "general_learning",
+      "line": 4,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/quellwert_room16_operating/CURRENT_OPERATING_STATE.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Batch: `guardrail_coverage_batch_004_ir_coverage`"
+    },
+    {
+      "candidate_id": "mem-1bcda68fccd0",
+      "kind": "workflow_learning",
+      "line": 5,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/quellwert_room16_operating/DATA_OPS_NEXT_ACTIONS.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "| Priority | Ticker | Reason | Operator action | Vega without login/API |"
+    },
+    {
+      "candidate_id": "mem-bd1bb9e5d48b",
+      "kind": "general_learning",
+      "line": 11,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/quellwert_room16_operating/DATA_OPS_NEXT_ACTIONS.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "| P0 | RGTI | High: speculative deep-tech guardrail anchor; direct current-period source improves manual-review quality. | Fetch direct company IR/earnings release or 10-Q extract; do not infer guidance. | yes_if_public_company_ir_or_sec_page_is_accessible |"
+    },
+    {
+      "candidate_id": "mem-de0d3639ee2e",
+      "kind": "workflow_learning",
+      "line": 11,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/quellwert_room16_operating/DATA_OPS_P0_REPLACEMENT_PLAN.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "| Ticker | Current source status | Desired direct source | Missing fields | Expected manual-review impact | Expected publishability impact | Required source type | Priority | Vega fetch/process | Operator action |"
+    },
+    {
+      "candidate_id": "mem-6501f427641a",
+      "kind": "general_learning",
+      "line": 45,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/quellwert_room16_operating/OPERATING_STATUS_SUMMARY.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Superseded by manual_focus_guardrail_final_check. Do not use for promotion."
+    },
+    {
+      "candidate_id": "mem-825b7a5e2bf6",
+      "kind": "general_learning",
+      "line": 3,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/quellwert_room16_operating/PASSED_SAMPLE_REVIEW.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "> Superseded by manual_focus_guardrail_final_check. Do not use for promotion."
+    },
+    {
+      "candidate_id": "mem-5214fad6e295",
+      "kind": "workflow_learning",
+      "line": 12,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/skill_intake/SKILL_INTAKE_IMPLEMENTATION_SUMMARY.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`docs/skills/VIVI_EXTERNAL_SKILL_REVIEW_CONTRACT.md/json`"
+    },
+    {
+      "candidate_id": "mem-81823719e218",
+      "kind": "general_learning",
+      "line": 31,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/skill_intake/SKILL_INTAKE_IMPLEMENTATION_SUMMARY.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Open P0/P1 Next Steps"
+    },
+    {
+      "candidate_id": "mem-e831e40b2fcd",
+      "kind": "workflow_learning",
+      "line": 34,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/skill_intake/SKILL_INTAKE_IMPLEMENTATION_SUMMARY.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "P0: use Skill Authoring Policy for internal Room16/Vivi/Vega playbooks."
+    },
+    {
+      "candidate_id": "mem-1ff7303c89b5",
+      "kind": "workflow_learning",
+      "line": 38,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/skill_intake/SKILL_INTAKE_IMPLEMENTATION_SUMMARY.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Codex/Vega Workflow Hook"
+    },
+    {
+      "candidate_id": "mem-378f16399bbc",
+      "kind": "workflow_learning",
+      "line": 40,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/skill_intake/SKILL_INTAKE_IMPLEMENTATION_SUMMARY.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Codex/Vega should reference these docs during reviews. No active workflow should load external skills, install packages, call remote scanners, mutate Obsidian or expand runtime authority from this package alone."
+    },
+    {
+      "candidate_id": "mem-a8e747581cc7",
+      "kind": "workflow_learning",
+      "line": 60,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/skill_playbooks/REMAINING_SKILL_PATTERN_IMPLEMENTATION_SUMMARY.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Run `scripts/skills/local_skill_inventory_scan.py` locally during future playbook reviews, then route findings through External Skill Intake SOP and Vivi review before any runtime consideration."
+    },
+    {
+      "candidate_id": "mem-d35c68cf6be3",
+      "kind": "workflow_learning",
+      "line": 20,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/ACCEPTED_ROADMAP_ITEMS.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "| Skill-governance read-only reference | `adopt_now` | Keeps external skill patterns out of runtime. | Use SOP/Vivi contract as review reference only. | P0 |"
+    },
+    {
+      "candidate_id": "mem-1d46809fa8fb",
+      "kind": "workflow_learning",
+      "line": 7,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/SKILL_GOVERNANCE_CROSSCHECK.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "The utility roadmap integration uses the External Skill Intake and Vivi governance package as read-only reference only."
+    },
+    {
+      "candidate_id": "mem-3379076f197f",
+      "kind": "workflow_learning",
+      "line": 17,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/SKILL_GOVERNANCE_CROSSCHECK.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "| Vivi Skill Intake SOP read-only reference | pass |"
+    }
+  ]
+}

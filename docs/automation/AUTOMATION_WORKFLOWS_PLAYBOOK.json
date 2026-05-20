@@ -1,0 +1,53 @@
+{
+  "name": "Automation Workflows Playbook",
+  "status": "active_draft",
+  "scope": "Codex app automations/Utility/Outcome/Data Ops reviews",
+  "risk_class": "R6_pattern_constrained_to_scheduled_review_only",
+  "runtime_changes": "none",
+  "purpose": "Use automations for reminders, data maturity checks and review artifacts without autonomous feature work.",
+  "allowed_automations": [
+    "outcome_window_check",
+    "utility_7_14_day_review",
+    "data_freshness_check",
+    "adsense_cmp_status_check",
+    "gsc_event_data_maturity_check",
+    "no_action_reminder"
+  ],
+  "forbidden": [
+    "automatically_change_code",
+    "automatically_release_reports",
+    "automatically_enable_ads_or_affiliate",
+    "automatically_loosen_guards",
+    "automatically_update_obsidian_backbone",
+    "automatically_publish",
+    "automatically_create_runtime_rights_api_keys_or_background_agents"
+  ],
+  "timing_rules": [
+    "exact_schedule_only_for_real_calendar_deadlines",
+    "flexible_schedule_for_review_tasks",
+    "condition_watch_for_data_maturity",
+    "no_action_if_not_mature"
+  ],
+  "output_contract": [
+    "status",
+    "missing_data",
+    "allowed_next_action",
+    "blocked_gates",
+    "no_action_if_not_mature"
+  ],
+  "existing_automations": [
+    "Utility Websites Mature 14-Day GSC/Event Review",
+    "Re-run 5D Outcome"
+  ],
+  "future_automation_candidates": [
+    "outcome_10d_check",
+    "outcome_20d_check",
+    "outcome_60d_check"
+  ],
+  "guardrails": [
+    "no_runtime_mutation_from_automation_alone",
+    "no_public_promotion_gate_bypass",
+    "no_obsidian_autowrites",
+    "no_hidden_scope_shift"
+  ]
+}

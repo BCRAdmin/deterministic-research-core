@@ -1,0 +1,51 @@
+{
+  "name": "Local Skill Inventory Risk Scan",
+  "status": "active_draft",
+  "scope": "local docs and helper inventory",
+  "risk_class": "R1_local_read_only",
+  "runtime_changes": "none",
+  "purpose": "Extract the useful SkillScan idea as a local-only inventory/risk triage with no external scanner.",
+  "scan_scope": [
+    "docs/skills",
+    "docs/media_ingest",
+    "docs/github",
+    "scripts"
+  ],
+  "forbidden": [
+    "external_upload",
+    "phone_home",
+    "auto_update",
+    "external_api_call",
+    "runtime_installation"
+  ],
+  "checks": [
+    "executable_scripts",
+    "network_calls",
+    "filesystem_writes",
+    "credential_references",
+    "environment_variables",
+    "auto_update_behavior",
+    "background_execution",
+    "obsidian_writes",
+    "github_mutations",
+    "api_calls"
+  ],
+  "risk_output_fields": [
+    "file",
+    "line",
+    "risk_type",
+    "severity",
+    "reason",
+    "allowed",
+    "operator_gate_needed"
+  ],
+  "helper_script": "scripts/skills/local_skill_inventory_scan.py",
+  "helper_rules": [
+    "local_only",
+    "no_network",
+    "read_only",
+    "stdout_json_or_markdown",
+    "no_secret_printing"
+  ],
+  "limits": "triage_aid_not_replacement_for_external_skill_intake_sop_vivi_review_or_operator_go"
+}

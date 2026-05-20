@@ -1,0 +1,61 @@
+{
+  "backends": [
+    {
+      "backend_id": "local_read_only",
+      "command_surface": [
+        "pwd",
+        "ls",
+        "find",
+        "rg",
+        "sed",
+        "python3 -m pytest",
+        "ruff check"
+      ],
+      "isolation": "host_user_no_extra_isolation",
+      "network": "disabled_by_policy_for_readiness_pack",
+      "operator_gate_required": false,
+      "secrets": "not_read_not_printed",
+      "status": "implemented_contract_only",
+      "verification": [
+        "commands_must_be_non_destructive",
+        "dangerous_command_scan_before_execution",
+        "workdir_must_equal:/Users/BjornRosinger/Documents/New project 2"
+      ],
+      "write_scope": "none_by_default; artifact writes only through explicit scripts"
+    },
+    {
+      "backend_id": "docker_project_sandbox",
+      "command_surface": [
+        "python3 -m pytest",
+        "ruff check",
+        "python3 scripts/ops/agent_os_readiness.py"
+      ],
+      "isolation": "container_namespace_with_project_mount",
+      "network": "off_by_default",
+      "operator_gate_required": true,
+      "secrets": "empty_env_except_explicit_allowlist",
+      "status": "planned_contract_ready_not_started",
+      "verification": [
+        "image_digest_pinned_before_use",
+        "workspace_mount_read_write_scope_confirmed",
+        "no_home_or_secret_mounts",
+        "post_run_artifact_diff_review"
+      ],
+      "write_scope": "project_mount_only; no home_mount; no vault_mount_by_default"
+    }
+  ],
+  "validations": [
+    {
+      "backend_id": "local_read_only",
+      "errors": [],
+      "valid": true,
+      "warnings": []
+    },
+    {
+      "backend_id": "docker_project_sandbox",
+      "errors": [],
+      "valid": true,
+      "warnings": []
+    }
+  ]
+}

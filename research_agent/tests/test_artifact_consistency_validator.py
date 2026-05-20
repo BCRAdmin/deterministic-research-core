@@ -8,6 +8,8 @@ from research_agent.batch.artifact_consistency_validator import (
     STALE_PUBLISHABILITY_ARTIFACT,
     STALE_RATING_ARTIFACT,
     ARTIFACT_SOURCE_OF_TRUTH_MISMATCH,
+    QCOM_SUPERSEDED_BANNER,
+    QCOM_SUPERSEDED_RAW_ACCUMULATE,
     validate_bundle_artifacts,
 )
 from research_agent.batch.review_bundle import REVIEW_BUNDLE_REQUIRED_FILES, create_chatgpt_review_bundle
@@ -289,6 +291,45 @@ def test_qcom_display_rule_consistency(tmp_path):
     result = validate_bundle_artifacts(tmp_path)
 
     assert result.status == "clean"
+
+
+def test_qcom_raw_accumulate_public_artifact_requires_superseded_banner(tmp_path):
+    ticker_dir = _ticker_bundle(
+        tmp_path,
+        ticker="QCOM",
+        archetype="SEMICONDUCTOR_AI_INFRA",
+        external="Hold Pending FCF Support",
+        publishable=False,
+        internal="Accumulate",
+        reasons=["MISSING_FCF_SUPPORT_FOR_ACCUMULATE"],
+    )
+    (ticker_dir / "publish_report.md").write_text("We rate QCOM Accumulate at the latest close.", encoding="utf-8")
+
+    result = validate_bundle_artifacts(tmp_path)
+
+    assert result.status == "artifact_inconsistent"
+    assert QCOM_SUPERSEDED_RAW_ACCUMULATE in {issue.code for issue in result.issues}
+
+
+def test_qcom_superseded_raw_accumulate_public_artifact_passes_with_banner(tmp_path):
+    ticker_dir = _ticker_bundle(
+        tmp_path,
+        ticker="QCOM",
+        archetype="SEMICONDUCTOR_AI_INFRA",
+        external="Hold Pending FCF Support",
+        publishable=False,
+        internal="Accumulate",
+        reasons=["MISSING_FCF_SUPPORT_FOR_ACCUMULATE"],
+    )
+    (ticker_dir / "publish_report.md").write_text(
+        f"{QCOM_SUPERSEDED_BANNER}\n\nWe rate QCOM Accumulate at the latest close.",
+        encoding="utf-8",
+    )
+
+    result = validate_bundle_artifacts(tmp_path)
+
+    assert result.status == "clean"
+    assert result.legacy_ignored
 
 
 def test_rgti_preliminary_underweight_consistency(tmp_path):

@@ -1,0 +1,22 @@
+# Synthetic Media Ingest Test Transcript
+
+Status: synthetic operator-approved dry run  
+Evidence status: not usable as evidence  
+Report status: not usable in reports
+
+## Transcript
+
+`00:00` Operator Test Speaker: This is a synthetic media ingest test. It is not a real company source and must not be used as evidence.
+
+`00:12` Operator Test Speaker: The workflow should preserve source metadata, mark extracted claims as candidates, and require verification for every claim.
+
+`00:25` Operator Test Speaker: No report, MetricsPacket, DecisionPacket, EvidenceLedger, rating, guard, calibration, Obsidian Backbone, or public output should change during this dry run.
+
+`00:42` Operator Test Speaker: A real future media packet would need source authenticity, rights review, speaker attribution, timestamping, and primary-source verification for hard claims.
+
+## Quality Notes
+
+- Synthetic transcript created for pipeline validation only.
+- No audio was transcribed.
+- No external source was accessed.
+- Speaker attribution is artificial and only tests required field handling.

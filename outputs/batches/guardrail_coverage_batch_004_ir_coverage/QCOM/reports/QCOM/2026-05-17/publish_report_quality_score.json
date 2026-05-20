@@ -1,9 +1,32 @@
 {
+  "display_rating": "Hold Pending FCF Support",
+  "display_status": "Manual Review",
+  "external_display_rating": "Hold Pending FCF Support",
+  "final_rating": "Hold Pending FCF Support",
+  "manual_review_reasons": [
+    "MISSING_FCF_SUPPORT_FOR_ACCUMULATE",
+    "EARNINGS_DATE_UNAVAILABLE",
+    "PERIOD_TYPE_MISMATCH_IGNORED",
+    "TRUE_SOURCE_VALUE_DISAGREEMENT",
+    "SOURCE_FRAME_VARIANT_IGNORED"
+  ],
+  "operator_facing_external_display_rating": "Hold Pending FCF Support",
+  "operator_facing_publishable": false,
+  "operator_facing_status": "manual_review",
+  "preferred_rating": "Hold Pending FCF Support",
+  "public_ready": false,
   "publish_action_plan_trigger_count": 4,
   "publish_claim_id_main_body_count": 0,
   "publish_current_kpi_count": 13,
   "publish_evidence_appendix_exists": 1,
   "publish_mechanical_language_count": 0,
   "publish_report_exists": 1,
-  "publish_valuation_sensitivity_present": 1
+  "publish_valuation_sensitivity_present": 1,
+  "publishable": false,
+  "rating_display_reason": "MISSING_FCF_SUPPORT_FOR_ACCUMULATE",
+  "raw_batch004_snapshot": {},
+  "status": "manual_review",
+  "superseded": true,
+  "superseded_banner": "Superseded by manual_focus_guardrail_final_check. Do not use for promotion.",
+  "superseded_by": "manual_focus_guardrail_final_check"
 }

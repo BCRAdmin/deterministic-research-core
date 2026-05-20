@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "status": "complete",
+  "created_at": "2026-05-20",
+  "scope": "documentation_sops_playbooks_review_gates_only",
+  "created": [
+    "docs/skills/EXTERNAL_SKILL_INTAKE_SOP.md",
+    "docs/skills/EXTERNAL_SKILL_INTAKE_SOP.json",
+    "docs/skills/SKILL_AUTHORING_POLICY.md",
+    "docs/skills/SKILL_AUTHORING_POLICY.json",
+    "docs/memory/OBSIDIAN_MEMORY_PROMOTION_MAP.md",
+    "docs/memory/OBSIDIAN_MEMORY_PROMOTION_MAP.json",
+    "docs/skills/VIVI_EXTERNAL_SKILL_REVIEW_CONTRACT.md",
+    "docs/skills/VIVI_EXTERNAL_SKILL_REVIEW_CONTRACT.json",
+    "docs/skills/CLAW_SKILL_PATTERN_DECISION_MATRIX.md",
+    "docs/skills/CLAW_SKILL_PATTERN_DECISION_MATRIX.json",
+    "docs/skills/EXTERNAL_SKILL_INTAKE_PACKAGE_README.md"
+  ],
+  "not_installed": [
+    "external_clawhub_skills",
+    "api_gateway_runtime",
+    "desktop_control_runtime",
+    "proactive_full_autonomy_runtime",
+    "phone_home_scanner",
+    "silent_updater",
+    "background_agent",
+    "second_memory_layer"
+  ],
+  "runtime_rights_changed": false,
+  "open_p0_p1_next_steps": [
+    "use_intake_sop_for_future_source_heavy_skill_reviews",
+    "use_authoring_policy_for_internal_room16_vivi_vega_playbooks",
+    "route_recurring_learnings_through_obsidian_memory_promotion_map",
+    "keep_github_docx_xlsx_whisper_youtube_humanizer_as_playbooks_unless_separately_approved"
+  ],
+  "codex_vega_workflow_hook": "reference_docs_during_reviews_only_no_external_runtime_loading_or_install"
+}

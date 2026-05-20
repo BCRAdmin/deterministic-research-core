@@ -1,0 +1,36 @@
+{
+  "blocking_issues": [],
+  "do_not_change": [
+    "No guard loosening.",
+    "No ticker hardcoding.",
+    "No public-ready routing without Promotion Gate.",
+    "No pseudo-IR or invented data.",
+    "Keep QCOM Hold Pending FCF Support masking when FCF support is missing.",
+    "Keep Speculative Deep-Tech and Early-Commercial manual review profiles active.",
+    "Keep GOOGL/SNOW Gold-v1 control samples stable.",
+    "Do not calibrate outcomes before mature price windows exist."
+  ],
+  "false_block_candidates": [],
+  "false_pass_candidates": [],
+  "fix_list_for_codex": [],
+  "human_review_required": false,
+  "non_blocking_issues": [
+    {
+      "artifact": "outputs/batches/guardrail_coverage_batch_004_ir_coverage/QCOM/dashboard_item.json + outputs/batches/manual_focus_guardrail_final_check/manual_focus_guardrail_final_check/dashboard_status.json",
+      "category": "Artifact Consistency",
+      "confidence": "high",
+      "evidence": "Batch004 QCOM dashboard_item has status=passed and external_display_rating=Accumulate with no FCF support flags; manual-focus dashboard_status has status=manual_review, external_display_rating=Hold Pending FCF Support, and MISSING_FCF_SUPPORT_FOR_ACCUMULATE.",
+      "expected_behavior": "Operators use the manual-focus overlay as current operating truth and do not promote the raw Batch004 QCOM state.",
+      "issue": "Raw Batch004 QCOM still shows the superseded passed/Accumulate state even though the current manual-focus final check correctly masks QCOM to manual_review/Hold Pending FCF Support.",
+      "severity": "info"
+    }
+  ],
+  "review_metadata": {
+    "batch_id": "guardrail_coverage_batch_004_ir_coverage",
+    "bundle_id": "quellwert_room16_operating_hardening",
+    "reviewed_at": "2026-05-19T02:28:39Z",
+    "reviewer": "Vivi",
+    "schema_version": "v1.1"
+  },
+  "review_status": "pass"
+}

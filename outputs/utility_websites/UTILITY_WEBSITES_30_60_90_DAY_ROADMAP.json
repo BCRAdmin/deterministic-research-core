@@ -1,0 +1,34 @@
+{
+  "generated_at": "2026-05-21T00:00:00+02:00",
+  "status": "no_ads_data_first",
+  "thirty_days": [
+    "monitor_materialbedarf_events_and_gsc",
+    "keep_ads_disabled",
+    "keep_paid_cmp_deferred",
+    "keep_affiliate_readiness_only",
+    "prepare_affiliate_shortlist_without_live_links",
+    "keep_elterngeld_trust_monitor",
+    "no_new_copy_or_feature_runs_without_data"
+  ],
+  "sixty_days": [
+    "affiliate_partner_applications_if_signals_exist",
+    "product_category_slot_pilot_if_partner_data_available",
+    "second_ctr_pass_based_on_gsc",
+    "materialbedarf_result_ux_inspection_if_events_show_dropoff",
+    "elterngeld_source_update_trust_clarity_only_if_data_supports"
+  ],
+  "ninety_days": [
+    "paid_cmp_decision_only_if_threshold_reached",
+    "possible_lead_gen_evaluation_only_if_signals_justify",
+    "new_calculator_or_content_only_if_gsc_event_data_supports",
+    "elterngeld_targeted_trust_content_update_only_if_needed"
+  ],
+  "hard_limits": [
+    "no_ads",
+    "no_paid_cmp_before_threshold",
+    "no_affiliate_live_links_without_partner_data_operator_go",
+    "no_aggressive_funnels",
+    "no_runtime_skill_installation"
+  ],
+  "runtime_changes": "none"
+}

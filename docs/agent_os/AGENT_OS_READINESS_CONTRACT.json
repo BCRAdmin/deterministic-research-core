@@ -1,0 +1,31 @@
+{
+  "name": "Agent OS Readiness Pack",
+  "status": "active_local_v1",
+  "runtime_changes": "none",
+  "command": "python3 scripts/ops/agent_os_readiness.py",
+  "outputs": [
+    "outputs/agent_os_readiness/AGENT_OS_READINESS_REPORT.md",
+    "outputs/agent_os_readiness/SKILL_REGISTRY.md",
+    "outputs/agent_os_readiness/MEMORY_INBOX_CANDIDATES.md",
+    "outputs/agent_os_readiness/SESSION_SEARCH.sqlite",
+    "outputs/agent_os_readiness/AUTOMATION_JOB_CARDS.md",
+    "outputs/agent_os_readiness/OPERATOR_INBOX.md",
+    "outputs/agent_os_readiness/TERMINAL_BACKENDS.md",
+    "outputs/agent_os_readiness/GUARDRAIL_SCAN.md",
+    "outputs/agent_os_readiness/RUN_SUMMARY.json"
+  ],
+  "boundaries": [
+    "no_external_skill_install",
+    "no_secret_value_import",
+    "no_runtime_config_mutation",
+    "no_obsidian_autowrite",
+    "no_automation_creation",
+    "no_network_calls"
+  ],
+  "gates": [
+    "External Skill Intake SOP",
+    "Operator Gate for R3+ runtime behavior",
+    "Obsidian promotion review for durable memory",
+    "sandbox plan before desktop/browser/gateway expansion"
+  ]
+}

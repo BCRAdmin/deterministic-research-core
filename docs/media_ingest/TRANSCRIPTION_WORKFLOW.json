@@ -1,0 +1,64 @@
+{
+  "schema_version": "1.0",
+  "status": "internal_workflow",
+  "runtime_activation": false,
+  "workflow": [
+    "operator_approves_source_and_intended_use",
+    "source_is_referenced_or_locally_stored_only_if_allowed",
+    "transcription_mode_is_selected",
+    "outputs_are_created",
+    "quality_checks_are_documented",
+    "no_direct_report_use_without_review"
+  ],
+  "transcription_modes": [
+    "local_transcription_if_available_and_permitted",
+    "api_transcription_only_with_separate_operator_go_and_credentials_policy",
+    "manual_transcript_ingestion"
+  ],
+  "outputs": [
+    "transcript_raw.txt",
+    "transcript_clean.md",
+    "transcript_metadata.json"
+  ],
+  "required_metadata": [
+    "source_title",
+    "source_url",
+    "source_type",
+    "source_owner",
+    "date",
+    "duration",
+    "language",
+    "transcription_method",
+    "rights_status",
+    "operator_approval",
+    "allowed_use",
+    "download_performed",
+    "download_operator_approval",
+    "public_output_allowed",
+    "report_use_allowed",
+    "evidence_use_allowed",
+    "requires_human_review"
+  ],
+  "quality_checks": [
+    "language_identified",
+    "speaker_changes_marked_where_recognizable",
+    "timestamps_retained_where_available",
+    "transcription_confidence_noted",
+    "known_transcription_gaps_listed",
+    "uncertain_text_marked",
+    "source_reliability_class_recorded"
+  ],
+  "stop_conditions": [
+    "rights_status_unclear",
+    "source_authenticity_unclear",
+    "transcript_quality_too_poor_for_claims",
+    "source_requires_login_paywall_or_drm_circumvention",
+    "public_output_requested_before_evidence_gate"
+  ],
+  "acceptance": [
+    "core_outputs_exist",
+    "metadata_validates",
+    "known_gaps_documented",
+    "vivi_can_review_without_fetching_or_guessing_missing_source_data"
+  ]
+}

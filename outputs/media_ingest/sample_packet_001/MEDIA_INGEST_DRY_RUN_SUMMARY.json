@@ -1,0 +1,41 @@
+{
+  "status": "pass",
+  "created_at_utc": "2026-05-20T16:56:59Z",
+  "sample_packet": "outputs/media_ingest/sample_packet_001",
+  "sample_type": "synthetic_operator_test",
+  "not_real_source": true,
+  "not_usable_as_evidence": true,
+  "metadata_validation": {
+    "status": "pass",
+    "artifact_md": "outputs/media_ingest/sample_packet_001/METADATA_VALIDATION.md",
+    "artifact_json": "outputs/media_ingest/sample_packet_001/METADATA_VALIDATION.json"
+  },
+  "claim_candidates": {
+    "count": 4,
+    "all_requires_verification": true,
+    "all_usable_in_report_false": true,
+    "hard_financial_claims_present": false
+  },
+  "promotion": {
+    "promoted_to_evidence": false,
+    "evidence_ledger_changed": false,
+    "report_impact": false,
+    "metrics_packet_impact": false,
+    "decision_packet_impact": false,
+    "guard_rating_calibration_impact": false,
+    "public_output_impact": false,
+    "obsidian_write": false
+  },
+  "vivi_review": {
+    "status": "pass",
+    "artifact": "outputs/media_ingest/sample_packet_001/VIVI_MEDIA_INGEST_SAMPLE_REVIEW.json",
+    "recommended_action": "dry_run_complete_no_promotion"
+  },
+  "runtime_side_effects": {
+    "runtime_activation": false,
+    "api_calls": false,
+    "downloads": false,
+    "youtube_fetches": false
+  },
+  "next_allowed_step": "Use the same packet structure with a real operator-approved source only after source rights, source authenticity and review gates are explicit."
+}

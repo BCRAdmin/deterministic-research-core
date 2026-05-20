@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "status": "integration_policy",
+  "applies_to": ["quellwert", "room16", "evidence_and_report_pipelines"],
+  "non_mutation_rules": {
+    "may_change_metrics_packet": false,
+    "may_change_decision_packet": false,
+    "may_change_ratings": false,
+    "may_change_guards": false,
+    "may_change_calibration": false,
+    "may_change_report_status": false,
+    "may_create_public_output": false,
+    "evidence_ledger_use": "candidate_only"
+  },
+  "evidence_candidate_required_fields": [
+    "source_metadata",
+    "source_type",
+    "source_owner",
+    "timestamp",
+    "speaker_attribution",
+    "transcript_confidence",
+    "rights_use_status",
+    "verification_requirement",
+    "proposed_source_rank",
+    "reviewer_status"
+  ],
+  "promotion_to_evidence_item_requires": [
+    "source_authenticity_check",
+    "timestamp",
+    "speaker_attribution",
+    "rights_use_check",
+    "hard_financial_claim_primary_or_official_verification",
+    "source_rank_assignment",
+    "vivi_or_human_reviewer_approval",
+    "explicit_no_automatic_packet_or_rating_mutation_note"
+  ],
+  "source_rank_rules": {
+    "official_ir_company_source": "high_rank_candidate_after_review",
+    "third_party_youtube_podcast_vendor_interview": "low_or_medium_unless_independently_verified",
+    "hard_financial_claims": "verify_against_ir_sec_filing_earnings_release_or_official_presentation"
+  },
+  "public_report_boundary": {
+    "paraphrase_allowed_after_review": true,
+    "timestamp_citation_allowed_after_review": true,
+    "full_third_party_transcript_reproduction_allowed": false,
+    "long_quotes_allowed": false,
+    "promotion_gate_required": true,
+    "non_advice_gate_required": true
+  }
+}

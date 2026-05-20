@@ -1,687 +1,720 @@
 {
   "batch_id": "guardrail_coverage_batch_004_ir_coverage",
-  "benchmark_data_latest_min": "2026-05-15",
-  "benchmark_data_latest_requirement_met": false,
-  "current_session_date": "2026-05-17",
-  "generated_at": "2026-05-17T18:04:00+02:00",
-  "missing_benchmarks": [
-    "QQQ",
-    "SMH",
-    "SPY"
-  ],
-  "missing_tickers": [
-    "AAPL",
-    "ACHR",
-    "AMD",
-    "AMZN",
-    "ASTS",
-    "AVGO",
-    "CRM",
-    "CRWD",
-    "DDOG",
-    "GOOGL",
-    "INTC",
-    "IONQ",
-    "JOBY",
-    "LCID",
-    "MDB",
-    "META",
-    "MRVL",
-    "MSFT",
-    "MU",
-    "NET",
-    "NFLX",
-    "NOW",
-    "NVDA",
-    "PANW",
-    "PLUG",
-    "QBTS",
-    "QCOM",
-    "RGTI",
-    "RIVN",
-    "RKLB",
-    "SNOW",
-    "ZS"
-  ],
-  "outcome_1d_evaluable": false,
+  "benchmark_data_latest_min": "2026-05-19",
+  "benchmark_data_latest_requirement_met": true,
+  "current_session_date": "2026-05-20",
+  "generated_at": "2026-05-20T14:35:26+02:00",
+  "missing_benchmarks": [],
+  "missing_tickers": [],
+  "outcome_1d_evaluable": true,
   "price_basis_date": "2026-05-15",
-  "price_data_latest_min": "2026-05-15",
-  "price_data_latest_requirement_met": false,
+  "price_data_latest_min": "2026-05-19",
+  "price_data_latest_requirement_met": true,
   "provider_attempted": "Yahoo Finance chart API",
   "provider_policy": "accept only source-returned OHLCV rows with date >= target_price_date; no synthetic fallback rows",
   "purpose": "price_data_refresh_for_outcome_tracking",
   "results": [
     {
-      "accepted_rows": 0,
+      "accepted_rows": 2,
       "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/AAPL.csv",
-      "fetched_rows": 1,
-      "issue": "target date 2026-05-18 is after current session date 2026-05-17; no valid target-date close accepted",
-      "latest_after": "2026-05-15",
+      "fetched_rows": 3,
+      "issue": null,
+      "latest_after": "2026-05-19",
       "latest_before": "2026-05-15",
       "provider_error": null,
-      "refresh_status": "pending_no_source_data_for_target_date",
+      "refresh_status": "updated",
       "role": "ticker",
       "source_dates_returned": [
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-18",
+        "2026-05-19"
       ],
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/AAPL?period1=1778803200&period2=1779235200&interval=1d&events=history&includeAdjustedClose=true",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/AAPL?period1=1778803200&period2=1779321600&interval=1d&events=history&includeAdjustedClose=true",
       "symbol": "AAPL",
       "target_date": "2026-05-18",
-      "target_date_present": false
+      "target_date_present": true
     },
     {
-      "accepted_rows": 0,
+      "accepted_rows": 2,
       "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/ACHR.csv",
-      "fetched_rows": 1,
-      "issue": "target date 2026-05-18 is after current session date 2026-05-17; no valid target-date close accepted",
-      "latest_after": "2026-05-15",
+      "fetched_rows": 3,
+      "issue": null,
+      "latest_after": "2026-05-19",
       "latest_before": "2026-05-15",
       "provider_error": null,
-      "refresh_status": "pending_no_source_data_for_target_date",
+      "refresh_status": "updated",
       "role": "ticker",
       "source_dates_returned": [
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-18",
+        "2026-05-19"
       ],
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/ACHR?period1=1778803200&period2=1779235200&interval=1d&events=history&includeAdjustedClose=true",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/ACHR?period1=1778803200&period2=1779321600&interval=1d&events=history&includeAdjustedClose=true",
       "symbol": "ACHR",
       "target_date": "2026-05-18",
-      "target_date_present": false
+      "target_date_present": true
     },
     {
-      "accepted_rows": 0,
+      "accepted_rows": 2,
       "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/AMD.csv",
-      "fetched_rows": 1,
-      "issue": "target date 2026-05-18 is after current session date 2026-05-17; no valid target-date close accepted",
-      "latest_after": "2026-05-15",
+      "fetched_rows": 3,
+      "issue": null,
+      "latest_after": "2026-05-19",
       "latest_before": "2026-05-15",
       "provider_error": null,
-      "refresh_status": "pending_no_source_data_for_target_date",
+      "refresh_status": "updated",
       "role": "ticker",
       "source_dates_returned": [
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-18",
+        "2026-05-19"
       ],
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/AMD?period1=1778803200&period2=1779235200&interval=1d&events=history&includeAdjustedClose=true",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/AMD?period1=1778803200&period2=1779321600&interval=1d&events=history&includeAdjustedClose=true",
       "symbol": "AMD",
       "target_date": "2026-05-18",
-      "target_date_present": false
+      "target_date_present": true
     },
     {
-      "accepted_rows": 0,
+      "accepted_rows": 2,
       "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/AMZN.csv",
-      "fetched_rows": 1,
-      "issue": "target date 2026-05-18 is after current session date 2026-05-17; no valid target-date close accepted",
-      "latest_after": "2026-05-15",
+      "fetched_rows": 3,
+      "issue": null,
+      "latest_after": "2026-05-19",
       "latest_before": "2026-05-15",
       "provider_error": null,
-      "refresh_status": "pending_no_source_data_for_target_date",
+      "refresh_status": "updated",
       "role": "ticker",
       "source_dates_returned": [
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-18",
+        "2026-05-19"
       ],
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/AMZN?period1=1778803200&period2=1779235200&interval=1d&events=history&includeAdjustedClose=true",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/AMZN?period1=1778803200&period2=1779321600&interval=1d&events=history&includeAdjustedClose=true",
       "symbol": "AMZN",
       "target_date": "2026-05-18",
-      "target_date_present": false
+      "target_date_present": true
     },
     {
-      "accepted_rows": 0,
+      "accepted_rows": 2,
       "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/ASTS.csv",
-      "fetched_rows": 1,
-      "issue": "target date 2026-05-18 is after current session date 2026-05-17; no valid target-date close accepted",
-      "latest_after": "2026-05-15",
+      "fetched_rows": 3,
+      "issue": null,
+      "latest_after": "2026-05-19",
       "latest_before": "2026-05-15",
       "provider_error": null,
-      "refresh_status": "pending_no_source_data_for_target_date",
+      "refresh_status": "updated",
       "role": "ticker",
       "source_dates_returned": [
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-18",
+        "2026-05-19"
       ],
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/ASTS?period1=1778803200&period2=1779235200&interval=1d&events=history&includeAdjustedClose=true",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/ASTS?period1=1778803200&period2=1779321600&interval=1d&events=history&includeAdjustedClose=true",
       "symbol": "ASTS",
       "target_date": "2026-05-18",
-      "target_date_present": false
+      "target_date_present": true
     },
     {
-      "accepted_rows": 0,
+      "accepted_rows": 2,
       "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/AVGO.csv",
-      "fetched_rows": 1,
-      "issue": "target date 2026-05-18 is after current session date 2026-05-17; no valid target-date close accepted",
-      "latest_after": "2026-05-15",
+      "fetched_rows": 3,
+      "issue": null,
+      "latest_after": "2026-05-19",
       "latest_before": "2026-05-15",
       "provider_error": null,
-      "refresh_status": "pending_no_source_data_for_target_date",
+      "refresh_status": "updated",
       "role": "ticker",
       "source_dates_returned": [
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-18",
+        "2026-05-19"
       ],
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/AVGO?period1=1778803200&period2=1779235200&interval=1d&events=history&includeAdjustedClose=true",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/AVGO?period1=1778803200&period2=1779321600&interval=1d&events=history&includeAdjustedClose=true",
       "symbol": "AVGO",
       "target_date": "2026-05-18",
-      "target_date_present": false
+      "target_date_present": true
     },
     {
-      "accepted_rows": 0,
+      "accepted_rows": 2,
       "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/CRM.csv",
-      "fetched_rows": 1,
-      "issue": "target date 2026-05-18 is after current session date 2026-05-17; no valid target-date close accepted",
-      "latest_after": "2026-05-15",
+      "fetched_rows": 3,
+      "issue": null,
+      "latest_after": "2026-05-19",
       "latest_before": "2026-05-15",
       "provider_error": null,
-      "refresh_status": "pending_no_source_data_for_target_date",
+      "refresh_status": "updated",
       "role": "ticker",
       "source_dates_returned": [
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-18",
+        "2026-05-19"
       ],
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/CRM?period1=1778803200&period2=1779235200&interval=1d&events=history&includeAdjustedClose=true",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/CRM?period1=1778803200&period2=1779321600&interval=1d&events=history&includeAdjustedClose=true",
       "symbol": "CRM",
       "target_date": "2026-05-18",
-      "target_date_present": false
+      "target_date_present": true
     },
     {
-      "accepted_rows": 0,
+      "accepted_rows": 2,
       "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/CRWD.csv",
-      "fetched_rows": 1,
-      "issue": "target date 2026-05-18 is after current session date 2026-05-17; no valid target-date close accepted",
-      "latest_after": "2026-05-15",
+      "fetched_rows": 3,
+      "issue": null,
+      "latest_after": "2026-05-19",
       "latest_before": "2026-05-15",
       "provider_error": null,
-      "refresh_status": "pending_no_source_data_for_target_date",
+      "refresh_status": "updated",
       "role": "ticker",
       "source_dates_returned": [
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-18",
+        "2026-05-19"
       ],
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/CRWD?period1=1778803200&period2=1779235200&interval=1d&events=history&includeAdjustedClose=true",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/CRWD?period1=1778803200&period2=1779321600&interval=1d&events=history&includeAdjustedClose=true",
       "symbol": "CRWD",
       "target_date": "2026-05-18",
-      "target_date_present": false
+      "target_date_present": true
     },
     {
-      "accepted_rows": 0,
+      "accepted_rows": 2,
       "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/DDOG.csv",
-      "fetched_rows": 1,
-      "issue": "target date 2026-05-18 is after current session date 2026-05-17; no valid target-date close accepted",
-      "latest_after": "2026-05-15",
+      "fetched_rows": 3,
+      "issue": null,
+      "latest_after": "2026-05-19",
       "latest_before": "2026-05-15",
       "provider_error": null,
-      "refresh_status": "pending_no_source_data_for_target_date",
+      "refresh_status": "updated",
       "role": "ticker",
       "source_dates_returned": [
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-18",
+        "2026-05-19"
       ],
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/DDOG?period1=1778803200&period2=1779235200&interval=1d&events=history&includeAdjustedClose=true",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/DDOG?period1=1778803200&period2=1779321600&interval=1d&events=history&includeAdjustedClose=true",
       "symbol": "DDOG",
       "target_date": "2026-05-18",
-      "target_date_present": false
+      "target_date_present": true
     },
     {
-      "accepted_rows": 0,
+      "accepted_rows": 2,
       "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/GOOGL.csv",
-      "fetched_rows": 1,
-      "issue": "target date 2026-05-18 is after current session date 2026-05-17; no valid target-date close accepted",
-      "latest_after": "2026-05-15",
+      "fetched_rows": 3,
+      "issue": null,
+      "latest_after": "2026-05-19",
       "latest_before": "2026-05-15",
       "provider_error": null,
-      "refresh_status": "pending_no_source_data_for_target_date",
+      "refresh_status": "updated",
       "role": "ticker",
       "source_dates_returned": [
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-18",
+        "2026-05-19"
       ],
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/GOOGL?period1=1778803200&period2=1779235200&interval=1d&events=history&includeAdjustedClose=true",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/GOOGL?period1=1778803200&period2=1779321600&interval=1d&events=history&includeAdjustedClose=true",
       "symbol": "GOOGL",
       "target_date": "2026-05-18",
-      "target_date_present": false
+      "target_date_present": true
     },
     {
-      "accepted_rows": 0,
+      "accepted_rows": 2,
       "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/INTC.csv",
-      "fetched_rows": 1,
-      "issue": "target date 2026-05-18 is after current session date 2026-05-17; no valid target-date close accepted",
-      "latest_after": "2026-05-15",
+      "fetched_rows": 3,
+      "issue": null,
+      "latest_after": "2026-05-19",
       "latest_before": "2026-05-15",
       "provider_error": null,
-      "refresh_status": "pending_no_source_data_for_target_date",
+      "refresh_status": "updated",
       "role": "ticker",
       "source_dates_returned": [
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-18",
+        "2026-05-19"
       ],
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/INTC?period1=1778803200&period2=1779235200&interval=1d&events=history&includeAdjustedClose=true",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/INTC?period1=1778803200&period2=1779321600&interval=1d&events=history&includeAdjustedClose=true",
       "symbol": "INTC",
       "target_date": "2026-05-18",
-      "target_date_present": false
+      "target_date_present": true
     },
     {
-      "accepted_rows": 0,
+      "accepted_rows": 2,
       "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/IONQ.csv",
-      "fetched_rows": 1,
-      "issue": "target date 2026-05-18 is after current session date 2026-05-17; no valid target-date close accepted",
-      "latest_after": "2026-05-15",
+      "fetched_rows": 3,
+      "issue": null,
+      "latest_after": "2026-05-19",
       "latest_before": "2026-05-15",
       "provider_error": null,
-      "refresh_status": "pending_no_source_data_for_target_date",
+      "refresh_status": "updated",
       "role": "ticker",
       "source_dates_returned": [
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-18",
+        "2026-05-19"
       ],
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/IONQ?period1=1778803200&period2=1779235200&interval=1d&events=history&includeAdjustedClose=true",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/IONQ?period1=1778803200&period2=1779321600&interval=1d&events=history&includeAdjustedClose=true",
       "symbol": "IONQ",
       "target_date": "2026-05-18",
-      "target_date_present": false
+      "target_date_present": true
     },
     {
-      "accepted_rows": 0,
+      "accepted_rows": 2,
       "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/JOBY.csv",
-      "fetched_rows": 1,
-      "issue": "target date 2026-05-18 is after current session date 2026-05-17; no valid target-date close accepted",
-      "latest_after": "2026-05-15",
+      "fetched_rows": 3,
+      "issue": null,
+      "latest_after": "2026-05-19",
       "latest_before": "2026-05-15",
       "provider_error": null,
-      "refresh_status": "pending_no_source_data_for_target_date",
+      "refresh_status": "updated",
       "role": "ticker",
       "source_dates_returned": [
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-18",
+        "2026-05-19"
       ],
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/JOBY?period1=1778803200&period2=1779235200&interval=1d&events=history&includeAdjustedClose=true",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/JOBY?period1=1778803200&period2=1779321600&interval=1d&events=history&includeAdjustedClose=true",
       "symbol": "JOBY",
       "target_date": "2026-05-18",
-      "target_date_present": false
+      "target_date_present": true
     },
     {
-      "accepted_rows": 0,
+      "accepted_rows": 2,
       "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/LCID.csv",
-      "fetched_rows": 1,
-      "issue": "target date 2026-05-18 is after current session date 2026-05-17; no valid target-date close accepted",
-      "latest_after": "2026-05-15",
+      "fetched_rows": 3,
+      "issue": null,
+      "latest_after": "2026-05-19",
       "latest_before": "2026-05-15",
       "provider_error": null,
-      "refresh_status": "pending_no_source_data_for_target_date",
+      "refresh_status": "updated",
       "role": "ticker",
       "source_dates_returned": [
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-18",
+        "2026-05-19"
       ],
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/LCID?period1=1778803200&period2=1779235200&interval=1d&events=history&includeAdjustedClose=true",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/LCID?period1=1778803200&period2=1779321600&interval=1d&events=history&includeAdjustedClose=true",
       "symbol": "LCID",
       "target_date": "2026-05-18",
-      "target_date_present": false
+      "target_date_present": true
     },
     {
-      "accepted_rows": 0,
+      "accepted_rows": 2,
       "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/MDB.csv",
-      "fetched_rows": 1,
-      "issue": "target date 2026-05-18 is after current session date 2026-05-17; no valid target-date close accepted",
-      "latest_after": "2026-05-15",
+      "fetched_rows": 3,
+      "issue": null,
+      "latest_after": "2026-05-19",
       "latest_before": "2026-05-15",
       "provider_error": null,
-      "refresh_status": "pending_no_source_data_for_target_date",
+      "refresh_status": "updated",
       "role": "ticker",
       "source_dates_returned": [
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-18",
+        "2026-05-19"
       ],
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/MDB?period1=1778803200&period2=1779235200&interval=1d&events=history&includeAdjustedClose=true",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/MDB?period1=1778803200&period2=1779321600&interval=1d&events=history&includeAdjustedClose=true",
       "symbol": "MDB",
       "target_date": "2026-05-18",
-      "target_date_present": false
+      "target_date_present": true
     },
     {
-      "accepted_rows": 0,
+      "accepted_rows": 2,
       "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/META.csv",
-      "fetched_rows": 1,
-      "issue": "target date 2026-05-18 is after current session date 2026-05-17; no valid target-date close accepted",
-      "latest_after": "2026-05-15",
+      "fetched_rows": 3,
+      "issue": null,
+      "latest_after": "2026-05-19",
       "latest_before": "2026-05-15",
       "provider_error": null,
-      "refresh_status": "pending_no_source_data_for_target_date",
+      "refresh_status": "updated",
       "role": "ticker",
       "source_dates_returned": [
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-18",
+        "2026-05-19"
       ],
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/META?period1=1778803200&period2=1779235200&interval=1d&events=history&includeAdjustedClose=true",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/META?period1=1778803200&period2=1779321600&interval=1d&events=history&includeAdjustedClose=true",
       "symbol": "META",
       "target_date": "2026-05-18",
-      "target_date_present": false
+      "target_date_present": true
     },
     {
-      "accepted_rows": 0,
+      "accepted_rows": 2,
       "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/MRVL.csv",
-      "fetched_rows": 1,
-      "issue": "target date 2026-05-18 is after current session date 2026-05-17; no valid target-date close accepted",
-      "latest_after": "2026-05-15",
+      "fetched_rows": 3,
+      "issue": null,
+      "latest_after": "2026-05-19",
       "latest_before": "2026-05-15",
       "provider_error": null,
-      "refresh_status": "pending_no_source_data_for_target_date",
+      "refresh_status": "updated",
       "role": "ticker",
       "source_dates_returned": [
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-18",
+        "2026-05-19"
       ],
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/MRVL?period1=1778803200&period2=1779235200&interval=1d&events=history&includeAdjustedClose=true",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/MRVL?period1=1778803200&period2=1779321600&interval=1d&events=history&includeAdjustedClose=true",
       "symbol": "MRVL",
       "target_date": "2026-05-18",
-      "target_date_present": false
+      "target_date_present": true
     },
     {
-      "accepted_rows": 0,
+      "accepted_rows": 2,
       "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/MSFT.csv",
-      "fetched_rows": 1,
-      "issue": "target date 2026-05-18 is after current session date 2026-05-17; no valid target-date close accepted",
-      "latest_after": "2026-05-15",
+      "fetched_rows": 3,
+      "issue": null,
+      "latest_after": "2026-05-19",
       "latest_before": "2026-05-15",
       "provider_error": null,
-      "refresh_status": "pending_no_source_data_for_target_date",
+      "refresh_status": "updated",
       "role": "ticker",
       "source_dates_returned": [
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-18",
+        "2026-05-19"
       ],
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/MSFT?period1=1778803200&period2=1779235200&interval=1d&events=history&includeAdjustedClose=true",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/MSFT?period1=1778803200&period2=1779321600&interval=1d&events=history&includeAdjustedClose=true",
       "symbol": "MSFT",
       "target_date": "2026-05-18",
-      "target_date_present": false
+      "target_date_present": true
     },
     {
-      "accepted_rows": 0,
+      "accepted_rows": 2,
       "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/MU.csv",
-      "fetched_rows": 1,
-      "issue": "target date 2026-05-18 is after current session date 2026-05-17; no valid target-date close accepted",
-      "latest_after": "2026-05-15",
+      "fetched_rows": 3,
+      "issue": null,
+      "latest_after": "2026-05-19",
       "latest_before": "2026-05-15",
       "provider_error": null,
-      "refresh_status": "pending_no_source_data_for_target_date",
+      "refresh_status": "updated",
       "role": "ticker",
       "source_dates_returned": [
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-18",
+        "2026-05-19"
       ],
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/MU?period1=1778803200&period2=1779235200&interval=1d&events=history&includeAdjustedClose=true",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/MU?period1=1778803200&period2=1779321600&interval=1d&events=history&includeAdjustedClose=true",
       "symbol": "MU",
       "target_date": "2026-05-18",
-      "target_date_present": false
+      "target_date_present": true
     },
     {
-      "accepted_rows": 0,
+      "accepted_rows": 2,
       "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/NET.csv",
-      "fetched_rows": 1,
-      "issue": "target date 2026-05-18 is after current session date 2026-05-17; no valid target-date close accepted",
-      "latest_after": "2026-05-15",
+      "fetched_rows": 3,
+      "issue": null,
+      "latest_after": "2026-05-19",
       "latest_before": "2026-05-15",
       "provider_error": null,
-      "refresh_status": "pending_no_source_data_for_target_date",
+      "refresh_status": "updated",
       "role": "ticker",
       "source_dates_returned": [
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-18",
+        "2026-05-19"
       ],
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/NET?period1=1778803200&period2=1779235200&interval=1d&events=history&includeAdjustedClose=true",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/NET?period1=1778803200&period2=1779321600&interval=1d&events=history&includeAdjustedClose=true",
       "symbol": "NET",
       "target_date": "2026-05-18",
-      "target_date_present": false
+      "target_date_present": true
     },
     {
-      "accepted_rows": 0,
+      "accepted_rows": 2,
       "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/NFLX.csv",
-      "fetched_rows": 1,
-      "issue": "target date 2026-05-18 is after current session date 2026-05-17; no valid target-date close accepted",
-      "latest_after": "2026-05-15",
+      "fetched_rows": 3,
+      "issue": null,
+      "latest_after": "2026-05-19",
       "latest_before": "2026-05-15",
       "provider_error": null,
-      "refresh_status": "pending_no_source_data_for_target_date",
+      "refresh_status": "updated",
       "role": "ticker",
       "source_dates_returned": [
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-18",
+        "2026-05-19"
       ],
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/NFLX?period1=1778803200&period2=1779235200&interval=1d&events=history&includeAdjustedClose=true",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/NFLX?period1=1778803200&period2=1779321600&interval=1d&events=history&includeAdjustedClose=true",
       "symbol": "NFLX",
       "target_date": "2026-05-18",
-      "target_date_present": false
+      "target_date_present": true
     },
     {
-      "accepted_rows": 0,
+      "accepted_rows": 2,
       "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/NOW.csv",
-      "fetched_rows": 1,
-      "issue": "target date 2026-05-18 is after current session date 2026-05-17; no valid target-date close accepted",
-      "latest_after": "2026-05-15",
+      "fetched_rows": 3,
+      "issue": null,
+      "latest_after": "2026-05-19",
       "latest_before": "2026-05-15",
       "provider_error": null,
-      "refresh_status": "pending_no_source_data_for_target_date",
+      "refresh_status": "updated",
       "role": "ticker",
       "source_dates_returned": [
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-18",
+        "2026-05-19"
       ],
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/NOW?period1=1778803200&period2=1779235200&interval=1d&events=history&includeAdjustedClose=true",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/NOW?period1=1778803200&period2=1779321600&interval=1d&events=history&includeAdjustedClose=true",
       "symbol": "NOW",
       "target_date": "2026-05-18",
-      "target_date_present": false
+      "target_date_present": true
     },
     {
-      "accepted_rows": 0,
+      "accepted_rows": 2,
       "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/NVDA.csv",
-      "fetched_rows": 1,
-      "issue": "target date 2026-05-18 is after current session date 2026-05-17; no valid target-date close accepted",
-      "latest_after": "2026-05-15",
+      "fetched_rows": 3,
+      "issue": null,
+      "latest_after": "2026-05-19",
       "latest_before": "2026-05-15",
       "provider_error": null,
-      "refresh_status": "pending_no_source_data_for_target_date",
+      "refresh_status": "updated",
       "role": "ticker",
       "source_dates_returned": [
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-18",
+        "2026-05-19"
       ],
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/NVDA?period1=1778803200&period2=1779235200&interval=1d&events=history&includeAdjustedClose=true",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/NVDA?period1=1778803200&period2=1779321600&interval=1d&events=history&includeAdjustedClose=true",
       "symbol": "NVDA",
       "target_date": "2026-05-18",
-      "target_date_present": false
+      "target_date_present": true
     },
     {
-      "accepted_rows": 0,
+      "accepted_rows": 2,
       "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/PANW.csv",
-      "fetched_rows": 1,
-      "issue": "target date 2026-05-18 is after current session date 2026-05-17; no valid target-date close accepted",
-      "latest_after": "2026-05-15",
+      "fetched_rows": 3,
+      "issue": null,
+      "latest_after": "2026-05-19",
       "latest_before": "2026-05-15",
       "provider_error": null,
-      "refresh_status": "pending_no_source_data_for_target_date",
+      "refresh_status": "updated",
       "role": "ticker",
       "source_dates_returned": [
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-18",
+        "2026-05-19"
       ],
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/PANW?period1=1778803200&period2=1779235200&interval=1d&events=history&includeAdjustedClose=true",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/PANW?period1=1778803200&period2=1779321600&interval=1d&events=history&includeAdjustedClose=true",
       "symbol": "PANW",
       "target_date": "2026-05-18",
-      "target_date_present": false
+      "target_date_present": true
     },
     {
-      "accepted_rows": 0,
+      "accepted_rows": 2,
       "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/PLUG.csv",
-      "fetched_rows": 1,
-      "issue": "target date 2026-05-18 is after current session date 2026-05-17; no valid target-date close accepted",
-      "latest_after": "2026-05-15",
+      "fetched_rows": 3,
+      "issue": null,
+      "latest_after": "2026-05-19",
       "latest_before": "2026-05-15",
       "provider_error": null,
-      "refresh_status": "pending_no_source_data_for_target_date",
+      "refresh_status": "updated",
       "role": "ticker",
       "source_dates_returned": [
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-18",
+        "2026-05-19"
       ],
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/PLUG?period1=1778803200&period2=1779235200&interval=1d&events=history&includeAdjustedClose=true",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/PLUG?period1=1778803200&period2=1779321600&interval=1d&events=history&includeAdjustedClose=true",
       "symbol": "PLUG",
       "target_date": "2026-05-18",
-      "target_date_present": false
+      "target_date_present": true
     },
     {
-      "accepted_rows": 0,
+      "accepted_rows": 2,
       "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/QBTS.csv",
-      "fetched_rows": 1,
-      "issue": "target date 2026-05-18 is after current session date 2026-05-17; no valid target-date close accepted",
-      "latest_after": "2026-05-15",
+      "fetched_rows": 3,
+      "issue": null,
+      "latest_after": "2026-05-19",
       "latest_before": "2026-05-15",
       "provider_error": null,
-      "refresh_status": "pending_no_source_data_for_target_date",
+      "refresh_status": "updated",
       "role": "ticker",
       "source_dates_returned": [
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-18",
+        "2026-05-19"
       ],
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/QBTS?period1=1778803200&period2=1779235200&interval=1d&events=history&includeAdjustedClose=true",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/QBTS?period1=1778803200&period2=1779321600&interval=1d&events=history&includeAdjustedClose=true",
       "symbol": "QBTS",
       "target_date": "2026-05-18",
-      "target_date_present": false
+      "target_date_present": true
     },
     {
-      "accepted_rows": 0,
+      "accepted_rows": 2,
       "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/QCOM.csv",
-      "fetched_rows": 1,
-      "issue": "target date 2026-05-18 is after current session date 2026-05-17; no valid target-date close accepted",
-      "latest_after": "2026-05-15",
+      "fetched_rows": 3,
+      "issue": null,
+      "latest_after": "2026-05-19",
       "latest_before": "2026-05-15",
       "provider_error": null,
-      "refresh_status": "pending_no_source_data_for_target_date",
+      "refresh_status": "updated",
       "role": "ticker",
       "source_dates_returned": [
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-18",
+        "2026-05-19"
       ],
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/QCOM?period1=1778803200&period2=1779235200&interval=1d&events=history&includeAdjustedClose=true",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/QCOM?period1=1778803200&period2=1779321600&interval=1d&events=history&includeAdjustedClose=true",
       "symbol": "QCOM",
       "target_date": "2026-05-18",
-      "target_date_present": false
+      "target_date_present": true
     },
     {
-      "accepted_rows": 0,
+      "accepted_rows": 2,
       "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/QQQ.csv",
-      "fetched_rows": 1,
-      "issue": "target date 2026-05-18 is after current session date 2026-05-17; no valid target-date close accepted",
-      "latest_after": "2026-05-15",
+      "fetched_rows": 3,
+      "issue": null,
+      "latest_after": "2026-05-19",
       "latest_before": "2026-05-15",
       "provider_error": null,
-      "refresh_status": "pending_no_source_data_for_target_date",
+      "refresh_status": "updated",
       "role": "benchmark",
       "source_dates_returned": [
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-18",
+        "2026-05-19"
       ],
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/QQQ?period1=1778803200&period2=1779235200&interval=1d&events=history&includeAdjustedClose=true",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/QQQ?period1=1778803200&period2=1779321600&interval=1d&events=history&includeAdjustedClose=true",
       "symbol": "QQQ",
       "target_date": "2026-05-18",
-      "target_date_present": false
+      "target_date_present": true
     },
     {
-      "accepted_rows": 0,
+      "accepted_rows": 2,
       "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/RGTI.csv",
-      "fetched_rows": 1,
-      "issue": "target date 2026-05-18 is after current session date 2026-05-17; no valid target-date close accepted",
-      "latest_after": "2026-05-15",
+      "fetched_rows": 3,
+      "issue": null,
+      "latest_after": "2026-05-19",
       "latest_before": "2026-05-15",
       "provider_error": null,
-      "refresh_status": "pending_no_source_data_for_target_date",
+      "refresh_status": "updated",
       "role": "ticker",
       "source_dates_returned": [
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-18",
+        "2026-05-19"
       ],
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/RGTI?period1=1778803200&period2=1779235200&interval=1d&events=history&includeAdjustedClose=true",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/RGTI?period1=1778803200&period2=1779321600&interval=1d&events=history&includeAdjustedClose=true",
       "symbol": "RGTI",
       "target_date": "2026-05-18",
-      "target_date_present": false
+      "target_date_present": true
     },
     {
-      "accepted_rows": 0,
+      "accepted_rows": 2,
       "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/RIVN.csv",
-      "fetched_rows": 1,
-      "issue": "target date 2026-05-18 is after current session date 2026-05-17; no valid target-date close accepted",
-      "latest_after": "2026-05-15",
+      "fetched_rows": 3,
+      "issue": null,
+      "latest_after": "2026-05-19",
       "latest_before": "2026-05-15",
       "provider_error": null,
-      "refresh_status": "pending_no_source_data_for_target_date",
+      "refresh_status": "updated",
       "role": "ticker",
       "source_dates_returned": [
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-18",
+        "2026-05-19"
       ],
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/RIVN?period1=1778803200&period2=1779235200&interval=1d&events=history&includeAdjustedClose=true",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/RIVN?period1=1778803200&period2=1779321600&interval=1d&events=history&includeAdjustedClose=true",
       "symbol": "RIVN",
       "target_date": "2026-05-18",
-      "target_date_present": false
+      "target_date_present": true
     },
     {
-      "accepted_rows": 0,
+      "accepted_rows": 2,
       "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/RKLB.csv",
-      "fetched_rows": 1,
-      "issue": "target date 2026-05-18 is after current session date 2026-05-17; no valid target-date close accepted",
-      "latest_after": "2026-05-15",
+      "fetched_rows": 3,
+      "issue": null,
+      "latest_after": "2026-05-19",
       "latest_before": "2026-05-15",
       "provider_error": null,
-      "refresh_status": "pending_no_source_data_for_target_date",
+      "refresh_status": "updated",
       "role": "ticker",
       "source_dates_returned": [
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-18",
+        "2026-05-19"
       ],
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/RKLB?period1=1778803200&period2=1779235200&interval=1d&events=history&includeAdjustedClose=true",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/RKLB?period1=1778803200&period2=1779321600&interval=1d&events=history&includeAdjustedClose=true",
       "symbol": "RKLB",
       "target_date": "2026-05-18",
-      "target_date_present": false
+      "target_date_present": true
     },
     {
-      "accepted_rows": 0,
+      "accepted_rows": 2,
       "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/SMH.csv",
-      "fetched_rows": 1,
-      "issue": "target date 2026-05-18 is after current session date 2026-05-17; no valid target-date close accepted",
-      "latest_after": "2026-05-15",
+      "fetched_rows": 3,
+      "issue": null,
+      "latest_after": "2026-05-19",
       "latest_before": "2026-05-15",
       "provider_error": null,
-      "refresh_status": "pending_no_source_data_for_target_date",
+      "refresh_status": "updated",
       "role": "benchmark",
       "source_dates_returned": [
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-18",
+        "2026-05-19"
       ],
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/SMH?period1=1778803200&period2=1779235200&interval=1d&events=history&includeAdjustedClose=true",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/SMH?period1=1778803200&period2=1779321600&interval=1d&events=history&includeAdjustedClose=true",
       "symbol": "SMH",
       "target_date": "2026-05-18",
-      "target_date_present": false
+      "target_date_present": true
     },
     {
-      "accepted_rows": 0,
+      "accepted_rows": 2,
       "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/SNOW.csv",
-      "fetched_rows": 1,
-      "issue": "target date 2026-05-18 is after current session date 2026-05-17; no valid target-date close accepted",
-      "latest_after": "2026-05-15",
+      "fetched_rows": 3,
+      "issue": null,
+      "latest_after": "2026-05-19",
       "latest_before": "2026-05-15",
       "provider_error": null,
-      "refresh_status": "pending_no_source_data_for_target_date",
+      "refresh_status": "updated",
       "role": "ticker",
       "source_dates_returned": [
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-18",
+        "2026-05-19"
       ],
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/SNOW?period1=1778803200&period2=1779235200&interval=1d&events=history&includeAdjustedClose=true",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/SNOW?period1=1778803200&period2=1779321600&interval=1d&events=history&includeAdjustedClose=true",
       "symbol": "SNOW",
       "target_date": "2026-05-18",
-      "target_date_present": false
+      "target_date_present": true
     },
     {
-      "accepted_rows": 0,
+      "accepted_rows": 2,
       "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/SPY.csv",
-      "fetched_rows": 1,
-      "issue": "target date 2026-05-18 is after current session date 2026-05-17; no valid target-date close accepted",
-      "latest_after": "2026-05-15",
+      "fetched_rows": 3,
+      "issue": null,
+      "latest_after": "2026-05-19",
       "latest_before": "2026-05-15",
       "provider_error": null,
-      "refresh_status": "pending_no_source_data_for_target_date",
+      "refresh_status": "updated",
       "role": "benchmark",
       "source_dates_returned": [
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-18",
+        "2026-05-19"
       ],
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?period1=1778803200&period2=1779235200&interval=1d&events=history&includeAdjustedClose=true",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?period1=1778803200&period2=1779321600&interval=1d&events=history&includeAdjustedClose=true",
       "symbol": "SPY",
       "target_date": "2026-05-18",
-      "target_date_present": false
+      "target_date_present": true
     },
     {
-      "accepted_rows": 0,
+      "accepted_rows": 2,
       "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/ZS.csv",
-      "fetched_rows": 1,
-      "issue": "target date 2026-05-18 is after current session date 2026-05-17; no valid target-date close accepted",
-      "latest_after": "2026-05-15",
+      "fetched_rows": 3,
+      "issue": null,
+      "latest_after": "2026-05-19",
       "latest_before": "2026-05-15",
       "provider_error": null,
-      "refresh_status": "pending_no_source_data_for_target_date",
+      "refresh_status": "updated",
       "role": "ticker",
       "source_dates_returned": [
-        "2026-05-15"
+        "2026-05-15",
+        "2026-05-18",
+        "2026-05-19"
       ],
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/ZS?period1=1778803200&period2=1779235200&interval=1d&events=history&includeAdjustedClose=true",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/ZS?period1=1778803200&period2=1779321600&interval=1d&events=history&includeAdjustedClose=true",
       "symbol": "ZS",
       "target_date": "2026-05-18",
-      "target_date_present": false
+      "target_date_present": true
     }
   ],
-  "status": "pending",
+  "status": "ready",
   "target_price_date": "2026-05-18"
 }

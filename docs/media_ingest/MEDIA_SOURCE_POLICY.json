@@ -1,0 +1,57 @@
+{
+  "schema_version": "1.0",
+  "status": "internal_policy",
+  "allowed_sources": [
+    "owned_audio_or_video_files",
+    "public_company_webcasts_where_terms_permit_internal_use",
+    "legitimate_ir_or_earnings_call_sources",
+    "youtube_videos_for_short_summary_analysis_or_timestamped_paraphrase",
+    "manually_provided_transcripts_with_rights_and_source_identity"
+  ],
+  "forbidden_sources": [
+    "paywall_login_or_drm_circumvention",
+    "mass_scraping_or_bulk_downloads",
+    "long_copyrighted_quotes",
+    "full_third_party_transcript_reproduction",
+    "music_or_song_lyrics_beyond_minimal_allowed_excerpt",
+    "automatic_public_publication_from_transcript",
+    "primary_evidence_use_without_source_review"
+  ],
+  "download_rule": {
+    "operator_go_required": true,
+    "helpers_may_download": false,
+    "helpers_may_call_external_api": false,
+    "helpers_may_fetch_youtube": false,
+    "required_fields": [
+      "source_url_or_local_source_path",
+      "source_owner",
+      "intended_use",
+      "rights_status",
+      "download_performed",
+      "download_operator_approval",
+      "approval_timestamp"
+    ]
+  },
+  "evidence_rule": {
+    "transcript_status": "evidence_candidate_not_truth",
+    "promotion_requirements": [
+      "source_authenticity_check",
+      "timestamp",
+      "speaker_attribution",
+      "rights_use_check",
+      "hard_claim_verification_where_required"
+    ]
+  },
+  "source_rank": {
+    "official_ir_company_channel": "high_candidate_rank_still_requires_review",
+    "sec_or_official_release_cited_in_media": "verify_against_primary_source_before_use",
+    "vendor_third_party_youtube_podcast_interview": "low_to_medium_context_only_without_verification",
+    "owned_material": "internal_notes_allowed_report_public_use_gated"
+  },
+  "quote_rule": {
+    "default": "paraphrase",
+    "short_excerpt_only": true,
+    "timestamp_and_source_required": true,
+    "copyright_limits_apply": true
+  }
+}

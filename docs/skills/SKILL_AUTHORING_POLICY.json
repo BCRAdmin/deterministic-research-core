@@ -1,0 +1,63 @@
+{
+  "schema_version": "1.0",
+  "status": "active_draft",
+  "scope": ["internal_playbooks", "LIONCOM", "Vega", "Vivi", "Room16"],
+  "goal": "Internal skills and playbooks stay short, maintainable, operator-safe and Obsidian-compatible.",
+  "structure": {
+    "SKILL.md": "core_instruction_only",
+    "references": "long_details_examples_schema_notes",
+    "scripts": "reviewed_bounded_helpers_only_when_needed",
+    "assets": "templates_images_fixtures_non_code_support"
+  },
+  "progressive_disclosure": [
+    "keep_main_instruction_short",
+    "details_on_demand",
+    "examples_only_when_they_prevent_real_mistakes",
+    "risk_boundaries_verification_visible_in_main_file"
+  ],
+  "required_metadata": [
+    "name",
+    "purpose",
+    "scope",
+    "allowed_actions",
+    "forbidden_actions",
+    "required_inputs",
+    "outputs",
+    "risk_class",
+    "operator_gates",
+    "tests_or_verification"
+  ],
+  "forbidden": [
+    "unspecific_prompts",
+    "make_everything_better",
+    "memory_layer_without_obsidian_promotion",
+    "silent_network_access",
+    "hidden_update_logic",
+    "unbounded_file_access",
+    "unbounded_autonomy",
+    "credential_secret_reads_without_operator_gate",
+    "desktop_browser_control_without_sandbox",
+    "production_money_email_deploy_delete_account_actions_without_gate",
+    "verification_claims_without_evidence"
+  ],
+  "skill_types": [
+    "SOP-only",
+    "review checklist",
+    "codex handoff",
+    "local utility",
+    "sandbox-only",
+    "blocked"
+  ],
+  "acceptance_checklist": [
+    "short_enough",
+    "no_scope_creep",
+    "clear_do_not_touch_boundaries",
+    "testable",
+    "outputs_and_evidence_named",
+    "risk_class_and_operator_gates_named",
+    "obsidian_backbone_compatible",
+    "does_not_duplicate_existing_capability_without_reason",
+    "does_not_install_or_enable_by_documentation"
+  ],
+  "runtime_changes": false
+}

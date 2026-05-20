@@ -1,0 +1,91 @@
+{
+  "schema_version": "1.0",
+  "status": "active_draft",
+  "scope": ["LIONCOM", "Vega", "Vivi", "Obsidian", "Room16"],
+  "goal": "Self-improving patterns flow through the existing Obsidian-backed memory and review system.",
+  "truth_layer": {
+    "primary": "Obsidian / Human Overview",
+    "controlled_write_targets": [
+      "Latest Session Context",
+      "Project Notes",
+      "Canonical Notes",
+      "Memory/Learnings and Fixes.md",
+      "Review Queue"
+    ],
+    "temporary_learnings_are_truth": false
+  },
+  "tiers": {
+    "HOT": "temporary_session_or_run_note",
+    "WARM": "recurring_pattern_candidate_not_promoted",
+    "COLD": "archived_historical_inactive",
+    "BACKBONE": "confirmed_durable_rule_project_truth_or_canonical_fact"
+  },
+  "promotion_rules": [
+    {"evidence": "1_observation", "tier": "HOT", "action": "record_with_uncertainty"},
+    {"evidence": "2_repetitions", "tier": "WARM_candidate", "action": "create_pattern_key_and_check_scope_risk"},
+    {"evidence": "3_repetitions_plus_evidence", "tier": "promotion_candidate", "action": "prepare_vivi_review_or_operator_go"},
+    {"evidence": "vivi_review_or_operator_go_plus_evidence", "tier": "BACKBONE", "action": "write_smallest_durable_rule"}
+  ],
+  "pattern_key_fields": [
+    "pattern_key",
+    "recurrence_count",
+    "first_seen",
+    "last_seen",
+    "evidence_artifacts",
+    "affected_project",
+    "proposed_rule",
+    "risk",
+    "promotion_decision",
+    "reviewer"
+  ],
+  "allowed_writes": {
+    "without_backbone_promotion": [
+      "temporary_run_notes",
+      "run_local_wal_entries",
+      "project_local_learning_files_with_explicit_status",
+      "review_proposals",
+      "evidence_manifests"
+    ],
+    "explicit_promotion_only": [
+      "Latest Session Context",
+      "Project Notes",
+      "Canonical Notes",
+      "durable_behavior_rules",
+      "cross_project_memory_rules"
+    ]
+  },
+  "forbidden_writes": [
+    "global_memory_updates_without_gate",
+    "overwriting_existing_project_truth",
+    "private_secret_credential_token_account_oauth_data_in_learning_files",
+    "runtime_behavior_change_without_review",
+    "background_memory_mutation",
+    "silent_operator_gate_relaxation",
+    "temporary_evidence_to_permanent_truth_without_gate"
+  ],
+  "verify_implementation_not_intent": {
+    "required": true,
+    "valid_evidence": [
+      "tests",
+      "parser_checker_result",
+      "artifact_diff",
+      "reviewed_bundle",
+      "dashboard_status",
+      "api_or_browser_smoke",
+      "source_verification_manifest",
+      "vqg_or_vega_review_result"
+    ]
+  },
+  "wal_lite_fields": [
+    "run_id",
+    "started_at",
+    "scope",
+    "planned_action",
+    "completed_action",
+    "evidence_path",
+    "unresolved",
+    "next_allowed_step",
+    "operator_gate_required"
+  ],
+  "runtime_changes": false
+}

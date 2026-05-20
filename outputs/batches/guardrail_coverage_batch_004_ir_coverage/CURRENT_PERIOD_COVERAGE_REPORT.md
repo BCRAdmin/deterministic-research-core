@@ -2,38 +2,41 @@
 
 - Current fixture coverage: `32/32`
 - Context ready: `32/32`
+- Superseded: `1`
 
-| Ticker | Fixture | SEC | Co FCF | SEC FCF | Guidance | Segment | Ready |
-|---|---|---|---|---|---|---|---|
-| GOOGL | yes | yes | yes | no | no | yes | yes |
-| SNOW | yes | yes | yes | no | yes | yes | yes |
-| MSFT | yes | yes | no | no | no | yes | yes |
-| AAPL | yes | yes | no | no | yes | no | yes |
-| META | yes | yes | no | no | yes | no | yes |
-| AMZN | yes | yes | yes | no | no | no | yes |
-| NFLX | yes | yes | no | no | no | no | yes |
-| CRM | yes | yes | yes | no | no | no | yes |
-| DDOG | yes | yes | yes | no | no | no | yes |
-| NOW | yes | yes | no | yes | no | no | yes |
-| MDB | yes | yes | no | yes | no | no | yes |
-| NET | yes | yes | no | yes | no | no | yes |
-| ZS | yes | yes | no | yes | no | no | yes |
-| CRWD | yes | yes | no | yes | no | no | yes |
-| PANW | yes | yes | no | no | yes | no | yes |
-| NVDA | yes | yes | no | yes | no | no | yes |
-| AMD | yes | yes | no | yes | no | no | yes |
-| AVGO | yes | yes | no | no | yes | yes | yes |
-| QCOM | yes | yes | no | no | no | no | yes |
-| MU | yes | yes | no | yes | no | no | yes |
-| MRVL | yes | yes | no | yes | no | no | yes |
-| INTC | yes | yes | no | yes | no | no | yes |
-| RGTI | yes | yes | no | yes | no | no | yes |
-| IONQ | yes | yes | no | yes | no | no | yes |
-| QBTS | yes | yes | no | yes | no | no | yes |
-| RKLB | yes | yes | yes | no | yes | yes | yes |
-| ASTS | yes | yes | no | yes | no | no | yes |
-| ACHR | yes | yes | no | yes | no | no | yes |
-| JOBY | yes | yes | no | yes | no | no | yes |
-| RIVN | yes | yes | no | yes | no | no | yes |
-| LCID | yes | yes | no | yes | no | no | yes |
-| PLUG | yes | yes | no | yes | no | no | yes |
+> QCOM: Superseded by manual_focus_guardrail_final_check. Do not use for promotion.
+
+| Ticker | Status | Fixture | SEC | Co FCF | SEC FCF | Guidance | Segment | Ready | Superseded |
+|---|---|---|---|---|---|---|---|---|---|
+| GOOGL | passed | yes | yes | yes | no | no | yes | yes | no |
+| SNOW | passed | yes | yes | yes | no | yes | yes | yes | no |
+| MSFT | passed | yes | yes | no | no | no | yes | yes | no |
+| AAPL | passed | yes | yes | no | no | yes | no | yes | no |
+| META | passed | yes | yes | no | no | yes | no | yes | no |
+| AMZN | manual_review | yes | yes | yes | no | no | no | yes | no |
+| NFLX | passed | yes | yes | no | no | no | no | yes | no |
+| CRM | passed | yes | yes | yes | no | no | no | yes | no |
+| DDOG | passed | yes | yes | yes | no | no | no | yes | no |
+| NOW | manual_review | yes | yes | no | yes | no | no | yes | no |
+| MDB | manual_review | yes | yes | no | yes | no | no | yes | no |
+| NET | manual_review | yes | yes | no | yes | no | no | yes | no |
+| ZS | manual_review | yes | yes | no | yes | no | no | yes | no |
+| CRWD | manual_review | yes | yes | no | yes | no | no | yes | no |
+| PANW | manual_review | yes | yes | no | no | yes | no | yes | no |
+| NVDA | manual_review | yes | yes | no | yes | no | no | yes | no |
+| AMD | manual_review | yes | yes | no | yes | no | no | yes | no |
+| AVGO | passed | yes | yes | no | no | yes | yes | yes | no |
+| QCOM | manual_review | yes | yes | no | no | no | no | yes | yes |
+| MU | manual_review | yes | yes | no | yes | no | no | yes | no |
+| MRVL | manual_review | yes | yes | no | yes | no | no | yes | no |
+| INTC | manual_review | yes | yes | no | yes | no | no | yes | no |
+| RGTI | manual_review | yes | yes | no | yes | no | no | yes | no |
+| IONQ | manual_review | yes | yes | no | yes | no | no | yes | no |
+| QBTS | manual_review | yes | yes | no | yes | no | no | yes | no |
+| RKLB | manual_review | yes | yes | yes | no | yes | yes | yes | no |
+| ASTS | manual_review | yes | yes | no | yes | no | no | yes | no |
+| ACHR | manual_review | yes | yes | no | yes | no | no | yes | no |
+| JOBY | manual_review | yes | yes | no | yes | no | no | yes | no |
+| RIVN | manual_review | yes | yes | no | yes | no | no | yes | no |
+| LCID | manual_review | yes | yes | no | yes | no | no | yes | no |
+| PLUG | manual_review | yes | yes | no | yes | no | no | yes | no |

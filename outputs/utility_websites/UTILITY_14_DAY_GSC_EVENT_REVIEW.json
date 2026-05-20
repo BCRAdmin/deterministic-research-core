@@ -1,0 +1,157 @@
+{
+  "generated_at": "2026-05-21T00:14:40+02:00",
+  "review_name": "UTILITY_14_DAY_GSC_EVENT_REVIEW",
+  "review_status": "pending_not_mature",
+  "planned_better_14_day_review_date": "2026-06-01",
+  "decision": "continue_monitoring",
+  "secondary_decision": "no_action",
+  "source_references": [
+    "outputs/utility_websites/UTILITY_14_DAY_REVIEW_PLAN.json",
+    "outputs/utility_websites/MATERIALBEDARF_NO_ADS_REVENUE_ROADMAP.json",
+    "outputs/utility_websites/MONETIZATION_READINESS_BOARD.json",
+    "/Users/BjornRosinger/Downloads/Utility webseiten/outputs/utility_websites/NEXT_GSC_EVENT_REVIEW_READINESS.md",
+    "/Users/BjornRosinger/Downloads/Utility webseiten/outputs/utility_websites/GSC_WAITING_WINDOW.md",
+    "/Users/BjornRosinger/Downloads/Utility webseiten/outputs/utility_websites/EVENT_TRACKING_VERIFICATION.md",
+    "/Users/BjornRosinger/Dreamfactory/utility webseite/materialbedarf-rechner.de/ops/GSC_LIVE_DASHBOARD_CHECK_2026-05-17.md",
+    "/Users/BjornRosinger/Dreamfactory/utility webseite/mein-elterngeldrechner.de/ops/GSC_LIVE_DASHBOARD_CHECK_2026-05-17.md",
+    "/Users/BjornRosinger/Downloads/Utility webseiten/outputs/utility_websites/AFFILIATE_PARTNER_PREP_NEXT.md",
+    "/Users/BjornRosinger/Downloads/Utility webseiten/outputs/utility_websites/ADSENSE_FREEZE_DECISION.md",
+    "/Users/BjornRosinger/Downloads/Utility webseiten/outputs/utility_websites/CMP_BRANCH_CLOSED_DECISION.md"
+  ],
+  "data_availability": {
+    "gsc_outcome_export_available": false,
+    "plausible_event_counts_available": false,
+    "affiliate_partner_prep_status_available": true,
+    "cmp_ads_status_available": true,
+    "baseline_gsc_available": true,
+    "baseline_only_not_outcome": true
+  },
+  "gsc_metrics": [
+    {
+      "metric": "impressions",
+      "data_available": false,
+      "value": null,
+      "reason": "No fresh GSC export for the 14-day outcome window is locally available."
+    },
+    {
+      "metric": "clicks",
+      "data_available": false,
+      "value": null,
+      "reason": "No fresh GSC export for the 14-day outcome window is locally available."
+    },
+    {
+      "metric": "ctr",
+      "data_available": false,
+      "value": null,
+      "reason": "No fresh GSC export for the 14-day outcome window is locally available."
+    },
+    {
+      "metric": "average_position",
+      "data_available": false,
+      "value": null,
+      "reason": "No fresh GSC export for the 14-day outcome window is locally available."
+    }
+  ],
+  "baseline_reference": [
+    {
+      "site": "materialbedarf-rechner.de",
+      "window": "2026-04-20_to_2026-05-14",
+      "clicks": 25,
+      "impressions": 1770,
+      "ctr_percent": 1.4,
+      "average_position": 21.1,
+      "is_outcome_window": false
+    },
+    {
+      "site": "mein-elterngeldrechner.de",
+      "window": "2026-04-20_to_2026-05-14",
+      "clicks": 8,
+      "impressions": 2130,
+      "ctr_percent": 0.4,
+      "average_position": 19.0,
+      "is_outcome_window": false
+    }
+  ],
+  "event_metrics": [
+    {
+      "event": "calculator_submit",
+      "implemented": true,
+      "live_count_available": false,
+      "value": null
+    },
+    {
+      "event": "purchase_prep_expand",
+      "implemented": true,
+      "live_count_available": false,
+      "value": null
+    },
+    {
+      "event": "purchase_prep_copy",
+      "implemented": true,
+      "live_count_available": false,
+      "value": null
+    },
+    {
+      "event": "result_pdf_click",
+      "implemented": true,
+      "live_count_available": false,
+      "value": null
+    },
+    {
+      "event": "copy_material_list",
+      "implemented": true,
+      "live_count_available": false,
+      "value": null
+    },
+    {
+      "event": "email_draft_click",
+      "implemented": true,
+      "live_count_available": false,
+      "value": null,
+      "note": "mailto path is not forced in local E2E because it can trigger external protocol side effects"
+    },
+    {
+      "event": "outbound_product_category_click_placeholder",
+      "implemented": true,
+      "live_count_available": false,
+      "value": null,
+      "note": "placeholder only; real outbound links remain blocked"
+    }
+  ],
+  "affiliate_partner_prep": {
+    "status": "readiness_only",
+    "applications_started": false,
+    "partner_data_available": false,
+    "live_links_allowed": false,
+    "application_ready": false,
+    "reason": "Event thresholds and partner data are missing; Operator-Go still required."
+  },
+  "cmp_ads": {
+    "cmp_deferred": true,
+    "free_google_cmp_viable": false,
+    "paid_cmp_threshold_met": false,
+    "ads_disabled": true,
+    "adsense_frozen": true
+  },
+  "decision_matrix": {
+    "continue_monitoring": true,
+    "small_ctr_adjustment": false,
+    "materialbedarf_result_ux_adjustment": false,
+    "affiliate_partner_application_ready": false,
+    "no_action": true
+  },
+  "guardrails": {
+    "no_ads": true,
+    "no_paid_cmp": true,
+    "no_affiliate_live_links_without_partner_data": true,
+    "no_large_rewrites": true,
+    "no_new_roadmap_cuts_without_data": true
+  },
+  "blocking_issues": [
+    "No fresh GSC page/query export for the 14-day outcome window is locally available.",
+    "No Plausible event-count export/API result for the readiness events is locally available.",
+    "The current local date is before the planned better 14-day review date of 2026-06-01."
+  ],
+  "next_allowed_step": "Run the 14-day review after 2026-06-01 with fresh GSC exports and Plausible event counts.",
+  "runtime_changes": "none"
+}

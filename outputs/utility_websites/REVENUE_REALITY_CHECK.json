@@ -1,0 +1,28 @@
+{
+  "generated_at": "2026-05-21T00:00:00+02:00",
+  "status": "conservative",
+  "short_term_expected_revenue_eur": 0,
+  "adsense": "frozen",
+  "paid_cmp": "not_economic_now",
+  "first_revenue_condition": "after_affiliate_partner_approval_plus_traffic_and_purchase_intent",
+  "realistic_early_range_eur_per_month": {
+    "early": "0-50",
+    "conditional": "50-300",
+    "conditional_requirements": [
+      "traffic",
+      "purchase_intent",
+      "affiliate_approvals",
+      "conversion"
+    ]
+  },
+  "elterngeld_short_mid_term_revenue": "likely_0",
+  "no_revenue_promises": true,
+  "assumptions_required": [
+    "traffic",
+    "ctr",
+    "event_engagement",
+    "affiliate_approval",
+    "conversion"
+  ],
+  "runtime_changes": "none"
+}

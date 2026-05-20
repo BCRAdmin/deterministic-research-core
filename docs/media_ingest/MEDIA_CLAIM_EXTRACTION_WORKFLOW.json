@@ -1,0 +1,62 @@
+{
+  "schema_version": "1.0",
+  "status": "internal_workflow",
+  "output_lane": "evidence_candidates_only",
+  "core_rule": "media_claims_do_not_become_evidence_items_report_claims_packet_metrics_or_public_text_without_review_gate_promotion",
+  "steps": [
+    "read_transcript_metadata_json",
+    "confirm_rights_source_type_and_allowed_use",
+    "read_transcript_clean_md_with_timestamps_if_available",
+    "extract_atomic_claims_only",
+    "preserve_speaker_attribution",
+    "preserve_timestamp_or_mark_timestamp_missing",
+    "mark_unclear_transcription_spans",
+    "mark_hard_claims_requires_verification_true",
+    "write_evidence_candidates_json_and_claim_candidates_md"
+  ],
+  "outputs": [
+    "evidence_candidates.json",
+    "claim_candidates.md"
+  ],
+  "candidate_fields": [
+    "claim_text",
+    "speaker",
+    "timestamp",
+    "source_ref",
+    "confidence",
+    "requires_verification",
+    "usable_in_report",
+    "reason"
+  ],
+  "hard_claim_policy": {
+    "requires_primary_or_official_verification": true,
+    "hard_claim_types": [
+      "financial",
+      "kpi",
+      "guidance",
+      "valuation",
+      "strategy_commitment",
+      "regulatory"
+    ],
+    "youtube_podcast_vendor_media_alone_sufficient": false,
+    "official_ir_or_company_media_still_requires_review": true
+  },
+  "speaker_attribution": {
+    "required": true,
+    "unknown_value": "unknown_speaker",
+    "unknown_speaker_max_confidence": "low"
+  },
+  "usable_in_report_requirements": [
+    "source_allowed",
+    "paraphrased_or_short_excerpt",
+    "timestamp_present",
+    "speaker_attribution_present",
+    "hard_claim_independently_verified_or_framed_as_unverified_context"
+  ],
+  "acceptance": [
+    "candidate_auditable_to_source_metadata",
+    "candidate_auditable_to_timestamp",
+    "candidate_auditable_to_speaker",
+    "candidate_has_verification_need"
+  ]
+}

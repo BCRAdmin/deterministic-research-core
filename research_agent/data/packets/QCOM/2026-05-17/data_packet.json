@@ -1,6 +1,12 @@
 {
   "as_of_date": "2026-05-17",
-  "company_guidance_eps": null,
+  "company_guidance_eps": {
+    "basis": "non_gaap",
+    "high": 2.3,
+    "low": 2.1,
+    "period": "Q2_FY2026",
+    "source_type": "earnings_release"
+  },
   "company_name": "QUALCOMM INC/DE",
   "fiscal_context": {
     "fiscal_year_end": null,

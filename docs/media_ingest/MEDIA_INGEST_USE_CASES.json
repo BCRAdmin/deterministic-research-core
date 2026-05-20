@@ -1,0 +1,99 @@
+{
+  "schema_version": "1.0",
+  "status": "internal_playbook_only",
+  "runtime_activation": false,
+  "global_rules": {
+    "new_api_keys_allowed": false,
+    "downloads_without_operator_go_allowed": false,
+    "paywall_login_drm_circumvention_allowed": false,
+    "mass_downloads_allowed": false,
+    "long_copyrighted_quotes_allowed": false,
+    "auto_public_output_allowed": false,
+    "direct_report_use_without_evidence_gate_allowed": false,
+    "transcript_truth_status": "evidence_candidate_not_evidence"
+  },
+  "use_cases": [
+    {
+      "id": "earnings_call_transcription",
+      "name": "Earnings Call Audio/Video transcribe",
+      "allowed": true,
+      "required_operator_input": ["source_url_or_local_file", "company", "date", "rights_status", "download_approval_if_needed"],
+      "copyright_risk": "medium",
+      "source_reliability": "high_if_official_ir_source_medium_otherwise",
+      "evidence_use_allowed": "candidate_only",
+      "report_use_allowed": "after_source_authenticity_and_hard_claim_verification",
+      "required_review_gate": ["vivi_media_review", "room16_evidence_gate"]
+    },
+    {
+      "id": "investor_day_transcription",
+      "name": "Investor Day / Company Presentation transcribe",
+      "allowed": true,
+      "required_operator_input": ["source_url_or_local_file", "company", "event_date", "rights_status"],
+      "copyright_risk": "medium",
+      "source_reliability": "high_if_official_ir_source",
+      "evidence_use_allowed": "candidate_only",
+      "report_use_allowed": "after_source_authenticity_and_hard_claim_verification",
+      "required_review_gate": ["vivi_media_review", "room16_evidence_gate"]
+    },
+    {
+      "id": "youtube_interview_pretriage",
+      "name": "YouTube interview pre-triage as research source",
+      "allowed": true,
+      "required_operator_input": ["url", "channel_identity", "intended_use", "quote_limits"],
+      "copyright_risk": "medium_to_high",
+      "source_reliability": "low_to_medium_unless_official_company_ir_channel",
+      "evidence_use_allowed": "candidate_only",
+      "report_use_allowed": "paraphrase_or_timestamped_context_after_review_only",
+      "required_review_gate": ["vivi_media_review", "source_rank_check"]
+    },
+    {
+      "id": "podcast_audio_pretriage",
+      "name": "Podcast / audio source pre-triage",
+      "allowed": true,
+      "required_operator_input": ["source", "owner", "episode_date", "rights_status", "intended_use"],
+      "copyright_risk": "medium_to_high",
+      "source_reliability": "low_to_medium_unless_official_source",
+      "evidence_use_allowed": "candidate_only",
+      "report_use_allowed": "after_verification_against_primary_or_official_evidence",
+      "required_review_gate": ["vivi_media_review", "primary_source_check"]
+    },
+    {
+      "id": "utility_content_from_owned_video",
+      "name": "Utility-site content ideas from owned or permitted videos",
+      "allowed": true,
+      "required_operator_input": ["owned_or_permitted_source", "use_scope", "target_project"],
+      "copyright_risk": "low_if_owned_or_permitted",
+      "source_reliability": "medium",
+      "evidence_use_allowed": "not_room16_evidence_by_default",
+      "report_use_allowed": "draft_only_no_auto_publish",
+      "required_review_gate": ["operator_content_review"]
+    },
+    {
+      "id": "room16_evidence_candidate",
+      "name": "Room16 Evidence Candidate from transcript",
+      "allowed": true,
+      "required_operator_input": ["source_metadata", "timestamp", "speaker", "claim_type"],
+      "copyright_risk": "medium",
+      "source_reliability": "depends_on_source_rank",
+      "evidence_use_allowed": "candidate_only",
+      "report_use_allowed": "no_direct_report_use",
+      "required_review_gate": ["room16_evidence_candidate_gate"]
+    },
+    {
+      "id": "obsidian_note_from_owned_material",
+      "name": "Obsidian note from owned material",
+      "allowed": true,
+      "required_operator_input": ["owner_approval", "sensitivity_status", "target_note_type"],
+      "copyright_risk": "low_if_owned",
+      "source_reliability": "internal_memory_only",
+      "evidence_use_allowed": "not_evidence_by_default",
+      "report_use_allowed": "no_public_or_report_use",
+      "required_review_gate": ["obsidian_memory_promotion_map"]
+    }
+  ],
+  "acceptance": [
+    "media_ingest_stays_in_draft_or_candidate_lanes",
+    "source_metadata_is_preserved",
+    "promotion_requires_vivi_room16_evidence_review_or_operator_go"
+  ]
+}

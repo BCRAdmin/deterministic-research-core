@@ -1,0 +1,37 @@
+{
+  "generated_at": "2026-05-21T00:00:00+02:00",
+  "site": "mein-elterngeldrechner.de",
+  "status": "monitor_wait_for_more_data",
+  "current_status": {
+    "ads": "disabled",
+    "monetization": "blocked",
+    "affiliate": "none",
+    "funnel": "none",
+    "trust_copy_faq_result_meta": "improved",
+    "rewrite_policy": "no_further_rewrites_without_gsc_data"
+  },
+  "operating_mode": [
+    "monitor_gsc",
+    "maintain_trust_and_official_context",
+    "keep_sources_date_disclaimer_visible",
+    "no_legal_or_tax_advice",
+    "no_aggressive_ctas",
+    "wait_for_more_data"
+  ],
+  "allowed_future_actions": [
+    "title_meta_adjustment_if_gsc_supports",
+    "intro_clarity_if_data_or_user_confusion_supports",
+    "source_update_clarity",
+    "faq_as_user_help_not_schema_bait",
+    "official_source_checks_for_sensitive_claims"
+  ],
+  "blocked_actions": [
+    "ads",
+    "affiliate",
+    "email_funnel",
+    "aggressive_ctas",
+    "legal_or_tax_advice",
+    "broad_rewrites_without_fresh_data"
+  ],
+  "runtime_changes": "none"
+}

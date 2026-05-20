@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0",
+  "status": "memory_policy",
+  "core_rule": "media_ingest_must_not_create_second_memory_layer_beside_obsidian",
+  "allowed_writes": [
+    "draft_source_note_for_owned_or_permitted_material",
+    "temporary_run_note_inside_project_local_ingest_folder",
+    "candidate_summary_marked_draft_source_note_or_evidence_candidate",
+    "promotion_proposal_linking_transcript_metadata_and_review_status"
+  ],
+  "forbidden_writes": [
+    "global_obsidian_memory_update_without_gate",
+    "overwrite_existing_project_truth_from_transcript_material",
+    "sensitive_transcript_content_in_backbone_without_operator_go",
+    "full_third_party_transcripts_when_rights_unclear",
+    "confirmed_project_rule_or_fact_from_transcript_without_promotion"
+  ],
+  "promotion_requires": [
+    "source_allowed",
+    "rights_status_acceptable",
+    "claim_verified_where_needed",
+    "vivi_review_or_operator_go",
+    "evidence_artifacts_linked",
+    "no_secret_or_private_data_leakage"
+  ],
+  "recommended_draft_note_sections": [
+    "source_metadata",
+    "transcript_status",
+    "short_summary",
+    "candidate_claims",
+    "verification_needs",
+    "rights_use_notes",
+    "promotion_decision"
+  ],
+  "acceptance": [
+    "media_outputs_remain_drafts_or_source_notes_until_reviewed",
+    "durable_truth_written_only_through_existing_backbone_promotion_path"
+  ]
+}

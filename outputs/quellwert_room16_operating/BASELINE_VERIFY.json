@@ -1,0 +1,168 @@
+{
+  "artifact_consistency": {
+    "clean_count": 32,
+    "issue_count": 0,
+    "issues": [],
+    "status": "clean"
+  },
+  "artifact_presence_status": "pass",
+  "batch_id": "guardrail_coverage_batch_004_ir_coverage",
+  "coverage": {
+    "current_period_coverage": "32/32",
+    "listed_ticker_count": 32,
+    "price_basis_date": "2026-05-15",
+    "stale_price_basis_count": 0
+  },
+  "current_operating_truth": [
+    "Batch 004 is the green operating baseline.",
+    "manual_focus_guardrail_final_check supersedes raw Batch004 for QCOM, IONQ, RGTI, QBTS, and related manual-focus display checks."
+  ],
+  "generated_at": "2026-05-20T12:30:59Z",
+  "known_superseded_artifacts": [
+    {
+      "current_operating_state": "manual_review/Hold Pending FCF Support",
+      "observed_raw_state": "superseded marker retained with raw_batch004_snapshot; operator-facing fields now manual_review/Hold Pending FCF Support",
+      "operator_rule": "Do not use raw Batch004 QCOM passed state for promotion or passed-sample decisions.",
+      "raw_artifact": "outputs/batches/guardrail_coverage_batch_004_ir_coverage/QCOM/dashboard_item.json",
+      "superseding_artifact": "outputs/batches/manual_focus_guardrail_final_check/manual_focus_guardrail_final_check/dashboard_status.json",
+      "ticker": "QCOM"
+    }
+  ],
+  "market_readiness": {
+    "current_operating_readiness": "usable_with_review",
+    "current_reports_can_be_used_internally": true,
+    "decision": "GREEN",
+    "public_output_blocked": true
+  },
+  "operating_scope": "internal_operating_pilot_only_public_requires_promotion_gate",
+  "public_gate": {
+    "public_ready_without_promotion": [],
+    "rule": "No public-ready without promotion_status.public_ready=true and human/operator approval.",
+    "status": "pass"
+  },
+  "qcom_superseded_cleanup": {
+    "banner": "Superseded by manual_focus_guardrail_final_check. Do not use for promotion.",
+    "operator_facing_external_display_rating": "Hold Pending FCF Support",
+    "operator_facing_status": "manual_review",
+    "removed_from_public_passed_bundles": true,
+    "status": "applied"
+  },
+  "required_artifacts": [
+    {
+      "exists": true,
+      "path": "outputs/batches/guardrail_coverage_batch_004_ir_coverage/dashboard_status.json"
+    },
+    {
+      "exists": true,
+      "path": "outputs/batches/guardrail_coverage_batch_004_ir_coverage/batch_manifest.json"
+    },
+    {
+      "exists": true,
+      "path": "outputs/batches/guardrail_coverage_batch_004_ir_coverage/GUARDRAIL_COVERAGE_MATRIX.md"
+    },
+    {
+      "exists": true,
+      "path": "outputs/batches/guardrail_coverage_batch_004_ir_coverage/GUARDRAIL_COVERAGE_MATRIX.json"
+    },
+    {
+      "exists": true,
+      "path": "outputs/batches/guardrail_coverage_batch_004_ir_coverage/vivi_batch_review.json"
+    },
+    {
+      "exists": true,
+      "path": "outputs/batches/guardrail_coverage_batch_004_ir_coverage/MARKET_READINESS_DECISION.md"
+    },
+    {
+      "exists": true,
+      "path": "outputs/batches/guardrail_coverage_batch_004_ir_coverage/MARKET_READINESS_DECISION.json"
+    },
+    {
+      "exists": true,
+      "path": "outputs/batches/guardrail_coverage_batch_004_ir_coverage/chatgpt_publish_review_bundle.zip"
+    },
+    {
+      "exists": true,
+      "path": "outputs/batches/guardrail_coverage_batch_004_ir_coverage/chatgpt_manual_review_bundle.zip"
+    },
+    {
+      "exists": true,
+      "path": "outputs/batches/guardrail_coverage_batch_004_ir_coverage/chatgpt_problem_cases_bundle.zip"
+    }
+  ],
+  "special_cases": {
+    "GOOGL_SNOW_gold_v1": {
+      "GOOGL_artifact_consistency": {
+        "issue_count": 0,
+        "path": "outputs/batches/guardrail_coverage_batch_004_ir_coverage/GOOGL/artifact_consistency_report.json",
+        "status": "clean"
+      },
+      "SNOW_artifact_consistency": {
+        "issue_count": 0,
+        "path": "outputs/batches/guardrail_coverage_batch_004_ir_coverage/SNOW/artifact_consistency_report.json",
+        "status": "clean"
+      },
+      "package_check": {
+        "details": {
+          "issues": []
+        },
+        "id": "gold_v1_samples_preserved",
+        "status": "pass",
+        "summary": "GOOGL/SNOW Gold-v1 sample files remain present."
+      },
+      "status": "pass"
+    },
+    "MSFT_no_stale_deeptech_artifact": {
+      "artifact_consistency": {
+        "issue_count": 0,
+        "path": "outputs/batches/guardrail_coverage_batch_004_ir_coverage/MSFT/artifact_consistency_report.json",
+        "status": "clean"
+      },
+      "company_archetype": "MEGA_CAP_PLATFORM",
+      "status": "pass"
+    },
+    "QCOM_display_rule": {
+      "manual_focus_external_display_rating": "Hold Pending FCF Support",
+      "manual_focus_manual_review_reasons": [
+        "MISSING_FCF_SUPPORT_FOR_ACCUMULATE",
+        "EARNINGS_DATE_UNAVAILABLE",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT",
+        "SOURCE_FRAME_VARIANT_IGNORED"
+      ],
+      "manual_focus_status": "manual_review",
+      "raw_batch004_external_display_rating": "Accumulate",
+      "raw_batch004_fcf_support": {
+        "company_defined_fcf_used": 0,
+        "sec_derived_fcf_used": 0
+      },
+      "raw_batch004_status": "passed",
+      "status": "pass_by_manual_focus_overlay"
+    },
+    "RGTI_deeptech": {
+      "company_archetype": "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL",
+      "current_status": "manual_review",
+      "external_display_rating": "Manual Review / Preliminary Underweight",
+      "status": "pass"
+    },
+    "RKLB_early_commercial": {
+      "company_archetype": "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH",
+      "current_status": "manual_review",
+      "external_display_rating": "Manual Review / Hold Pending FCF and Execution Evidence",
+      "status": "pass"
+    }
+  },
+  "status": "pass_qcom_superseded_cleanup_applied",
+  "status_distribution_batch004": {
+    "manual_review": 22,
+    "passed": 10
+  },
+  "status_distribution_manual_focus": {
+    "manual_review": 5
+  },
+  "vivi_review": {
+    "blocking_issues": [],
+    "false_block_candidates": [],
+    "false_pass_candidates": [],
+    "review_status": "pass"
+  }
+}

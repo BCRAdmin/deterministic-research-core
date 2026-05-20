@@ -1,0 +1,49 @@
+{
+  "name": "Next Media Sample Backlog",
+  "status": "active_draft",
+  "scope": "Media Ingest Playbook next operator sample",
+  "risk_class": "R0_doc_only_pattern",
+  "runtime_changes": "none",
+  "allowed_sample_types": [
+    "operator_owned_audio_file",
+    "operator_owned_video_file",
+    "manually_provided_transcript",
+    "public_company_webcast_transcript_supplied_by_operator_with_source_url_and_allowed_use_note",
+    "synthetic_internal_test_sample_not_evidence"
+  ],
+  "operator_must_provide": [
+    "source_file_or_transcript_path",
+    "source_title",
+    "source_owner",
+    "source_url_if_public",
+    "date_and_duration_if_known",
+    "rights_use_status",
+    "allowed_use",
+    "local_processing_approval"
+  ],
+  "allowed_outputs_after_operator_input": [
+    "transcript_raw.txt",
+    "transcript_clean.md",
+    "transcript_metadata.json",
+    "claim_candidates.md",
+    "evidence_candidates.json",
+    "METADATA_VALIDATION.md",
+    "METADATA_VALIDATION.json",
+    "VIVI_MEDIA_INGEST_SAMPLE_REVIEW.json",
+    "MEDIA_INGEST_DRY_RUN_SUMMARY.md",
+    "MEDIA_INGEST_DRY_RUN_SUMMARY.json"
+  ],
+  "why_no_downloads_api_now": [
+    "no_operator_provided_real_sample_attached",
+    "no_api_key_use_approved",
+    "no_youtube_fetch_approved",
+    "no_rights_status_established_for_real_source"
+  ],
+  "next_allowed_step": "wait_for_operator_approved_sample_and_run_existing_media_ingest_dry_run",
+  "forbidden": [
+    "promote_claims_to_evidenceledger",
+    "modify_reports",
+    "download_or_fetch_without_operator_go",
+    "use_api_keys"
+  ]
+}

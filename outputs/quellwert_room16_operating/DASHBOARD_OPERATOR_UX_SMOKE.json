@@ -1,0 +1,35 @@
+{
+  "browser_smoke": {
+    "api_state_reachable": true,
+    "executed": true,
+    "live_state_limitation": "Current live Public Library had no visible markdown_first_qa or public_final rows; those lanes were validated through package samples, source scan, and verifier scripts.",
+    "manual_review_modal_opened": true,
+    "modal_showed_manual_review_reasons": true,
+    "placeholder_copy_found": false,
+    "public_actions_for_manual_review_disabled": true,
+    "public_freigabe_blockiert_count": 13,
+    "public_freigabe_setzen_count": 0,
+    "title": "Room 16",
+    "url": "http://127.0.0.1:4516/",
+    "visible_report_count": 13
+  },
+  "generated_at": "2026-05-19T02:28:39Z",
+  "source_scan": {
+    "audit_doc": "DASHBOARD_COPY_AUDIT.md",
+    "change_log": "DASHBOARD_COPY_CHANGELOG.md",
+    "manual_review_reasons_visible_in_source": true,
+    "placeholder_copy_absent": true,
+    "status_specific_modals_present": [
+      "markdown_first_qa",
+      "manual_review",
+      "internal_best",
+      "public_final"
+    ]
+  },
+  "status": "pass_with_live_state_limitation",
+  "verifiers": {
+    "npm_run_verify_manual_review_workbench": "pass",
+    "npm_run_verify_report_machine": "pass",
+    "npm_run_verify_review_operations": "pass"
+  }
+}

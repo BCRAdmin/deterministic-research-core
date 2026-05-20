@@ -1,0 +1,30 @@
+{
+  "generated_at": "2026-05-21T00:00:00+02:00",
+  "overall_status": "no_ads_operating_mode_adsense_frozen",
+  "monetization_release": "blocked",
+  "source_reference": "/Users/BjornRosinger/Downloads/Utility webseiten/outputs/utility_websites/MONETIZATION_READINESS_BOARD.md",
+  "sites": [
+    {
+      "site": "materialbedarf-rechner.de",
+      "ads_status": "disabled_until_cmp_economically_viable",
+      "cmp_status": "free_google_cmp_failed_paid_deferred",
+      "affiliate_status": "readiness_only",
+      "primary_focus": "seo_event_tracking_affiliate_partner_prep"
+    },
+    {
+      "site": "mein-elterngeldrechner.de",
+      "ads_status": "disabled_until_cmp_economically_viable",
+      "cmp_status": "free_google_cmp_failed_paid_deferred",
+      "affiliate_status": "not_active",
+      "primary_focus": "trust_content_monitoring"
+    }
+  ],
+  "release_gates": [
+    "affiliate_live_links_require_partner_data_disclosure_rel_attributes_event_thresholds_operator_go",
+    "paid_cmp_requires_20000_30000_pageviews_per_month_or_adsense_forecast_2x_cmp_cost",
+    "ads_stay_disabled_until_certified_tcf_flow_and_economic_paid_cmp",
+    "elterngeld_has_no_active_monetization_path"
+  ],
+  "current_decision": "no_monetization_release_continue_materialbedarf_readiness_and_elterngeld_monitoring",
+  "runtime_changes": "none"
+}

@@ -1,0 +1,37 @@
+{
+  "artifact_consistency_counts": {
+    "artifact_consistency_errors": 0,
+    "stale_archetype_artifacts": 0,
+    "stale_artifact_issues": 0,
+    "stale_diagnostic_status_references": 0,
+    "stale_rating_artifacts": 0
+  },
+  "artifact_consistency_error_count": 0,
+  "artifact_consistency_status": "clean",
+  "generated_at": "2026-05-20T12:56:58.198273+00:00",
+  "included_files": [
+    "artifact_consistency_report.json",
+    "dashboard_status.json",
+    "decision_packet.json",
+    "quality_score.json",
+    "report_manifest.json",
+    "reports/RGTI/2026-05-17/analyst_claims.json",
+    "reports/RGTI/2026-05-17/audit_report.json",
+    "reports/RGTI/2026-05-17/final_report.md",
+    "reports/RGTI/2026-05-17/internal_best_report.md",
+    "reports/RGTI/2026-05-17/manual_review_required.md",
+    "reports/RGTI/2026-05-17/publish_report.md",
+    "reports/RGTI/2026-05-17/publish_report_quality_score.json",
+    "reports/RGTI/2026-05-17/quality_score.json",
+    "reports/RGTI/2026-05-17/report_manifest.json",
+    "reports/RGTI_2026-05-17_report.md"
+  ],
+  "source_batch_id": null,
+  "source_of_truth_files": [
+    "report_manifest.json"
+  ],
+  "stale_artifact_issue_count": 0,
+  "tickers": [
+    "RGTI"
+  ]
+}

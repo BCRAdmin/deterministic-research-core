@@ -2,7 +2,7 @@
 
 ## Reconciliation Stats
 
-- Canonical metrics created: `1195`
+- Canonical metrics created: `1205`
 - `TRUE_SOURCE_VALUE_DISAGREEMENT`: `25`
 - `PERIOD_TYPE_MISMATCH_IGNORED`: `15`
 - `SOURCE_FRAME_VARIANT_IGNORED`: `1`
@@ -1202,10 +1202,20 @@
 | shares_diluted | CY2025Q4 | 1,079,000,000.00 shares | gaap | SEC_0000804328-26-000017 | high |
 | shares_diluted | Q2_FY2026_ytd | 1,075,000,000.00 shares | gaap | SEC_0000804328-26-000061 | high |
 | shares_diluted | CY2026Q1 | 1,072,000,000.00 shares | gaap | SEC_0000804328-26-000061 | high |
-| revenue | latest_companyfacts_ttm | 44,195,000,000.00 usd | gaap | QCOM_SEC_CURRENT_PERIOD_COMPANYFACTS_2026_05_15 | high |
-| operating_cash_flow | latest_companyfacts_ttm | 15,596,000,000.00 usd | gaap | QCOM_SEC_CURRENT_PERIOD_COMPANYFACTS_2026_05_15 | high |
-| sbc | latest_companyfacts_ttm | 2,883,000,000.00 usd | gaap | QCOM_SEC_CURRENT_PERIOD_COMPANYFACTS_2026_05_15 | high |
-| cash_and_equivalents | latest_companyfacts_instant | 7,203,000,000.00 usd | gaap | QCOM_SEC_CURRENT_PERIOD_COMPANYFACTS_2026_05_15 | high |
+| revenue | Q2_FY2026 | 10,599,000,000.00 usd | gaap | QCOM_IR_Q2_FY2026_EARNINGS_RELEASE | high |
+| operating_income | Q2_FY2026 | 2,309,000,000.00 usd | gaap | QCOM_IR_Q2_FY2026_EARNINGS_RELEASE | high |
+| net_income | Q2_FY2026 | 7,370,000,000.00 usd | gaap | QCOM_IR_Q2_FY2026_EARNINGS_RELEASE | high |
+| operating_cash_flow | H1_FY2026 | 7,414,000,000.00 usd | gaap | QCOM_IR_Q2_FY2026_EARNINGS_RELEASE | high |
+| capital_expenditures | H1_FY2026 | -1,082,000,000.00 usd | gaap | QCOM_IR_Q2_FY2026_EARNINGS_RELEASE | high |
+| calculated_fcf_from_release_cash_flow_ytd | H1_FY2026 | 6,332,000,000.00 usd | gaap | QCOM_IR_Q2_FY2026_EARNINGS_RELEASE | high |
+| sbc | H1_FY2026 | 1,749,000,000.00 usd | gaap | QCOM_IR_Q2_FY2026_EARNINGS_RELEASE | high |
+| qct_revenue | Q2_FY2026 | 9,076,000,000.00 usd | company_defined | QCOM_IR_Q2_FY2026_EARNINGS_RELEASE | high |
+| qtl_revenue | Q2_FY2026 | 1,382,000,000.00 usd | company_defined | QCOM_IR_Q2_FY2026_EARNINGS_RELEASE | high |
+| handsets_revenue | Q2_FY2026 | 6,024,000,000.00 usd | company_defined | QCOM_IR_Q2_FY2026_EARNINGS_RELEASE | high |
+| automotive_revenue | Q2_FY2026 | 1,326,000,000.00 usd | company_defined | QCOM_IR_Q2_FY2026_EARNINGS_RELEASE | high |
+| iot_revenue | Q2_FY2026 | 1,726,000,000.00 usd | company_defined | QCOM_IR_Q2_FY2026_EARNINGS_RELEASE | high |
+| q3_fy2026_revenue_guidance_low | Q3_FY2026_GUIDANCE | 9,200,000,000.00 usd | company_defined | QCOM_IR_Q2_FY2026_EARNINGS_RELEASE | high |
+| q3_fy2026_revenue_guidance_high | Q3_FY2026_GUIDANCE | 10,000,000,000.00 usd | company_defined | QCOM_IR_Q2_FY2026_EARNINGS_RELEASE | high |
 
 ## Top Unresolved Disagreements
 

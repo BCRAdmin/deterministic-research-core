@@ -2,7 +2,7 @@
 
 ## Reconciliation Stats
 
-- Canonical metrics created: `343`
+- Canonical metrics created: `347`
 - `PERIOD_TYPE_MISMATCH_IGNORED`: `11`
 
 ## Canonical Metrics
@@ -347,11 +347,15 @@
 | shares_diluted | CY2025Q3 | 342,204,831.00 shares | gaap | SEC_0001907982-25-000251 | high |
 | shares_diluted | CY2025 | 321,202,025.00 shares | gaap | SEC_0001907982-26-000026 | high |
 | shares_diluted | CY2026Q1 | 367,473,219.00 shares | gaap | SEC_0001907982-26-000059 | high |
-| revenue | latest_companyfacts_ttm | 24,693,000.00 usd | gaap | QBTS_SEC_CURRENT_PERIOD_COMPANYFACTS_2026_05_14 | high |
-| operating_cash_flow | latest_companyfacts_ttm | -89,932,000.00 usd | gaap | QBTS_SEC_CURRENT_PERIOD_COMPANYFACTS_2026_05_14 | high |
-| free_cash_flow | latest_companyfacts_ttm | -91,820,000.00 usd | gaap | QBTS_SEC_CURRENT_PERIOD_COMPANYFACTS_2026_05_14 | high |
-| sbc | latest_companyfacts_ttm | 22,276,000.00 usd | gaap | QBTS_SEC_CURRENT_PERIOD_COMPANYFACTS_2026_05_14 | high |
-| cash_and_equivalents | latest_companyfacts_instant | 304,321,000.00 usd | gaap | QBTS_SEC_CURRENT_PERIOD_COMPANYFACTS_2026_05_14 | high |
+| revenue | Q1_2026 | 2,900,000.00 usd | gaap | QBTS_IR_Q1_2026_EARNINGS_RELEASE | high |
+| bookings | Q1_2026 | 33,400,000.00 usd | company_defined | QBTS_IR_Q1_2026_EARNINGS_RELEASE | high |
+| remaining_performance_obligations | 2026-03-31 | 42,400,000.00 usd | company_defined | QBTS_IR_Q1_2026_EARNINGS_RELEASE | high |
+| gross_profit | Q1_2026 | 1,800,000.00 usd | gaap | QBTS_IR_Q1_2026_EARNINGS_RELEASE | high |
+| gross_margin | Q1_2026 | 0.64 ratio | gaap | QBTS_IR_Q1_2026_EARNINGS_RELEASE | high |
+| operating_expenses | Q1_2026 | 56,500,000.00 usd | gaap | QBTS_IR_Q1_2026_EARNINGS_RELEASE | high |
+| net_income | Q1_2026 | -18,400,000.00 usd | gaap | QBTS_IR_Q1_2026_EARNINGS_RELEASE | high |
+| adjusted_ebitda | Q1_2026 | -32,800,000.00 usd | non_gaap | QBTS_IR_Q1_2026_EARNINGS_RELEASE | high |
+| cash_and_marketable_securities | 2026-03-31 | 588,400,000.00 usd | gaap | QBTS_IR_Q1_2026_EARNINGS_RELEASE | high |
 
 ## Top Unresolved Disagreements
 

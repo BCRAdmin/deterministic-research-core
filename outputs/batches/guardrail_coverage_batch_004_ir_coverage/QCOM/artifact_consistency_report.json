@@ -1,6 +1,11 @@
 {
+  "expected_operator_facing_external_display_rating": "Hold Pending FCF Support",
+  "expected_operator_facing_status": "manual_review",
   "generated_at": "2026-05-17T02:08:51Z",
   "issues": [],
   "status": "clean",
+  "superseded": true,
+  "superseded_banner": "Superseded by manual_focus_guardrail_final_check. Do not use for promotion.",
+  "superseded_by": "manual_focus_guardrail_final_check",
   "ticker": "QCOM"
 }

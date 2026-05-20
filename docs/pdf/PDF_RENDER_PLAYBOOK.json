@@ -1,0 +1,55 @@
+{
+  "name": "PDF Render Playbook",
+  "status": "active_draft",
+  "scope": "Room16/Quellwert/Utility operator artifacts",
+  "risk_class": "R2_local_write_within_project",
+  "runtime_changes": "none",
+  "purpose": "Treat PDF as a final or internal render artifact with lane and QA checks, not as content approval.",
+  "pdf_lanes": [
+    {
+      "lane": "markdown_first_qa",
+      "meaning": "No PDF; Markdown/JSON remain review surfaces.",
+      "public_use": false
+    },
+    {
+      "lane": "internal_best_pdf",
+      "meaning": "Optional internal render for operator reading.",
+      "public_use": false
+    },
+    {
+      "lane": "public_final_pdf",
+      "meaning": "Final promoted render after gates.",
+      "public_use": true
+    }
+  ],
+  "rules": [
+    "pdf_is_not_content_approval",
+    "utf8_umlauts_render_cleanly",
+    "toc_checked_if_present",
+    "page_breaks_reviewed",
+    "tables_not_cut_off",
+    "no_unexpected_empty_pages",
+    "headers_footers_match_lane",
+    "manual_review_or_blocked_outputs_only_as_internal_best_pdf"
+  ],
+  "required_qa": [
+    "source_markdown_path",
+    "render_mode",
+    "pdf_path",
+    "page_count",
+    "text_extract_sanity",
+    "unicode_test",
+    "status_lane_consistency"
+  ],
+  "use_cases": [
+    "rgti_internal_pdf",
+    "public_final_report_pdf_after_promotion_gate",
+    "utility_operator_package_pdf_if_needed"
+  ],
+  "forbidden": [
+    "treat_pdf_generation_as_promotion",
+    "create_public_final_pdf_from_manual_review_artifacts",
+    "hide_source_defects_behind_pdf",
+    "export_without_lane_and_status"
+  ]
+}

@@ -1,0 +1,364 @@
+{
+  "findings": [
+    {
+      "category": "automation_prompt",
+      "check_id": "auto_runtime_mutation",
+      "evidence": "- Quellwert-Publish-Go,",
+      "file": "docs/OUTCOME_MATURATION_POLICY_2026-05-18.md",
+      "line": 65,
+      "message": "Automation prompts must not mutate runtime, credentials, launches, or public state.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "automation_prompt",
+      "check_id": "auto_runtime_mutation",
+      "evidence": "- Production-Go,",
+      "file": "docs/OUTCOME_MATURATION_POLICY_2026-05-18.md",
+      "line": 66,
+      "message": "Automation prompts must not mutate runtime, credentials, launches, or public state.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "skill_package",
+      "check_id": "skill_background_or_self_modify",
+      "evidence": "network, credentials, background execution, desktop/browser control, or canonical",
+      "file": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
+      "line": 56,
+      "message": "Background, self-update, or self-modifying behavior must stay gated.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "automation_prompt",
+      "check_id": "auto_runtime_mutation",
+      "evidence": "- Automatically release reports.",
+      "file": "docs/automation/AUTOMATION_WORKFLOWS_PLAYBOOK.md",
+      "line": 24,
+      "message": "Automation prompts must not mutate runtime, credentials, launches, or public state.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "automation_prompt",
+      "check_id": "auto_runtime_mutation",
+      "evidence": "- Automatically enable Ads or Affiliate.",
+      "file": "docs/automation/AUTOMATION_WORKFLOWS_PLAYBOOK.md",
+      "line": 25,
+      "message": "Automation prompts must not mutate runtime, credentials, launches, or public state.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "automation_prompt",
+      "check_id": "auto_runtime_mutation",
+      "evidence": "- Automatically publish.",
+      "file": "docs/automation/AUTOMATION_WORKFLOWS_PLAYBOOK.md",
+      "line": 28,
+      "message": "Automation prompts must not mutate runtime, credentials, launches, or public state.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "skill_package",
+      "check_id": "skill_background_or_self_modify",
+      "evidence": "- Automatically create runtime rights, API keys or background agents.",
+      "file": "docs/automation/AUTOMATION_WORKFLOWS_PLAYBOOK.md",
+      "line": 29,
+      "message": "Background, self-update, or self-modifying behavior must stay gated.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "skill_package",
+      "check_id": "skill_background_or_self_modify",
+      "evidence": "Applies to: Whisper / YouTube Watcher derived workflows, Room16, Quellwert, Vivi and Obsidian",
+      "file": "docs/media_ingest/MEDIA_SOURCE_POLICY.md",
+      "line": 4,
+      "message": "Background, self-update, or self-modifying behavior must stay gated.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "automation_prompt",
+      "check_id": "auto_runtime_mutation",
+      "evidence": "- SEC/filing or official release cited inside media: verify against the primary source before use.",
+      "file": "docs/media_ingest/MEDIA_SOURCE_POLICY.md",
+      "line": 45,
+      "message": "Automation prompts must not mutate runtime, credentials, launches, or public state.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "skill_package",
+      "check_id": "skill_background_or_self_modify",
+      "evidence": "Applies to: media notes created from Whisper / YouTube Watcher patterns",
+      "file": "docs/media_ingest/OBSIDIAN_MEDIA_NOTE_POLICY.md",
+      "line": 4,
+      "message": "Background, self-update, or self-modifying behavior must stay gated.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "automation_prompt",
+      "check_id": "auto_runtime_mutation",
+      "evidence": "- Hard financial claims from media must be checked against IR, SEC, filings, earnings release or official presentation before report use.",
+      "file": "docs/media_ingest/ROOM16_MEDIA_INGEST_INTEGRATION.md",
+      "line": 45,
+      "message": "Automation prompts must not mutate runtime, credentials, launches, or public state.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "skill_package",
+      "check_id": "skill_memory_write",
+      "evidence": "| Vivi Review or Operator-Go plus evidence | `BACKBONE` | Write the smallest durable rule into Obsidian. |",
+      "file": "docs/memory/OBSIDIAN_MEMORY_PROMOTION_MAP.md",
+      "line": 43,
+      "message": "Memory writes require the Obsidian promotion gate.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "automation_prompt",
+      "check_id": "auto_runtime_mutation",
+      "evidence": "- private, secret, credential, token, account or OAuth data in learning files",
+      "file": "docs/memory/OBSIDIAN_MEMORY_PROMOTION_MAP.md",
+      "line": 94,
+      "message": "Automation prompts must not mutate runtime, credentials, launches, or public state.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "skill_package",
+      "check_id": "skill_background_or_self_modify",
+      "evidence": "- background memory mutation",
+      "file": "docs/memory/OBSIDIAN_MEMORY_PROMOTION_MAP.md",
+      "line": 96,
+      "message": "Background, self-update, or self-modifying behavior must stay gated.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "skill_package",
+      "check_id": "skill_background_or_self_modify",
+      "evidence": "\"P1\": [\"github\", \"word-docx\", \"excel-xlsx\", \"openai-whisper\", \"youtube-watcher\", \"humanizer\"],",
+      "file": "docs/skills/CLAW_SKILL_PATTERN_DECISION_MATRIX.json",
+      "line": 34,
+      "message": "Background, self-update, or self-modifying behavior must stay gated.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "skill_package",
+      "check_id": "skill_background_or_self_modify",
+      "evidence": "| `youtube-watcher` | yes | yes | transcript extraction pattern | source/copyright gates | transcript helper with attribution | unbounded video ingest | R3 | adopt as future playbook | P1 | 2-4d | media ingest |",
+      "file": "docs/skills/CLAW_SKILL_PATTERN_DECISION_MATRIX.md",
+      "line": 36,
+      "message": "Background, self-update, or self-modifying behavior must stay gated.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "skill_package",
+      "check_id": "skill_background_or_self_modify",
+      "evidence": "- `youtube-watcher`",
+      "file": "docs/skills/CLAW_SKILL_PATTERN_DECISION_MATRIX.md",
+      "line": 56,
+      "message": "Background, self-update, or self-modifying behavior must stay gated.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "automation_prompt",
+      "check_id": "auto_runtime_mutation",
+      "evidence": "- credential, secret, token, OAuth, account and environment-variable access",
+      "file": "docs/skills/EXTERNAL_SKILL_INTAKE_SOP.md",
+      "line": 56,
+      "message": "Automation prompts must not mutate runtime, credentials, launches, or public state.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "skill_package",
+      "check_id": "skill_background_or_self_modify",
+      "evidence": "- autonomous, proactive, scheduled, background or self-modifying behavior",
+      "file": "docs/skills/EXTERNAL_SKILL_INTAKE_SOP.md",
+      "line": 59,
+      "message": "Background, self-update, or self-modifying behavior must stay gated.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "skill_package",
+      "check_id": "skill_background_or_self_modify",
+      "evidence": "- silent auto-update behavior",
+      "file": "docs/skills/EXTERNAL_SKILL_INTAKE_SOP.md",
+      "line": 98,
+      "message": "Background, self-update, or self-modifying behavior must stay gated.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "skill_package",
+      "check_id": "skill_memory_write",
+      "evidence": "- memory overwrite outside the Obsidian Gate",
+      "file": "docs/skills/EXTERNAL_SKILL_INTAKE_SOP.md",
+      "line": 101,
+      "message": "Memory writes require the Obsidian promotion gate.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "skill_package",
+      "check_id": "skill_background_or_self_modify",
+      "evidence": "- autonomous background behavior that bypasses LIONCOM/Vega gates",
+      "file": "docs/skills/EXTERNAL_SKILL_INTAKE_SOP.md",
+      "line": 106,
+      "message": "Background, self-update, or self-modifying behavior must stay gated.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "skill_package",
+      "check_id": "skill_background_or_self_modify",
+      "evidence": "- background memory mutation outside Vivi/Vega review",
+      "file": "docs/skills/EXTERNAL_SKILL_INTAKE_SOP.md",
+      "line": 125,
+      "message": "Background, self-update, or self-modifying behavior must stay gated.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "automation_prompt",
+      "check_id": "auto_runtime_mutation",
+      "evidence": "| `api-gateway` | R3/R4 | Broad external API and credential/OAuth surface. | Read-only API-gate checklist. | API write access, broad OAuth, hidden SaaS mutation. |",
+      "file": "docs/skills/HIGH_RISK_SKILLS_HOLD_REGISTER.md",
+      "line": 16,
+      "message": "Automation prompts must not mutate runtime, credentials, launches, or public state.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "skill_package",
+      "check_id": "skill_background_or_self_modify",
+      "evidence": "| `proactive-agent full autonomy` | R6 | Background/proactive work can bypass operator gates. | WAL-lite and verify-implementation pattern. | Autonomous feature work or public changes. |",
+      "file": "docs/skills/HIGH_RISK_SKILLS_HOLD_REGISTER.md",
+      "line": 18,
+      "message": "Background, self-update, or self-modifying behavior must stay gated.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "skill_package",
+      "check_id": "skill_background_or_self_modify",
+      "evidence": "| `remote skillscan/phone-home scanner` | R3/R6 | External upload, polling, silent update risk. | Local inventory/risk scan idea. | Phone-home, upload, auto-update scanner. |",
+      "file": "docs/skills/HIGH_RISK_SKILLS_HOLD_REGISTER.md",
+      "line": 20,
+      "message": "Background, self-update, or self-modifying behavior must stay gated.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "skill_package",
+      "check_id": "skill_background_or_self_modify",
+      "evidence": "\"auto_update\",",
+      "file": "docs/skills/LOCAL_SKILL_INVENTORY_RISK_SCAN.json",
+      "line": 17,
+      "message": "Background, self-update, or self-modifying behavior must stay gated.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "skill_package",
+      "check_id": "skill_background_or_self_modify",
+      "evidence": "- Auto-update behavior.",
+      "file": "docs/skills/LOCAL_SKILL_INVENTORY_RISK_SCAN.md",
+      "line": 28,
+      "message": "Background, self-update, or self-modifying behavior must stay gated.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "skill_package",
+      "check_id": "skill_background_or_self_modify",
+      "evidence": "- Background execution.",
+      "file": "docs/skills/LOCAL_SKILL_INVENTORY_RISK_SCAN.md",
+      "line": 29,
+      "message": "Background, self-update, or self-modifying behavior must stay gated.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "automation_prompt",
+      "check_id": "auto_runtime_mutation",
+      "evidence": "- credentials/OAuth/account access",
+      "file": "docs/skills/VIVI_EXTERNAL_SKILL_REVIEW_CONTRACT.md",
+      "line": 31,
+      "message": "Automation prompts must not mutate runtime, credentials, launches, or public state.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "skill_package",
+      "check_id": "skill_background_or_self_modify",
+      "evidence": "- autonomous/background/update behavior",
+      "file": "docs/skills/VIVI_EXTERNAL_SKILL_REVIEW_CONTRACT.md",
+      "line": 34,
+      "message": "Background, self-update, or self-modifying behavior must stay gated.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "skill_package",
+      "check_id": "skill_network_or_install",
+      "evidence": "re.compile(r\"\\b(curl|wget|requests\\.|fetch\\(|axios\\.|urllib\\.request|http[s]?://)\", re.I),",
+      "file": "scripts/skills/local_skill_inventory_scan.py",
+      "line": 78,
+      "message": "Skill package mentions network, downloads, installs, or package execution.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "skill_package",
+      "check_id": "skill_background_or_self_modify",
+      "evidence": "\"Background, daemon or scheduled behavior needs an explicit gate.\",",
+      "file": "scripts/skills/local_skill_inventory_scan.py",
+      "line": 117,
+      "message": "Background, self-update, or self-modifying behavior must stay gated.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "skill_package",
+      "check_id": "skill_background_or_self_modify",
+      "evidence": "re.compile(r\"\\b(cron|daemon|background|launchctl|nohup|systemd|heartbeat|schedule)\\b\", re.I),",
+      "file": "scripts/skills/local_skill_inventory_scan.py",
+      "line": 118,
+      "message": "Background, self-update, or self-modifying behavior must stay gated.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "skill_package",
+      "check_id": "skill_memory_write",
+      "evidence": "re.compile(r\"\\b(Obsidian|Human Overview|Backbone|Latest Session Context|vault)\\b.*\\b(write|update|overwrite|sync)\\b\", re.I),",
+      "file": "scripts/skills/local_skill_inventory_scan.py",
+      "line": 126,
+      "message": "Memory writes require the Obsidian promotion gate.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "automation_prompt",
+      "check_id": "auto_runtime_mutation",
+      "evidence": "re.compile(r\"\\b(gh\\s+(issue|pr|release)\\s+(create|edit|comment|merge|close)|git\\s+push|git\\s+tag)\\b\", re.I),",
+      "file": "scripts/skills/local_skill_inventory_scan.py",
+      "line": 134,
+      "message": "Automation prompts must not mutate runtime, credentials, launches, or public state.",
+      "operator_gate_required": true,
+      "severity": "high"
+    }
+  ]
+}

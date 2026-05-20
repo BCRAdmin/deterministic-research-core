@@ -1,0 +1,87 @@
+{
+  "generated_at": "2026-05-21T00:00:00+02:00",
+  "status": "computed",
+  "items": [
+    {
+      "original_claim": "Improve Materialbedarf result UX.",
+      "decision": "adopt_now",
+      "reason": "Result UX was improved; the next safe step is measurement, not another rewrite.",
+      "current_system_status": "Materialbedarf technically operating-ready; result/purchase-prep modules improved",
+      "next_action": "monitor result and purchase-prep events",
+      "priority": "P1"
+    },
+    {
+      "original_claim": "Explain material list and reserve/waste assumptions.",
+      "decision": "adopt_now",
+      "reason": "Improves user trust and result clarity without monetization or new calculator scope.",
+      "current_system_status": "copy improved",
+      "next_action": "keep copy clear; no formula expansion",
+      "priority": "P1"
+    },
+    {
+      "original_claim": "Support PDF, copy, print, or email actions.",
+      "decision": "already_done",
+      "reason": "Utility actions are already prepared as readiness signals.",
+      "current_system_status": "result_pdf_click, copy_material_list, email_draft_click expected",
+      "next_action": "measure engagement before expanding",
+      "priority": "P1"
+    },
+    {
+      "original_claim": "Prepare product-category transitions.",
+      "decision": "adopt_later",
+      "reason": "Useful no-ads revenue path but blocked from live monetization until partner data exists.",
+      "current_system_status": "affiliate readiness_only",
+      "next_action": "prepare slot taxonomy only",
+      "priority": "P2"
+    },
+    {
+      "original_claim": "Prepare affiliate partner path.",
+      "decision": "requires_operator_gate",
+      "reason": "Requires partner approval, disclosure, rel=sponsored nofollow, event thresholds, and Operator-Go.",
+      "current_system_status": "affiliate readiness_only; no live links",
+      "next_action": "build shortlist/readiness only",
+      "priority": "P1"
+    },
+    {
+      "original_claim": "Use GSC CTR improvements.",
+      "decision": "requires_data",
+      "reason": "Only post-change data can justify title/meta cuts.",
+      "current_system_status": "monitoring expected",
+      "next_action": "wait for mature GSC window",
+      "priority": "P1"
+    },
+    {
+      "original_claim": "Improve internal linking.",
+      "decision": "adopt_later",
+      "reason": "Useful only when tied to measured intent or GSC opportunity.",
+      "current_system_status": "SEO/event focus",
+      "next_action": "hold until data supports target choice",
+      "priority": "P2"
+    },
+    {
+      "original_claim": "Keep Elterngeld trust, sources, and update status visible.",
+      "decision": "already_done",
+      "reason": "Matches conservative trust/monitor mode.",
+      "current_system_status": "trust/copy/FAQ/result/meta improved",
+      "next_action": "maintain source/date/disclaimer visibility",
+      "priority": "P1"
+    },
+    {
+      "original_claim": "Wait for Elterngeld GSC data before more changes.",
+      "decision": "adopt_now",
+      "reason": "Prevents stale-data rewrites and funnel creep.",
+      "current_system_status": "monitor wait_for_more_data",
+      "next_action": "do not rewrite without fresh GSC data",
+      "priority": "P0"
+    },
+    {
+      "original_claim": "Use skill-governance package for future review.",
+      "decision": "adopt_now",
+      "reason": "Read-only reference improves governance without runtime change.",
+      "current_system_status": "External Skill Intake P0 done; no installs",
+      "next_action": "reference SOP/Vivi contract only",
+      "priority": "P0"
+    }
+  ],
+  "runtime_changes": "none"
+}

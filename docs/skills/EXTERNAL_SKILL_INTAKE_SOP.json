@@ -1,0 +1,101 @@
+{
+  "schema_version": "1.0",
+  "status": "active_draft",
+  "scope": ["LIONCOM", "Vega", "Vivi", "Obsidian", "Room16"],
+  "purpose": [
+    "External skills, repos and agent packages must not be installed directly.",
+    "Every external skill goes through Intake, Source Verification, Risk Review and Operator Gate."
+  ],
+  "source_verification_rule": {
+    "source_not_verified": "pre_triage_only_not_trust",
+    "slug_or_name_only_final_analysis_allowed": false,
+    "required": [
+      "source_url",
+      "owner_or_source",
+      "current_page_or_repo_checked",
+      "archive_or_bundle_when_available",
+      "local_skill_md_or_equivalent_read",
+      "install_scripts_hooks_plugins_providers_manifests_inspected_when_present",
+      "obsidian_and_existing_capabilities_considered"
+    ]
+  },
+  "intake_stages": [
+    "submitted",
+    "source_verified",
+    "locally_unpacked",
+    "static_reviewed",
+    "risk_classified",
+    "pattern_extracted",
+    "rejected",
+    "sandbox_candidate",
+    "approved_playbook_only",
+    "approved_runtime_candidate"
+  ],
+  "mandatory_review": [
+    "source_owner",
+    "audit_status",
+    "skill_md_read",
+    "install_scripts",
+    "network_calls",
+    "credentials_secrets_access",
+    "file_system_access",
+    "memory_access",
+    "autonomous_behavior",
+    "update_behavior",
+    "permissions",
+    "exfiltration_risk",
+    "obfuscation_eval_exec",
+    "hooks_plugins_providers",
+    "operator_gate_required"
+  ],
+  "risk_classes": {
+    "R0": "doc_only_pattern",
+    "R1": "local_read_only",
+    "R2": "local_write_within_project",
+    "R3": "external_network_api",
+    "R4": "credentials_oauth_account_access",
+    "R5": "desktop_browser_control",
+    "R6": "autonomous_proactive_background_behavior"
+  },
+  "decisions": [
+    "adopt_as_sop",
+    "extract_pattern_only",
+    "sandbox_test",
+    "hold",
+    "reject"
+  ],
+  "hard_reject_criteria": [
+    "silent_auto_update",
+    "phone_home_without_operator_go",
+    "credential_harvesting",
+    "memory_overwrite_outside_obsidian_gate",
+    "desktop_control_without_sandbox",
+    "api_write_access_without_read_only_pilot",
+    "eval_exec_obfuscation_without_reviewable_reason",
+    "unclear_license_owner_source",
+    "autonomous_background_behavior_bypassing_gates",
+    "broad_filesystem_access",
+    "unverifiable_install_scripts_or_hidden_hooks"
+  ],
+  "output_template_fields": [
+    "name",
+    "source_url",
+    "owner",
+    "local_archive_path",
+    "local_skill_md_path",
+    "verified",
+    "verification_method",
+    "audit_status",
+    "risk_class",
+    "useful_patterns",
+    "rejected_patterns",
+    "existing_local_capability",
+    "integration_decision",
+    "required_operator_action",
+    "next_step",
+    "evidence_artifacts",
+    "reviewer",
+    "reviewed_at"
+  ],
+  "runtime_changes": false
+}

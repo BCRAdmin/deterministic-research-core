@@ -2,7 +2,7 @@
 
 ## Reconciliation Stats
 
-- Canonical metrics created: `1454`
+- Canonical metrics created: `1461`
 - `PERIOD_TYPE_MISMATCH_IGNORED`: `34`
 - `TRUE_SOURCE_VALUE_DISAGREEMENT`: `29`
 - `SOURCE_FRAME_VARIANT_IGNORED`: `2`
@@ -1460,11 +1460,18 @@
 | shares_diluted | Q3_FY2026_ytd | 24,542,000,000.00 shares | gaap | SEC_0001045810-25-000230 | high |
 | shares_diluted | CY2025Q3 | 24,483,000,000.00 shares | gaap | SEC_0001045810-25-000230 | high |
 | shares_diluted | CY2025 | 24,514,000,000.00 shares | gaap | SEC_0001045810-26-000021 | high |
-| revenue | latest_companyfacts_ttm | 182,893,000,000.00 usd | gaap | NVDA_SEC_CURRENT_PERIOD_COMPANYFACTS_2026_05_15 | high |
-| operating_cash_flow | latest_companyfacts_ttm | 47,401,000,000.00 usd | gaap | NVDA_SEC_CURRENT_PERIOD_COMPANYFACTS_2026_05_15 | high |
-| free_cash_flow | latest_companyfacts_ttm | 46,946,000,000.00 usd | gaap | NVDA_SEC_CURRENT_PERIOD_COMPANYFACTS_2026_05_15 | high |
-| sbc | latest_companyfacts_ttm | 3,798,000,000.00 usd | gaap | NVDA_SEC_CURRENT_PERIOD_COMPANYFACTS_2026_05_15 | high |
-| cash_and_equivalents | latest_companyfacts_instant | 9,107,000,000.00 usd | gaap | NVDA_SEC_CURRENT_PERIOD_COMPANYFACTS_2026_05_15 | high |
+| revenue | Q4_FY2026 | 68,127,000,000.00 usd | gaap | NVDA_IR_Q4_FY2026_EARNINGS_RELEASE | high |
+| operating_income | Q4_FY2026 | 44,299,000,000.00 usd | gaap | NVDA_IR_Q4_FY2026_EARNINGS_RELEASE | high |
+| net_income | Q4_FY2026 | 42,960,000,000.00 usd | gaap | NVDA_IR_Q4_FY2026_EARNINGS_RELEASE | high |
+| data_center_revenue | Q4_FY2026 | 62,300,000,000.00 usd | company_defined | NVDA_IR_Q4_FY2026_EARNINGS_RELEASE | high |
+| revenue | FY2026 | 215,938,000,000.00 usd | gaap | NVDA_IR_Q4_FY2026_EARNINGS_RELEASE | high |
+| operating_income | FY2026 | 130,387,000,000.00 usd | gaap | NVDA_IR_Q4_FY2026_EARNINGS_RELEASE | high |
+| operating_cash_flow | FY2026 | 102,718,000,000.00 usd | gaap | NVDA_IR_Q4_FY2026_EARNINGS_RELEASE | high |
+| free_cash_flow | FY2026 | 96,575,000,000.00 usd | company_defined | NVDA_IR_Q4_FY2026_EARNINGS_RELEASE | high |
+| sbc | FY2026 | 6,386,000,000.00 usd | gaap | NVDA_IR_Q4_FY2026_EARNINGS_RELEASE | high |
+| cash_and_marketable_securities | 2026-01-25 | 62,556,000,000.00 usd | gaap | NVDA_IR_Q4_FY2026_EARNINGS_RELEASE | high |
+| total_debt | 2026-01-25 | 8,468,000,000.00 usd | gaap | NVDA_IR_Q4_FY2026_EARNINGS_RELEASE | high |
+| q1_fy2027_revenue_guidance_midpoint | Q1_FY2027_GUIDANCE | 78,000,000,000.00 usd | company_defined | NVDA_IR_Q4_FY2026_EARNINGS_RELEASE | high |
 
 ## Top Unresolved Disagreements
 

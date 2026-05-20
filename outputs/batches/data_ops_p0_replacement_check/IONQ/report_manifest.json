@@ -1,0 +1,40 @@
+{
+  "archetype_confidence": 0.923,
+  "archetype_triggered_rules": [
+    "revenue_ttm_gt_100m",
+    "revenue_ttm_lt_5b",
+    "operating_income_ttm_lt_0",
+    "free_cash_flow_ttm_lt_0",
+    "market_cap_revenue_gt_20",
+    "ev_sales_gt_20",
+    "backlog_contracts_or_contracted_missions_present",
+    "capital_intensive_development_program_present",
+    "major_execution_milestone_risk_present",
+    "beta_high_volatility",
+    "current_period_evidence_exists_but_fcf_path_negative",
+    "frontier_real_revenue_extreme_economics"
+  ],
+  "canonical_report_manifest_path": "outputs/batches/data_ops_p0_replacement_check/IONQ/reports/IONQ/2026-05-17/report_manifest.json",
+  "company_archetype": "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH",
+  "data_confidence_score": 75,
+  "external_display_rating": "Manual Review / Hold Pending FCF and Execution Evidence",
+  "internal_rating": "Hold",
+  "internal_research_quality_score": 75,
+  "manual_review_reasons": [
+    "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH_MANUAL_REVIEW_PROFILE",
+    "EXTREME_VALUATION_REQUIRES_REVIEW",
+    "TRUE_FINANCIAL_ANOMALY",
+    "EARNINGS_DATE_UNAVAILABLE",
+    "PERIOD_TYPE_MISMATCH_IGNORED",
+    "SOURCE_FRAME_VARIANT_IGNORED"
+  ],
+  "public_library_status": "not_public_ready",
+  "public_rating": null,
+  "public_ready": false,
+  "publish_quality_score": 65,
+  "publishable": false,
+  "quality_score": 65,
+  "review_status": "manual_review",
+  "ticker": "IONQ",
+  "visibility": "internal_only"
+}

@@ -1,0 +1,37 @@
+{
+  "generated_at": "2026-05-21T00:00:00+02:00",
+  "mode": "no_ads_operating_mode_cmp_branch_closed",
+  "source_reference": "/Users/BjornRosinger/Downloads/Utility webseiten/outputs/utility_websites/UTILITY_14_DAY_REVIEW_PLAN.md",
+  "focus": [
+    "no_ads",
+    "no_cmp_work",
+    "measure_materialbedarf_events",
+    "measure_purchase_intent",
+    "gsc_ctr_only_with_post_change_data",
+    "prepare_affiliate_partner_data",
+    "elterngeld_monitor_trust",
+    "no_new_copy_or_feature_runs_without_data"
+  ],
+  "review_criteria": [
+    "impressions",
+    "clicks",
+    "ctr",
+    "calculator_submit",
+    "purchase_prep_expand",
+    "purchase_prep_copy",
+    "result_pdf_click",
+    "copy_material_list",
+    "email_draft_click",
+    "outbound_product_category_click_placeholder",
+    "affiliate_partner_status",
+    "traffic_threshold_for_paid_cmp_reached"
+  ],
+  "decision_rules": [
+    "if_data_missing_keep_wait_for_more_data",
+    "if_materialbedarf_purchase_intent_visible_inspect_affiliate_readiness_only",
+    "if_elterngeld_data_weak_or_mixed_keep_trust_monitor",
+    "if_cmp_threshold_not_reached_keep_ads_disabled_paid_cmp_deferred"
+  ],
+  "next_review_date": "2026-06-01",
+  "runtime_changes": "none"
+}

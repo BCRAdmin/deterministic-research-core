@@ -1,0 +1,142 @@
+{
+  "coverage_note": "Direct D-Wave Q1 2026 earnings-release replacement. No company-defined FCF was located in the release.",
+  "metrics": [
+    {
+      "basis": "gaap",
+      "duration_days": 90,
+      "end_date": "2026-03-31",
+      "fiscal_period": "Q1",
+      "fiscal_year": 2026,
+      "metric_name": "revenue",
+      "period": "Q1_2026",
+      "period_bucket": "quarterly",
+      "start_date": "2026-01-01",
+      "statement": "D-Wave reported Q1 2026 revenue of $2.9 million.",
+      "statement_type": "income_statement",
+      "unit": "usd",
+      "value": 2900000
+    },
+    {
+      "basis": "company_defined",
+      "end_date": "2026-03-31",
+      "fiscal_period": "Q1",
+      "fiscal_year": 2026,
+      "metric_name": "bookings",
+      "period": "Q1_2026",
+      "period_bucket": "quarterly",
+      "statement": "D-Wave reported Q1 2026 bookings of $33.4 million.",
+      "statement_type": "income_statement",
+      "supports_metrics": [
+        "bookings",
+        "orders",
+        "contracted_revenue"
+      ],
+      "unit": "usd",
+      "value": 33400000
+    },
+    {
+      "basis": "company_defined",
+      "end_date": "2026-03-31",
+      "fiscal_period": "Q1",
+      "fiscal_year": 2026,
+      "metric_name": "remaining_performance_obligations",
+      "period": "2026-03-31",
+      "period_bucket": "instant",
+      "statement": "D-Wave reported remaining performance obligations of $42.4 million at March 31, 2026.",
+      "statement_type": "balance_sheet",
+      "supports_metrics": [
+        "rpo",
+        "contracted_revenue"
+      ],
+      "unit": "usd",
+      "value": 42400000
+    },
+    {
+      "basis": "gaap",
+      "end_date": "2026-03-31",
+      "fiscal_period": "Q1",
+      "fiscal_year": 2026,
+      "metric_name": "gross_profit",
+      "period": "Q1_2026",
+      "period_bucket": "quarterly",
+      "statement": "D-Wave reported Q1 2026 GAAP gross profit of $1.8 million.",
+      "statement_type": "income_statement",
+      "unit": "usd",
+      "value": 1800000
+    },
+    {
+      "basis": "gaap",
+      "end_date": "2026-03-31",
+      "fiscal_period": "Q1",
+      "fiscal_year": 2026,
+      "metric_name": "gross_margin",
+      "period": "Q1_2026",
+      "period_bucket": "quarterly",
+      "statement": "D-Wave reported Q1 2026 GAAP gross margin of 63.6%.",
+      "statement_type": "income_statement",
+      "unit": "ratio",
+      "value": 0.636
+    },
+    {
+      "basis": "gaap",
+      "end_date": "2026-03-31",
+      "fiscal_period": "Q1",
+      "fiscal_year": 2026,
+      "metric_name": "operating_expenses",
+      "period": "Q1_2026",
+      "period_bucket": "quarterly",
+      "statement": "D-Wave reported Q1 2026 GAAP operating expenses of $56.5 million.",
+      "statement_type": "income_statement",
+      "unit": "usd",
+      "value": 56500000
+    },
+    {
+      "basis": "gaap",
+      "end_date": "2026-03-31",
+      "fiscal_period": "Q1",
+      "fiscal_year": 2026,
+      "metric_name": "net_income",
+      "period": "Q1_2026",
+      "period_bucket": "quarterly",
+      "statement": "D-Wave reported Q1 2026 net loss of $18.4 million.",
+      "statement_type": "income_statement",
+      "unit": "usd",
+      "value": -18400000
+    },
+    {
+      "basis": "non_gaap",
+      "end_date": "2026-03-31",
+      "fiscal_period": "Q1",
+      "fiscal_year": 2026,
+      "metric_name": "adjusted_ebitda",
+      "period": "Q1_2026",
+      "period_bucket": "quarterly",
+      "statement": "D-Wave reported Q1 2026 adjusted EBITDA loss of $32.8 million.",
+      "statement_type": "income_statement",
+      "unit": "usd",
+      "value": -32800000
+    },
+    {
+      "basis": "gaap",
+      "end_date": "2026-03-31",
+      "fiscal_period": "Q1",
+      "fiscal_year": 2026,
+      "metric_name": "cash_and_marketable_securities",
+      "period": "2026-03-31",
+      "period_bucket": "instant",
+      "statement": "D-Wave reported consolidated cash and marketable investment securities of $588.4 million at March 31, 2026.",
+      "statement_type": "balance_sheet",
+      "unit": "usd",
+      "value": 588400000
+    }
+  ],
+  "period": "Q1_2026",
+  "report_date": "2026-05-12",
+  "retrieved_at": "2026-05-20T00:00:00+02:00",
+  "source_confidence": "high",
+  "source_id": "QBTS_IR_Q1_2026_EARNINGS_RELEASE",
+  "source_type": "earnings_release",
+  "source_url": "https://www.dwavequantum.com/company/newsroom/press-release/d-wave-reports-first-quarter-2026-results/",
+  "text": "",
+  "url": "https://www.dwavequantum.com/company/newsroom/press-release/d-wave-reports-first-quarter-2026-results/"
+}

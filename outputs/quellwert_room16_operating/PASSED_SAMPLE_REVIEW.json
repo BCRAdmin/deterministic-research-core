@@ -1,0 +1,403 @@
+{
+  "false_pass_candidates": [],
+  "generated_at": "2026-05-20T12:30:59Z",
+  "records": [
+    {
+      "artifact_consistency": {
+        "issue_count": 0,
+        "path": "outputs/batches/guardrail_coverage_batch_004_ir_coverage/SNOW/artifact_consistency_report.json",
+        "status": "clean"
+      },
+      "current_period_context": {
+        "current_period_context_ready": true,
+        "has_company_defined_fcf": true,
+        "has_current_ir_fixture": true,
+        "has_current_sec_evidence": true,
+        "has_guidance": true,
+        "has_sec_derived_fcf": false,
+        "has_segment_kpis": true,
+        "price_basis_date": "2026-05-15"
+      },
+      "evidence_status": {
+        "evidence_mapped_claim_ratio": 100,
+        "evidence_warnings": 0,
+        "hard_claim_evidence_ratio": 100,
+        "hard_claims_without_evidence_count": 0,
+        "matrix_evidence_status": "clean"
+      },
+      "false_pass_candidate": false,
+      "manual_focus_overlay": {
+        "external_display_rating": null,
+        "manual_review_reasons": [],
+        "present": false,
+        "publishable": null,
+        "status": null
+      },
+      "rating_consistency": {
+        "effective_external_display_rating": "Hold with Underweight Bias",
+        "raw_external_display_rating": "Hold with Underweight Bias",
+        "status": "pass"
+      },
+      "raw_batch004": {
+        "company_archetype": "SAAS_CONSUMPTION",
+        "data_confidence_score": 79,
+        "external_display_rating": "Hold with Underweight Bias",
+        "internal_research_quality_score": 100,
+        "manual_review_reasons": [],
+        "public_rating": null,
+        "public_ready": false,
+        "publish_quality_score": 93,
+        "publishable": true,
+        "status": "passed"
+      },
+      "review_result": "pass",
+      "special_checks": [
+        "Gold-v1 control sample preserved and artifact consistency clean."
+      ],
+      "ticker": "SNOW"
+    },
+    {
+      "artifact_consistency": {
+        "issue_count": 0,
+        "path": "outputs/batches/guardrail_coverage_batch_004_ir_coverage/GOOGL/artifact_consistency_report.json",
+        "status": "clean"
+      },
+      "current_period_context": {
+        "current_period_context_ready": true,
+        "has_company_defined_fcf": true,
+        "has_current_ir_fixture": true,
+        "has_current_sec_evidence": true,
+        "has_guidance": false,
+        "has_sec_derived_fcf": false,
+        "has_segment_kpis": true,
+        "price_basis_date": "2026-05-15"
+      },
+      "evidence_status": {
+        "evidence_mapped_claim_ratio": 100,
+        "evidence_warnings": 0,
+        "hard_claim_evidence_ratio": 100,
+        "hard_claims_without_evidence_count": 0,
+        "matrix_evidence_status": "clean"
+      },
+      "false_pass_candidate": false,
+      "manual_focus_overlay": {
+        "external_display_rating": null,
+        "manual_review_reasons": [],
+        "present": false,
+        "publishable": null,
+        "status": null
+      },
+      "rating_consistency": {
+        "effective_external_display_rating": "Hold",
+        "raw_external_display_rating": "Hold",
+        "status": "pass"
+      },
+      "raw_batch004": {
+        "company_archetype": "MEGA_CAP_PLATFORM",
+        "data_confidence_score": 77,
+        "external_display_rating": "Hold",
+        "internal_research_quality_score": 100,
+        "manual_review_reasons": [],
+        "public_rating": null,
+        "public_ready": false,
+        "publish_quality_score": 93,
+        "publishable": true,
+        "status": "passed"
+      },
+      "review_result": "pass",
+      "special_checks": [
+        "Gold-v1 control sample preserved and artifact consistency clean."
+      ],
+      "ticker": "GOOGL"
+    },
+    {
+      "artifact_consistency": {
+        "issue_count": 0,
+        "path": "outputs/batches/guardrail_coverage_batch_004_ir_coverage/META/artifact_consistency_report.json",
+        "status": "clean"
+      },
+      "current_period_context": {
+        "current_period_context_ready": true,
+        "has_company_defined_fcf": false,
+        "has_current_ir_fixture": true,
+        "has_current_sec_evidence": true,
+        "has_guidance": true,
+        "has_sec_derived_fcf": false,
+        "has_segment_kpis": false,
+        "price_basis_date": "2026-05-15"
+      },
+      "evidence_status": {
+        "evidence_mapped_claim_ratio": 100,
+        "evidence_warnings": 0,
+        "hard_claim_evidence_ratio": 100,
+        "hard_claims_without_evidence_count": 0,
+        "matrix_evidence_status": "clean"
+      },
+      "false_pass_candidate": false,
+      "manual_focus_overlay": {
+        "external_display_rating": null,
+        "manual_review_reasons": [],
+        "present": false,
+        "publishable": null,
+        "status": null
+      },
+      "rating_consistency": {
+        "effective_external_display_rating": "Hold",
+        "raw_external_display_rating": "Hold",
+        "status": "pass"
+      },
+      "raw_batch004": {
+        "company_archetype": "MEGA_CAP_PLATFORM",
+        "data_confidence_score": 71,
+        "external_display_rating": "Hold",
+        "internal_research_quality_score": 100,
+        "manual_review_reasons": [],
+        "public_rating": null,
+        "public_ready": false,
+        "publish_quality_score": 93,
+        "publishable": true,
+        "status": "passed"
+      },
+      "review_result": "pass",
+      "special_checks": [],
+      "ticker": "META"
+    },
+    {
+      "artifact_consistency": {
+        "issue_count": 0,
+        "path": "outputs/batches/guardrail_coverage_batch_004_ir_coverage/CRM/artifact_consistency_report.json",
+        "status": "clean"
+      },
+      "current_period_context": {
+        "current_period_context_ready": true,
+        "has_company_defined_fcf": true,
+        "has_current_ir_fixture": true,
+        "has_current_sec_evidence": true,
+        "has_guidance": false,
+        "has_sec_derived_fcf": false,
+        "has_segment_kpis": false,
+        "price_basis_date": "2026-05-15"
+      },
+      "evidence_status": {
+        "evidence_mapped_claim_ratio": 100,
+        "evidence_warnings": 0,
+        "hard_claim_evidence_ratio": 100,
+        "hard_claims_without_evidence_count": 0,
+        "matrix_evidence_status": "clean"
+      },
+      "false_pass_candidate": false,
+      "manual_focus_overlay": {
+        "external_display_rating": null,
+        "manual_review_reasons": [],
+        "present": false,
+        "publishable": null,
+        "status": null
+      },
+      "rating_consistency": {
+        "effective_external_display_rating": "Hold",
+        "raw_external_display_rating": "Hold",
+        "status": "pass"
+      },
+      "raw_batch004": {
+        "company_archetype": "SAAS_CONSUMPTION",
+        "data_confidence_score": 68,
+        "external_display_rating": "Hold",
+        "internal_research_quality_score": 100,
+        "manual_review_reasons": [],
+        "public_rating": null,
+        "public_ready": false,
+        "publish_quality_score": 88,
+        "publishable": true,
+        "status": "passed"
+      },
+      "review_result": "pass",
+      "special_checks": [
+        "FCF evidence is present and fcf_ocf_inconsistency_count is 0; reconciliation warnings are source-frame/value disagreements, not contradictory FCF support."
+      ],
+      "ticker": "CRM"
+    },
+    {
+      "artifact_consistency": {
+        "issue_count": 0,
+        "path": "outputs/batches/guardrail_coverage_batch_004_ir_coverage/NFLX/artifact_consistency_report.json",
+        "status": "clean"
+      },
+      "current_period_context": {
+        "current_period_context_ready": true,
+        "has_company_defined_fcf": false,
+        "has_current_ir_fixture": true,
+        "has_current_sec_evidence": true,
+        "has_guidance": false,
+        "has_sec_derived_fcf": false,
+        "has_segment_kpis": false,
+        "price_basis_date": "2026-05-15"
+      },
+      "evidence_status": {
+        "evidence_mapped_claim_ratio": 100,
+        "evidence_warnings": 0,
+        "hard_claim_evidence_ratio": 100,
+        "hard_claims_without_evidence_count": 0,
+        "matrix_evidence_status": "clean"
+      },
+      "false_pass_candidate": false,
+      "manual_focus_overlay": {
+        "external_display_rating": null,
+        "manual_review_reasons": [],
+        "present": false,
+        "publishable": null,
+        "status": null
+      },
+      "rating_consistency": {
+        "effective_external_display_rating": "Hold",
+        "raw_external_display_rating": "Hold",
+        "status": "pass"
+      },
+      "raw_batch004": {
+        "company_archetype": "MEGA_CAP_PLATFORM",
+        "data_confidence_score": 71,
+        "external_display_rating": "Hold",
+        "internal_research_quality_score": 100,
+        "manual_review_reasons": [],
+        "public_rating": null,
+        "public_ready": false,
+        "publish_quality_score": 90,
+        "publishable": true,
+        "status": "passed"
+      },
+      "review_result": "pass",
+      "special_checks": [],
+      "ticker": "NFLX"
+    },
+    {
+      "artifact_consistency": {
+        "issue_count": 0,
+        "path": "outputs/batches/guardrail_coverage_batch_004_ir_coverage/AVGO/artifact_consistency_report.json",
+        "status": "clean"
+      },
+      "current_period_context": {
+        "current_period_context_ready": true,
+        "has_company_defined_fcf": false,
+        "has_current_ir_fixture": true,
+        "has_current_sec_evidence": true,
+        "has_guidance": true,
+        "has_sec_derived_fcf": false,
+        "has_segment_kpis": true,
+        "price_basis_date": "2026-05-15"
+      },
+      "evidence_status": {
+        "evidence_mapped_claim_ratio": 100,
+        "evidence_warnings": 0,
+        "hard_claim_evidence_ratio": 100,
+        "hard_claims_without_evidence_count": 0,
+        "matrix_evidence_status": "clean"
+      },
+      "false_pass_candidate": false,
+      "manual_focus_overlay": {
+        "external_display_rating": null,
+        "manual_review_reasons": [],
+        "present": false,
+        "publishable": null,
+        "status": null
+      },
+      "rating_consistency": {
+        "effective_external_display_rating": "Hold",
+        "raw_external_display_rating": "Hold",
+        "status": "pass"
+      },
+      "raw_batch004": {
+        "company_archetype": "SEMICONDUCTOR_AI_INFRA",
+        "data_confidence_score": 77,
+        "external_display_rating": "Hold",
+        "internal_research_quality_score": 100,
+        "manual_review_reasons": [],
+        "public_rating": null,
+        "public_ready": false,
+        "publish_quality_score": 90,
+        "publishable": true,
+        "status": "passed"
+      },
+      "review_result": "pass",
+      "special_checks": [
+        "AI guide, valuation sensitivity, and FCF support were found in the main publish report/evidence context; no false pass observed."
+      ],
+      "ticker": "AVGO"
+    }
+  ],
+  "sample_tickers": [
+    "SNOW",
+    "GOOGL",
+    "META",
+    "QCOM",
+    "CRM",
+    "NFLX",
+    "AVGO"
+  ],
+  "status": "pass_qcom_removed_from_passed_sample_after_supersession_cleanup",
+  "superseded_exclusions": [
+    {
+      "previous_record": {
+        "artifact_consistency": {
+          "issue_count": 0,
+          "path": "outputs/batches/guardrail_coverage_batch_004_ir_coverage/QCOM/artifact_consistency_report.json",
+          "status": "clean"
+        },
+        "current_period_context": {
+          "current_period_context_ready": true,
+          "has_company_defined_fcf": false,
+          "has_current_ir_fixture": true,
+          "has_current_sec_evidence": true,
+          "has_guidance": false,
+          "has_sec_derived_fcf": false,
+          "has_segment_kpis": false,
+          "price_basis_date": "2026-05-15"
+        },
+        "evidence_status": {
+          "evidence_mapped_claim_ratio": 100,
+          "evidence_warnings": 0,
+          "hard_claim_evidence_ratio": 100,
+          "hard_claims_without_evidence_count": 0,
+          "matrix_evidence_status": "clean"
+        },
+        "false_pass_candidate": false,
+        "manual_focus_overlay": {
+          "external_display_rating": "Hold Pending FCF Support",
+          "manual_review_reasons": [
+            "MISSING_FCF_SUPPORT_FOR_ACCUMULATE",
+            "EARNINGS_DATE_UNAVAILABLE",
+            "PERIOD_TYPE_MISMATCH_IGNORED",
+            "TRUE_SOURCE_VALUE_DISAGREEMENT",
+            "SOURCE_FRAME_VARIANT_IGNORED"
+          ],
+          "present": true,
+          "publishable": false,
+          "status": "manual_review"
+        },
+        "rating_consistency": {
+          "effective_external_display_rating": "Hold Pending FCF Support",
+          "raw_external_display_rating": "Accumulate",
+          "status": "known_superseded_raw_rating"
+        },
+        "raw_batch004": {
+          "company_archetype": "SEMICONDUCTOR_AI_INFRA",
+          "data_confidence_score": 68,
+          "external_display_rating": "Accumulate",
+          "internal_research_quality_score": 100,
+          "manual_review_reasons": [],
+          "public_rating": null,
+          "public_ready": false,
+          "publish_quality_score": 87,
+          "publishable": true,
+          "status": "passed"
+        },
+        "review_result": "pass_by_manual_focus_overlay_raw_batch_superseded",
+        "special_checks": [
+          "Raw Batch004 is superseded by manual-focus final check. Current operating state is manual_review/Hold Pending FCF Support.",
+          "Manual-focus status=manual_review, display=Hold Pending FCF Support, reasons=['MISSING_FCF_SUPPORT_FOR_ACCUMULATE', 'EARNINGS_DATE_UNAVAILABLE', 'PERIOD_TYPE_MISMATCH_IGNORED', 'TRUE_SOURCE_VALUE_DISAGREEMENT', 'SOURCE_FRAME_VARIANT_IGNORED']."
+        ],
+        "ticker": "QCOM"
+      },
+      "reason": "Superseded by manual_focus_guardrail_final_check. Do not use for promotion.",
+      "ticker": "QCOM"
+    }
+  ]
+}

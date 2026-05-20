@@ -1,0 +1,52 @@
+{
+  "name": "Humanizer Lint Playbook",
+  "status": "active_draft",
+  "scope": "Utility copy/Room16 reports/operator copy",
+  "risk_class": "R0_doc_only_pattern",
+  "runtime_changes": "none",
+  "purpose": "Improve clarity without changing facts, ratings, evidence, legal posture or financial claims.",
+  "allowed": [
+    "mark_generic_seo_phrases",
+    "mark_repetition",
+    "mark_internal_system_language",
+    "mark_overly_long_sentences",
+    "mark_weak_ctas",
+    "mark_passive_or_imprecise_language",
+    "suggest_concrete_user_help"
+  ],
+  "forbidden": [
+    "change_facts",
+    "change_numbers",
+    "change_ratings",
+    "strengthen_claims",
+    "add_or_remove_sources",
+    "make_legal_or_financial_statements_stronger",
+    "bypass_evidence_requirements",
+    "write_away_ymyl_uncertainty",
+    "turn_cautious_report_into_promotional_copy"
+  ],
+  "use_cases": [
+    "materialbedarf_copy",
+    "elterngeld_trust_copy",
+    "room16_internal_best_report",
+    "room16_publish_report_prose",
+    "dashboard_operator_copy"
+  ],
+  "lint_output_fields": [
+    "issue_type",
+    "severity",
+    "current_text",
+    "suggested_rewrite",
+    "risk",
+    "requires_human_review",
+    "allowed_auto_apply"
+  ],
+  "auto_apply_allowed_for": [
+    "obvious_typos",
+    "duplicate_words",
+    "placeholders",
+    "internal_ui_labels"
+  ],
+  "auto_apply_for_everything_else": false,
+  "vivi_review": "check_rewrites_preserve_facts_evidence_uncertainty_and_project_gates"
+}

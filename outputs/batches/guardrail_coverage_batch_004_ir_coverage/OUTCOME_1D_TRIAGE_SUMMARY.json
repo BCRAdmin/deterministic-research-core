@@ -1,0 +1,373 @@
+{
+  "batch_id": "guardrail_coverage_batch_004_ir_coverage",
+  "generated_at": "2026-05-20T14:41:49+02:00",
+  "source_files": {
+    "outcome_review_json": "outputs/batches/guardrail_coverage_batch_004_ir_coverage/OUTCOME_1D_REVIEW.json",
+    "outcome_review_md": "outputs/batches/guardrail_coverage_batch_004_ir_coverage/OUTCOME_1D_REVIEW.md"
+  },
+  "window": "1D",
+  "price_basis_date": "2026-05-15",
+  "one_day_end_date": "2026-05-18",
+  "overall_status": {
+    "status": "computed",
+    "computed_rows": 37,
+    "pending_rows": 0,
+    "computed_unique_tickers": 32,
+    "false_pass_flags": {
+      "row_count": 0,
+      "unique_tickers": []
+    },
+    "false_block_flags": {
+      "row_count": 4,
+      "unique_tickers": [
+        "MDB",
+        "NOW",
+        "RKLB",
+        "ZS"
+      ]
+    },
+    "benchmark_coverage": {
+      "status": "complete",
+      "computed_rows_with_benchmark": 37,
+      "computed_unique_tickers_with_benchmark": 32,
+      "benchmark_row_counts": {
+        "QQQ": 25,
+        "SMH": 9,
+        "SPY": 3
+      },
+      "benchmark_unique_ticker_counts": {
+        "QQQ": 22,
+        "SMH": 7,
+        "SPY": 3
+      },
+      "missing_benchmark_tickers": []
+    },
+    "data_quality": {
+      "status": "complete_for_1d",
+      "missing_price_tickers": [],
+      "missing_benchmark_tickers": [],
+      "notes": "1D is fully computed from local price CSVs. Source rows include manual-focus overlay duplicates; top lists use unique tickers and prefer manual_focus_guardrail_final_check for duplicated tickers."
+    }
+  },
+  "top_positive_excess_returns": [
+    {
+      "ticker": "NOW",
+      "original_status": "manual_review",
+      "rating_external_display": "Hold",
+      "one_day_return_pct": 8.783,
+      "benchmark": "QQQ",
+      "benchmark_return_pct": -0.4302,
+      "excess_return_pct": 9.2132,
+      "interpretation": "possible false block"
+    },
+    {
+      "ticker": "ZS",
+      "original_status": "manual_review",
+      "rating_external_display": "Hold",
+      "one_day_return_pct": 8.4694,
+      "benchmark": "QQQ",
+      "benchmark_return_pct": -0.4302,
+      "excess_return_pct": 8.8996,
+      "interpretation": "possible false block"
+    },
+    {
+      "ticker": "MDB",
+      "original_status": "manual_review",
+      "rating_external_display": "Hold",
+      "one_day_return_pct": 5.715,
+      "benchmark": "QQQ",
+      "benchmark_return_pct": -0.4302,
+      "excess_return_pct": 6.1452,
+      "interpretation": "possible false block"
+    },
+    {
+      "ticker": "RKLB",
+      "original_status": "manual_review",
+      "rating_external_display": "Manual Review / Hold Pending FCF and Execution Evidence",
+      "one_day_return_pct": 5.1214,
+      "benchmark": "QQQ",
+      "benchmark_return_pct": -0.4302,
+      "excess_return_pct": 5.5517,
+      "interpretation": "possible false block"
+    },
+    {
+      "ticker": "SNOW",
+      "original_status": "passed",
+      "rating_external_display": "Hold with Underweight Bias",
+      "one_day_return_pct": 4.2992,
+      "benchmark": "QQQ",
+      "benchmark_return_pct": -0.4302,
+      "excess_return_pct": 4.7295,
+      "interpretation": "worth monitoring"
+    },
+    {
+      "ticker": "CRWD",
+      "original_status": "manual_review",
+      "rating_external_display": "Hold",
+      "one_day_return_pct": 4.1661,
+      "benchmark": "QQQ",
+      "benchmark_return_pct": -0.4302,
+      "excess_return_pct": 4.5963,
+      "interpretation": "worth monitoring"
+    },
+    {
+      "ticker": "ASTS",
+      "original_status": "manual_review",
+      "rating_external_display": "Manual Review / Preliminary Underweight",
+      "one_day_return_pct": 3.7767,
+      "benchmark": "QQQ",
+      "benchmark_return_pct": -0.4302,
+      "excess_return_pct": 4.207,
+      "interpretation": "worth monitoring"
+    },
+    {
+      "ticker": "CRM",
+      "original_status": "passed",
+      "rating_external_display": "Hold",
+      "one_day_return_pct": 3.4407,
+      "benchmark": "QQQ",
+      "benchmark_return_pct": -0.4302,
+      "excess_return_pct": 3.8709,
+      "interpretation": "worth monitoring"
+    },
+    {
+      "ticker": "NFLX",
+      "original_status": "passed",
+      "rating_external_display": "Hold",
+      "one_day_return_pct": 3.0223,
+      "benchmark": "QQQ",
+      "benchmark_return_pct": -0.4302,
+      "excess_return_pct": 3.4525,
+      "interpretation": "worth monitoring"
+    },
+    {
+      "ticker": "QCOM",
+      "original_status": "manual_review",
+      "rating_external_display": "Hold Pending FCF Support",
+      "one_day_return_pct": 1.067,
+      "benchmark": "SMH",
+      "benchmark_return_pct": -1.8298,
+      "excess_return_pct": 2.8969,
+      "interpretation": "normal noise"
+    }
+  ],
+  "top_negative_excess_returns": [
+    {
+      "ticker": "PLUG",
+      "original_status": "manual_review",
+      "rating_external_display": "Hold",
+      "one_day_return_pct": -8.7302,
+      "benchmark": "SPY",
+      "benchmark_return_pct": -0.0703,
+      "excess_return_pct": -8.6598,
+      "interpretation": "worth monitoring"
+    },
+    {
+      "ticker": "RGTI",
+      "original_status": "manual_review",
+      "rating_external_display": "Manual Review / Preliminary Underweight",
+      "one_day_return_pct": -6.8908,
+      "benchmark": "QQQ",
+      "benchmark_return_pct": -0.4302,
+      "excess_return_pct": -6.4605,
+      "interpretation": "worth monitoring"
+    },
+    {
+      "ticker": "QBTS",
+      "original_status": "manual_review",
+      "rating_external_display": "Manual Review / Preliminary Underweight",
+      "one_day_return_pct": -6.3391,
+      "benchmark": "QQQ",
+      "benchmark_return_pct": -0.4302,
+      "excess_return_pct": -5.9088,
+      "interpretation": "worth monitoring"
+    },
+    {
+      "ticker": "LCID",
+      "original_status": "manual_review",
+      "rating_external_display": "Underweight",
+      "one_day_return_pct": -5.1324,
+      "benchmark": "SPY",
+      "benchmark_return_pct": -0.0703,
+      "excess_return_pct": -5.0621,
+      "interpretation": "worth monitoring"
+    },
+    {
+      "ticker": "IONQ",
+      "original_status": "manual_review",
+      "rating_external_display": "Manual Review / Hold Pending FCF and Execution Evidence",
+      "one_day_return_pct": -5.0818,
+      "benchmark": "QQQ",
+      "benchmark_return_pct": -0.4302,
+      "excess_return_pct": -4.6516,
+      "interpretation": "worth monitoring"
+    },
+    {
+      "ticker": "MU",
+      "original_status": "manual_review",
+      "rating_external_display": "Hold",
+      "one_day_return_pct": -5.9504,
+      "benchmark": "SMH",
+      "benchmark_return_pct": -1.8298,
+      "excess_return_pct": -4.1206,
+      "interpretation": "worth monitoring"
+    },
+    {
+      "ticker": "RIVN",
+      "original_status": "manual_review",
+      "rating_external_display": "Underweight",
+      "one_day_return_pct": -3.1907,
+      "benchmark": "SPY",
+      "benchmark_return_pct": -0.0703,
+      "excess_return_pct": -3.1204,
+      "interpretation": "worth monitoring"
+    },
+    {
+      "ticker": "MRVL",
+      "original_status": "manual_review",
+      "rating_external_display": "Hold",
+      "one_day_return_pct": -4.5,
+      "benchmark": "SMH",
+      "benchmark_return_pct": -1.8298,
+      "excess_return_pct": -2.6701,
+      "interpretation": "normal noise"
+    },
+    {
+      "ticker": "ACHR",
+      "original_status": "manual_review",
+      "rating_external_display": "Manual Review / Preliminary Underweight",
+      "one_day_return_pct": -2.1488,
+      "benchmark": "QQQ",
+      "benchmark_return_pct": -0.4302,
+      "excess_return_pct": -1.7185,
+      "interpretation": "normal noise"
+    },
+    {
+      "ticker": "AAPL",
+      "original_status": "passed",
+      "rating_external_display": "Accumulate",
+      "one_day_return_pct": -0.7961,
+      "benchmark": "QQQ",
+      "benchmark_return_pct": -0.4302,
+      "excess_return_pct": -0.3658,
+      "interpretation": "normal noise"
+    }
+  ],
+  "passed_reports_check": {
+    "strong_negative_excess_threshold_pct": -3.0,
+    "passed_tickers_with_strong_negative_1d_excess": [],
+    "possible_false_pass_suspicion": "no",
+    "action_policy": "No action unless repeated at 5D/10D."
+  },
+  "manual_review_missed_opportunity_watchlist": [
+    {
+      "ticker": "NOW",
+      "why_manual_review_originally": "price date before as-of date; earnings date unavailable; source frame variant ignored; period type mismatch ignored; true-source value disagreement",
+      "manual_review_reason_codes": [
+        "PRICE_DATE_BEFORE_AS_OF_DATE",
+        "EARNINGS_DATE_UNAVAILABLE",
+        "SOURCE_FRAME_VARIANT_IGNORED",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT"
+      ],
+      "one_day_outcome": {
+        "outcome_status": "computed",
+        "one_day_return_pct": 8.783,
+        "benchmark": "QQQ",
+        "benchmark_return_pct": -0.4302,
+        "excess_return_pct": 9.2132,
+        "manual_review_missed_opportunity": true
+      },
+      "does_this_challenge_the_guard": "no; 1D is monitoring-only and cannot challenge the guard alone",
+      "recommended_actions": [
+        "monitor until 5D",
+        "data-ops needed"
+      ]
+    },
+    {
+      "ticker": "MDB",
+      "why_manual_review_originally": "price date before as-of date; earnings date unavailable; source frame variant ignored; period type mismatch ignored; true-source value disagreement",
+      "manual_review_reason_codes": [
+        "PRICE_DATE_BEFORE_AS_OF_DATE",
+        "EARNINGS_DATE_UNAVAILABLE",
+        "SOURCE_FRAME_VARIANT_IGNORED",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT"
+      ],
+      "one_day_outcome": {
+        "outcome_status": "computed",
+        "one_day_return_pct": 5.715,
+        "benchmark": "QQQ",
+        "benchmark_return_pct": -0.4302,
+        "excess_return_pct": 6.1452,
+        "manual_review_missed_opportunity": true
+      },
+      "does_this_challenge_the_guard": "no; 1D is monitoring-only and cannot challenge the guard alone",
+      "recommended_actions": [
+        "monitor until 5D",
+        "data-ops needed"
+      ]
+    },
+    {
+      "ticker": "ZS",
+      "why_manual_review_originally": "price date before as-of date; earnings date unavailable; period type mismatch ignored; source frame variant ignored",
+      "manual_review_reason_codes": [
+        "PRICE_DATE_BEFORE_AS_OF_DATE",
+        "EARNINGS_DATE_UNAVAILABLE",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "SOURCE_FRAME_VARIANT_IGNORED"
+      ],
+      "one_day_outcome": {
+        "outcome_status": "computed",
+        "one_day_return_pct": 8.4694,
+        "benchmark": "QQQ",
+        "benchmark_return_pct": -0.4302,
+        "excess_return_pct": 8.8996,
+        "manual_review_missed_opportunity": true
+      },
+      "does_this_challenge_the_guard": "no; 1D is monitoring-only and cannot challenge the guard alone",
+      "recommended_actions": [
+        "monitor until 5D",
+        "data-ops needed"
+      ]
+    },
+    {
+      "ticker": "RKLB",
+      "why_manual_review_originally": "extreme valuation requires review; early-commercial capital-intensive tech manual-review profile; price date before as-of date; earnings date unavailable; period type mismatch ignored; true-source value disagreement; source frame variant ignored",
+      "manual_review_reason_codes": [
+        "EXTREME_VALUATION_REQUIRES_REVIEW",
+        "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH_MANUAL_REVIEW_PROFILE",
+        "PRICE_DATE_BEFORE_AS_OF_DATE",
+        "EARNINGS_DATE_UNAVAILABLE",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT",
+        "SOURCE_FRAME_VARIANT_IGNORED"
+      ],
+      "one_day_outcome": {
+        "outcome_status": "computed",
+        "one_day_return_pct": 5.1214,
+        "benchmark": "QQQ",
+        "benchmark_return_pct": -0.4302,
+        "excess_return_pct": 5.5517,
+        "manual_review_missed_opportunity": true
+      },
+      "does_this_challenge_the_guard": "no; 1D is monitoring-only and cannot challenge the guard alone",
+      "recommended_actions": [
+        "monitor until 10D",
+        "possible guard review later"
+      ]
+    }
+  ],
+  "no_change_policy": {
+    "no_calibration_from_1d_alone": true,
+    "no_guard_change_from_1d_alone": true,
+    "no_rating_change_from_1d_alone": true,
+    "no_report_change_from_1d_alone": true
+  },
+  "next_outcome_windows": {
+    "5D": "2026-05-22",
+    "10D": "2026-06-01",
+    "20D": "2026-06-15",
+    "60D": "2026-08-12"
+  }
+}

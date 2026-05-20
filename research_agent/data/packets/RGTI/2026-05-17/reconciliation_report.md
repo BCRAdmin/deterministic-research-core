@@ -2,7 +2,7 @@
 
 ## Reconciliation Stats
 
-- Canonical metrics created: `318`
+- Canonical metrics created: `325`
 - `PERIOD_TYPE_MISMATCH_IGNORED`: `15`
 - `TRUE_SOURCE_VALUE_DISAGREEMENT`: `2`
 - `SOURCE_FRAME_VARIANT_IGNORED`: `1`
@@ -324,11 +324,18 @@
 | shares_diluted | CY2025Q3 | 325,024,000.00 shares | gaap | SEC_0001104659-25-109141 | high |
 | shares_diluted | CY2025 | 309,763,000.00 shares | gaap | SEC_0001104659-26-023454 | high |
 | shares_diluted | CY2026Q1 | 335,437,000.00 shares | gaap | SEC_0001104659-26-058641 | high |
-| revenue | latest_companyfacts_ttm | 9,243,000.00 usd | gaap | RGTI_SEC_CURRENT_PERIOD_COMPANYFACTS_2026_05_11 | high |
-| operating_cash_flow | latest_companyfacts_ttm | -58,554,000.00 usd | gaap | RGTI_SEC_CURRENT_PERIOD_COMPANYFACTS_2026_05_11 | high |
-| free_cash_flow | latest_companyfacts_ttm | -75,809,000.00 usd | gaap | RGTI_SEC_CURRENT_PERIOD_COMPANYFACTS_2026_05_11 | high |
-| sbc | latest_companyfacts_ttm | 14,758,000.00 usd | gaap | RGTI_SEC_CURRENT_PERIOD_COMPANYFACTS_2026_05_11 | high |
-| cash_and_equivalents | latest_companyfacts_instant | 48,146,000.00 usd | gaap | RGTI_SEC_CURRENT_PERIOD_COMPANYFACTS_2026_05_11 | high |
+| revenue | Q1_2026 | 4,400,000.00 usd | gaap | RGTI_IR_Q1_2026_EARNINGS_RELEASE | high |
+| operating_income | Q1_2026 | -25,951,000.00 usd | gaap | RGTI_IR_Q1_2026_EARNINGS_RELEASE | high |
+| net_income | Q1_2026 | 33,109,000.00 usd | gaap | RGTI_IR_Q1_2026_EARNINGS_RELEASE | high |
+| non_gaap_net_income | Q1_2026 | -14,700,000.00 usd | non_gaap | RGTI_IR_Q1_2026_EARNINGS_RELEASE | high |
+| operating_cash_flow | Q1_2026 | -16,216,000.00 usd | gaap | RGTI_IR_Q1_2026_EARNINGS_RELEASE | high |
+| capital_expenditures | Q1_2026 | -4,411,000.00 usd | gaap | RGTI_IR_Q1_2026_EARNINGS_RELEASE | high |
+| calculated_current_q_fcf_from_cash_flow_statement | Q1_2026 | -20,627,000.00 usd | gaap | RGTI_IR_Q1_2026_EARNINGS_RELEASE | high |
+| stock_based_compensation | Q1_2026 | 5,890,000.00 usd | gaap | RGTI_IR_Q1_2026_EARNINGS_RELEASE | high |
+| cash_and_equivalents | 2026-03-31 | 48,146,000.00 usd | gaap | RGTI_IR_Q1_2026_EARNINGS_RELEASE | high |
+| cash_and_marketable_securities | 2026-03-31 | 569,000,000.00 usd | company_defined | RGTI_IR_Q1_2026_EARNINGS_RELEASE | high |
+| total_debt | 2026-03-31 | 0.00 usd | gaap | RGTI_IR_Q1_2026_EARNINGS_RELEASE | high |
+| cepheus_system_qubits | Q1_2026 | 108.00 count | company_defined | RGTI_IR_Q1_2026_EARNINGS_RELEASE | high |
 
 ## Top Unresolved Disagreements
 

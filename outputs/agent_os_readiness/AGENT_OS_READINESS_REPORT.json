@@ -1,0 +1,122 @@
+{
+  "capabilities": [
+    {
+      "capability": "openclaw_runtime_status",
+      "evidence": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Canonical/Systems/System - OpenClaw.md = present; /Users/BjornRosinger/.openclaw = missing",
+      "next_action": "Run explicit path/config/service/smoke preflight before treating OpenClaw as active.",
+      "status": "reference_only_until_preflight"
+    },
+    {
+      "capability": "hermes_pattern_benchmark",
+      "evidence": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/DreamFactory System/Agent Stack/Hermes Agent Benchmark - 2026-05-21.md",
+      "next_action": "Use as pattern source only; no external runtime install.",
+      "status": "captured"
+    },
+    {
+      "capability": "external_skill_intake",
+      "evidence": "/Users/BjornRosinger/Documents/New project 2/docs/skills/EXTERNAL_SKILL_INTAKE_SOP.md",
+      "next_action": "Keep all external skills behind source verification, risk class, and operator gate.",
+      "status": "active"
+    },
+    {
+      "capability": "skill_registry_v1",
+      "evidence": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/SKILL_REGISTRY.md",
+      "next_action": "Refresh via scripts/ops/agent_os_readiness.py.",
+      "status": "implemented_local_artifact"
+    },
+    {
+      "capability": "memory_inbox_and_search",
+      "evidence": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/MEMORY_INBOX_CANDIDATES.md",
+      "next_action": "Promote candidates manually into Obsidian routes; index is local search only.",
+      "status": "implemented_local_artifact"
+    },
+    {
+      "capability": "automation_job_cards",
+      "evidence": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/AUTOMATION_JOB_CARDS.md",
+      "next_action": "Create real app automations only after operator review.",
+      "status": "implemented_proposal_artifact"
+    },
+    {
+      "capability": "guardrails_as_code",
+      "evidence": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/GUARDRAIL_SCAN.md",
+      "next_action": "Treat block/high findings as gates before runtime expansion.",
+      "status": "implemented_local_scan"
+    },
+    {
+      "capability": "multi_channel_gateway",
+      "evidence": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/OPERATOR_INBOX.md",
+      "next_action": "Use the local inbox before considering any external chat gateway.",
+      "status": "local_operator_inbox_contract_implemented"
+    },
+    {
+      "capability": "terminal_backend_abstraction",
+      "evidence": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/TERMINAL_BACKENDS.md",
+      "next_action": "Do not start Docker or expand execution rights without operator gate.",
+      "status": "local_and_docker_contracts_implemented"
+    },
+    {
+      "capability": "hermes_home_presence",
+      "evidence": "/Users/BjornRosinger/.hermes = missing",
+      "next_action": "Do not read or import Hermes secrets without explicit operator gate.",
+      "status": "observed_only"
+    }
+  ],
+  "openclaw_migration_dry_run": [
+    {
+      "action": "no_source_found",
+      "secret_sensitive": false,
+      "source": "/Users/BjornRosinger/.openclaw/SOUL.md",
+      "status": "missing",
+      "target": "lioncom_agent_os_staging/persona/SOUL.md"
+    },
+    {
+      "action": "no_source_found",
+      "secret_sensitive": false,
+      "source": "/Users/BjornRosinger/.openclaw/AGENTS.md",
+      "status": "missing",
+      "target": "lioncom_agent_os_staging/workspace/AGENTS.md"
+    },
+    {
+      "action": "no_source_found",
+      "secret_sensitive": false,
+      "source": "/Users/BjornRosinger/.openclaw/MEMORY.md",
+      "status": "missing",
+      "target": "lioncom_agent_os_staging/memory/imported_MEMORY.md"
+    },
+    {
+      "action": "no_source_found",
+      "secret_sensitive": false,
+      "source": "/Users/BjornRosinger/.openclaw/USER.md",
+      "status": "missing",
+      "target": "lioncom_agent_os_staging/memory/imported_USER.md"
+    },
+    {
+      "action": "no_source_found",
+      "secret_sensitive": false,
+      "source": "/Users/BjornRosinger/.openclaw/skills",
+      "status": "missing",
+      "target": "lioncom_agent_os_staging/skills/openclaw-imports"
+    },
+    {
+      "action": "no_source_found",
+      "secret_sensitive": true,
+      "source": "/Users/BjornRosinger/.openclaw/openclaw.json",
+      "status": "missing",
+      "target": "lioncom_agent_os_staging/config/openclaw.imported.json"
+    },
+    {
+      "action": "no_source_found",
+      "secret_sensitive": true,
+      "source": "/Users/BjornRosinger/.openclaw/.env",
+      "status": "missing",
+      "target": "lioncom_agent_os_staging/secrets/.env.redacted_manifest_only"
+    },
+    {
+      "action": "no_source_found",
+      "secret_sensitive": false,
+      "source": "/Users/BjornRosinger/.openclaw/allowlist.json",
+      "status": "missing",
+      "target": "lioncom_agent_os_staging/security/command_allowlist.imported.json"
+    }
+  ]
+}

@@ -1,0 +1,219 @@
+{
+  "has_blocking_errors": true,
+  "issues": [
+    {
+      "code": "EXTREME_VALUATION_REQUIRES_REVIEW",
+      "line_number": null,
+      "message": "EV/Sales above 100x is an extreme valuation without a concrete denominator bug signal; treat it as valuation risk, not an automatic period-denominator bug.",
+      "metric": "ev_to_sales",
+      "raw_text": null,
+      "reported": 577.1703535604306,
+      "severity": "error",
+      "validated": null
+    },
+    {
+      "code": "TRUE_FINANCIAL_ANOMALY",
+      "line_number": null,
+      "message": "SBC/Revenue above 100% is extreme for general without a concrete denominator bug signal.",
+      "metric": "sbc_to_revenue",
+      "raw_text": null,
+      "reported": 1.5966677485664826,
+      "severity": "error",
+      "validated": null
+    },
+    {
+      "code": "SPECULATIVE_DEEP_TECH_MANUAL_REVIEW_PROFILE",
+      "line_number": null,
+      "message": "Speculative deep-tech early-commercial company archetype requires manual review.",
+      "metric": null,
+      "raw_text": null,
+      "reported": null,
+      "severity": "warning",
+      "validated": null
+    },
+    {
+      "code": "TECHNICAL_OVERWEIGHT_IN_FUNDAMENTAL_THESIS",
+      "line_number": null,
+      "message": "Technical analysis dominates the fundamental rating rationale.",
+      "metric": null,
+      "raw_text": null,
+      "reported": null,
+      "severity": "warning",
+      "validated": null
+    }
+  ],
+  "numeric_claims": [
+    {
+      "line_number": 9,
+      "nearby_text": "- Fundamental basis: revenue scale is `$9.2M`.",
+      "normalized_value": 9200000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$9.2M",
+      "unit": "usd"
+    },
+    {
+      "line_number": 10,
+      "nearby_text": "- Cash-conversion basis: free cash flow is `$-75.8M`.",
+      "normalized_value": -75800000.0,
+      "period_hint": "unknown",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$-75.8M",
+      "unit": "usd"
+    },
+    {
+      "line_number": 11,
+      "nearby_text": "- Valuation constraint: EV/Sales is `577.17x`.",
+      "normalized_value": 577.17,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "577.17x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 15,
+      "nearby_text": "- Report as-of date: `2026-05-17`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-17",
+      "unit": "date"
+    },
+    {
+      "line_number": 16,
+      "nearby_text": "- Price basis: `2026-05-15` close via `csv_price_provider`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": "close",
+      "raw_text": "2026-05-15",
+      "unit": "date"
+    },
+    {
+      "line_number": 17,
+      "nearby_text": "- Technical indicators are based on the closing price from `2026-05-15`, not on the report creation date `2026-05-17`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-15",
+      "unit": "date"
+    },
+    {
+      "line_number": 17,
+      "nearby_text": "- Technical indicators are based on the closing price from `2026-05-15`, not on the report creation date `2026-05-17`.",
+      "normalized_value": null,
+      "period_hint": "unknown",
+      "possible_metric": null,
+      "raw_text": "2026-05-17",
+      "unit": "date"
+    },
+    {
+      "line_number": 29,
+      "nearby_text": "| SBC / Revenue | 159.7% |",
+      "normalized_value": 159.7,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "159.7%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 37,
+      "nearby_text": "- **RGTI_CLAIM_002**: RGTI has revenue TTM of $9.2M, so the business discussion should focus on company-specific growth, margin quality and source-quality drivers rather than generic scale language.",
+      "normalized_value": 9200000.0,
+      "period_hint": "ttm",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$9.2M",
+      "unit": "usd"
+    },
+    {
+      "line_number": 41,
+      "nearby_text": "- **RGTI_CLAIM_003**: FCF TTM is $-75.8M, making cash conversion a direct rating input for RGTI.",
+      "normalized_value": -75800000.0,
+      "period_hint": "ttm",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$-75.8M",
+      "unit": "usd"
+    },
+    {
+      "line_number": 45,
+      "nearby_text": "- **RGTI_CLAIM_004**: SBC/Revenue is 159.7%, which should be interpreted through sector-specific quality and valuation context rather than a one-size-fits-all compensation lens.",
+      "normalized_value": 159.7,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "159.7%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 49,
+      "nearby_text": "- **RGTI_CLAIM_005**: Balance-sheet flexibility is anchored in net cash of $652.8M and debt evidence, which affects how much downside tolerance the action plan can carry.",
+      "normalized_value": 652800000.0,
+      "period_hint": "unknown",
+      "possible_metric": "net_cash",
+      "raw_text": "$652.8M",
+      "unit": "usd"
+    },
+    {
+      "line_number": 54,
+      "nearby_text": "- **RGTI_CLAIM_006**: Valuation is framed by EV/Sales of 577.17x; this directly limits how aggressive the Underweight stance should be.",
+      "normalized_value": 577.17,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "577.17x",
+      "unit": "multiple"
+    },
+    {
+      "line_number": 72,
+      "nearby_text": "- **RGTI_CLAIM_010**: The bull case is that validated growth and cash-flow quality combines with revenue of $9.2M to support the allowed upside rating path when cash conversion quality also holds.",
+      "normalized_value": 9200000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$9.2M",
+      "unit": "usd"
+    },
+    {
+      "line_number": 81,
+      "nearby_text": "- **RGTI_CLAIM_012**: The bear case is that source concerns, valuation risk or technical weakness overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at 159.7% or source concerns persist.",
+      "normalized_value": 159.7,
+      "period_hint": "unknown",
+      "possible_metric": "sbc_to_revenue",
+      "raw_text": "159.7%",
+      "unit": "percent"
+    },
+    {
+      "line_number": 92,
+      "nearby_text": "- **RGTI_CLAIM_015**: Source disagreement or current-period mismatch can reduce conviction for RGTI, especially where revenue $9.2M is a key valuation denominator.",
+      "normalized_value": 9200000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$9.2M",
+      "unit": "usd"
+    },
+    {
+      "line_number": 114,
+      "nearby_text": "- Why this rating? `Underweight` balances revenue of `$9.2M` against valuation and technical timing.",
+      "normalized_value": 9200000.0,
+      "period_hint": "unknown",
+      "possible_metric": "revenue_ttm",
+      "raw_text": "$9.2M",
+      "unit": "usd"
+    },
+    {
+      "line_number": 115,
+      "nearby_text": "- Cash conversion: FCF is `$-75.8M` and determines whether growth converts into equity value.",
+      "normalized_value": -75800000.0,
+      "period_hint": "unknown",
+      "possible_metric": "free_cash_flow_ttm",
+      "raw_text": "$-75.8M",
+      "unit": "usd"
+    },
+    {
+      "line_number": 116,
+      "nearby_text": "- Why not more bullish? EV/Sales `577.17x` limits new-money urgency unless current-period KPIs accelerate.",
+      "normalized_value": 577.17,
+      "period_hint": "unknown",
+      "possible_metric": "ev_to_sales",
+      "raw_text": "577.17x",
+      "unit": "multiple"
+    }
+  ],
+  "ticker": "RGTI"
+}

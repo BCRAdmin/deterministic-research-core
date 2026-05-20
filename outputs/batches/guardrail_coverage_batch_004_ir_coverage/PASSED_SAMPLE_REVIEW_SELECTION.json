@@ -52,22 +52,6 @@
     },
     {
       "category": "lowest_quality",
-      "company_archetype": "SEMICONDUCTOR_AI_INFRA",
-      "data_confidence_score": 68,
-      "external_display_rating": "Accumulate",
-      "internal_research_quality_score": 100,
-      "publish_quality_score": 87,
-      "rationale": "Lowest passed publish_quality_score; useful for floor check.",
-      "review_focus": "spot-check report, evidence appendix, rating consistency and no public-ready leakage",
-      "ticker": "QCOM",
-      "valuation_snapshot": {
-        "ev_to_sales": 4.625642853007623,
-        "market_cap_to_revenue": null,
-        "price_to_fcf": null
-      }
-    },
-    {
-      "category": "lowest_quality",
       "company_archetype": "SAAS_CONSUMPTION",
       "data_confidence_score": 68,
       "external_display_rating": "Hold",
@@ -120,5 +104,29 @@
     "2 lowest quality",
     "1 deterministic random",
     "1 high-risk/high-valuation if available among passed"
+  ],
+  "superseded_exclusions": [
+    {
+      "current_operating_truth": "manual_review / Hold Pending FCF Support",
+      "raw_record": {
+        "category": "lowest_quality",
+        "company_archetype": "SEMICONDUCTOR_AI_INFRA",
+        "data_confidence_score": 68,
+        "external_display_rating": "Accumulate",
+        "internal_research_quality_score": 100,
+        "publish_quality_score": 87,
+        "rationale": "Lowest passed publish_quality_score; useful for floor check.",
+        "review_focus": "spot-check report, evidence appendix, rating consistency and no public-ready leakage",
+        "ticker": "QCOM",
+        "valuation_snapshot": {
+          "ev_to_sales": 4.625642853007623,
+          "market_cap_to_revenue": null,
+          "price_to_fcf": null
+        }
+      },
+      "reason": "Superseded by manual_focus_guardrail_final_check. Do not use for promotion.",
+      "removed_from_passed_sample_bundle": true,
+      "ticker": "QCOM"
+    }
   ]
 }

@@ -1,3 +1,7 @@
+> Superseded by manual_focus_guardrail_final_check. Do not use for promotion.
+
+> Current operating truth: QCOM is manual_review / Hold Pending FCF Support via manual_focus_guardrail_final_check.
+
 # QCOM Research Report
 ## Executive Summary
 - **QCOM_CLAIM_001**: QCOM enters the report at a frozen close of 201.49 with a Accumulate stance; the action should reflect QCT/QTL mix, handset cyclicality, automotive/IoT diversification and management forecast quality, valuation discipline and the current technical setup.

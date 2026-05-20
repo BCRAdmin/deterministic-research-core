@@ -1,0 +1,50 @@
+{
+  "generated_at": "2026-05-21T00:00:00+02:00",
+  "mode": "no_ads_data_first",
+  "source_reference": "/Users/BjornRosinger/Downloads/Utility webseiten/outputs/utility_websites/UTILITY_WEBSITES_30_DAY_PLAN.md",
+  "weeks": [
+    {
+      "week": 1,
+      "focus": [
+        "freeze_ads_and_cmp_work",
+        "confirm_event_tracking_expectations",
+        "keep_materialbedarf_result_purchaseprep_signals_measurable",
+        "keep_elterngeld_trust_monitor"
+      ]
+    },
+    {
+      "week": 2,
+      "focus": [
+        "review_materialbedarf_events_if_available",
+        "review_gsc_only_with_post_change_data",
+        "prepare_affiliate_partner_shortlist_without_live_links",
+        "no_elterngeld_rewrite_without_specific_gsc_issue"
+      ]
+    },
+    {
+      "week": 3,
+      "focus": [
+        "inspect_product_category_slot_readiness_only_if_partner_data_exists",
+        "no_ads_or_paid_cmp",
+        "no_sticky_affiliate_cta",
+        "keep_elterngeld_no_funnel_no_affiliate"
+      ]
+    },
+    {
+      "week": 4,
+      "focus": [
+        "review_impressions_clicks_ctr_calculator_usage_purchaseprep_pdf_copy_email_events_outbound_placeholder_intent",
+        "if_data_immature_keep_monitor_wait_for_more_data",
+        "if_thresholds_not_met_keep_monetization_blocked_or_readiness_only"
+      ]
+    }
+  ],
+  "guardrails": [
+    "no_new_calculators",
+    "no_mass_seo_article_runs",
+    "no_aggressive_funnels",
+    "no_affiliate_live_links_without_operator_go",
+    "no_runtime_skill_installation"
+  ],
+  "runtime_changes": "none"
+}

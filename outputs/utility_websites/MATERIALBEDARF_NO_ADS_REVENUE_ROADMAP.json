@@ -1,0 +1,56 @@
+{
+  "generated_at": "2026-05-21T00:00:00+02:00",
+  "site": "materialbedarf-rechner.de",
+  "status": "readiness_only",
+  "current_status": {
+    "ads": "disabled",
+    "free_google_cmp": "not_viable_branch_closed",
+    "paid_cmp": "deferred",
+    "affiliate": "readiness_only",
+    "event_tracking": "active_or_prepared",
+    "purchase_intent_metrics": "available_or_expected"
+  },
+  "no_ads_revenue_paths": [
+    "affiliate_partner_prep",
+    "product_category_slots",
+    "material_list_pdf_copy_email",
+    "later_lead_gen_only_if_traffic_supports",
+    "later_paid_cmp_only_at_break_even"
+  ],
+  "short_term_work": [
+    "no_new_large_features",
+    "measure_events",
+    "review_gsc_action_cuts_only_with_post_change_data",
+    "prepare_partner_programs",
+    "no_live_links"
+  ],
+  "fourteen_day_goals": [
+    "calculator_submit",
+    "purchase_prep_expand",
+    "purchase_prep_copy",
+    "result_pdf_click",
+    "copy_material_list",
+    "email_draft_click",
+    "outbound_product_category_click_placeholder"
+  ],
+  "affiliate_start_conditions": [
+    "partner_data_available",
+    "disclosure_available",
+    "rel_sponsored_nofollow_prepared",
+    "event_thresholds_reached",
+    "operator_go"
+  ],
+  "paid_cmp_threshold": {
+    "minimum_pageviews_per_month": "20000-30000",
+    "alternative": "adsense_forecast_at_least_2x_cmp_cost",
+    "operator_gate_required": true
+  },
+  "blocked_actions": [
+    "ads",
+    "paid_cmp_now",
+    "live_affiliate_links",
+    "sticky_affiliate_cta",
+    "price_or_availability_promises"
+  ],
+  "runtime_changes": "none"
+}

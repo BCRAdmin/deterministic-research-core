@@ -1,3 +1,7 @@
+> Superseded by manual_focus_guardrail_final_check. Do not use for promotion.
+
+> Current operating truth: QCOM is manual_review / Hold Pending FCF Support via manual_focus_guardrail_final_check.
+
 # QCOM Research Report
 ## Executive Summary
 QCOM has revenue TTM of $44.20B, so the business discussion should focus on QCT/QTL mix, handset cyclicality, automotive/IoT diversification and management forecast quality rather than generic scale language. Revenue scale alone does not prove attractive returns or valuation discipline. Use revenue evidence as context, not as a standalone buy signal.

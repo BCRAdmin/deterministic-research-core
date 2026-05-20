@@ -2,7 +2,7 @@
 
 - Batch-ID: `guardrail_coverage_batch_004_ir_coverage`
 - Ticker count: `32`
-- passed/manual_review/failed/data_unavailable: `10 / 22 / 0 / 0`
+- operator-facing passed/manual_review/failed/data_unavailable: `9 / 23 / 0 / 0`
 - Current-period coverage: `32/32`
 - Price basis date: `2026-05-15`
 - Vivi status: `pass`
@@ -28,3 +28,9 @@
 - Do not bypass manual_review, artifact consistency, source, or promotion gates.
 - Do not present SEC-derived current-period fixtures as direct company guidance.
 - Do not create public reports from manual_review cases without human approval and final render.
+
+## Superseded Raw State Cleanup
+
+- QCOM raw Batch004 `passed / Accumulate` is superseded. Superseded by manual_focus_guardrail_final_check. Do not use for promotion.
+- Current QCOM operator-facing status: `manual_review / Hold Pending FCF Support`.
+- Public and passed bundles must not use raw Batch004 QCOM as current truth.

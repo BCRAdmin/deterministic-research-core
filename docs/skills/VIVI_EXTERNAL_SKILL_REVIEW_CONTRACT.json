@@ -1,0 +1,57 @@
+{
+  "schema_version": "1.0",
+  "status": "active_draft",
+  "scope": "external_skill_repo_agent_package_reviews",
+  "required_inputs": [
+    "source_url",
+    "owner_source_identity",
+    "audit_metadata",
+    "local_archive_path",
+    "local_skill_md_path",
+    "source_verification_status",
+    "unpack_review_status",
+    "existing_capabilities"
+  ],
+  "review_dimensions": [
+    "source_verification",
+    "local_artifact_availability",
+    "risk_class",
+    "runtime_authority",
+    "network_api_behavior",
+    "credentials_oauth_account_access",
+    "filesystem_access",
+    "memory_behavior",
+    "autonomous_background_update_behavior",
+    "operator_gate_compatibility",
+    "obsidian_compatibility",
+    "pattern_extraction_potential",
+    "install_decision"
+  ],
+  "review_status_values": [
+    "reject",
+    "hold",
+    "pattern_extract_only",
+    "sandbox_candidate",
+    "approved_sop",
+    "approved_runtime_candidate"
+  ],
+  "mandatory_output_fields": [
+    "review_status",
+    "blocking_issues",
+    "non_blocking_issues",
+    "useful_patterns",
+    "rejected_patterns",
+    "do_not_install_reasons",
+    "required_operator_action",
+    "codex_fix_or_doc_task"
+  ],
+  "rules": {
+    "source_not_verified_final_decision_allowed": false,
+    "slug_name_only_analysis_allowed": false,
+    "deep_research_must_be_checked_against_obsidian_capabilities_gates": true,
+    "external_memory_must_use_obsidian_promotion_map": true,
+    "vivi_alone_may_approve_normal_runtime_for_high_authority_skills": false,
+    "direct_install_without_operator_gate": false
+  },
+  "runtime_changes": false
+}

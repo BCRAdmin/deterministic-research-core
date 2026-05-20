@@ -1,0 +1,14 @@
+{
+  "automation_cards": 4,
+  "automation_cards_valid": true,
+  "guardrail_findings": 36,
+  "memory_candidates": 63,
+  "operator_inbox_items": 5,
+  "operator_inbox_valid": true,
+  "output_dir": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness",
+  "session_search_indexed_rows": 1865,
+  "skill_records": 26,
+  "status": "completed",
+  "terminal_backends": 2,
+  "terminal_backends_valid": true
+}

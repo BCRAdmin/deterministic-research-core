@@ -1,0 +1,308 @@
+{
+  "as_of_date": "2026-05-17",
+  "batch_id": "data_ops_p0_replacement_check",
+  "bundle_path": "outputs/quellwert_room16_operating/chatgpt_data_ops_p0_replacement_bundle.zip",
+  "generated_at": "2026-05-20T00:00:00+02:00",
+  "rows": [
+    {
+      "after_data_confidence_score": 75,
+      "after_external_display_rating": "Manual Review / Hold Pending FCF and Execution Evidence",
+      "after_status": "manual_review",
+      "artifact_consistency_status": "clean",
+      "before_data_confidence_score": 72,
+      "before_external_display_rating": "Manual Review / Hold Pending FCF and Execution Evidence",
+      "before_status": "manual_review",
+      "canonical_financials_path": "outputs/batches/data_ops_p0_replacement_check/IONQ/canonical_financials.json",
+      "company_defined_fcf_used": 0,
+      "current_period_reconciliation_summary_path": "outputs/batches/data_ops_p0_replacement_check/IONQ/current_period_reconciliation_summary.md",
+      "evidence_report_path": "outputs/batches/data_ops_p0_replacement_check/IONQ/evidence_report.md",
+      "manual_review_reasons_added": [],
+      "manual_review_reasons_remaining": [
+        "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH_MANUAL_REVIEW_PROFILE",
+        "EARNINGS_DATE_UNAVAILABLE",
+        "EXTREME_VALUATION_REQUIRES_REVIEW",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "SOURCE_FRAME_VARIANT_IGNORED",
+        "TRUE_FINANCIAL_ANOMALY"
+      ],
+      "manual_review_reasons_removed": [
+        "TECHNICAL_OVERWEIGHT_IN_FUNDAMENTAL_THESIS"
+      ],
+      "public_ready": false,
+      "publishability_changed": false,
+      "publishable": false,
+      "rating_display_changed": false,
+      "remaining_blockers": [
+        "company-defined FCF",
+        "confirmed next earnings date",
+        "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH_MANUAL_REVIEW_PROFILE",
+        "EARNINGS_DATE_UNAVAILABLE",
+        "EXTREME_VALUATION_REQUIRES_REVIEW",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "SOURCE_FRAME_VARIANT_IGNORED",
+        "TRUE_FINANCIAL_ANOMALY"
+      ],
+      "sec_derived_fcf_used": 0,
+      "source_added": "IonQ Q1 2026 earnings release: revenue, adjusted EBITDA loss, OCF/capex, cash/investments, RPO, FY/Q2 revenue guidance.",
+      "source_registry_path": "outputs/batches/data_ops_p0_replacement_check/IONQ/source_registry.json",
+      "ticker": "IONQ"
+    },
+    {
+      "after_data_confidence_score": 67,
+      "after_external_display_rating": "Accumulate",
+      "after_status": "manual_review",
+      "artifact_consistency_status": "clean",
+      "before_data_confidence_score": 60,
+      "before_external_display_rating": "Hold",
+      "before_status": "manual_review",
+      "canonical_financials_path": "outputs/batches/data_ops_p0_replacement_check/NVDA/canonical_financials.json",
+      "company_defined_fcf_used": 1,
+      "current_period_reconciliation_summary_path": "outputs/batches/data_ops_p0_replacement_check/NVDA/current_period_reconciliation_summary.md",
+      "evidence_report_path": "outputs/batches/data_ops_p0_replacement_check/NVDA/evidence_report.md",
+      "manual_review_reasons_added": [
+        "FINANCIAL_SANITY_FCF_MARGIN_ANOMALY",
+        "GUARD_THRESHOLD_REVIEW"
+      ],
+      "manual_review_reasons_remaining": [
+        "EARNINGS_DATE_UNAVAILABLE",
+        "FINANCIAL_SANITY_FCF_MARGIN_ANOMALY",
+        "GUARD_THRESHOLD_REVIEW",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "SOURCE_FRAME_VARIANT_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT"
+      ],
+      "manual_review_reasons_removed": [
+        "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+        "TRUE_FINANCIAL_ANOMALY"
+      ],
+      "public_ready": false,
+      "publishability_changed": false,
+      "publishable": false,
+      "rating_display_changed": true,
+      "remaining_blockers": [
+        "confirmed next earnings date",
+        "latest FY2027 actuals after next report",
+        "EARNINGS_DATE_UNAVAILABLE",
+        "FINANCIAL_SANITY_FCF_MARGIN_ANOMALY",
+        "GUARD_THRESHOLD_REVIEW",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "SOURCE_FRAME_VARIANT_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT"
+      ],
+      "sec_derived_fcf_used": 0,
+      "source_added": "NVIDIA Q4/FY2026 earnings release: Q4/FY revenue, operating income, Data Center revenue, OCF, company-defined FCF, cash/securities, FY2027 Q1 revenue outlook.",
+      "source_registry_path": "outputs/batches/data_ops_p0_replacement_check/NVDA/source_registry.json",
+      "ticker": "NVDA"
+    },
+    {
+      "after_data_confidence_score": 75,
+      "after_external_display_rating": "Manual Review / Preliminary Underweight",
+      "after_status": "manual_review",
+      "artifact_consistency_status": "clean",
+      "before_data_confidence_score": 75,
+      "before_external_display_rating": "Manual Review / Preliminary Underweight",
+      "before_status": "manual_review",
+      "canonical_financials_path": "outputs/batches/data_ops_p0_replacement_check/QBTS/canonical_financials.json",
+      "company_defined_fcf_used": 0,
+      "current_period_reconciliation_summary_path": "outputs/batches/data_ops_p0_replacement_check/QBTS/current_period_reconciliation_summary.md",
+      "evidence_report_path": "outputs/batches/data_ops_p0_replacement_check/QBTS/evidence_report.md",
+      "manual_review_reasons_added": [],
+      "manual_review_reasons_remaining": [
+        "EARNINGS_DATE_UNAVAILABLE",
+        "EXTREME_VALUATION_REQUIRES_REVIEW",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "SPECULATIVE_DEEP_TECH_MANUAL_REVIEW_PROFILE",
+        "TRUE_FINANCIAL_ANOMALY"
+      ],
+      "manual_review_reasons_removed": [
+        "TECHNICAL_OVERWEIGHT_IN_FUNDAMENTAL_THESIS"
+      ],
+      "public_ready": false,
+      "publishability_changed": false,
+      "publishable": false,
+      "rating_display_changed": false,
+      "remaining_blockers": [
+        "company-defined FCF",
+        "full 10-Q cash-flow detail in direct release fixture",
+        "confirmed next earnings date",
+        "EARNINGS_DATE_UNAVAILABLE",
+        "EXTREME_VALUATION_REQUIRES_REVIEW",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "SPECULATIVE_DEEP_TECH_MANUAL_REVIEW_PROFILE",
+        "TRUE_FINANCIAL_ANOMALY"
+      ],
+      "sec_derived_fcf_used": 0,
+      "source_added": "D-Wave Q1 2026 earnings release: revenue, bookings, RPO, gross margin, operating expenses, net loss, adjusted EBITDA loss, cash/securities.",
+      "source_registry_path": "outputs/batches/data_ops_p0_replacement_check/QBTS/source_registry.json",
+      "ticker": "QBTS"
+    },
+    {
+      "after_data_confidence_score": 49,
+      "after_external_display_rating": "Hold Pending FCF Support",
+      "after_status": "manual_review",
+      "artifact_consistency_status": "clean",
+      "before_data_confidence_score": 72,
+      "before_external_display_rating": "Hold Pending FCF Support",
+      "before_status": "manual_review",
+      "canonical_financials_path": "outputs/batches/data_ops_p0_replacement_check/QCOM/canonical_financials.json",
+      "company_defined_fcf_used": 0,
+      "current_period_reconciliation_summary_path": "outputs/batches/data_ops_p0_replacement_check/QCOM/current_period_reconciliation_summary.md",
+      "evidence_report_path": "outputs/batches/data_ops_p0_replacement_check/QCOM/evidence_report.md",
+      "manual_review_reasons_added": [
+        "MISSING_CURRENT_PERIOD_KPI_CONTEXT"
+      ],
+      "manual_review_reasons_remaining": [
+        "EARNINGS_DATE_UNAVAILABLE",
+        "MISSING_CURRENT_PERIOD_KPI_CONTEXT",
+        "MISSING_FCF_SUPPORT_FOR_ACCUMULATE",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "SOURCE_FRAME_VARIANT_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT"
+      ],
+      "manual_review_reasons_removed": [],
+      "public_ready": false,
+      "publishability_changed": false,
+      "publishable": false,
+      "rating_display_changed": false,
+      "remaining_blockers": [
+        "company-defined FCF label/reconciled TTM FCF",
+        "confirmed next earnings date",
+        "main-body use of new QCT/QTL/current-period KPIs remains incomplete",
+        "EARNINGS_DATE_UNAVAILABLE",
+        "MISSING_CURRENT_PERIOD_KPI_CONTEXT",
+        "MISSING_FCF_SUPPORT_FOR_ACCUMULATE",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "SOURCE_FRAME_VARIANT_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT"
+      ],
+      "sec_derived_fcf_used": 0,
+      "source_added": "Qualcomm Q2 FY2026 earnings release PDF: revenue, operating income, OCF, capex, calculated cash-flow support, QCT/QTL segment revenue, Q3 guidance.",
+      "source_registry_path": "outputs/batches/data_ops_p0_replacement_check/QCOM/source_registry.json",
+      "ticker": "QCOM"
+    },
+    {
+      "after_data_confidence_score": 69,
+      "after_external_display_rating": "Manual Review / Preliminary Underweight",
+      "after_status": "manual_review",
+      "artifact_consistency_status": "clean",
+      "before_data_confidence_score": 69,
+      "before_external_display_rating": "Manual Review / Preliminary Underweight",
+      "before_status": "manual_review",
+      "canonical_financials_path": "outputs/batches/data_ops_p0_replacement_check/RGTI/canonical_financials.json",
+      "company_defined_fcf_used": 0,
+      "current_period_reconciliation_summary_path": "outputs/batches/data_ops_p0_replacement_check/RGTI/current_period_reconciliation_summary.md",
+      "evidence_report_path": "outputs/batches/data_ops_p0_replacement_check/RGTI/evidence_report.md",
+      "manual_review_reasons_added": [],
+      "manual_review_reasons_remaining": [
+        "EARNINGS_DATE_UNAVAILABLE",
+        "EXTREME_VALUATION_REQUIRES_REVIEW",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "SOURCE_FRAME_VARIANT_IGNORED",
+        "SPECULATIVE_DEEP_TECH_MANUAL_REVIEW_PROFILE",
+        "TECHNICAL_OVERWEIGHT_IN_FUNDAMENTAL_THESIS",
+        "TRUE_FINANCIAL_ANOMALY",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT"
+      ],
+      "manual_review_reasons_removed": [],
+      "public_ready": false,
+      "publishability_changed": false,
+      "publishable": false,
+      "rating_display_changed": false,
+      "remaining_blockers": [
+        "company-defined FCF",
+        "customer/order materiality beyond disclosed Novera shipments",
+        "confirmed next earnings date",
+        "EARNINGS_DATE_UNAVAILABLE",
+        "EXTREME_VALUATION_REQUIRES_REVIEW",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "SOURCE_FRAME_VARIANT_IGNORED",
+        "SPECULATIVE_DEEP_TECH_MANUAL_REVIEW_PROFILE",
+        "TECHNICAL_OVERWEIGHT_IN_FUNDAMENTAL_THESIS",
+        "TRUE_FINANCIAL_ANOMALY",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT"
+      ],
+      "sec_derived_fcf_used": 0,
+      "source_added": "Rigetti Q1 2026 earnings release PDF: revenue, operating loss, GAAP/non-GAAP income, OCF, capex, cash/securities, no-debt statement, 108-qubit system milestone.",
+      "source_registry_path": "outputs/batches/data_ops_p0_replacement_check/RGTI/source_registry.json",
+      "ticker": "RGTI"
+    }
+  ],
+  "scope": "Data-Ops direct source replacements only; no guard/rating/archetype/template/code changes.",
+  "sources_added": {
+    "IONQ": "IonQ Q1 2026 earnings release: revenue, adjusted EBITDA loss, OCF/capex, cash/investments, RPO, FY/Q2 revenue guidance.",
+    "NVDA": "NVIDIA Q4/FY2026 earnings release: Q4/FY revenue, operating income, Data Center revenue, OCF, company-defined FCF, cash/securities, FY2027 Q1 revenue outlook.",
+    "QBTS": "D-Wave Q1 2026 earnings release: revenue, bookings, RPO, gross margin, operating expenses, net loss, adjusted EBITDA loss, cash/securities.",
+    "QCOM": "Qualcomm Q2 FY2026 earnings release PDF: revenue, operating income, OCF, capex, calculated cash-flow support, QCT/QTL segment revenue, Q3 guidance.",
+    "RGTI": "Rigetti Q1 2026 earnings release PDF: revenue, operating loss, GAAP/non-GAAP income, OCF, capex, cash/securities, no-debt statement, 108-qubit system milestone."
+  },
+  "sources_added_count": 5,
+  "sources_missing": {
+    "IONQ": [
+      "company-defined FCF",
+      "confirmed next earnings date"
+    ],
+    "NVDA": [
+      "confirmed next earnings date",
+      "latest FY2027 actuals after next report"
+    ],
+    "QBTS": [
+      "company-defined FCF",
+      "full 10-Q cash-flow detail in direct release fixture",
+      "confirmed next earnings date"
+    ],
+    "QCOM": [
+      "company-defined FCF label/reconciled TTM FCF",
+      "confirmed next earnings date",
+      "main-body use of new QCT/QTL/current-period KPIs remains incomplete"
+    ],
+    "RGTI": [
+      "company-defined FCF",
+      "customer/order materiality beyond disclosed Novera shipments",
+      "confirmed next earnings date"
+    ]
+  },
+  "summary": {
+    "artifact_consistency_error_count": 0,
+    "artifact_consistency_status": "clean",
+    "no_public_ready_without_promotion": true,
+    "publishability_changes": [],
+    "qa": {
+      "compileall": "passed",
+      "git_diff_check": "passed",
+      "pytest": "passed"
+    },
+    "qcom_status": {
+      "external_display_rating": "Hold Pending FCF Support",
+      "manual_review_reasons": [
+        "MISSING_FCF_SUPPORT_FOR_ACCUMULATE",
+        "MISSING_CURRENT_PERIOD_KPI_CONTEXT",
+        "EARNINGS_DATE_UNAVAILABLE",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT",
+        "SOURCE_FRAME_VARIANT_IGNORED"
+      ],
+      "publishable": false,
+      "status": "manual_review"
+    },
+    "rating_display_changes": {
+      "NVDA": {
+        "after": "Accumulate",
+        "before": "Hold"
+      }
+    },
+    "regression": {
+      "ionq_not_standard_growth": true,
+      "nvda_no_false_pass": true,
+      "qbts_deeptech_manual_review": true,
+      "qcom_not_plain_accumulate_without_fcf_support": true,
+      "rgti_deeptech_manual_review": true
+    },
+    "rgti_status": {
+      "company_archetype": "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL",
+      "external_display_rating": "Manual Review / Preliminary Underweight",
+      "publishable": false,
+      "status": "manual_review"
+    },
+    "status_changes": {}
+  }
+}

@@ -48,3 +48,23 @@ When a Markdown draft fails audit, the repair loop can attempt up to three contr
 If repair cannot clear blocking issues, the system writes `manual_review_required.md`, `draft_failed_audit.md`, and `audit_report.json` instead.
 
 The quality gate requires a score of at least `85`, no blocking validation errors, no blocking audit errors, and a final rating allowed by `DecisionPacket`.
+
+## Agent OS Readiness Pack
+
+Hermes/OpenClaw-inspired operating improvements live behind a local, safe readiness pack:
+
+```bash
+python3 scripts/ops/agent_os_readiness.py
+```
+
+The runner writes `outputs/agent_os_readiness/` with:
+
+- OpenClaw migration dry-run and capability matrix
+- local skill registry with risk decisions
+- Obsidian-compatible memory inbox candidates and SQLite search index
+- proposed automation job cards
+- local operator inbox contract
+- local/Docker terminal backend contracts
+- static guardrails-as-code scan
+
+It does not install external skills, read secret values, mutate runtime config, write canonical Obsidian notes, create automations, or call the network.

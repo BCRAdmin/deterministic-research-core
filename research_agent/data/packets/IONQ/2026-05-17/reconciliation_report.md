@@ -2,7 +2,7 @@
 
 ## Reconciliation Stats
 
-- Canonical metrics created: `365`
+- Canonical metrics created: `373`
 - `PERIOD_TYPE_MISMATCH_IGNORED`: `8`
 - `SOURCE_FRAME_VARIANT_IGNORED`: `1`
 
@@ -370,11 +370,19 @@
 | shares_diluted | CY2025Q3 | 294,524,786.00 shares | gaap | SEC_0001193125-25-266942 | high |
 | shares_diluted | CY2025 | 280,345,046.00 shares | gaap | SEC_0001193125-26-071562 | high |
 | shares_diluted | CY2026Q1 | 371,228,286.00 shares | gaap | SEC_0001193125-26-211876 | high |
-| revenue | latest_companyfacts_ttm | 132,794,000.00 usd | gaap | IONQ_SEC_CURRENT_PERIOD_COMPANYFACTS_2026_05_08 | high |
-| operating_cash_flow | latest_companyfacts_ttm | -218,329,000.00 usd | gaap | IONQ_SEC_CURRENT_PERIOD_COMPANYFACTS_2026_05_08 | high |
-| free_cash_flow | latest_companyfacts_ttm | -233,331,000.00 usd | gaap | IONQ_SEC_CURRENT_PERIOD_COMPANYFACTS_2026_05_08 | high |
-| sbc | latest_companyfacts_ttm | 194,099,000.00 usd | gaap | IONQ_SEC_CURRENT_PERIOD_COMPANYFACTS_2026_05_08 | high |
-| cash_and_equivalents | latest_companyfacts_instant | 162,360,000.00 usd | gaap | IONQ_SEC_CURRENT_PERIOD_COMPANYFACTS_2026_05_08 | high |
+| revenue | Q1_2026 | 64,700,000.00 usd | gaap | IONQ_IR_Q1_2026_EARNINGS_RELEASE | high |
+| net_income | Q1_2026 | 805,360,000.00 usd | gaap | IONQ_IR_Q1_2026_EARNINGS_RELEASE | high |
+| adjusted_ebitda | Q1_2026 | -96,753,000.00 usd | non_gaap | IONQ_IR_Q1_2026_EARNINGS_RELEASE | high |
+| operating_cash_flow | Q1_2026 | -151,024,000.00 usd | gaap | IONQ_IR_Q1_2026_EARNINGS_RELEASE | high |
+| capital_expenditures | Q1_2026 | -8,369,000.00 usd | gaap | IONQ_IR_Q1_2026_EARNINGS_RELEASE | high |
+| stock_based_compensation | Q1_2026 | 128,517,000.00 usd | gaap | IONQ_IR_Q1_2026_EARNINGS_RELEASE | high |
+| cash_and_equivalents | 2026-03-31 | 501,353,000.00 usd | gaap | IONQ_IR_Q1_2026_EARNINGS_RELEASE | high |
+| cash_and_marketable_securities | 2026-03-31 | 3,100,000,000.00 usd | company_defined | IONQ_IR_Q1_2026_EARNINGS_RELEASE | high |
+| remaining_performance_obligations | 2026-03-31 | 470,000,000.00 usd | company_defined | IONQ_IR_Q1_2026_EARNINGS_RELEASE | high |
+| fy2026_revenue_guidance_low | FY2026_GUIDANCE | 260,000,000.00 usd | company_defined | IONQ_IR_Q1_2026_EARNINGS_RELEASE | high |
+| fy2026_revenue_guidance_high | FY2026_GUIDANCE | 270,000,000.00 usd | company_defined | IONQ_IR_Q1_2026_EARNINGS_RELEASE | high |
+| q2_2026_revenue_guidance_low | Q2_2026_GUIDANCE | 65,000,000.00 usd | company_defined | IONQ_IR_Q1_2026_EARNINGS_RELEASE | high |
+| q2_2026_revenue_guidance_high | Q2_2026_GUIDANCE | 68,000,000.00 usd | company_defined | IONQ_IR_Q1_2026_EARNINGS_RELEASE | high |
 
 ## Top Unresolved Disagreements
 

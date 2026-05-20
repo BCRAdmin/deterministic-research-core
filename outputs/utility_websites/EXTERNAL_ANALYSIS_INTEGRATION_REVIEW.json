@@ -1,0 +1,278 @@
+{
+  "generated_at": "2026-05-21T00:00:00+02:00",
+  "basis_date": "2026-05-21",
+  "status": "computed",
+  "source_precedence": [
+    "current_operator_state_2026_05_21",
+    "read_only_skill_governance_docs",
+    "obsidian_utility_roadmap_and_reconciliation_notes",
+    "downloads_utility_outputs",
+    "raw_old_deep_research_if_available"
+  ],
+  "source_references": [
+    "/Users/BjornRosinger/Downloads/Utility webseiten/outputs/utility_websites/MONETIZATION_READINESS_BOARD.md",
+    "/Users/BjornRosinger/Downloads/Utility webseiten/outputs/utility_websites/UTILITY_14_DAY_REVIEW_PLAN.md",
+    "/Users/BjornRosinger/Downloads/Utility webseiten/outputs/utility_websites/UTILITY_WEBSITES_30_DAY_PLAN.md",
+    "/Users/BjornRosinger/Downloads/Utility webseiten/outputs/utility_websites/ADSENSE_FREEZE_DECISION.md",
+    "/Users/BjornRosinger/Downloads/Utility webseiten/outputs/utility_websites/CMP_BRANCH_CLOSED_DECISION.md",
+    "docs/skills/EXTERNAL_SKILL_INTAKE_SOP.md",
+    "docs/skills/VIVI_EXTERNAL_SKILL_REVIEW_CONTRACT.md",
+    "docs/memory/OBSIDIAN_MEMORY_PROMOTION_MAP.md"
+  ],
+  "global_rules": {
+    "ads": "disabled",
+    "paid_cmp": "deferred",
+    "free_google_cmp": "closed_not_viable",
+    "affiliate": "readiness_only_no_live_links",
+    "elterngeld": "trust_monitor_wait_for_more_data",
+    "skill_governance": "read_only_reference_no_runtime_install"
+  },
+  "materialbedarf": [
+    {
+      "topic": "Ergebnis-UX",
+      "original_claim": "Improve result clarity and conversion intent.",
+      "decision": "already_done",
+      "reason": "Result and PurchasePrep modules were improved; additional UX work needs event evidence.",
+      "current_system_status": "technically operating-ready; result and purchase-prep modules improved; event tracking prepared",
+      "next_action": "measure result and purchase-intent events",
+      "priority": "P1"
+    },
+    {
+      "topic": "Einkaufsliste",
+      "original_claim": "Make the shopping list more useful.",
+      "decision": "adopt_now",
+      "reason": "Material list clarity supports user value and purchase intent without activating monetization.",
+      "current_system_status": "copy/PDF/copy/email paths prepared",
+      "next_action": "keep list/copy/email/PDF actions measurable",
+      "priority": "P1"
+    },
+    {
+      "topic": "Reserve/Verschnitt",
+      "original_claim": "Explain reserve/waste assumptions.",
+      "decision": "adopt_now",
+      "reason": "Reserve explanation improves trust and result comprehension without new calculator scope.",
+      "current_system_status": "calculator operating-ready",
+      "next_action": "keep explanation clear; no new formula changes",
+      "priority": "P1"
+    },
+    {
+      "topic": "PDF/Druck/Copy/E-Mail",
+      "original_claim": "Add shareable/exportable result actions.",
+      "decision": "already_done",
+      "reason": "Readiness events and utility actions are already prepared.",
+      "current_system_status": "result_pdf_click, copy_material_list, email_draft_click expected",
+      "next_action": "monitor clicks before feature expansion",
+      "priority": "P1"
+    },
+    {
+      "topic": "PurchasePrep",
+      "original_claim": "Use result-adjacent purchase preparation.",
+      "decision": "already_done",
+      "reason": "PurchasePrep is improved and purchase_prep_copy was fixed.",
+      "current_system_status": "purchase prep copy/tracking fixed",
+      "next_action": "measure purchase_prep_expand and purchase_prep_copy",
+      "priority": "P1"
+    },
+    {
+      "topic": "Produktkategorie-Uebergaenge",
+      "original_claim": "Bridge from result to product categories.",
+      "decision": "adopt_later",
+      "reason": "Strong no-ads revenue path, but only readiness until partner data exists.",
+      "current_system_status": "affiliate readiness_only",
+      "next_action": "prepare slots and partner shortlist; no live links",
+      "priority": "P2"
+    },
+    {
+      "topic": "Affiliate",
+      "original_claim": "Use affiliate monetization.",
+      "decision": "requires_operator_gate",
+      "reason": "Requires partner data, disclosure, sponsored/nofollow attributes, event thresholds, and Operator-Go.",
+      "current_system_status": "readiness_only",
+      "next_action": "partner prep only",
+      "priority": "P1"
+    },
+    {
+      "topic": "AdSense",
+      "original_claim": "Use AdSense as short-term revenue.",
+      "decision": "reject",
+      "reason": "CMP path failed and Ads are frozen.",
+      "current_system_status": "ads disabled; gate safe_blocked",
+      "next_action": "no AdSense work before threshold",
+      "priority": "blocked"
+    },
+    {
+      "topic": "CMP",
+      "original_claim": "Continue CMP setup/debugging now.",
+      "decision": "outdated",
+      "reason": "Free Google CMP is not viable and paid CMP is deferred.",
+      "current_system_status": "Funding Choices carrier loads safely but no dialog, TC-string, or Purpose/Vendor map",
+      "next_action": "no further CMP debugging unless traffic/revenue threshold",
+      "priority": "blocked"
+    },
+    {
+      "topic": "GSC/CTR",
+      "original_claim": "Optimize CTR from Search Console.",
+      "decision": "requires_data",
+      "reason": "Allowed only as small action cuts after post-change data matures.",
+      "current_system_status": "monitoring expected",
+      "next_action": "wait for post-change GSC window",
+      "priority": "P1"
+    },
+    {
+      "topic": "Blog/Content",
+      "original_claim": "Publish broader supporting content.",
+      "decision": "requires_data",
+      "reason": "Mass articles without signals are rejected.",
+      "current_system_status": "no new copy without data",
+      "next_action": "only content backed by GSC/event evidence",
+      "priority": "P3"
+    },
+    {
+      "topic": "FAQ",
+      "original_claim": "Use FAQ/schema as SEO lever.",
+      "decision": "monitor",
+      "reason": "FAQ can help users, but schema is not treated as primary SEO lever.",
+      "current_system_status": "copy improved",
+      "next_action": "keep helpful FAQ; no schema-chasing",
+      "priority": "P2"
+    },
+    {
+      "topic": "Interne Links",
+      "original_claim": "Improve internal links.",
+      "decision": "adopt_later",
+      "reason": "Useful if tied to measured paths and GSC-backed targets.",
+      "current_system_status": "SEO/event focus",
+      "next_action": "use only with data-backed target pages",
+      "priority": "P2"
+    },
+    {
+      "topic": "Mobile UX",
+      "original_claim": "Improve mobile UX.",
+      "decision": "monitor",
+      "reason": "Important, but no broad UX sprint without evidence.",
+      "current_system_status": "technically operating-ready",
+      "next_action": "watch engagement and drop-off",
+      "priority": "P2"
+    },
+    {
+      "topic": "Performance/Core Web Vitals",
+      "original_claim": "Optimize performance.",
+      "decision": "monitor",
+      "reason": "Maintain health; no new optimization sprint without issue evidence.",
+      "current_system_status": "technically operating-ready",
+      "next_action": "review only if measurements degrade",
+      "priority": "P2"
+    }
+  ],
+  "elterngeld": [
+    {
+      "topic": "Trust/Quellen",
+      "original_claim": "Strengthen trust and sources.",
+      "decision": "already_done",
+      "reason": "Trust/copy/FAQ/result/meta have been improved.",
+      "current_system_status": "technically clean; trust monitor mode",
+      "next_action": "keep sources/date/disclaimer visible",
+      "priority": "P1"
+    },
+    {
+      "topic": "Rechner/Ergebnis",
+      "original_claim": "Improve calculator/result.",
+      "decision": "monitor",
+      "reason": "Technically clean; no new calculator work without data.",
+      "current_system_status": "monitor wait_for_more_data",
+      "next_action": "monitor GSC and user signals",
+      "priority": "P2"
+    },
+    {
+      "topic": "FAQ",
+      "original_claim": "Use FAQ for SEO.",
+      "decision": "monitor",
+      "reason": "Helpful FAQ is allowed, but not as schema bait.",
+      "current_system_status": "FAQ improved",
+      "next_action": "edit only if user/GSC data supports",
+      "priority": "P2"
+    },
+    {
+      "topic": "Ratgeber",
+      "original_claim": "Publish broader advice content.",
+      "decision": "requires_data",
+      "reason": "No mass guide expansion without post-change evidence.",
+      "current_system_status": "no further rewrites without GSC data",
+      "next_action": "wait for GSC",
+      "priority": "P3"
+    },
+    {
+      "topic": "Rueckwirkend beantragen",
+      "original_claim": "Cover retroactive application topic.",
+      "decision": "adopt_later",
+      "reason": "Potential user-help topic, but legally sensitive and source-dependent.",
+      "current_system_status": "trust monitor mode",
+      "next_action": "only consider with official-source review and GSC signal",
+      "priority": "P3"
+    },
+    {
+      "topic": "Meta/CTR",
+      "original_claim": "Improve titles/meta for CTR.",
+      "decision": "requires_data",
+      "reason": "CTR changes need fresh GSC data after prior updates.",
+      "current_system_status": "GSC waiting window",
+      "next_action": "review after waiting window",
+      "priority": "P1"
+    },
+    {
+      "topic": "Disclaimer",
+      "original_claim": "Clarify disclaimer.",
+      "decision": "already_done",
+      "reason": "No legal/tax advice posture is already current policy.",
+      "current_system_status": "trust/copy improved",
+      "next_action": "keep conservative disclaimer",
+      "priority": "P1"
+    },
+    {
+      "topic": "E-Mail-Opt-in",
+      "original_claim": "Add email capture.",
+      "decision": "reject",
+      "reason": "Funnel is too aggressive for current trust/monitor mode.",
+      "current_system_status": "no funnel",
+      "next_action": "none",
+      "priority": "blocked"
+    },
+    {
+      "topic": "AdSense",
+      "original_claim": "Use Ads.",
+      "decision": "reject",
+      "reason": "Ads disabled and monetization blocked.",
+      "current_system_status": "ads disabled",
+      "next_action": "none",
+      "priority": "blocked"
+    },
+    {
+      "topic": "Funnel",
+      "original_claim": "Build monetization funnel.",
+      "decision": "reject",
+      "reason": "Aggressive funnels are outside current Elterngeld mode.",
+      "current_system_status": "trust monitor",
+      "next_action": "none",
+      "priority": "blocked"
+    },
+    {
+      "topic": "Rechtliche Sensibilitaet",
+      "original_claim": "Handle sensitive legal/tax adjacent claims.",
+      "decision": "monitor",
+      "reason": "Content requires official-source posture and no-advice framing.",
+      "current_system_status": "no legal/tax advice",
+      "next_action": "keep no-advice framing",
+      "priority": "P1"
+    },
+    {
+      "topic": "GSC-Waiting-Window",
+      "original_claim": "Wait for more data before more edits.",
+      "decision": "adopt_now",
+      "reason": "Matches current policy.",
+      "current_system_status": "monitor wait_for_more_data",
+      "next_action": "do not rewrite without fresh data",
+      "priority": "P0"
+    }
+  ],
+  "runtime_changes": "none"
+}

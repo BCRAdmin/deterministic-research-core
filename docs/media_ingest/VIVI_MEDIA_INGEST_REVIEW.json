@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.0",
+  "status": "review_contract",
+  "reviewer_role": "Vivi",
+  "scope": [
+    "media_ingest_packets",
+    "evidence_candidates",
+    "obsidian_draft_notes"
+  ],
+  "checks": [
+    "source_allowed",
+    "rights_and_use_policy_clear",
+    "no_paywall_login_or_drm_circumvention",
+    "download_approval_present_if_download_happened",
+    "transcript_complete_enough_for_intended_use",
+    "language_timestamps_speaker_attribution_and_known_gaps_documented",
+    "hard_claims_marked_requires_verification_true",
+    "no_long_quotes_or_full_third_party_transcript_reproduction",
+    "no_direct_report_promotion",
+    "no_metrics_packet_or_decision_packet_mutation",
+    "no_guard_rating_or_calibration_change",
+    "obsidian_promotion_gate_followed",
+    "room16_evidence_candidate_lane_preserved"
+  ],
+  "review_status_values": [
+    "pass",
+    "needs_fix",
+    "manual_human_review"
+  ],
+  "output_fields": [
+    "review_status",
+    "blocking_issues",
+    "non_blocking_issues",
+    "source_allowed",
+    "rights_policy_clear",
+    "download_gate_ok",
+    "transcript_quality",
+    "hard_claims_require_verification",
+    "long_quotes_present",
+    "direct_report_promotion_present",
+    "obsidian_gate_ok",
+    "room16_candidate_lane_ok",
+    "recommended_action"
+  ],
+  "hard_stops": [
+    "source_access_required_paywall_login_or_drm_bypass",
+    "rights_use_status_unknown_for_intended_use",
+    "full_third_party_transcript_reproduction_present",
+    "media_claims_directly_changed_packets_reports_ratings_guards_or_public_status",
+    "hard_financial_claims_report_ready_without_primary_or_official_verification"
+  ],
+  "allowed_recommendations": [
+    "monitoring",
+    "fix_metadata",
+    "fix_claim_flags",
+    "candidate_review",
+    "human_gate"
+  ]
+}

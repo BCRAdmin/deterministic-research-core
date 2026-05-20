@@ -16,6 +16,8 @@ STALE_MANUAL_REVIEW_REASON = "STALE_MANUAL_REVIEW_REASON"
 ARTIFACT_SOURCE_OF_TRUTH_MISMATCH = "ARTIFACT_SOURCE_OF_TRUTH_MISMATCH"
 STALE_ARTIFACT_ISSUE = "STALE_ARTIFACT_ISSUE"
 STALE_DIAGNOSTIC_STATUS_REFERENCE = "STALE_DIAGNOSTIC_STATUS_REFERENCE"
+QCOM_SUPERSEDED_RAW_ACCUMULATE = "QCOM_SUPERSEDED_RAW_ACCUMULATE"
+QCOM_SUPERSEDED_BANNER = "Superseded by manual_focus_guardrail_final_check. Do not use for promotion."
 
 SOURCE_OF_TRUTH_FILES = [
     "report_manifest.json",
@@ -301,6 +303,7 @@ def _check_markdown_artifacts(
         _check_current_status_text(ticker, artifact, text, truth, issues)
         _check_archetype_text(ticker, artifact, role, text, truth, issues, legacy_ignored)
         _check_rating_text(ticker, artifact, role, text, truth, issues, legacy_ignored)
+        _check_qcom_superseded_raw_accumulate(ticker, artifact, role, text, truth, issues, legacy_ignored)
         _check_publishability_text(ticker, artifact, text, truth, issues, legacy_ignored)
         _check_manual_review_reasons(ticker, artifact, text, truth, issues, legacy_ignored)
         _check_stale_issue_codes(ticker, artifact, text, truth, issues, legacy_ignored)
@@ -376,6 +379,56 @@ def _check_rating_text(
                 found=stale,
             )
         )
+
+
+def _check_qcom_superseded_raw_accumulate(
+    ticker: str,
+    artifact: str,
+    role: str,
+    text: str,
+    truth: dict[str, Any],
+    issues: list[ConsistencyIssue],
+    legacy_ignored: list[dict[str, Any]],
+) -> None:
+    if ticker.upper() != "QCOM":
+        return
+    expected = str(truth.get("external_display_rating") or "")
+    reasons = set(_as_list(truth.get("manual_review_reasons")))
+    if expected != "Hold Pending FCF Support" and "MISSING_FCF_SUPPORT_FOR_ACCUMULATE" not in reasons:
+        return
+    if role != "public_facing":
+        return
+    stale_markers = [
+        "Final Rating: Accumulate",
+        "We rate QCOM Accumulate",
+        "QCOM Accumulate",
+        "Accumulate stance",
+    ]
+    found = next((marker for marker in stale_markers if marker.lower() in text.lower()), None)
+    if not found:
+        return
+    if QCOM_SUPERSEDED_BANNER in text:
+        legacy_ignored.append(
+            {
+                "ticker": ticker,
+                "artifact": artifact,
+                "term": found,
+                "role": role,
+                "reason": "qcom_superseded_raw_state_banner",
+            }
+        )
+        return
+    issues.append(
+        ConsistencyIssue(
+            QCOM_SUPERSEDED_RAW_ACCUMULATE,
+            "error",
+            ticker,
+            artifact,
+            "Raw QCOM Accumulate state is exposed without the superseded banner.",
+            expected=QCOM_SUPERSEDED_BANNER,
+            found=found,
+        )
+    )
 
 
 def _check_public_system_language(

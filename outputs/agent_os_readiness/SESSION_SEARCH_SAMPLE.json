@@ -1,0 +1,66 @@
+{
+  "hits": [
+    {
+      "line": 4,
+      "path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
+      "score": -15.01516135413237,
+      "snippet": "Scope: LIONCOM / Vega / Vivi / OpenClaw / Hermes pattern adoption"
+    },
+    {
+      "line": 29,
+      "path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
+      "score": -5.7153496983870715,
+      "snippet": "Default outputs are written to `outputs/agent_os_readiness/`."
+    },
+    {
+      "line": 9,
+      "path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
+      "score": -5.553400732241382,
+      "snippet": "This pack translates the useful Hermes Agent patterns into safe local operating"
+    },
+    {
+      "line": 49,
+      "path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
+      "score": -5.424031294657932,
+      "snippet": "- No Obsidian canonical note is updated by the script."
+    },
+    {
+      "line": 1,
+      "path": "docs/media_ingest/VIVI_MEDIA_INGEST_REVIEW.md",
+      "score": -3.742254418854729,
+      "snippet": "# Vivi Media Ingest Review"
+    },
+    {
+      "line": 69,
+      "path": "docs/media_ingest/TRANSCRIPTION_WORKFLOW.md",
+      "score": -3.6670987282384284,
+      "snippet": "## Acceptance"
+    },
+    {
+      "line": 3,
+      "path": "docs/media_ingest/VIVI_MEDIA_INGEST_REVIEW.md",
+      "score": -3.6670987282384284,
+      "snippet": "Status: review contract"
+    },
+    {
+      "line": 18,
+      "path": "docs/skills/VIVI_EXTERNAL_SKILL_REVIEW_CONTRACT.md",
+      "score": -3.6670987282384284,
+      "snippet": "- source verification status"
+    },
+    {
+      "line": 66,
+      "path": "docs/media_ingest/TRANSCRIPTION_WORKFLOW.md",
+      "score": -3.5949023098355055,
+      "snippet": "- the source requires login/paywall/DRM circumvention"
+    },
+    {
+      "line": 113,
+      "path": "docs/skills/SKILL_AUTHORING_POLICY.md",
+      "score": -3.5254937552549364,
+      "snippet": "- JSON/YAML/schema artifacts parse if present"
+    }
+  ],
+  "indexed_rows": 1865,
+  "query": "Hermes OR OpenClaw OR Vivi"
+}

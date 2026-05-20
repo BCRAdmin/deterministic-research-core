@@ -1,0 +1,59 @@
+{
+  "generated_at": "2026-05-21T00:00:00+02:00",
+  "status": "completed",
+  "created_playbooks": [
+    "docs/documents/DOCX_WORKFLOW_PLAYBOOK.md",
+    "docs/documents/DOCX_WORKFLOW_PLAYBOOK.json",
+    "docs/spreadsheets/XLSX_WORKFLOW_PLAYBOOK.md",
+    "docs/spreadsheets/XLSX_WORKFLOW_PLAYBOOK.json",
+    "docs/pdf/PDF_RENDER_PLAYBOOK.md",
+    "docs/pdf/PDF_RENDER_PLAYBOOK.json",
+    "docs/writing/HUMANIZER_LINT_PLAYBOOK.md",
+    "docs/writing/HUMANIZER_LINT_PLAYBOOK.json",
+    "docs/automation/AUTOMATION_WORKFLOWS_PLAYBOOK.md",
+    "docs/automation/AUTOMATION_WORKFLOWS_PLAYBOOK.json",
+    "docs/skills/LOCAL_SKILL_INVENTORY_RISK_SCAN.md",
+    "docs/skills/LOCAL_SKILL_INVENTORY_RISK_SCAN.json",
+    "docs/media_ingest/NEXT_MEDIA_SAMPLE_BACKLOG.md",
+    "docs/media_ingest/NEXT_MEDIA_SAMPLE_BACKLOG.json",
+    "docs/skills/HIGH_RISK_SKILLS_HOLD_REGISTER.md",
+    "docs/skills/HIGH_RISK_SKILLS_HOLD_REGISTER.json"
+  ],
+  "helper_scripts": [
+    {
+      "path": "scripts/skills/local_skill_inventory_scan.py",
+      "mode": "local_read_only",
+      "network": "none",
+      "writes": "none",
+      "secret_printing": false
+    }
+  ],
+  "not_implemented": [
+    "external_skill_installation",
+    "runtime_integration",
+    "api_gateway",
+    "desktop_control",
+    "proactive_agent_full_autonomy",
+    "remote_skillscan_phone_home_scanner",
+    "auto_updates",
+    "obsidian_autowrites",
+    "public_or_publishing_action",
+    "file_conversion_without_explicit_operator_input"
+  ],
+  "runtime_changes": "none",
+  "p1_backlog": [
+    "use_docx_xlsx_pdf_playbooks_on_next_operator_file_task",
+    "run_local_inventory_scan_before_future_skill_playbook_changes",
+    "use_humanizer_lint_as_review_only_for_utility_and_room16_copy"
+  ],
+  "p2_backlog": [
+    "add_examples_to_docx_xlsx_validation_reports_after_first_real_file_workflow",
+    "add_utility_gsc_event_review_xlsx_template_only_when_actual_export_data_exists",
+    "run_real_media_ingest_sample_only_after_operator_provides_approved_source"
+  ],
+  "p3_backlog": [
+    "draft_future_sandbox_proposal_template_for_api_gateway_desktop_control_only_if_real_use_case_appears",
+    "add_pdf_render_checklist_examples_after_first_internal_render_task"
+  ],
+  "next_safe_step": "run_scripts_skills_local_skill_inventory_scan_py_during_future_playbook_reviews_and_route_findings_through_external_skill_intake_sop_and_vivi_review"
+}

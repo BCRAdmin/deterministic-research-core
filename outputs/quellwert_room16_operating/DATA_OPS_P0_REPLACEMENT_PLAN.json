@@ -1,0 +1,116 @@
+{
+  "as_of_date": "2026-05-17",
+  "batch_config_path": "outputs/batches/data_ops_p0_replacement_check_config.json",
+  "batch_id": "data_ops_p0_replacement_check",
+  "freshness_reference_date": "2026-05-17",
+  "generated_at": "2026-05-20T00:00:00+02:00",
+  "scope": "Direct IR/Earnings-/SEC source replacements only; no guard/rating/archetype/template changes.",
+  "source_input_root": "outputs/source_inputs/data_ops_p0_replacement_check",
+  "source_registry_note": "Direct release fixtures remain earnings_release; source registry maps the direct company release as company_ir authority to avoid treating company-issued releases as low-authority vendor sources.",
+  "summary": {
+    "direct_sources_added": 5,
+    "expected_publishability_changes": 0,
+    "missing_company_defined_fcf_tickers": [
+      "IONQ",
+      "QBTS",
+      "QCOM",
+      "RGTI"
+    ],
+    "operator_actions_needed": 0,
+    "p0_tickers": 5
+  },
+  "tickers": [
+    {
+      "can_vega_fetch_process": true,
+      "current_source_status": "Batch004 had SEC CompanyFacts current-period support but no direct Q1 2026 IR release fixture; manual-focus corrected archetype to EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH.",
+      "desired_direct_source": "https://investors.ionq.com/news/news-details/2026/IonQ-Announces-First-Quarter-2026-Financial-Results/default.aspx",
+      "expected_impact_on_manual_review": "Improves current-period revenue, RPO/guidance, cash-burn and SBC evidence; does not remove valuation/FCF/execution manual-review requirement.",
+      "expected_impact_on_publishability": "No public publishability expected; keep Manual Review / Hold Pending FCF and Execution Evidence.",
+      "missing_fields": [
+        "company-defined free cash flow",
+        "confirmed next earnings date"
+      ],
+      "operator_action_needed": false,
+      "priority": "P0",
+      "required_source_type": [
+        "earnings release",
+        "10-Q / 10-K"
+      ],
+      "ticker": "IONQ"
+    },
+    {
+      "can_vega_fetch_process": true,
+      "current_source_status": "Batch004/manual-focus had SEC CompanyFacts and stale/no direct FY2026 company-defined FCF fixture, causing source disagreement and financial sanity review.",
+      "desired_direct_source": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Fourth-Quarter-and-Fiscal-2026/",
+      "expected_impact_on_manual_review": "Should improve direct FCF, annual revenue, Data Center and guidance evidence; valuation/source-disagreement review may remain.",
+      "expected_impact_on_publishability": "Could become a stronger internal candidate, but no public-ready without promotion.",
+      "missing_fields": [
+        "latest Q1 FY2027 actuals after next report date",
+        "confirmed next earnings date"
+      ],
+      "operator_action_needed": false,
+      "priority": "P0",
+      "required_source_type": [
+        "earnings release",
+        "IR presentation"
+      ],
+      "ticker": "NVDA"
+    },
+    {
+      "can_vega_fetch_process": true,
+      "current_source_status": "Batch004/manual-focus had SEC CompanyFacts and no direct Q1 2026 D-Wave release fixture.",
+      "desired_direct_source": "https://www.dwavequantum.com/company/newsroom/press-release/d-wave-reports-first-quarter-2026-results/",
+      "expected_impact_on_manual_review": "Adds current revenue, bookings, RPO, cash and roadmap evidence; deep-tech manual review should remain.",
+      "expected_impact_on_publishability": "No public publishability expected; speculative deep-tech remains manual review.",
+      "missing_fields": [
+        "company-defined free cash flow",
+        "cash-flow statement detail from 10-Q",
+        "confirmed next earnings date"
+      ],
+      "operator_action_needed": false,
+      "priority": "P0",
+      "required_source_type": [
+        "earnings release",
+        "10-Q / 10-K"
+      ],
+      "ticker": "QBTS"
+    },
+    {
+      "can_vega_fetch_process": true,
+      "current_source_status": "Manual-focus baseline correctly shows manual_review / Hold Pending FCF Support because FCF support was not reconciled as primary/company-defined evidence.",
+      "desired_direct_source": "https://s204.q4cdn.com/645488518/files/doc_financials/2026/q2/FY2026-2nd-Quarter-Earnings-Release.pdf",
+      "expected_impact_on_manual_review": "Adds direct OCF, capex, QCT/QTL segment and guidance evidence; keeps Hold Pending FCF Support unless FCF is explicitly reconciled.",
+      "expected_impact_on_publishability": "No publishability change expected in this pass; no plain Accumulate without FCF support.",
+      "missing_fields": [
+        "company-defined FCF label",
+        "confirmed next earnings date"
+      ],
+      "operator_action_needed": false,
+      "priority": "P0",
+      "required_source_type": [
+        "earnings release",
+        "10-Q / 10-K"
+      ],
+      "ticker": "QCOM"
+    },
+    {
+      "can_vega_fetch_process": true,
+      "current_source_status": "Batch004/manual-focus had SEC CompanyFacts but no direct Q1 2026 Rigetti earnings-release fixture.",
+      "desired_direct_source": "https://investors.rigetti.com/node/11041/pdf",
+      "expected_impact_on_manual_review": "Improves direct revenue, operating loss, cash burn, cash/securities and execution evidence; deep-tech manual review should remain.",
+      "expected_impact_on_publishability": "No public publishability expected; speculative deep-tech remains manual review.",
+      "missing_fields": [
+        "company-defined free cash flow",
+        "customer/order materiality beyond disclosed Novera shipments",
+        "confirmed next earnings date"
+      ],
+      "operator_action_needed": false,
+      "priority": "P0",
+      "required_source_type": [
+        "earnings release",
+        "10-Q / 10-K"
+      ],
+      "ticker": "RGTI"
+    }
+  ]
+}

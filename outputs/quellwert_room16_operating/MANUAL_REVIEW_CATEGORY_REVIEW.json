@@ -1,0 +1,376 @@
+{
+  "categories": [
+    {
+      "category": "evidence/current-period limitation",
+      "count_batch004": 22,
+      "count_effective_with_manual_focus_overlay": 22,
+      "data_ops_needed": true,
+      "false_block_risk": "medium_until_direct_ir_replacements_land",
+      "guard_correct": true,
+      "notes": "",
+      "representative_state": {
+        "company_archetype": "SEMICONDUCTOR_AI_INFRA",
+        "external_display_rating": "Hold",
+        "manual_review_reasons": [
+          "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+          "TRUE_FINANCIAL_ANOMALY",
+          "EARNINGS_DATE_UNAVAILABLE",
+          "SOURCE_FRAME_VARIANT_IGNORED",
+          "PERIOD_TYPE_MISMATCH_IGNORED",
+          "TRUE_SOURCE_VALUE_DISAGREEMENT"
+        ],
+        "status": "manual_review"
+      },
+      "representative_ticker": "NVDA",
+      "system_fix_needed": false,
+      "tickers": [
+        "ACHR",
+        "AMD",
+        "AMZN",
+        "ASTS",
+        "CRWD",
+        "INTC",
+        "IONQ",
+        "JOBY",
+        "LCID",
+        "MDB",
+        "MRVL",
+        "MU",
+        "NET",
+        "NOW",
+        "NVDA",
+        "PANW",
+        "PLUG",
+        "QBTS",
+        "RGTI",
+        "RIVN",
+        "RKLB",
+        "ZS"
+      ],
+      "typical_reasons": "Keep internal/manual until direct current-period evidence or explicit no-guidance evidence is stronger."
+    },
+    {
+      "category": "valuation anomaly",
+      "count_batch004": 12,
+      "count_effective_with_manual_focus_overlay": 12,
+      "data_ops_needed": false,
+      "false_block_risk": "low",
+      "guard_correct": true,
+      "notes": "",
+      "representative_state": {
+        "company_archetype": "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH",
+        "external_display_rating": "Manual Review / Hold Pending FCF and Execution Evidence",
+        "manual_review_reasons": [
+          "EXTREME_VALUATION_REQUIRES_REVIEW",
+          "TRUE_FINANCIAL_ANOMALY",
+          "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH_MANUAL_REVIEW_PROFILE",
+          "TECHNICAL_OVERWEIGHT_IN_FUNDAMENTAL_THESIS",
+          "EARNINGS_DATE_UNAVAILABLE",
+          "PERIOD_TYPE_MISMATCH_IGNORED",
+          "SOURCE_FRAME_VARIANT_IGNORED"
+        ],
+        "status": "manual_review"
+      },
+      "representative_ticker": "IONQ",
+      "system_fix_needed": false,
+      "tickers": [
+        "ACHR",
+        "AMD",
+        "AMZN",
+        "ASTS",
+        "CRWD",
+        "IONQ",
+        "JOBY",
+        "MU",
+        "NVDA",
+        "QBTS",
+        "RGTI",
+        "RKLB"
+      ],
+      "typical_reasons": "Manual review is expected; do not resolve by guard loosening."
+    },
+    {
+      "category": "FCF support",
+      "count_batch004": 6,
+      "count_effective_with_manual_focus_overlay": 7,
+      "data_ops_needed": true,
+      "false_block_risk": "low",
+      "guard_correct": true,
+      "notes": "QCOM FCF support is added by manual-focus overlay.",
+      "representative_state": {
+        "company_archetype": "SEMICONDUCTOR_AI_INFRA",
+        "external_display_rating": "Hold Pending FCF Support",
+        "manual_review_reasons": [
+          "MISSING_FCF_SUPPORT_FOR_ACCUMULATE",
+          "EARNINGS_DATE_UNAVAILABLE",
+          "PERIOD_TYPE_MISMATCH_IGNORED",
+          "TRUE_SOURCE_VALUE_DISAGREEMENT",
+          "SOURCE_FRAME_VARIANT_IGNORED"
+        ],
+        "status": "manual_review"
+      },
+      "representative_ticker": "QCOM",
+      "system_fix_needed": false,
+      "tickers": [
+        "AMD",
+        "AMZN",
+        "CRWD",
+        "MU",
+        "NVDA",
+        "PANW",
+        "QCOM"
+      ],
+      "typical_reasons": "Require explicit FCF/OCF support before stronger public/passed interpretation."
+    },
+    {
+      "category": "Deep-Tech / Early-Commercial",
+      "count_batch004": 6,
+      "count_effective_with_manual_focus_overlay": 6,
+      "data_ops_needed": true,
+      "false_block_risk": "low",
+      "guard_correct": true,
+      "notes": "",
+      "representative_state": {
+        "company_archetype": "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL",
+        "external_display_rating": "Manual Review / Preliminary Underweight",
+        "manual_review_reasons": [
+          "EXTREME_VALUATION_REQUIRES_REVIEW",
+          "TRUE_FINANCIAL_ANOMALY",
+          "SPECULATIVE_DEEP_TECH_MANUAL_REVIEW_PROFILE",
+          "TECHNICAL_OVERWEIGHT_IN_FUNDAMENTAL_THESIS",
+          "EARNINGS_DATE_UNAVAILABLE",
+          "PERIOD_TYPE_MISMATCH_IGNORED",
+          "TRUE_SOURCE_VALUE_DISAGREEMENT",
+          "SOURCE_FRAME_VARIANT_IGNORED"
+        ],
+        "status": "manual_review"
+      },
+      "representative_ticker": "RGTI",
+      "system_fix_needed": false,
+      "tickers": [
+        "ACHR",
+        "ASTS",
+        "JOBY",
+        "QBTS",
+        "RGTI",
+        "RKLB"
+      ],
+      "typical_reasons": "Manual review is desired for speculative or capital-intensive profiles."
+    },
+    {
+      "category": "Semiconductor / cyclicality",
+      "count_batch004": 5,
+      "count_effective_with_manual_focus_overlay": 5,
+      "data_ops_needed": true,
+      "false_block_risk": "low",
+      "guard_correct": true,
+      "notes": "",
+      "representative_state": {
+        "company_archetype": "SEMICONDUCTOR_AI_INFRA",
+        "external_display_rating": "Hold",
+        "manual_review_reasons": [
+          "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+          "TRUE_FINANCIAL_ANOMALY",
+          "PRICE_DATE_BEFORE_AS_OF_DATE",
+          "EARNINGS_DATE_UNAVAILABLE",
+          "SOURCE_FRAME_VARIANT_IGNORED",
+          "PERIOD_TYPE_MISMATCH_IGNORED",
+          "TRUE_SOURCE_VALUE_DISAGREEMENT"
+        ],
+        "status": "manual_review"
+      },
+      "representative_ticker": "MU",
+      "system_fix_needed": false,
+      "tickers": [
+        "AMD",
+        "INTC",
+        "MRVL",
+        "MU",
+        "NVDA"
+      ],
+      "typical_reasons": "Review cyclicality, guidance, inventory/capex and AI-cycle evidence."
+    },
+    {
+      "category": "turnaround/distressed",
+      "count_batch004": 3,
+      "count_effective_with_manual_focus_overlay": 3,
+      "data_ops_needed": false,
+      "false_block_risk": "low",
+      "guard_correct": true,
+      "notes": "",
+      "representative_state": {
+        "company_archetype": "STANDARD_GROWTH",
+        "external_display_rating": "Underweight",
+        "manual_review_reasons": [
+          "PRICE_DATE_BEFORE_AS_OF_DATE",
+          "EARNINGS_DATE_UNAVAILABLE",
+          "PERIOD_TYPE_MISMATCH_IGNORED",
+          "SOURCE_FRAME_VARIANT_IGNORED"
+        ],
+        "status": "manual_review"
+      },
+      "representative_ticker": "RIVN",
+      "system_fix_needed": false,
+      "tickers": [
+        "LCID",
+        "PLUG",
+        "RIVN"
+      ],
+      "typical_reasons": "Treat as internal risk notes; public promotion needs stronger operator review."
+    },
+    {
+      "category": "artifact/evidence/reconciliation warning",
+      "count_batch004": 22,
+      "count_effective_with_manual_focus_overlay": 22,
+      "data_ops_needed": true,
+      "false_block_risk": "medium_until_direct_ir_replacements_land",
+      "guard_correct": true,
+      "notes": "",
+      "representative_state": {
+        "company_archetype": "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL",
+        "external_display_rating": "Manual Review / Preliminary Underweight",
+        "manual_review_reasons": [
+          "EXTREME_VALUATION_REQUIRES_REVIEW",
+          "TRUE_FINANCIAL_ANOMALY",
+          "SPECULATIVE_DEEP_TECH_MANUAL_REVIEW_PROFILE",
+          "TECHNICAL_OVERWEIGHT_IN_FUNDAMENTAL_THESIS",
+          "EARNINGS_DATE_UNAVAILABLE",
+          "PERIOD_TYPE_MISMATCH_IGNORED"
+        ],
+        "status": "manual_review"
+      },
+      "representative_ticker": "QBTS",
+      "system_fix_needed": false,
+      "tickers": [
+        "ACHR",
+        "AMD",
+        "AMZN",
+        "ASTS",
+        "CRWD",
+        "INTC",
+        "IONQ",
+        "JOBY",
+        "LCID",
+        "MDB",
+        "MRVL",
+        "MU",
+        "NET",
+        "NOW",
+        "NVDA",
+        "PANW",
+        "PLUG",
+        "QBTS",
+        "RGTI",
+        "RIVN",
+        "RKLB",
+        "ZS"
+      ],
+      "typical_reasons": "Resolve stale/reconciliation/source-frame artifacts before promotion."
+    }
+  ],
+  "focus_tickers": {
+    "IONQ": {
+      "batch004_archetype": "STANDARD_GROWTH",
+      "batch004_display": "Hold",
+      "batch004_status": "manual_review",
+      "manual_focus_archetype": "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH",
+      "manual_focus_display": "Manual Review / Hold Pending FCF and Execution Evidence",
+      "manual_focus_reasons": [
+        "EXTREME_VALUATION_REQUIRES_REVIEW",
+        "TRUE_FINANCIAL_ANOMALY",
+        "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH_MANUAL_REVIEW_PROFILE",
+        "TECHNICAL_OVERWEIGHT_IN_FUNDAMENTAL_THESIS",
+        "EARNINGS_DATE_UNAVAILABLE",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "SOURCE_FRAME_VARIANT_IGNORED"
+      ],
+      "manual_focus_status": "manual_review"
+    },
+    "MU": {
+      "batch004_archetype": "SEMICONDUCTOR_AI_INFRA",
+      "batch004_display": "Hold",
+      "batch004_status": "manual_review",
+      "manual_focus_archetype": null,
+      "manual_focus_display": null,
+      "manual_focus_reasons": [],
+      "manual_focus_status": null
+    },
+    "NVDA": {
+      "batch004_archetype": "SEMICONDUCTOR_AI_INFRA",
+      "batch004_display": "Hold",
+      "batch004_status": "manual_review",
+      "manual_focus_archetype": "SEMICONDUCTOR_AI_INFRA",
+      "manual_focus_display": "Hold",
+      "manual_focus_reasons": [
+        "FINANCIAL_SANITY_PRICE_TO_FCF_ANOMALY",
+        "TRUE_FINANCIAL_ANOMALY",
+        "EARNINGS_DATE_UNAVAILABLE",
+        "SOURCE_FRAME_VARIANT_IGNORED",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT"
+      ],
+      "manual_focus_status": "manual_review"
+    },
+    "QBTS": {
+      "batch004_archetype": "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL",
+      "batch004_display": "Manual Review / Preliminary Underweight",
+      "batch004_status": "manual_review",
+      "manual_focus_archetype": "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL",
+      "manual_focus_display": "Manual Review / Preliminary Underweight",
+      "manual_focus_reasons": [
+        "EXTREME_VALUATION_REQUIRES_REVIEW",
+        "TRUE_FINANCIAL_ANOMALY",
+        "SPECULATIVE_DEEP_TECH_MANUAL_REVIEW_PROFILE",
+        "TECHNICAL_OVERWEIGHT_IN_FUNDAMENTAL_THESIS",
+        "EARNINGS_DATE_UNAVAILABLE",
+        "PERIOD_TYPE_MISMATCH_IGNORED"
+      ],
+      "manual_focus_status": "manual_review"
+    },
+    "QCOM": {
+      "batch004_archetype": "SEMICONDUCTOR_AI_INFRA",
+      "batch004_display": "Accumulate",
+      "batch004_status": "passed",
+      "manual_focus_archetype": "SEMICONDUCTOR_AI_INFRA",
+      "manual_focus_display": "Hold Pending FCF Support",
+      "manual_focus_reasons": [
+        "MISSING_FCF_SUPPORT_FOR_ACCUMULATE",
+        "EARNINGS_DATE_UNAVAILABLE",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT",
+        "SOURCE_FRAME_VARIANT_IGNORED"
+      ],
+      "manual_focus_status": "manual_review"
+    },
+    "RGTI": {
+      "batch004_archetype": "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL",
+      "batch004_display": "Manual Review / Preliminary Underweight",
+      "batch004_status": "manual_review",
+      "manual_focus_archetype": "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL",
+      "manual_focus_display": "Manual Review / Preliminary Underweight",
+      "manual_focus_reasons": [
+        "EXTREME_VALUATION_REQUIRES_REVIEW",
+        "TRUE_FINANCIAL_ANOMALY",
+        "SPECULATIVE_DEEP_TECH_MANUAL_REVIEW_PROFILE",
+        "TECHNICAL_OVERWEIGHT_IN_FUNDAMENTAL_THESIS",
+        "EARNINGS_DATE_UNAVAILABLE",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT",
+        "SOURCE_FRAME_VARIANT_IGNORED"
+      ],
+      "manual_focus_status": "manual_review"
+    },
+    "RKLB": {
+      "batch004_archetype": "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH",
+      "batch004_display": "Manual Review / Hold Pending FCF and Execution Evidence",
+      "batch004_status": "manual_review",
+      "manual_focus_archetype": null,
+      "manual_focus_display": null,
+      "manual_focus_reasons": [],
+      "manual_focus_status": null
+    }
+  },
+  "generated_at": "2026-05-19T02:28:39Z",
+  "manual_review_count_batch004": 22,
+  "status": "pass_categories_behave_as_manual_review_not_false_blocks"
+}

@@ -1,0 +1,28 @@
+{
+  "validated_at_utc": "2026-05-20T16:56:59Z",
+  "validation_status": "pass",
+  "schema": "docs/media_ingest/transcript_metadata.schema.json",
+  "validator": "scripts/media_ingest/validate_transcript_metadata.py",
+  "metadata_path": "outputs/media_ingest/sample_packet_001/transcript_metadata.json",
+  "command": "python3 scripts/media_ingest/validate_transcript_metadata.py outputs/media_ingest/sample_packet_001/transcript_metadata.json --schema docs/media_ingest/transcript_metadata.schema.json",
+  "stdout": [
+    "metadata_ok outputs/media_ingest/sample_packet_001/transcript_metadata.json"
+  ],
+  "warnings": [],
+  "errors": [],
+  "synthetic_dry_run_markers": {
+    "sample_type": "synthetic_operator_test",
+    "not_real_source": true,
+    "not_usable_as_evidence": true,
+    "allowed_use": "pipeline_dry_run_only"
+  },
+  "runtime_side_effects": {
+    "downloads": false,
+    "api_calls": false,
+    "youtube_fetches": false,
+    "report_changes": false,
+    "packet_changes": false,
+    "evidence_ledger_promotion": false,
+    "obsidian_backbone_write": false
+  }
+}

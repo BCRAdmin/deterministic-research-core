@@ -1,0 +1,54 @@
+{
+  "generated_at": "2026-05-21T00:00:00+02:00",
+  "status": "pass",
+  "reference_docs": [
+    "docs/skills/EXTERNAL_SKILL_INTAKE_SOP.md",
+    "docs/skills/SKILL_AUTHORING_POLICY.md",
+    "docs/memory/OBSIDIAN_MEMORY_PROMOTION_MAP.md",
+    "docs/skills/VIVI_EXTERNAL_SKILL_REVIEW_CONTRACT.md",
+    "docs/skills/CLAW_SKILL_PATTERN_DECISION_MATRIX.md"
+  ],
+  "checks": [
+    {
+      "check": "no_runtime_skill_installation",
+      "status": "pass"
+    },
+    {
+      "check": "no_new_api_desktop_proactive_rights",
+      "status": "pass"
+    },
+    {
+      "check": "no_second_memory_layer",
+      "status": "pass"
+    },
+    {
+      "check": "obsidian_remains_backbone",
+      "status": "pass"
+    },
+    {
+      "check": "vivi_skill_intake_sop_read_only_reference",
+      "status": "pass"
+    },
+    {
+      "check": "no_external_seo_automation_skills_without_intake",
+      "status": "pass"
+    },
+    {
+      "check": "no_phone_home_scanner",
+      "status": "pass"
+    },
+    {
+      "check": "no_autonomous_workflow_activation",
+      "status": "pass"
+    }
+  ],
+  "blocked_classes": [
+    "api_gateway_runtime",
+    "desktop_control_runtime",
+    "proactive_full_autonomy",
+    "remote_scanner_phone_home",
+    "auto_update_skill"
+  ],
+  "blocked_by_skill_intake_sop": [],
+  "runtime_changes": "none"
+}

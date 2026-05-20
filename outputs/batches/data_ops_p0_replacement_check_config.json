@@ -1,0 +1,77 @@
+{
+  "as_of_date": "2026-05-17",
+  "batch_id": "data_ops_p0_replacement_check",
+  "batch_mode": "current_research",
+  "cik_records_path": "outputs/source_inputs/data_ops_p0_replacement_check/cik_records.json",
+  "freshness_max_trading_days": 2,
+  "freshness_reference_date": "2026-05-17",
+  "ir_release_dir": "outputs/source_inputs/data_ops_p0_replacement_check/ir_releases",
+  "max_parallel_jobs": 1,
+  "model_name": "research_agent_v0.1.0",
+  "model_provider": "deterministic",
+  "output_dir": "outputs/batches",
+  "pipeline_version": "data_ops_p0_replacement_check",
+  "price_csv_dir": "outputs/source_inputs/data_ops_p0_replacement_check/prices",
+  "price_start_date": "2024-01-01",
+  "sec_companyfacts_dir": "outputs/source_inputs/data_ops_p0_replacement_check/sec_companyfacts",
+  "sec_user_agent": "QuellwertResearchAgent/0.1 codex-pilot@example.com",
+  "tickers": [
+    {
+      "benchmark": "QQQ",
+      "company_name": null,
+      "mode": "source_ingestion_mode",
+      "priority": "high",
+      "tags": [
+        "data_ops_p0_replacement",
+        "frontier_quantum",
+        "early_commercial_check"
+      ],
+      "ticker": "IONQ"
+    },
+    {
+      "benchmark": "SMH",
+      "company_name": null,
+      "mode": "source_ingestion_mode",
+      "priority": "high",
+      "tags": [
+        "data_ops_p0_replacement",
+        "semiconductor_ai_infra"
+      ],
+      "ticker": "NVDA"
+    },
+    {
+      "benchmark": "QQQ",
+      "company_name": null,
+      "mode": "source_ingestion_mode",
+      "priority": "high",
+      "tags": [
+        "data_ops_p0_replacement",
+        "speculative_deep_tech"
+      ],
+      "ticker": "QBTS"
+    },
+    {
+      "benchmark": "SMH",
+      "company_name": null,
+      "mode": "source_ingestion_mode",
+      "priority": "high",
+      "tags": [
+        "data_ops_p0_replacement",
+        "semiconductor_ai_infra",
+        "fcf_support_check"
+      ],
+      "ticker": "QCOM"
+    },
+    {
+      "benchmark": "QQQ",
+      "company_name": null,
+      "mode": "source_ingestion_mode",
+      "priority": "high",
+      "tags": [
+        "data_ops_p0_replacement",
+        "speculative_deep_tech"
+      ],
+      "ticker": "RGTI"
+    }
+  ]
+}

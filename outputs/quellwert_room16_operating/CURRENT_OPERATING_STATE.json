@@ -1,0 +1,175 @@
+{
+  "state_name": "quellwert_room16_current_operating_state",
+  "generated_at": "2026-05-20T15:18:45+02:00",
+  "current_session_date": "2026-05-20",
+  "batch": {
+    "id": "guardrail_coverage_batch_004_ir_coverage",
+    "operating_status": "GREEN Operating Baseline",
+    "current_period_coverage": "32/32",
+    "price_basis_date": "2026-05-15",
+    "false_pass_candidates": [],
+    "false_block_candidates": [],
+    "vivi_review": "pass",
+    "public_output_policy": "Promotion-gated; no unattended public release"
+  },
+  "outcome_1d": {
+    "status": "computed",
+    "computed_rows": 37,
+    "pending_rows": 0,
+    "false_pass_flags": 0,
+    "provisional_false_block_watchlist": [
+      "MDB",
+      "NOW",
+      "RKLB",
+      "ZS"
+    ],
+    "watchlist_source": "outputs/batches/guardrail_coverage_batch_004_ir_coverage/OUTCOME_WATCHLIST_CARRY_FORWARD.json",
+    "policy": "1D is watchlist-only and is not a reason for calibration, guard, rating, or report changes."
+  },
+  "outcome_5d": {
+    "target_date": "2026-05-22",
+    "status": "pending",
+    "price_refresh_status_path": "outputs/batches/guardrail_coverage_batch_004_ir_coverage/PRICE_DATA_REFRESH_5D.json",
+    "blocked_by": "missing local source-returned ticker and benchmark closes for 2026-05-22",
+    "no_synthetic_prices": true,
+    "no_replacement_end_date": true,
+    "no_forward_fill": true
+  },
+  "watchlist_carry_forward": {
+    "tickers": [
+      "MDB",
+      "NOW",
+      "RKLB",
+      "ZS"
+    ],
+    "status": "carry_forward_to_5d_when_target_date_is_available",
+    "do_not_change_until": "2026-06-01 10D minimum for any calibration/guard review"
+  },
+  "data_ops_p0_replacement": {
+    "batch_id": "data_ops_p0_replacement_check",
+    "bundle_path": "outputs/quellwert_room16_operating/chatgpt_data_ops_p0_replacement_bundle.zip",
+    "sources_added": {
+      "IONQ": "IonQ Q1 2026 earnings release: revenue, adjusted EBITDA loss, OCF/capex, cash/investments, RPO, FY/Q2 revenue guidance.",
+      "NVDA": "NVIDIA Q4/FY2026 earnings release: Q4/FY revenue, operating income, Data Center revenue, OCF, company-defined FCF, cash/securities, FY2027 Q1 revenue outlook.",
+      "QBTS": "D-Wave Q1 2026 earnings release: revenue, bookings, RPO, gross margin, operating expenses, net loss, adjusted EBITDA loss, cash/securities.",
+      "QCOM": "Qualcomm Q2 FY2026 earnings release PDF: revenue, operating income, OCF, capex, calculated cash-flow support, QCT/QTL segment revenue, Q3 guidance.",
+      "RGTI": "Rigetti Q1 2026 earnings release PDF: revenue, operating loss, GAAP/non-GAAP income, OCF, capex, cash/securities, no-debt statement, 108-qubit system milestone."
+    },
+    "sources_added_count": 5,
+    "remaining_source_gaps": {
+      "IONQ": [
+        "company-defined FCF",
+        "confirmed next earnings date"
+      ],
+      "NVDA": [
+        "confirmed next earnings date",
+        "latest FY2027 actuals after next report"
+      ],
+      "QBTS": [
+        "company-defined FCF",
+        "full 10-Q cash-flow detail in direct release fixture",
+        "confirmed next earnings date"
+      ],
+      "QCOM": [
+        "company-defined FCF label/reconciled TTM FCF",
+        "confirmed next earnings date",
+        "main-body use of new QCT/QTL/current-period KPIs remains incomplete"
+      ],
+      "RGTI": [
+        "company-defined FCF",
+        "customer/order materiality beyond disclosed Novera shipments",
+        "confirmed next earnings date"
+      ]
+    },
+    "data_confidence_before_after": {
+      "IONQ": {
+        "before": 72,
+        "after": 75
+      },
+      "NVDA": {
+        "before": 60,
+        "after": 67
+      },
+      "QBTS": {
+        "before": 75,
+        "after": 75
+      },
+      "QCOM": {
+        "before": 72,
+        "after": 49
+      },
+      "RGTI": {
+        "before": 69,
+        "after": 69
+      }
+    },
+    "status_changes": {},
+    "all_remain_manual_review": true,
+    "publishable": false,
+    "public_ready": false,
+    "qcom": {
+      "status": "manual_review",
+      "external_display_rating": "Hold Pending FCF Support",
+      "manual_review_reason": "MISSING_FCF_SUPPORT_FOR_ACCUMULATE",
+      "note": "Hold Pending FCF Support; missing company-defined/reconciled TTM FCF and incomplete current-KPI report usage."
+    },
+    "rgti": {
+      "status": "manual_review",
+      "external_display_rating": "Manual Review / Preliminary Underweight",
+      "company_archetype": "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL",
+      "note": "Deep-Tech archetype retained; manual_review / Preliminary Underweight."
+    },
+    "artifact_consistency": "clean",
+    "artifact_consistency_error_count": 0,
+    "qa": {
+      "compileall": "passed",
+      "git_diff_check": "passed",
+      "pytest": "passed"
+    }
+  },
+  "blockers": {
+    "system_level_blockers": [],
+    "ticker_level_evidence_gaps": {
+      "IONQ": [
+        "company-defined FCF",
+        "confirmed next earnings date"
+      ],
+      "NVDA": [
+        "confirmed next earnings date",
+        "latest FY2027 actuals after next report"
+      ],
+      "QBTS": [
+        "company-defined FCF",
+        "full 10-Q cash-flow detail in direct release fixture",
+        "confirmed next earnings date"
+      ],
+      "QCOM": [
+        "company-defined FCF label/reconciled TTM FCF",
+        "confirmed next earnings date",
+        "main-body use of new QCT/QTL/current-period KPIs remains incomplete"
+      ],
+      "RGTI": [
+        "company-defined FCF",
+        "customer/order materiality beyond disclosed Novera shipments",
+        "confirmed next earnings date"
+      ]
+    },
+    "blocking_issues": [
+      "5D outcome cannot be computed until local ticker and benchmark CSVs contain source-returned 2026-05-22 closes."
+    ]
+  },
+  "policies": {
+    "no_public_output_without_promotion_gate": true,
+    "no_unattended_public_release": true,
+    "no_calibration_from_1d_or_5d_alone": true,
+    "no_guard_change_from_1d_or_5d_alone": true,
+    "no_rating_change_without_review": true,
+    "no_report_polish_without_mature_outcome_data": true,
+    "no_synthetic_prices": true
+  },
+  "next_hard_outcome_window": {
+    "window": "5D",
+    "date": "2026-05-22",
+    "status": "pending_price_data"
+  }
+}

@@ -1,0 +1,58 @@
+[
+  {
+    "claim_id": "sample_claim_001",
+    "claim_text": "This packet is a synthetic media ingest test and is not a real company source.",
+    "confidence": "high",
+    "not_real_source": true,
+    "not_usable_as_evidence": true,
+    "reason": "Synthetic packet marker; retained only to test candidate extraction.",
+    "requires_verification": true,
+    "sample_type": "synthetic_operator_test",
+    "source_ref": "outputs/media_ingest/sample_packet_001/transcript_clean.md#00:00",
+    "speaker": "Operator Test Speaker",
+    "timestamp": "00:00",
+    "usable_in_report": false
+  },
+  {
+    "claim_id": "sample_claim_002",
+    "claim_text": "Media ingest should preserve source metadata and mark extracted claims as candidates.",
+    "confidence": "high",
+    "not_real_source": true,
+    "not_usable_as_evidence": true,
+    "reason": "Workflow claim from synthetic test, not external evidence.",
+    "requires_verification": true,
+    "sample_type": "synthetic_operator_test",
+    "source_ref": "outputs/media_ingest/sample_packet_001/transcript_clean.md#00:12",
+    "speaker": "Operator Test Speaker",
+    "timestamp": "00:12",
+    "usable_in_report": false
+  },
+  {
+    "claim_id": "sample_claim_003",
+    "claim_text": "No report, MetricsPacket, DecisionPacket, EvidenceLedger, rating, guard, calibration, Obsidian Backbone, or public output should change during the dry run.",
+    "confidence": "high",
+    "not_real_source": true,
+    "not_usable_as_evidence": true,
+    "reason": "Guardrail assertion for dry-run validation; not evidence.",
+    "requires_verification": true,
+    "sample_type": "synthetic_operator_test",
+    "source_ref": "outputs/media_ingest/sample_packet_001/transcript_clean.md#00:25",
+    "speaker": "Operator Test Speaker",
+    "timestamp": "00:25",
+    "usable_in_report": false
+  },
+  {
+    "claim_id": "sample_claim_004",
+    "claim_text": "A real future media packet would need authenticity, rights, speaker, timestamp and primary-source checks before hard-claim use.",
+    "confidence": "high",
+    "not_real_source": true,
+    "not_usable_as_evidence": true,
+    "reason": "Policy rehearsal from synthetic test; requires verification before real use.",
+    "requires_verification": true,
+    "sample_type": "synthetic_operator_test",
+    "source_ref": "outputs/media_ingest/sample_packet_001/transcript_clean.md#00:42",
+    "speaker": "Operator Test Speaker",
+    "timestamp": "00:42",
+    "usable_in_report": false
+  }
+]

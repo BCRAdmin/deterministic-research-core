@@ -1,0 +1,153 @@
+{
+  "batch_id": "guardrail_coverage_batch_004_ir_coverage",
+  "generated_at": "2026-05-20T14:55:02+02:00",
+  "source_files": {
+    "outcome_1d_triage_summary_json": "outputs/batches/guardrail_coverage_batch_004_ir_coverage/OUTCOME_1D_TRIAGE_SUMMARY.json",
+    "outcome_1d_triage_summary_md": "outputs/batches/guardrail_coverage_batch_004_ir_coverage/OUTCOME_1D_TRIAGE_SUMMARY.md"
+  },
+  "one_day_status": {
+    "computed_rows": 37,
+    "pending_rows": 0,
+    "false_pass_flags": 0,
+    "provisional_false_block_watchlist": [
+      "MDB",
+      "NOW",
+      "RKLB",
+      "ZS"
+    ],
+    "benchmark_coverage": "complete"
+  },
+  "watchlist": [
+    {
+      "ticker": "MDB",
+      "original_status": "manual_review",
+      "original_rating_external_display": "Hold",
+      "original_manual_review_reason": "price date before as-of date; earnings date unavailable; source frame variant ignored; period type mismatch ignored; true-source value disagreement",
+      "manual_review_reason_codes": [
+        "PRICE_DATE_BEFORE_AS_OF_DATE",
+        "EARNINGS_DATE_UNAVAILABLE",
+        "SOURCE_FRAME_VARIANT_IGNORED",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT"
+      ],
+      "one_day_return_pct": 5.715,
+      "benchmark": "QQQ",
+      "benchmark_return_pct": -0.4302,
+      "excess_return_pct": 6.1452,
+      "why_flagged": "1D manual_review_missed_opportunity=true with positive benchmark-adjusted excess return of 6.1452%.",
+      "what_would_confirm_concern_at_5d": "Concern is confirmed for monitoring if benchmark-adjusted outperformance remains meaningfully positive at 5D and the original manual_review reason does not resolve through data freshness or source reconciliation.",
+      "what_would_clear_concern_at_5d": "Concern is cleared or downgraded if 5D excess normalizes/reverses, or if the original manual_review reason remains a valid evidence/data-quality block despite the 1D move.",
+      "data_needed": [
+        "5D close for ticker and benchmark on 2026-05-22",
+        "10D follow-up if 5D remains positive",
+        "current-period date/price freshness confirmation",
+        "source-frame and true-source reconciliation"
+      ],
+      "do_not_change_until": "2026-06-01 (10D minimum for any calibration/guard review; no rating/report change from this watchlist)"
+    },
+    {
+      "ticker": "NOW",
+      "original_status": "manual_review",
+      "original_rating_external_display": "Hold",
+      "original_manual_review_reason": "price date before as-of date; earnings date unavailable; source frame variant ignored; period type mismatch ignored; true-source value disagreement",
+      "manual_review_reason_codes": [
+        "PRICE_DATE_BEFORE_AS_OF_DATE",
+        "EARNINGS_DATE_UNAVAILABLE",
+        "SOURCE_FRAME_VARIANT_IGNORED",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT"
+      ],
+      "one_day_return_pct": 8.783,
+      "benchmark": "QQQ",
+      "benchmark_return_pct": -0.4302,
+      "excess_return_pct": 9.2132,
+      "why_flagged": "1D manual_review_missed_opportunity=true with positive benchmark-adjusted excess return of 9.2132%.",
+      "what_would_confirm_concern_at_5d": "Concern is confirmed for monitoring if benchmark-adjusted outperformance remains meaningfully positive at 5D and the original manual_review reason does not resolve through data freshness or source reconciliation.",
+      "what_would_clear_concern_at_5d": "Concern is cleared or downgraded if 5D excess normalizes/reverses, or if the original manual_review reason remains a valid evidence/data-quality block despite the 1D move.",
+      "data_needed": [
+        "5D close for ticker and benchmark on 2026-05-22",
+        "10D follow-up if 5D remains positive",
+        "current-period date/price freshness confirmation",
+        "source-frame and true-source reconciliation"
+      ],
+      "do_not_change_until": "2026-06-01 (10D minimum for any calibration/guard review; no rating/report change from this watchlist)"
+    },
+    {
+      "ticker": "RKLB",
+      "original_status": "manual_review",
+      "original_rating_external_display": "Manual Review / Hold Pending FCF and Execution Evidence",
+      "original_manual_review_reason": "extreme valuation requires review; early-commercial capital-intensive tech manual-review profile; price date before as-of date; earnings date unavailable; period type mismatch ignored; true-source value disagreement; source frame variant ignored",
+      "manual_review_reason_codes": [
+        "EXTREME_VALUATION_REQUIRES_REVIEW",
+        "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH_MANUAL_REVIEW_PROFILE",
+        "PRICE_DATE_BEFORE_AS_OF_DATE",
+        "EARNINGS_DATE_UNAVAILABLE",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "TRUE_SOURCE_VALUE_DISAGREEMENT",
+        "SOURCE_FRAME_VARIANT_IGNORED"
+      ],
+      "one_day_return_pct": 5.1214,
+      "benchmark": "QQQ",
+      "benchmark_return_pct": -0.4302,
+      "excess_return_pct": 5.5517,
+      "why_flagged": "1D manual_review_missed_opportunity=true with positive benchmark-adjusted excess return of 5.5517%.",
+      "what_would_confirm_concern_at_5d": "Concern is confirmed for monitoring if benchmark-adjusted outperformance remains meaningfully positive at 5D and the original manual_review reason does not resolve through data freshness or source reconciliation.",
+      "what_would_clear_concern_at_5d": "Concern is cleared or downgraded if 5D excess normalizes/reverses, or if the original manual_review reason remains a valid evidence/data-quality block despite the 1D move.",
+      "data_needed": [
+        "5D close for ticker and benchmark on 2026-05-22",
+        "10D follow-up if 5D remains positive",
+        "current-period date/price freshness confirmation",
+        "source-frame and true-source reconciliation",
+        "FCF/execution evidence and valuation context before any later guard review"
+      ],
+      "do_not_change_until": "2026-06-01 (10D minimum for any calibration/guard review; no rating/report change from this watchlist)"
+    },
+    {
+      "ticker": "ZS",
+      "original_status": "manual_review",
+      "original_rating_external_display": "Hold",
+      "original_manual_review_reason": "price date before as-of date; earnings date unavailable; period type mismatch ignored; source frame variant ignored",
+      "manual_review_reason_codes": [
+        "PRICE_DATE_BEFORE_AS_OF_DATE",
+        "EARNINGS_DATE_UNAVAILABLE",
+        "PERIOD_TYPE_MISMATCH_IGNORED",
+        "SOURCE_FRAME_VARIANT_IGNORED"
+      ],
+      "one_day_return_pct": 8.4694,
+      "benchmark": "QQQ",
+      "benchmark_return_pct": -0.4302,
+      "excess_return_pct": 8.8996,
+      "why_flagged": "1D manual_review_missed_opportunity=true with positive benchmark-adjusted excess return of 8.8996%.",
+      "what_would_confirm_concern_at_5d": "Concern is confirmed for monitoring if benchmark-adjusted outperformance remains meaningfully positive at 5D and the original manual_review reason does not resolve through data freshness or source reconciliation.",
+      "what_would_clear_concern_at_5d": "Concern is cleared or downgraded if 5D excess normalizes/reverses, or if the original manual_review reason remains a valid evidence/data-quality block despite the 1D move.",
+      "data_needed": [
+        "5D close for ticker and benchmark on 2026-05-22",
+        "10D follow-up if 5D remains positive",
+        "current-period date/price freshness confirmation",
+        "source-frame and true-source reconciliation"
+      ],
+      "do_not_change_until": "2026-06-01 (10D minimum for any calibration/guard review; no rating/report change from this watchlist)"
+    }
+  ],
+  "escalation_rules": [
+    "1D outperformance alone does not justify guard change.",
+    "If still outperforming at 5D: inspect manual_review reason.",
+    "If still outperforming at 10D: classify possible false block.",
+    "If still outperforming at 20D: consider rule/decision calibration review.",
+    "No calibration before 10D minimum.",
+    "No guard change before repeated signal."
+  ],
+  "next_outcome_dates": {
+    "5D": "2026-05-22",
+    "10D": "2026-06-01",
+    "20D": "2026-06-15",
+    "60D": "2026-08-12"
+  },
+  "no_change_policy": {
+    "no_code_change": true,
+    "no_calibration_change": true,
+    "no_guard_change": true,
+    "no_rating_change": true,
+    "no_report_change": true
+  }
+}

@@ -1,0 +1,110 @@
+{
+  "name": "High-Risk Skills Hold Register",
+  "status": "active",
+  "scope": "external high-risk skill patterns",
+  "runtime_changes": "none",
+  "items": [
+    {
+      "name": "api-gateway",
+      "risk_class": "R3_R4",
+      "why_hold": "Broad external API and credential/OAuth surface.",
+      "allowed_pattern_extraction": "read_only_api_gate_checklist",
+      "forbidden_runtime_behavior": [
+        "api_write_access",
+        "broad_oauth",
+        "hidden_saas_mutation"
+      ],
+      "conditions_for_future_sandbox": [
+        "narrow_read_only_use_case",
+        "source_verification",
+        "operator_gate",
+        "no_write_permissions"
+      ],
+      "operator_gate_required": true
+    },
+    {
+      "name": "desktop-control",
+      "risk_class": "R5",
+      "why_hold": "Host UI, browser, keyboard and screenshot authority.",
+      "allowed_pattern_extraction": "sandbox_checklist_only",
+      "forbidden_runtime_behavior": [
+        "unsandboxed_desktop_control",
+        "keyboard_mouse_control_without_gate",
+        "screenshot_capture_without_scope"
+      ],
+      "conditions_for_future_sandbox": [
+        "isolated_sandbox",
+        "approval_mode",
+        "bounded_target",
+        "operator_gate"
+      ],
+      "operator_gate_required": true
+    },
+    {
+      "name": "proactive-agent full autonomy",
+      "risk_class": "R6",
+      "why_hold": "Background/proactive work can bypass operator gates.",
+      "allowed_pattern_extraction": "wal_lite_and_verify_implementation_pattern",
+      "forbidden_runtime_behavior": [
+        "autonomous_feature_work",
+        "public_changes",
+        "background_scope_shift"
+      ],
+      "conditions_for_future_sandbox": [
+        "explicit_mission",
+        "no_public_or_runtime_mutation",
+        "operator_gate",
+        "review_artifacts"
+      ],
+      "operator_gate_required": true
+    },
+    {
+      "name": "external self-improving runtime",
+      "risk_class": "R6",
+      "why_hold": "Can create a second memory layer or mutate behavior.",
+      "allowed_pattern_extraction": "obsidian_promotion_pattern_only",
+      "forbidden_runtime_behavior": [
+        "runtime_self_modification",
+        "global_memory_writes",
+        "background_memory_mutation"
+      ],
+      "conditions_for_future_sandbox": [
+        "project_local_only",
+        "no_backbone_write",
+        "vivi_review",
+        "operator_gate"
+      ],
+      "operator_gate_required": true
+    },
+    {
+      "name": "remote skillscan/phone-home scanner",
+      "risk_class": "R3_R6",
+      "why_hold": "External upload, polling and silent update risk.",
+      "allowed_pattern_extraction": "local_inventory_risk_scan_idea",
+      "forbidden_runtime_behavior": [
+        "phone_home",
+        "upload_source_files",
+        "auto_update_scanner"
+      ],
+      "conditions_for_future_sandbox": [
+        "no_external_upload",
+        "no_auto_update",
+        "local_fixture_only",
+        "operator_gate"
+      ],
+      "operator_gate_required": true
+    }
+  ],
+  "future_sandbox_conditions": [
+    "source_verification",
+    "local_artifact_review",
+    "risk_class",
+    "explicit_operator_gate",
+    "no_credentials_unless_separately_approved",
+    "no_production_data",
+    "bounded_write_scope",
+    "rollback_or_no_rollback_note",
+    "vivi_or_vega_review_evidence"
+  ],
+  "operator_gate": "all_hold_items_require_explicit_operator_approval_before_runtime_pilot"
+}

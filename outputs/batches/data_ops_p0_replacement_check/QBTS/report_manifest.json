@@ -1,0 +1,33 @@
+{
+  "archetype_confidence": 0.5,
+  "archetype_triggered_rules": [
+    "market_cap_revenue_gt_100",
+    "revenue_ttm_lt_50m",
+    "operating_income_ttm_lt_0",
+    "free_cash_flow_ttm_lt_0",
+    "sbc_to_revenue_gt_050",
+    "high_volatility_or_beta_gt_15"
+  ],
+  "canonical_report_manifest_path": "outputs/batches/data_ops_p0_replacement_check/QBTS/reports/QBTS/2026-05-17/report_manifest.json",
+  "company_archetype": "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL",
+  "data_confidence_score": 75,
+  "external_display_rating": "Manual Review / Preliminary Underweight",
+  "internal_rating": "Underweight",
+  "internal_research_quality_score": 85,
+  "manual_review_reasons": [
+    "SPECULATIVE_DEEP_TECH_MANUAL_REVIEW_PROFILE",
+    "EXTREME_VALUATION_REQUIRES_REVIEW",
+    "TRUE_FINANCIAL_ANOMALY",
+    "EARNINGS_DATE_UNAVAILABLE",
+    "PERIOD_TYPE_MISMATCH_IGNORED"
+  ],
+  "public_library_status": "not_public_ready",
+  "public_rating": null,
+  "public_ready": false,
+  "publish_quality_score": 65,
+  "publishable": false,
+  "quality_score": 65,
+  "review_status": "manual_review",
+  "ticker": "QBTS",
+  "visibility": "internal_only"
+}

@@ -114,6 +114,9 @@
       "issue_count": 0,
       "path": "outputs/batches/guardrail_coverage_batch_004_ir_coverage/QCOM/artifact_consistency_report.json",
       "status": "clean",
+      "superseded": true,
+      "superseded_banner": "Superseded by manual_focus_guardrail_final_check. Do not use for promotion.",
+      "superseded_by": "manual_focus_guardrail_final_check",
       "ticker": "QCOM"
     },
     {
@@ -195,5 +198,9 @@
       "ticker": "PLUG"
     }
   ],
-  "status": "clean"
+  "status": "clean",
+  "superseded_count": 1,
+  "superseded_tickers": [
+    "QCOM"
+  ]
 }

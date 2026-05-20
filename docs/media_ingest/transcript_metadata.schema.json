@@ -1,0 +1,176 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Transcript Metadata",
+  "schema_version": "1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "source_title",
+    "source_url",
+    "source_path",
+    "source_type",
+    "source_owner",
+    "date",
+    "duration",
+    "language",
+    "transcription_method",
+    "rights_status",
+    "operator_approval",
+    "allowed_use",
+    "download_performed",
+    "download_operator_approval",
+    "public_output_allowed",
+    "report_use_allowed",
+    "evidence_use_allowed",
+    "requires_human_review",
+    "known_transcription_gaps",
+    "confidence_notes",
+    "created_at_utc"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "media_ingest_metadata_v1"
+    },
+    "source_title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_url": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_type": {
+      "type": "string",
+      "enum": [
+        "owned_file",
+        "official_ir_webcast",
+        "official_company_youtube",
+        "third_party_youtube",
+        "podcast",
+        "manual_transcript",
+        "synthetic_test",
+        "other"
+      ]
+    },
+    "source_owner": {
+      "type": "string",
+      "minLength": 1
+    },
+    "date": {
+      "type": "string",
+      "minLength": 1
+    },
+    "duration": {
+      "type": "string",
+      "minLength": 1
+    },
+    "language": {
+      "type": "string",
+      "minLength": 1
+    },
+    "transcription_method": {
+      "type": "string",
+      "enum": [
+        "local_whisper",
+        "manual_transcript",
+        "api_transcription_operator_approved",
+        "not_transcribed_yet",
+        "synthetic_manual_test",
+        "other"
+      ]
+    },
+    "rights_status": {
+      "type": "string",
+      "enum": [
+        "owned",
+        "permitted_public_ir",
+        "permitted_summary_only",
+        "operator_provided",
+        "synthetic_internal_test_only",
+        "unknown",
+        "blocked"
+      ]
+    },
+    "operator_approval": {
+      "type": "boolean"
+    },
+    "allowed_use": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "internal_draft",
+              "evidence_candidate",
+              "obsidian_draft_note",
+              "report_after_evidence_gate",
+              "public_after_promotion_gate",
+              "pipeline_dry_run_only"
+            ]
+          }
+        },
+        {
+          "type": "string",
+          "enum": [
+            "pipeline_dry_run_only"
+          ]
+        }
+      ]
+    },
+    "download_performed": {
+      "type": "boolean"
+    },
+    "download_operator_approval": {
+      "type": "boolean"
+    },
+    "public_output_allowed": {
+      "type": "boolean"
+    },
+    "report_use_allowed": {
+      "type": "boolean"
+    },
+    "evidence_use_allowed": {
+      "type": "string",
+      "enum": [
+        "candidate_only",
+        "no",
+        "promoted_after_review"
+      ]
+    },
+    "requires_human_review": {
+      "type": "boolean"
+    },
+    "known_transcription_gaps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "confidence_notes": {
+      "type": "string"
+    },
+    "created_at_utc": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sample_type": {
+      "type": "string",
+      "enum": [
+        "synthetic_operator_test"
+      ]
+    },
+    "not_real_source": {
+      "type": "boolean"
+    },
+    "not_usable_as_evidence": {
+      "type": "boolean"
+    }
+  }
+}
