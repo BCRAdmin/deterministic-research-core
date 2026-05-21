@@ -16,8 +16,8 @@
     "Keep raw transcript, synthesis, claims-to-check, and operator readout separate.",
     "Never auto-promote agent opinions into Obsidian, LIONCOM, Room16, or public artifacts.",
     "Avoid AGPL/MiroFish code reuse unless a separate license decision is made.",
-        "Start with internal use and pilot evidence before UI, LIONCOM, or productization.",
-        "Do not version raw scenario sandbox outputs; preserve durable learnings in Vault notes and roadmap artifacts."
+    "Start with internal use and pilot evidence before UI, LIONCOM, or productization.",
+    "Do not version raw scenario sandbox outputs; preserve durable learnings in Vault notes and roadmap artifacts."
   ],
   "phases": [
     {
@@ -28,12 +28,13 @@
       "outputs": [
         "vega-multi-agent-research skill",
         "multi_agent_panel.py runner",
+        "scripts/ops/context_pack_builder.py and scripts/ops/multi_agent_panel.py repo wrappers",
         "MiroFish benchmark update",
-                "Skill routing and memory updates",
-                "Legacy scenario_sandbox_debate.py removed in favor of the validated skill runner",
-                "Raw outputs/scenario_sandbox artifacts treated as local-only test evidence"
-            ]
-        },
+        "Skill routing and memory updates",
+        "Legacy scenario_sandbox_debate.py removed in favor of the validated skill runner",
+        "Raw outputs/scenario_sandbox artifacts treated as local-only test evidence"
+      ]
+    },
     {
       "id": "P1",
       "name": "Runner produktionsnah haerten",

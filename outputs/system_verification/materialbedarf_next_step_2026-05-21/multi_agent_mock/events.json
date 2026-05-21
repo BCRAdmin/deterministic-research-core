@@ -1,0 +1,74 @@
+{
+  "events": [
+    {
+      "round": "Round 1",
+      "agent_id": "founder",
+      "agent_name": "Founder",
+      "duration_seconds": 0.0,
+      "model": "verification-mock:mock",
+      "done_reason": "stop",
+      "eval_count": 64,
+      "prompt_eval_count": 2153,
+      "empty": false,
+      "content": "- Aus Rolle Founder: staerkster Hebel ist ein kleiner, pruefbarer Test.\n- Blocker: unklare Quellenlage wuerde die Aussage schwaechen.\n- Widerspruch: keine Agentenmeinung als Fakt behandeln.\n- Prioritaet: candidate_only Ergebnis mit Claim-Review."
+    },
+    {
+      "round": "Round 1",
+      "agent_id": "finance",
+      "agent_name": "Finance",
+      "duration_seconds": 0.0,
+      "model": "verification-mock:mock",
+      "done_reason": "stop",
+      "eval_count": 64,
+      "prompt_eval_count": 2190,
+      "empty": false,
+      "content": "- Aus Rolle Finance: staerkster Hebel ist ein kleiner, pruefbarer Test.\n- Blocker: unklare Quellenlage wuerde die Aussage schwaechen.\n- Widerspruch: keine Agentenmeinung als Fakt behandeln.\n- Prioritaet: candidate_only Ergebnis mit Claim-Review."
+    },
+    {
+      "round": "Round 1",
+      "agent_id": "legal",
+      "agent_name": "Legal/Privacy",
+      "duration_seconds": 0.0,
+      "model": "verification-mock:mock",
+      "done_reason": "stop",
+      "eval_count": 64,
+      "prompt_eval_count": 2227,
+      "empty": false,
+      "content": "- Aus Rolle Legal/Privacy: staerkster Hebel ist ein kleiner, pruefbarer Test.\n- Blocker: unklare Quellenlage wuerde die Aussage schwaechen.\n- Widerspruch: keine Agentenmeinung als Fakt behandeln.\n- Prioritaet: candidate_only Ergebnis mit Claim-Review."
+    },
+    {
+      "round": "Round 1",
+      "agent_id": "customer",
+      "agent_name": "Customer",
+      "duration_seconds": 0.0,
+      "model": "verification-mock:mock",
+      "done_reason": "stop",
+      "eval_count": 64,
+      "prompt_eval_count": 2264,
+      "empty": false,
+      "content": "- Aus Rolle Customer: staerkster Hebel ist ein kleiner, pruefbarer Test.\n- Blocker: unklare Quellenlage wuerde die Aussage schwaechen.\n- Widerspruch: keine Agentenmeinung als Fakt behandeln.\n- Prioritaet: candidate_only Ergebnis mit Claim-Review."
+    },
+    {
+      "round": "Round 1",
+      "agent_id": "delivery",
+      "agent_name": "Delivery",
+      "duration_seconds": 0.0,
+      "model": "verification-mock:mock",
+      "done_reason": "stop",
+      "eval_count": 64,
+      "prompt_eval_count": 2301,
+      "empty": false,
+      "content": "- Aus Rolle Delivery: staerkster Hebel ist ein kleiner, pruefbarer Test.\n- Blocker: unklare Quellenlage wuerde die Aussage schwaechen.\n- Widerspruch: keine Agentenmeinung als Fakt behandeln.\n- Prioritaet: candidate_only Ergebnis mit Claim-Review."
+    }
+  ],
+  "summary": {
+    "round": "moderator_summary",
+    "duration_seconds": 0.0,
+    "model": "verification-mock:mock",
+    "done_reason": "stop",
+    "eval_count": 64,
+    "prompt_eval_count": 2327,
+    "empty": false,
+    "content": "## Kurzfazit\nDer Lauf ist ein Mock-Smoke und bestaetigt den Artefaktvertrag.\n\n## Konsens\n- Kontext und Frage muessen eng bleiben.\n\n## Konflikte\n- Mock-Agenten erzeugen keine echte Marktentscheidung.\n\n## Top 5 naechste Tests\n1. Quellenbasis pruefen.\n2. Claims-to-check abarbeiten.\n3. Einen echten Modelllauf anschliessen.\n\n## Claims to Check\n- Mock-Ausgaben sind keine inhaltliche Evidenz.\n\n## Nicht uebernehmen\n- Keine Public- oder Produktentscheidung aus Mock-Daten.\n\n## Naechster Schritt\nEchten Smoke mit kleinem Kontext laufen lassen."
+  }
+}

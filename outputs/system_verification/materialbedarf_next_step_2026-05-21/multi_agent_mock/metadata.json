@@ -1,0 +1,23 @@
+{
+  "status": "candidate_only",
+  "model_requested": "verification-mock",
+  "ollama_chat_url": "http://127.0.0.1:11434/api/chat",
+  "started_at": "2026-05-21T01:04:23.392218+00:00",
+  "ended_at": "2026-05-21T01:04:23.393001+00:00",
+  "title": "Materialbedarf Next-Step Verification Panel",
+  "question": "Welcher naechste Materialbedarf-Hebel sollte jetzt als sicherer No-Ads-/Trust-/Measurement-Schnitt verfolgt werden?",
+  "context_file": "/Users/BjornRosinger/Documents/New project 2/outputs/system_verification/materialbedarf_next_step_2026-05-21/CONTEXT_PACK.md",
+  "agent_set": "strategy",
+  "agent_file": null,
+  "agent_count": 5,
+  "round_count": 1,
+  "empty_turns": 0,
+  "error_turns": 0,
+  "capped_turns": 0,
+  "summary_capped": false,
+  "claims_to_check_missing": false,
+  "think": false,
+  "mock": true,
+  "health": [],
+  "exit_code": 0
+}

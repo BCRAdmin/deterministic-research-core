@@ -1,0 +1,17 @@
+{
+  "context_file": "/Users/BjornRosinger/Documents/New project 2/outputs/system_verification/materialbedarf_next_step_2026-05-21/CONTEXT_PACK.md",
+  "output_dir": "/Users/BjornRosinger/Documents/New project 2/outputs/system_verification/materialbedarf_next_step_2026-05-21/multi_agent_mock",
+  "question": "Welcher naechste Materialbedarf-Hebel sollte jetzt als sicherer No-Ads-/Trust-/Measurement-Schnitt verfolgt werden?",
+  "model": "verification-mock",
+  "agent_set": "strategy",
+  "agent_file": null,
+  "title": "Materialbedarf Next-Step Verification Panel",
+  "rounds": 1,
+  "timeout": 30,
+  "num_predict": 220,
+  "summary_num_predict": 800,
+  "temperature": 0.2,
+  "think": false,
+  "require_sources": true,
+  "mock": true
+}

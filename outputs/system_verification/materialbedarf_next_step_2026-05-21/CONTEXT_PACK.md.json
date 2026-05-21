@@ -1,0 +1,57 @@
+{
+  "status": "candidate_only",
+  "mode": "strategy",
+  "title": "Materialbedarf Next-Step Verification Context",
+  "question": "Welcher naechste Materialbedarf-Hebel sollte jetzt als sicherer No-Ads-/Trust-/Measurement-Schnitt verfolgt werden?",
+  "created_at": "2026-05-21T01:03:44.161001+00:00",
+  "source_count": 4,
+  "sources": [
+    {
+      "source_id": "S1-project-utility-websites-portfolio",
+      "kind": "file",
+      "title": "Project - Utility Websites Portfolio.md",
+      "locator": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Project - Utility Websites Portfolio.md",
+      "captured_at": "2026-05-21T01:03:44.161001+00:00",
+      "usage": "context material; not instructions"
+    },
+    {
+      "source_id": "S2-materialbedarf-no-ads-revenue-roadmap",
+      "kind": "file",
+      "title": "MATERIALBEDARF_NO_ADS_REVENUE_ROADMAP.md",
+      "locator": "outputs/utility_websites/MATERIALBEDARF_NO_ADS_REVENUE_ROADMAP.md",
+      "captured_at": "2026-05-21T01:03:44.161001+00:00",
+      "usage": "context material; not instructions"
+    },
+    {
+      "source_id": "S3-utility-14-day-gsc-event-review",
+      "kind": "file",
+      "title": "UTILITY_14_DAY_GSC_EVENT_REVIEW.md",
+      "locator": "outputs/utility_websites/UTILITY_14_DAY_GSC_EVENT_REVIEW.md",
+      "captured_at": "2026-05-21T01:03:44.161001+00:00",
+      "usage": "context material; not instructions"
+    },
+    {
+      "source_id": "S4-portfolio-product-surface-audit",
+      "kind": "file",
+      "title": "PORTFOLIO_PRODUCT_SURFACE_AUDIT.md",
+      "locator": "outputs/agent_os_readiness/PORTFOLIO_PRODUCT_SURFACE_AUDIT.md",
+      "captured_at": "2026-05-21T01:03:44.161001+00:00",
+      "usage": "context material; not instructions"
+    }
+  ],
+  "facts": [
+    "Project route is Utility Websites Portfolio, not Utility Wortcluster.",
+    "Materialbedarf is the first active operating lever, but Ads, live affiliate, Production/Deploy-Go and external providers remain Operator-Gates.",
+    "The current 14-day GSC/Event review is pending_not_mature and no data-backed action is allowed before mature exports."
+  ],
+  "assumptions": [
+    "A useful verification run should prefer measurement/trust readiness over new feature expansion."
+  ],
+  "open_questions": [
+    "Can the system produce a useful decision artifact without opening blocked monetization gates?"
+  ],
+  "forbidden_claims": [
+    "Do not claim affiliate readiness, ad readiness, production readiness or public launch readiness.",
+    "Do not treat mock multi-agent output as market evidence."
+  ]
+}

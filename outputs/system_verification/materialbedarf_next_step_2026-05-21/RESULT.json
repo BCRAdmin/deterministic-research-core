@@ -1,0 +1,39 @@
+{
+  "artifact_id": "materialbedarf_next_step_verification_2026_05_21",
+  "status": "verified_local",
+  "project_route": "Project - Utility Websites Portfolio",
+  "not_project_route": "Project - Utility Wortcluster",
+  "lanes": [
+    "orchestrator",
+    "research",
+    "data",
+    "docs"
+  ],
+  "decision": "prepare_mature_data_review_after_2026_06_01",
+  "blocked_gates": [
+    "ads",
+    "live_affiliate",
+    "production_deploy",
+    "external_provider",
+    "new_domain_assumption",
+    "public_claim"
+  ],
+  "multi_agent_mock": {
+    "exit_code": 0,
+    "empty_turns": 0,
+    "error_turns": 0,
+    "claims_to_check_missing": false
+  },
+  "system_findings": [
+    {
+      "id": "untracked_multi_agent_repo_entrypoints",
+      "severity": "medium",
+      "status": "fixed_by_versioning",
+      "paths": [
+        "scripts/ops/context_pack_builder.py",
+        "scripts/ops/multi_agent_panel.py"
+      ]
+    }
+  ],
+  "next_safe_action": "Run the mature Utility 14-day GSC/Event review after 2026-06-01 with fresh GSC and event exports."
+}

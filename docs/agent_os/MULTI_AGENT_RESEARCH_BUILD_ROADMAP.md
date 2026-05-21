@@ -47,6 +47,7 @@ Aktueller Stand:
 
 - Skill: `/Users/BjornRosinger/.codex/skills/vega-multi-agent-research/`
 - Runner: `/Users/BjornRosinger/.codex/skills/vega-multi-agent-research/scripts/multi_agent_panel.py`
+- Repo-Einstiegspunkte: `scripts/ops/context_pack_builder.py` und `scripts/ops/multi_agent_panel.py` als duenne Wrapper auf den lokalen Skill
 - Modi: `research`, `ideas`, `website`, `strategy`
 - Output: `TRANSCRIPT.md`, `SYNTHESIS.md`, `events.json`, `metadata.json`
 - DeepSeek/Ollama-Default: `think:false`
@@ -130,6 +131,7 @@ Erledigt:
 - Skill in Skill Inventory, Selection Matrix, Research Dossier Loop und Memory verankert.
 - Alter Spike-Runner `scripts/ops/scenario_sandbox_debate.py` wurde durch den validierten Skill-Runner ersetzt und aus dem Repo-Workingtree entfernt.
 - Raw-Scenario-Outputs unter `outputs/scenario_sandbox/` sind lokale Testevidence und werden nicht versioniert; dauerhafte Learnings stehen im Vault und in dieser Roadmap.
+- Verification-Run 2026-05-21 fand und fixte fehlende Git-Versionierung der Repo-Einstiegspunkte `scripts/ops/context_pack_builder.py` und `scripts/ops/multi_agent_panel.py`.
 
 Definition of Done:
 
