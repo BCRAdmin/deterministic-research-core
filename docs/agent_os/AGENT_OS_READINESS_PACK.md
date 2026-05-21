@@ -15,6 +15,7 @@ Arbeitsoberflaechen:
 - Automation Job Cards
 - Deliverable-Swarm-Lanes und Output-Vertraege
 - Portfolio-Produktoberflaechen-Audit fuer die kanonischen Projektkarten
+- Vault Semantic Ownership Audit fuer Projektwahrheit, Startflaechen und alte Gewohnheitsrouten
 - Guardrails-as-Code
 - Operator-Inbox-Vertrag
 - Terminal-Backend-Vertraege
@@ -43,6 +44,7 @@ Standard-Outputs werden nach `outputs/agent_os_readiness/` geschrieben.
 - `DELIVERABLE_SWARM_OPERATING_MAP.canvas`: JSON-Canvas-Schaubild.
 - `PORTFOLIO_PRODUCT_SURFACE_AUDIT.md/json`: Einzelpruefung der Projektkarten auf sichtbare Lieferoberflaeche, Owner-Lanes, Gates und naechste sichere Aktion.
 - `PORTFOLIO_PRODUCT_SURFACE_MAP.canvas`: JSON-Canvas-Schaubild fuer die Projektoberflaechen.
+- `VAULT_SEMANTIC_OWNERSHIP_AUDIT.md/json`: semantischer Drift-Check fuer aktive Projektowner, Startflaechen, alte Routing-Phrasen, Status-Aging und Gate-Inversion.
 - `OPERATOR_INBOX.md/json`: lokale Review-Inbox, kein Chat-Gateway.
 - `TERMINAL_BACKENDS.md/json`: lokale/Docker-Backend-Vertraege, keine laufenden Backends.
 - `GUARDRAIL_SCAN.md/json`: lokale statische Guardrail-Funde.

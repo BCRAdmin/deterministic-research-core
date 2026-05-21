@@ -10,7 +10,7 @@
       "line": 28,
       "path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
       "score": -5.7153496983870715,
-      "snippet": "```"
+      "snippet": "```bash"
     },
     {
       "line": 9,
@@ -19,48 +19,48 @@
       "snippet": "Dieses Paket uebersetzt die nuetzlichen Hermes-Agent-Muster in sichere lokale"
     },
     {
-      "line": 48,
+      "line": 47,
       "path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
       "score": -5.424031294657932,
-      "snippet": "## Harte Grenzen"
+      "snippet": "- `VAULT_SEMANTIC_OWNERSHIP_AUDIT.md/json`: semantischer Drift-Check fuer aktive Projektowner, Startflaechen, alte Routing-Phrasen, Status-Aging und Gate-Inversion."
     },
     {
-      "line": 17,
-      "path": "docs/media_ingest/MEDIA_INGEST_USE_CASES.md",
+      "line": 195,
+      "path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
       "score": -3.742254418854729,
-      "snippet": "- No automatic public output."
+      "snippet": "- Abrufdatum"
     },
     {
-      "line": 15,
-      "path": "docs/media_ingest/MEDIA_INGEST_USE_CASES.md",
+      "line": 193,
+      "path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
       "score": -3.6670987282384284,
-      "snippet": "- No mass downloads."
+      "snippet": "- Titel"
     },
     {
-      "line": 18,
-      "path": "docs/media_ingest/MEDIA_INGEST_USE_CASES.md",
+      "line": 196,
+      "path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
       "score": -3.6670987282384284,
-      "snippet": "- No direct report use without Evidence Gate."
+      "snippet": "- Nutzung im Lauf"
     },
     {
-      "line": 98,
-      "path": "docs/skills/EXTERNAL_SKILL_INTAKE_SOP.md",
+      "line": 41,
+      "path": "docs/media_ingest/TRANSCRIPTION_WORKFLOW.md",
       "score": -3.6670987282384284,
-      "snippet": "- silent auto-update behavior"
+      "snippet": "## Quality Checks"
     },
     {
-      "line": 13,
-      "path": "docs/media_ingest/MEDIA_INGEST_USE_CASES.md",
+      "line": 191,
+      "path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
       "score": -3.5949023098355055,
-      "snippet": "- No downloads without explicit Operator-Go."
+      "snippet": "- Source-Ledger im Kontextpaket:"
     },
     {
-      "line": 75,
-      "path": "docs/skills/EXTERNAL_SKILL_INTAKE_SOP.md",
+      "line": 24,
+      "path": "docs/media_ingest/TRANSCRIPTION_WORKFLOW.md",
       "score": -3.5254937552549364,
-      "snippet": "| R3 | external network/API | Uses external HTTP, API, search or download. | Operator Gate for runtime use. |"
+      "snippet": "- `source_url`"
     }
   ],
-  "indexed_rows": 2087,
+  "indexed_rows": 2463,
   "query": "Hermes OR OpenClaw OR Vivi"
 }

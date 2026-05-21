@@ -37,6 +37,12 @@
       "status": "implemented_local_artifact"
     },
     {
+      "capability": "vault_semantic_ownership_audit",
+      "evidence": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/VAULT_SEMANTIC_OWNERSHIP_AUDIT.md",
+      "next_action": "Vor jedem Claim 'Vault ist sauber' semantische Ownership-, Startflaechen- und Aging-Drift pruefen.",
+      "status": "implemented_local_gate"
+    },
+    {
       "capability": "automation_job_cards",
       "evidence": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/AUTOMATION_JOB_CARDS.md",
       "next_action": "Echte App-Automationen nur nach Operator-Review erstellen.",

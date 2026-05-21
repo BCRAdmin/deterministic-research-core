@@ -19,27 +19,27 @@
       "summary": "Dieses Paket uebersetzt die nuetzlichen Hermes-Agent-Muster in sichere lokale"
     },
     {
-      "candidate_id": "mem-2526f71d8f78",
+      "candidate_id": "mem-efd92c4871a6",
       "kind": "agent_stack_learning",
-      "line": 34,
+      "line": 36,
       "route": "DreamFactory System/Agent Stack",
       "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
       "status": "candidate_needs_promotion_review",
       "summary": "`AGENT_OS_READINESS_REPORT.md/json`: Faehigkeitsmatrix und OpenClaw-Migrations-Trockenlauf."
     },
     {
-      "candidate_id": "mem-48b5a86c3294",
+      "candidate_id": "mem-0310fbba3b20",
       "kind": "general_learning",
-      "line": 45,
+      "line": 50,
       "route": "Memory/Learnings and Fixes",
       "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
       "status": "candidate_needs_promotion_review",
       "summary": "`GUARDRAIL_SCAN.md/json`: lokale statische Guardrail-Funde."
     },
     {
-      "candidate_id": "mem-cfbcd1077a6c",
+      "candidate_id": "mem-038d7d222ec1",
       "kind": "agent_stack_learning",
-      "line": 59,
+      "line": 64,
       "route": "DreamFactory System/Agent Stack",
       "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
       "status": "candidate_needs_promotion_review",
@@ -71,6 +71,159 @@
       "source_path": "docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
       "status": "candidate_needs_promotion_review",
       "summary": "OpenClaw-Migrationserfahrungen gebaut werden."
+    },
+    {
+      "candidate_id": "mem-22fd4f6dc8e9",
+      "kind": "workflow_learning",
+      "line": 15,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "1. `vega-multi-agent-research` als lokalen Codex/Vivi-Skill stabilisieren. Status: erledigt."
+    },
+    {
+      "candidate_id": "mem-3e0742b12c8e",
+      "kind": "operator_gate_learning",
+      "line": 18,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "4. LIONCOM erst anbinden, wenn es einen nachweisbar nuetzlichen Run-Vertrag, Artefaktstruktur und Operator-Gate gibt. Status: Adapter bewusst nicht gebaut, weil CLI/Skill reicht."
+    },
+    {
+      "candidate_id": "mem-7ed4e9eb64c5",
+      "kind": "workflow_learning",
+      "line": 23,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Ein interner Scenario-/Research-Sandbox-Baustein, den Vega und Vivi bei passenden Aufgaben nutzen koennen:"
+    },
+    {
+      "candidate_id": "mem-52b17897e545",
+      "kind": "workflow_learning",
+      "line": 29,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Alles bleibt `candidate_only`, bis Vega/Operator es prueft."
+    },
+    {
+      "candidate_id": "mem-bc3a874acffd",
+      "kind": "workflow_learning",
+      "line": 48,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Skill: `/Users/BjornRosinger/.codex/skills/vega-multi-agent-research/`"
+    },
+    {
+      "candidate_id": "mem-4feaca0b77fc",
+      "kind": "workflow_learning",
+      "line": 49,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Runner: `/Users/BjornRosinger/.codex/skills/vega-multi-agent-research/scripts/multi_agent_panel.py`"
+    },
+    {
+      "candidate_id": "mem-266fa5a3381e",
+      "kind": "workflow_learning",
+      "line": 106,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Vega/Operator entscheidet, nicht der Moderator."
+    },
+    {
+      "candidate_id": "mem-b76e0eac9285",
+      "kind": "workflow_learning",
+      "line": 116,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Dauerhafte Regeln: nur nach Vega-Pruefung in `Learnings and Fixes`, Projektnote oder Skill-Routing."
+    },
+    {
+      "candidate_id": "mem-e92a335507a4",
+      "kind": "workflow_learning",
+      "line": 130,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Skill `vega-multi-agent-research` erstellt."
+    },
+    {
+      "candidate_id": "mem-ade9c6d17934",
+      "kind": "workflow_learning",
+      "line": 263,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "5. LIONCOM/Vivi: interne Systementscheidung, z. B. welche Capability als Nutzeroberflaeche sichtbar werden soll."
+    },
+    {
+      "candidate_id": "mem-78bf13301b48",
+      "kind": "workflow_learning",
+      "line": 289,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "P5 - Vivi/Codex Arbeitsintegration"
+    },
+    {
+      "candidate_id": "mem-dc297f6012a8",
+      "kind": "workflow_learning",
+      "line": 293,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Ziel: Vivi und Codex sollen wissen, wann der Skill zu nutzen ist, ohne jedes Mal neu zu diskutieren."
+    },
+    {
+      "candidate_id": "mem-bef879c8e1d5",
+      "kind": "workflow_learning",
+      "line": 302,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Standardformulierungen fuer Vivi:"
+    },
+    {
+      "candidate_id": "mem-8b73ad563833",
+      "kind": "workflow_learning",
+      "line": 317,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Vivi/Codex kann in einem neuen Auftrag begruenden, warum Multi-Agenten passend oder unpassend sind."
+    },
+    {
+      "candidate_id": "mem-6919f934c5c0",
+      "kind": "workflow_learning",
+      "line": 447,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "8. P5: Vivi-Handoff-Template materialisiert."
+    },
+    {
+      "candidate_id": "mem-a2a7fb8008eb",
+      "kind": "workflow_learning",
+      "line": 4,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/agent_os/PORTFOLIO_PRODUCT_SURFACE_AUDIT.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Scope: LIONCOM / Membership / Utility / Quellwert / Vega-Vivi-Lieferoberflaechen"
+    },
+    {
+      "candidate_id": "mem-3dec566884cf",
+      "kind": "workflow_learning",
+      "line": 44,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/agent_os/PORTFOLIO_PRODUCT_SURFACE_AUDIT.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "promotet keine Public-Ausgabe. Dauerhafte Findings gehoeren nach Vega-Memory"
     },
     {
       "candidate_id": "mem-3b42a5fd595b",

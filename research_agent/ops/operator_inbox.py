@@ -45,6 +45,8 @@ def build_operator_inbox_items(
     automation_cards_valid: bool,
     deliverable_contract_valid: bool = True,
     deliverable_lane_count: int = 0,
+    vault_semantic_audit_valid: bool = True,
+    vault_semantic_findings: int = 0,
 ) -> list[InboxItem]:
     root = root.resolve()
     base = root / "outputs/agent_os_readiness"
@@ -88,6 +90,19 @@ def build_operator_inbox_items(
             summary=f"{guardrail_count} Guardrail-Funde sind als Gates vor Runtime-Erweiterung festgehalten.",
             required_action="gates_vor_runtime_rechten_klaeren_oder_akzeptieren",
             operator_gate_required=True,
+        ),
+        InboxItem(
+            item_id="vault-semantic-ownership-review",
+            lane="memory_governance",
+            priority="P0",
+            status="ready_for_review" if vault_semantic_audit_valid else "blocked",
+            source=str(base / "VAULT_SEMANTIC_OWNERSHIP_AUDIT.md"),
+            summary=(
+                f"{vault_semantic_findings} semantische Vault-Ownership-Funde; "
+                "prueft aktive Projektwahrheit, Startflaechen und alte Gewohnheitsrouten."
+            ),
+            required_action="vor_vault_clean_claim_pruefen_oder_findings_fixen",
+            operator_gate_required=not vault_semantic_audit_valid,
         ),
         InboxItem(
             item_id="automation-card-review",

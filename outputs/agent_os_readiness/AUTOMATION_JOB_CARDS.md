@@ -6,6 +6,7 @@ Das sind vorgeschlagene sichere Automation Cards. Sie sind keine installierten A
 | --- | --- | ---: | --- | --- | --- |
 | `Agent-OS-Readiness woechentlich pruefen` | `proposed_local_review_only` | true | woechentlich, manuelle Erstellung erforderlich | `local_file_only` | `read_file, search_files, terminal_read_only` |
 | `Memory-Inbox-Promotion pruefen` | `proposed_local_review_only` | true | woechentlich, manuelle Erstellung erforderlich | `local_file_only` | `read_file, search_files` |
+| `Vault Semantic Ownership pruefen` | `proposed_local_review_only` | true | woechentlich und vor jedem Claim 'Vault ist sauber' | `local_file_only` | `read_file, search_files, terminal_read_only` |
 | `Skill-Registry-Drift pruefen` | `proposed_local_review_only` | true | woechentlich, manuelle Erstellung erforderlich | `local_file_only` | `read_file, search_files, terminal_read_only` |
 | `Guardrail-Coverage-Smoke pruefen` | `proposed_local_review_only` | true | bei Bedarf vor Agent-OS-Runtime-Aenderungen | `local_file_only` | `read_file, search_files, terminal_read_only` |
 | `Deliverable-Swarm-Vertrag pruefen` | `proposed_local_review_only` | true | bei Bedarf vor neuen sichtbaren Agentenoberflaechen | `local_file_only` | `read_file, search_files, terminal_read_only` |
@@ -19,6 +20,12 @@ Das sind vorgeschlagene sichere Automation Cards. Sie sind keine installierten A
 - warnungen: `keine`
 
 ### memory-inbox-promotion-pruefen-573b2f5c
+
+- gueltig: `true`
+- fehler: `keine`
+- warnungen: `keine`
+
+### vault-semantic-ownership-pruefen-a61f1079
 
 - gueltig: `true`
 - fehler: `keine`

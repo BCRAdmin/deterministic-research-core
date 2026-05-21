@@ -2,14 +2,14 @@
 
 This registry is a review surface, not a runtime installer.
 
-Records: 26
+Records: 29
 
 ## Decision Counts
 
-- `approved_local_review_helper`: 1
+- `approved_local_review_helper`: 3
 - `approved_playbook_only`: 12
 - `hold_for_operator_review`: 11
-- `review_before_runtime_use`: 2
+- `review_before_runtime_use`: 3
 
 ## Registry
 
@@ -28,8 +28,11 @@ Records: 26
 | `humanizer-lint-playbook-1366dda5` | Humanizer Lint Playbook | `R0_doc_only_pattern` | `approved_playbook_only` | false | 0 | `docs/writing/HUMANIZER_LINT_PLAYBOOK.md` |
 | `media-ingest-helper-scripts-25212885` | Media Ingest Helper Scripts | `R0_doc_only_pattern` | `approved_playbook_only` | false | 0 | `scripts/media_ingest/README.md` |
 | `validate-transcript-metadata-b9019b41` | Validate Transcript Metadata | `R1_local_read_only_helper` | `approved_local_review_helper` | false | 0 | `scripts/media_ingest/validate_transcript_metadata.py` |
+| `context-pack-builder-99c1794f` | Context Pack Builder | `R1_local_read_only_helper` | `approved_local_review_helper` | false | 0 | `scripts/ops/context_pack_builder.py` |
+| `multi-agent-panel-ddd58146` | Multi Agent Panel | `R1_local_read_only_helper` | `approved_local_review_helper` | false | 0 | `scripts/ops/multi_agent_panel.py` |
 | `transcript-clean-fc425d3c` | Transcript Clean | `R2_local_write_or_exec_helper` | `review_before_runtime_use` | true | 0 | `scripts/media_ingest/prepare_media_ingest_folder.sh` |
 | `agent-os-readiness-ef832283` | Agent Os Readiness | `R2_local_write_or_exec_helper` | `review_before_runtime_use` | true | 0 | `scripts/ops/agent_os_readiness.py` |
+| `vault-semantic-audit-09789ce6` | Vault Semantic Audit | `R2_local_write_or_exec_helper` | `review_before_runtime_use` | true | 0 | `scripts/ops/vault_semantic_audit.py` |
 | `automation-workflows-playbook-dc8fc5cb` | Automation Workflows Playbook | `R6_autonomous_or_background` | `hold_for_operator_review` | true | 4 | `docs/automation/AUTOMATION_WORKFLOWS_PLAYBOOK.md` |
 | `media-source-policy-3188eac1` | Media Source Policy | `R6_autonomous_or_background` | `hold_for_operator_review` | true | 2 | `docs/media_ingest/MEDIA_SOURCE_POLICY.md` |
 | `obsidian-media-note-policy-845205e4` | Obsidian Media Note Policy | `R6_autonomous_or_background` | `hold_for_operator_review` | true | 1 | `docs/media_ingest/OBSIDIAN_MEDIA_NOTE_POLICY.md` |

@@ -164,6 +164,33 @@ def default_job_cards(root: Path) -> list[AutomationJobCard]:
             ),
         ),
         AutomationJobCard(
+            job_id=make_job_id("Vault Semantic Ownership pruefen"),
+            name="Vault Semantic Ownership pruefen",
+            status="proposed_local_review_only",
+            schedule="woechentlich und vor jedem Claim 'Vault ist sauber'",
+            workdir=workdir,
+            profile="default",
+            allowed_toolsets=("read_file", "search_files", "terminal_read_only"),
+            skills=("vega-obsidian-memory", "semantic-ownership-audit"),
+            context_from=(
+                "outputs/agent_os_readiness/VAULT_SEMANTIC_OWNERSHIP_AUDIT.md",
+                "outputs/vault_semantic_audit/VAULT_SEMANTIC_OWNERSHIP_AUDIT.md",
+            ),
+            delivery="local_file_only",
+            stop_conditions=(
+                "stop_before_writing_obsidian",
+                "stop_if_active_project_owner_is_ambiguous",
+                "stop_if_start_surfaces_disagree",
+                "stop_if_operator_gate_required",
+            ),
+            prompt=(
+                "Fuehre den lokalen Vault Semantic Ownership Audit aus. Pruefe Blickwinkel "
+                "Ownership, Startflaechen, Body-Semantik, Negative Routing, Aging, Gate-"
+                "Inversion und Nachfolger-/Vorgaenger-Spuren. Berichte Findings und sichere "
+                "naechste Aktionen. Kein kanonisches Memory automatisch aendern."
+            ),
+        ),
+        AutomationJobCard(
             job_id=make_job_id("Skill-Registry-Drift pruefen"),
             name="Skill-Registry-Drift pruefen",
             status="proposed_local_review_only",

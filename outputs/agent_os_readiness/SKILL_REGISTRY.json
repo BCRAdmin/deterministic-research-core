@@ -170,6 +170,32 @@
       "triggers": []
     },
     {
+      "description": "\"\"\"Repo entrypoint for the local Vega multi-agent context-pack builder.\"\"\"",
+      "finding_count": 0,
+      "highest_guardrail_severity": "none",
+      "operator_gate_required": false,
+      "path": "scripts/ops/context_pack_builder.py",
+      "risk_class": "R1_local_read_only_helper",
+      "runtime_decision": "approved_local_review_helper",
+      "skill_id": "context-pack-builder-99c1794f",
+      "source_type": "playbook_or_helper",
+      "title": "Context Pack Builder",
+      "triggers": []
+    },
+    {
+      "description": "\"\"\"Repo entrypoint for the local Vega multi-agent research skill runner.\"\"\"",
+      "finding_count": 0,
+      "highest_guardrail_severity": "none",
+      "operator_gate_required": false,
+      "path": "scripts/ops/multi_agent_panel.py",
+      "risk_class": "R1_local_read_only_helper",
+      "runtime_decision": "approved_local_review_helper",
+      "skill_id": "multi-agent-panel-ddd58146",
+      "source_type": "playbook_or_helper",
+      "title": "Multi Agent Panel",
+      "triggers": []
+    },
+    {
       "description": "set -euo pipefail",
       "finding_count": 0,
       "highest_guardrail_severity": "none",
@@ -193,6 +219,19 @@
       "skill_id": "agent-os-readiness-ef832283",
       "source_type": "playbook_or_helper",
       "title": "Agent Os Readiness",
+      "triggers": []
+    },
+    {
+      "description": "\"\"\"Run the Vega vault semantic ownership audit.\"\"\"",
+      "finding_count": 0,
+      "highest_guardrail_severity": "none",
+      "operator_gate_required": true,
+      "path": "scripts/ops/vault_semantic_audit.py",
+      "risk_class": "R2_local_write_or_exec_helper",
+      "runtime_decision": "review_before_runtime_use",
+      "skill_id": "vault-semantic-audit-09789ce6",
+      "source_type": "playbook_or_helper",
+      "title": "Vault Semantic Audit",
       "triggers": []
     },
     {

@@ -88,6 +88,12 @@ def build_capability_matrix(
             "Kandidaten manuell in Obsidian-Routen promoten; Index ist nur lokale Suche.",
         ),
         CapabilityCheck(
+            "vault_semantic_ownership_audit",
+            "implemented_local_gate",
+            str(root / "outputs/agent_os_readiness/VAULT_SEMANTIC_OWNERSHIP_AUDIT.md"),
+            "Vor jedem Claim 'Vault ist sauber' semantische Ownership-, Startflaechen- und Aging-Drift pruefen.",
+        ),
+        CapabilityCheck(
             "automation_job_cards",
             "implemented_proposal_artifact",
             str(root / "outputs/agent_os_readiness/AUTOMATION_JOB_CARDS.md"),

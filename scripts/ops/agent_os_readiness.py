@@ -60,6 +60,10 @@ from research_agent.ops.terminal_backends import (
     render_terminal_backends_markdown,
     validate_backend_specs,
 )
+from research_agent.ops.vault_semantic_audit import (
+    audit_vault_semantic_ownership,
+    render_vault_semantic_audit_markdown,
+)
 
 
 def write_json(path: Path, payload: Any) -> None:
@@ -132,6 +136,13 @@ def run_all(args: argparse.Namespace) -> int:
         ),
     )
 
+    vault_semantic_audit = audit_vault_semantic_ownership(vault)
+    write_json(out / "VAULT_SEMANTIC_OWNERSHIP_AUDIT.json", vault_semantic_audit.to_dict())
+    write_text(
+        out / "VAULT_SEMANTIC_OWNERSHIP_AUDIT.md",
+        render_vault_semantic_audit_markdown(vault_semantic_audit),
+    )
+
     job_cards = default_job_cards(root)
     validations = [validate_job_card(card, root) for card in job_cards]
     write_json(
@@ -170,6 +181,8 @@ def run_all(args: argparse.Namespace) -> int:
         automation_cards_valid=all(validation.valid for validation in validations),
         deliverable_contract_valid=deliverable_validation.valid,
         deliverable_lane_count=len(deliverable_lanes),
+        vault_semantic_audit_valid=vault_semantic_audit.valid,
+        vault_semantic_findings=len(vault_semantic_audit.findings),
     )
     inbox_validation = validate_operator_inbox(inbox_items)
     write_json(
@@ -207,6 +220,9 @@ def run_all(args: argparse.Namespace) -> int:
         "portfolio_surface_projects": len(portfolio_audit.results),
         "portfolio_surface_valid": portfolio_audit.valid,
         "portfolio_surface_findings": len(portfolio_audit.findings),
+        "vault_semantic_valid": vault_semantic_audit.valid,
+        "vault_semantic_findings": len(vault_semantic_audit.findings),
+        "vault_semantic_viewpoints": len(vault_semantic_audit.viewpoints),
         "terminal_backends": len(backend_specs),
         "terminal_backends_valid": all(validation.valid for validation in backend_validations),
         "operator_inbox_items": len(inbox_items),
@@ -214,7 +230,15 @@ def run_all(args: argparse.Namespace) -> int:
     }
     write_json(out / "RUN_SUMMARY.json", summary)
     print(json.dumps(summary, indent=2, sort_keys=True))
-    return 0 if all(validation.valid for validation in validations) else 2
+    ready = (
+        all(validation.valid for validation in validations)
+        and deliverable_validation.valid
+        and all(validation.valid for validation in backend_validations)
+        and portfolio_audit.valid
+        and vault_semantic_audit.valid
+        and inbox_validation.valid
+    )
+    return 0 if ready else 2
 
 
 def main() -> int:

@@ -22,11 +22,11 @@
     },
     {
       "category": "skill_package",
-      "check_id": "skill_background_or_self_modify",
-      "evidence": "network, credentials, background execution, desktop/browser control, or canonical",
-      "file": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
-      "line": 60,
-      "message": "Background, self-update, or self-modifying behavior must stay gated.",
+      "check_id": "skill_memory_write",
+      "evidence": "8. Wenn dauerhafte Projektwahrheit entstanden ist, in Obsidian oder Pending Sync sichern.",
+      "file": "docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
+      "line": 144,
+      "message": "Memory writes require the Obsidian promotion gate.",
       "operator_gate_required": true,
       "severity": "high"
     },

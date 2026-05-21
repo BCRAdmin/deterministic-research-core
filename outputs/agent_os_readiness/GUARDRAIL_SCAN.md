@@ -7,7 +7,7 @@ Highest severity: `high`
 | --- | ---: | --- | --- | ---: | --- |
 | `docs/OUTCOME_MATURATION_POLICY_2026-05-18.md` | 65 | `auto_runtime_mutation` | `high` | true | - Quellwert-Publish-Go, |
 | `docs/OUTCOME_MATURATION_POLICY_2026-05-18.md` | 66 | `auto_runtime_mutation` | `high` | true | - Production-Go, |
-| `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 60 | `skill_background_or_self_modify` | `high` | true | network, credentials, background execution, desktop/browser control, or canonical |
+| `docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md` | 144 | `skill_memory_write` | `high` | true | 8. Wenn dauerhafte Projektwahrheit entstanden ist, in Obsidian oder Pending Sync sichern. |
 | `docs/automation/AUTOMATION_WORKFLOWS_PLAYBOOK.md` | 24 | `auto_runtime_mutation` | `high` | true | - Automatically release reports. |
 | `docs/automation/AUTOMATION_WORKFLOWS_PLAYBOOK.md` | 25 | `auto_runtime_mutation` | `high` | true | - Automatically enable Ads or Affiliate. |
 | `docs/automation/AUTOMATION_WORKFLOWS_PLAYBOOK.md` | 28 | `auto_runtime_mutation` | `high` | true | - Automatically publish. |

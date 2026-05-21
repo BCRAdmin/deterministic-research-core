@@ -47,8 +47,13 @@ def test_default_automation_cards_are_valid(tmp_path: Path) -> None:
         "SKILL_REGISTRY.md",
         "GUARDRAIL_SCAN.md",
         "DELIVERABLE_SWARM_CONTRACT.md",
+        "VAULT_SEMANTIC_OWNERSHIP_AUDIT.md",
     ):
         (tmp_path / "outputs" / "agent_os_readiness" / name).write_text("output", encoding="utf-8")
+    (tmp_path / "outputs" / "vault_semantic_audit").mkdir(parents=True)
+    (
+        tmp_path / "outputs" / "vault_semantic_audit" / "VAULT_SEMANTIC_OWNERSHIP_AUDIT.md"
+    ).write_text("output", encoding="utf-8")
 
     cards = default_job_cards(tmp_path)
     validations = [validate_job_card(card, tmp_path) for card in cards]

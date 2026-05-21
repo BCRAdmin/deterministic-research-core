@@ -1,0 +1,83 @@
+{
+  "checked_files": [
+    "00 DreamFactory Home.md",
+    "01 Projects.md",
+    "02 Plans and Status.md",
+    "03 Features.md",
+    "04 Agent Start Here.md",
+    "Canonical/Canonical Index.md",
+    "DreamFactory \u2013 Projekt\u00fcbersicht.md",
+    "DreamFactory \u2013 Systemhandbuch.md",
+    "Project - Utility Websites Portfolio.md",
+    "Project - Utility Wortcluster.md",
+    "Review Queue.md"
+  ],
+  "findings": [],
+  "valid": true,
+  "vault": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview",
+  "viewpoints": [
+    {
+      "catches": "Aktive Nachfolge-Lanes in alten Projektkarten.",
+      "operator_relief": "Bjorn muss nicht merken, welche alte Note frueher fuehrend war.",
+      "question": "Welche Karte fuehrt diese Entitaet heute?",
+      "title": "Ownership statt Linkstatus",
+      "viewpoint_id": "ownership"
+    },
+    {
+      "catches": "Neue Projektkarten, die nur in einer Detailnote sichtbar sind.",
+      "operator_relief": "Neue Sessions starten richtig, ohne dass der Operator routen muss.",
+      "question": "Zeigen Human-, Agenten-, System- und Canonical-Starts dieselbe aktive Spur?",
+      "title": "Startflaechen-Abgleich",
+      "viewpoint_id": "start_surface_alignment"
+    },
+    {
+      "catches": "Notes mit korrektem `status: waiting`, aber aktiv klingenden Body-Abschnitten.",
+      "operator_relief": "Vivi/Vega muessen nicht aus Chronik-Waenden die Fuehrung erraten.",
+      "question": "Widersprechen alte Abschnitte dem Status oben in der Note?",
+      "title": "Body-Semantik statt Frontmatter",
+      "viewpoint_id": "body_semantics"
+    },
+    {
+      "catches": "Saetze wie `fuehrende Projektkarte: alte Karte`.",
+      "operator_relief": "Alte Gewohnheitsrouten werden maschinell sichtbar.",
+      "question": "Gibt es noch aktive Phrasen, die auf die alte Karte zeigen?",
+      "title": "Negative Routing-Tests",
+      "viewpoint_id": "negative_routing"
+    },
+    {
+      "catches": "Review-Queue-Leichen und alte `active` Roadmaps.",
+      "operator_relief": "Der Operator muss nicht alte Warteschlangen mental abgleichen.",
+      "question": "Sind alte offene Punkte noch offen oder durch spaetere Wahrheit geschlossen?",
+      "title": "Status- und Review-Aging",
+      "viewpoint_id": "status_aging"
+    },
+    {
+      "catches": "Gruene lokale Tests, die als externe Freigabe missverstanden werden.",
+      "operator_relief": "Operator-Gates bleiben sichtbar, statt aus Testgruens zu verschwinden.",
+      "question": "Wird ein lokaler/verifizierter Stand irgendwo als Public-/Production-Go gelesen?",
+      "title": "Gate-Inversion",
+      "viewpoint_id": "gate_inversion"
+    },
+    {
+      "catches": "Materialbedarf/Elterngeld als aktive Wahrheit unter Wortcluster.",
+      "operator_relief": "Projektwechsel muessen nicht aus Erinnerung rekonstruiert werden.",
+      "question": "Ist klar, was historischer Ursprung und was aktuelle operative Flaeche ist?",
+      "title": "Nachfolger-/Vorgaenger-Spur",
+      "viewpoint_id": "successor_predecessor"
+    },
+    {
+      "catches": "Audits, die erst laufen, wenn Bjorn sie exakt benennt.",
+      "operator_relief": "Bjorn muss die Systemklasse nicht jedes Mal selbst formulieren.",
+      "question": "Welche wiederholte Operator-Sorge steckt hinter dem aktuellen Prompt?",
+      "title": "Operator-Intent-Extraktion",
+      "viewpoint_id": "operator_intent_extraction"
+    },
+    {
+      "catches": "Entweder kein wiederholbarer Check oder riskante stille Autowrites.",
+      "operator_relief": "Routinepruefungen laufen mit, aber echte Vault-Aenderungen bleiben bewusst.",
+      "question": "Kann der Check automatisch report-only laufen, ohne kanonisches Memory zu mutieren?",
+      "title": "Automatic-by-Workflow",
+      "viewpoint_id": "workflow_not_mutation"
+    }
+  ]
+}

@@ -2,18 +2,35 @@
 
 These are promotion candidates. They are not canonical memory until reviewed.
 
-Candidates: 66
+Candidates: 83
 
 | Candidate | Route | Kind | Source | Line | Summary |
 | --- | --- | --- | --- | ---: | --- |
 | `mem-949266143276` | `DreamFactory System/Agent Stack` | `agent_stack_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 4 | Scope: LIONCOM / Vega / Vivi / OpenClaw / sichere Hermes-Musteruebernahme |
 | `mem-0a98c28f4a5e` | `DreamFactory System/Agent Stack` | `agent_stack_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 9 | Dieses Paket uebersetzt die nuetzlichen Hermes-Agent-Muster in sichere lokale |
-| `mem-2526f71d8f78` | `DreamFactory System/Agent Stack` | `agent_stack_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 34 | `AGENT_OS_READINESS_REPORT.md/json`: Faehigkeitsmatrix und OpenClaw-Migrations-Trockenlauf. |
-| `mem-48b5a86c3294` | `Memory/Learnings and Fixes` | `general_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 45 | `GUARDRAIL_SCAN.md/json`: lokale statische Guardrail-Funde. |
-| `mem-cfbcd1077a6c` | `DreamFactory System/Agent Stack` | `agent_stack_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 59 | Hermes ist ein Produktmuster-Benchmark. Jede Funktion, die Netzwerk, |
+| `mem-efd92c4871a6` | `DreamFactory System/Agent Stack` | `agent_stack_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 36 | `AGENT_OS_READINESS_REPORT.md/json`: Faehigkeitsmatrix und OpenClaw-Migrations-Trockenlauf. |
+| `mem-0310fbba3b20` | `Memory/Learnings and Fixes` | `general_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 50 | `GUARDRAIL_SCAN.md/json`: lokale statische Guardrail-Funde. |
+| `mem-038d7d222ec1` | `DreamFactory System/Agent Stack` | `agent_stack_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 64 | Hermes ist ein Produktmuster-Benchmark. Jede Funktion, die Netzwerk, |
 | `mem-38be4066dda5` | `DreamFactory System/Agent Stack` | `agent_stack_learning` | `docs/agent_os/DELIVERABLE_SWARM_CONTRACT.md` | 10 | sichere lokale Oberflaeche fuer Vega-, Vivi-, LIONCOM- und OpenClaw-Arbeit. |
 | `mem-74babc60b338` | `DreamFactory System/Agent Stack` | `agent_stack_learning` | `docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md` | 4 | Scope: Vega / Vivi / LIONCOM / OpenClaw-nahe Agentenarbeit |
 | `mem-39f59b586e0c` | `DreamFactory System/Agent Stack` | `agent_stack_learning` | `docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md` | 202 | OpenClaw-Migrationserfahrungen gebaut werden. |
+| `mem-22fd4f6dc8e9` | `Memory/Learnings and Fixes` | `workflow_learning` | `docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md` | 15 | 1. `vega-multi-agent-research` als lokalen Codex/Vivi-Skill stabilisieren. Status: erledigt. |
+| `mem-3e0742b12c8e` | `Memory/Learnings and Fixes` | `operator_gate_learning` | `docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md` | 18 | 4. LIONCOM erst anbinden, wenn es einen nachweisbar nuetzlichen Run-Vertrag, Artefaktstruktur und Operator-Gate gibt. Status: Adapter bewusst nicht gebaut, weil CLI/Skill reicht. |
+| `mem-7ed4e9eb64c5` | `Memory/Learnings and Fixes` | `workflow_learning` | `docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md` | 23 | Ein interner Scenario-/Research-Sandbox-Baustein, den Vega und Vivi bei passenden Aufgaben nutzen koennen: |
+| `mem-52b17897e545` | `Memory/Learnings and Fixes` | `workflow_learning` | `docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md` | 29 | Alles bleibt `candidate_only`, bis Vega/Operator es prueft. |
+| `mem-bc3a874acffd` | `Memory/Learnings and Fixes` | `workflow_learning` | `docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md` | 48 | Skill: `/Users/BjornRosinger/.codex/skills/vega-multi-agent-research/` |
+| `mem-4feaca0b77fc` | `Memory/Learnings and Fixes` | `workflow_learning` | `docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md` | 49 | Runner: `/Users/BjornRosinger/.codex/skills/vega-multi-agent-research/scripts/multi_agent_panel.py` |
+| `mem-266fa5a3381e` | `Memory/Learnings and Fixes` | `workflow_learning` | `docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md` | 106 | Vega/Operator entscheidet, nicht der Moderator. |
+| `mem-b76e0eac9285` | `Memory/Learnings and Fixes` | `workflow_learning` | `docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md` | 116 | Dauerhafte Regeln: nur nach Vega-Pruefung in `Learnings and Fixes`, Projektnote oder Skill-Routing. |
+| `mem-e92a335507a4` | `Memory/Learnings and Fixes` | `workflow_learning` | `docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md` | 130 | Skill `vega-multi-agent-research` erstellt. |
+| `mem-ade9c6d17934` | `Memory/Learnings and Fixes` | `workflow_learning` | `docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md` | 263 | 5. LIONCOM/Vivi: interne Systementscheidung, z. B. welche Capability als Nutzeroberflaeche sichtbar werden soll. |
+| `mem-78bf13301b48` | `Memory/Learnings and Fixes` | `workflow_learning` | `docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md` | 289 | P5 - Vivi/Codex Arbeitsintegration |
+| `mem-dc297f6012a8` | `Memory/Learnings and Fixes` | `workflow_learning` | `docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md` | 293 | Ziel: Vivi und Codex sollen wissen, wann der Skill zu nutzen ist, ohne jedes Mal neu zu diskutieren. |
+| `mem-bef879c8e1d5` | `Memory/Learnings and Fixes` | `workflow_learning` | `docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md` | 302 | Standardformulierungen fuer Vivi: |
+| `mem-8b73ad563833` | `Memory/Learnings and Fixes` | `workflow_learning` | `docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md` | 317 | Vivi/Codex kann in einem neuen Auftrag begruenden, warum Multi-Agenten passend oder unpassend sind. |
+| `mem-6919f934c5c0` | `Memory/Learnings and Fixes` | `workflow_learning` | `docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md` | 447 | 8. P5: Vivi-Handoff-Template materialisiert. |
+| `mem-a2a7fb8008eb` | `Memory/Learnings and Fixes` | `workflow_learning` | `docs/agent_os/PORTFOLIO_PRODUCT_SURFACE_AUDIT.md` | 4 | Scope: LIONCOM / Membership / Utility / Quellwert / Vega-Vivi-Lieferoberflaechen |
+| `mem-3dec566884cf` | `Memory/Learnings and Fixes` | `workflow_learning` | `docs/agent_os/PORTFOLIO_PRODUCT_SURFACE_AUDIT.md` | 44 | promotet keine Public-Ausgabe. Dauerhafte Findings gehoeren nach Vega-Memory |
 | `mem-3b42a5fd595b` | `Memory/Learnings and Fixes` | `workflow_learning` | `docs/documents/DOCX_WORKFLOW_PLAYBOOK.md` | 4 | Scope: LIONCOM / Vega / Vivi document workflows |
 | `mem-b9cf0898075a` | `Memory/Learnings and Fixes` | `workflow_learning` | `docs/documents/DOCX_WORKFLOW_PLAYBOOK.md` | 61 | Vivi must not report a DOCX as final without a validation report. |
 | `mem-5251756e2a09` | `Memory/Learnings and Fixes` | `workflow_learning` | `docs/media_ingest/MEDIA_INGEST_USE_CASES.md` | 8 | This playbook defines safe media-ingest use cases for Quellwert, Room16, Vivi and Obsidian. Media may help create transcript drafts, source notes and evidence candidates, but it must not directly change reports, ratings, guards, calibration, `MetricsPacket`, `DecisionPacket` or public output. |
