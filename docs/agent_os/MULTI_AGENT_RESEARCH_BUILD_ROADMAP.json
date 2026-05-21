@@ -1,0 +1,146 @@
+{
+  "title": "Multi-Agent Research Build Roadmap",
+  "status": "active",
+  "date": "2026-05-21",
+  "owner": "Vega",
+  "scope": "internal-first",
+  "decision": {
+    "build_path": "skill-first",
+    "lioncom_integration": "defer_until_after_internal_pilots",
+    "mirofish_code_adoption": "no",
+    "zep_required": false,
+    "default_output_status": "candidate_only"
+  },
+  "principles": [
+    "Use multi-agent debate only when real perspective tension exists.",
+    "Keep raw transcript, synthesis, claims-to-check, and operator readout separate.",
+    "Never auto-promote agent opinions into Obsidian, LIONCOM, Room16, or public artifacts.",
+    "Avoid AGPL/MiroFish code reuse unless a separate license decision is made.",
+        "Start with internal use and pilot evidence before UI, LIONCOM, or productization.",
+        "Do not version raw scenario sandbox outputs; preserve durable learnings in Vault notes and roadmap artifacts."
+  ],
+  "phases": [
+    {
+      "id": "P0",
+      "name": "Fundament sichern",
+      "status": "done",
+      "gate": "Skill validator green, first smoke has empty_turns=0 and error_turns=0.",
+      "outputs": [
+        "vega-multi-agent-research skill",
+        "multi_agent_panel.py runner",
+        "MiroFish benchmark update",
+                "Skill routing and memory updates",
+                "Legacy scenario_sandbox_debate.py removed in favor of the validated skill runner",
+                "Raw outputs/scenario_sandbox artifacts treated as local-only test evidence"
+            ]
+        },
+    {
+      "id": "P1",
+      "name": "Runner produktionsnah haerten",
+      "status": "next",
+      "estimated_effort": "0.5-1 day",
+      "tasks": [
+        "Add run_config.json or YAML support.",
+        "Generate RUN_REPORT.md and CLAIMS_TO_CHECK.md.",
+        "Document exit codes.",
+        "Expand health checks for empty turns, token caps, model errors, missing sources, and invalid config.",
+        "Add offline tests for config, custom agents, and health evaluation."
+      ],
+      "gate": "Compile green, skill validator green, offline tests green, one real Ollama smoke green."
+    },
+    {
+      "id": "P2",
+      "name": "Kontextpaket-Builder bauen",
+      "status": "planned",
+      "estimated_effort": "1-2 days",
+      "tasks": [
+        "Create context_pack_builder.py.",
+        "Add source ledger structure.",
+        "Separate facts, assumptions, and open questions.",
+        "Warn when research or website runs have no sources.",
+        "Create templates for website reviews, market research, product ideas, and system decisions."
+      ],
+      "gate": "Context pack can be built without LLM and warns on weak source basis."
+    },
+    {
+      "id": "P3",
+      "name": "Synthese und Claim Review schaerfen",
+      "status": "planned",
+      "estimated_effort": "1 day",
+      "tasks": [
+        "Force moderator output contract.",
+        "Classify claims as factual, inference, persona_preference, unsupported, or risky_public_claim.",
+        "Mark token-capped summaries as warnings.",
+        "Block done state when Claims to Check is missing."
+      ],
+      "gate": "No run is considered complete without claims-to-check and candidate_only status."
+    },
+    {
+      "id": "P4",
+      "name": "Interne Pilotserie",
+      "status": "planned",
+      "estimated_effort": "1-2 weeks alongside other work",
+      "pilots_required": 5,
+      "pilot_types": [
+        "Utility website messaging/funnel",
+        "Second local service website review",
+        "Product idea simulation",
+        "Room16/Quellwert internal review simulation without financial decision",
+        "LIONCOM/Vivi system decision"
+      ],
+      "gate": "At least 3 of 5 pilots clearly outperform a single-model report."
+    },
+    {
+      "id": "P5",
+      "name": "Vivi/Codex Arbeitsintegration",
+      "status": "planned",
+      "estimated_effort": "0.5-1 day",
+      "tasks": [
+        "Finalize Vivi handoff fields.",
+        "Update routing notes if pilot evidence changes usage rules.",
+        "Ensure Vivi/Codex can explain why multi-agent is or is not appropriate."
+      ],
+      "gate": "A new task can be routed into or away from multi-agent mode with a clear reason."
+    },
+    {
+      "id": "P6",
+      "name": "Separate interne Scenario-Sandbox-App pruefen",
+      "status": "conditional",
+      "estimated_effort": "2-4 days for MVP if justified",
+      "gate": "Build only if pilots show repeated need for UI, run comparison, and operator review."
+    },
+    {
+      "id": "P7",
+      "name": "Optionaler LIONCOM-Einbau",
+      "status": "deferred",
+      "estimated_effort": "1-2 days for minimal adapter after P6",
+      "gate": "Only after stable output contract, health checks, operator demand, and runtime verifier are defined."
+    },
+    {
+      "id": "P8",
+      "name": "Externe Produktisierung",
+      "status": "deferred",
+      "recommended_path": "service-first greenfield",
+      "gate": "At least 3 paid pilots, repeatable delivery template, clear price anchor, and privacy/legal scope."
+    }
+  ],
+  "next_10_tasks": [
+    "P1: Add config-file support.",
+    "P1: Generate RUN_REPORT.md and CLAIMS_TO_CHECK.md.",
+    "P1: Add offline tests for config, custom agents, and health checks.",
+    "P2: Add website review context template.",
+    "P2: Add product idea context template.",
+    "P3: Lock moderator output contract.",
+    "P4: Run second website pilot.",
+    "P4: Run first product idea pilot.",
+    "P5: Materialize Vivi handoff template.",
+    "Decision after 5 pilots: skill-only, separate app, or LIONCOM adapter."
+  ],
+  "stop_conditions": [
+    "Pilots do not clearly outperform single-model reports.",
+    "Health or claim problems remain too high.",
+    "The process creates more meta-work than decision value.",
+    "LIONCOM integration is driven by completeness rather than real operator need.",
+    "No repeated internal demand appears."
+  ]
+}
