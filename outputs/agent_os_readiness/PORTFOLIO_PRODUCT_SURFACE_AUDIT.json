@@ -1,0 +1,134 @@
+{
+  "findings": [],
+  "results": [
+    {
+      "audit_status": "verified_local_surface",
+      "blocked_gates": [
+        "Gate",
+        "Verifier",
+        "Operator-Go"
+      ],
+      "declared_status": "active",
+      "findings": [],
+      "next_safe_action": "Lieferoberflaeche als Reentry-Karte halten: aktive Lane, Output-Pfad, Verifier, blockiertes Gate und naechste Aktion.",
+      "note_path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Project - LIONCOM Dashboard.md",
+      "note_present": true,
+      "owner_lanes": [
+        "orchestrator",
+        "assistant",
+        "docs"
+      ],
+      "project_id": "lioncom_dashboard",
+      "title": "LIONCOM Dashboard",
+      "visible_surfaces": [
+        "Operator-Control-Plane",
+        "Portfolio-Control-Tower",
+        "Vivi/Vega-Claim- und Gate-Sicht"
+      ]
+    },
+    {
+      "audit_status": "verified_local_surface",
+      "blocked_gates": [
+        "Operator-Go",
+        "Provider",
+        "Checkout",
+        "Mail"
+      ],
+      "declared_status": "active",
+      "findings": [],
+      "next_safe_action": "Nur Research-, Readiness- und Preview-Lieferobjekte oeffnen, bis Provider, Geld, Mail und echte externe Sends explizit frei sind.",
+      "note_path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Project - Membership Finanzplattform.md",
+      "note_present": true,
+      "owner_lanes": [
+        "research",
+        "docs",
+        "assistant"
+      ],
+      "project_id": "membership_finanzplattform",
+      "title": "Membership Finanzplattform",
+      "visible_surfaces": [
+        "Proof-first Webseite",
+        "Waitlist-/Founder-Funnel",
+        "Support-/Activation-Readiness"
+      ]
+    },
+    {
+      "audit_status": "verified_local_surface",
+      "blocked_gates": [
+        "waiting",
+        "Datenquellen-Hold",
+        "Methodik"
+      ],
+      "declared_status": "waiting",
+      "findings": [],
+      "next_safe_action": "Wortquelle, Regelset und Datenschema entscheiden, bevor UI- oder SEO-Ausbau als aktiv gefuehrt wird.",
+      "note_path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Project - Utility Wortcluster.md",
+      "note_present": true,
+      "owner_lanes": [
+        "research",
+        "data",
+        "docs"
+      ],
+      "project_id": "utility_wortcluster",
+      "title": "Utility Wortcluster",
+      "visible_surfaces": [
+        "Wortquelle",
+        "Regelset",
+        "Solver-MVP"
+      ]
+    },
+    {
+      "audit_status": "verified_local_surface",
+      "blocked_gates": [
+        "GSC",
+        "Messvertrag",
+        "Trust"
+      ],
+      "declared_status": "active",
+      "findings": [],
+      "next_safe_action": "Aktive Website-Lanes getrennt vom wartenden Wortcluster fuehren und jede Folgemassnahme an Mess-, Trust- oder Opportunity-Gates binden.",
+      "note_path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Project - Utility Websites Portfolio.md",
+      "note_present": true,
+      "owner_lanes": [
+        "research",
+        "data",
+        "docs"
+      ],
+      "project_id": "utility_websites_portfolio",
+      "title": "Utility Websites Portfolio",
+      "visible_surfaces": [
+        "Materialbedarf-Rechner",
+        "Mein Elterngeldrechner",
+        "Microtool Starter Kit"
+      ]
+    },
+    {
+      "audit_status": "verified_local_surface",
+      "blocked_gates": [
+        "Promotion",
+        "public_ready",
+        "Operator-Go",
+        "Non-Advice"
+      ],
+      "declared_status": "local_preview",
+      "findings": [],
+      "next_safe_action": "Research-/Archiv-/Methodik-Vertrauen staerken; Public-Promotion nur ueber Source-Ledger, Non-Advice, Human Source Verification und Operator-Go.",
+      "note_path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Project - Quellwert.md",
+      "note_present": true,
+      "owner_lanes": [
+        "research",
+        "data",
+        "docs"
+      ],
+      "project_id": "quellwert",
+      "title": "Quellwert",
+      "visible_surfaces": [
+        "Research-/Archiv-/Methodik-Webseite",
+        "Room16-Promotion-Queue",
+        "Public-Preview-Gates"
+      ]
+    }
+  ],
+  "valid": true,
+  "vault": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview"
+}

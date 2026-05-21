@@ -10,6 +10,8 @@
     "outputs/agent_os_readiness/SESSION_SEARCH.sqlite",
     "outputs/agent_os_readiness/AUTOMATION_JOB_CARDS.md",
     "outputs/agent_os_readiness/DELIVERABLE_SWARM_CONTRACT.md",
+    "outputs/agent_os_readiness/PORTFOLIO_PRODUCT_SURFACE_AUDIT.md",
+    "outputs/agent_os_readiness/PORTFOLIO_PRODUCT_SURFACE_MAP.canvas",
     "outputs/agent_os_readiness/OPERATOR_INBOX.md",
     "outputs/agent_os_readiness/TERMINAL_BACKENDS.md",
     "outputs/agent_os_readiness/GUARDRAIL_SCAN.md",

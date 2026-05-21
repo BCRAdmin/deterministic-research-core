@@ -14,6 +14,7 @@ Arbeitsoberflaechen:
 - Memory Inbox und lokale Suche
 - Automation Job Cards
 - Deliverable-Swarm-Lanes und Output-Vertraege
+- Portfolio-Produktoberflaechen-Audit fuer die kanonischen Projektkarten
 - Guardrails-as-Code
 - Operator-Inbox-Vertrag
 - Terminal-Backend-Vertraege
@@ -40,6 +41,8 @@ Standard-Outputs werden nach `outputs/agent_os_readiness/` geschrieben.
 - `DELIVERABLE_SWARM_CONTRACT.md/json`: OpenSwarm-inspirierte Lane-Matrix und Output-Vertrag.
 - `DELIVERABLE_SWARM_OPERATING_OVERVIEW.md`: Wo-/Wann-/Wie-Nutzungsuebersicht fuer den Vertrag.
 - `DELIVERABLE_SWARM_OPERATING_MAP.canvas`: JSON-Canvas-Schaubild.
+- `PORTFOLIO_PRODUCT_SURFACE_AUDIT.md/json`: Einzelpruefung der Projektkarten auf sichtbare Lieferoberflaeche, Owner-Lanes, Gates und naechste sichere Aktion.
+- `PORTFOLIO_PRODUCT_SURFACE_MAP.canvas`: JSON-Canvas-Schaubild fuer die Projektoberflaechen.
 - `OPERATOR_INBOX.md/json`: lokale Review-Inbox, kein Chat-Gateway.
 - `TERMINAL_BACKENDS.md/json`: lokale/Docker-Backend-Vertraege, keine laufenden Backends.
 - `GUARDRAIL_SCAN.md/json`: lokale statische Guardrail-Funde.

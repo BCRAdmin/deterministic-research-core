@@ -1,0 +1,149 @@
+{
+  "nodes": [
+    {
+      "id": "portfolio-audit",
+      "type": "file",
+      "file": "outputs/agent_os_readiness/PORTFOLIO_PRODUCT_SURFACE_AUDIT.md",
+      "x": 0,
+      "y": 0,
+      "width": 520,
+      "height": 260,
+      "color": "4"
+    },
+    {
+      "id": "deliverable-swarm-contract",
+      "type": "file",
+      "file": "docs/agent_os/DELIVERABLE_SWARM_CONTRACT.md",
+      "x": -680,
+      "y": 0,
+      "width": 460,
+      "height": 220,
+      "color": "5"
+    },
+    {
+      "id": "audit-rule",
+      "type": "text",
+      "text": "Pruefregel\n\nJede Projektkarte braucht sichtbare Oberflaeche, Owner-Lanes, Gate-Begriffe und naechste sichere Aktion. Wartende und aktive Produkte duerfen nicht in derselben Wahrheit verschwimmen.",
+      "x": 680,
+      "y": 0,
+      "width": 520,
+      "height": 260,
+      "color": "6"
+    },
+    {
+      "id": "project-lioncom_dashboard",
+      "type": "text",
+      "text": "LIONCOM Dashboard\n\nStatus: active\nAudit: verified_local_surface\nLanes: orchestrator, assistant, docs\nFindings: 0\n\nNaechste Aktion: Lieferoberflaeche als Reentry-Karte halten: aktive Lane, Output-Pfad, Verifier, blockiertes Gate und naechste Aktion.",
+      "x": -980,
+      "y": 420,
+      "width": 460,
+      "height": 260,
+      "color": "4"
+    },
+    {
+      "id": "project-membership_finanzplattform",
+      "type": "text",
+      "text": "Membership Finanzplattform\n\nStatus: active\nAudit: verified_local_surface\nLanes: research, docs, assistant\nFindings: 0\n\nNaechste Aktion: Nur Research-, Readiness- und Preview-Lieferobjekte oeffnen, bis Provider, Geld, Mail und echte externe Sends explizit frei sind.",
+      "x": -480,
+      "y": 420,
+      "width": 460,
+      "height": 260,
+      "color": "4"
+    },
+    {
+      "id": "project-utility_wortcluster",
+      "type": "text",
+      "text": "Utility Wortcluster\n\nStatus: waiting\nAudit: verified_local_surface\nLanes: research, data, docs\nFindings: 0\n\nNaechste Aktion: Wortquelle, Regelset und Datenschema entscheiden, bevor UI- oder SEO-Ausbau als aktiv gefuehrt wird.",
+      "x": 40,
+      "y": 420,
+      "width": 460,
+      "height": 260,
+      "color": "4"
+    },
+    {
+      "id": "project-utility_websites_portfolio",
+      "type": "text",
+      "text": "Utility Websites Portfolio\n\nStatus: active\nAudit: verified_local_surface\nLanes: research, data, docs\nFindings: 0\n\nNaechste Aktion: Aktive Website-Lanes getrennt vom wartenden Wortcluster fuehren und jede Folgemassnahme an Mess-, Trust- oder Opportunity-Gates binden.",
+      "x": 560,
+      "y": 420,
+      "width": 460,
+      "height": 260,
+      "color": "4"
+    },
+    {
+      "id": "project-quellwert",
+      "type": "text",
+      "text": "Quellwert\n\nStatus: local_preview\nAudit: verified_local_surface\nLanes: research, data, docs\nFindings: 0\n\nNaechste Aktion: Research-/Archiv-/Methodik-Vertrauen staerken; Public-Promotion nur ueber Source-Ledger, Non-Advice, Human Source Verification und Operator-Go.",
+      "x": 1080,
+      "y": 420,
+      "width": 460,
+      "height": 260,
+      "color": "4"
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-contract-audit",
+      "fromNode": "deliverable-swarm-contract",
+      "fromSide": "right",
+      "toNode": "portfolio-audit",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "liefert Lane-Vertrag"
+    },
+    {
+      "id": "edge-rule-audit",
+      "fromNode": "audit-rule",
+      "fromSide": "left",
+      "toNode": "portfolio-audit",
+      "toSide": "right",
+      "toEnd": "arrow",
+      "label": "prueft"
+    },
+    {
+      "id": "edge-audit-lioncom_dashboard",
+      "fromNode": "portfolio-audit",
+      "fromSide": "bottom",
+      "toNode": "project-lioncom_dashboard",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "Projektcheck"
+    },
+    {
+      "id": "edge-audit-membership_finanzplattform",
+      "fromNode": "portfolio-audit",
+      "fromSide": "bottom",
+      "toNode": "project-membership_finanzplattform",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "Projektcheck"
+    },
+    {
+      "id": "edge-audit-utility_wortcluster",
+      "fromNode": "portfolio-audit",
+      "fromSide": "bottom",
+      "toNode": "project-utility_wortcluster",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "Projektcheck"
+    },
+    {
+      "id": "edge-audit-utility_websites_portfolio",
+      "fromNode": "portfolio-audit",
+      "fromSide": "bottom",
+      "toNode": "project-utility_websites_portfolio",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "Projektcheck"
+    },
+    {
+      "id": "edge-audit-quellwert",
+      "fromNode": "portfolio-audit",
+      "fromSide": "bottom",
+      "toNode": "project-quellwert",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "Projektcheck"
+    }
+  ]
+}

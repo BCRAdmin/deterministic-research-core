@@ -41,6 +41,11 @@ from research_agent.ops.operator_inbox import (
     render_operator_inbox_markdown,
     validate_operator_inbox,
 )
+from research_agent.ops.portfolio_surface_audit import (
+    audit_portfolio_surfaces,
+    render_portfolio_surface_canvas,
+    render_portfolio_surface_markdown,
+)
 from research_agent.ops.readiness import (
     DEFAULT_HERMES_HOME,
     DEFAULT_OPENCLAW_HOME,
@@ -152,6 +157,11 @@ def run_all(args: argparse.Namespace) -> int:
         render_terminal_backends_markdown(backend_specs, backend_validations),
     )
 
+    portfolio_audit = audit_portfolio_surfaces(vault)
+    write_json(out / "PORTFOLIO_PRODUCT_SURFACE_AUDIT.json", portfolio_audit.to_dict())
+    write_text(out / "PORTFOLIO_PRODUCT_SURFACE_AUDIT.md", render_portfolio_surface_markdown(portfolio_audit))
+    write_text(out / "PORTFOLIO_PRODUCT_SURFACE_MAP.canvas", render_portfolio_surface_canvas(portfolio_audit))
+
     inbox_items = build_operator_inbox_items(
         root,
         guardrail_count=len(guardrail_findings),
@@ -194,6 +204,9 @@ def run_all(args: argparse.Namespace) -> int:
         "deliverable_lanes": len(deliverable_lanes),
         "delivery_contracts": len(delivery_contracts),
         "deliverable_contract_valid": deliverable_validation.valid,
+        "portfolio_surface_projects": len(portfolio_audit.results),
+        "portfolio_surface_valid": portfolio_audit.valid,
+        "portfolio_surface_findings": len(portfolio_audit.findings),
         "terminal_backends": len(backend_specs),
         "terminal_backends_valid": all(validation.valid for validation in backend_validations),
         "operator_inbox_items": len(inbox_items),
