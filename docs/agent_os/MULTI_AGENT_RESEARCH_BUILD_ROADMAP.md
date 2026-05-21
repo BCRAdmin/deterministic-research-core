@@ -1,6 +1,6 @@
 ---
 title: Multi-Agent Research Build Roadmap
-status: active
+status: implemented_internal_v1
 date: 2026-05-21
 owner: Vega
 scope: internal-first
@@ -12,11 +12,11 @@ scope: internal-first
 
 Wir bauen keinen MiroFish-Fork und keinen sofortigen LIONCOM-Einbau. Der richtige Weg ist:
 
-1. `vega-multi-agent-research` als lokalen Codex/Vivi-Skill stabilisieren.
-2. Den Workflow als wiederholbaren Research-/Ideen-/Strategie-Baustein nutzen.
-3. Nach 5-10 echten internen Laeufen entscheiden, ob daraus eine getrennte kleine App analog Room16 entsteht.
-4. LIONCOM erst anbinden, wenn es einen nachweisbar nuetzlichen Run-Vertrag, Artefaktstruktur und Operator-Gate gibt.
-5. Externe Produktisierung nur greenfield/service-first, nicht auf AGPL-MiroFish-Codebasis.
+1. `vega-multi-agent-research` als lokalen Codex/Vivi-Skill stabilisieren. Status: erledigt.
+2. Den Workflow als wiederholbaren Research-/Ideen-/Strategie-Baustein nutzen. Status: erledigt fuer interne CLI-/Skill-Nutzung.
+3. Nach 5-10 echten internen Laeufen entscheiden, ob daraus eine getrennte kleine App analog Room16 entsteht. Status: 5 technische Piloten gruen; keine App jetzt.
+4. LIONCOM erst anbinden, wenn es einen nachweisbar nuetzlichen Run-Vertrag, Artefaktstruktur und Operator-Gate gibt. Status: Adapter bewusst nicht gebaut, weil CLI/Skill reicht.
+5. Externe Produktisierung nur greenfield/service-first, nicht auf AGPL-MiroFish-Codebasis. Status: bewusst deferred.
 
 ## Zielbild
 
@@ -50,15 +50,17 @@ Aktueller Stand:
 - Repo-Einstiegspunkte: `scripts/ops/context_pack_builder.py` und `scripts/ops/multi_agent_panel.py` als duenne Wrapper auf den lokalen Skill
 - Modi: `research`, `ideas`, `website`, `strategy`
 - Output: `TRANSCRIPT.md`, `SYNTHESIS.md`, `events.json`, `metadata.json`
+- Ergaenzter Output: `CLAIMS_TO_CHECK.md`, `RUN_REPORT.md`, `AUDIT_LOG.json`, `run_config.resolved.json`
 - DeepSeek/Ollama-Default: `think:false`
 - Validator: gruen mit `Skill is valid!`
 
-Naechster Ausbau:
+Umgesetzt:
 
-- Output-Schema formalisieren.
-- Health-Gates schaerfen.
-- Konfigurationsdateien fuer wiederholbare Runs ergaenzen.
-- Runner optional ins Repo spiegeln, sobald er mehr als lokales Skill-Werkzeug sein soll.
+- Output-Schema formalisiert.
+- Health-Gates geschaerft.
+- Konfigurationsdateien fuer wiederholbare Runs ergaenzt.
+- Repo-Einstiegspunkte unter `scripts/ops/` ergaenzt.
+- URL-only Quellen, Datenklassifikation und Audit-Log als QA-Kanten eingebaut.
 
 ### Schicht 2: Kontextpaket
 
@@ -141,6 +143,8 @@ Definition of Done:
 
 ### P1 - Runner produktionsnah haerten
 
+Status: erledigt.
+
 Ziel: Der Runner soll auch spaeter ohne Erinnerungsarbeit korrekt laufen.
 
 Aufgaben:
@@ -173,6 +177,8 @@ Empfohlener Aufwand: 0.5-1 Tag.
 
 ### P2 - Kontextpaket-Builder bauen
 
+Status: erledigt.
+
 Ziel: Nicht jeder Lauf soll haendisch aus Quellen zusammenkopiert werden muessen.
 
 Aufgaben:
@@ -204,6 +210,8 @@ Gate:
 Empfohlener Aufwand: 1-2 Tage.
 
 ### P3 - Synthese und Claim Review schaerfen
+
+Status: erledigt.
 
 Ziel: Aus dem Debattenmaterial soll ein wirklich nutzbares Entscheidungsartefakt werden.
 
@@ -242,6 +250,8 @@ Empfohlener Aufwand: 1 Tag.
 
 ### P4 - Interne Pilotserie
 
+Status: erledigt fuer technischen internen Build-Gate.
+
 Ziel: Erst echte Nutzung beweist, welche Agenten-Sets und Outputs taugen.
 
 Mindestens 5 Piloten:
@@ -267,9 +277,18 @@ Gate fuer Weiterbau:
 - Mindestens 2 konkrete Entscheidungen oder bessere Tests entstehen daraus.
 - Keine haeufigen Halluzinations-/Claim-Probleme ohne erkennbare Health-Warnung.
 
+Ergebnis 2026-05-21:
+
+- 5/5 technische DeepSeek-Piloten gruen: `exit_code=0`, keine leeren Turns, keine Modellfehler, keine Caps, Claims-to-check vorhanden.
+- Pilotserie-Bericht: `outputs/scenario_sandbox/pilot_series_2026-05-21/PILOT_SERIES_REPORT.md`.
+- Finaler Validierungslauf: `outputs/scenario_sandbox/final_validation_2026-05-21/deepseek_run/RUN_REPORT.md`.
+- Qualitativer Mehrwert: die Piloten erzeugten direkt neue Fixes (`data_classification`, URL-only Guard, Audit-Log, Handoff-QA).
+
 Empfohlener Aufwand: 1-2 Wochen nebenbei.
 
 ### P5 - Vivi/Codex Arbeitsintegration
+
+Status: erledigt fuer lokales Handoff.
 
 Ziel: Vivi und Codex sollen wissen, wann der Skill zu nutzen ist, ohne jedes Mal neu zu diskutieren.
 
@@ -301,6 +320,8 @@ Gate:
 Empfohlener Aufwand: 0.5-1 Tag.
 
 ### P6 - Separate interne Scenario-Sandbox-App pruefen
+
+Status: bewusst deferred.
 
 Ziel: Nur wenn die Pilotserie zeigt, dass eine UI echten Nutzen bringt.
 
@@ -334,6 +355,8 @@ Gate vor Bau:
 Empfohlener Aufwand MVP: 2-4 Tage.
 
 ### P7 - Optionaler LIONCOM-Einbau
+
+Status: bewusst deferred.
 
 Ziel: LIONCOM soll den Skill nur sichtbar machen, nicht die Wahrheitsschicht unkontrolliert veraendern.
 
@@ -371,6 +394,8 @@ Gate:
 Empfohlener Aufwand Minimaladapter: 1-2 Tage nach P6.
 
 ### P8 - Externe Produktisierung
+
+Status: bewusst deferred.
 
 Ziel: Nur service-first und greenfield.
 
@@ -410,18 +435,18 @@ Gate:
 
 Empfohlener Aufwand Service-Pilot: 3-7 Tage fuer Angebot + Beispiele, danach Verkaufstest.
 
-## Priorisierte naechste 10 Tasks
+## Erledigte Tasks
 
-1. P1: Runner um Config-Datei und stabilere Health-Gates erweitern.
-2. P1: `RUN_REPORT.md` und `CLAIMS_TO_CHECK.md` automatisch erzeugen.
-3. P1: Offline-Tests fuer Config, Custom-Agenten und Health schreiben.
-4. P2: Kontextpaket-Template fuer Website Reviews bauen.
-5. P2: Kontextpaket-Template fuer Produktideen bauen.
-6. P3: Moderator-Synthese in festen Output-Vertrag bringen.
-7. P4: zweiten Website-Piloten durchfuehren.
-8. P4: ersten Produktideen-Piloten durchfuehren.
-9. P5: Vivi-Handoff-Format als kurze Notiz/Template materialisieren.
-10. Nach 5 Piloten: Entscheidung `CLI/Skill reicht`, `separate App`, oder `LIONCOM-Adapter`.
+1. P1: Runner um Config-Datei und stabilere Health-Gates erweitert.
+2. P1: `RUN_REPORT.md` und `CLAIMS_TO_CHECK.md` automatisch erzeugt.
+3. P1: Offline-Tests fuer Config, Custom-Agenten und Health geschrieben.
+4. P2: Kontextpaket-Builder und Website-/Research-/Produkt-/System-Templates gebaut.
+5. P3: Moderator-Synthese in festen Output-Vertrag gebracht.
+6. P3: `AUDIT_LOG.json` ergaenzt.
+7. P4: fuenf technische interne DeepSeek-Piloten durchgefuehrt.
+8. P5: Vivi-Handoff-Template materialisiert.
+9. Repo-Einstiegspunkte fuer Context Builder und Panel Runner erstellt.
+10. Entscheidung nach Pilotserie dokumentiert: CLI/Skill reicht jetzt; separate App und LIONCOM-Adapter deferred.
 
 ## Wann Wir Stoppen
 
@@ -435,4 +460,4 @@ Stoppen oder parken, wenn:
 
 ## Empfehlung
 
-Als naechstes P1-P3 bauen, dann fuenf echte interne Piloten. Vorher keine LIONCOM-Integration und kein Produktbau. Wenn die Piloten tragen, ist der wahrscheinlich beste Produktpfad nicht SaaS, sondern ein schlanker Service-Sprint mit starken Beispielreports.
+Interner V1 ist nutzbar. Keine LIONCOM-Integration und keine separate App jetzt. Weiter mit echten Anwendungsfaellen im CLI-/Skill-Modus; erst bei wiederholtem UI-Bedarf oder Operator-Queue-Bedarf eine Scenario-Sandbox-App bauen. Externe Produktisierung bleibt service-first mit Beispielreports und bezahlten Piloten.

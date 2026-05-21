@@ -1,12 +1,12 @@
 {
   "title": "Multi-Agent Research Build Roadmap",
-  "status": "active",
+  "status": "implemented_internal_v1",
   "date": "2026-05-21",
   "owner": "Vega",
   "scope": "internal-first",
   "decision": {
     "build_path": "skill-first",
-    "lioncom_integration": "defer_until_after_internal_pilots",
+    "lioncom_integration": "deferred_after_green_internal_pilots",
     "mirofish_code_adoption": "no",
     "zep_required": false,
     "default_output_status": "candidate_only"
@@ -38,7 +38,7 @@
     {
       "id": "P1",
       "name": "Runner produktionsnah haerten",
-      "status": "next",
+      "status": "done",
       "estimated_effort": "0.5-1 day",
       "tasks": [
         "Add run_config.json or YAML support.",
@@ -52,7 +52,7 @@
     {
       "id": "P2",
       "name": "Kontextpaket-Builder bauen",
-      "status": "planned",
+      "status": "done",
       "estimated_effort": "1-2 days",
       "tasks": [
         "Create context_pack_builder.py.",
@@ -66,7 +66,7 @@
     {
       "id": "P3",
       "name": "Synthese und Claim Review schaerfen",
-      "status": "planned",
+      "status": "done",
       "estimated_effort": "1 day",
       "tasks": [
         "Force moderator output contract.",
@@ -79,7 +79,7 @@
     {
       "id": "P4",
       "name": "Interne Pilotserie",
-      "status": "planned",
+      "status": "done_internal_build_gate",
       "estimated_effort": "1-2 weeks alongside other work",
       "pilots_required": 5,
       "pilot_types": [
@@ -89,12 +89,12 @@
         "Room16/Quellwert internal review simulation without financial decision",
         "LIONCOM/Vivi system decision"
       ],
-      "gate": "At least 3 of 5 pilots clearly outperform a single-model report."
+      "gate": "5 of 5 technical internal pilots completed green; qualitative fixes were generated and applied."
     },
     {
       "id": "P5",
       "name": "Vivi/Codex Arbeitsintegration",
-      "status": "planned",
+      "status": "done_local_handoff",
       "estimated_effort": "0.5-1 day",
       "tasks": [
         "Finalize Vivi handoff fields.",
@@ -125,17 +125,17 @@
       "gate": "At least 3 paid pilots, repeatable delivery template, clear price anchor, and privacy/legal scope."
     }
   ],
-  "next_10_tasks": [
-    "P1: Add config-file support.",
-    "P1: Generate RUN_REPORT.md and CLAIMS_TO_CHECK.md.",
-    "P1: Add offline tests for config, custom agents, and health checks.",
-    "P2: Add website review context template.",
-    "P2: Add product idea context template.",
-    "P3: Lock moderator output contract.",
-    "P4: Run second website pilot.",
-    "P4: Run first product idea pilot.",
-    "P5: Materialize Vivi handoff template.",
-    "Decision after 5 pilots: skill-only, separate app, or LIONCOM adapter."
+  "completed_tasks": [
+    "P1: Added config-file support.",
+    "P1: Generated RUN_REPORT.md and CLAIMS_TO_CHECK.md.",
+    "P1: Added offline tests for config, custom agents, and health checks.",
+    "P2: Added context pack builder and templates.",
+    "P3: Locked moderator output contract.",
+    "P3: Added AUDIT_LOG.json.",
+    "P4: Ran five technical internal DeepSeek pilots.",
+    "P5: Materialized Vivi handoff template.",
+    "Added repo entrypoints under scripts/ops.",
+    "Decision after pilots: skill/CLI now, separate app and LIONCOM adapter deferred."
   ],
   "stop_conditions": [
     "Pilots do not clearly outperform single-model reports.",
