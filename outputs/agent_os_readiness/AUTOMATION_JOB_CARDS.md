@@ -1,43 +1,43 @@
 # Automation Job Cards
 
-These are proposed safe automation cards. They are not installed automations.
+Das sind vorgeschlagene sichere Automation Cards. Sie sind keine installierten Automationen.
 
-| Job | Status | Valid | Schedule | Delivery | Toolsets |
+| Job | Status | Gueltig | Zeitplan | Lieferung | Toolsets |
 | --- | --- | ---: | --- | --- | --- |
-| `Agent OS Readiness Weekly Review` | `proposed_local_review_only` | true | weekly, manual creation required | `local_file_only` | `read_file, search_files, terminal_read_only` |
-| `Memory Inbox Promotion Review` | `proposed_local_review_only` | true | weekly, manual creation required | `local_file_only` | `read_file, search_files` |
-| `Skill Registry Drift Review` | `proposed_local_review_only` | true | weekly, manual creation required | `local_file_only` | `read_file, search_files, terminal_read_only` |
-| `Guardrail Coverage Smoke` | `proposed_local_review_only` | true | on demand before agent-os runtime changes | `local_file_only` | `read_file, search_files, terminal_read_only` |
-| `Deliverable Swarm Contract Review` | `proposed_local_review_only` | true | on demand before new user-facing agent surfaces | `local_file_only` | `read_file, search_files, terminal_read_only` |
+| `Agent-OS-Readiness woechentlich pruefen` | `proposed_local_review_only` | true | woechentlich, manuelle Erstellung erforderlich | `local_file_only` | `read_file, search_files, terminal_read_only` |
+| `Memory-Inbox-Promotion pruefen` | `proposed_local_review_only` | true | woechentlich, manuelle Erstellung erforderlich | `local_file_only` | `read_file, search_files` |
+| `Skill-Registry-Drift pruefen` | `proposed_local_review_only` | true | woechentlich, manuelle Erstellung erforderlich | `local_file_only` | `read_file, search_files, terminal_read_only` |
+| `Guardrail-Coverage-Smoke pruefen` | `proposed_local_review_only` | true | bei Bedarf vor Agent-OS-Runtime-Aenderungen | `local_file_only` | `read_file, search_files, terminal_read_only` |
+| `Deliverable-Swarm-Vertrag pruefen` | `proposed_local_review_only` | true | bei Bedarf vor neuen sichtbaren Agentenoberflaechen | `local_file_only` | `read_file, search_files, terminal_read_only` |
 
-## Validation Details
+## Validierungsdetails
 
-### agent-os-readiness-weekly-review-695041e5
+### agent-os-readiness-woechentlich-pruefen-ccd57fac
 
-- valid: `true`
-- errors: `none`
-- warnings: `none`
+- gueltig: `true`
+- fehler: `keine`
+- warnungen: `keine`
 
-### memory-inbox-promotion-review-2a865600
+### memory-inbox-promotion-pruefen-573b2f5c
 
-- valid: `true`
-- errors: `none`
-- warnings: `none`
+- gueltig: `true`
+- fehler: `keine`
+- warnungen: `keine`
 
-### skill-registry-drift-review-58e57c62
+### skill-registry-drift-pruefen-22c0b2d4
 
-- valid: `true`
-- errors: `none`
-- warnings: `none`
+- gueltig: `true`
+- fehler: `keine`
+- warnungen: `keine`
 
-### guardrail-coverage-smoke-6bebf3fb
+### guardrail-coverage-smoke-pruefen-a820e6b9
 
-- valid: `true`
-- errors: `none`
-- warnings: `none`
+- gueltig: `true`
+- fehler: `keine`
+- warnungen: `keine`
 
-### deliverable-swarm-contract-review-2f84bfa1
+### deliverable-swarm-vertrag-pruefen-e54a8577
 
-- valid: `true`
-- errors: `none`
-- warnings: `none`
+- gueltig: `true`
+- fehler: `keine`
+- warnungen: `keine`

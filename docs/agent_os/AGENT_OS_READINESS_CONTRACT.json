@@ -1,5 +1,5 @@
 {
-  "name": "Agent OS Readiness Pack",
+  "name": "Agent-OS-Readiness-Paket",
   "status": "active_local_v1",
   "runtime_changes": "none",
   "command": "python3 scripts/ops/agent_os_readiness.py",
@@ -27,9 +27,9 @@
   ],
   "gates": [
     "External Skill Intake SOP",
-    "Operator Gate for R3+ runtime behavior",
-    "Obsidian promotion review for durable memory",
-    "sandbox plan before desktop/browser/gateway expansion",
-    "Deliverable Swarm Contract before user-facing lane expansion"
+    "Operator-Gate fuer R3+-Runtime-Verhalten",
+    "Obsidian-Promotion-Review fuer dauerhaftes Memory",
+    "Sandbox-Plan vor Desktop-/Browser-/Gateway-Erweiterung",
+    "Deliverable-Swarm-Vertrag vor sichtbarer Lane-Erweiterung"
   ]
 }

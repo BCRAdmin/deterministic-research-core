@@ -20,8 +20,8 @@
         "automatically_publish",
         "automatically_create_runtime_rights_api_keys_or_background_agents"
       ],
-      "job_id": "agent-os-readiness-weekly-review-695041e5",
-      "name": "Agent OS Readiness Weekly Review",
+      "job_id": "agent-os-readiness-woechentlich-pruefen-ccd57fac",
+      "name": "Agent-OS-Readiness woechentlich pruefen",
       "no_action_if_not_mature": true,
       "operator_gate_required": false,
       "output_contract": [
@@ -32,9 +32,9 @@
         "no_action_if_not_mature"
       ],
       "profile": "default",
-      "prompt": "Review local Agent OS readiness artifacts. Report missing data, stale outputs, blocked gates, and safe next actions. Do not change code or canonical memory.",
+      "prompt": "Pruefe lokale Agent-OS-Readiness-Artefakte. Berichte fehlende Daten, veraltete Outputs, blockierte Gates und sichere naechste Aktionen. Keinen Code und kein kanonisches Memory aendern.",
       "risk_class": "R6_scheduled_review_constrained",
-      "schedule": "weekly, manual creation required",
+      "schedule": "woechentlich, manuelle Erstellung erforderlich",
       "skills": [
         "agent-os-readiness"
       ],
@@ -64,8 +64,8 @@
         "automatically_publish",
         "automatically_create_runtime_rights_api_keys_or_background_agents"
       ],
-      "job_id": "memory-inbox-promotion-review-2a865600",
-      "name": "Memory Inbox Promotion Review",
+      "job_id": "memory-inbox-promotion-pruefen-573b2f5c",
+      "name": "Memory-Inbox-Promotion pruefen",
       "no_action_if_not_mature": true,
       "operator_gate_required": false,
       "output_contract": [
@@ -76,9 +76,9 @@
         "no_action_if_not_mature"
       ],
       "profile": "default",
-      "prompt": "Review memory inbox candidates and classify each as promote, reject, merge, or needs operator. Do not write Obsidian directly.",
+      "prompt": "Pruefe Memory-Inbox-Kandidaten und klassifiziere jeden als promoten, ablehnen, mergen oder operatorbeduerftig. Nicht direkt nach Obsidian schreiben.",
       "risk_class": "R6_scheduled_review_constrained",
-      "schedule": "weekly, manual creation required",
+      "schedule": "woechentlich, manuelle Erstellung erforderlich",
       "skills": [
         "obsidian-memory-promotion"
       ],
@@ -109,8 +109,8 @@
         "automatically_publish",
         "automatically_create_runtime_rights_api_keys_or_background_agents"
       ],
-      "job_id": "skill-registry-drift-review-58e57c62",
-      "name": "Skill Registry Drift Review",
+      "job_id": "skill-registry-drift-pruefen-22c0b2d4",
+      "name": "Skill-Registry-Drift pruefen",
       "no_action_if_not_mature": true,
       "operator_gate_required": false,
       "output_contract": [
@@ -121,9 +121,9 @@
         "no_action_if_not_mature"
       ],
       "profile": "default",
-      "prompt": "Review local skill registry drift. Suggest playbook updates and hold-register entries only. Do not install external skills.",
+      "prompt": "Pruefe lokalen Skill-Registry-Drift. Schlage nur Playbook-Updates und Hold-Register-Eintraege vor. Keine externen Skills installieren.",
       "risk_class": "R6_scheduled_review_constrained",
-      "schedule": "weekly, manual creation required",
+      "schedule": "woechentlich, manuelle Erstellung erforderlich",
       "skills": [
         "skill-pattern-governance"
       ],
@@ -154,8 +154,8 @@
         "automatically_publish",
         "automatically_create_runtime_rights_api_keys_or_background_agents"
       ],
-      "job_id": "guardrail-coverage-smoke-6bebf3fb",
-      "name": "Guardrail Coverage Smoke",
+      "job_id": "guardrail-coverage-smoke-pruefen-a820e6b9",
+      "name": "Guardrail-Coverage-Smoke pruefen",
       "no_action_if_not_mature": true,
       "operator_gate_required": false,
       "output_contract": [
@@ -166,9 +166,9 @@
         "no_action_if_not_mature"
       ],
       "profile": "default",
-      "prompt": "Run the local guardrail scan and summarize block/high findings with file paths. Do not print secret values.",
+      "prompt": "Fuehre den lokalen Guardrail-Scan aus und fasse Block-/High-Funde mit Dateipfaden zusammen. Keine Secret-Werte ausgeben.",
       "risk_class": "R6_scheduled_review_constrained",
-      "schedule": "on demand before agent-os runtime changes",
+      "schedule": "bei Bedarf vor Agent-OS-Runtime-Aenderungen",
       "skills": [
         "guardrails-as-code"
       ],
@@ -200,8 +200,8 @@
         "automatically_publish",
         "automatically_create_runtime_rights_api_keys_or_background_agents"
       ],
-      "job_id": "deliverable-swarm-contract-review-2f84bfa1",
-      "name": "Deliverable Swarm Contract Review",
+      "job_id": "deliverable-swarm-vertrag-pruefen-e54a8577",
+      "name": "Deliverable-Swarm-Vertrag pruefen",
       "no_action_if_not_mature": true,
       "operator_gate_required": false,
       "output_contract": [
@@ -212,9 +212,9 @@
         "no_action_if_not_mature"
       ],
       "profile": "default",
-      "prompt": "Review the deliverable swarm lane matrix and output contracts. Report gaps in owners, output paths, verifiers, gates, or handoffs. Do not create accounts, install runtimes, or mutate canonical memory.",
+      "prompt": "Pruefe die Deliverable-Swarm-Lane-Matrix und Output-Vertraege. Berichte Luecken bei Ownern, Output-Pfaden, Verifiern, Gates oder Handoffs. Keine Konten erstellen, keine Runtimes installieren und kein kanonisches Memory mutieren.",
       "risk_class": "R6_scheduled_review_constrained",
-      "schedule": "on demand before new user-facing agent surfaces",
+      "schedule": "bei Bedarf vor neuen sichtbaren Agentenoberflaechen",
       "skills": [
         "deliverable-swarm-contract",
         "agent-os-readiness"
@@ -231,31 +231,31 @@
   "validations": [
     {
       "errors": [],
-      "job_id": "agent-os-readiness-weekly-review-695041e5",
+      "job_id": "agent-os-readiness-woechentlich-pruefen-ccd57fac",
       "valid": true,
       "warnings": []
     },
     {
       "errors": [],
-      "job_id": "memory-inbox-promotion-review-2a865600",
+      "job_id": "memory-inbox-promotion-pruefen-573b2f5c",
       "valid": true,
       "warnings": []
     },
     {
       "errors": [],
-      "job_id": "skill-registry-drift-review-58e57c62",
+      "job_id": "skill-registry-drift-pruefen-22c0b2d4",
       "valid": true,
       "warnings": []
     },
     {
       "errors": [],
-      "job_id": "guardrail-coverage-smoke-6bebf3fb",
+      "job_id": "guardrail-coverage-smoke-pruefen-a820e6b9",
       "valid": true,
       "warnings": []
     },
     {
       "errors": [],
-      "job_id": "deliverable-swarm-contract-review-2f84bfa1",
+      "job_id": "deliverable-swarm-vertrag-pruefen-e54a8577",
       "valid": true,
       "warnings": []
     }

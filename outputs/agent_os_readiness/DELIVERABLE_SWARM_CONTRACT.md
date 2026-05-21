@@ -1,14 +1,14 @@
-# Deliverable Swarm Contract
+# Deliverable-Swarm-Vertrag
 
-This is the safe local transfer of the OpenSwarm pattern: visible specialist lanes and explicit output contracts, without external runtime installation.
+Das ist die sichere lokale Uebernahme des OpenSwarm-Musters: sichtbare Spezialisten-Lanes und explizite Output-Vertraege, ohne externe Runtime-Installation.
 
-Valid: `true`
-Errors: `none`
-Warnings: `none`
+Gueltig: `true`
+Fehler: `keine`
+Warnungen: `keine`
 
-## Lane Matrix
+## Lane-Matrix
 
-| Lane | Status | Risk | Gate | Default output | Verifier | Handoff targets |
+| Lane | Status | Risiko | Gate | Standard-Output | Verifier | Handoff-Ziele |
 | --- | --- | --- | ---: | --- | --- | --- |
 | `orchestrator` | `active_local_contract` | `R1_local_coordination` | false | `outputs/deliverable_swarm/orchestrator` | `validate_route_has_lane_owner_output_path_and_gate` | `assistant, research, data, docs, slides, images, video` |
 | `assistant` | `active_local_contract` | `R2_operator_action_surface` | true | `outputs/deliverable_swarm/assistant` | `validate_no_irreversible_action_without_operator_go` | `orchestrator` |
@@ -19,9 +19,9 @@ Warnings: `none`
 | `images` | `provider_gated_contract` | `R3_external_media_provider` | true | `outputs/deliverable_swarm/images` | `validate_prompt_reference_rights_output_path_and_qc` | `orchestrator, docs, slides` |
 | `video` | `provider_gated_contract` | `R3_external_media_provider` | true | `outputs/deliverable_swarm/video` | `validate_brief_duration_provider_cost_output_path_and_qc` | `orchestrator, images` |
 
-## Output Contracts
+## Output-Vertraege
 
-| Contract | Lane | Artifact | Default path | Gate rule | Verification |
+| Vertrag | Lane | Artefakt | Standardpfad | Gate-Regel | Pruefung |
 | --- | --- | --- | --- | --- | --- |
 | `route-plan` | `orchestrator` | `route_plan` | `outputs/deliverable_swarm/orchestrator/{project}/route_plan.md` | `local_verification_required` | `validate_route_has_lane_owner_output_path_and_gate, git_diff_check_for_repo_outputs_when_applicable, operator_gate_check_if_required` |
 | `handoff-packet` | `orchestrator` | `handoff_packet` | `outputs/deliverable_swarm/orchestrator/{project}/handoff_packet.json` | `local_verification_required` | `validate_route_has_lane_owner_output_path_and_gate, git_diff_check_for_repo_outputs_when_applicable, operator_gate_check_if_required` |
@@ -46,7 +46,7 @@ Warnings: `none`
 | `video-asset` | `video` | `video_asset` | `outputs/deliverable_swarm/video/{project}/videos/{artifact_id}.mp4` | `operator_go_required` | `validate_brief_duration_provider_cost_output_path_and_qc, git_diff_check_for_repo_outputs_when_applicable, operator_gate_check_if_required` |
 | `video-qc-report` | `video` | `video_qc_report` | `outputs/deliverable_swarm/video/{project}/video_qc_report.md` | `operator_go_required` | `validate_brief_duration_provider_cost_output_path_and_qc, git_diff_check_for_repo_outputs_when_applicable, operator_gate_check_if_required` |
 
-## Hard Boundaries
+## Harte Grenzen
 
 - `auto_install_external_runtime`
 - `auto_install_system_packages`
@@ -57,6 +57,6 @@ Warnings: `none`
 - `auto_create_background_automation`
 - `unbounded_all_to_all_handoff`
 
-## Adoption Rule
+## Uebernahmeregel
 
-Use this as the first user-facing capability surface for LIONCOM/Vivi/OpenClaw. It may route work to existing local skills and verified artifact workflows, but it does not install OpenSwarm, Composio, system packages, or background agents.
+Nutze diesen Vertrag als erste sichtbare Faehigkeitsoberflaeche fuer LIONCOM/Vivi/OpenClaw. Er darf Arbeit an bestehende lokale Skills und gepruefte Artefakt-Workflows routen, installiert aber weder OpenSwarm noch Composio, Systempakete oder Hintergrundagenten.

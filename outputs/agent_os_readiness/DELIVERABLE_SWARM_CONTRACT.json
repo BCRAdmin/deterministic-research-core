@@ -661,7 +661,7 @@
         "unbounded_all_to_all_handoff"
       ],
       "default_output_dir": "outputs/deliverable_swarm/orchestrator",
-      "finality_rule": "Never claim final delivery; specialists and verifiers own final artifacts.",
+      "finality_rule": "Nie allein finale Lieferung behaupten; Spezialisten und Verifier besitzen finale Artefakte.",
       "handoff_targets": [
         "assistant",
         "research",
@@ -673,15 +673,15 @@
       ],
       "lane_id": "orchestrator",
       "operator_gate_required": false,
-      "owner_role": "Vega supervisor / LIONCOM route planner",
-      "purpose": "Classify the request, choose lanes, define output contract, and route work.",
+      "owner_role": "Vega-Supervisor / LIONCOM-Routenplaner",
+      "purpose": "Auftrag klassifizieren, Lanes waehlen, Output-Vertrag festlegen und Arbeit routen.",
       "risk_class": "R1_local_coordination",
       "status": "active_local_contract",
       "title": "Orchestrator",
       "triggers": [
-        "multi-step request",
-        "unclear owner",
-        "cross-lane deliverable package"
+        "mehrschrittiger Auftrag",
+        "unklarer Owner",
+        "lane-uebergreifendes Lieferpaket"
       ],
       "verifier": "validate_route_has_lane_owner_output_path_and_gate"
     },
@@ -706,22 +706,22 @@
         "unbounded_all_to_all_handoff"
       ],
       "default_output_dir": "outputs/deliverable_swarm/assistant",
-      "finality_rule": "Drafts are reviewable until the operator explicitly approves sending or mutation.",
+      "finality_rule": "Entwuerfe bleiben pruefbar, bis der Operator Senden oder Mutation ausdruecklich freigibt.",
       "handoff_targets": [
         "orchestrator"
       ],
       "lane_id": "assistant",
       "operator_gate_required": true,
-      "owner_role": "Vivi operator assistant",
-      "purpose": "Draft messages, summarize small tasks, and coordinate operator-facing follow-up.",
+      "owner_role": "Vivi-Operator-Assistenz",
+      "purpose": "Nachrichten entwerfen, kleine Aufgaben zusammenfassen und operatornahe Folgearbeit koordinieren.",
       "risk_class": "R2_operator_action_surface",
       "status": "active_local_contract",
-      "title": "Assistant",
+      "title": "Assistenz",
       "triggers": [
-        "admin task",
-        "message draft",
-        "operator summary",
-        "small coordination task"
+        "Admin-Aufgabe",
+        "Nachrichtenentwurf",
+        "Operator-Zusammenfassung",
+        "kleine Koordination"
       ],
       "verifier": "validate_no_irreversible_action_without_operator_go"
     },
@@ -747,7 +747,7 @@
         "unbounded_all_to_all_handoff"
       ],
       "default_output_dir": "outputs/deliverable_swarm/research",
-      "finality_rule": "Facts are final only after source attribution and uncertainty notes are present.",
+      "finality_rule": "Fakten gelten erst mit Quellenzuordnung und Unsicherheitsnotizen als belastbar.",
       "handoff_targets": [
         "orchestrator",
         "docs",
@@ -756,16 +756,16 @@
       ],
       "lane_id": "research",
       "operator_gate_required": false,
-      "owner_role": "Vega research lane",
-      "purpose": "Produce cited research briefs and source-backed decision options.",
+      "owner_role": "Vega-Recherche-Lane",
+      "purpose": "Quellenbelegte Research-Briefs und entscheidbare Optionen liefern.",
       "risk_class": "R2_external_information",
       "status": "active_local_contract",
       "title": "Deep Research",
       "triggers": [
-        "deep research",
-        "competitor analysis",
-        "repo scan",
-        "market/source review"
+        "Deep Research",
+        "Wettbewerbsanalyse",
+        "Repo-Scan",
+        "Markt-/Quellenpruefung"
       ],
       "verifier": "validate_claims_have_sources_and_open_questions"
     },
@@ -791,7 +791,7 @@
         "unbounded_all_to_all_handoff"
       ],
       "default_output_dir": "outputs/deliverable_swarm/data",
-      "finality_rule": "Data outputs are final only with source period, assumptions, and validation notes.",
+      "finality_rule": "Datenoutputs sind erst mit Zeitraum, Annahmen und Validierungsnotizen final.",
       "handoff_targets": [
         "orchestrator",
         "docs",
@@ -799,18 +799,18 @@
       ],
       "lane_id": "data",
       "operator_gate_required": false,
-      "owner_role": "Room16 / deterministic data lane",
-      "purpose": "Analyze structured data, produce charts, and report assumptions and limits.",
+      "owner_role": "Room16 / deterministische Daten-Lane",
+      "purpose": "Strukturierte Daten analysieren, Charts erzeugen und Annahmen sowie Grenzen berichten.",
       "risk_class": "R2_local_analysis",
       "status": "active_local_contract",
-      "title": "Data Analyst",
+      "title": "Datenanalyse",
       "triggers": [
         "csv",
         "xlsx",
-        "metrics",
-        "chart",
-        "statistical analysis",
-        "dashboard input"
+        "Metriken",
+        "Chart",
+        "statistische Analyse",
+        "Dashboard-Input"
       ],
       "verifier": "validate_inputs_metrics_chart_paths_and_data_limits"
     },
@@ -837,7 +837,7 @@
         "unbounded_all_to_all_handoff"
       ],
       "default_output_dir": "outputs/deliverable_swarm/docs",
-      "finality_rule": "Document outputs need explicit output path and render/export verification.",
+      "finality_rule": "Dokumente brauchen expliziten Output-Pfad und Render-/Export-Pruefung.",
       "handoff_targets": [
         "orchestrator",
         "research",
@@ -845,18 +845,18 @@
       ],
       "lane_id": "docs",
       "operator_gate_required": false,
-      "owner_role": "Document artifact lane",
-      "purpose": "Create or update markdown, DOCX, PDF, SOP, and report documents.",
+      "owner_role": "Dokumenten-Artefakt-Lane",
+      "purpose": "Markdown-, DOCX-, PDF-, SOP- und Report-Dokumente erstellen oder aktualisieren.",
       "risk_class": "R2_local_artifact_write",
       "status": "active_local_contract",
-      "title": "Docs",
+      "title": "Dokumente",
       "triggers": [
-        "document",
+        "Dokument",
         "docx",
         "pdf",
-        "sop",
-        "report",
-        "brief"
+        "SOP",
+        "Report",
+        "Briefing"
       ],
       "verifier": "validate_source_html_or_markdown_export_and_change_summary"
     },
@@ -882,7 +882,7 @@
         "unbounded_all_to_all_handoff"
       ],
       "default_output_dir": "outputs/deliverable_swarm/slides",
-      "finality_rule": "Decks are final only after export and visual QA artifact exists.",
+      "finality_rule": "Decks sind erst final, wenn Export und visuelles QA-Artefakt existieren.",
       "handoff_targets": [
         "orchestrator",
         "research",
@@ -890,16 +890,16 @@
       ],
       "lane_id": "slides",
       "operator_gate_required": false,
-      "owner_role": "Presentation artifact lane",
-      "purpose": "Create slide decks with source slides, exported PPTX/PDF, and visual QA.",
+      "owner_role": "Praesentations-Artefakt-Lane",
+      "purpose": "Slide Decks mit Quellfolien, PPTX-/PDF-Export und visueller QA erstellen.",
       "risk_class": "R2_local_artifact_write",
       "status": "active_local_contract",
-      "title": "Slides",
+      "title": "Praesentation",
       "triggers": [
-        "presentation",
-        "slides",
-        "deck",
-        "pitch",
+        "Praesentation",
+        "Slides",
+        "Deck",
+        "Pitch",
         "pptx"
       ],
       "verifier": "validate_deck_export_visual_qa_and_no_overflow"
@@ -924,7 +924,7 @@
         "unbounded_all_to_all_handoff"
       ],
       "default_output_dir": "outputs/deliverable_swarm/images",
-      "finality_rule": "Image outputs are final only after QC pass and rights/source notes.",
+      "finality_rule": "Bildoutputs sind erst nach QC-Pass und Rechte-/Quellnotizen final.",
       "handoff_targets": [
         "orchestrator",
         "docs",
@@ -932,17 +932,17 @@
       ],
       "lane_id": "images",
       "operator_gate_required": true,
-      "owner_role": "Visual generation lane",
-      "purpose": "Generate or edit images only when model/provider and rights gates are clear.",
+      "owner_role": "Bildgenerierungs-Lane",
+      "purpose": "Bilder nur erzeugen oder bearbeiten, wenn Modell-/Provider- und Rechte-Gates klar sind.",
       "risk_class": "R3_external_media_provider",
       "status": "provider_gated_contract",
-      "title": "Images",
+      "title": "Bilder",
       "triggers": [
-        "image",
-        "visual",
-        "hero asset",
-        "photo edit",
-        "mockup"
+        "Bild",
+        "Visual",
+        "Hero Asset",
+        "Fotobearbeitung",
+        "Mockup"
       ],
       "verifier": "validate_prompt_reference_rights_output_path_and_qc"
     },
@@ -966,24 +966,24 @@
         "unbounded_all_to_all_handoff"
       ],
       "default_output_dir": "outputs/deliverable_swarm/video",
-      "finality_rule": "Video outputs are final only after rendered file and QC evidence exist.",
+      "finality_rule": "Videooutputs sind erst final, wenn gerenderte Datei und QC-Evidence existieren.",
       "handoff_targets": [
         "orchestrator",
         "images"
       ],
       "lane_id": "video",
       "operator_gate_required": true,
-      "owner_role": "Video generation lane",
-      "purpose": "Generate or edit video only behind provider, cost, duration, and QC gates.",
+      "owner_role": "Videogenerierungs-Lane",
+      "purpose": "Video nur hinter Provider-, Kosten-, Dauer- und QC-Gates erzeugen oder bearbeiten.",
       "risk_class": "R3_external_media_provider",
       "status": "provider_gated_contract",
       "title": "Video",
       "triggers": [
-        "video",
-        "clip",
-        "animation",
-        "voiceover",
-        "subtitles"
+        "Video",
+        "Clip",
+        "Animation",
+        "Voiceover",
+        "Untertitel"
       ],
       "verifier": "validate_brief_duration_provider_cost_output_path_and_qc"
     }

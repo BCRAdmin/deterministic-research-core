@@ -1,9 +1,10 @@
-"""Deliverable Swarm contract.
+"""Deliverable-Swarm-Vertrag.
 
-OpenSwarm's strongest reusable pattern is not its runtime installer. It is the
-simple product surface: one orchestrator and visible specialist lanes for
-concrete deliverables. This module turns that pattern into a bounded local
-contract for Vega/LIONCOM/Vivi.
+Das staerkste wiederverwendbare Muster aus OpenSwarm ist nicht der
+Runtime-Installer, sondern die einfache Produktoberflaeche: ein Orchestrator
+und sichtbare Spezialisten-Lanes fuer konkrete Lieferobjekte. Dieses Modul
+uebersetzt das Muster in einen begrenzten lokalen Vertrag fuer
+Vega/LIONCOM/Vivi.
 """
 
 from __future__ import annotations
@@ -118,30 +119,30 @@ def default_deliverable_lanes(root: Path) -> list[DeliverableLane]:
             lane_id="orchestrator",
             title="Orchestrator",
             status="active_local_contract",
-            owner_role="Vega supervisor / LIONCOM route planner",
-            purpose="Classify the request, choose lanes, define output contract, and route work.",
-            triggers=("multi-step request", "unclear owner", "cross-lane deliverable package"),
+            owner_role="Vega-Supervisor / LIONCOM-Routenplaner",
+            purpose="Auftrag klassifizieren, Lanes waehlen, Output-Vertrag festlegen und Arbeit routen.",
+            triggers=("mehrschrittiger Auftrag", "unklarer Owner", "lane-uebergreifendes Lieferpaket"),
             default_output_dir="outputs/deliverable_swarm/orchestrator",
             artifact_types=("route_plan", "handoff_packet"),
             allowed_toolsets=("read_file", "search_files", "terminal_read_only"),
             verifier="validate_route_has_lane_owner_output_path_and_gate",
-            finality_rule="Never claim final delivery; specialists and verifiers own final artifacts.",
+            finality_rule="Nie allein finale Lieferung behaupten; Spezialisten und Verifier besitzen finale Artefakte.",
             risk_class="R1_local_coordination",
             operator_gate_required=False,
             handoff_targets=("assistant", "research", "data", "docs", "slides", "images", "video"),
         ),
         DeliverableLane(
             lane_id="assistant",
-            title="Assistant",
+            title="Assistenz",
             status="active_local_contract",
-            owner_role="Vivi operator assistant",
-            purpose="Draft messages, summarize small tasks, and coordinate operator-facing follow-up.",
-            triggers=("admin task", "message draft", "operator summary", "small coordination task"),
+            owner_role="Vivi-Operator-Assistenz",
+            purpose="Nachrichten entwerfen, kleine Aufgaben zusammenfassen und operatornahe Folgearbeit koordinieren.",
+            triggers=("Admin-Aufgabe", "Nachrichtenentwurf", "Operator-Zusammenfassung", "kleine Koordination"),
             default_output_dir="outputs/deliverable_swarm/assistant",
             artifact_types=("operator_note", "draft_message", "task_summary"),
             allowed_toolsets=("read_file", "search_files"),
             verifier="validate_no_irreversible_action_without_operator_go",
-            finality_rule="Drafts are reviewable until the operator explicitly approves sending or mutation.",
+            finality_rule="Entwuerfe bleiben pruefbar, bis der Operator Senden oder Mutation ausdruecklich freigibt.",
             risk_class="R2_operator_action_surface",
             operator_gate_required=True,
             handoff_targets=("orchestrator",),
@@ -150,78 +151,78 @@ def default_deliverable_lanes(root: Path) -> list[DeliverableLane]:
             lane_id="research",
             title="Deep Research",
             status="active_local_contract",
-            owner_role="Vega research lane",
-            purpose="Produce cited research briefs and source-backed decision options.",
-            triggers=("deep research", "competitor analysis", "repo scan", "market/source review"),
+            owner_role="Vega-Recherche-Lane",
+            purpose="Quellenbelegte Research-Briefs und entscheidbare Optionen liefern.",
+            triggers=("Deep Research", "Wettbewerbsanalyse", "Repo-Scan", "Markt-/Quellenpruefung"),
             default_output_dir="outputs/deliverable_swarm/research",
             artifact_types=("research_brief", "source_matrix", "decision_options"),
             allowed_toolsets=("read_file", "search_files", "web_search_with_citation_policy"),
             verifier="validate_claims_have_sources_and_open_questions",
-            finality_rule="Facts are final only after source attribution and uncertainty notes are present.",
+            finality_rule="Fakten gelten erst mit Quellenzuordnung und Unsicherheitsnotizen als belastbar.",
             risk_class="R2_external_information",
             operator_gate_required=False,
             handoff_targets=("orchestrator", "docs", "slides", "data"),
         ),
         DeliverableLane(
             lane_id="data",
-            title="Data Analyst",
+            title="Datenanalyse",
             status="active_local_contract",
-            owner_role="Room16 / deterministic data lane",
-            purpose="Analyze structured data, produce charts, and report assumptions and limits.",
-            triggers=("csv", "xlsx", "metrics", "chart", "statistical analysis", "dashboard input"),
+            owner_role="Room16 / deterministische Daten-Lane",
+            purpose="Strukturierte Daten analysieren, Charts erzeugen und Annahmen sowie Grenzen berichten.",
+            triggers=("csv", "xlsx", "Metriken", "Chart", "statistische Analyse", "Dashboard-Input"),
             default_output_dir="outputs/deliverable_swarm/data",
             artifact_types=("analysis_report", "chart_asset", "data_quality_note"),
             allowed_toolsets=("read_file", "local_python_analysis", "terminal_read_only"),
             verifier="validate_inputs_metrics_chart_paths_and_data_limits",
-            finality_rule="Data outputs are final only with source period, assumptions, and validation notes.",
+            finality_rule="Datenoutputs sind erst mit Zeitraum, Annahmen und Validierungsnotizen final.",
             risk_class="R2_local_analysis",
             operator_gate_required=False,
             handoff_targets=("orchestrator", "docs", "slides"),
         ),
         DeliverableLane(
             lane_id="docs",
-            title="Docs",
+            title="Dokumente",
             status="active_local_contract",
-            owner_role="Document artifact lane",
-            purpose="Create or update markdown, DOCX, PDF, SOP, and report documents.",
-            triggers=("document", "docx", "pdf", "sop", "report", "brief"),
+            owner_role="Dokumenten-Artefakt-Lane",
+            purpose="Markdown-, DOCX-, PDF-, SOP- und Report-Dokumente erstellen oder aktualisieren.",
+            triggers=("Dokument", "docx", "pdf", "SOP", "Report", "Briefing"),
             default_output_dir="outputs/deliverable_swarm/docs",
             artifact_types=("markdown_doc", "docx_doc", "pdf_doc", "change_summary"),
             allowed_toolsets=("read_file", "local_file_write_artifact", "document_render_verify"),
             verifier="validate_source_html_or_markdown_export_and_change_summary",
-            finality_rule="Document outputs need explicit output path and render/export verification.",
+            finality_rule="Dokumente brauchen expliziten Output-Pfad und Render-/Export-Pruefung.",
             risk_class="R2_local_artifact_write",
             operator_gate_required=False,
             handoff_targets=("orchestrator", "research", "data"),
         ),
         DeliverableLane(
             lane_id="slides",
-            title="Slides",
+            title="Praesentation",
             status="active_local_contract",
-            owner_role="Presentation artifact lane",
-            purpose="Create slide decks with source slides, exported PPTX/PDF, and visual QA.",
-            triggers=("presentation", "slides", "deck", "pitch", "pptx"),
+            owner_role="Praesentations-Artefakt-Lane",
+            purpose="Slide Decks mit Quellfolien, PPTX-/PDF-Export und visueller QA erstellen.",
+            triggers=("Praesentation", "Slides", "Deck", "Pitch", "pptx"),
             default_output_dir="outputs/deliverable_swarm/slides",
             artifact_types=("slide_source", "pptx_deck", "deck_visual_qa"),
             allowed_toolsets=("read_file", "local_file_write_artifact", "presentation_render_verify"),
             verifier="validate_deck_export_visual_qa_and_no_overflow",
-            finality_rule="Decks are final only after export and visual QA artifact exists.",
+            finality_rule="Decks sind erst final, wenn Export und visuelles QA-Artefakt existieren.",
             risk_class="R2_local_artifact_write",
             operator_gate_required=False,
             handoff_targets=("orchestrator", "research", "data"),
         ),
         DeliverableLane(
             lane_id="images",
-            title="Images",
+            title="Bilder",
             status="provider_gated_contract",
-            owner_role="Visual generation lane",
-            purpose="Generate or edit images only when model/provider and rights gates are clear.",
-            triggers=("image", "visual", "hero asset", "photo edit", "mockup"),
+            owner_role="Bildgenerierungs-Lane",
+            purpose="Bilder nur erzeugen oder bearbeiten, wenn Modell-/Provider- und Rechte-Gates klar sind.",
+            triggers=("Bild", "Visual", "Hero Asset", "Fotobearbeitung", "Mockup"),
             default_output_dir="outputs/deliverable_swarm/images",
             artifact_types=("image_asset", "image_qc_report"),
             allowed_toolsets=("local_asset_review", "provider_image_generation_after_gate"),
             verifier="validate_prompt_reference_rights_output_path_and_qc",
-            finality_rule="Image outputs are final only after QC pass and rights/source notes.",
+            finality_rule="Bildoutputs sind erst nach QC-Pass und Rechte-/Quellnotizen final.",
             risk_class="R3_external_media_provider",
             operator_gate_required=True,
             handoff_targets=("orchestrator", "docs", "slides"),
@@ -230,14 +231,14 @@ def default_deliverable_lanes(root: Path) -> list[DeliverableLane]:
             lane_id="video",
             title="Video",
             status="provider_gated_contract",
-            owner_role="Video generation lane",
-            purpose="Generate or edit video only behind provider, cost, duration, and QC gates.",
-            triggers=("video", "clip", "animation", "voiceover", "subtitles"),
+            owner_role="Videogenerierungs-Lane",
+            purpose="Video nur hinter Provider-, Kosten-, Dauer- und QC-Gates erzeugen oder bearbeiten.",
+            triggers=("Video", "Clip", "Animation", "Voiceover", "Untertitel"),
             default_output_dir="outputs/deliverable_swarm/video",
             artifact_types=("video_asset", "video_qc_report"),
             allowed_toolsets=("local_asset_review", "provider_video_generation_after_gate"),
             verifier="validate_brief_duration_provider_cost_output_path_and_qc",
-            finality_rule="Video outputs are final only after rendered file and QC evidence exist.",
+            finality_rule="Videooutputs sind erst final, wenn gerenderte Datei und QC-Evidence existieren.",
             risk_class="R3_external_media_provider",
             operator_gate_required=True,
             handoff_targets=("orchestrator", "images"),
@@ -396,18 +397,19 @@ def render_deliverable_swarm_markdown(
     validation: SwarmValidation,
 ) -> str:
     lines = [
-        "# Deliverable Swarm Contract",
+        "# Deliverable-Swarm-Vertrag",
         "",
-        "This is the safe local transfer of the OpenSwarm pattern: visible specialist lanes "
-        "and explicit output contracts, without external runtime installation.",
+        "Das ist die sichere lokale Uebernahme des OpenSwarm-Musters: sichtbare "
+        "Spezialisten-Lanes und explizite Output-Vertraege, ohne externe "
+        "Runtime-Installation.",
         "",
-        f"Valid: `{str(validation.valid).lower()}`",
-        f"Errors: `{', '.join(validation.errors) if validation.errors else 'none'}`",
-        f"Warnings: `{', '.join(validation.warnings) if validation.warnings else 'none'}`",
+        f"Gueltig: `{str(validation.valid).lower()}`",
+        f"Fehler: `{', '.join(validation.errors) if validation.errors else 'keine'}`",
+        f"Warnungen: `{', '.join(validation.warnings) if validation.warnings else 'keine'}`",
         "",
-        "## Lane Matrix",
+        "## Lane-Matrix",
         "",
-        "| Lane | Status | Risk | Gate | Default output | Verifier | Handoff targets |",
+        "| Lane | Status | Risiko | Gate | Standard-Output | Verifier | Handoff-Ziele |",
         "| --- | --- | --- | ---: | --- | --- | --- |",
     ]
     for lane in lanes:
@@ -420,9 +422,9 @@ def render_deliverable_swarm_markdown(
     lines.extend(
         [
             "",
-            "## Output Contracts",
+            "## Output-Vertraege",
             "",
-            "| Contract | Lane | Artifact | Default path | Gate rule | Verification |",
+            "| Vertrag | Lane | Artefakt | Standardpfad | Gate-Regel | Pruefung |",
             "| --- | --- | --- | --- | --- | --- |",
         ]
     )
@@ -436,7 +438,7 @@ def render_deliverable_swarm_markdown(
     lines.extend(
         [
             "",
-            "## Hard Boundaries",
+            "## Harte Grenzen",
             "",
         ]
     )
@@ -445,11 +447,12 @@ def render_deliverable_swarm_markdown(
     lines.extend(
         [
             "",
-            "## Adoption Rule",
+            "## Uebernahmeregel",
             "",
-            "Use this as the first user-facing capability surface for LIONCOM/Vivi/OpenClaw. "
-            "It may route work to existing local skills and verified artifact workflows, but it "
-            "does not install OpenSwarm, Composio, system packages, or background agents.",
+            "Nutze diesen Vertrag als erste sichtbare Faehigkeitsoberflaeche fuer "
+            "LIONCOM/Vivi/OpenClaw. Er darf Arbeit an bestehende lokale Skills und "
+            "gepruefte Artefakt-Workflows routen, installiert aber weder OpenSwarm "
+            "noch Composio, Systempakete oder Hintergrundagenten.",
             "",
         ]
     )

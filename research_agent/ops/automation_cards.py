@@ -118,10 +118,10 @@ def default_job_cards(root: Path) -> list[AutomationJobCard]:
     workdir = str(root)
     return [
         AutomationJobCard(
-            job_id=make_job_id("Agent OS Readiness Weekly Review"),
-            name="Agent OS Readiness Weekly Review",
+            job_id=make_job_id("Agent-OS-Readiness woechentlich pruefen"),
+            name="Agent-OS-Readiness woechentlich pruefen",
             status="proposed_local_review_only",
-            schedule="weekly, manual creation required",
+            schedule="woechentlich, manuelle Erstellung erforderlich",
             workdir=workdir,
             profile="default",
             allowed_toolsets=("read_file", "search_files", "terminal_read_only"),
@@ -137,15 +137,16 @@ def default_job_cards(root: Path) -> list[AutomationJobCard]:
                 "stop_if_operator_gate_required",
             ),
             prompt=(
-                "Review local Agent OS readiness artifacts. Report missing data, stale outputs, "
-                "blocked gates, and safe next actions. Do not change code or canonical memory."
+                "Pruefe lokale Agent-OS-Readiness-Artefakte. Berichte fehlende Daten, "
+                "veraltete Outputs, blockierte Gates und sichere naechste Aktionen. Keinen "
+                "Code und kein kanonisches Memory aendern."
             ),
         ),
         AutomationJobCard(
-            job_id=make_job_id("Memory Inbox Promotion Review"),
-            name="Memory Inbox Promotion Review",
+            job_id=make_job_id("Memory-Inbox-Promotion pruefen"),
+            name="Memory-Inbox-Promotion pruefen",
             status="proposed_local_review_only",
-            schedule="weekly, manual creation required",
+            schedule="woechentlich, manuelle Erstellung erforderlich",
             workdir=workdir,
             profile="default",
             allowed_toolsets=("read_file", "search_files"),
@@ -158,15 +159,15 @@ def default_job_cards(root: Path) -> list[AutomationJobCard]:
                 "stop_if_duplicate_memory_exists",
             ),
             prompt=(
-                "Review memory inbox candidates and classify each as promote, reject, merge, or "
-                "needs operator. Do not write Obsidian directly."
+                "Pruefe Memory-Inbox-Kandidaten und klassifiziere jeden als promoten, "
+                "ablehnen, mergen oder operatorbeduerftig. Nicht direkt nach Obsidian schreiben."
             ),
         ),
         AutomationJobCard(
-            job_id=make_job_id("Skill Registry Drift Review"),
-            name="Skill Registry Drift Review",
+            job_id=make_job_id("Skill-Registry-Drift pruefen"),
+            name="Skill-Registry-Drift pruefen",
             status="proposed_local_review_only",
-            schedule="weekly, manual creation required",
+            schedule="woechentlich, manuelle Erstellung erforderlich",
             workdir=workdir,
             profile="default",
             allowed_toolsets=("read_file", "search_files", "terminal_read_only"),
@@ -179,15 +180,15 @@ def default_job_cards(root: Path) -> list[AutomationJobCard]:
                 "stop_if_risk_class_R3_or_higher_without_operator_gate",
             ),
             prompt=(
-                "Review local skill registry drift. Suggest playbook updates and hold-register "
-                "entries only. Do not install external skills."
+                "Pruefe lokalen Skill-Registry-Drift. Schlage nur Playbook-Updates und "
+                "Hold-Register-Eintraege vor. Keine externen Skills installieren."
             ),
         ),
         AutomationJobCard(
-            job_id=make_job_id("Guardrail Coverage Smoke"),
-            name="Guardrail Coverage Smoke",
+            job_id=make_job_id("Guardrail-Coverage-Smoke pruefen"),
+            name="Guardrail-Coverage-Smoke pruefen",
             status="proposed_local_review_only",
-            schedule="on demand before agent-os runtime changes",
+            schedule="bei Bedarf vor Agent-OS-Runtime-Aenderungen",
             workdir=workdir,
             profile="default",
             allowed_toolsets=("read_file", "search_files", "terminal_read_only"),
@@ -200,15 +201,15 @@ def default_job_cards(root: Path) -> list[AutomationJobCard]:
                 "stop_if_context_injection_is_detected",
             ),
             prompt=(
-                "Run the local guardrail scan and summarize block/high findings with file paths. "
-                "Do not print secret values."
+                "Fuehre den lokalen Guardrail-Scan aus und fasse Block-/High-Funde mit "
+                "Dateipfaden zusammen. Keine Secret-Werte ausgeben."
             ),
         ),
         AutomationJobCard(
-            job_id=make_job_id("Deliverable Swarm Contract Review"),
-            name="Deliverable Swarm Contract Review",
+            job_id=make_job_id("Deliverable-Swarm-Vertrag pruefen"),
+            name="Deliverable-Swarm-Vertrag pruefen",
             status="proposed_local_review_only",
-            schedule="on demand before new user-facing agent surfaces",
+            schedule="bei Bedarf vor neuen sichtbaren Agentenoberflaechen",
             workdir=workdir,
             profile="default",
             allowed_toolsets=("read_file", "search_files", "terminal_read_only"),
@@ -224,9 +225,10 @@ def default_job_cards(root: Path) -> list[AutomationJobCard]:
                 "stop_if_output_contract_lacks_verifier",
             ),
             prompt=(
-                "Review the deliverable swarm lane matrix and output contracts. Report gaps in "
-                "owners, output paths, verifiers, gates, or handoffs. Do not create accounts, "
-                "install runtimes, or mutate canonical memory."
+                "Pruefe die Deliverable-Swarm-Lane-Matrix und Output-Vertraege. Berichte "
+                "Luecken bei Ownern, Output-Pfaden, Verifiern, Gates oder Handoffs. Keine "
+                "Konten erstellen, keine Runtimes installieren und kein kanonisches Memory "
+                "mutieren."
             ),
         ),
     ]
@@ -240,9 +242,9 @@ def render_job_cards_markdown(
     lines = [
         "# Automation Job Cards",
         "",
-        "These are proposed safe automation cards. They are not installed automations.",
+        "Das sind vorgeschlagene sichere Automation Cards. Sie sind keine installierten Automationen.",
         "",
-        "| Job | Status | Valid | Schedule | Delivery | Toolsets |",
+        "| Job | Status | Gueltig | Zeitplan | Lieferung | Toolsets |",
         "| --- | --- | ---: | --- | --- | --- |",
     ]
     for card in cards:
@@ -252,12 +254,12 @@ def render_job_cards_markdown(
             f"| `{card.name}` | `{card.status}` | {str(valid).lower()} | "
             f"{card.schedule} | `{card.delivery}` | `{', '.join(card.allowed_toolsets)}` |"
         )
-    lines.extend(["", "## Validation Details", ""])
+    lines.extend(["", "## Validierungsdetails", ""])
     for validation in validations:
         lines.append(f"### {validation.job_id}")
         lines.append("")
-        lines.append(f"- valid: `{str(validation.valid).lower()}`")
-        lines.append(f"- errors: `{', '.join(validation.errors) if validation.errors else 'none'}`")
-        lines.append(f"- warnings: `{', '.join(validation.warnings) if validation.warnings else 'none'}`")
+        lines.append(f"- gueltig: `{str(validation.valid).lower()}`")
+        lines.append(f"- fehler: `{', '.join(validation.errors) if validation.errors else 'keine'}`")
+        lines.append(f"- warnungen: `{', '.join(validation.warnings) if validation.warnings else 'keine'}`")
         lines.append("")
     return "\n".join(lines)

@@ -1,66 +1,67 @@
-# Agent OS Readiness Pack
+# Agent-OS-Readiness-Paket
 
-Status: active local v1  
-Scope: LIONCOM / Vega / Vivi / OpenClaw / Hermes pattern adoption  
-Runtime changes: none
+Status: aktive lokale v1
+Scope: LIONCOM / Vega / Vivi / OpenClaw / sichere Hermes-Musteruebernahme
+Runtime-Aenderungen: keine
 
-## Purpose
+## Zweck
 
-This pack translates the useful Hermes Agent patterns into safe local operating
-surfaces:
+Dieses Paket uebersetzt die nuetzlichen Hermes-Agent-Muster in sichere lokale
+Arbeitsoberflaechen:
 
-- readiness and migration dry-run
-- local skill registry
-- memory inbox and local search
-- automation job cards
-- deliverable swarm lane and output contracts
-- guardrails-as-code
-- operator inbox contract
-- terminal backend contracts
+- Readiness- und Migrations-Trockenlauf
+- lokale Skill Registry
+- Memory Inbox und lokale Suche
+- Automation Job Cards
+- Deliverable-Swarm-Lanes und Output-Vertraege
+- Guardrails-as-Code
+- Operator-Inbox-Vertrag
+- Terminal-Backend-Vertraege
 
-It is intentionally not a gateway, not an external skill installer, not a secret
-importer, and not an autonomous background agent.
+Es ist absichtlich kein Gateway, kein externer Skill-Installer, kein
+Secret-Importer und kein autonomer Hintergrundagent.
 
-## Command
+## Befehl
 
 ```bash
 python3 scripts/ops/agent_os_readiness.py
 ```
 
-Default outputs are written to `outputs/agent_os_readiness/`.
+Standard-Outputs werden nach `outputs/agent_os_readiness/` geschrieben.
 
-## Output Contract
+## Output-Vertrag
 
-- `AGENT_OS_READINESS_REPORT.md/json`: capability matrix and OpenClaw migration dry-run.
-- `SKILL_REGISTRY.md/json`: local skill/playbook inventory with risk class and runtime decision.
-- `MEMORY_INBOX_CANDIDATES.md/json`: promotion candidates for Obsidian review.
-- `SESSION_SEARCH.sqlite`: local markdown search index.
-- `SESSION_SEARCH_SAMPLE.json`: sample search result set.
-- `AUTOMATION_JOB_CARDS.md/json`: proposed safe automation cards, not installed automations.
-- `DELIVERABLE_SWARM_CONTRACT.md/json`: OpenSwarm-inspired lane matrix and output contract.
-- `DELIVERABLE_SWARM_OPERATING_OVERVIEW.md`: where/when/how guide for the contract.
-- `DELIVERABLE_SWARM_OPERATING_MAP.canvas`: JSON Canvas overview diagram.
-- `OPERATOR_INBOX.md/json`: local review inbox, not a chat gateway.
-- `TERMINAL_BACKENDS.md/json`: local/Docker backend contracts, not running backends.
-- `GUARDRAIL_SCAN.md/json`: local static guardrail findings.
-- `RUN_SUMMARY.json`: machine-readable run summary.
+- `AGENT_OS_READINESS_REPORT.md/json`: Faehigkeitsmatrix und OpenClaw-Migrations-Trockenlauf.
+- `SKILL_REGISTRY.md/json`: lokales Skill-/Playbook-Inventar mit Risikoklasse und Runtime-Entscheidung.
+- `MEMORY_INBOX_CANDIDATES.md/json`: Promotionskandidaten fuer Obsidian-Review.
+- `SESSION_SEARCH.sqlite`: lokaler Markdown-Suchindex.
+- `SESSION_SEARCH_SAMPLE.json`: Beispiel-Suchergebnisse.
+- `AUTOMATION_JOB_CARDS.md/json`: vorgeschlagene sichere Automation Cards, keine installierten Automationen.
+- `DELIVERABLE_SWARM_CONTRACT.md/json`: OpenSwarm-inspirierte Lane-Matrix und Output-Vertrag.
+- `DELIVERABLE_SWARM_OPERATING_OVERVIEW.md`: Wo-/Wann-/Wie-Nutzungsuebersicht fuer den Vertrag.
+- `DELIVERABLE_SWARM_OPERATING_MAP.canvas`: JSON-Canvas-Schaubild.
+- `OPERATOR_INBOX.md/json`: lokale Review-Inbox, kein Chat-Gateway.
+- `TERMINAL_BACKENDS.md/json`: lokale/Docker-Backend-Vertraege, keine laufenden Backends.
+- `GUARDRAIL_SCAN.md/json`: lokale statische Guardrail-Funde.
+- `RUN_SUMMARY.json`: maschinenlesbare Laufzusammenfassung.
 
-## Hard Boundaries
+## Harte Grenzen
 
-- No external skills are installed.
-- No API keys or secret values are read into output.
-- No runtime config is changed.
-- No Obsidian canonical note is updated by the script.
-- No automation is created by the script.
-- No network calls are made.
+- Es werden keine externen Skills installiert.
+- Es werden keine API-Keys oder Secret-Werte in Outputs gelesen.
+- Es wird keine Runtime-Config geaendert.
+- Das Script aktualisiert keine kanonische Obsidian-Notiz.
+- Das Script erstellt keine Automation.
+- Es werden keine Netzwerkaufrufe gemacht.
 
-## Adoption Rule
+## Uebernahmeregel
 
-Hermes is treated as a product-pattern benchmark. Any feature that would add
-network, credentials, background execution, desktop/browser control, or canonical
-memory mutation remains behind the existing External Skill Intake SOP and
-Operator Gate.
+Hermes ist ein Produktmuster-Benchmark. Jede Funktion, die Netzwerk,
+Credentials, Hintergrundausfuehrung, Desktop-/Browser-Control oder kanonische
+Memory-Mutation einfuehren wuerde, bleibt hinter External Skill Intake SOP und
+Operator-Gate.
 
-OpenSwarm is treated as a deliverable-surface benchmark. Its useful pattern is
-visible specialist lanes and explicit final artifact contracts. Its auto-install,
-Composio-wide, full-mesh, and provider-runtime behavior is not adopted.
+OpenSwarm ist ein Deliverable-Surface-Benchmark. Das nuetzliche Muster sind
+sichtbare Spezialisten-Lanes und explizite finale Artefaktvertraege. Auto-
+Install-, Composio-weite, Full-Mesh- und Provider-Runtime-Verhalten wird nicht
+uebernommen.

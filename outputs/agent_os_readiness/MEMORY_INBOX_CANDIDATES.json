@@ -1,76 +1,76 @@
 {
   "candidates": [
     {
-      "candidate_id": "mem-51ed52dab869",
+      "candidate_id": "mem-949266143276",
       "kind": "agent_stack_learning",
       "line": 4,
       "route": "DreamFactory System/Agent Stack",
       "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
       "status": "candidate_needs_promotion_review",
-      "summary": "Scope: LIONCOM / Vega / Vivi / OpenClaw / Hermes pattern adoption"
+      "summary": "Scope: LIONCOM / Vega / Vivi / OpenClaw / sichere Hermes-Musteruebernahme"
     },
     {
-      "candidate_id": "mem-d6b24eb78bf1",
+      "candidate_id": "mem-0a98c28f4a5e",
       "kind": "agent_stack_learning",
       "line": 9,
       "route": "DreamFactory System/Agent Stack",
       "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
       "status": "candidate_needs_promotion_review",
-      "summary": "This pack translates the useful Hermes Agent patterns into safe local operating"
+      "summary": "Dieses Paket uebersetzt die nuetzlichen Hermes-Agent-Muster in sichere lokale"
     },
     {
-      "candidate_id": "mem-7af332be6a5f",
+      "candidate_id": "mem-2526f71d8f78",
       "kind": "agent_stack_learning",
       "line": 34,
       "route": "DreamFactory System/Agent Stack",
       "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
       "status": "candidate_needs_promotion_review",
-      "summary": "`AGENT_OS_READINESS_REPORT.md/json`: capability matrix and OpenClaw migration dry-run."
+      "summary": "`AGENT_OS_READINESS_REPORT.md/json`: Faehigkeitsmatrix und OpenClaw-Migrations-Trockenlauf."
     },
     {
-      "candidate_id": "mem-d2bfe3cb27f7",
+      "candidate_id": "mem-48b5a86c3294",
       "kind": "general_learning",
       "line": 45,
       "route": "Memory/Learnings and Fixes",
       "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
       "status": "candidate_needs_promotion_review",
-      "summary": "`GUARDRAIL_SCAN.md/json`: local static guardrail findings."
+      "summary": "`GUARDRAIL_SCAN.md/json`: lokale statische Guardrail-Funde."
     },
     {
-      "candidate_id": "mem-a71dea4dc295",
+      "candidate_id": "mem-cfbcd1077a6c",
       "kind": "agent_stack_learning",
       "line": 59,
       "route": "DreamFactory System/Agent Stack",
       "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
       "status": "candidate_needs_promotion_review",
-      "summary": "Hermes is treated as a product-pattern benchmark. Any feature that would add"
+      "summary": "Hermes ist ein Produktmuster-Benchmark. Jede Funktion, die Netzwerk,"
     },
     {
-      "candidate_id": "mem-3d689a5c3de6",
+      "candidate_id": "mem-38be4066dda5",
       "kind": "agent_stack_learning",
       "line": 10,
       "route": "DreamFactory System/Agent Stack",
       "source_path": "docs/agent_os/DELIVERABLE_SWARM_CONTRACT.md",
       "status": "candidate_needs_promotion_review",
-      "summary": "surface for Vega, Vivi, LIONCOM, and OpenClaw work."
+      "summary": "sichere lokale Oberflaeche fuer Vega-, Vivi-, LIONCOM- und OpenClaw-Arbeit."
     },
     {
-      "candidate_id": "mem-288ae8728b43",
+      "candidate_id": "mem-74babc60b338",
       "kind": "agent_stack_learning",
       "line": 4,
       "route": "DreamFactory System/Agent Stack",
       "source_path": "docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
       "status": "candidate_needs_promotion_review",
-      "summary": "Scope: Vega / Vivi / LIONCOM / OpenClaw-facing agent work"
+      "summary": "Scope: Vega / Vivi / LIONCOM / OpenClaw-nahe Agentenarbeit"
     },
     {
-      "candidate_id": "mem-7ea6f014fbb3",
+      "candidate_id": "mem-39f59b586e0c",
       "kind": "agent_stack_learning",
-      "line": 200,
+      "line": 202,
       "route": "DreamFactory System/Agent Stack",
       "source_path": "docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
       "status": "candidate_needs_promotion_review",
-      "summary": "new user-facing agent surfaces, mission packs, output workflows or OpenClaw"
+      "summary": "OpenClaw-Migrationserfahrungen gebaut werden."
     },
     {
       "candidate_id": "mem-3b42a5fd595b",

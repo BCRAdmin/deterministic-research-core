@@ -52,13 +52,13 @@ def build_capability_matrix(
             "openclaw_runtime_status",
             "reference_only_until_preflight",
             f"{vault / 'Canonical/Systems/System - OpenClaw.md'} = {_exists(vault / 'Canonical/Systems/System - OpenClaw.md')}; {openclaw_home} = {_exists(openclaw_home)}",
-            "Run explicit path/config/service/smoke preflight before treating OpenClaw as active.",
+            "Vor aktiver OpenClaw-Nutzung expliziten Pfad-/Config-/Service-/Smoke-Preflight ausfuehren.",
         ),
         CapabilityCheck(
             "hermes_pattern_benchmark",
             "captured",
             str(vault / "DreamFactory System/Agent Stack/Hermes Agent Benchmark - 2026-05-21.md"),
-            "Use as pattern source only; no external runtime install.",
+            "Nur als Musterquelle nutzen; keine externe Runtime installieren.",
         ),
         CapabilityCheck(
             "openswarm_deliverable_benchmark",
@@ -67,61 +67,61 @@ def build_capability_matrix(
                 vault
                 / "DreamFactory System/Agent Stack/OpenSwarm Benchmark - 2026-05-21.md"
             ),
-            "Use OpenSwarm as a deliverable-lane pattern source, not a runtime package.",
+            "OpenSwarm als Deliverable-Lane-Muster nutzen, nicht als Runtime-Paket.",
         ),
         CapabilityCheck(
             "external_skill_intake",
             "active",
             str(root / "docs/skills/EXTERNAL_SKILL_INTAKE_SOP.md"),
-            "Keep all external skills behind source verification, risk class, and operator gate.",
+            "Alle externen Skills hinter Quellenpruefung, Risikoklasse und Operator-Gate halten.",
         ),
         CapabilityCheck(
             "skill_registry_v1",
             "implemented_local_artifact",
             str(root / "outputs/agent_os_readiness/SKILL_REGISTRY.md"),
-            "Refresh via scripts/ops/agent_os_readiness.py.",
+            "Ueber scripts/ops/agent_os_readiness.py aktualisieren.",
         ),
         CapabilityCheck(
             "memory_inbox_and_search",
             "implemented_local_artifact",
             str(root / "outputs/agent_os_readiness/MEMORY_INBOX_CANDIDATES.md"),
-            "Promote candidates manually into Obsidian routes; index is local search only.",
+            "Kandidaten manuell in Obsidian-Routen promoten; Index ist nur lokale Suche.",
         ),
         CapabilityCheck(
             "automation_job_cards",
             "implemented_proposal_artifact",
             str(root / "outputs/agent_os_readiness/AUTOMATION_JOB_CARDS.md"),
-            "Create real app automations only after operator review.",
+            "Echte App-Automationen nur nach Operator-Review erstellen.",
         ),
         CapabilityCheck(
             "deliverable_swarm_contract",
             "implemented_local_artifact",
             str(root / "outputs/agent_os_readiness/DELIVERABLE_SWARM_CONTRACT.md"),
-            "Use as the visible lane/output contract before adding any new runtime rights.",
+            "Vor neuen Runtime-Rechten als sichtbaren Lane-/Output-Vertrag nutzen.",
         ),
         CapabilityCheck(
             "guardrails_as_code",
             "implemented_local_scan",
             str(root / "outputs/agent_os_readiness/GUARDRAIL_SCAN.md"),
-            "Treat block/high findings as gates before runtime expansion.",
+            "Block-/High-Funde vor Runtime-Erweiterung als Gates behandeln.",
         ),
         CapabilityCheck(
             "multi_channel_gateway",
             "local_operator_inbox_contract_implemented",
             str(root / "outputs/agent_os_readiness/OPERATOR_INBOX.md"),
-            "Use the local inbox before considering any external chat gateway.",
+            "Zuerst lokale Inbox nutzen, bevor ein externes Chat-Gateway erwogen wird.",
         ),
         CapabilityCheck(
             "terminal_backend_abstraction",
             "local_and_docker_contracts_implemented",
             str(root / "outputs/agent_os_readiness/TERMINAL_BACKENDS.md"),
-            "Do not start Docker or expand execution rights without operator gate.",
+            "Docker nicht starten und Ausfuehrungsrechte nicht ohne Operator-Gate erweitern.",
         ),
         CapabilityCheck(
             "hermes_home_presence",
             "observed_only",
             f"{hermes_home} = {_exists(hermes_home)}",
-            "Do not read or import Hermes secrets without explicit operator gate.",
+            "Hermes-Secrets nicht ohne explizites Operator-Gate lesen oder importieren.",
         ),
     ]
     return checks
@@ -170,13 +170,13 @@ def render_readiness_markdown(
     migration_items: Sequence[MigrationItem],
 ) -> str:
     lines = [
-        "# Agent OS Readiness Report",
+        "# Agent-OS-Readiness-Bericht",
         "",
-        "This report captures safe Hermes/OpenClaw-inspired improvements without enabling external runtime behavior.",
+        "Dieser Bericht sammelt sichere Hermes-/OpenClaw-inspirierte Verbesserungen, ohne externes Runtime-Verhalten zu aktivieren.",
         "",
-        "## Capability Matrix",
+        "## Faehigkeitsmatrix",
         "",
-        "| Capability | Status | Evidence | Next action |",
+        "| Faehigkeit | Status | Evidenz | Naechste Aktion |",
         "| --- | --- | --- | --- |",
     ]
     for check in checks:
@@ -186,11 +186,11 @@ def render_readiness_markdown(
     lines.extend(
         [
             "",
-            "## OpenClaw Migration Dry Run",
+            "## OpenClaw-Migrations-Trockenlauf",
             "",
-            "No files are copied by this dry run. Secret-sensitive sources are manifest-only.",
+            "Dieser Trockenlauf kopiert keine Dateien. Secret-sensitive Quellen werden nur als Manifest gefuehrt.",
             "",
-            "| Source | Target | Status | Secret-sensitive | Action |",
+            "| Quelle | Ziel | Status | Secret-sensitiv | Aktion |",
             "| --- | --- | --- | ---: | --- |",
         ]
     )

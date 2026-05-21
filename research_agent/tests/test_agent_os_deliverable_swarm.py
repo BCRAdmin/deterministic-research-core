@@ -76,7 +76,7 @@ def test_deliverable_swarm_markdown_renders_validation_and_boundaries(tmp_path: 
     validation = validate_deliverable_swarm(lanes, contracts, tmp_path)
     markdown = render_deliverable_swarm_markdown(lanes, contracts, validation)
 
-    assert "Valid: `true`" in markdown
+    assert "Gueltig: `true`" in markdown
     assert "`orchestrator`" in markdown
     assert "`research_brief`" in markdown
     assert "`auto_install_external_runtime`" in markdown

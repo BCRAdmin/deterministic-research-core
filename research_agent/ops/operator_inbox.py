@@ -1,8 +1,8 @@
-"""Local operator inbox contract.
+"""Lokaler Operator-Inbox-Vertrag.
 
-Hermes and OpenClaw make multi-channel work visible. This module gives our
-system the useful part first: a single local inbox artifact for review, gates,
-and next safe actions. It is not a messaging gateway.
+Hermes und OpenClaw machen Mehrkanal-Arbeit sichtbar. Dieses Modul uebernimmt
+zuerst den nuetzlichen Teil fuer unser System: ein lokales Inbox-Artefakt fuer
+Review, Gates und sichere naechste Aktionen. Es ist kein Messaging-Gateway.
 """
 
 from __future__ import annotations
@@ -55,8 +55,8 @@ def build_operator_inbox_items(
             priority="P0",
             status="ready_for_review",
             source=str(base / "AGENT_OS_READINESS_REPORT.md"),
-            summary="Review capability matrix and OpenClaw migration dry-run before any runtime expansion.",
-            required_action="read_or_acknowledge",
+            summary="Faehigkeitsmatrix und OpenClaw-Migrations-Trockenlauf vor jeder Runtime-Erweiterung pruefen.",
+            required_action="lesen_oder_bestaetigen",
             operator_gate_required=False,
         ),
         InboxItem(
@@ -65,8 +65,8 @@ def build_operator_inbox_items(
             priority="P1",
             status="ready_for_review",
             source=str(base / "SKILL_REGISTRY.md"),
-            summary=f"{skill_record_count} local skill/playbook records classified; no external install allowed.",
-            required_action="review_hold_or_playbook_decisions",
+            summary=f"{skill_record_count} lokale Skill-/Playbook-Eintraege klassifiziert; externe Installation bleibt verboten.",
+            required_action="hold_oder_playbook_entscheidung_pruefen",
             operator_gate_required=False,
         ),
         InboxItem(
@@ -75,8 +75,8 @@ def build_operator_inbox_items(
             priority="P1",
             status="candidate_review",
             source=str(base / "MEMORY_INBOX_CANDIDATES.md"),
-            summary=f"{memory_candidate_count} memory candidates need promote/reject/merge review.",
-            required_action="promote_only_after_obsidian_route_check",
+            summary=f"{memory_candidate_count} Memory-Kandidaten brauchen Promote-/Reject-/Merge-Review.",
+            required_action="nur_nach_obsidian_routenpruefung_promoten",
             operator_gate_required=True,
         ),
         InboxItem(
@@ -85,8 +85,8 @@ def build_operator_inbox_items(
             priority="P1",
             status="gate_review",
             source=str(base / "GUARDRAIL_SCAN.md"),
-            summary=f"{guardrail_count} guardrail findings are recorded as gates before runtime expansion.",
-            required_action="clear_or_accept_gates_before_runtime_rights",
+            summary=f"{guardrail_count} Guardrail-Funde sind als Gates vor Runtime-Erweiterung festgehalten.",
+            required_action="gates_vor_runtime_rechten_klaeren_oder_akzeptieren",
             operator_gate_required=True,
         ),
         InboxItem(
@@ -95,8 +95,8 @@ def build_operator_inbox_items(
             priority="P2",
             status="ready_for_review" if automation_cards_valid else "blocked",
             source=str(base / "AUTOMATION_JOB_CARDS.md"),
-            summary="Automation job cards are proposals only and are not installed automations.",
-            required_action="create_real_automation_only_after_operator_go",
+            summary="Automation Cards sind nur Vorschlaege und keine installierten Automationen.",
+            required_action="echte_automation_nur_nach_operator_go_erstellen",
             operator_gate_required=True,
         ),
         InboxItem(
@@ -106,10 +106,10 @@ def build_operator_inbox_items(
             status="ready_for_review" if deliverable_contract_valid else "blocked",
             source=str(base / "DELIVERABLE_SWARM_CONTRACT.md"),
             summary=(
-                f"{deliverable_lane_count} deliverable lanes define owners, output paths, "
-                "verifiers, handoffs, and gates."
+                f"{deliverable_lane_count} Deliverable-Lanes definieren Owner, Output-Pfade, "
+                "Verifier, Handoffs und Gates."
             ),
-            required_action="use_as_primary_agent_team_surface_before_runtime_expansion",
+            required_action="vor_runtime_erweiterung_als_agenten_team_oberflaeche_nutzen",
             operator_gate_required=not deliverable_contract_valid,
         ),
     ]
@@ -139,18 +139,19 @@ def render_operator_inbox_markdown(items: Sequence[InboxItem], validation: Inbox
     lines = [
         "# Operator Inbox",
         "",
-        "Local review inbox for Agent OS work. This is not a chat gateway.",
+        "Lokale Review-Inbox fuer Agent-OS-Arbeit. Das ist kein Chat-Gateway.",
         "",
-        f"Valid: `{str(validation.valid).lower()}`",
-        f"Errors: `{', '.join(validation.errors) if validation.errors else 'none'}`",
-        f"Warnings: `{', '.join(validation.warnings) if validation.warnings else 'none'}`",
+        f"Gueltig: `{str(validation.valid).lower()}`",
+        f"Fehler: `{', '.join(validation.errors) if validation.errors else 'keine'}`",
+        f"Warnungen: `{', '.join(validation.warnings) if validation.warnings else 'keine'}`",
         "",
-        "| Item | Lane | Priority | Status | Gate | Action | Source |",
-        "| --- | --- | --- | --- | ---: | --- | --- |",
+        "| Item | Lane | Prioritaet | Status | Gate | Aktion | Zusammenfassung | Quelle |",
+        "| --- | --- | --- | --- | ---: | --- | --- | --- |",
     ]
     for item in items:
         lines.append(
             f"| `{item.item_id}` | `{item.lane}` | `{item.priority}` | `{item.status}` | "
-            f"{str(item.operator_gate_required).lower()} | `{item.required_action}` | `{item.source}` |"
+            f"{str(item.operator_gate_required).lower()} | `{item.required_action}` | "
+            f"{item.summary} | `{item.source}` |"
         )
     return "\n".join(lines) + "\n"

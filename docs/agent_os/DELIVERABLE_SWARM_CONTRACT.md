@@ -1,36 +1,36 @@
-# Deliverable Swarm Contract
+# Deliverable-Swarm-Vertrag
 
-Status: active local v1
-Runtime changes: none
-Source pattern: VRSEN/OpenSwarm, pattern-only
+Status: aktive lokale v1
+Runtime-Aenderungen: keine
+Quellmuster: VRSEN/OpenSwarm, nur als Muster uebernommen
 
-## Purpose
+## Zweck
 
-This contract turns the useful OpenSwarm product pattern into a safe local
-surface for Vega, Vivi, LIONCOM, and OpenClaw work.
+Dieser Vertrag uebersetzt das nuetzliche OpenSwarm-Produktmuster in eine
+sichere lokale Oberflaeche fuer Vega-, Vivi-, LIONCOM- und OpenClaw-Arbeit.
 
-The adopted pattern is simple:
+Das uebernommene Muster ist einfach:
 
-- an orchestrator routes work
-- specialists own deliverables
-- every deliverable has an output path
-- every final artifact has a verifier
-- provider, account, scheduled-runner, or publishing behavior must not run without a gate
+- ein Orchestrator routet Arbeit
+- Spezialisten besitzen konkrete Lieferobjekte
+- jedes Lieferobjekt hat einen Output-Pfad
+- jedes finale Artefakt hat einen Verifier
+- Provider-, Konto-, Scheduled-Runner- oder Publishing-Verhalten laeuft nie ohne Gate
 
-## Required Lanes
+## Pflicht-Lanes
 
-- `orchestrator`: route plan and handoff packet
-- `assistant`: operator notes, draft messages, task summaries
-- `research`: research briefs, source matrices, decision options
-- `data`: analysis reports, chart assets, data quality notes
-- `docs`: markdown, DOCX, PDF, change summaries
-- `slides`: slide sources, PPTX deck, visual QA
-- `images`: image assets and image QC, provider-gated
-- `video`: video assets and video QC, provider-gated
+- `orchestrator`: Routenplan und Handoff-Paket
+- `assistant`: Operator-Notizen, Nachrichtenentwuerfe, Task-Zusammenfassungen
+- `research`: Research-Briefs, Quellenmatrizen, Entscheidungsoptionen
+- `data`: Analyseberichte, Chart-Artefakte, Datenqualitaetsnotizen
+- `docs`: Markdown, DOCX, PDF, Aenderungszusammenfassungen
+- `slides`: Slide-Quellen, PPTX-Deck, visuelle QA
+- `images`: Bildartefakte und Bild-QC, provider-gated
+- `video`: Videoartefakte und Video-QC, provider-gated
 
-## Output Metadata
+## Output-Metadaten
 
-Every final artifact needs:
+Jedes finale Artefakt braucht:
 
 - `artifact_id`
 - `lane_id`
@@ -41,35 +41,36 @@ Every final artifact needs:
 - `blocked_gates`
 - `next_action`
 
-## Handoff Policy
+## Handoff-Regel
 
-The orchestrator may route to every specialist lane. Specialist lanes return to
-the orchestrator or to a narrow downstream artifact lane. A hidden all-to-all
-runtime mesh is not allowed.
+Der Orchestrator darf an jede Spezialisten-Lane routen. Spezialisten-Lanes
+geben an den Orchestrator oder an eine eng definierte nachgelagerte
+Artefakt-Lane zurueck. Ein verstecktes all-to-all-Runtime-Mesh ist nicht
+erlaubt.
 
-## Hard Boundaries
+## Harte Grenzen
 
-- no auto-install of external runtimes
-- no system package installation
-- no automatic external account connection
-- no secret import
-- no public publishing
-- no canonical Obsidian write by generated runtime
-- no background automation creation
-- no unbounded all-to-all handoff runtime
+- keine Auto-Installation externer Runtimes
+- keine Systempaket-Installation
+- keine automatische Verbindung externer Konten
+- kein Secret-Import
+- keine oeffentliche Veroeffentlichung
+- kein kanonischer Obsidian-Write durch generierte Runtime
+- keine Hintergrundautomation-Erstellung
+- keine unbegrenzte all-to-all-Handoff-Runtime
 
-## Command
+## Befehl
 
 ```bash
 python3 scripts/ops/agent_os_readiness.py
 ```
 
-Generated outputs:
+Generierte Outputs:
 
 - `outputs/agent_os_readiness/DELIVERABLE_SWARM_CONTRACT.md`
 - `outputs/agent_os_readiness/DELIVERABLE_SWARM_CONTRACT.json`
 
-Operating overview:
+Nutzungsuebersicht:
 
 - `docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md`
 - `docs/agent_os/DELIVERABLE_SWARM_OPERATING_MAP.canvas`
