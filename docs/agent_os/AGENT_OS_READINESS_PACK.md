@@ -38,6 +38,8 @@ Default outputs are written to `outputs/agent_os_readiness/`.
 - `SESSION_SEARCH_SAMPLE.json`: sample search result set.
 - `AUTOMATION_JOB_CARDS.md/json`: proposed safe automation cards, not installed automations.
 - `DELIVERABLE_SWARM_CONTRACT.md/json`: OpenSwarm-inspired lane matrix and output contract.
+- `DELIVERABLE_SWARM_OPERATING_OVERVIEW.md`: where/when/how guide for the contract.
+- `DELIVERABLE_SWARM_OPERATING_MAP.canvas`: JSON Canvas overview diagram.
 - `OPERATOR_INBOX.md/json`: local review inbox, not a chat gateway.
 - `TERMINAL_BACKENDS.md/json`: local/Docker backend contracts, not running backends.
 - `GUARDRAIL_SCAN.md/json`: local static guardrail findings.

@@ -28,18 +28,18 @@
       "summary": "`AGENT_OS_READINESS_REPORT.md/json`: capability matrix and OpenClaw migration dry-run."
     },
     {
-      "candidate_id": "mem-6fca15169856",
+      "candidate_id": "mem-d2bfe3cb27f7",
       "kind": "general_learning",
-      "line": 43,
+      "line": 45,
       "route": "Memory/Learnings and Fixes",
       "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
       "status": "candidate_needs_promotion_review",
       "summary": "`GUARDRAIL_SCAN.md/json`: local static guardrail findings."
     },
     {
-      "candidate_id": "mem-be1417a1d39f",
+      "candidate_id": "mem-a71dea4dc295",
       "kind": "agent_stack_learning",
-      "line": 57,
+      "line": 59,
       "route": "DreamFactory System/Agent Stack",
       "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
       "status": "candidate_needs_promotion_review",
@@ -53,6 +53,24 @@
       "source_path": "docs/agent_os/DELIVERABLE_SWARM_CONTRACT.md",
       "status": "candidate_needs_promotion_review",
       "summary": "surface for Vega, Vivi, LIONCOM, and OpenClaw work."
+    },
+    {
+      "candidate_id": "mem-288ae8728b43",
+      "kind": "agent_stack_learning",
+      "line": 4,
+      "route": "DreamFactory System/Agent Stack",
+      "source_path": "docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Scope: Vega / Vivi / LIONCOM / OpenClaw-facing agent work"
+    },
+    {
+      "candidate_id": "mem-7ea6f014fbb3",
+      "kind": "agent_stack_learning",
+      "line": 200,
+      "route": "DreamFactory System/Agent Stack",
+      "source_path": "docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "new user-facing agent surfaces, mission packs, output workflows or OpenClaw"
     },
     {
       "candidate_id": "mem-3b42a5fd595b",

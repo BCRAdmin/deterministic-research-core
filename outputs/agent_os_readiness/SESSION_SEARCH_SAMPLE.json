@@ -19,48 +19,48 @@
       "snippet": "This pack translates the useful Hermes Agent patterns into safe local operating"
     },
     {
-      "line": 49,
+      "line": 48,
       "path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
       "score": -5.424031294657932,
-      "snippet": "- No API keys or secret values are read into output."
+      "snippet": "## Hard Boundaries"
     },
     {
-      "line": 1,
-      "path": "docs/media_ingest/TRANSCRIPTION_WORKFLOW.md",
+      "line": 21,
+      "path": "docs/media_ingest/MEDIA_INGEST_USE_CASES.md",
       "score": -3.742254418854729,
-      "snippet": "# Transcription Workflow"
+      "snippet": "## Use Cases"
     },
     {
-      "line": 51,
-      "path": "docs/media_ingest/ROOM16_MEDIA_INGEST_INTEGRATION.md",
+      "line": 18,
+      "path": "docs/media_ingest/MEDIA_INGEST_USE_CASES.md",
       "score": -3.6670987282384284,
-      "snippet": "## Acceptance"
+      "snippet": "- No direct report use without Evidence Gate."
     },
     {
-      "line": 3,
-      "path": "docs/media_ingest/TRANSCRIPTION_WORKFLOW.md",
+      "line": 23,
+      "path": "docs/media_ingest/MEDIA_INGEST_USE_CASES.md",
       "score": -3.6670987282384284,
-      "snippet": "Status: internal workflow"
+      "snippet": "| Use case | Allowed | Required operator input | Copyright risk | Source reliability | Evidence use allowed | Report use allowed | Required review gate |"
     },
     {
-      "line": 60,
-      "path": "docs/skills/SKILL_AUTHORING_POLICY.md",
+      "line": 101,
+      "path": "docs/skills/EXTERNAL_SKILL_INTAKE_SOP.md",
       "score": -3.6670987282384284,
-      "snippet": "- `updated`"
+      "snippet": "- memory overwrite outside the Obsidian Gate"
     },
     {
-      "line": 47,
-      "path": "docs/media_ingest/ROOM16_MEDIA_INGEST_INTEGRATION.md",
+      "line": 16,
+      "path": "docs/media_ingest/MEDIA_INGEST_USE_CASES.md",
       "score": -3.5949023098355055,
-      "snippet": "## Public Report Boundary"
+      "snippet": "- No long copyrighted excerpts or full transcript reproduction from third-party sources."
     },
     {
-      "line": 41,
-      "path": "docs/skills/SKILL_AUTHORING_POLICY.md",
+      "line": 78,
+      "path": "docs/skills/EXTERNAL_SKILL_INTAKE_SOP.md",
       "score": -3.5254937552549364,
-      "snippet": "Every internal skill/playbook must declare:"
+      "snippet": "| R6 | autonomous/proactive/background behavior | Schedules, updates, self-modifies, runs in background or changes memory automatically. | Hold/reject unless explicitly designed internally. |"
     }
   ],
-  "indexed_rows": 1922,
+  "indexed_rows": 2084,
   "query": "Hermes OR OpenClaw OR Vivi"
 }

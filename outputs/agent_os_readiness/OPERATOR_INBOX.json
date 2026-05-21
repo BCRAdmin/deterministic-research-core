@@ -28,7 +28,7 @@
       "required_action": "promote_only_after_obsidian_route_check",
       "source": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/MEMORY_INBOX_CANDIDATES.md",
       "status": "candidate_review",
-      "summary": "64 memory candidates need promote/reject/merge review."
+      "summary": "66 memory candidates need promote/reject/merge review."
     },
     {
       "item_id": "guardrail-gate-review",

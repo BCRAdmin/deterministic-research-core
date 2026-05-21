@@ -1,0 +1,244 @@
+{
+  "nodes": [
+    {
+      "id": "0a1b2c3d4e5f6789",
+      "type": "file",
+      "file": "docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
+      "x": 0,
+      "y": 0,
+      "width": 460,
+      "height": 260,
+      "color": "4"
+    },
+    {
+      "id": "1a2b3c4d5e6f7890",
+      "type": "text",
+      "text": "Entry: use when a request must produce a concrete deliverable.\n\nExamples: research brief, data chart, document, deck, image, video, operator note, multi-lane package.",
+      "x": -620,
+      "y": -300,
+      "width": 440,
+      "height": 220,
+      "color": "5"
+    },
+    {
+      "id": "2a3b4c5d6e7f8901",
+      "type": "text",
+      "text": "Do not use as runtime permission.\n\nNo OpenSwarm install. No auto-install. No Composio full mesh. No secret import. No public publishing. No background automation.",
+      "x": -620,
+      "y": 20,
+      "width": 440,
+      "height": 240,
+      "color": "1"
+    },
+    {
+      "id": "3a4b5c6d7e8f9012",
+      "type": "text",
+      "text": "Orchestrator\n\nClassifies scope, chooses lanes, binds output contract, and prevents hidden all-to-all handoff.",
+      "x": 560,
+      "y": -300,
+      "width": 400,
+      "height": 200,
+      "color": "6"
+    },
+    {
+      "id": "4a5b6c7d8e9f0123",
+      "type": "text",
+      "text": "Lane Matrix\n\nassistant, research, data, docs, slides, images, video.\n\nEach lane has owner, triggers, allowed toolsets, artifact types, verifier, risk class and gate.",
+      "x": 1080,
+      "y": -300,
+      "width": 460,
+      "height": 240,
+      "color": "3"
+    },
+    {
+      "id": "5a6b7c8d9e0f1234",
+      "type": "text",
+      "text": "Output Contract\n\nartifact_id\nlane_id\nartifact_type\noutput_path\nstatus\nverifier\nblocked_gates\nnext_action",
+      "x": 560,
+      "y": 20,
+      "width": 400,
+      "height": 260,
+      "color": "4"
+    },
+    {
+      "id": "6a7b8c9d0e1f2345",
+      "type": "text",
+      "text": "Verifier + Gate\n\nLocal verifier proves usable output. Operator/provider gate stops irreversible, media, account, background or publish actions.",
+      "x": 1080,
+      "y": 40,
+      "width": 460,
+      "height": 220,
+      "color": "2"
+    },
+    {
+      "id": "7a8b9c0d1e2f3456",
+      "type": "text",
+      "text": "Final State\n\nverified: artifact path + verifier evidence\nblocked: missing input/gate + next safe action\n\nDurable truth goes to Obsidian. Repo truth goes to commit/push/CI.",
+      "x": 800,
+      "y": 420,
+      "width": 520,
+      "height": 240,
+      "color": "4"
+    },
+    {
+      "id": "8a9b0c1d2e3f4567",
+      "type": "file",
+      "file": "research_agent/ops/deliverable_swarm.py",
+      "x": -80,
+      "y": 420,
+      "width": 420,
+      "height": 220,
+      "color": "6"
+    },
+    {
+      "id": "9a0b1c2d3e4f5678",
+      "type": "file",
+      "file": "outputs/agent_os_readiness/DELIVERABLE_SWARM_CONTRACT.md",
+      "x": -620,
+      "y": 420,
+      "width": 440,
+      "height": 220,
+      "color": "3"
+    },
+    {
+      "id": "0b1c2d3e4f5a6789",
+      "type": "file",
+      "file": "docs/agent_os/DELIVERABLE_SWARM_CONTRACT.md",
+      "x": 0,
+      "y": -300,
+      "width": 460,
+      "height": 220,
+      "color": "5"
+    },
+    {
+      "id": "1b2c3d4e5f6a7890",
+      "type": "text",
+      "text": "Command\n\npython3 scripts/ops/agent_os_readiness.py\n\nRegenerates lane matrix, output contracts, readiness report, operator inbox and automation cards.",
+      "x": -620,
+      "y": 720,
+      "width": 440,
+      "height": 220,
+      "color": "6"
+    },
+    {
+      "id": "2b3c4d5e6f7a8901",
+      "type": "text",
+      "text": "Tests\n\npytest\ncoverage\nruff\ngit diff --check\nJSON parse\nGitHub CI",
+      "x": -80,
+      "y": 760,
+      "width": 420,
+      "height": 180,
+      "color": "4"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e01a2b3c4d5e6f70",
+      "fromNode": "1a2b3c4d5e6f7890",
+      "fromSide": "right",
+      "toNode": "3a4b5c6d7e8f9012",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "task enters"
+    },
+    {
+      "id": "e12a3b4c5d6e7f81",
+      "fromNode": "3a4b5c6d7e8f9012",
+      "fromSide": "right",
+      "toNode": "4a5b6c7d8e9f0123",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "routes"
+    },
+    {
+      "id": "e23a4b5c6d7e8f92",
+      "fromNode": "4a5b6c7d8e9f0123",
+      "fromSide": "bottom",
+      "toNode": "5a6b7c8d9e0f1234",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "binds artifact"
+    },
+    {
+      "id": "e34a5b6c7d8e9f03",
+      "fromNode": "5a6b7c8d9e0f1234",
+      "fromSide": "right",
+      "toNode": "6a7b8c9d0e1f2345",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "must pass"
+    },
+    {
+      "id": "e45a6b7c8d9e0f14",
+      "fromNode": "6a7b8c9d0e1f2345",
+      "fromSide": "bottom",
+      "toNode": "7a8b9c0d1e2f3456",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "verified or blocked"
+    },
+    {
+      "id": "e56a7b8c9d0e1f25",
+      "fromNode": "0a1b2c3d4e5f6789",
+      "fromSide": "right",
+      "toNode": "3a4b5c6d7e8f9012",
+      "toSide": "bottom",
+      "toEnd": "arrow",
+      "label": "explains"
+    },
+    {
+      "id": "e67a8b9c0d1e2f36",
+      "fromNode": "0b1c2d3e4f5a6789",
+      "fromSide": "bottom",
+      "toNode": "0a1b2c3d4e5f6789",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "source contract"
+    },
+    {
+      "id": "e78a9b0c1d2e3f47",
+      "fromNode": "8a9b0c1d2e3f4567",
+      "fromSide": "top",
+      "toNode": "5a6b7c8d9e0f1234",
+      "toSide": "bottom",
+      "toEnd": "arrow",
+      "label": "implements"
+    },
+    {
+      "id": "e89a0b1c2d3e4f58",
+      "fromNode": "9a0b1c2d3e4f5678",
+      "fromSide": "right",
+      "toNode": "0a1b2c3d4e5f6789",
+      "toSide": "bottom",
+      "toEnd": "arrow",
+      "label": "current output"
+    },
+    {
+      "id": "e90a1b2c3d4e5f69",
+      "fromNode": "2a3b4c5d6e7f8901",
+      "fromSide": "right",
+      "toNode": "6a7b8c9d0e1f2345",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "blocks"
+    },
+    {
+      "id": "ea1b2c3d4e5f6071",
+      "fromNode": "1b2c3d4e5f6a7890",
+      "fromSide": "right",
+      "toNode": "9a0b1c2d3e4f5678",
+      "toSide": "bottom",
+      "toEnd": "arrow",
+      "label": "regenerates"
+    },
+    {
+      "id": "eb2c3d4e5f607182",
+      "fromNode": "2b3c4d5e6f7a8901",
+      "fromSide": "top",
+      "toNode": "7a8b9c0d1e2f3456",
+      "toSide": "bottom",
+      "toEnd": "arrow",
+      "label": "proves"
+    }
+  ]
+}

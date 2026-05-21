@@ -68,3 +68,8 @@ Generated outputs:
 
 - `outputs/agent_os_readiness/DELIVERABLE_SWARM_CONTRACT.md`
 - `outputs/agent_os_readiness/DELIVERABLE_SWARM_CONTRACT.json`
+
+Operating overview:
+
+- `docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md`
+- `docs/agent_os/DELIVERABLE_SWARM_OPERATING_MAP.canvas`
