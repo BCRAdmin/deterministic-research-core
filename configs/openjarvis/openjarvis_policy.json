@@ -1,0 +1,195 @@
+{
+  "schema_version": 1,
+  "mode": "shadow_read_only",
+  "source_of_truth": false,
+  "kill_switch": {
+    "openjarvis_enabled": true,
+    "runtime_execution_enabled": false
+  },
+  "runtime_permissions": {
+    "allow_shell": false,
+    "allow_write": false,
+    "allow_network": false,
+    "allow_github_api": false
+  },
+  "allowed_extensions": [
+    ".cjs",
+    ".json",
+    ".md",
+    ".mjs",
+    ".py",
+    ".toml",
+    ".ts",
+    ".tsx",
+    ".yaml",
+    ".yml"
+  ],
+  "max_file_bytes": 200000,
+  "deny_globs": [
+    ".env",
+    ".env.*",
+    "**/.env",
+    "**/.env.*",
+    "**/.git/**",
+    "**/.venv/**",
+    "**/__pycache__/**",
+    "**/.pytest_cache/**",
+    "**/.ruff_cache/**",
+    "**/node_modules/**",
+    "**/.next/**",
+    "**/dist/**",
+    "**/dist-desktop/**",
+    "**/outputs/debug_bundles/**",
+    "**/reports/room16/runs/**",
+    "**/reports/room16/premium/translation-cache.json",
+    "**/secrets/**",
+    "**/credentials/**",
+    "**/cookies/**"
+  ],
+  "source_sets": [
+    {
+      "id": "agent_ops_openjarvis_docs",
+      "root": "/Users/BjornRosinger/Documents/New project 2",
+      "include_paths": [
+        "docs/openjarvis",
+        "configs/openjarvis/openjarvis_policy.json",
+        "research_agent/ops/openjarvis_capability_lab.py",
+        "scripts/ops/openjarvis_capability_lab.py"
+      ]
+    },
+    {
+      "id": "agent_ops_quality_os",
+      "root": "/Users/BjornRosinger/Documents/New project 2",
+      "include_paths": [
+        "docs/agent_os",
+        "docs/skills",
+        "scripts/ops",
+        "research_agent/ops",
+        "README.md",
+        "pyproject.toml"
+      ]
+    },
+    {
+      "id": "vega_backbone",
+      "root": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview",
+      "include_paths": [
+        "VEGA_START_HERE.md",
+        "Latest Session Context.md",
+        "Backbone Home.md",
+        "Canonical/Canonical Index.md"
+      ]
+    },
+    {
+      "id": "pig_surface",
+      "root": "/Users/BjornRosinger/Documents/New project",
+      "include_paths": [
+        "scripts/project_intelligence_graph/pig.py",
+        "outputs/project_intelligence_graph/operator_brief.json",
+        "outputs/project_intelligence_graph/quality_os_operator_surface.json",
+        "outputs/project_intelligence_graph/full_check_report.json"
+      ]
+    },
+    {
+      "id": "lioncom_surface",
+      "root": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board",
+      "include_paths": [
+        "components/portfolio-control-tower-page.tsx",
+        "lib/types.ts",
+        "lib/control-plane-v2/live-data.ts",
+        "scripts/verify_planning_quality_surface.mjs",
+        "package.json"
+      ]
+    }
+  ],
+  "benchmark_questions": [
+    {
+      "id": "openjarvis_shadow_policy",
+      "question": "Wie darf OpenJarvis in diesem System benutzt werden?",
+      "must_terms": [
+        "shadow_read_only",
+        "source_of_truth",
+        "Operator-Go",
+        "Secret"
+      ],
+      "expected_source_patterns": [
+        "OPENJARVIS",
+        "openjarvis_policy"
+      ],
+      "top_k": 12
+    },
+    {
+      "id": "operator_gate_boundary",
+      "question": "Welche Grenzen bleiben Operator-Gates und dürfen nicht autonom überschritten werden?",
+      "must_terms": [
+        "Operator-Go",
+        "runtime_action_executed",
+        "Public",
+        "Credentials"
+      ],
+      "expected_source_patterns": [
+        "openjarvis_policy"
+      ],
+      "top_k": 6
+    },
+    {
+      "id": "vivi_worker_truth",
+      "question": "Was darf der Vivi Worker lokal tun und was nicht?",
+      "must_terms": [
+        "Vivi Worker",
+        "local_artifact",
+        "runtime_action_executed",
+        "Operator-Go"
+      ],
+      "expected_source_patterns": [
+        "quality_os_operator_surface"
+      ],
+      "top_k": 6
+    },
+    {
+      "id": "lioncom_surface_truth",
+      "question": "Wo soll der OpenJarvis Capability-Lab Zustand sichtbar werden?",
+      "must_terms": [
+        "Planning Quality",
+        "PIG",
+        "Operator",
+        "Surface"
+      ],
+      "expected_source_patterns": [
+        "portfolio-control-tower-page"
+      ],
+      "top_k": 12
+    }
+  ],
+  "qa_shadow_projects": [
+    {
+      "id": "agent_ops",
+      "root": "/Users/BjornRosinger/Documents/New project 2",
+      "expected_script_keywords": [
+        "pytest",
+        "ruff",
+        "verify",
+        "check"
+      ]
+    },
+    {
+      "id": "lioncom",
+      "root": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board",
+      "expected_script_keywords": [
+        "verify",
+        "build",
+        "baseline",
+        "vivi"
+      ]
+    },
+    {
+      "id": "company_dossier_lab",
+      "root": "/Users/BjornRosinger/Documents/New project/company-dossier-lab",
+      "expected_script_keywords": [
+        "verify",
+        "test",
+        "build",
+        "room16"
+      ]
+    }
+  ]
+}

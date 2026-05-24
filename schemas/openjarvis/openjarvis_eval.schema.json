@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bcr.local/schemas/openjarvis/openjarvis_eval.schema.json",
+  "title": "OpenJarvis Capability Lab Evaluation",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "generated_at",
+    "status",
+    "mode",
+    "source_of_truth",
+    "preflight",
+    "runtime",
+    "retrieval_benchmark",
+    "code_qa_shadow",
+    "hardening",
+    "non_actions"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "generated_at": { "type": "string" },
+    "status": { "enum": ["PASS", "WARN", "FAIL"] },
+    "mode": { "const": "shadow_read_only" },
+    "path": { "type": "string" },
+    "source_of_truth": { "const": false },
+    "source_document_count": { "type": "integer", "minimum": 0 },
+    "preflight": {
+      "type": "object",
+      "required": ["status", "finding_count", "blocker_count"],
+      "properties": {
+        "status": { "enum": ["PASS", "FAIL"] },
+        "finding_count": { "type": "integer", "minimum": 0 },
+        "blocker_count": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "required": ["runtime_available", "runtime_execution_attempted", "runtime_execution_allowed"],
+      "properties": {
+        "runtime_available": { "type": "boolean" },
+        "runtime_execution_attempted": { "const": false },
+        "runtime_execution_allowed": { "const": false }
+      }
+    },
+    "retrieval_benchmark": {
+      "type": "object",
+      "required": ["status", "question_count", "pass_count"],
+      "properties": {
+        "status": { "enum": ["PASS", "WARN", "FAIL"] },
+        "question_count": { "type": "integer", "minimum": 0 },
+        "pass_count": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "code_qa_shadow": {
+      "type": "object",
+      "required": ["status", "project_count", "pass_count"],
+      "properties": {
+        "status": { "enum": ["PASS", "WARN", "FAIL"] },
+        "project_count": { "type": "integer", "minimum": 0 },
+        "pass_count": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "hardening": {
+      "type": "object",
+      "required": ["source_of_truth", "runtime_permissions", "secret_scan_enabled", "mutations_attempted", "runtime_action_executed"],
+      "properties": {
+        "source_of_truth": { "const": false },
+        "secret_scan_enabled": { "const": true },
+        "mutations_attempted": { "const": false },
+        "runtime_action_executed": { "const": false }
+      }
+    },
+    "non_actions": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

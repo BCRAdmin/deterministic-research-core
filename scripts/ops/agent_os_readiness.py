@@ -46,6 +46,11 @@ from research_agent.ops.operator_inbox import (
     render_operator_inbox_markdown,
     validate_operator_inbox,
 )
+from research_agent.ops.openjarvis_capability_lab import (
+    DEFAULT_POLICY_PATH as OPENJARVIS_POLICY_PATH,
+    build_capability_lab,
+    render_markdown as render_openjarvis_capability_lab_markdown,
+)
 from research_agent.ops.past_blocks_closure import (
     DEFAULT_LIONCOM_ROOT,
     build_past_blocks_closure_report,
@@ -343,6 +348,21 @@ def run_all(args: argparse.Namespace) -> int:
     write_json(out / "PAST_BLOCKS_CLOSURE.json", past_blocks_closure.to_dict())
     write_text(out / "PAST_BLOCKS_CLOSURE.md", render_past_blocks_closure_markdown(past_blocks_closure))
 
+    openjarvis_capability_lab = {
+        **build_capability_lab(OPENJARVIS_POLICY_PATH),
+        "path": str(out / "OPENJARVIS_CAPABILITY_LAB.json"),
+    }
+    write_json(out / "OPENJARVIS_CAPABILITY_LAB.json", openjarvis_capability_lab)
+    write_text(
+        out / "OPENJARVIS_CAPABILITY_LAB.md",
+        render_openjarvis_capability_lab_markdown(openjarvis_capability_lab),
+    )
+    write_json(out / "OPENJARVIS_PREFLIGHT.json", openjarvis_capability_lab.get("preflight", {}))
+    write_json(
+        out / "OPENJARVIS_BENCHMARK.json",
+        openjarvis_capability_lab.get("retrieval_benchmark", {}),
+    )
+
     inbox_items = build_operator_inbox_items(
         root,
         guardrail_count=len(guardrail_findings),
@@ -402,6 +422,12 @@ def run_all(args: argparse.Namespace) -> int:
         "portfolio_surface_findings": len(portfolio_audit.findings),
         "past_blocks_closure_valid": past_blocks_closure.valid,
         "remaining_past_blocks": len(past_blocks_closure.remaining_past_blocks),
+        "openjarvis_capability_lab_status": openjarvis_capability_lab.get("status", "UNKNOWN"),
+        "openjarvis_source_document_count": openjarvis_capability_lab.get("source_document_count", 0),
+        "openjarvis_retrieval_questions": openjarvis_capability_lab.get("retrieval_benchmark", {}).get("question_count", 0),
+        "openjarvis_retrieval_pass_count": openjarvis_capability_lab.get("retrieval_benchmark", {}).get("pass_count", 0),
+        "openjarvis_runtime_available": openjarvis_capability_lab.get("runtime", {}).get("runtime_available", False),
+        "openjarvis_runtime_action_executed": openjarvis_capability_lab.get("hardening", {}).get("runtime_action_executed", None),
         "vault_semantic_valid": vault_semantic_audit.valid,
         "vault_semantic_findings": len(vault_semantic_audit.findings),
         "vault_semantic_viewpoints": len(vault_semantic_audit.viewpoints),
@@ -427,6 +453,7 @@ def run_all(args: argparse.Namespace) -> int:
         and all(validation.valid for validation in backend_validations)
         and portfolio_audit.valid
         and past_blocks_closure.valid
+        and openjarvis_capability_lab.get("status") == "PASS"
         and vault_semantic_audit.valid
         and inbox_validation.valid
         and not markdown_language_findings
