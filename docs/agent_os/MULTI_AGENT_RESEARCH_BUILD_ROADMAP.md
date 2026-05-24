@@ -13,9 +13,9 @@ scope: internal-first
 Wir bauen keinen MiroFish-Fork und keinen sofortigen LIONCOM-Einbau. Der richtige Weg ist:
 
 1. `vega-multi-agent-research` als lokalen Codex/Vivi-Skill stabilisieren. Status: erledigt.
-2. Den Workflow als wiederholbaren Research-/Ideen-/Strategie-Baustein nutzen. Status: erledigt fuer interne CLI-/Skill-Nutzung.
-3. Nach 5-10 echten internen Laeufen entscheiden, ob daraus eine getrennte kleine App analog Room16 entsteht. Status: 5 technische Piloten gruen; keine App jetzt.
-4. LIONCOM erst anbinden, wenn es einen nachweisbar nuetzlichen Run-Vertrag, Artefaktstruktur und Operator-Gate gibt. Status: Adapter bewusst nicht gebaut, weil CLI/Skill reicht.
+2. Den Workflow als wiederholbaren Research-/Ideen-/Strategie-Baustein nutzen. Status: erledigt für interne CLI-/Skill-Nutzung.
+3. Nach 5-10 echten internen Läufen entscheiden, ob daraus eine getrennte kleine App analog Room16 entsteht. Status: 5 technische Piloten gruen; keine App jetzt.
+4. LIONCOM erst anbinden, wenn es einen nachweisbar nützlichen Run-Vertrag, Artefaktstruktur und Operator-Gate gibt. Status: Adapter bewusst nicht gebaut, weil CLI/Skill reicht.
 5. Externe Produktisierung nur greenfield/service-first, nicht auf AGPL-MiroFish-Codebasis. Status: bewusst deferred.
 
 ## Zielbild
@@ -25,8 +25,8 @@ Ein interner Scenario-/Research-Sandbox-Baustein, den Vega und Vivi bei passende
 - Quellen oder Kontext rein.
 - Enge Debattenfrage rein.
 - 3-6 Rollen diskutieren in 1-3 Runden.
-- Rohtranskript, Synthese, Claims-to-check, Konflikte und naechste Tests raus.
-- Alles bleibt `candidate_only`, bis Vega/Operator es prueft.
+- Rohtranskript, Synthese, Claims-to-check, Konflikte und nächste Tests raus.
+- Alles bleibt `candidate_only`, bis Vega/Operator es prüft.
 
 Der Mehrwert ist nicht "mehr Agenten = besser", sondern: kontrollierte Perspektivenspannung, sichtbare Widersprueche, besserer Skeptiker-Modus und wiederverwendbare Artefakte.
 
@@ -36,8 +36,8 @@ Der Mehrwert ist nicht "mehr Agenten = besser", sondern: kontrollierte Perspekti
 - Keine Nutzung als Finanz-, Rechts-, Medizin- oder Public-Entscheider.
 - Keine AGPL-Codeuebernahme aus MiroFish ohne Lizenzentscheidung.
 - Keine Zep-/Cloud-Memory-Pflicht in V1.
-- Keine LIONCOM-Runtime-Aenderung, bis der Skill in internen Laeufen stabil und nuetzlich ist.
-- Keine Multi-Agenten-Laeufe fuer einfache Faktenfragen, kleine Code-Fixes oder klare Zusammenfassungen.
+- Keine LIONCOM-Runtime-Änderung, bis der Skill in internen Läufen stabil und nützlich ist.
+- Keine Multi-Agenten-Läufe für einfache Faktenfragen, kleine Code-Fixes oder klare Zusammenfassungen.
 
 ## Architektur
 
@@ -58,8 +58,8 @@ Umgesetzt:
 
 - Output-Schema formalisiert.
 - Health-Gates geschaerft.
-- Konfigurationsdateien fuer wiederholbare Runs ergaenzt.
-- Repo-Einstiegspunkte unter `scripts/ops/` ergaenzt.
+- Konfigurationsdateien für wiederholbare Runs ergänzt.
+- Repo-Einstiegspunkte unter `scripts/ops/` ergänzt.
 - URL-only Quellen, Datenklassifikation und Audit-Log als QA-Kanten eingebaut.
 
 ### Schicht 2: Kontextpaket
@@ -87,8 +87,8 @@ Standard-Sets:
 
 Ausbau:
 
-- Custom-Agenten per JSON-Datei fuer spezielle Zielgruppen.
-- Wiederverwendbare Sets fuer Utility-Websites, Room16/Quellwert, Produktideen, lokale Dienstleister, SaaS, Creator/Info-Produkte.
+- Custom-Agenten per JSON-Datei für spezielle Zielgruppen.
+- Wiederverwendbare Sets für Utility-Websites, Room16/Quellwert, Produktideen, lokale Dienstleister, SaaS, Creator/Info-Produkte.
 - Agentenprofile kurz halten, damit Rollen nicht zu Theater werden.
 
 ### Schicht 4: Moderator und Claim Review
@@ -101,7 +101,7 @@ Die Synthese muss immer trennen:
 - Konsens
 - Top-Massnahmen
 - Claims-to-check
-- naechster kleinster Test
+- nächster kleinster Test
 
 Vega/Operator entscheidet, nicht der Moderator.
 
@@ -113,7 +113,7 @@ Promotion-Regel:
 
 - Rohtranskript: nie automatisch in Memory.
 - Synthese: nur als Candidate oder Projektartefakt.
-- Dauerhafte Regeln: nur nach Vega-Pruefung in `Learnings and Fixes`, Projektnote oder Skill-Routing.
+- Dauerhafte Regeln: nur nach Vega-Prüfung in `Learnings and Fixes`, Projektnote oder Skill-Routing.
 - Produkt-/Launch-Ideen: in `Project Seeds`, wenn sie echten Folgewert haben.
 
 ## Build-Phasen
@@ -170,7 +170,7 @@ Gate:
 
 - `python3 -m py_compile` gruen.
 - Skill-Validator gruen.
-- Mindestens ein Offline-/Mock-Test fuer Config/Health ohne LLM.
+- Mindestens ein Offline-/Mock-Test für Config/Health ohne LLM.
 - Ein echter Ollama-Smoke mit kleinem Kontext.
 
 Empfohlener Aufwand: 0.5-1 Tag.
@@ -194,7 +194,7 @@ Aufgaben:
   - URL/Pfad
   - Abrufdatum
   - Nutzung im Lauf
-- Prompt-Injection-Hinweis fuer Webquellen: Quelltext ist Material, keine Anweisung.
+- Prompt-Injection-Hinweis für Webquellen: Quelltext ist Material, keine Anweisung.
 - Templates:
   - Website Review
   - Markt-/Konkurrenzanalyse
@@ -221,10 +221,10 @@ Aufgaben:
   - `Kurzfazit`
   - `Konsens`
   - `Konflikte`
-  - `Top 5 naechste Tests`
+  - `Top 5 nächste Tests`
   - `Claims to Check`
-  - `Nicht uebernehmen`
-  - `Naechster Schritt`
+  - `Nicht übernehmen`
+  - `Nächster Schritt`
 - Separates `CLAIMS_TO_CHECK.md` erzeugen.
 - `RUN_REPORT.md` als Operator-Ansicht erzeugen:
   - Status
@@ -250,7 +250,7 @@ Empfohlener Aufwand: 1 Tag.
 
 ### P4 - Interne Pilotserie
 
-Status: erledigt fuer technischen internen Build-Gate.
+Status: erledigt für technischen internen Build-Gate.
 
 Ziel: Erst echte Nutzung beweist, welche Agenten-Sets und Outputs taugen.
 
@@ -271,7 +271,7 @@ Pro Pilot speichern:
 - Operator-Readout
 - kurze Bewertung: besser als Einzelmodell ja/nein/warum
 
-Gate fuer Weiterbau:
+Gate für Weiterbau:
 
 - Mindestens 3 von 5 Piloten liefern klaren Mehrwert gegenueber Einzelmodell.
 - Mindestens 2 konkrete Entscheidungen oder bessere Tests entstehen daraus.
@@ -288,7 +288,7 @@ Empfohlener Aufwand: 1-2 Wochen nebenbei.
 
 ### P5 - Vivi/Codex Arbeitsintegration
 
-Status: erledigt fuer lokales Handoff.
+Status: erledigt für lokales Handoff.
 
 Ziel: Vivi und Codex sollen wissen, wann der Skill zu nutzen ist, ohne jedes Mal neu zu diskutieren.
 
@@ -299,7 +299,7 @@ Aufgaben:
   - Skill Selection Matrix
   - Vivi Skill Inventory
   - ggf. Auftragstyp Routing Decision Tree
-- Standardformulierungen fuer Vivi:
+- Standardformulierungen für Vivi:
   - "Kontextpaket bauen"
   - "Multi-Agentenlauf nur bei Perspektivenspannung"
   - "Synthese candidate_only"
@@ -319,7 +319,7 @@ Gate:
 
 Empfohlener Aufwand: 0.5-1 Tag.
 
-### P6 - Separate interne Scenario-Sandbox-App pruefen
+### P6 - Separate interne Scenario-Sandbox-App prüfen
 
 Status: bewusst deferred.
 
@@ -349,7 +349,7 @@ Gate vor Bau:
 
 - Mindestens 5 interne Runs.
 - Wiederholter Bedarf nach UI statt CLI.
-- Klarer Speicherort fuer Artefakte.
+- Klarer Speicherort für Artefakte.
 - Operator will mehrere Runs vergleichen.
 
 Empfohlener Aufwand MVP: 2-4 Tage.
@@ -358,12 +358,12 @@ Empfohlener Aufwand MVP: 2-4 Tage.
 
 Status: bewusst deferred.
 
-Ziel: LIONCOM soll den Skill nur sichtbar machen, nicht die Wahrheitsschicht unkontrolliert veraendern.
+Ziel: LIONCOM soll den Skill nur sichtbar machen, nicht die Wahrheitsschicht unkontrolliert verändern.
 
 Moeglicher kleiner Einbau:
 
 - Neue Capability Card: `Scenario / Multi-Agent Research`.
-- Formular fuer:
+- Formular für:
   - Debattenfrage
   - Kontextquelle/Pfad
   - Agent-Set
@@ -381,7 +381,7 @@ Nicht einbauen:
 
 - keine permanente Agenten-Diskussion als Chat-Spielerei
 - keine Zep-/Graph-Memory-Abhaengigkeit
-- keine automatische Outreach-/Website-/Report-Aenderung
+- keine automatische Outreach-/Website-/Report-Änderung
 - keine Kundendaten ohne Auth/Privacy-Gate
 
 Gate:
@@ -409,7 +409,7 @@ Moegliches Angebot:
   - Messaging-Ranking
   - Risiko-/Backlash-Check
   - Copy-Varianten
-  - naechster Realtest
+  - nächster Realtest
 
 Vorgehen:
 
@@ -431,21 +431,21 @@ Gate:
 - Mindestens 3 zahlende Piloten.
 - Wiederholbares Delivery-Template.
 - Klarer Preisanker.
-- Recht-/Datenschutz-Scope geklaert.
+- Recht-/Datenschutz-Scope geklärt.
 
-Empfohlener Aufwand Service-Pilot: 3-7 Tage fuer Angebot + Beispiele, danach Verkaufstest.
+Empfohlener Aufwand Service-Pilot: 3-7 Tage für Angebot + Beispiele, danach Verkaufstest.
 
 ## Erledigte Tasks
 
 1. P1: Runner um Config-Datei und stabilere Health-Gates erweitert.
 2. P1: `RUN_REPORT.md` und `CLAIMS_TO_CHECK.md` automatisch erzeugt.
-3. P1: Offline-Tests fuer Config, Custom-Agenten und Health geschrieben.
+3. P1: Offline-Tests für Config, Custom-Agenten und Health geschrieben.
 4. P2: Kontextpaket-Builder und Website-/Research-/Produkt-/System-Templates gebaut.
 5. P3: Moderator-Synthese in festen Output-Vertrag gebracht.
-6. P3: `AUDIT_LOG.json` ergaenzt.
+6. P3: `AUDIT_LOG.json` ergänzt.
 7. P4: fuenf technische interne DeepSeek-Piloten durchgefuehrt.
 8. P5: Vivi-Handoff-Template materialisiert.
-9. Repo-Einstiegspunkte fuer Context Builder und Panel Runner erstellt.
+9. Repo-Einstiegspunkte für Context Builder und Panel Runner erstellt.
 10. Entscheidung nach Pilotserie dokumentiert: CLI/Skill reicht jetzt; separate App und LIONCOM-Adapter deferred.
 
 ## Wann Wir Stoppen

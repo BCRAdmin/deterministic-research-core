@@ -10,6 +10,7 @@ from __future__ import annotations
 
 __all__ = [
     "automation_cards",
+    "coding_guardrails",
     "deliverable_swarm",
     "guardrails",
     "memory_inbox",

@@ -3,6 +3,10 @@ from pathlib import Path
 from research_agent.ops.automation_cards import default_job_cards, validate_job_card
 from research_agent.ops.memory_inbox import build_search_index, collect_memory_candidates, search_index
 from research_agent.ops.readiness import build_openclaw_migration_dry_run
+from research_agent.ops.review_workbenches import (
+    build_guardrail_policy_gate_matrix,
+    build_memory_promotion_workbench,
+)
 
 
 def test_memory_inbox_collects_promotion_candidate(tmp_path: Path) -> None:
@@ -31,6 +35,38 @@ def test_session_search_index_returns_hits(tmp_path: Path) -> None:
     assert row_count == 1
     assert hits
     assert hits[0].path == "docs/note.md"
+
+
+def test_memory_promotion_workbench_groups_candidates(tmp_path: Path) -> None:
+    docs = tmp_path / "docs"
+    docs.mkdir()
+    (docs / "note.md").write_text(
+        "\n".join(
+            [
+                "- Learning: Vega should keep durable decisions in the vault.",
+                "- Dauerregel: Operator-Gate findings must stay visible.",
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+    candidates = collect_memory_candidates(tmp_path, targets=("docs",))
+    batches = build_memory_promotion_workbench(candidates)
+
+    assert batches
+    assert sum(batch.candidate_count for batch in batches) == len(candidates)
+    assert all(batch.gate == "obsidian_promotion_review_required" for batch in batches)
+
+
+def test_guardrail_policy_gate_matrix_groups_findings() -> None:
+    from research_agent.ops.guardrails import scan_text
+
+    findings = scan_text("run deploy to production", scan_type="automation")
+    gates = build_guardrail_policy_gate_matrix(findings)
+
+    assert gates
+    assert gates[0].status == "report_level_gate_active"
+    assert gates[0].operator_gate_required is True
 
 
 def test_default_automation_cards_are_valid(tmp_path: Path) -> None:

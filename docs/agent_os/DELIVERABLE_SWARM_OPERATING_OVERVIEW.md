@@ -1,24 +1,24 @@
-# Deliverable-Swarm-Nutzungsuebersicht
+# Deliverable-Swarm-Nutzungsübersicht
 
 Status: aktive lokale v1
 Scope: Vega / Vivi / LIONCOM / OpenClaw-nahe Agentenarbeit
-Quellmuster: VRSEN/OpenSwarm, nur als Muster uebernommen
-Runtime-Aenderungen: keine
+Quellmuster: VRSEN/OpenSwarm, nur als Muster übernommen
+Runtime-Änderungen: keine
 
 ## Kurzbild
 
-Der Deliverable-Swarm-Vertrag ist die sichtbare Struktur fuer Agentenarbeit.
-Er beantwortet vor der Ausfuehrung vier Fragen:
+Der Deliverable-Swarm-Vertrag ist die sichtbare Struktur für Agentenarbeit.
+Er beantwortet vor der Ausführung vier Fragen:
 
 - Welche Lane besitzt die Arbeit?
 - Welches Artefakt wird geliefert?
 - Wohin wird das Artefakt geschrieben?
 - Welcher Verifier beweist, dass es nutzbar ist?
 
-Uebernommen wird OpenSwarms gutes Produktmuster: sichtbare Spezialisten-Lanes
-fuer konkrete Outputs. Nicht uebernommen werden OpenSwarms Runtime-Risiken wie
+Übernommen wird OpenSwarms gutes Produktmuster: sichtbare Spezialisten-Lanes
+für konkrete Outputs. Nicht übernommen werden OpenSwarms Runtime-Risiken wie
 Auto-Installer, breite Composio-Integrationen, Systempaket-Mutationen,
-versteckte all-to-all-Handoffs oder Provider-Ausfuehrung ohne Gate.
+versteckte all-to-all-Handoffs oder Provider-Ausführung ohne Gate.
 
 ## Wo es genutzt wird
 
@@ -28,12 +28,12 @@ versteckte all-to-all-Handoffs oder Provider-Ausfuehrung ohne Gate.
 | Maschinenvertrag | Pflicht-Lanes, Metadaten und Grenzen | `docs/agent_os/DELIVERABLE_SWARM_CONTRACT.json` |
 | Implementierung | Lane-, Output-Vertrags- und Validierungslogik | `research_agent/ops/deliverable_swarm.py` |
 | Agent-OS-Runner | Erzeugt die aktuellen Review-Artefakte | `python3 scripts/ops/agent_os_readiness.py` |
-| Generierte Uebersicht | Aktuelle Lane-Matrix und Output-Vertraege | `outputs/agent_os_readiness/DELIVERABLE_SWARM_CONTRACT.md` |
-| Operator Inbox | Zeigt den Review-Punkt als P0-Lieferoberflaeche | `outputs/agent_os_readiness/OPERATOR_INBOX.md` |
+| Generierte Übersicht | Aktuelle Lane-Matrix und Output-Verträge | `outputs/agent_os_readiness/DELIVERABLE_SWARM_CONTRACT.md` |
+| Operator Inbox | Zeigt den Review-Punkt als P0-Lieferoberfläche | `outputs/agent_os_readiness/OPERATOR_INBOX.md` |
 | Automation Cards | Fuegt eine sichere Review-Karte hinzu, keine installierte Automation | `outputs/agent_os_readiness/AUTOMATION_JOB_CARDS.md` |
-| Readiness-Bericht | Dokumentiert den OpenSwarm-Transfer als lokale Faehigkeit | `outputs/agent_os_readiness/AGENT_OS_READINESS_REPORT.md` |
+| Readiness-Bericht | Dokumentiert den OpenSwarm-Transfer als lokale Fähigkeit | `outputs/agent_os_readiness/AGENT_OS_READINESS_REPORT.md` |
 | Tests | Verhindert Drift bei Lanes, Gates, Handoffs und Metadaten | `research_agent/tests/test_agent_os_deliverable_swarm.py` |
-| Canvas | Visuelle Karte fuer Wann, Wo und Wie | `docs/agent_os/DELIVERABLE_SWARM_OPERATING_MAP.canvas` |
+| Canvas | Visuelle Karte für Wann, Wo und Wie | `docs/agent_os/DELIVERABLE_SWARM_OPERATING_MAP.canvas` |
 
 ## Wann es genutzt wird
 
@@ -53,13 +53,13 @@ Praesentation" oder "gib mir alles was ich wissen muss".
 
 ## Wann es nicht direkt genutzt wird
 
-Der Deliverable-Swarm-Vertrag ist keine Erlaubnis fuer:
+Der Deliverable-Swarm-Vertrag ist keine Erlaubnis für:
 
 - OpenSwarm oder eine andere externe Runtime zu installieren
 - Gmail, Slack, GitHub, Stripe, Composio oder Media-Provider zu verbinden
 - Secrets oder API-Keys zu lesen oder zu importieren
 - oeffentliche Veroeffentlichungen auszufuehren
-- kanonische Obsidian-Notizen automatisch zu veraendern
+- kanonische Obsidian-Notizen automatisch zu verändern
 - Scheduled-Runner-Agenten oder Automationen anzulegen
 - versteckte all-to-all-Handoffs zwischen Spezialisten zu nutzen
 
@@ -74,10 +74,10 @@ flowchart LR
     B --> C["Lane(s) waehlen"]
     C --> D["Output-Vertrag binden"]
     D --> E["Artefakt erzeugen"]
-    E --> F["Verifier ausfuehren"]
+    E --> F["Verifier ausführen"]
     F --> G{"Gate frei?"}
-    G -->|ja| H["Geprueftes Artefakt + Pfad"]
-    G -->|nein| I["Blockierte Gates + naechste sichere Aktion"]
+    G -->|ja| H["Geprüftes Artefakt + Pfad"]
+    G -->|nein| I["Blockierte Gates + nächste sichere Aktion"]
     H --> J["Optional Memory/GitHub sichern"]
     I --> J
 ```
@@ -91,14 +91,14 @@ unbegrenztes Mesh zu verwandeln.
 
 | Lane | Nutzen, wenn | Outputs | Gate | Verifier |
 | --- | --- | --- | --- | --- |
-| `orchestrator` | Der Auftrag braucht Routing, Zerlegung oder mehrere Outputs | `route_plan`, `handoff_packet` | lokale Pruefung | `validate_route_has_lane_owner_output_path_and_gate` |
-| `assistant` | Der Auftrag ist operatornahe Koordination oder ein Entwurf | `operator_note`, `draft_message`, `task_summary` | Operator-Go fuer irreversible Aktion | `validate_no_irreversible_action_without_operator_go` |
-| `research` | Quellenbelegte Fakten, Vergleiche oder Repo-Analyse noetig sind | `research_brief`, `source_matrix`, `decision_options` | lokale Pruefung | `validate_claims_have_sources_and_open_questions` |
-| `data` | Strukturierte Daten, Metriken oder Charts genutzt werden | `analysis_report`, `chart_asset`, `data_quality_note` | lokale Pruefung | `validate_inputs_metrics_chart_paths_and_data_limits` |
-| `docs` | Das Ergebnis ein Dokument, SOP, PDF oder DOCX ist | `markdown_doc`, `docx_doc`, `pdf_doc`, `change_summary` | lokale Pruefung | `validate_source_html_or_markdown_export_and_change_summary` |
-| `slides` | Das Ergebnis ein Slide Deck oder Pitch Deck ist | `slide_source`, `pptx_deck`, `deck_visual_qa` | lokale Pruefung | `validate_deck_export_visual_qa_and_no_overflow` |
-| `images` | Bildgenerierung oder Bildbearbeitung noetig ist | `image_asset`, `image_qc_report` | Operator-/Provider-Gate | `validate_prompt_reference_rights_output_path_and_qc` |
-| `video` | Videogenerierung oder Videobearbeitung noetig ist | `video_asset`, `video_qc_report` | Operator-/Provider-Gate | `validate_brief_duration_provider_cost_output_path_and_qc` |
+| `orchestrator` | Der Auftrag braucht Routing, Zerlegung oder mehrere Outputs | `route_plan`, `handoff_packet` | lokale Prüfung | `validate_route_has_lane_owner_output_path_and_gate` |
+| `assistant` | Der Auftrag ist operatornahe Koordination oder ein Entwurf | `operator_note`, `draft_message`, `task_summary` | Operator-Go für irreversible Aktion | `validate_no_irreversible_action_without_operator_go` |
+| `research` | Quellenbelegte Fakten, Vergleiche oder Repo-Analyse nötig sind | `research_brief`, `source_matrix`, `decision_options` | lokale Prüfung | `validate_claims_have_sources_and_open_questions` |
+| `data` | Strukturierte Daten, Metriken oder Charts genutzt werden | `analysis_report`, `chart_asset`, `data_quality_note` | lokale Prüfung | `validate_inputs_metrics_chart_paths_and_data_limits` |
+| `docs` | Das Ergebnis ein Dokument, SOP, PDF oder DOCX ist | `markdown_doc`, `docx_doc`, `pdf_doc`, `change_summary` | lokale Prüfung | `validate_source_html_or_markdown_export_and_change_summary` |
+| `slides` | Das Ergebnis ein Slide Deck oder Pitch Deck ist | `slide_source`, `pptx_deck`, `deck_visual_qa` | lokale Prüfung | `validate_deck_export_visual_qa_and_no_overflow` |
+| `images` | Bildgenerierung oder Bildbearbeitung nötig ist | `image_asset`, `image_qc_report` | Operator-/Provider-Gate | `validate_prompt_reference_rights_output_path_and_qc` |
+| `video` | Videogenerierung oder Videobearbeitung nötig ist | `video_asset`, `video_qc_report` | Operator-/Provider-Gate | `validate_brief_duration_provider_cost_output_path_and_qc` |
 
 ## Output-Vertrag
 
@@ -134,15 +134,15 @@ ist fertig, wenn Artefaktpfad, Lane, Verifier und Gate-Zustand explizit sind.
 
 ## Standard-Ablauf
 
-1. Auftrag lesen und entscheiden, ob ein konkretes Lieferobjekt noetig ist.
-2. Ueber `orchestrator` routen, wenn mehrere Lanes moeglich sind.
+1. Auftrag lesen und entscheiden, ob ein konkretes Lieferobjekt nötig ist.
+2. Über `orchestrator` routen, wenn mehrere Lanes möglich sind.
 3. Eine oder mehrere Lanes waehlen.
-4. Output-Vertraege binden, bevor Artefakte erzeugt werden.
-5. Artefakte unter `outputs/deliverable_swarm/<lane>/<project>/...` oder einem projektspezifisch geprueften Pfad schreiben.
-6. Lane-Verifier oder naechsten bestehenden Projekt-Verifier ausfuehren.
-7. Finalen Pfad, Status, blockierte Gates und naechste sichere Aktion berichten.
+4. Output-Verträge binden, bevor Artefakte erzeugt werden.
+5. Artefakte unter `outputs/deliverable_swarm/<lane>/<project>/...` oder einem projektspezifisch geprüften Pfad schreiben.
+6. Lane-Verifier oder nächsten bestehenden Projekt-Verifier ausführen.
+7. Finalen Pfad, Status, blockierte Gates und nächste sichere Aktion berichten.
 8. Wenn dauerhafte Projektwahrheit entstanden ist, in Obsidian oder Pending Sync sichern.
-9. Wenn Repo-Wahrheit entstanden ist, ueber Review-Git-Workflow und CI sichern.
+9. Wenn Repo-Wahrheit entstanden ist, über Review-Git-Workflow und CI sichern.
 
 ## Entscheidungs-Spickzettel
 
@@ -160,7 +160,7 @@ ist fertig, wenn Artefaktpfad, Lane, Verifier und Gate-Zustand explizit sind.
 
 ## Visuelle Karte
 
-Oeffne diese Canvas-Datei fuer das Schaubild:
+Öffne diese Canvas-Datei für das Schaubild:
 
 - `docs/agent_os/DELIVERABLE_SWARM_OPERATING_MAP.canvas`
 
@@ -168,13 +168,13 @@ Die Canvas zeigt:
 
 - wann der Vertrag greift
 - wie Orchestrierung in Lanes routet
-- wo Output-Vertraege sitzen
+- wo Output-Verträge sitzen
 - wo Verifier und Gates stoppen oder finalisieren
 - welche Quell- und Output-Dateien das System definieren
 
 ## Verifikation
 
-Aktuell gepruefte Befehle:
+Aktuell geprüfte Befehle:
 
 ```bash
 python3 scripts/ops/agent_os_readiness.py

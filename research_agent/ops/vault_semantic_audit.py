@@ -54,6 +54,11 @@ HISTORICAL_MARKERS = (
     "historische herkunft",
 )
 
+WORTCLUSTER_ALLOWED_STATUSES = (
+    "status: waiting",
+    "status: parked_no_current_intent",
+)
+
 
 @dataclass(frozen=True)
 class SemanticFinding:
@@ -118,7 +123,7 @@ def default_viewpoints() -> tuple[AuditViewpoint, ...]:
             viewpoint_id="body_semantics",
             title="Body-Semantik statt Frontmatter",
             question="Widersprechen alte Abschnitte dem Status oben in der Note?",
-            catches="Notes mit korrektem `status: waiting`, aber aktiv klingenden Body-Abschnitten.",
+            catches="Notes mit korrektem `waiting`/`parked` Status, aber aktiv klingenden Body-Abschnitten.",
             operator_relief="Vivi/Vega muessen nicht aus Chronik-Waenden die Fuehrung erraten.",
         ),
         AuditViewpoint(
@@ -236,15 +241,15 @@ def audit_vault_semantic_ownership(vault: Path = DEFAULT_VAULT) -> VaultSemantic
             )
 
     if wortcluster.exists():
-        if "status: waiting" not in wortcluster_text:
+        if not any(status in wortcluster_text for status in WORTCLUSTER_ALLOWED_STATUSES):
             findings.append(
                 SemanticFinding(
                     severity="high",
-                    check_id="wortcluster_not_waiting",
+                    check_id="wortcluster_not_waiting_or_parked",
                     file=_relative(vault, wortcluster),
                     line=0,
-                    summary="Utility Wortcluster ist nicht mehr eindeutig `waiting`.",
-                    action="Wortcluster nur bei echter Solver-Reaktivierung auf aktiv stellen.",
+                    summary="Utility Wortcluster ist nicht eindeutig `waiting` oder `parked_no_current_intent`.",
+                    action="Wortcluster nur bei echter Solver-Reaktivierung auf aktiv stellen; sonst parked/waiting halten.",
                 )
             )
         if (

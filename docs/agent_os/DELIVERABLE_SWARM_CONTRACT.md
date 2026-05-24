@@ -1,15 +1,15 @@
 # Deliverable-Swarm-Vertrag
 
 Status: aktive lokale v1
-Runtime-Aenderungen: keine
-Quellmuster: VRSEN/OpenSwarm, nur als Muster uebernommen
+Runtime-Änderungen: keine
+Quellmuster: VRSEN/OpenSwarm, nur als Muster übernommen
 
 ## Zweck
 
-Dieser Vertrag uebersetzt das nuetzliche OpenSwarm-Produktmuster in eine
-sichere lokale Oberflaeche fuer Vega-, Vivi-, LIONCOM- und OpenClaw-Arbeit.
+Dieser Vertrag übersetzt das nützliche OpenSwarm-Produktmuster in eine
+sichere lokale Oberfläche für Vega-, Vivi-, LIONCOM- und OpenClaw-Arbeit.
 
-Das uebernommene Muster ist einfach:
+Das übernommene Muster ist einfach:
 
 - ein Orchestrator routet Arbeit
 - Spezialisten besitzen konkrete Lieferobjekte
@@ -23,7 +23,7 @@ Das uebernommene Muster ist einfach:
 - `assistant`: Operator-Notizen, Nachrichtenentwuerfe, Task-Zusammenfassungen
 - `research`: Research-Briefs, Quellenmatrizen, Entscheidungsoptionen
 - `data`: Analyseberichte, Chart-Artefakte, Datenqualitaetsnotizen
-- `docs`: Markdown, DOCX, PDF, Aenderungszusammenfassungen
+- `docs`: Markdown, DOCX, PDF, Änderungszusammenfassungen
 - `slides`: Slide-Quellen, PPTX-Deck, visuelle QA
 - `images`: Bildartefakte und Bild-QC, provider-gated
 - `video`: Videoartefakte und Video-QC, provider-gated
@@ -70,7 +70,7 @@ Generierte Outputs:
 - `outputs/agent_os_readiness/DELIVERABLE_SWARM_CONTRACT.md`
 - `outputs/agent_os_readiness/DELIVERABLE_SWARM_CONTRACT.json`
 
-Nutzungsuebersicht:
+Nutzungsübersicht:
 
 - `docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md`
 - `docs/agent_os/DELIVERABLE_SWARM_OPERATING_MAP.canvas`

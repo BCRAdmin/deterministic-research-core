@@ -1,6 +1,6 @@
-"""Portfolio-Produktoberflaechen-Audit.
+"""Portfolio-Produktoberflächen-Audit.
 
-Diese Schicht prueft die kanonischen Projektkarten gegen den
+Diese Schicht prüft die kanonischen Projektkarten gegen den
 Deliverable-Swarm-Vertrag. Sie ist absichtlich ein lokaler Review-Output:
 keine Runtime-Mutation, keine automatischen Obsidian-Schreibrechte und keine
 externen Provider-Aktionen.
@@ -16,6 +16,9 @@ from typing import Optional, Sequence
 
 
 SURFACE_MARKERS = (
+    "## Produktoberflächen-Check",
+    "## Deliverable-/Produktoberflächen-Check",
+    "## Lieferoberfläche",
     "## Produktoberflaechen-Check",
     "## Deliverable-/Produktoberflaechen-Check",
     "## Lieferoberflaeche",
@@ -24,8 +27,12 @@ SURFACE_MARKERS = (
 REQUIRED_PROJECT_HEADINGS = (
     "## Kurzbild",
     "## Aktueller Stand",
-    "## Naechster sinnvoller Schnitt",
+    "## Nächster sinnvoller Schnitt",
 )
+
+LEGACY_REQUIRED_PROJECT_HEADINGS = {
+    "## Nächster sinnvoller Schnitt": ("## Naechster sinnvoller Schnitt",),
+}
 
 
 @dataclass(frozen=True)
@@ -126,7 +133,7 @@ def default_project_surface_specs() -> list[ProjectSurfaceSpec]:
             required_terms=("Proof", "Waitlist", "Provider", "Launch"),
             gate_terms=("Operator-Go", "Provider", "Checkout", "Mail"),
             next_safe_action=(
-                "Nur Research-, Readiness- und Preview-Lieferobjekte oeffnen, "
+                "Nur Research-, Readiness- und Preview-Lieferobjekte öffnen, "
                 "bis Provider, Geld, Mail und echte externe Sends explizit frei sind."
             ),
         ),
@@ -134,14 +141,14 @@ def default_project_surface_specs() -> list[ProjectSurfaceSpec]:
             project_id="utility_wortcluster",
             title="Utility Wortcluster",
             note_relative_path="Project - Utility Wortcluster.md",
-            expected_statuses=("waiting",),
+            expected_statuses=("waiting", "parked_no_current_intent"),
             owner_lanes=("research", "data", "docs"),
             visible_surfaces=("Wortquelle", "Regelset", "Solver-MVP"),
             required_terms=("Wortquelle", "Regelset", "Solver"),
-            gate_terms=("waiting", "Datenquellen-Hold", "Methodik"),
+            gate_terms=("parked_no_current_intent", "Datenquellen-Hold", "Methodik"),
             next_safe_action=(
-                "Wortquelle, Regelset und Datenschema entscheiden, bevor UI- oder "
-                "SEO-Ausbau als aktiv gefuehrt wird."
+                "Keine Solverarbeit starten; nur bei ausdruecklicher Reaktivierung "
+                "Wortquelle, Regelset und Datenschema neu entscheiden."
             ),
         ),
         ProjectSurfaceSpec(
@@ -176,8 +183,8 @@ def default_project_surface_specs() -> list[ProjectSurfaceSpec]:
             required_terms=("Research", "Archiv", "Methodik", "Room16"),
             gate_terms=("Promotion", "public_ready", "Operator-Go", "Non-Advice"),
             next_safe_action=(
-                "Research-/Archiv-/Methodik-Vertrauen staerken; Public-Promotion "
-                "nur ueber Source-Ledger, Non-Advice, Human Source Verification und Operator-Go."
+                "Research-/Archiv-/Methodik-Vertrauen stärken; Public-Promotion "
+                "nur über Source-Ledger, Non-Advice, Human Source Verification und Operator-Go."
             ),
         ),
     ]
@@ -250,14 +257,15 @@ def _audit_single_project(spec: ProjectSurfaceSpec, vault: Path) -> ProjectSurfa
         )
 
     for heading in REQUIRED_PROJECT_HEADINGS:
-        if heading not in text:
+        accepted_headings = (heading, *LEGACY_REQUIRED_PROJECT_HEADINGS.get(heading, ()))
+        if not any(accepted in text for accepted in accepted_headings):
             findings.append(
                 SurfaceFinding(
                     project_id=spec.project_id,
                     severity="high",
                     check_id=f"missing_heading:{heading}",
-                    summary=f"Fuehrungsheading fehlt: `{heading}`.",
-                    action="Projektkarte auf Kurzbild, aktuelle Wahrheit und naechsten Schnitt normalisieren.",
+                    summary=f"Führungsheading fehlt: `{heading}`.",
+                    action="Projektkarte auf Kurzbild, aktuelle Wahrheit und nächsten Schnitt normalisieren.",
                 )
             )
 
@@ -267,10 +275,10 @@ def _audit_single_project(spec: ProjectSurfaceSpec, vault: Path) -> ProjectSurfa
                 project_id=spec.project_id,
                 severity="high",
                 check_id="missing_product_surface_check",
-                summary="Expliziter Produktoberflaechen-Check fehlt.",
+                summary="Expliziter Produktoberflächen-Check fehlt.",
                 action=(
-                    "Abschnitt `Produktoberflaechen-Check` mit sichtbarer "
-                    "Oberflaeche, Lanes, Gates und naechster sicherer Aktion ergaenzen."
+                    "Abschnitt `Produktoberflächen-Check` mit sichtbarer "
+                    "Oberfläche, Lanes, Gates und nächster sicherer Aktion ergänzen."
                 ),
             )
         )
@@ -283,7 +291,7 @@ def _audit_single_project(spec: ProjectSurfaceSpec, vault: Path) -> ProjectSurfa
                 severity="high",
                 check_id="missing_surface_terms",
                 summary=f"Pflichtbegriffe fehlen: `{', '.join(missing_required)}`.",
-                action="Projektkarte muss die reale sichtbare Lieferoberflaeche benennen.",
+                action="Projektkarte muss die reale sichtbare Lieferoberfläche benennen.",
             )
         )
 
@@ -317,7 +325,7 @@ def _audit_single_project(spec: ProjectSurfaceSpec, vault: Path) -> ProjectSurfa
                     ),
                     action=(
                         "Aktive Utility-Websites in eine eigene Projektkarte routen und "
-                        "Wortcluster wieder als wartenden Solver-MVP fuehren."
+                        "Wortcluster wieder als wartenden Solver-MVP führen."
                     ),
                 )
             )
@@ -358,20 +366,20 @@ def audit_portfolio_surfaces(
 
 def render_portfolio_surface_markdown(audit: PortfolioSurfaceAudit) -> str:
     lines = [
-        "# Portfolio-Produktoberflaechen-Audit",
+        "# Portfolio-Produktoberflächen-Audit",
         "",
-        "Dieser Bericht prueft die aktiven Projektkarten einzeln gegen die Frage: "
-        "Gibt es eine sichtbare Lieferoberflaeche mit Owner-Lane, Output, Verifier, "
-        "Gate und naechster sicherer Aktion?",
+        "Dieser Bericht prüft die aktiven Projektkarten einzeln gegen die Frage: "
+        "Gibt es eine sichtbare Lieferoberfläche mit Owner-Lane, Output, Verifier, "
+        "Gate und nächster sicherer Aktion?",
         "",
-        f"Gueltig: `{str(audit.valid).lower()}`",
+        f"Gültig: `{str(audit.valid).lower()}`",
         f"Vault: `{audit.vault}`",
         f"Projektkarten: `{len(audit.results)}`",
         f"Findings: `{len(audit.findings)}`",
         "",
         "## Matrix",
         "",
-        "| Projekt | Status | Audit | Lanes | Sichtbare Oberflaechen | Gates | Naechste sichere Aktion |",
+        "| Projekt | Status | Audit | Lanes | Sichtbare Oberflächen | Gates | Nächste sichere Aktion |",
         "| --- | --- | --- | --- | --- | --- | --- |",
     ]
     for result in audit.results:
@@ -402,9 +410,9 @@ def render_portfolio_surface_markdown(audit: PortfolioSurfaceAudit) -> str:
                 f"- Projektkarte: `{result.note_path}`",
                 f"- Audit-Status: `{result.audit_status}`",
                 f"- Owner-Lanes: `{', '.join(result.owner_lanes)}`",
-                f"- Sichtbare Oberflaechen: {', '.join(result.visible_surfaces)}",
+                f"- Sichtbare Oberflächen: {', '.join(result.visible_surfaces)}",
                 f"- Blockierte Gates: `{', '.join(result.blocked_gates)}`",
-                f"- Naechste sichere Aktion: {result.next_safe_action}",
+                f"- Nächste sichere Aktion: {result.next_safe_action}",
                 "",
             ]
         )
@@ -437,9 +445,9 @@ def render_portfolio_surface_canvas(audit: PortfolioSurfaceAudit) -> str:
             "id": "audit-rule",
             "type": "text",
             "text": (
-                "Pruefregel\n\nJede Projektkarte braucht sichtbare Oberflaeche, "
-                "Owner-Lanes, Gate-Begriffe und naechste sichere Aktion. "
-                "Wartende und aktive Produkte duerfen nicht in derselben Wahrheit verschwimmen."
+                "Prüfregel\n\nJede Projektkarte braucht sichtbare Oberfläche, "
+                "Owner-Lanes, Gate-Begriffe und nächste sichere Aktion. "
+                "Wartende und aktive Produkte dürfen nicht in derselben Wahrheit verschwimmen."
             ),
             "x": 680,
             "y": 0,
@@ -465,7 +473,7 @@ def render_portfolio_surface_canvas(audit: PortfolioSurfaceAudit) -> str:
             "toNode": "portfolio-audit",
             "toSide": "right",
             "toEnd": "arrow",
-            "label": "prueft",
+            "label": "prüft",
         },
     ]
 
@@ -479,7 +487,7 @@ def render_portfolio_surface_canvas(audit: PortfolioSurfaceAudit) -> str:
             f"Audit: {result.audit_status}\n"
             f"Lanes: {', '.join(result.owner_lanes)}\n"
             f"Findings: {findings}\n\n"
-            f"Naechste Aktion: {result.next_safe_action}"
+            f"Nächste Aktion: {result.next_safe_action}"
         )
         nodes.append(
             {

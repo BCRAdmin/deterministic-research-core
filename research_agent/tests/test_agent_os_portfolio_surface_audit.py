@@ -103,6 +103,27 @@ def test_portfolio_surface_audit_passes_for_split_and_marked_project_cards(tmp_p
     assert {result.audit_status for result in audit.results} == {"verified_local_surface"}
 
 
+def test_portfolio_surface_audit_accepts_parked_wortcluster(tmp_path: Path) -> None:
+    _write_valid_vault(tmp_path)
+    _write_project_note(
+        tmp_path,
+        "Project - Utility Wortcluster.md",
+        "parked_no_current_intent",
+        (
+            "Kein aktueller Scrabble- oder Wortfinder-Intent. Wortquelle, Regelset, Solver, "
+            "parked_no_current_intent, Datenquellen-Hold und Methodik. Historische "
+            "Materialbedarf-/Elterngeld-/Microtool-Belege verweisen auf "
+            "[[Project - Utility Websites Portfolio]]. Utility-Websites-Portfolio ist eine "
+            "eigene aktive Projektkarte."
+        ),
+    )
+
+    audit = audit_portfolio_surfaces(tmp_path)
+
+    assert audit.valid is True
+    assert not audit.findings
+
+
 def test_portfolio_surface_audit_flags_utility_mix_without_split(tmp_path: Path) -> None:
     _write_valid_vault(tmp_path)
     (tmp_path / "Project - Utility Websites Portfolio.md").unlink()
@@ -128,7 +149,7 @@ def test_portfolio_surface_renderers_emit_markdown_and_canvas(tmp_path: Path) ->
     markdown = render_portfolio_surface_markdown(audit)
     canvas = json.loads(render_portfolio_surface_canvas(audit))
 
-    assert "Portfolio-Produktoberflaechen-Audit" in markdown
+    assert "Portfolio-Produktoberflächen-Audit" in markdown
     assert "Keine Blocker oder High-Findings" in markdown
     assert any(node["id"] == "portfolio-audit" for node in canvas["nodes"])
     assert len(canvas["edges"]) >= len(audit.results)

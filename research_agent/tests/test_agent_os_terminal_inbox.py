@@ -25,6 +25,7 @@ def test_operator_inbox_items_are_valid_when_sources_exist(tmp_path: Path) -> No
         "SKILL_REGISTRY.md",
         "MEMORY_INBOX_CANDIDATES.md",
         "GUARDRAIL_SCAN.md",
+        "AGENT_CODING_GUARDRAILS.md",
         "AUTOMATION_JOB_CARDS.md",
         "DELIVERABLE_SWARM_CONTRACT.md",
         "VAULT_SEMANTIC_OWNERSHIP_AUDIT.md",
@@ -39,6 +40,8 @@ def test_operator_inbox_items_are_valid_when_sources_exist(tmp_path: Path) -> No
         automation_cards_valid=True,
         deliverable_contract_valid=True,
         deliverable_lane_count=8,
+        coding_guardrails_valid=True,
+        coding_guardrail_count=7,
         vault_semantic_audit_valid=True,
         vault_semantic_findings=0,
     )
@@ -48,4 +51,5 @@ def test_operator_inbox_items_are_valid_when_sources_exist(tmp_path: Path) -> No
     assert not validation.warnings
     assert any(item.lane == "runtime_gate" and item.operator_gate_required for item in items)
     assert any(item.lane == "deliverable_surface" and item.priority == "P0" for item in items)
+    assert any(item.lane == "coding_governance" and item.priority == "P0" for item in items)
     assert any(item.item_id == "vault-semantic-ownership-review" for item in items)

@@ -45,6 +45,8 @@ def build_operator_inbox_items(
     automation_cards_valid: bool,
     deliverable_contract_valid: bool = True,
     deliverable_lane_count: int = 0,
+    coding_guardrails_valid: bool = True,
+    coding_guardrail_count: int = 0,
     vault_semantic_audit_valid: bool = True,
     vault_semantic_findings: int = 0,
 ) -> list[InboxItem]:
@@ -90,6 +92,19 @@ def build_operator_inbox_items(
             summary=f"{guardrail_count} Guardrail-Funde sind als Gates vor Runtime-Erweiterung festgehalten.",
             required_action="gates_vor_runtime_rechten_klaeren_oder_akzeptieren",
             operator_gate_required=True,
+        ),
+        InboxItem(
+            item_id="agent-coding-guardrails-review",
+            lane="coding_governance",
+            priority="P0",
+            status="ready_for_review" if coding_guardrails_valid else "blocked",
+            source=str(base / "AGENT_CODING_GUARDRAILS.md"),
+            summary=(
+                f"{coding_guardrail_count} Coding-Guardrails uebernehmen Karpathy-Minimalismus "
+                "und Superpowers-Verification/Debugging als lokale Playbook-Schicht."
+            ),
+            required_action="bei_coding_tasks_als_default_review_gate_nutzen",
+            operator_gate_required=not coding_guardrails_valid,
         ),
         InboxItem(
             item_id="vault-semantic-ownership-review",

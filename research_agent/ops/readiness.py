@@ -112,6 +112,12 @@ def build_capability_matrix(
             "Block-/High-Funde vor Runtime-Erweiterung als Gates behandeln.",
         ),
         CapabilityCheck(
+            "agent_coding_guardrails",
+            "implemented_local_playbook",
+            str(root / "outputs/agent_os_readiness/AGENT_CODING_GUARDRAILS.md"),
+            "Karpathy-Minimalismus und Superpowers-Verification/Debugging als lokale Coding-Checks nutzen; keine Plugin-Installation.",
+        ),
+        CapabilityCheck(
             "multi_channel_gateway",
             "local_operator_inbox_contract_implemented",
             str(root / "outputs/agent_os_readiness/OPERATOR_INBOX.md"),

@@ -91,6 +91,30 @@ def test_vault_semantic_audit_passes_clean_split(tmp_path: Path) -> None:
     assert not audit.findings
 
 
+def test_vault_semantic_audit_accepts_parked_wortcluster(tmp_path: Path) -> None:
+    _write_clean_vault(tmp_path)
+    _write(
+        tmp_path / "Project - Utility Wortcluster.md",
+        _project(
+            "Project - Utility Wortcluster",
+            "parked_no_current_intent",
+            "\n".join(
+                [
+                    "Kein aktueller Scrabble- oder Wortfinder-Intent.",
+                    "## Historische Utility-Websites-Migrationsspur",
+                    "Materialbedarf, Elterngeld und Microtool gehoeren zu "
+                    "[[Project - Utility Websites Portfolio]].",
+                ]
+            ),
+        ),
+    )
+
+    audit = audit_vault_semantic_ownership(tmp_path)
+
+    assert audit.valid is True
+    assert not audit.findings
+
+
 def test_vault_semantic_audit_flags_old_active_route_phrase(tmp_path: Path) -> None:
     _write_clean_vault(tmp_path)
     _write(

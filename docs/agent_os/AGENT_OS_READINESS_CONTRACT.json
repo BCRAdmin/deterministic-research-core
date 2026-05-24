@@ -13,6 +13,7 @@
     "outputs/agent_os_readiness/PORTFOLIO_PRODUCT_SURFACE_AUDIT.md",
     "outputs/agent_os_readiness/PORTFOLIO_PRODUCT_SURFACE_MAP.canvas",
     "outputs/agent_os_readiness/VAULT_SEMANTIC_OWNERSHIP_AUDIT.md",
+    "outputs/agent_os_readiness/AGENT_CODING_GUARDRAILS.md",
     "outputs/agent_os_readiness/OPERATOR_INBOX.md",
     "outputs/agent_os_readiness/TERMINAL_BACKENDS.md",
     "outputs/agent_os_readiness/GUARDRAIL_SCAN.md",
@@ -34,6 +35,7 @@
     "Obsidian-Promotion-Review fuer dauerhaftes Memory",
     "Vault Semantic Ownership Audit vor 'Vault ist sauber'-Claims",
     "Sandbox-Plan vor Desktop-/Browser-/Gateway-Erweiterung",
-    "Deliverable-Swarm-Vertrag vor sichtbarer Lane-Erweiterung"
+    "Deliverable-Swarm-Vertrag vor sichtbarer Lane-Erweiterung",
+    "Agent Coding Guardrails vor groesseren Coding-/Debugging-Handoffs"
   ]
 }

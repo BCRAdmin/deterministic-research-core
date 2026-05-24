@@ -1,0 +1,34 @@
+{
+  "name": "Agent Coding Guardrails",
+  "status": "active_local_playbook",
+  "runtime_policy": "playbook_only",
+  "source_repos": [
+    "github:obra/superpowers",
+    "github:multica-ai/andrej-karpathy-skills"
+  ],
+  "required_guardrails": [
+    "state_assumptions_and_tradeoffs",
+    "minimal_surgical_change",
+    "goal_driven_execution",
+    "evidence_before_completion",
+    "root_cause_before_fix",
+    "explicit_branch_finish",
+    "skill_behavior_pressure_test"
+  ],
+  "blocked_defaults": [
+    "global_session_hook",
+    "skill_trigger_before_every_reply",
+    "spec_commit_for_small_tasks",
+    "auto_worktree_creation",
+    "auto_subagent_driven_development",
+    "external_plugin_vendoring_without_license_gate"
+  ],
+  "outputs": [
+    "outputs/agent_os_readiness/AGENT_CODING_GUARDRAILS.md",
+    "outputs/agent_os_readiness/AGENT_CODING_GUARDRAILS.json"
+  ],
+  "verifiers": [
+    ".venv/bin/pytest -q research_agent/tests/test_agent_os_coding_guardrails.py",
+    "python3 scripts/ops/agent_os_readiness.py"
+  ]
+}
