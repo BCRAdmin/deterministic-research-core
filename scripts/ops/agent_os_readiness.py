@@ -51,6 +51,14 @@ from research_agent.ops.openjarvis_capability_lab import (
     build_capability_lab,
     render_markdown as render_openjarvis_capability_lab_markdown,
 )
+from research_agent.ops.openjarvis_capability_arena import (
+    build_capability_arena,
+    render_markdown as render_openjarvis_capability_arena_markdown,
+)
+from research_agent.ops.openjarvis_decision_gauntlet import (
+    build_decision_gauntlet,
+    render_markdown as render_openjarvis_decision_gauntlet_markdown,
+)
 from research_agent.ops.past_blocks_closure import (
     DEFAULT_LIONCOM_ROOT,
     build_past_blocks_closure_report,
@@ -362,6 +370,42 @@ def run_all(args: argparse.Namespace) -> int:
         out / "OPENJARVIS_BENCHMARK.json",
         openjarvis_capability_lab.get("retrieval_benchmark", {}),
     )
+    openjarvis_capability_arena = {
+        **build_capability_arena(OPENJARVIS_POLICY_PATH),
+        "path": str(out / "OPENJARVIS_CAPABILITY_ARENA_SCOREBOARD.json"),
+    }
+    write_json(out / "OPENJARVIS_CAPABILITY_ARENA_SCOREBOARD.json", openjarvis_capability_arena)
+    write_text(
+        out / "OPENJARVIS_CAPABILITY_ARENA_SCOREBOARD.md",
+        render_openjarvis_capability_arena_markdown(openjarvis_capability_arena),
+    )
+    write_json(
+        out / "OPENJARVIS_CAPABILITY_ARENA_PREFLIGHT.json",
+        openjarvis_capability_arena.get("preflight", {}),
+    )
+    openjarvis_decision_gauntlet = {
+        **build_decision_gauntlet(OPENJARVIS_POLICY_PATH),
+        "path": str(out / "OPENJARVIS_DECISION_GAUNTLET.json"),
+    }
+    write_json(out / "OPENJARVIS_DECISION_GAUNTLET.json", openjarvis_decision_gauntlet)
+    write_text(
+        out / "OPENJARVIS_DECISION_GAUNTLET.md",
+        render_openjarvis_decision_gauntlet_markdown(openjarvis_decision_gauntlet),
+    )
+    write_json(
+        out / "OPENJARVIS_DECISION_TEST_MATRIX.json",
+        {
+            "tests": [
+                {
+                    "workstream_id": workstream.get("id"),
+                    "workstream_title": workstream.get("title"),
+                    **test,
+                }
+                for workstream in openjarvis_decision_gauntlet.get("workstreams", [])
+                for test in workstream.get("tests", [])
+            ],
+        },
+    )
 
     inbox_items = build_operator_inbox_items(
         root,
@@ -428,6 +472,16 @@ def run_all(args: argparse.Namespace) -> int:
         "openjarvis_retrieval_pass_count": openjarvis_capability_lab.get("retrieval_benchmark", {}).get("pass_count", 0),
         "openjarvis_runtime_available": openjarvis_capability_lab.get("runtime", {}).get("runtime_available", False),
         "openjarvis_runtime_action_executed": openjarvis_capability_lab.get("hardening", {}).get("runtime_action_executed", None),
+        "openjarvis_capability_arena_status": openjarvis_capability_arena.get("status", "UNKNOWN"),
+        "openjarvis_arena_task_count": openjarvis_capability_arena.get("evaluated_task_count", 0),
+        "openjarvis_arena_shadow_wins": openjarvis_capability_arena.get("winner_summary", {}).get("openjarvis_shadow", 0),
+        "openjarvis_arena_baseline_wins": openjarvis_capability_arena.get("winner_summary", {}).get("pig_obsidian_baseline", 0),
+        "openjarvis_arena_ties": openjarvis_capability_arena.get("winner_summary", {}).get("tie", 0),
+        "openjarvis_decision_gauntlet_status": openjarvis_decision_gauntlet.get("status", "UNKNOWN"),
+        "openjarvis_decision_status": openjarvis_decision_gauntlet.get("decision_status", "UNKNOWN"),
+        "openjarvis_decision_test_count": openjarvis_decision_gauntlet.get("summary", {}).get("test_count", 0),
+        "openjarvis_decision_operator_gates": openjarvis_decision_gauntlet.get("summary", {}).get("operator_gate_count", 0),
+        "openjarvis_decision_fail_count": openjarvis_decision_gauntlet.get("summary", {}).get("fail_count", 0),
         "vault_semantic_valid": vault_semantic_audit.valid,
         "vault_semantic_findings": len(vault_semantic_audit.findings),
         "vault_semantic_viewpoints": len(vault_semantic_audit.viewpoints),
@@ -454,6 +508,8 @@ def run_all(args: argparse.Namespace) -> int:
         and portfolio_audit.valid
         and past_blocks_closure.valid
         and openjarvis_capability_lab.get("status") == "PASS"
+        and openjarvis_capability_arena.get("status") == "PASS"
+        and openjarvis_decision_gauntlet.get("status") == "PASS"
         and vault_semantic_audit.valid
         and inbox_validation.valid
         and not markdown_language_findings

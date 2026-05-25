@@ -24,7 +24,7 @@
     ".yaml",
     ".yml"
   ],
-  "max_file_bytes": 200000,
+  "max_file_bytes": 1000000,
   "deny_globs": [
     ".env",
     ".env.*",
@@ -53,7 +53,9 @@
       "include_paths": [
         "docs/openjarvis",
         "configs/openjarvis/openjarvis_policy.json",
+        "configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
         "research_agent/ops/openjarvis_capability_lab.py",
+        "research_agent/ops/openjarvis_decision_gauntlet.py",
         "scripts/ops/openjarvis_capability_lab.py"
       ]
     },
@@ -143,7 +145,7 @@
       "expected_source_patterns": [
         "quality_os_operator_surface"
       ],
-      "top_k": 6
+      "top_k": 12
     },
     {
       "id": "lioncom_surface_truth",
