@@ -1,0 +1,134 @@
+{
+  "run_id": "2026-05-28-root-placement-fix",
+  "generated_at": "2026-05-28T13:43:17.674999+00:00",
+  "policy_rule": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Canonical/Rules/Rule - Documents Root Hygiene.md",
+  "verifier": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/documents_root_hygiene_check.py",
+  "moves": [
+    {
+      "old": "/Users/BjornRosinger/Documents/Room 16 Reports",
+      "new": "/Users/BjornRosinger/Documents/DreamFactory/Room16/Reports",
+      "mode": "moved_with_legacy_symlink",
+      "reason": "Room16 shelf is a DreamFactory/Room16 subfolder, not a Documents-root project folder."
+    },
+    {
+      "old": "/Users/BjornRosinger/Documents/wp-stb-roesinger-redesign",
+      "new": "/Users/BjornRosinger/Documents/BCR Ventures/client-prototypes/wp-stb-roesinger-redesign",
+      "mode": "moved",
+      "reason": "Client website prototype belongs under BCR Ventures client prototypes."
+    },
+    {
+      "old": "/Users/BjornRosinger/Documents/docs",
+      "new": "/Users/BjornRosinger/Documents/Codex/path-hygiene-quarantine/2026-05-28/root-leaks/docs",
+      "mode": "quarantined",
+      "reason": "Root docs folder was a runtime/template leak, not a project namespace."
+    },
+    {
+      "old": "/Users/BjornRosinger/Documents/dashboard",
+      "new": "/Users/BjornRosinger/Documents/Codex/path-hygiene-quarantine/2026-05-28/root-leaks/dashboard",
+      "mode": "quarantined",
+      "reason": "Root dashboard folder was a runtime/template leak, not a project namespace."
+    },
+    {
+      "old": "/Users/BjornRosinger/Documents/prompts",
+      "new": "/Users/BjornRosinger/Documents/Codex/path-hygiene-quarantine/2026-05-28/root-leaks/prompts",
+      "mode": "quarantined",
+      "reason": "Root prompts folder was a stale prompt leak; active LIONCOM prompts remain under DreamFactory/LIONCOM/prompts."
+    },
+    {
+      "old": "/Users/BjornRosinger/Documents/New%20project",
+      "new": "/Users/BjornRosinger/Documents/Codex/path-hygiene-quarantine/2026-05-28/root-leaks/New%20project",
+      "mode": "quarantined",
+      "reason": "URL-encoded leftover from the historic New%20project path bug."
+    },
+    {
+      "old": "/Users/BjornRosinger/Documents/wp-stb-roesinger-redesign",
+      "new": "/Users/BjornRosinger/Documents/Codex/path-hygiene-quarantine/2026-05-28/root-leaks/wp-stb-roesinger-redesign-stray-preview-logs",
+      "mode": "quarantined_stray_preview_logs",
+      "reason": "A stale local-preview attempt recreated the root folder with logs only after the main prototype move."
+    },
+    {
+      "old": "/Users/BjornRosinger/Documents/wp-stb-roesinger-redesign",
+      "new": "/Users/BjornRosinger/Documents/Codex/path-hygiene-quarantine/2026-05-28/root-leaks/wp-stb-roesinger-redesign-stray-preview-logs-2",
+      "mode": "quarantined_stray_preview_logs",
+      "reason": "A stale preview retry recreated the root folder with logs only; it was quarantined before creating the compatibility symlink."
+    },
+    {
+      "old": "/Users/BjornRosinger/Documents/wp-stb-roesinger-redesign",
+      "new": "/Users/BjornRosinger/Documents/BCR Ventures/client-prototypes/wp-stb-roesinger-redesign",
+      "mode": "legacy_symlink_created",
+      "reason": "Compatibility link absorbs stale preview/log callers while keeping the real prototype under BCR Ventures."
+    }
+  ],
+  "post_state": [
+    {
+      "path": "/Users/BjornRosinger/Documents/Room 16 Reports",
+      "kind": "symlink",
+      "target": "/Users/BjornRosinger/Documents/DreamFactory/Room16/Reports"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/Reports",
+      "kind": "directory",
+      "target": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/wp-stb-roesinger-redesign",
+      "kind": "symlink",
+      "target": "/Users/BjornRosinger/Documents/BCR Ventures/client-prototypes/wp-stb-roesinger-redesign"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/BCR Ventures/client-prototypes/wp-stb-roesinger-redesign",
+      "kind": "directory",
+      "target": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/docs",
+      "kind": "missing",
+      "target": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/Codex/path-hygiene-quarantine/2026-05-28/root-leaks/docs",
+      "kind": "directory",
+      "target": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/dashboard",
+      "kind": "missing",
+      "target": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/Codex/path-hygiene-quarantine/2026-05-28/root-leaks/dashboard",
+      "kind": "directory",
+      "target": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/prompts",
+      "kind": "missing",
+      "target": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/Codex/path-hygiene-quarantine/2026-05-28/root-leaks/prompts",
+      "kind": "directory",
+      "target": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New%20project",
+      "kind": "missing",
+      "target": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/Codex/path-hygiene-quarantine/2026-05-28/root-leaks/New%20project",
+      "kind": "directory",
+      "target": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/Codex/path-hygiene-quarantine/2026-05-28/root-leaks/wp-stb-roesinger-redesign-stray-preview-logs",
+      "kind": "directory",
+      "target": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/Codex/path-hygiene-quarantine/2026-05-28/root-leaks/wp-stb-roesinger-redesign-stray-preview-logs-2",
+      "kind": "directory",
+      "target": null
+    }
+  ]
+}
