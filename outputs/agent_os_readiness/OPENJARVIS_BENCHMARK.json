@@ -12,7 +12,7 @@
       "status": "PASS",
       "top_sources": [
         {
-          "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_policy.json",
+          "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/configs/openjarvis/openjarvis_policy.json",
           "relative_path": "configs/openjarvis/openjarvis_policy.json",
           "score": 22.0,
           "size_bytes": 5026,
@@ -24,13 +24,22 @@
           "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Latest Session Context.md",
           "relative_path": "Latest Session Context.md",
           "score": 18.0,
-          "size_bytes": 1019340,
-          "snippet": "--- type: latest_session_context status: active updated: 2026-05-28 --- # latest session context ## update 2026-05-28 - german output gate coverage repariert - operator-befund bestaetigt: der deutsch-check war nicht inhaltlich kaputt aber zu eng verdrahtet. er pruefte nur outputs/project_intelligence_graph plus vier registry-ziele und uebersah dadurch pig-markdown-doku sowie aktive codex-skill-runbooks. - fix im pig-workspace: german_output_quality_gate.py erkennt zusaetzliche ascii-umlaut-staemme wie aehn aend ausfuehr gehoer groess laeuf laeng nuetz raeum zaehl pig.py expandiert registry-zie",
+          "size_bytes": 1028855,
+          "snippet": "--- type: latest_session_context status: active updated: 2026-05-28 --- # latest session context ## update 2026-05-28 - new project 2 formal migriert - operator-go umgesetzt: der verwirrende legacy-workspace /users/bjornrosinger/documents/new project 2 wurde formal aus dem documents-root entfernt und nach /users/bjornrosinger/documents/dreamfactory/room16/research-agent-ops verschoben. der alte pfad bleibt nur als kompatibilitaets-symlink damit historische vault- script- und audit-verweise nicht brechen. - fuehrende bedeutung: research-agent-ops ist der aktive git-workspace fuer deterministic ",
           "source_set_id": "vega_backbone",
           "suffix": ".md"
         },
         {
-          "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
+          "path": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/quality_os_operator_surface.json",
+          "relative_path": "outputs/project_intelligence_graph/quality_os_operator_surface.json",
+          "score": 15.0,
+          "size_bytes": 219856,
+          "snippet": "generated_at : 2026-05-28t18:06:12 00:00 status : pass source : pig_quality_os surface_version : v3 control_capabilities : approval_actions : true pause_resume_retry : true multi_run_history : true fresh_session_handoff : true long_run_completion_audit : true rule_propagation_audit : true operator_intent_contract : true impact_radius_assessment : true autonomy_governor : true vivi_vega_handoff_inbox : true fresh_session_readiness : true fresh_data_intake : true vivi_job_card_queue : true vivi_runner_mvp : true vivi_supervisor_audit : true commit_cleanup_go_package : true vivi_worker_mvp : true",
+          "source_set_id": "pig_surface",
+          "suffix": ".json"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
           "relative_path": "configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
           "score": 13.0,
           "size_bytes": 21458,
@@ -39,7 +48,7 @@
           "suffix": ".json"
         },
         {
-          "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_COMPONENT_ADAPTER.md",
+          "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/openjarvis/OPENJARVIS_COMPONENT_ADAPTER.md",
           "relative_path": "docs/openjarvis/OPENJARVIS_COMPONENT_ADAPTER.md",
           "score": 13.0,
           "size_bytes": 1669,
@@ -48,7 +57,7 @@
           "suffix": ".md"
         },
         {
-          "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
+          "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
           "relative_path": "docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
           "score": 12.0,
           "size_bytes": 9268,
@@ -57,16 +66,7 @@
           "suffix": ".md"
         },
         {
-          "path": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/quality_os_operator_surface.json",
-          "relative_path": "outputs/project_intelligence_graph/quality_os_operator_surface.json",
-          "score": 12.0,
-          "size_bytes": 207858,
-          "snippet": "generated_at : 2026-05-28t17:20:34 00:00 status : pass source : pig_quality_os surface_version : v3 control_capabilities : approval_actions : true pause_resume_retry : true multi_run_history : true fresh_session_handoff : true long_run_completion_audit : true rule_propagation_audit : true operator_intent_contract : true impact_radius_assessment : true autonomy_governor : true vivi_vega_handoff_inbox : true fresh_session_readiness : true fresh_data_intake : true vivi_job_card_queue : true vivi_runner_mvp : true vivi_supervisor_audit : true commit_cleanup_go_package : true vivi_worker_mvp : true",
-          "source_set_id": "pig_surface",
-          "suffix": ".json"
-        },
-        {
-          "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
+          "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
           "relative_path": "docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
           "score": 10.0,
           "size_bytes": 2616,
@@ -84,7 +84,7 @@
           "suffix": ".md"
         },
         {
-          "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_DECISION_GAUNTLET.md",
+          "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/openjarvis/OPENJARVIS_DECISION_GAUNTLET.md",
           "relative_path": "docs/openjarvis/OPENJARVIS_DECISION_GAUNTLET.md",
           "score": 7.0,
           "size_bytes": 2088,
@@ -93,7 +93,7 @@
           "suffix": ".md"
         },
         {
-          "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/openjarvis_decision_gauntlet.py",
+          "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/openjarvis_decision_gauntlet.py",
           "relative_path": "research_agent/ops/openjarvis_decision_gauntlet.py",
           "score": 7.0,
           "size_bytes": 17366,
@@ -102,7 +102,7 @@
           "suffix": ".py"
         },
         {
-          "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/openjarvis_decision_gauntlet.py",
+          "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/openjarvis_decision_gauntlet.py",
           "relative_path": "research_agent/ops/openjarvis_decision_gauntlet.py",
           "score": 7.0,
           "size_bytes": 17366,
@@ -135,13 +135,13 @@
           "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Latest Session Context.md",
           "relative_path": "Latest Session Context.md",
           "score": 30.0,
-          "size_bytes": 1019340,
-          "snippet": "--- type: latest_session_context status: active updated: 2026-05-28 --- # latest session context ## update 2026-05-28 - german output gate coverage repariert - operator-befund bestaetigt: der deutsch-check war nicht inhaltlich kaputt aber zu eng verdrahtet. er pruefte nur outputs/project_intelligence_graph plus vier registry-ziele und uebersah dadurch pig-markdown-doku sowie aktive codex-skill-runbooks. - fix im pig-workspace: german_output_quality_gate.py erkennt zusaetzliche ascii-umlaut-staemme wie aehn aend ausfuehr gehoer groess laeuf laeng nuetz raeum zaehl pig.py expandiert registry-zie",
+          "size_bytes": 1028855,
+          "snippet": "--- type: latest_session_context status: active updated: 2026-05-28 --- # latest session context ## update 2026-05-28 - new project 2 formal migriert - operator-go umgesetzt: der verwirrende legacy-workspace /users/bjornrosinger/documents/new project 2 wurde formal aus dem documents-root entfernt und nach /users/bjornrosinger/documents/dreamfactory/room16/research-agent-ops verschoben. der alte pfad bleibt nur als kompatibilitaets-symlink damit historische vault- script- und audit-verweise nicht brechen. - fuehrende bedeutung: research-agent-ops ist der aktive git-workspace fuer deterministic ",
           "source_set_id": "vega_backbone",
           "suffix": ".md"
         },
         {
-          "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_policy.json",
+          "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/configs/openjarvis/openjarvis_policy.json",
           "relative_path": "configs/openjarvis/openjarvis_policy.json",
           "score": 30.0,
           "size_bytes": 5026,
@@ -150,7 +150,7 @@
           "suffix": ".json"
         },
         {
-          "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/vault_semantic_audit.py",
+          "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/vault_semantic_audit.py",
           "relative_path": "research_agent/ops/vault_semantic_audit.py",
           "score": 21.0,
           "size_bytes": 16232,
@@ -168,7 +168,7 @@
           "suffix": ".md"
         },
         {
-          "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
+          "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
           "relative_path": "configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
           "score": 18.0,
           "size_bytes": 21458,
@@ -177,7 +177,7 @@
           "suffix": ".json"
         },
         {
-          "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
+          "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
           "relative_path": "docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
           "score": 18.0,
           "size_bytes": 9268,
@@ -201,13 +201,13 @@
           "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Latest Session Context.md",
           "relative_path": "Latest Session Context.md",
           "score": 27.0,
-          "size_bytes": 1019340,
-          "snippet": "--- type: latest_session_context status: active updated: 2026-05-28 --- # latest session context ## update 2026-05-28 - german output gate coverage repariert - operator-befund bestaetigt: der deutsch-check war nicht inhaltlich kaputt aber zu eng verdrahtet. er pruefte nur outputs/project_intelligence_graph plus vier registry-ziele und uebersah dadurch pig-markdown-doku sowie aktive codex-skill-runbooks. - fix im pig-workspace: german_output_quality_gate.py erkennt zusaetzliche ascii-umlaut-staemme wie aehn aend ausfuehr gehoer groess laeuf laeng nuetz raeum zaehl pig.py expandiert registry-zie",
+          "size_bytes": 1028855,
+          "snippet": "--- type: latest_session_context status: active updated: 2026-05-28 --- # latest session context ## update 2026-05-28 - new project 2 formal migriert - operator-go umgesetzt: der verwirrende legacy-workspace /users/bjornrosinger/documents/new project 2 wurde formal aus dem documents-root entfernt und nach /users/bjornrosinger/documents/dreamfactory/room16/research-agent-ops verschoben. der alte pfad bleibt nur als kompatibilitaets-symlink damit historische vault- script- und audit-verweise nicht brechen. - fuehrende bedeutung: research-agent-ops ist der aktive git-workspace fuer deterministic ",
           "source_set_id": "vega_backbone",
           "suffix": ".md"
         },
         {
-          "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_policy.json",
+          "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/configs/openjarvis/openjarvis_policy.json",
           "relative_path": "configs/openjarvis/openjarvis_policy.json",
           "score": 27.0,
           "size_bytes": 5026,
@@ -225,7 +225,7 @@
           "suffix": ".tsx"
         },
         {
-          "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
+          "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
           "relative_path": "docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
           "score": 21.0,
           "size_bytes": 9268,
@@ -237,13 +237,13 @@
           "path": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/quality_os_operator_surface.json",
           "relative_path": "outputs/project_intelligence_graph/quality_os_operator_surface.json",
           "score": 21.0,
-          "size_bytes": 207858,
-          "snippet": "generated_at : 2026-05-28t17:20:34 00:00 status : pass source : pig_quality_os surface_version : v3 control_capabilities : approval_actions : true pause_resume_retry : true multi_run_history : true fresh_session_handoff : true long_run_completion_audit : true rule_propagation_audit : true operator_intent_contract : true impact_radius_assessment : true autonomy_governor : true vivi_vega_handoff_inbox : true fresh_session_readiness : true fresh_data_intake : true vivi_job_card_queue : true vivi_runner_mvp : true vivi_supervisor_audit : true commit_cleanup_go_package : true vivi_worker_mvp : true",
+          "size_bytes": 219856,
+          "snippet": "generated_at : 2026-05-28t18:06:12 00:00 status : pass source : pig_quality_os surface_version : v3 control_capabilities : approval_actions : true pause_resume_retry : true multi_run_history : true fresh_session_handoff : true long_run_completion_audit : true rule_propagation_audit : true operator_intent_contract : true impact_radius_assessment : true autonomy_governor : true vivi_vega_handoff_inbox : true fresh_session_readiness : true fresh_data_intake : true vivi_job_card_queue : true vivi_runner_mvp : true vivi_supervisor_audit : true commit_cleanup_go_package : true vivi_worker_mvp : true",
           "source_set_id": "pig_surface",
           "suffix": ".json"
         },
         {
-          "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
+          "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
           "relative_path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
           "score": 18.0,
           "size_bytes": 15465,
@@ -270,7 +270,7 @@
           "suffix": ".md"
         },
         {
-          "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
+          "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
           "relative_path": "configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
           "score": 15.0,
           "size_bytes": 21458,
@@ -279,7 +279,7 @@
           "suffix": ".json"
         },
         {
-          "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/PORTFOLIO_PRODUCT_SURFACE_AUDIT.md",
+          "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/agent_os/PORTFOLIO_PRODUCT_SURFACE_AUDIT.md",
           "relative_path": "docs/agent_os/PORTFOLIO_PRODUCT_SURFACE_AUDIT.md",
           "score": 15.0,
           "size_bytes": 1496,
@@ -288,7 +288,7 @@
           "suffix": ".md"
         },
         {
-          "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_CAPABILITY_LAB.md",
+          "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/openjarvis/OPENJARVIS_CAPABILITY_LAB.md",
           "relative_path": "docs/openjarvis/OPENJARVIS_CAPABILITY_LAB.md",
           "score": 15.0,
           "size_bytes": 1530,
@@ -297,7 +297,7 @@
           "suffix": ".md"
         },
         {
-          "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
+          "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
           "relative_path": "docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
           "score": 15.0,
           "size_bytes": 2616,
@@ -318,7 +318,7 @@
       "status": "PASS",
       "top_sources": [
         {
-          "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_policy.json",
+          "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/configs/openjarvis/openjarvis_policy.json",
           "relative_path": "configs/openjarvis/openjarvis_policy.json",
           "score": 22.0,
           "size_bytes": 5026,
@@ -330,13 +330,13 @@
           "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Latest Session Context.md",
           "relative_path": "Latest Session Context.md",
           "score": 21.0,
-          "size_bytes": 1019340,
-          "snippet": "--- type: latest_session_context status: active updated: 2026-05-28 --- # latest session context ## update 2026-05-28 - german output gate coverage repariert - operator-befund bestaetigt: der deutsch-check war nicht inhaltlich kaputt aber zu eng verdrahtet. er pruefte nur outputs/project_intelligence_graph plus vier registry-ziele und uebersah dadurch pig-markdown-doku sowie aktive codex-skill-runbooks. - fix im pig-workspace: german_output_quality_gate.py erkennt zusaetzliche ascii-umlaut-staemme wie aehn aend ausfuehr gehoer groess laeuf laeng nuetz raeum zaehl pig.py expandiert registry-zie",
+          "size_bytes": 1028855,
+          "snippet": "--- type: latest_session_context status: active updated: 2026-05-28 --- # latest session context ## update 2026-05-28 - new project 2 formal migriert - operator-go umgesetzt: der verwirrende legacy-workspace /users/bjornrosinger/documents/new project 2 wurde formal aus dem documents-root entfernt und nach /users/bjornrosinger/documents/dreamfactory/room16/research-agent-ops verschoben. der alte pfad bleibt nur als kompatibilitaets-symlink damit historische vault- script- und audit-verweise nicht brechen. - fuehrende bedeutung: research-agent-ops ist der aktive git-workspace fuer deterministic ",
           "source_set_id": "vega_backbone",
           "suffix": ".md"
         },
         {
-          "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
+          "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
           "relative_path": "configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
           "score": 13.0,
           "size_bytes": 21458,
@@ -345,7 +345,7 @@
           "suffix": ".json"
         },
         {
-          "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
+          "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
           "relative_path": "docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
           "score": 13.0,
           "size_bytes": 2616,
@@ -363,7 +363,7 @@
           "suffix": ".tsx"
         },
         {
-          "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/AGENT_CODING_GUARDRAILS.md",
+          "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/agent_os/AGENT_CODING_GUARDRAILS.md",
           "relative_path": "docs/agent_os/AGENT_CODING_GUARDRAILS.md",
           "score": 12.0,
           "size_bytes": 3739,
@@ -372,7 +372,7 @@
           "suffix": ".md"
         },
         {
-          "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
+          "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
           "relative_path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
           "score": 12.0,
           "size_bytes": 15465,
@@ -393,13 +393,13 @@
           "path": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/quality_os_operator_surface.json",
           "relative_path": "outputs/project_intelligence_graph/quality_os_operator_surface.json",
           "score": 12.0,
-          "size_bytes": 207858,
-          "snippet": "generated_at : 2026-05-28t17:20:34 00:00 status : pass source : pig_quality_os surface_version : v3 control_capabilities : approval_actions : true pause_resume_retry : true multi_run_history : true fresh_session_handoff : true long_run_completion_audit : true rule_propagation_audit : true operator_intent_contract : true impact_radius_assessment : true autonomy_governor : true vivi_vega_handoff_inbox : true fresh_session_readiness : true fresh_data_intake : true vivi_job_card_queue : true vivi_runner_mvp : true vivi_supervisor_audit : true commit_cleanup_go_package : true vivi_worker_mvp : true",
+          "size_bytes": 219856,
+          "snippet": "generated_at : 2026-05-28t18:06:12 00:00 status : pass source : pig_quality_os surface_version : v3 control_capabilities : approval_actions : true pause_resume_retry : true multi_run_history : true fresh_session_handoff : true long_run_completion_audit : true rule_propagation_audit : true operator_intent_contract : true impact_radius_assessment : true autonomy_governor : true vivi_vega_handoff_inbox : true fresh_session_readiness : true fresh_data_intake : true vivi_job_card_queue : true vivi_runner_mvp : true vivi_supervisor_audit : true commit_cleanup_go_package : true vivi_worker_mvp : true",
           "source_set_id": "pig_surface",
           "suffix": ".json"
         },
         {
-          "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_COMPONENT_ADAPTER.md",
+          "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/openjarvis/OPENJARVIS_COMPONENT_ADAPTER.md",
           "relative_path": "docs/openjarvis/OPENJARVIS_COMPONENT_ADAPTER.md",
           "score": 10.0,
           "size_bytes": 1669,
@@ -408,7 +408,7 @@
           "suffix": ".md"
         },
         {
-          "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_DECISION_GAUNTLET.md",
+          "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/openjarvis/OPENJARVIS_DECISION_GAUNTLET.md",
           "relative_path": "docs/openjarvis/OPENJARVIS_DECISION_GAUNTLET.md",
           "score": 10.0,
           "size_bytes": 2088,

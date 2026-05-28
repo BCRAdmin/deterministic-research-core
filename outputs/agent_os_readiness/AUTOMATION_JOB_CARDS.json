@@ -44,7 +44,7 @@
         "stop_if_external_install_would_be_required",
         "stop_if_operator_gate_required"
       ],
-      "workdir": "/Users/BjornRosinger/Documents/New project 2"
+      "workdir": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops"
     },
     {
       "allowed_toolsets": [
@@ -88,7 +88,7 @@
         "stop_if_candidate_route_is_unclear",
         "stop_if_duplicate_memory_exists"
       ],
-      "workdir": "/Users/BjornRosinger/Documents/New project 2"
+      "workdir": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops"
     },
     {
       "allowed_toolsets": [
@@ -136,7 +136,7 @@
         "stop_if_start_surfaces_disagree",
         "stop_if_operator_gate_required"
       ],
-      "workdir": "/Users/BjornRosinger/Documents/New project 2"
+      "workdir": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops"
     },
     {
       "allowed_toolsets": [
@@ -181,7 +181,7 @@
         "stop_if_runtime_rights_change_is_needed",
         "stop_if_risk_class_R3_or_higher_without_operator_gate"
       ],
-      "workdir": "/Users/BjornRosinger/Documents/New project 2"
+      "workdir": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops"
     },
     {
       "allowed_toolsets": [
@@ -228,7 +228,7 @@
         "stop_if_write_worker_adoption_is_suggested",
         "stop_if_github_mutation_is_requested"
       ],
-      "workdir": "/Users/BjornRosinger/Documents/New project 2"
+      "workdir": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops"
     },
     {
       "allowed_toolsets": [
@@ -273,7 +273,7 @@
         "stop_if_secret_evidence_would_be_printed",
         "stop_if_context_injection_is_detected"
       ],
-      "workdir": "/Users/BjornRosinger/Documents/New project 2"
+      "workdir": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops"
     },
     {
       "allowed_toolsets": [
@@ -320,7 +320,7 @@
         "stop_if_media_provider_or_account_gate_is_needed",
         "stop_if_output_contract_lacks_verifier"
       ],
-      "workdir": "/Users/BjornRosinger/Documents/New project 2"
+      "workdir": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops"
     }
   ],
   "validations": [

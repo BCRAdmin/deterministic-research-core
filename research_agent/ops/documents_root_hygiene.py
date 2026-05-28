@@ -9,7 +9,13 @@ import re
 
 LEGACY_WORKSPACE_NAMES = {
     "New project": "legacy_active_pig_lioncom_room16_workspace",
-    "New project 2": "legacy_active_research_agent_quellwert_workspace",
+}
+
+MIGRATED_COMPATIBILITY_LINKS = {
+    "New project 2": (
+        "legacy_research_agent_ops_compatibility_symlink",
+        "research_agent_ops",
+    ),
 }
 
 FORBIDDEN_ROOT_DIRS = {
@@ -45,6 +51,10 @@ class DocumentsRootFinding:
 def canonical_paths(documents_root: Path) -> dict[str, Path]:
     return {
         "room16_reports": documents_root / "DreamFactory" / "Room16" / "Reports",
+        "research_agent_ops": documents_root
+        / "DreamFactory"
+        / "Room16"
+        / "research-agent-ops",
         "client_prototypes": documents_root / "BCR Ventures" / "client-prototypes",
         "path_hygiene_quarantine": documents_root
         / "Codex"
@@ -89,6 +99,30 @@ def scan_documents_root(documents_root: Path) -> dict[str, object]:
                     "Do not create more generic `New project` workspaces; migrate this one formally later.",
                 )
             )
+            continue
+        if name in MIGRATED_COMPATIBILITY_LINKS:
+            code, canonical_key = MIGRATED_COMPATIBILITY_LINKS[name]
+            canonical_path = paths[canonical_key]
+            if child.is_symlink() and child.resolve() == canonical_path.resolve():
+                findings.append(
+                    DocumentsRootFinding(
+                        "warning",
+                        str(child),
+                        code,
+                        "Migrated legacy workspace root link exists for compatibility only.",
+                        f"Use canonical workspace `{canonical_path}` for new work.",
+                    )
+                )
+            else:
+                findings.append(
+                    DocumentsRootFinding(
+                        "error",
+                        str(child),
+                        "migrated_workspace_must_be_symlink",
+                        "New project 2 was migrated and must not be a real Documents-root workspace anymore.",
+                        f"Move the real workspace to `{canonical_path}` and leave only a compatibility symlink.",
+                    )
+                )
             continue
         if name in FORBIDDEN_ROOT_DIRS:
             findings.append(
@@ -154,6 +188,18 @@ def scan_documents_root(documents_root: Path) -> dict[str, object]:
                 "canonical_room16_reports_missing",
                 "Canonical Room16 reports folder is missing.",
                 "Create it before running Room16 shelf/report flows.",
+            )
+        )
+
+    canonical_research_agent_ops = paths["research_agent_ops"]
+    if not canonical_research_agent_ops.exists():
+        findings.append(
+            DocumentsRootFinding(
+                "error",
+                str(canonical_research_agent_ops),
+                "canonical_research_agent_ops_missing",
+                "Canonical Room16 research-agent ops workspace is missing.",
+                "Restore it before running Quellwert/Room16/Agent-OS verifier flows.",
             )
         )
 

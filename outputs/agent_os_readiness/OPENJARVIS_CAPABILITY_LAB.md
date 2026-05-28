@@ -3,12 +3,12 @@
 - Status: `PASS`
 - Modus: `shadow_read_only`
 - Source of Truth: `False`
-- Dokumente im sicheren Index: `87`
+- Dokumente im sicheren Index: `88`
 - Preflight: `PASS` (0 Blocker)
 - Retrieval Benchmark: `PASS` (4/4 PASS)
 - Code-QA Shadow: `PASS` (3/3 PASS)
 - OpenJarvis Runtime erkannt: `False`
-- Evidence-Pfad: `/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/OPENJARVIS_CAPABILITY_LAB.json`
+- Evidence-Pfad: `/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/outputs/agent_os_readiness/OPENJARVIS_CAPABILITY_LAB.json`
 - Empfehlung: `keep_shadow_mode_and_benchmark_retrieval_first`
 
 ## Härtung
@@ -26,7 +26,7 @@
 - Status: `PASS`
 - Fehlende Begriffe: `none`
 - Fehlende Quellenmuster: `none`
-- Top-Quellen: `configs/openjarvis/openjarvis_policy.json, Latest Session Context.md, configs/openjarvis/openjarvis_decision_gauntlet_plan.json`
+- Top-Quellen: `configs/openjarvis/openjarvis_policy.json, Latest Session Context.md, outputs/project_intelligence_graph/quality_os_operator_surface.json`
 
 ### operator_gate_boundary
 

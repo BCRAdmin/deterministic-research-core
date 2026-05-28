@@ -4,9 +4,9 @@
 - Modus: `shadow_read_only`
 - Source of Truth: `False`
 - Aufgaben: `30/30`
-- Sichere Quellen: `87`
+- Sichere Quellen: `88`
 - Baseline-Dokumente: `6`
-- Shadow-Dokumente: `87`
+- Shadow-Dokumente: `88`
 - Runtime-Aktion: `False`
 - Empfehlung: `promote_shadow_retrieval_benchmark_to_next_read_only_trial`
 

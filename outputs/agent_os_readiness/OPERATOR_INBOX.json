@@ -6,7 +6,7 @@
       "operator_gate_required": false,
       "priority": "P0",
       "required_action": "lesen_oder_bestaetigen",
-      "source": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/AGENT_OS_READINESS_REPORT.md",
+      "source": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/outputs/agent_os_readiness/AGENT_OS_READINESS_REPORT.md",
       "status": "ready_for_review",
       "summary": "Faehigkeitsmatrix und OpenClaw-Migrations-Trockenlauf vor jeder Runtime-Erweiterung pruefen."
     },
@@ -16,7 +16,7 @@
       "operator_gate_required": false,
       "priority": "P1",
       "required_action": "hold_oder_playbook_entscheidung_pruefen",
-      "source": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/SKILL_REGISTRY.md",
+      "source": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/outputs/agent_os_readiness/SKILL_REGISTRY.md",
       "status": "ready_for_review",
       "summary": "41 lokale Skill-/Playbook-Eintraege klassifiziert; externe Installation bleibt verboten."
     },
@@ -26,9 +26,9 @@
       "operator_gate_required": true,
       "priority": "P1",
       "required_action": "nur_nach_obsidian_routenpruefung_promoten",
-      "source": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/MEMORY_INBOX_CANDIDATES.md",
+      "source": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/outputs/agent_os_readiness/MEMORY_INBOX_CANDIDATES.md",
       "status": "candidate_review",
-      "summary": "235 Memory-Kandidaten brauchen Promote-/Reject-/Merge-Review."
+      "summary": "236 Memory-Kandidaten brauchen Promote-/Reject-/Merge-Review."
     },
     {
       "item_id": "guardrail-gate-review",
@@ -36,7 +36,7 @@
       "operator_gate_required": true,
       "priority": "P1",
       "required_action": "gates_vor_runtime_rechten_klaeren_oder_akzeptieren",
-      "source": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/GUARDRAIL_SCAN.md",
+      "source": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/outputs/agent_os_readiness/GUARDRAIL_SCAN.md",
       "status": "gate_review",
       "summary": "40 Guardrail-Funde sind als Gates vor Runtime-Erweiterung festgehalten."
     },
@@ -46,7 +46,7 @@
       "operator_gate_required": false,
       "priority": "P0",
       "required_action": "bei_coding_tasks_als_default_review_gate_nutzen",
-      "source": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/AGENT_CODING_GUARDRAILS.md",
+      "source": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/outputs/agent_os_readiness/AGENT_CODING_GUARDRAILS.md",
       "status": "ready_for_review",
       "summary": "8 Coding-Guardrails uebernehmen Karpathy-Minimalismus und Superpowers-Verification/Debugging als lokale Playbook-Schicht."
     },
@@ -56,7 +56,7 @@
       "operator_gate_required": false,
       "priority": "P0",
       "required_action": "vor_vault_clean_claim_pruefen_oder_findings_fixen",
-      "source": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/VAULT_SEMANTIC_OWNERSHIP_AUDIT.md",
+      "source": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/outputs/agent_os_readiness/VAULT_SEMANTIC_OWNERSHIP_AUDIT.md",
       "status": "ready_for_review",
       "summary": "0 semantische Vault-Ownership-Funde; prueft aktive Projektwahrheit, Startflaechen und alte Gewohnheitsrouten."
     },
@@ -66,7 +66,7 @@
       "operator_gate_required": true,
       "priority": "P2",
       "required_action": "echte_automation_nur_nach_operator_go_erstellen",
-      "source": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/AUTOMATION_JOB_CARDS.md",
+      "source": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/outputs/agent_os_readiness/AUTOMATION_JOB_CARDS.md",
       "status": "ready_for_review",
       "summary": "Automation Cards sind nur Vorschlaege und keine installierten Automationen."
     },
@@ -76,7 +76,7 @@
       "operator_gate_required": false,
       "priority": "P0",
       "required_action": "vor_runtime_erweiterung_als_agenten_team_oberflaeche_nutzen",
-      "source": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/DELIVERABLE_SWARM_CONTRACT.md",
+      "source": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/outputs/agent_os_readiness/DELIVERABLE_SWARM_CONTRACT.md",
       "status": "ready_for_review",
       "summary": "8 Deliverable-Lanes definieren Owner, Output-Pfade, Verifier, Handoffs und Gates."
     }

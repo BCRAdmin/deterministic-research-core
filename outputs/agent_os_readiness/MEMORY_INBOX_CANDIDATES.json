@@ -91,63 +91,63 @@
       "summary": "Scope: LIONCOM / Vega / Vivi / OpenClaw / sichere Hermes-Musteruebernahme"
     },
     {
-      "candidate_id": "mem-a695330844cb",
+      "candidate_id": "mem-4f53740f2798",
       "kind": "agent_stack_learning",
-      "line": 9,
+      "line": 10,
       "route": "DreamFactory System/Agent Stack",
       "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
       "status": "candidate_needs_promotion_review",
       "summary": "Dieses Paket \u00fcbersetzt die n\u00fctzlichen Hermes-Agent-Muster in sichere lokale"
     },
     {
-      "candidate_id": "mem-24d36b884b1c",
+      "candidate_id": "mem-81a58d9de849",
       "kind": "general_learning",
-      "line": 20,
+      "line": 21,
       "route": "Memory/Learnings and Fixes",
       "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
       "status": "candidate_needs_promotion_review",
       "summary": "Agent Coding Guardrails als kuratierter Superpowers-/Karpathy-Transfer"
     },
     {
-      "candidate_id": "mem-83511b38bb41",
+      "candidate_id": "mem-a800e9b3af64",
       "kind": "workflow_learning",
-      "line": 22,
+      "line": 23,
       "route": "Memory/Learnings and Fixes",
       "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
       "status": "candidate_needs_promotion_review",
       "summary": "Documents-Root-Hygiene als Standard-Preflight f\u00fcr Vega-/Vivi-Systemarbeit"
     },
     {
-      "candidate_id": "mem-fcc321c06f7b",
+      "candidate_id": "mem-467b4a8f8ea2",
       "kind": "agent_stack_learning",
-      "line": 40,
+      "line": 41,
       "route": "DreamFactory System/Agent Stack",
       "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
       "status": "candidate_needs_promotion_review",
       "summary": "`AGENT_OS_READINESS_REPORT.md/json`: F\u00e4higkeitsmatrix und OpenClaw-Migrations-Trockenlauf."
     },
     {
-      "candidate_id": "mem-b5466ed7c41f",
+      "candidate_id": "mem-11eee4d43ff9",
       "kind": "general_learning",
-      "line": 52,
+      "line": 53,
       "route": "Memory/Learnings and Fixes",
       "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
       "status": "candidate_needs_promotion_review",
       "summary": "`AGENT_CODING_GUARDRAILS.md/json`: lokale Coding-Agent-Guardrails aus Superpowers-/Karpathy-Patterns, ohne Plugin-Installation."
     },
     {
-      "candidate_id": "mem-9ed5a188a2d4",
+      "candidate_id": "mem-b0f6dcd61c23",
       "kind": "general_learning",
-      "line": 55,
+      "line": 56,
       "route": "Memory/Learnings and Fixes",
       "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
       "status": "candidate_needs_promotion_review",
       "summary": "`GUARDRAIL_SCAN.md/json`: lokale statische Guardrail-Funde."
     },
     {
-      "candidate_id": "mem-93d7fb19201f",
+      "candidate_id": "mem-867a67c0a901",
       "kind": "agent_stack_learning",
-      "line": 69,
+      "line": 70,
       "route": "DreamFactory System/Agent Stack",
       "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
       "status": "candidate_needs_promotion_review",
@@ -359,6 +359,15 @@
       "source_path": "docs/agent_os/PORTFOLIO_PRODUCT_SURFACE_AUDIT.md",
       "status": "candidate_needs_promotion_review",
       "summary": "promotet keine Public-Ausgabe. Dauerhafte Findings gehoeren nach Vega-Memory"
+    },
+    {
+      "candidate_id": "mem-24faef42879b",
+      "kind": "general_learning",
+      "line": 14,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/agent_os/WORKSPACE_PLACEMENT.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "publishing guardrails and local hygiene verifiers."
     },
     {
       "candidate_id": "mem-3b42a5fd595b",
@@ -829,13 +838,13 @@
       "summary": "Guardrail Coverage Matrix XLSX."
     },
     {
-      "candidate_id": "mem-3da01a0fde9d",
+      "candidate_id": "mem-49f005e67e94",
       "kind": "operator_gate_learning",
-      "line": 67,
+      "line": 134,
       "route": "Memory/Learnings and Fixes",
       "source_path": "docs/writing/HUMANIZER_LINT_PLAYBOOK.md",
       "status": "candidate_needs_promotion_review",
-      "summary": "Vivi should check whether suggested rewrites preserve facts, evidence, uncertainty and project gates before any user-facing copy is changed."
+      "summary": "Vivi should check whether suggested rewrites preserve facts, evidence, uncertainty, source meaning and project gates before any user-facing copy is changed."
     },
     {
       "candidate_id": "mem-f0c8e9205169",

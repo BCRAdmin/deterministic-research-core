@@ -3,6 +3,7 @@
 Status: aktive lokale v1
 Scope: LIONCOM / Vega / Vivi / OpenClaw / sichere Hermes-Musteruebernahme
 Runtime-Änderungen: keine
+Workspace: `/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops`
 
 ## Zweck
 

@@ -131,7 +131,7 @@
       "triggers": []
     },
     {
-      "description": "Humanizer lint improves clarity and removes generic machine-like prose. It must not change facts, ratings, evidence, legal posture or financial claims.",
+      "description": "Humanizer lint removes generic machine-like prose and AI slop while preserving truth. It can make wording clearer, more concrete and more human, but it must not change facts, numbers, ratings, evidence, legal posture, financial claims, sour",
       "finding_count": 0,
       "highest_guardrail_severity": "none",
       "operator_gate_required": false,

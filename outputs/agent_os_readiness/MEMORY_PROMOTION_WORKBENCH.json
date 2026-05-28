@@ -9,9 +9,9 @@
       "route": "DreamFactory System/Agent Stack",
       "sample_candidates": [
         "mem-949266143276",
-        "mem-a695330844cb",
-        "mem-fcc321c06f7b",
-        "mem-93d7fb19201f",
+        "mem-4f53740f2798",
+        "mem-467b4a8f8ea2",
+        "mem-867a67c0a901",
         "mem-fd54cb2ca757"
       ],
       "source_count": 13,
@@ -32,7 +32,7 @@
     },
     {
       "batch_id": "mem-batch-913bf8bab264",
-      "candidate_count": 27,
+      "candidate_count": 28,
       "gate": "obsidian_promotion_review_required",
       "kind": "general_learning",
       "next_action": "dedupe_against_target_note_then_promote_or_reject_batch",
@@ -44,7 +44,7 @@
         "mem-ca6ef519484d",
         "mem-840004a372eb"
       ],
-      "source_count": 19,
+      "source_count": 20,
       "status": "ready_for_operator_batch_review"
     },
     {
@@ -75,7 +75,7 @@
         "mem-fbb5e7133a42",
         "mem-5d2bcae3914c",
         "mem-6ef9641e2c49",
-        "mem-83511b38bb41",
+        "mem-a800e9b3af64",
         "mem-22fd4f6dc8e9"
       ],
       "source_count": 46,

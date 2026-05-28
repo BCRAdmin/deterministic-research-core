@@ -12,7 +12,7 @@ These are execution contracts only. No backend is started by the readiness runne
 ### local_read_only
 - `commands_must_be_non_destructive`
 - `dangerous_command_scan_before_execution`
-- `workdir_must_equal:/Users/BjornRosinger/Documents/New project 2`
+- `workdir_must_equal:/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops`
 - validation_errors: `none`
 - validation_warnings: `none`
 

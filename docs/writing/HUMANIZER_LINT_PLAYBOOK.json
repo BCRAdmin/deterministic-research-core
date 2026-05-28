@@ -1,46 +1,112 @@
 {
   "name": "Humanizer Lint Playbook",
-  "status": "active_draft",
-  "scope": "Utility copy/Room16 reports/operator copy",
-  "risk_class": "R0_doc_only_pattern",
+  "status": "active",
+  "source_checked": [
+    {
+      "source": "github",
+      "repo": "blader/humanizer",
+      "version": "2.7.0",
+      "decision": "pattern_taxonomy_only"
+    },
+    {
+      "source": "local_clawhub_copy",
+      "repo": "biostartechnology/humanizer",
+      "version": "2.1.1",
+      "decision": "superseded_by_github_pattern_review"
+    }
+  ],
+  "scope": [
+    "utility_copy",
+    "room16_reports",
+    "operator_copy",
+    "document_like_reports",
+    "non_evidence_website_copy"
+  ],
+  "risk_class": "R0_R1_review_pattern",
   "runtime_changes": "none",
-  "purpose": "Improve clarity without changing facts, ratings, evidence, legal posture or financial claims.",
-  "allowed": [
-    "mark_generic_seo_phrases",
-    "mark_repetition",
-    "mark_internal_system_language",
-    "mark_overly_long_sentences",
-    "mark_weak_ctas",
-    "mark_passive_or_imprecise_language",
-    "suggest_concrete_user_help"
+  "decision": "adopt_as_lint_not_runtime_skill",
+  "purpose": "Remove generic machine-like prose and AI slop while preserving facts, numbers, ratings, evidence, legal posture, financial claims, source meaning and uncertainty.",
+  "review_only": true,
+  "no_auto_rewrite_research_truth": true,
+  "pattern_taxonomy": [
+    "significance_inflation",
+    "notability_padding",
+    "superficial_ing_analysis",
+    "promotional_language",
+    "vague_attribution",
+    "formulaic_challenges_future",
+    "ai_vocabulary_cluster",
+    "copula_avoidance",
+    "negative_parallelism",
+    "rule_of_three",
+    "synonym_cycling",
+    "false_range",
+    "passive_or_subjectless_fragment",
+    "dash_overuse",
+    "boldface_or_inline_header_overuse",
+    "emoji_decoration",
+    "chatbot_artifact",
+    "cutoff_disclaimer",
+    "sycophantic_tone",
+    "filler_or_excessive_hedging",
+    "generic_conclusion",
+    "diff_anchored_writing"
   ],
-  "forbidden": [
-    "change_facts",
-    "change_numbers",
-    "change_ratings",
-    "strengthen_claims",
-    "add_or_remove_sources",
-    "make_legal_or_financial_statements_stronger",
-    "bypass_evidence_requirements",
-    "write_away_ymyl_uncertainty",
-    "turn_cautious_report_into_promotional_copy"
-  ],
-  "use_cases": [
-    "materialbedarf_copy",
-    "elterngeld_trust_copy",
-    "room16_internal_best_report",
-    "room16_publish_report_prose",
-    "dashboard_operator_copy"
-  ],
-  "lint_output_fields": [
+  "required_output_fields": [
     "issue_type",
     "severity",
     "current_text",
     "suggested_rewrite",
     "risk",
     "requires_human_review",
-    "allowed_auto_apply"
+    "allowed_auto_apply",
+    "evidence_preservation_note"
   ],
+  "allowed_findings": [
+    "mark_generic_seo_or_ai_sounding_phrases",
+    "mark_repetition",
+    "mark_synonym_cycling",
+    "mark_forced_triples",
+    "mark_internal_system_language",
+    "mark_overly_long_sentences",
+    "mark_weak_ctas",
+    "mark_passive_or_subjectless_language",
+    "suggest_concrete_user_help",
+    "flag_vague_attribution_without_inventing_sources"
+  ],
+  "forbidden_changes": [
+    "change_facts",
+    "change_numbers",
+    "change_ratings",
+    "strengthen_or_weaken_claims",
+    "add_remove_or_reinterpret_sources",
+    "make_legal_or_financial_statements_stronger",
+    "bypass_evidence_requirements",
+    "write_away_ymyl_uncertainty",
+    "turn_cautious_report_into_promotional_copy",
+    "auto_rewrite_research_truth",
+    "auto_rewrite_operator_truth",
+    "auto_rewrite_policy_gates"
+  ],
+  "voice_calibration": {
+    "enabled": true,
+    "default": "plain_concrete_varied_prose",
+    "sample_matching": [
+      "sentence_length",
+      "word_level",
+      "paragraph_opening_style",
+      "punctuation_habits",
+      "transition_style"
+    ],
+    "neutral_voice_required_for": [
+      "technical_text",
+      "legal_text",
+      "financial_text",
+      "reference_text",
+      "audit_text",
+      "operator_truth"
+    ]
+  },
   "auto_apply_allowed_for": [
     "obvious_typos",
     "duplicate_words",
@@ -48,5 +114,26 @@
     "internal_ui_labels"
   ],
   "auto_apply_for_everything_else": false,
-  "vivi_review": "check_rewrites_preserve_facts_evidence_uncertainty_and_project_gates"
+  "requires_human_review_for": [
+    "room16",
+    "quellwert",
+    "legal",
+    "financial",
+    "ymyl",
+    "operator_truth",
+    "research_outputs"
+  ],
+  "stop_conditions": [
+    "rewrite_requires_new_evidence",
+    "rewrite_changes_number_rating_legal_or_financial_claim",
+    "unresolved_source_conflict",
+    "requested_tone_hides_uncertainty",
+    "generated_evidence_or_policy_surface_must_stay_literal"
+  ],
+  "verifiers": [
+    "python3 scripts/project_intelligence_graph/pig.py german-output-quality",
+    "python3 scripts/project_intelligence_graph/pig.py rule-propagation",
+    "project_specific_verifier"
+  ],
+  "vivi_review": "check_rewrites_preserve_facts_evidence_uncertainty_source_meaning_and_project_gates"
 }

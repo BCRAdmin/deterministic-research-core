@@ -3,15 +3,17 @@ from pathlib import Path
 from research_agent.ops.documents_root_hygiene import scan_documents_root
 
 
-def test_documents_root_hygiene_allows_legacy_workspaces_and_room16_symlink(tmp_path: Path) -> None:
+def test_documents_root_hygiene_allows_legacy_workspace_and_migrated_symlink(tmp_path: Path) -> None:
     (tmp_path / "New project").mkdir()
-    (tmp_path / "New project 2").mkdir()
     reports = tmp_path / "DreamFactory" / "Room16" / "Reports"
     reports.mkdir(parents=True)
+    research_agent_ops = tmp_path / "DreamFactory" / "Room16" / "research-agent-ops"
+    research_agent_ops.mkdir(parents=True)
     (tmp_path / "BCR Ventures" / "client-prototypes" / "wp-stb-roesinger-redesign").mkdir(
         parents=True
     )
     (tmp_path / "Room 16 Reports").symlink_to(reports)
+    (tmp_path / "New project 2").symlink_to(research_agent_ops)
 
     payload = scan_documents_root(tmp_path)
 
@@ -22,6 +24,7 @@ def test_documents_root_hygiene_allows_legacy_workspaces_and_room16_symlink(tmp_
 
 def test_documents_root_hygiene_blocks_generic_and_root_leak_dirs(tmp_path: Path) -> None:
     (tmp_path / "DreamFactory" / "Room16" / "Reports").mkdir(parents=True)
+    (tmp_path / "DreamFactory" / "Room16" / "research-agent-ops").mkdir(parents=True)
     (tmp_path / "BCR Ventures" / "client-prototypes" / "wp-stb-roesinger-redesign").mkdir(
         parents=True
     )
@@ -42,6 +45,7 @@ def test_documents_root_hygiene_blocks_generic_and_root_leak_dirs(tmp_path: Path
 
 def test_documents_root_hygiene_blocks_real_room16_root_folder(tmp_path: Path) -> None:
     (tmp_path / "DreamFactory" / "Room16" / "Reports").mkdir(parents=True)
+    (tmp_path / "DreamFactory" / "Room16" / "research-agent-ops").mkdir(parents=True)
     (tmp_path / "BCR Ventures" / "client-prototypes" / "wp-stb-roesinger-redesign").mkdir(
         parents=True
     )
@@ -52,6 +56,24 @@ def test_documents_root_hygiene_blocks_real_room16_root_folder(tmp_path: Path) -
     assert payload["ok"] is False
     assert any(
         finding["code"] == "room16_reports_root_folder"
+        for finding in payload["findings"]
+        if finding["severity"] == "error"
+    )
+
+
+def test_documents_root_hygiene_blocks_real_new_project_2_after_migration(tmp_path: Path) -> None:
+    (tmp_path / "DreamFactory" / "Room16" / "Reports").mkdir(parents=True)
+    (tmp_path / "DreamFactory" / "Room16" / "research-agent-ops").mkdir(parents=True)
+    (tmp_path / "BCR Ventures" / "client-prototypes" / "wp-stb-roesinger-redesign").mkdir(
+        parents=True
+    )
+    (tmp_path / "New project 2").mkdir()
+
+    payload = scan_documents_root(tmp_path)
+
+    assert payload["ok"] is False
+    assert any(
+        finding["code"] == "migrated_workspace_must_be_symlink"
         for finding in payload["findings"]
         if finding["severity"] == "error"
     )

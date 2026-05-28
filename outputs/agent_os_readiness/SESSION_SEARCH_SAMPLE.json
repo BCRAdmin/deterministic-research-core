@@ -25,42 +25,42 @@
       "snippet": "### Bugs und CI-Fails"
     },
     {
-      "line": 17,
+      "line": 16,
       "path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
       "score": -3.742254418854729,
+      "snippet": "2. Den Workflow als wiederholbaren Research-/Ideen-/Strategie-Baustein nutzen. Status: erledigt f\u00fcr interne CLI-/Skill-Nutzung."
+    },
+    {
+      "line": 13,
+      "path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
+      "score": -3.6670987282384284,
+      "snippet": "Wir bauen keinen MiroFish-Fork und keinen sofortigen LIONCOM-Einbau. Der richtige Weg ist:"
+    },
+    {
+      "line": 17,
+      "path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
+      "score": -3.6670987282384284,
       "snippet": "3. Nach 5-10 echten internen L\u00e4ufen entscheiden, ob daraus eine getrennte kleine App analog Room16 entsteht. Status: 5 technische Piloten gruen; keine App jetzt."
     },
     {
-      "line": 15,
-      "path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
+      "line": 28,
+      "path": "docs/media_ingest/MEDIA_SOURCE_POLICY.md",
       "score": -3.6670987282384284,
-      "snippet": "1. `vega-multi-agent-research` als lokalen Codex/Vivi-Skill stabilisieren. Status: erledigt."
+      "snippet": "- source URL or local source path"
     },
     {
-      "line": 18,
-      "path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
-      "score": -3.6670987282384284,
-      "snippet": "4. LIONCOM erst anbinden, wenn es einen nachweisbar n\u00fctzlichen Run-Vertrag, Artefaktstruktur und Operator-Gate gibt. Status: Adapter bewusst nicht gebaut, weil CLI/Skill reicht."
-    },
-    {
-      "line": 12,
-      "path": "docs/media_ingest/NEXT_MEDIA_SAMPLE_BACKLOG.md",
-      "score": -3.6670987282384284,
-      "snippet": "## Allowed Sample Types"
-    },
-    {
-      "line": 11,
+      "line": 9,
       "path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
       "score": -3.5949023098355055,
-      "snippet": "## Kurzentscheidung"
+      "snippet": "# Multi-Agent Research Build Roadmap"
     },
     {
-      "line": 42,
+      "line": 6,
       "path": "docs/media_ingest/MEDIA_SOURCE_POLICY.md",
       "score": -3.5254937552549364,
-      "snippet": "## Source Rank"
+      "snippet": "## Allowed Sources"
     }
   ],
-  "indexed_rows": 7023,
+  "indexed_rows": 7101,
   "query": "Hermes OR OpenClaw OR Vivi"
 }

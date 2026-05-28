@@ -10,9 +10,9 @@
         "mutations_attempted": false,
         "package_json": null,
         "project_id": "agent_ops",
-        "pyproject_toml": "/Users/BjornRosinger/Documents/New project 2/pyproject.toml",
+        "pyproject_toml": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/pyproject.toml",
         "recommended_mode": "read_only_handoff_only",
-        "root": "/Users/BjornRosinger/Documents/New project 2",
+        "root": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops",
         "status": "PASS"
       },
       {
@@ -88,7 +88,7 @@
     ],
     "status": "PASS"
   },
-  "generated_at": "2026-05-28T17:23:47+00:00",
+  "generated_at": "2026-05-28T18:06:42+00:00",
   "hardening": {
     "deny_globs": [
       ".env",
@@ -126,532 +126,539 @@
   },
   "indexed_sources": [
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
       "relative_path": "configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
       "size_bytes": 21458,
       "source_set_id": "agent_ops_openjarvis_docs",
       "suffix": ".json"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_policy.json",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/configs/openjarvis/openjarvis_policy.json",
       "relative_path": "configs/openjarvis/openjarvis_policy.json",
       "size_bytes": 5026,
       "source_set_id": "agent_ops_openjarvis_docs",
       "suffix": ".json"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_ALLOWED_USE_CASES.md",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/openjarvis/OPENJARVIS_ALLOWED_USE_CASES.md",
       "relative_path": "docs/openjarvis/OPENJARVIS_ALLOWED_USE_CASES.md",
       "size_bytes": 1265,
       "source_set_id": "agent_ops_openjarvis_docs",
       "suffix": ".md"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_CAPABILITY_ARENA.md",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/openjarvis/OPENJARVIS_CAPABILITY_ARENA.md",
       "relative_path": "docs/openjarvis/OPENJARVIS_CAPABILITY_ARENA.md",
       "size_bytes": 1387,
       "source_set_id": "agent_ops_openjarvis_docs",
       "suffix": ".md"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_CAPABILITY_LAB.md",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/openjarvis/OPENJARVIS_CAPABILITY_LAB.md",
       "relative_path": "docs/openjarvis/OPENJARVIS_CAPABILITY_LAB.md",
       "size_bytes": 1530,
       "source_set_id": "agent_ops_openjarvis_docs",
       "suffix": ".md"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_COMPONENT_ADAPTER.md",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/openjarvis/OPENJARVIS_COMPONENT_ADAPTER.md",
       "relative_path": "docs/openjarvis/OPENJARVIS_COMPONENT_ADAPTER.md",
       "size_bytes": 1669,
       "source_set_id": "agent_ops_openjarvis_docs",
       "suffix": ".md"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_DECISION_GAUNTLET.md",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/openjarvis/OPENJARVIS_DECISION_GAUNTLET.md",
       "relative_path": "docs/openjarvis/OPENJARVIS_DECISION_GAUNTLET.md",
       "size_bytes": 2088,
       "source_set_id": "agent_ops_openjarvis_docs",
       "suffix": ".md"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
       "relative_path": "docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
       "size_bytes": 2616,
       "source_set_id": "agent_ops_openjarvis_docs",
       "suffix": ".md"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_THREAT_MODEL.md",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/openjarvis/OPENJARVIS_THREAT_MODEL.md",
       "relative_path": "docs/openjarvis/OPENJARVIS_THREAT_MODEL.md",
       "size_bytes": 1119,
       "source_set_id": "agent_ops_openjarvis_docs",
       "suffix": ".md"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/openjarvis_capability_lab.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/openjarvis_capability_lab.py",
       "relative_path": "research_agent/ops/openjarvis_capability_lab.py",
       "size_bytes": 21862,
       "source_set_id": "agent_ops_openjarvis_docs",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/openjarvis_decision_gauntlet.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/openjarvis_decision_gauntlet.py",
       "relative_path": "research_agent/ops/openjarvis_decision_gauntlet.py",
       "size_bytes": 17366,
       "source_set_id": "agent_ops_openjarvis_docs",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/openjarvis_capability_lab.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/scripts/ops/openjarvis_capability_lab.py",
       "relative_path": "scripts/ops/openjarvis_capability_lab.py",
       "size_bytes": 402,
       "source_set_id": "agent_ops_openjarvis_docs",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/README.md",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/README.md",
       "relative_path": "README.md",
-      "size_bytes": 2848,
+      "size_bytes": 3185,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".md"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/AGENT_CODING_GUARDRAILS.json",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/agent_os/AGENT_CODING_GUARDRAILS.json",
       "relative_path": "docs/agent_os/AGENT_CODING_GUARDRAILS.json",
       "size_bytes": 1146,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".json"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/AGENT_CODING_GUARDRAILS.md",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/agent_os/AGENT_CODING_GUARDRAILS.md",
       "relative_path": "docs/agent_os/AGENT_CODING_GUARDRAILS.md",
       "size_bytes": 3739,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".md"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/AGENT_OS_READINESS_CONTRACT.json",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/agent_os/AGENT_OS_READINESS_CONTRACT.json",
       "relative_path": "docs/agent_os/AGENT_OS_READINESS_CONTRACT.json",
       "size_bytes": 1707,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".json"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/AGENT_OS_READINESS_PACK.md",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/agent_os/AGENT_OS_READINESS_PACK.md",
       "relative_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
-      "size_bytes": 3994,
+      "size_bytes": 4077,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".md"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/BLOCK_6_PORTFOLIO_PREFLIGHT.md",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/agent_os/BLOCK_6_PORTFOLIO_PREFLIGHT.md",
       "relative_path": "docs/agent_os/BLOCK_6_PORTFOLIO_PREFLIGHT.md",
       "size_bytes": 1244,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".md"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/BLOCK_8_SKILL_PATTERN_GOVERNANCE.md",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/agent_os/BLOCK_8_SKILL_PATTERN_GOVERNANCE.md",
       "relative_path": "docs/agent_os/BLOCK_8_SKILL_PATTERN_GOVERNANCE.md",
       "size_bytes": 1578,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".md"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/DELIVERABLE_SWARM_CONTRACT.json",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/agent_os/DELIVERABLE_SWARM_CONTRACT.json",
       "relative_path": "docs/agent_os/DELIVERABLE_SWARM_CONTRACT.json",
       "size_bytes": 1018,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".json"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/DELIVERABLE_SWARM_CONTRACT.md",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/agent_os/DELIVERABLE_SWARM_CONTRACT.md",
       "relative_path": "docs/agent_os/DELIVERABLE_SWARM_CONTRACT.md",
       "size_bytes": 2206,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".md"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
       "relative_path": "docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
       "size_bytes": 9268,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".md"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.json",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.json",
       "relative_path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.json",
       "size_bytes": 6107,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".json"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
       "relative_path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
       "size_bytes": 15465,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".md"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/PAST_BLOCKS_CLOSURE_2026-05-21.json",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/agent_os/PAST_BLOCKS_CLOSURE_2026-05-21.json",
       "relative_path": "docs/agent_os/PAST_BLOCKS_CLOSURE_2026-05-21.json",
       "size_bytes": 704,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".json"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/PAST_BLOCKS_CLOSURE_2026-05-21.md",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/agent_os/PAST_BLOCKS_CLOSURE_2026-05-21.md",
       "relative_path": "docs/agent_os/PAST_BLOCKS_CLOSURE_2026-05-21.md",
       "size_bytes": 1113,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".md"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/PORTFOLIO_PRODUCT_SURFACE_AUDIT.md",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/agent_os/PORTFOLIO_PRODUCT_SURFACE_AUDIT.md",
       "relative_path": "docs/agent_os/PORTFOLIO_PRODUCT_SURFACE_AUDIT.md",
       "size_bytes": 1496,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".md"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/docs/skills/CLAW_SKILL_PATTERN_DECISION_MATRIX.json",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/agent_os/WORKSPACE_PLACEMENT.md",
+      "relative_path": "docs/agent_os/WORKSPACE_PLACEMENT.md",
+      "size_bytes": 943,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".md"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/skills/CLAW_SKILL_PATTERN_DECISION_MATRIX.json",
       "relative_path": "docs/skills/CLAW_SKILL_PATTERN_DECISION_MATRIX.json",
       "size_bytes": 8691,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".json"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/docs/skills/CLAW_SKILL_PATTERN_DECISION_MATRIX.md",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/skills/CLAW_SKILL_PATTERN_DECISION_MATRIX.md",
       "relative_path": "docs/skills/CLAW_SKILL_PATTERN_DECISION_MATRIX.md",
       "size_bytes": 5650,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".md"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/docs/skills/EXTERNAL_SKILL_INTAKE_PACKAGE_README.md",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/skills/EXTERNAL_SKILL_INTAKE_PACKAGE_README.md",
       "relative_path": "docs/skills/EXTERNAL_SKILL_INTAKE_PACKAGE_README.md",
       "size_bytes": 1252,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".md"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/docs/skills/EXTERNAL_SKILL_INTAKE_SOP.json",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/skills/EXTERNAL_SKILL_INTAKE_SOP.json",
       "relative_path": "docs/skills/EXTERNAL_SKILL_INTAKE_SOP.json",
       "size_bytes": 2813,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".json"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/docs/skills/EXTERNAL_SKILL_INTAKE_SOP.md",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/skills/EXTERNAL_SKILL_INTAKE_SOP.md",
       "relative_path": "docs/skills/EXTERNAL_SKILL_INTAKE_SOP.md",
       "size_bytes": 6502,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".md"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/docs/skills/HIGH_RISK_SKILLS_HOLD_REGISTER.json",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/skills/HIGH_RISK_SKILLS_HOLD_REGISTER.json",
       "relative_path": "docs/skills/HIGH_RISK_SKILLS_HOLD_REGISTER.json",
       "size_bytes": 3426,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".json"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/docs/skills/HIGH_RISK_SKILLS_HOLD_REGISTER.md",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/skills/HIGH_RISK_SKILLS_HOLD_REGISTER.md",
       "relative_path": "docs/skills/HIGH_RISK_SKILLS_HOLD_REGISTER.md",
       "size_bytes": 1704,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".md"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/docs/skills/LOCAL_SKILL_INVENTORY_RISK_SCAN.json",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/skills/LOCAL_SKILL_INVENTORY_RISK_SCAN.json",
       "relative_path": "docs/skills/LOCAL_SKILL_INVENTORY_RISK_SCAN.json",
       "size_bytes": 1249,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".json"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/docs/skills/LOCAL_SKILL_INVENTORY_RISK_SCAN.md",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/skills/LOCAL_SKILL_INVENTORY_RISK_SCAN.md",
       "relative_path": "docs/skills/LOCAL_SKILL_INVENTORY_RISK_SCAN.md",
       "size_bytes": 1254,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".md"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/docs/skills/SKILL_AUTHORING_POLICY.json",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/skills/SKILL_AUTHORING_POLICY.json",
       "relative_path": "docs/skills/SKILL_AUTHORING_POLICY.json",
       "size_bytes": 1876,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".json"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/docs/skills/SKILL_AUTHORING_POLICY.md",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/skills/SKILL_AUTHORING_POLICY.md",
       "relative_path": "docs/skills/SKILL_AUTHORING_POLICY.md",
       "size_bytes": 3450,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".md"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/docs/skills/VIVI_EXTERNAL_SKILL_REVIEW_CONTRACT.json",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/skills/VIVI_EXTERNAL_SKILL_REVIEW_CONTRACT.json",
       "relative_path": "docs/skills/VIVI_EXTERNAL_SKILL_REVIEW_CONTRACT.json",
       "size_bytes": 1601,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".json"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/docs/skills/VIVI_EXTERNAL_SKILL_REVIEW_CONTRACT.md",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/skills/VIVI_EXTERNAL_SKILL_REVIEW_CONTRACT.md",
       "relative_path": "docs/skills/VIVI_EXTERNAL_SKILL_REVIEW_CONTRACT.md",
       "size_bytes": 2559,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".md"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/pyproject.toml",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/pyproject.toml",
       "relative_path": "pyproject.toml",
       "size_bytes": 788,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".toml"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__init__.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/__init__.py",
       "relative_path": "research_agent/ops/__init__.py",
       "size_bytes": 541,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/automation_cards.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/automation_cards.py",
       "relative_path": "research_agent/ops/automation_cards.py",
       "size_bytes": 13435,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/coding_guardrails.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/coding_guardrails.py",
       "relative_path": "research_agent/ops/coding_guardrails.py",
       "size_bytes": 14165,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/deliverable_swarm.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/deliverable_swarm.py",
       "relative_path": "research_agent/ops/deliverable_swarm.py",
       "size_bytes": 20647,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/documents_root_hygiene.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/documents_root_hygiene.py",
       "relative_path": "research_agent/ops/documents_root_hygiene.py",
-      "size_bytes": 8770,
+      "size_bytes": 10622,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/guardrails.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/guardrails.py",
       "relative_path": "research_agent/ops/guardrails.py",
       "size_bytes": 11641,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/memory_inbox.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/memory_inbox.py",
       "relative_path": "research_agent/ops/memory_inbox.py",
       "size_bytes": 7814,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/openjarvis_capability_arena.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/openjarvis_capability_arena.py",
       "relative_path": "research_agent/ops/openjarvis_capability_arena.py",
       "size_bytes": 17489,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/openjarvis_capability_lab.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/openjarvis_capability_lab.py",
       "relative_path": "research_agent/ops/openjarvis_capability_lab.py",
       "size_bytes": 21862,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/openjarvis_component_adapter.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/openjarvis_component_adapter.py",
       "relative_path": "research_agent/ops/openjarvis_component_adapter.py",
       "size_bytes": 13831,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/openjarvis_decision_gauntlet.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/openjarvis_decision_gauntlet.py",
       "relative_path": "research_agent/ops/openjarvis_decision_gauntlet.py",
       "size_bytes": 17366,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/operator_inbox.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/operator_inbox.py",
       "relative_path": "research_agent/ops/operator_inbox.py",
       "size_bytes": 7561,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/past_blocks_closure.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/past_blocks_closure.py",
       "relative_path": "research_agent/ops/past_blocks_closure.py",
       "size_bytes": 6314,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/portfolio_preflight_scan.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/portfolio_preflight_scan.py",
       "relative_path": "research_agent/ops/portfolio_preflight_scan.py",
       "size_bytes": 7409,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/portfolio_surface_audit.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/portfolio_surface_audit.py",
       "relative_path": "research_agent/ops/portfolio_surface_audit.py",
       "size_bytes": 19150,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/quellwert_productization_hardening.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/quellwert_productization_hardening.py",
       "relative_path": "research_agent/ops/quellwert_productization_hardening.py",
       "size_bytes": 12015,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/readiness.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/readiness.py",
       "relative_path": "research_agent/ops/readiness.py",
       "size_bytes": 8086,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/review_workbenches.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/review_workbenches.py",
       "relative_path": "research_agent/ops/review_workbenches.py",
       "size_bytes": 6002,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/skill_pattern_governance.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/skill_pattern_governance.py",
       "relative_path": "research_agent/ops/skill_pattern_governance.py",
       "size_bytes": 12864,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/skill_registry.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/skill_registry.py",
       "relative_path": "research_agent/ops/skill_registry.py",
       "size_bytes": 7784,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/terminal_backends.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/terminal_backends.py",
       "relative_path": "research_agent/ops/terminal_backends.py",
       "size_bytes": 5333,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/vault_semantic_audit.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/vault_semantic_audit.py",
       "relative_path": "research_agent/ops/vault_semantic_audit.py",
       "size_bytes": 16232,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/agent_os_readiness.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/scripts/ops/agent_os_readiness.py",
       "relative_path": "scripts/ops/agent_os_readiness.py",
       "size_bytes": 23479,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/context_pack_builder.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/scripts/ops/context_pack_builder.py",
       "relative_path": "scripts/ops/context_pack_builder.py",
       "size_bytes": 591,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/documents_root_hygiene_check.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/scripts/ops/documents_root_hygiene_check.py",
       "relative_path": "scripts/ops/documents_root_hygiene_check.py",
       "size_bytes": 1019,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/multi_agent_panel.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/scripts/ops/multi_agent_panel.py",
       "relative_path": "scripts/ops/multi_agent_panel.py",
       "size_bytes": 589,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/openjarvis_capability_arena.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/scripts/ops/openjarvis_capability_arena.py",
       "relative_path": "scripts/ops/openjarvis_capability_arena.py",
       "size_bytes": 397,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/openjarvis_capability_lab.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/scripts/ops/openjarvis_capability_lab.py",
       "relative_path": "scripts/ops/openjarvis_capability_lab.py",
       "size_bytes": 402,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/openjarvis_component_adapter.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/scripts/ops/openjarvis_component_adapter.py",
       "relative_path": "scripts/ops/openjarvis_component_adapter.py",
       "size_bytes": 400,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/openjarvis_decision_gauntlet.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/scripts/ops/openjarvis_decision_gauntlet.py",
       "relative_path": "scripts/ops/openjarvis_decision_gauntlet.py",
       "size_bytes": 399,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/past_blocks_closure_check.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/scripts/ops/past_blocks_closure_check.py",
       "relative_path": "scripts/ops/past_blocks_closure_check.py",
       "size_bytes": 1668,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/portfolio_preflight_scan.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/scripts/ops/portfolio_preflight_scan.py",
       "relative_path": "scripts/ops/portfolio_preflight_scan.py",
       "size_bytes": 1299,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/quellwert_productization_hardening_audit.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/scripts/ops/quellwert_productization_hardening_audit.py",
       "relative_path": "scripts/ops/quellwert_productization_hardening_audit.py",
       "size_bytes": 1857,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/skill_pattern_governance_check.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/scripts/ops/skill_pattern_governance_check.py",
       "relative_path": "scripts/ops/skill_pattern_governance_check.py",
       "size_bytes": 1044,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
     {
-      "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/vault_semantic_audit.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/scripts/ops/vault_semantic_audit.py",
       "relative_path": "scripts/ops/vault_semantic_audit.py",
       "size_bytes": 1343,
       "source_set_id": "agent_ops_quality_os",
@@ -674,7 +681,7 @@
     {
       "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Latest Session Context.md",
       "relative_path": "Latest Session Context.md",
-      "size_bytes": 1019340,
+      "size_bytes": 1028855,
       "source_set_id": "vega_backbone",
       "suffix": ".md"
     },
@@ -695,7 +702,7 @@
     {
       "path": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/quality_os_operator_surface.json",
       "relative_path": "outputs/project_intelligence_graph/quality_os_operator_surface.json",
-      "size_bytes": 207858,
+      "size_bytes": 219856,
       "source_set_id": "pig_surface",
       "suffix": ".json"
     },
@@ -745,191 +752,191 @@
     "no_commit_push_release",
     "no_secret_indexing"
   ],
-  "path": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/OPENJARVIS_CAPABILITY_LAB.json",
+  "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/outputs/agent_os_readiness/OPENJARVIS_CAPABILITY_LAB.json",
   "policy_errors": [],
-  "policy_path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_policy.json",
+  "policy_path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/configs/openjarvis/openjarvis_policy.json",
   "preflight": {
     "blocker_count": 0,
     "finding_count": 28,
     "findings": [
       {
         "code": "extension_not_allowed",
-        "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/DELIVERABLE_SWARM_OPERATING_MAP.canvas",
+        "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/agent_os/DELIVERABLE_SWARM_OPERATING_MAP.canvas",
         "severity": "info",
         "source_set_id": "agent_ops_quality_os",
         "suffix": ".canvas"
       },
       {
         "code": "denied_by_policy",
-        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/__init__.cpython-312.pyc",
+        "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/__pycache__/__init__.cpython-312.pyc",
         "pattern": "**/__pycache__/**",
         "severity": "info",
         "source_set_id": "agent_ops_quality_os"
       },
       {
         "code": "denied_by_policy",
-        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/automation_cards.cpython-312.pyc",
+        "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/__pycache__/automation_cards.cpython-312.pyc",
         "pattern": "**/__pycache__/**",
         "severity": "info",
         "source_set_id": "agent_ops_quality_os"
       },
       {
         "code": "denied_by_policy",
-        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/coding_guardrails.cpython-312.pyc",
+        "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/__pycache__/coding_guardrails.cpython-312.pyc",
         "pattern": "**/__pycache__/**",
         "severity": "info",
         "source_set_id": "agent_ops_quality_os"
       },
       {
         "code": "denied_by_policy",
-        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/deliverable_swarm.cpython-312.pyc",
+        "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/__pycache__/deliverable_swarm.cpython-312.pyc",
         "pattern": "**/__pycache__/**",
         "severity": "info",
         "source_set_id": "agent_ops_quality_os"
       },
       {
         "code": "denied_by_policy",
-        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/documents_root_hygiene.cpython-312.pyc",
+        "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/__pycache__/documents_root_hygiene.cpython-312.pyc",
         "pattern": "**/__pycache__/**",
         "severity": "info",
         "source_set_id": "agent_ops_quality_os"
       },
       {
         "code": "denied_by_policy",
-        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/guardrails.cpython-312.pyc",
+        "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/__pycache__/guardrails.cpython-312.pyc",
         "pattern": "**/__pycache__/**",
         "severity": "info",
         "source_set_id": "agent_ops_quality_os"
       },
       {
         "code": "denied_by_policy",
-        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/memory_inbox.cpython-312.pyc",
+        "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/__pycache__/memory_inbox.cpython-312.pyc",
         "pattern": "**/__pycache__/**",
         "severity": "info",
         "source_set_id": "agent_ops_quality_os"
       },
       {
         "code": "denied_by_policy",
-        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/openjarvis_capability_arena.cpython-312.pyc",
+        "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/__pycache__/openjarvis_capability_arena.cpython-312.pyc",
         "pattern": "**/__pycache__/**",
         "severity": "info",
         "source_set_id": "agent_ops_quality_os"
       },
       {
         "code": "denied_by_policy",
-        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/openjarvis_capability_lab.cpython-312.pyc",
+        "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/__pycache__/openjarvis_capability_lab.cpython-312.pyc",
         "pattern": "**/__pycache__/**",
         "severity": "info",
         "source_set_id": "agent_ops_quality_os"
       },
       {
         "code": "denied_by_policy",
-        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/openjarvis_component_adapter.cpython-312.pyc",
+        "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/__pycache__/openjarvis_component_adapter.cpython-312.pyc",
         "pattern": "**/__pycache__/**",
         "severity": "info",
         "source_set_id": "agent_ops_quality_os"
       },
       {
         "code": "denied_by_policy",
-        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/openjarvis_decision_gauntlet.cpython-312.pyc",
+        "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/__pycache__/openjarvis_decision_gauntlet.cpython-312.pyc",
         "pattern": "**/__pycache__/**",
         "severity": "info",
         "source_set_id": "agent_ops_quality_os"
       },
       {
         "code": "denied_by_policy",
-        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/operator_inbox.cpython-312.pyc",
+        "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/__pycache__/operator_inbox.cpython-312.pyc",
         "pattern": "**/__pycache__/**",
         "severity": "info",
         "source_set_id": "agent_ops_quality_os"
       },
       {
         "code": "denied_by_policy",
-        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/past_blocks_closure.cpython-312.pyc",
+        "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/__pycache__/past_blocks_closure.cpython-312.pyc",
         "pattern": "**/__pycache__/**",
         "severity": "info",
         "source_set_id": "agent_ops_quality_os"
       },
       {
         "code": "denied_by_policy",
-        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/portfolio_preflight_scan.cpython-312.pyc",
+        "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/__pycache__/portfolio_preflight_scan.cpython-312.pyc",
         "pattern": "**/__pycache__/**",
         "severity": "info",
         "source_set_id": "agent_ops_quality_os"
       },
       {
         "code": "denied_by_policy",
-        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/portfolio_surface_audit.cpython-312.pyc",
+        "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/__pycache__/portfolio_surface_audit.cpython-312.pyc",
         "pattern": "**/__pycache__/**",
         "severity": "info",
         "source_set_id": "agent_ops_quality_os"
       },
       {
         "code": "denied_by_policy",
-        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/quellwert_productization_hardening.cpython-312.pyc",
+        "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/__pycache__/quellwert_productization_hardening.cpython-312.pyc",
         "pattern": "**/__pycache__/**",
         "severity": "info",
         "source_set_id": "agent_ops_quality_os"
       },
       {
         "code": "denied_by_policy",
-        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/readiness.cpython-312.pyc",
+        "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/__pycache__/readiness.cpython-312.pyc",
         "pattern": "**/__pycache__/**",
         "severity": "info",
         "source_set_id": "agent_ops_quality_os"
       },
       {
         "code": "denied_by_policy",
-        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/review_workbenches.cpython-312.pyc",
+        "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/__pycache__/review_workbenches.cpython-312.pyc",
         "pattern": "**/__pycache__/**",
         "severity": "info",
         "source_set_id": "agent_ops_quality_os"
       },
       {
         "code": "denied_by_policy",
-        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/skill_pattern_governance.cpython-312.pyc",
+        "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/__pycache__/skill_pattern_governance.cpython-312.pyc",
         "pattern": "**/__pycache__/**",
         "severity": "info",
         "source_set_id": "agent_ops_quality_os"
       },
       {
         "code": "denied_by_policy",
-        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/skill_registry.cpython-312.pyc",
+        "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/__pycache__/skill_registry.cpython-312.pyc",
         "pattern": "**/__pycache__/**",
         "severity": "info",
         "source_set_id": "agent_ops_quality_os"
       },
       {
         "code": "denied_by_policy",
-        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/terminal_backends.cpython-312.pyc",
+        "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/__pycache__/terminal_backends.cpython-312.pyc",
         "pattern": "**/__pycache__/**",
         "severity": "info",
         "source_set_id": "agent_ops_quality_os"
       },
       {
         "code": "denied_by_policy",
-        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/vault_semantic_audit.cpython-312.pyc",
+        "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/__pycache__/vault_semantic_audit.cpython-312.pyc",
         "pattern": "**/__pycache__/**",
         "severity": "info",
         "source_set_id": "agent_ops_quality_os"
       },
       {
         "code": "denied_by_policy",
-        "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/__pycache__/agent_os_readiness.cpython-312.pyc",
+        "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/scripts/ops/__pycache__/agent_os_readiness.cpython-312.pyc",
         "pattern": "**/__pycache__/**",
         "severity": "info",
         "source_set_id": "agent_ops_quality_os"
       },
       {
         "code": "denied_by_policy",
-        "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/__pycache__/openjarvis_component_adapter.cpython-312.pyc",
+        "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/scripts/ops/__pycache__/openjarvis_component_adapter.cpython-312.pyc",
         "pattern": "**/__pycache__/**",
         "severity": "info",
         "source_set_id": "agent_ops_quality_os"
       },
       {
         "code": "denied_by_policy",
-        "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/__pycache__/quellwert_productization_hardening_audit.cpython-312.pyc",
+        "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/scripts/ops/__pycache__/quellwert_productization_hardening_audit.cpython-312.pyc",
         "pattern": "**/__pycache__/**",
         "severity": "info",
         "source_set_id": "agent_ops_quality_os"
@@ -939,7 +946,7 @@
         "max_file_bytes": 1200000,
         "path": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/full_check_report.json",
         "severity": "warn",
-        "size_bytes": 1907005,
+        "size_bytes": 1987257,
         "source_set_id": "pig_surface"
       },
       {
@@ -947,7 +954,7 @@
         "max_file_bytes": 1200000,
         "path": "/Users/BjornRosinger/Documents/New project/scripts/project_intelligence_graph/pig.py",
         "severity": "warn",
-        "size_bytes": 1231077,
+        "size_bytes": 1231309,
         "source_set_id": "pig_surface"
       }
     ],
@@ -967,7 +974,7 @@
         "status": "PASS",
         "top_sources": [
           {
-            "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_policy.json",
+            "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/configs/openjarvis/openjarvis_policy.json",
             "relative_path": "configs/openjarvis/openjarvis_policy.json",
             "score": 22.0,
             "size_bytes": 5026,
@@ -979,13 +986,22 @@
             "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Latest Session Context.md",
             "relative_path": "Latest Session Context.md",
             "score": 18.0,
-            "size_bytes": 1019340,
-            "snippet": "--- type: latest_session_context status: active updated: 2026-05-28 --- # latest session context ## update 2026-05-28 - german output gate coverage repariert - operator-befund bestaetigt: der deutsch-check war nicht inhaltlich kaputt aber zu eng verdrahtet. er pruefte nur outputs/project_intelligence_graph plus vier registry-ziele und uebersah dadurch pig-markdown-doku sowie aktive codex-skill-runbooks. - fix im pig-workspace: german_output_quality_gate.py erkennt zusaetzliche ascii-umlaut-staemme wie aehn aend ausfuehr gehoer groess laeuf laeng nuetz raeum zaehl pig.py expandiert registry-zie",
+            "size_bytes": 1028855,
+            "snippet": "--- type: latest_session_context status: active updated: 2026-05-28 --- # latest session context ## update 2026-05-28 - new project 2 formal migriert - operator-go umgesetzt: der verwirrende legacy-workspace /users/bjornrosinger/documents/new project 2 wurde formal aus dem documents-root entfernt und nach /users/bjornrosinger/documents/dreamfactory/room16/research-agent-ops verschoben. der alte pfad bleibt nur als kompatibilitaets-symlink damit historische vault- script- und audit-verweise nicht brechen. - fuehrende bedeutung: research-agent-ops ist der aktive git-workspace fuer deterministic ",
             "source_set_id": "vega_backbone",
             "suffix": ".md"
           },
           {
-            "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
+            "path": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/quality_os_operator_surface.json",
+            "relative_path": "outputs/project_intelligence_graph/quality_os_operator_surface.json",
+            "score": 15.0,
+            "size_bytes": 219856,
+            "snippet": "generated_at : 2026-05-28t18:06:12 00:00 status : pass source : pig_quality_os surface_version : v3 control_capabilities : approval_actions : true pause_resume_retry : true multi_run_history : true fresh_session_handoff : true long_run_completion_audit : true rule_propagation_audit : true operator_intent_contract : true impact_radius_assessment : true autonomy_governor : true vivi_vega_handoff_inbox : true fresh_session_readiness : true fresh_data_intake : true vivi_job_card_queue : true vivi_runner_mvp : true vivi_supervisor_audit : true commit_cleanup_go_package : true vivi_worker_mvp : true",
+            "source_set_id": "pig_surface",
+            "suffix": ".json"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
             "relative_path": "configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
             "score": 13.0,
             "size_bytes": 21458,
@@ -994,7 +1010,7 @@
             "suffix": ".json"
           },
           {
-            "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_COMPONENT_ADAPTER.md",
+            "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/openjarvis/OPENJARVIS_COMPONENT_ADAPTER.md",
             "relative_path": "docs/openjarvis/OPENJARVIS_COMPONENT_ADAPTER.md",
             "score": 13.0,
             "size_bytes": 1669,
@@ -1003,7 +1019,7 @@
             "suffix": ".md"
           },
           {
-            "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
+            "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
             "relative_path": "docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
             "score": 12.0,
             "size_bytes": 9268,
@@ -1012,16 +1028,7 @@
             "suffix": ".md"
           },
           {
-            "path": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/quality_os_operator_surface.json",
-            "relative_path": "outputs/project_intelligence_graph/quality_os_operator_surface.json",
-            "score": 12.0,
-            "size_bytes": 207858,
-            "snippet": "generated_at : 2026-05-28t17:20:34 00:00 status : pass source : pig_quality_os surface_version : v3 control_capabilities : approval_actions : true pause_resume_retry : true multi_run_history : true fresh_session_handoff : true long_run_completion_audit : true rule_propagation_audit : true operator_intent_contract : true impact_radius_assessment : true autonomy_governor : true vivi_vega_handoff_inbox : true fresh_session_readiness : true fresh_data_intake : true vivi_job_card_queue : true vivi_runner_mvp : true vivi_supervisor_audit : true commit_cleanup_go_package : true vivi_worker_mvp : true",
-            "source_set_id": "pig_surface",
-            "suffix": ".json"
-          },
-          {
-            "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
+            "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
             "relative_path": "docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
             "score": 10.0,
             "size_bytes": 2616,
@@ -1039,7 +1046,7 @@
             "suffix": ".md"
           },
           {
-            "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_DECISION_GAUNTLET.md",
+            "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/openjarvis/OPENJARVIS_DECISION_GAUNTLET.md",
             "relative_path": "docs/openjarvis/OPENJARVIS_DECISION_GAUNTLET.md",
             "score": 7.0,
             "size_bytes": 2088,
@@ -1048,7 +1055,7 @@
             "suffix": ".md"
           },
           {
-            "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/openjarvis_decision_gauntlet.py",
+            "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/openjarvis_decision_gauntlet.py",
             "relative_path": "research_agent/ops/openjarvis_decision_gauntlet.py",
             "score": 7.0,
             "size_bytes": 17366,
@@ -1057,7 +1064,7 @@
             "suffix": ".py"
           },
           {
-            "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/openjarvis_decision_gauntlet.py",
+            "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/openjarvis_decision_gauntlet.py",
             "relative_path": "research_agent/ops/openjarvis_decision_gauntlet.py",
             "score": 7.0,
             "size_bytes": 17366,
@@ -1090,13 +1097,13 @@
             "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Latest Session Context.md",
             "relative_path": "Latest Session Context.md",
             "score": 30.0,
-            "size_bytes": 1019340,
-            "snippet": "--- type: latest_session_context status: active updated: 2026-05-28 --- # latest session context ## update 2026-05-28 - german output gate coverage repariert - operator-befund bestaetigt: der deutsch-check war nicht inhaltlich kaputt aber zu eng verdrahtet. er pruefte nur outputs/project_intelligence_graph plus vier registry-ziele und uebersah dadurch pig-markdown-doku sowie aktive codex-skill-runbooks. - fix im pig-workspace: german_output_quality_gate.py erkennt zusaetzliche ascii-umlaut-staemme wie aehn aend ausfuehr gehoer groess laeuf laeng nuetz raeum zaehl pig.py expandiert registry-zie",
+            "size_bytes": 1028855,
+            "snippet": "--- type: latest_session_context status: active updated: 2026-05-28 --- # latest session context ## update 2026-05-28 - new project 2 formal migriert - operator-go umgesetzt: der verwirrende legacy-workspace /users/bjornrosinger/documents/new project 2 wurde formal aus dem documents-root entfernt und nach /users/bjornrosinger/documents/dreamfactory/room16/research-agent-ops verschoben. der alte pfad bleibt nur als kompatibilitaets-symlink damit historische vault- script- und audit-verweise nicht brechen. - fuehrende bedeutung: research-agent-ops ist der aktive git-workspace fuer deterministic ",
             "source_set_id": "vega_backbone",
             "suffix": ".md"
           },
           {
-            "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_policy.json",
+            "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/configs/openjarvis/openjarvis_policy.json",
             "relative_path": "configs/openjarvis/openjarvis_policy.json",
             "score": 30.0,
             "size_bytes": 5026,
@@ -1105,7 +1112,7 @@
             "suffix": ".json"
           },
           {
-            "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/vault_semantic_audit.py",
+            "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/ops/vault_semantic_audit.py",
             "relative_path": "research_agent/ops/vault_semantic_audit.py",
             "score": 21.0,
             "size_bytes": 16232,
@@ -1123,7 +1130,7 @@
             "suffix": ".md"
           },
           {
-            "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
+            "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
             "relative_path": "configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
             "score": 18.0,
             "size_bytes": 21458,
@@ -1132,7 +1139,7 @@
             "suffix": ".json"
           },
           {
-            "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
+            "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
             "relative_path": "docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
             "score": 18.0,
             "size_bytes": 9268,
@@ -1156,13 +1163,13 @@
             "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Latest Session Context.md",
             "relative_path": "Latest Session Context.md",
             "score": 27.0,
-            "size_bytes": 1019340,
-            "snippet": "--- type: latest_session_context status: active updated: 2026-05-28 --- # latest session context ## update 2026-05-28 - german output gate coverage repariert - operator-befund bestaetigt: der deutsch-check war nicht inhaltlich kaputt aber zu eng verdrahtet. er pruefte nur outputs/project_intelligence_graph plus vier registry-ziele und uebersah dadurch pig-markdown-doku sowie aktive codex-skill-runbooks. - fix im pig-workspace: german_output_quality_gate.py erkennt zusaetzliche ascii-umlaut-staemme wie aehn aend ausfuehr gehoer groess laeuf laeng nuetz raeum zaehl pig.py expandiert registry-zie",
+            "size_bytes": 1028855,
+            "snippet": "--- type: latest_session_context status: active updated: 2026-05-28 --- # latest session context ## update 2026-05-28 - new project 2 formal migriert - operator-go umgesetzt: der verwirrende legacy-workspace /users/bjornrosinger/documents/new project 2 wurde formal aus dem documents-root entfernt und nach /users/bjornrosinger/documents/dreamfactory/room16/research-agent-ops verschoben. der alte pfad bleibt nur als kompatibilitaets-symlink damit historische vault- script- und audit-verweise nicht brechen. - fuehrende bedeutung: research-agent-ops ist der aktive git-workspace fuer deterministic ",
             "source_set_id": "vega_backbone",
             "suffix": ".md"
           },
           {
-            "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_policy.json",
+            "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/configs/openjarvis/openjarvis_policy.json",
             "relative_path": "configs/openjarvis/openjarvis_policy.json",
             "score": 27.0,
             "size_bytes": 5026,
@@ -1180,7 +1187,7 @@
             "suffix": ".tsx"
           },
           {
-            "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
+            "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
             "relative_path": "docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
             "score": 21.0,
             "size_bytes": 9268,
@@ -1192,13 +1199,13 @@
             "path": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/quality_os_operator_surface.json",
             "relative_path": "outputs/project_intelligence_graph/quality_os_operator_surface.json",
             "score": 21.0,
-            "size_bytes": 207858,
-            "snippet": "generated_at : 2026-05-28t17:20:34 00:00 status : pass source : pig_quality_os surface_version : v3 control_capabilities : approval_actions : true pause_resume_retry : true multi_run_history : true fresh_session_handoff : true long_run_completion_audit : true rule_propagation_audit : true operator_intent_contract : true impact_radius_assessment : true autonomy_governor : true vivi_vega_handoff_inbox : true fresh_session_readiness : true fresh_data_intake : true vivi_job_card_queue : true vivi_runner_mvp : true vivi_supervisor_audit : true commit_cleanup_go_package : true vivi_worker_mvp : true",
+            "size_bytes": 219856,
+            "snippet": "generated_at : 2026-05-28t18:06:12 00:00 status : pass source : pig_quality_os surface_version : v3 control_capabilities : approval_actions : true pause_resume_retry : true multi_run_history : true fresh_session_handoff : true long_run_completion_audit : true rule_propagation_audit : true operator_intent_contract : true impact_radius_assessment : true autonomy_governor : true vivi_vega_handoff_inbox : true fresh_session_readiness : true fresh_data_intake : true vivi_job_card_queue : true vivi_runner_mvp : true vivi_supervisor_audit : true commit_cleanup_go_package : true vivi_worker_mvp : true",
             "source_set_id": "pig_surface",
             "suffix": ".json"
           },
           {
-            "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
+            "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
             "relative_path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
             "score": 18.0,
             "size_bytes": 15465,
@@ -1225,7 +1232,7 @@
             "suffix": ".md"
           },
           {
-            "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
+            "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
             "relative_path": "configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
             "score": 15.0,
             "size_bytes": 21458,
@@ -1234,7 +1241,7 @@
             "suffix": ".json"
           },
           {
-            "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/PORTFOLIO_PRODUCT_SURFACE_AUDIT.md",
+            "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/agent_os/PORTFOLIO_PRODUCT_SURFACE_AUDIT.md",
             "relative_path": "docs/agent_os/PORTFOLIO_PRODUCT_SURFACE_AUDIT.md",
             "score": 15.0,
             "size_bytes": 1496,
@@ -1243,7 +1250,7 @@
             "suffix": ".md"
           },
           {
-            "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_CAPABILITY_LAB.md",
+            "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/openjarvis/OPENJARVIS_CAPABILITY_LAB.md",
             "relative_path": "docs/openjarvis/OPENJARVIS_CAPABILITY_LAB.md",
             "score": 15.0,
             "size_bytes": 1530,
@@ -1252,7 +1259,7 @@
             "suffix": ".md"
           },
           {
-            "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
+            "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
             "relative_path": "docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
             "score": 15.0,
             "size_bytes": 2616,
@@ -1273,7 +1280,7 @@
         "status": "PASS",
         "top_sources": [
           {
-            "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_policy.json",
+            "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/configs/openjarvis/openjarvis_policy.json",
             "relative_path": "configs/openjarvis/openjarvis_policy.json",
             "score": 22.0,
             "size_bytes": 5026,
@@ -1285,13 +1292,13 @@
             "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Latest Session Context.md",
             "relative_path": "Latest Session Context.md",
             "score": 21.0,
-            "size_bytes": 1019340,
-            "snippet": "--- type: latest_session_context status: active updated: 2026-05-28 --- # latest session context ## update 2026-05-28 - german output gate coverage repariert - operator-befund bestaetigt: der deutsch-check war nicht inhaltlich kaputt aber zu eng verdrahtet. er pruefte nur outputs/project_intelligence_graph plus vier registry-ziele und uebersah dadurch pig-markdown-doku sowie aktive codex-skill-runbooks. - fix im pig-workspace: german_output_quality_gate.py erkennt zusaetzliche ascii-umlaut-staemme wie aehn aend ausfuehr gehoer groess laeuf laeng nuetz raeum zaehl pig.py expandiert registry-zie",
+            "size_bytes": 1028855,
+            "snippet": "--- type: latest_session_context status: active updated: 2026-05-28 --- # latest session context ## update 2026-05-28 - new project 2 formal migriert - operator-go umgesetzt: der verwirrende legacy-workspace /users/bjornrosinger/documents/new project 2 wurde formal aus dem documents-root entfernt und nach /users/bjornrosinger/documents/dreamfactory/room16/research-agent-ops verschoben. der alte pfad bleibt nur als kompatibilitaets-symlink damit historische vault- script- und audit-verweise nicht brechen. - fuehrende bedeutung: research-agent-ops ist der aktive git-workspace fuer deterministic ",
             "source_set_id": "vega_backbone",
             "suffix": ".md"
           },
           {
-            "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
+            "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
             "relative_path": "configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
             "score": 13.0,
             "size_bytes": 21458,
@@ -1300,7 +1307,7 @@
             "suffix": ".json"
           },
           {
-            "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
+            "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
             "relative_path": "docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
             "score": 13.0,
             "size_bytes": 2616,
@@ -1318,7 +1325,7 @@
             "suffix": ".tsx"
           },
           {
-            "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/AGENT_CODING_GUARDRAILS.md",
+            "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/agent_os/AGENT_CODING_GUARDRAILS.md",
             "relative_path": "docs/agent_os/AGENT_CODING_GUARDRAILS.md",
             "score": 12.0,
             "size_bytes": 3739,
@@ -1327,7 +1334,7 @@
             "suffix": ".md"
           },
           {
-            "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
+            "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
             "relative_path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
             "score": 12.0,
             "size_bytes": 15465,
@@ -1348,13 +1355,13 @@
             "path": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/quality_os_operator_surface.json",
             "relative_path": "outputs/project_intelligence_graph/quality_os_operator_surface.json",
             "score": 12.0,
-            "size_bytes": 207858,
-            "snippet": "generated_at : 2026-05-28t17:20:34 00:00 status : pass source : pig_quality_os surface_version : v3 control_capabilities : approval_actions : true pause_resume_retry : true multi_run_history : true fresh_session_handoff : true long_run_completion_audit : true rule_propagation_audit : true operator_intent_contract : true impact_radius_assessment : true autonomy_governor : true vivi_vega_handoff_inbox : true fresh_session_readiness : true fresh_data_intake : true vivi_job_card_queue : true vivi_runner_mvp : true vivi_supervisor_audit : true commit_cleanup_go_package : true vivi_worker_mvp : true",
+            "size_bytes": 219856,
+            "snippet": "generated_at : 2026-05-28t18:06:12 00:00 status : pass source : pig_quality_os surface_version : v3 control_capabilities : approval_actions : true pause_resume_retry : true multi_run_history : true fresh_session_handoff : true long_run_completion_audit : true rule_propagation_audit : true operator_intent_contract : true impact_radius_assessment : true autonomy_governor : true vivi_vega_handoff_inbox : true fresh_session_readiness : true fresh_data_intake : true vivi_job_card_queue : true vivi_runner_mvp : true vivi_supervisor_audit : true commit_cleanup_go_package : true vivi_worker_mvp : true",
             "source_set_id": "pig_surface",
             "suffix": ".json"
           },
           {
-            "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_COMPONENT_ADAPTER.md",
+            "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/openjarvis/OPENJARVIS_COMPONENT_ADAPTER.md",
             "relative_path": "docs/openjarvis/OPENJARVIS_COMPONENT_ADAPTER.md",
             "score": 10.0,
             "size_bytes": 1669,
@@ -1363,7 +1370,7 @@
             "suffix": ".md"
           },
           {
-            "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_DECISION_GAUNTLET.md",
+            "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/openjarvis/OPENJARVIS_DECISION_GAUNTLET.md",
             "relative_path": "docs/openjarvis/OPENJARVIS_DECISION_GAUNTLET.md",
             "score": 10.0,
             "size_bytes": 2088,
@@ -1399,7 +1406,7 @@
     "runtime_execution_attempted": false
   },
   "schema_version": 1,
-  "source_document_count": 87,
+  "source_document_count": 88,
   "source_of_truth": false,
   "source_sets": [
     {

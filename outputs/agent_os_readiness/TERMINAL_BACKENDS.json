@@ -19,7 +19,7 @@
       "verification": [
         "commands_must_be_non_destructive",
         "dangerous_command_scan_before_execution",
-        "workdir_must_equal:/Users/BjornRosinger/Documents/New project 2"
+        "workdir_must_equal:/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops"
       ],
       "write_scope": "none_by_default; artifact writes only through explicit scripts"
     },

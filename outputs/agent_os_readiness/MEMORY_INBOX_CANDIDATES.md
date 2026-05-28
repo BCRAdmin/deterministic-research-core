@@ -2,7 +2,7 @@
 
 These are promotion candidates. They are not canonical memory until reviewed.
 
-Candidates: 235
+Candidates: 236
 
 | Candidate | Route | Kind | Source | Line | Summary |
 | --- | --- | --- | --- | ---: | --- |
@@ -16,13 +16,13 @@ Candidates: 235
 | `mem-ca6ef519484d` | `Memory/Learnings and Fixes` | `general_learning` | `docs/agent_os/AGENT_CODING_GUARDRAILS.md` | 90 | `outputs/agent_os_readiness/AGENT_CODING_GUARDRAILS.json` |
 | `mem-840004a372eb` | `Memory/Learnings and Fixes` | `general_learning` | `docs/agent_os/AGENT_CODING_GUARDRAILS.md` | 95 | .venv/bin/pytest -q research_agent/tests/test_agent_os_coding_guardrails.py |
 | `mem-949266143276` | `DreamFactory System/Agent Stack` | `agent_stack_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 4 | Scope: LIONCOM / Vega / Vivi / OpenClaw / sichere Hermes-Musterübernahme |
-| `mem-a695330844cb` | `DreamFactory System/Agent Stack` | `agent_stack_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 9 | Dieses Paket übersetzt die nützlichen Hermes-Agent-Muster in sichere lokale |
-| `mem-24d36b884b1c` | `Memory/Learnings and Fixes` | `general_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 20 | Agent Coding Guardrails als kuratierter Superpowers-/Karpathy-Transfer |
-| `mem-83511b38bb41` | `Memory/Learnings and Fixes` | `workflow_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 22 | Documents-Root-Hygiene als Standard-Preflight für Vega-/Vivi-Systemarbeit |
-| `mem-fcc321c06f7b` | `DreamFactory System/Agent Stack` | `agent_stack_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 40 | `AGENT_OS_READINESS_REPORT.md/json`: Fähigkeitsmatrix und OpenClaw-Migrations-Trockenlauf. |
-| `mem-b5466ed7c41f` | `Memory/Learnings and Fixes` | `general_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 52 | `AGENT_CODING_GUARDRAILS.md/json`: lokale Coding-Agent-Guardrails aus Superpowers-/Karpathy-Patterns, ohne Plugin-Installation. |
-| `mem-9ed5a188a2d4` | `Memory/Learnings and Fixes` | `general_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 55 | `GUARDRAIL_SCAN.md/json`: lokale statische Guardrail-Funde. |
-| `mem-93d7fb19201f` | `DreamFactory System/Agent Stack` | `agent_stack_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 69 | Hermes ist ein Produktmuster-Benchmark. Jede Funktion, die Netzwerk, |
+| `mem-4f53740f2798` | `DreamFactory System/Agent Stack` | `agent_stack_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 10 | Dieses Paket übersetzt die nützlichen Hermes-Agent-Muster in sichere lokale |
+| `mem-81a58d9de849` | `Memory/Learnings and Fixes` | `general_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 21 | Agent Coding Guardrails als kuratierter Superpowers-/Karpathy-Transfer |
+| `mem-a800e9b3af64` | `Memory/Learnings and Fixes` | `workflow_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 23 | Documents-Root-Hygiene als Standard-Preflight für Vega-/Vivi-Systemarbeit |
+| `mem-467b4a8f8ea2` | `DreamFactory System/Agent Stack` | `agent_stack_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 41 | `AGENT_OS_READINESS_REPORT.md/json`: Fähigkeitsmatrix und OpenClaw-Migrations-Trockenlauf. |
+| `mem-11eee4d43ff9` | `Memory/Learnings and Fixes` | `general_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 53 | `AGENT_CODING_GUARDRAILS.md/json`: lokale Coding-Agent-Guardrails aus Superpowers-/Karpathy-Patterns, ohne Plugin-Installation. |
+| `mem-b0f6dcd61c23` | `Memory/Learnings and Fixes` | `general_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 56 | `GUARDRAIL_SCAN.md/json`: lokale statische Guardrail-Funde. |
+| `mem-867a67c0a901` | `DreamFactory System/Agent Stack` | `agent_stack_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 70 | Hermes ist ein Produktmuster-Benchmark. Jede Funktion, die Netzwerk, |
 | `mem-cb3f69cd12b2` | `Memory/Learnings and Fixes` | `operator_gate_learning` | `docs/agent_os/BLOCK_8_SKILL_PATTERN_GOVERNANCE.md` | 5 | Block 8 fuehrt externe Skill-Repos und Skill-Patterns nicht als Runtime-Wahrheit ein. Gute Muster werden in lokale Playbooks, Hold-Register und Review-Gates übersetzt. Riskante Runtime-Ideen bleiben blockiert, bis Source, Risiko, Operator-Gate und Obsidian-Kompatibilität geprüft sind. |
 | `mem-57cf7f45e73d` | `Memory/Learnings and Fixes` | `operator_gate_learning` | `docs/agent_os/BLOCK_8_SKILL_PATTERN_GOVERNANCE.md` | 35 | High-Risk-Hold-Items fehlen oder kein Operator-Gate erzwingen |
 | `mem-fd54cb2ca757` | `DreamFactory System/Agent Stack` | `agent_stack_learning` | `docs/agent_os/DELIVERABLE_SWARM_CONTRACT.md` | 10 | sichere lokale Oberfläche für Vega-, Vivi-, LIONCOM- und OpenClaw-Arbeit. |
@@ -46,6 +46,7 @@ Candidates: 235
 | `mem-d98fa8e52f44` | `Memory/Learnings and Fixes` | `operator_gate_learning` | `docs/agent_os/PAST_BLOCKS_CLOSURE_2026-05-21.md` | 9 | `Vivi model route snapshot`: closed by LIONCOM claim-start snapshot field `AutonomyClaim.modelRouteSnapshotAtClaimStart`, rendered in `TASK_CLAIMS.md` and propagated into the local duo loop prompt/heartbeat. |
 | `mem-1d6c9d9eab8a` | `Memory/Learnings and Fixes` | `workflow_learning` | `docs/agent_os/PORTFOLIO_PRODUCT_SURFACE_AUDIT.md` | 4 | Scope: LIONCOM / Membership / Utility / Quellwert / Vega-Vivi-Lieferoberflächen |
 | `mem-3dec566884cf` | `Memory/Learnings and Fixes` | `workflow_learning` | `docs/agent_os/PORTFOLIO_PRODUCT_SURFACE_AUDIT.md` | 44 | promotet keine Public-Ausgabe. Dauerhafte Findings gehoeren nach Vega-Memory |
+| `mem-24faef42879b` | `Memory/Learnings and Fixes` | `general_learning` | `docs/agent_os/WORKSPACE_PLACEMENT.md` | 14 | publishing guardrails and local hygiene verifiers. |
 | `mem-3b42a5fd595b` | `Memory/Learnings and Fixes` | `workflow_learning` | `docs/documents/DOCX_WORKFLOW_PLAYBOOK.md` | 4 | Scope: LIONCOM / Vega / Vivi document workflows |
 | `mem-b9cf0898075a` | `Memory/Learnings and Fixes` | `workflow_learning` | `docs/documents/DOCX_WORKFLOW_PLAYBOOK.md` | 61 | Vivi must not report a DOCX as final without a validation report. |
 | `mem-5251756e2a09` | `Memory/Learnings and Fixes` | `workflow_learning` | `docs/media_ingest/MEDIA_INGEST_USE_CASES.md` | 8 | This playbook defines safe media-ingest use cases for Quellwert, Room16, Vivi and Obsidian. Media may help create transcript drafts, source notes and evidence candidates, but it must not directly change reports, ratings, guards, calibration, `MetricsPacket`, `DecisionPacket` or public output. |
@@ -98,7 +99,7 @@ Candidates: 235
 | `mem-f5d5a078c229` | `Memory/Learnings and Fixes` | `operator_gate_learning` | `docs/skills/VIVI_EXTERNAL_SKILL_REVIEW_CONTRACT.md` | 69 | Direct install remains blocked unless a separate Operator Gate and Vega verification path exist. |
 | `mem-e7118c72211b` | `Memory/Learnings and Fixes` | `general_learning` | `docs/spreadsheets/XLSX_WORKFLOW_PLAYBOOK.md` | 17 | Export Batch, Outcome or Guardrail matrices. |
 | `mem-de1833bb9ea9` | `Memory/Learnings and Fixes` | `general_learning` | `docs/spreadsheets/XLSX_WORKFLOW_PLAYBOOK.md` | 52 | Guardrail Coverage Matrix XLSX. |
-| `mem-3da01a0fde9d` | `Memory/Learnings and Fixes` | `operator_gate_learning` | `docs/writing/HUMANIZER_LINT_PLAYBOOK.md` | 67 | Vivi should check whether suggested rewrites preserve facts, evidence, uncertainty and project gates before any user-facing copy is changed. |
+| `mem-49f005e67e94` | `Memory/Learnings and Fixes` | `operator_gate_learning` | `docs/writing/HUMANIZER_LINT_PLAYBOOK.md` | 134 | Vivi should check whether suggested rewrites preserve facts, evidence, uncertainty, source meaning and project gates before any user-facing copy is changed. |
 | `mem-f0c8e9205169` | `Memory/Learnings and Fixes` | `general_learning` | `outputs/quellwert_room16_operating/BASELINE_VERIFY.md` | 5 | QCOM raw Batch004 is now visibly superseded: Superseded by manual_focus_guardrail_final_check. Do not use for promotion. |
 | `mem-af1ca4be9cc8` | `Memory/Learnings and Fixes` | `general_learning` | `outputs/quellwert_room16_operating/CURRENT_OPERATING_STATE.md` | 8 | Batch: `guardrail_coverage_batch_004_ir_coverage` |
 | `mem-1bcda68fccd0` | `Memory/Learnings and Fixes` | `workflow_learning` | `outputs/quellwert_room16_operating/DATA_OPS_NEXT_ACTIONS.md` | 5 | | Priority | Ticker | Reason | Operator action | Vega without login/API | |

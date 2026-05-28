@@ -6,7 +6,7 @@
 - Adapt-ready: `4`
 - Gated-ready: `1`
 - Derzeit abgelehnt: `1`
-- Trial-Report: `/Users/BjornRosinger/Documents/New project 2/outputs/openjarvis_capability_lab/operator_trials/20260525T005539Z/reports/OPENJARVIS_OPERATOR_TRIALS_REPORT.json`
+- Trial-Report: `/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/outputs/openjarvis_capability_lab/operator_trials/20260525T005539Z/reports/OPENJARVIS_OPERATOR_TRIALS_REPORT.json`
 
 ## Komponenten
 

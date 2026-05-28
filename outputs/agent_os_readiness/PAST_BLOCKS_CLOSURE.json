@@ -22,22 +22,22 @@
     },
     {
       "check_id": "agent_os_vault_semantic_audit_artifact",
-      "detail": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/VAULT_SEMANTIC_OWNERSHIP_AUDIT.md",
+      "detail": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/outputs/agent_os_readiness/VAULT_SEMANTIC_OWNERSHIP_AUDIT.md",
       "valid": true
     },
     {
       "check_id": "agent_os_report_only_automation_card",
-      "detail": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/AUTOMATION_JOB_CARDS.md",
+      "detail": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/outputs/agent_os_readiness/AUTOMATION_JOB_CARDS.md",
       "valid": true
     },
     {
       "check_id": "agent_os_operator_inbox_semantic_review",
-      "detail": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/OPERATOR_INBOX.md",
+      "detail": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/outputs/agent_os_readiness/OPERATOR_INBOX.md",
       "valid": true
     },
     {
       "check_id": "standalone_semantic_audit_output",
-      "detail": "/Users/BjornRosinger/Documents/New project 2/outputs/vault_semantic_audit/VAULT_SEMANTIC_OWNERSHIP_AUDIT.md",
+      "detail": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/outputs/vault_semantic_audit/VAULT_SEMANTIC_OWNERSHIP_AUDIT.md",
       "valid": true
     }
   ],
