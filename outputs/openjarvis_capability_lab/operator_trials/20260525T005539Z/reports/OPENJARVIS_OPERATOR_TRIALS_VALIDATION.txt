@@ -1,0 +1,12 @@
+OpenJarvis Operator Trials Validation
+runtime_sandbox=PASS_WITH_WARNINGS
+github_digest=PASS
+write_fix_sandbox=FAIL_FOR_OPENJARVIS_ADOPTION
+openjarvis_safe_calculator_ask=437
+github_mutations_attempted=false
+openjarvis_real_repo_writes=false
+openjarvis_write_worker_patch_created=false
+sandbox_codex_baseline_unittest=4 passed
+secret_scan=PASS
+zip_path=/Users/BjornRosinger/Documents/New project 2/outputs/openjarvis_capability_lab/openjarvis-operator-trials-v1-20260525.zip
+zip_sha256=84a41f6be9501d8fdea12de405da2f1585895034f02d8f4c7b907674a1fcdf92

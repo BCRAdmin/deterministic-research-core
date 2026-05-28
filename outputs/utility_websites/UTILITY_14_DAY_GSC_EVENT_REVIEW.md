@@ -1,16 +1,16 @@
 # Utility Websites 14-Day GSC / Event Review
 
-Generated: 2026-05-21T00:14:40+02:00
+Generated: 2026-05-25T09:01:13+02:00
 
 Review status: `pending_not_mature`
 
-Decision: `continue_monitoring`
+Decision: `no_action`
 
-Secondary decision: `no_action`
+Secondary decision: `continue_monitoring`
 
 ## Readiness
 
-The requested 14-day review window is not locally data-complete. Existing operating artifacts set the better 14-day review date to 2026-06-01. The local workspace contains GSC baselines ending 2026-05-14 and event implementation verification, but no fresh GSC export or Plausible event-count export for the requested 14-day outcome window.
+The requested 14-day review window is not locally data-complete. This heartbeat check ran on 2026-05-25 and found no fresh GSC/Search Console export and no Plausible/event-count export in the active workspace or the known Utility Downloads reference path. Existing operating artifacts set the better 14-day review date to 2026-06-01. The local workspace contains GSC baselines ending 2026-05-14 and event implementation verification, but no fresh outcome export for the requested 14-day window.
 
 ## Data Availability
 
@@ -44,11 +44,11 @@ These are not 14-day outcome values; they are the last local GSC baseline values
 
 | Possible decision | Result | Reason |
 |---|---|---|
-| `continue_monitoring` | yes | 14-day data is not available/mature. |
+| `continue_monitoring` | secondary | Monitoring continues through the scheduled maturity check, but no data-backed action is allowed now. |
 | `small_ctr_adjustment` | no | No fresh GSC export for the outcome window. |
 | `materialbedarf_result_ux_adjustment` | no | No live event counts showing drop-off. |
 | `affiliate_partner_application_ready` | no | Partner prep exists, but event thresholds and partner data are missing. |
-| `no_action` | yes | No data-backed action is allowed now. |
+| `no_action` | yes | Required decision while GSC/Event inputs are missing. |
 
 ## Guardrails Confirmed
 

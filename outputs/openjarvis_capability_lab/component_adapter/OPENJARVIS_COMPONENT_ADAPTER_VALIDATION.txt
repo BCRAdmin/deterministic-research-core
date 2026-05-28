@@ -1,0 +1,8 @@
+OpenJarvis Component Adapter Validation
+status=PASS
+component_count=6
+adapt_ready_count=4
+gated_ready_count=1
+rejected_current_count=1
+github_digest_status=PASS
+mutations_attempted=false

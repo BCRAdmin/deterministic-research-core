@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "trial_id": "20260525T005539Z",
+  "generated_at": "2026-05-25T01:08:52Z",
+  "trial_root": "/Users/BjornRosinger/Documents/New project 2/outputs/openjarvis_capability_lab/operator_trials/20260525T005539Z",
+  "overall_decision": "do_not_adopt_openjarvis_as_write_worker; keep_shadow_and_read_only_digest_patterns",
+  "runtime_sandbox": {
+    "status": "PASS_WITH_WARNINGS",
+    "openjarvis_version": "1.0.1",
+    "install_isolated": true,
+    "sandbox_home": "/Users/BjornRosinger/Documents/New project 2/outputs/openjarvis_capability_lab/operator_trials/20260525T005539Z/runtime_sandbox/home",
+    "doctor_summary": "6 passed, 21 warnings, 0 failures",
+    "safe_calculator_ask": "437",
+    "warnings": [
+      "uv was not globally installed; installed only in sandbox venv.",
+      "OpenJarvis pulled CPython 3.14.5 into sandbox because uv selected it.",
+      "code-assistant preset enables file_write, shell_exec, git_commit, http_request, web_search by default.",
+      "doctor can see local Ollama and model inventory; future tests must pin whether local engines are allowed.",
+      "docs/API mention --skip-scan in older context but current CLI uses --no-scan."
+    ]
+  },
+  "github_dependabot_digest": {
+    "status": "PASS",
+    "read_only": true,
+    "repo_count": 10,
+    "open_pr_count": 12,
+    "open_dependabot_pr_count": 12,
+    "mutations_attempted": false,
+    "finding": "Existing gh CLI is enough for read-only Dependabot digest; no Jarvis connector is needed for this function yet."
+  },
+  "write_fix_sandbox": {
+    "status": "FAIL_FOR_OPENJARVIS_ADOPTION",
+    "sandbox": "/Users/BjornRosinger/Documents/New project 2/outputs/openjarvis_capability_lab/operator_trials/20260525T005539Z/write_sandbox/toy_bug_repo",
+    "before_tests": "4 failures",
+    "openjarvis_patch_created": false,
+    "openjarvis_tests_green": false,
+    "openjarvis_process_stopped_after_seconds_approx": 124,
+    "codex_baseline_patch_created": true,
+    "codex_baseline_tests": "4 passed",
+    "commit_attempted_by_openjarvis": false,
+    "push_attempted": false,
+    "finding": "OpenJarvis is not reliable enough as a write/fix worker in current configuration."
+  },
+  "hard_boundaries_confirmed": [
+    "No real project repo writes by OpenJarvis.",
+    "No GitHub comments, labels, branches, commits, merges, or pushes.",
+    "No release/public/production action.",
+    "No secret files intentionally mounted into OpenJarvis runtime.",
+    "Writes occurred only in disposable toy_bug_repo plus reports/docs in Agent Ops."
+  ],
+  "recommended_next_system_action": [
+    "Do not integrate OpenJarvis as code-writing worker.",
+    "Keep/adapt the read-only GitHub Dependabot digest pattern into PIG/LIONCOM if desired.",
+    "If testing write-worker again, build a hard wrapper that strips file_write/shell_exec/git_commit/http_request/web_search unless a disposable workspace lease is active.",
+    "Use OpenJarvis tool registry output as a capability reference, not as permission policy."
+  ],
+  "sources_used": [
+    "https://github.com/open-jarvis/OpenJarvis",
+    "https://open-jarvis.github.io/OpenJarvis/getting-started/quickstart/",
+    "https://open-jarvis.github.io/OpenJarvis/getting-started/installation/",
+    "https://open-jarvis.github.io/OpenJarvis/getting-started/configuration/"
+  ]
+}

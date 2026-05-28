@@ -4,7 +4,7 @@ Generated: 2026-05-21
 
 Mode: `no_ads_data_first`
 
-Source reference: `/Users/BjornRosinger/Downloads/Utility webseiten/outputs/utility_websites/UTILITY_WEBSITES_30_DAY_PLAN.md`
+Source reference: `/Users/BjornRosinger/Documents/New project 2/outputs/utility_websites/downloads_ingest_2026-05/outputs/utility_websites/UTILITY_WEBSITES_30_DAY_PLAN.md`
 
 ## Week 1
 

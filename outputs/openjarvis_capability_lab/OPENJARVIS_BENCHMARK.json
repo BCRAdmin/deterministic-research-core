@@ -1,0 +1,434 @@
+{
+  "pass_count": 4,
+  "question_count": 4,
+  "results": [
+    {
+      "gate_awareness": 3,
+      "missing_source_patterns": [],
+      "missing_terms": [],
+      "question": "Wie darf OpenJarvis in diesem System benutzt werden?",
+      "question_id": "openjarvis_shadow_policy",
+      "source_precision": 5,
+      "status": "PASS",
+      "top_sources": [
+        {
+          "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_policy.json",
+          "relative_path": "configs/openjarvis/openjarvis_policy.json",
+          "score": 22.0,
+          "size_bytes": 5026,
+          "snippet": "schema_version : 1 mode : shadow_read_only source_of_truth : false kill_switch : openjarvis_enabled : true runtime_execution_enabled : false runtime_permissions : allow_shell : false allow_write : false allow_network : false allow_github_api : false allowed_extensions : .cjs .json .md .mjs .py .toml .ts .tsx .yaml .yml max_file_bytes : 1200000 deny_globs : .env .env. /.env /.env. /.git/ /.venv/ /__pycache__/ /.pytest_cache/ /.ruff_cache/ /node_modules/ /.next/ /dist/ /dist-desktop/ /outputs/debug_bundles/ /reports/room16/runs/ /reports/room16/premium/translation-cache.json /secrets/ /credentia",
+          "source_set_id": "agent_ops_openjarvis_docs",
+          "suffix": ".json"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Latest Session Context.md",
+          "relative_path": "Latest Session Context.md",
+          "score": 18.0,
+          "size_bytes": 1000137,
+          "snippet": "--- type: latest_session_context status: active updated: 2026-05-28 --- # latest session context ## update 2026-05-28 - quellwert sauber eingefroren - operator-entscheidung nach strategieklaerung: quellwert wird nicht als aktive launch- funnel- payment- oder membership-spur weitergetrieben sondern sauber als spaeter wiederverwendbares shelf-asset eingefroren. status: frozen_shelf_asset_operator_reopen_required . - wichtige trennung: room16 selbst ist nicht eingestampft. room16 bleibt die interne research-/evidence-/review-maschine eingefroren ist die quellwert-schaufenster-/produktisierungs-/g",
+          "source_set_id": "vega_backbone",
+          "suffix": ".md"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/quality_os_operator_surface.json",
+          "relative_path": "outputs/project_intelligence_graph/quality_os_operator_surface.json",
+          "score": 15.0,
+          "size_bytes": 201908,
+          "snippet": "generated_at : 2026-05-28t12:34:17 00:00 status : pass source : pig_quality_os surface_version : v3 control_capabilities : approval_actions : true pause_resume_retry : true multi_run_history : true fresh_session_handoff : true long_run_completion_audit : true rule_propagation_audit : true operator_intent_contract : true impact_radius_assessment : true autonomy_governor : true vivi_vega_handoff_inbox : true fresh_session_readiness : true fresh_data_intake : true vivi_job_card_queue : true vivi_runner_mvp : true vivi_supervisor_audit : true commit_cleanup_go_package : true vivi_worker_mvp : true",
+          "source_set_id": "pig_surface",
+          "suffix": ".json"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
+          "relative_path": "configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
+          "score": 13.0,
+          "size_bytes": 21458,
+          "snippet": "schema_version : 1 gauntlet_id : openjarvis_decision_gauntlet_v1 title : openjarvis / jarvis decision gauntlet decision_goal : entscheiden ob jarvis in bjoerns system nur als ideen-/bausteinquelle als read-only shadow-capability als isolierter worker oder gar nicht genutzt werden soll. leading_truth : pig obsidian lioncom und deterministische verifier bleiben fuehrend. openjarvis darf vor einem separaten operator-go keine runtime- shell- write- network- oder github-api-aktion ausfuehren. ein gewinnergebnis im shadow-retrieval beweist nutzen als capability aber nicht runtime-reife. final_decisi",
+          "source_set_id": "agent_ops_openjarvis_docs",
+          "suffix": ".json"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_COMPONENT_ADAPTER.md",
+          "relative_path": "docs/openjarvis/OPENJARVIS_COMPONENT_ADAPTER.md",
+          "score": 13.0,
+          "size_bytes": 1669,
+          "snippet": "# openjarvis component adapter ## zweck der component adapter macht aus openjarvis ein teilelager: gute muster werden identifiziert bewertet und als eigene vega-/pig-/lioncom-bausteine nachgebaut oder gehaertet. die bewertung laeuft ueber komponenten statt ueber die frage ob openjarvis als gesamtsystem uebernommen wird. ## dauerhafte bausteine - github_dependabot_digest : read-only repo-/pr-/dependabot-digest mit gh . - tool_surface_audit : tool-inventar und deny-by-default-policy fuer gefaehrliche faehigkeiten wie shell writes git-commit und http. - skill_mining : externe skills nur lesen kla",
+          "source_set_id": "agent_ops_openjarvis_docs",
+          "suffix": ".md"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
+          "relative_path": "docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
+          "score": 12.0,
+          "size_bytes": 9268,
+          "snippet": "# deliverable-swarm-nutzungsuebersicht status: aktive lokale v1 scope: vega / vivi / lioncom / openclaw-nahe agentenarbeit quellmuster: vrsen/openswarm nur als muster uebernommen runtime-aenderungen: keine ## kurzbild der deliverable-swarm-vertrag ist die sichtbare struktur fuer agentenarbeit. er beantwortet vor der ausfuehrung vier fragen: - welche lane besitzt die arbeit - welches artefakt wird geliefert - wohin wird das artefakt geschrieben - welcher verifier beweist dass es nutzbar ist uebernommen wird openswarms gutes produktmuster: sichtbare spezialisten-lanes fuer konkrete outputs. nich",
+          "source_set_id": "agent_ops_quality_os",
+          "suffix": ".md"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
+          "relative_path": "docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
+          "score": 10.0,
+          "size_bytes": 2616,
+          "snippet": "# openjarvis integration decision ## entscheidung openjarvis wird als gehaertetes capability-lab integriert nicht als control plane. ## live-trial-entscheidung 2026-05-25 nach operator-go wurden die drei zuvor blockierten trials sicher ausgefuehrt: - runtime-sandbox: pass_with_warnings . openjarvis 1.0.1 liess sich in einer isolierten sandbox installieren jarvis --help jarvis --version jarvis doctor preset-init und ein minimaler calculator-ask liefen. der code-assistant -preset aktiviert aber standardmaessig file_write shell_exec git_commit http_request und web_search deshalb bleibt er fuer ec",
+          "source_set_id": "agent_ops_openjarvis_docs",
+          "suffix": ".md"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/VEGA_START_HERE.md",
+          "relative_path": "VEGA_START_HERE.md",
+          "score": 9.0,
+          "size_bytes": 7284,
+          "snippet": "--- type: vega_start status: active updated: 2026-05-28 aliases: - vega start here - vegapunk start here - vivi start here --- # vega_start_here wenn der user in zukunft nur sagt: lies dir vega_start_here durch dann ist das der eine pflicht-einstieg fuer meine start-session. ## lies in genau dieser reihenfolge - fuer die komplette systemuebersicht jetzt direkt auch dreamfactory systemhandbuch und dreamfactory systemkarte.canvas dreamfactory systemkarte nutzen 1. latest session context 2. backbone home 3. canonical/canonical index 4. review queue 5. memory/chat and idea ledger 6. memory/project",
+          "source_set_id": "vega_backbone",
+          "suffix": ".md"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_DECISION_GAUNTLET.md",
+          "relative_path": "docs/openjarvis/OPENJARVIS_DECISION_GAUNTLET.md",
+          "score": 7.0,
+          "size_bytes": 2088,
+          "snippet": "# openjarvis decision gauntlet ## zweck der decision gauntlet ist die finale pruefschicht vor einer jarvis-entscheidung. er beantwortet nicht nur ob der shadow-test gut aussieht sondern welche arbeit und welche tests vollstaendig erledigt sein muessen bevor jarvis als baustein worker oder gar nicht uebernommen wird. ## fuehrende entscheidung openjarvis wird nicht automatisch eingebaut. es muss sich in vier ebenen beweisen: 1. shadow_read_only retrieval und code-qa gegen pig/obsidian. 2. operator-surface-sichtbarkeit in agent ops pig und lioncom. 3. runtime- github- und write-sandbox-trials nur",
+          "source_set_id": "agent_ops_openjarvis_docs",
+          "suffix": ".md"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/openjarvis_decision_gauntlet.py",
+          "relative_path": "research_agent/ops/openjarvis_decision_gauntlet.py",
+          "score": 7.0,
+          "size_bytes": 17366,
+          "snippet": "openjarvis decision gauntlet. the gauntlet is the decision layer above the capability lab and arena. it turns the question should we use jarvis into a complete repeatable test matrix. local checks run deterministically. runtime github network and write tests are kept as explicit operator-gates until a separate approval exists. from __future__ import annotations import argparse import json from pathlib import path from typing import any from research_agent.ops.openjarvis_capability_arena import build_capability_arena from research_agent.ops.openjarvis_capability_lab import default_policy_path b",
+          "source_set_id": "agent_ops_openjarvis_docs",
+          "suffix": ".py"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/openjarvis_decision_gauntlet.py",
+          "relative_path": "research_agent/ops/openjarvis_decision_gauntlet.py",
+          "score": 7.0,
+          "size_bytes": 17366,
+          "snippet": "openjarvis decision gauntlet. the gauntlet is the decision layer above the capability lab and arena. it turns the question should we use jarvis into a complete repeatable test matrix. local checks run deterministically. runtime github network and write tests are kept as explicit operator-gates until a separate approval exists. from __future__ import annotations import argparse import json from pathlib import path from typing import any from research_agent.ops.openjarvis_capability_arena import build_capability_arena from research_agent.ops.openjarvis_capability_lab import default_policy_path b",
+          "source_set_id": "agent_ops_quality_os",
+          "suffix": ".py"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Canonical/Canonical Index.md",
+          "relative_path": "Canonical/Canonical Index.md",
+          "score": 6.0,
+          "size_bytes": 3733,
+          "snippet": "--- type: canonical_index status: active updated: 2026-05-28 --- # canonical index ## zweck das ist die zentrale wahrheitsschicht dieses wissensraums. ## schnellroute - rollen und personen zuerst: people/person - bjorn rosinger people/person - vivi people/person - vegapunk - governance und systemkern zuerst: companies/company - bcr ventures ug rules/rule - project before files decisions/decision - one truth two interfaces systems/system - obsidian knowledge base - aktive arbeit zuerst: project - lioncom dashboard project - membership finanzplattform project - utility websites portfolio project",
+          "source_set_id": "vega_backbone",
+          "suffix": ".md"
+        }
+      ],
+      "truth_alignment": 5
+    },
+    {
+      "gate_awareness": 3,
+      "missing_source_patterns": [],
+      "missing_terms": [],
+      "question": "Welche Grenzen bleiben Operator-Gates und dürfen nicht autonom überschritten werden?",
+      "question_id": "operator_gate_boundary",
+      "source_precision": 5,
+      "status": "PASS",
+      "top_sources": [
+        {
+          "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Latest Session Context.md",
+          "relative_path": "Latest Session Context.md",
+          "score": 30.0,
+          "size_bytes": 1000137,
+          "snippet": "--- type: latest_session_context status: active updated: 2026-05-28 --- # latest session context ## update 2026-05-28 - quellwert sauber eingefroren - operator-entscheidung nach strategieklaerung: quellwert wird nicht als aktive launch- funnel- payment- oder membership-spur weitergetrieben sondern sauber als spaeter wiederverwendbares shelf-asset eingefroren. status: frozen_shelf_asset_operator_reopen_required . - wichtige trennung: room16 selbst ist nicht eingestampft. room16 bleibt die interne research-/evidence-/review-maschine eingefroren ist die quellwert-schaufenster-/produktisierungs-/g",
+          "source_set_id": "vega_backbone",
+          "suffix": ".md"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_policy.json",
+          "relative_path": "configs/openjarvis/openjarvis_policy.json",
+          "score": 30.0,
+          "size_bytes": 5026,
+          "snippet": "schema_version : 1 mode : shadow_read_only source_of_truth : false kill_switch : openjarvis_enabled : true runtime_execution_enabled : false runtime_permissions : allow_shell : false allow_write : false allow_network : false allow_github_api : false allowed_extensions : .cjs .json .md .mjs .py .toml .ts .tsx .yaml .yml max_file_bytes : 1200000 deny_globs : .env .env. /.env /.env. /.git/ /.venv/ /__pycache__/ /.pytest_cache/ /.ruff_cache/ /node_modules/ /.next/ /dist/ /dist-desktop/ /outputs/debug_bundles/ /reports/room16/runs/ /reports/room16/premium/translation-cache.json /secrets/ /credentia",
+          "source_set_id": "agent_ops_openjarvis_docs",
+          "suffix": ".json"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/vault_semantic_audit.py",
+          "relative_path": "research_agent/ops/vault_semantic_audit.py",
+          "score": 21.0,
+          "size_bytes": 16232,
+          "snippet": "semantic ownership audit for the vega obsidian backbone. the older vault checks were mostly structural: links presence and headings. this layer checks whether active entities still have exactly one leading project surface and whether old project notes only mention successor lanes historically. from __future__ import annotations import json from dataclasses import asdict dataclass from pathlib import path from typing import sequence default_vault path /users/bjornrosinger/documents/obsidian/test vaul privat/human overview start_surfaces 00 dreamfactory home.md 01 projects.md 02 plans and status",
+          "source_set_id": "agent_ops_quality_os",
+          "suffix": ".py"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/VEGA_START_HERE.md",
+          "relative_path": "VEGA_START_HERE.md",
+          "score": 18.0,
+          "size_bytes": 7284,
+          "snippet": "--- type: vega_start status: active updated: 2026-05-28 aliases: - vega start here - vegapunk start here - vivi start here --- # vega_start_here wenn der user in zukunft nur sagt: lies dir vega_start_here durch dann ist das der eine pflicht-einstieg fuer meine start-session. ## lies in genau dieser reihenfolge - fuer die komplette systemuebersicht jetzt direkt auch dreamfactory systemhandbuch und dreamfactory systemkarte.canvas dreamfactory systemkarte nutzen 1. latest session context 2. backbone home 3. canonical/canonical index 4. review queue 5. memory/chat and idea ledger 6. memory/project",
+          "source_set_id": "vega_backbone",
+          "suffix": ".md"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
+          "relative_path": "configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
+          "score": 18.0,
+          "size_bytes": 21458,
+          "snippet": "schema_version : 1 gauntlet_id : openjarvis_decision_gauntlet_v1 title : openjarvis / jarvis decision gauntlet decision_goal : entscheiden ob jarvis in bjoerns system nur als ideen-/bausteinquelle als read-only shadow-capability als isolierter worker oder gar nicht genutzt werden soll. leading_truth : pig obsidian lioncom und deterministische verifier bleiben fuehrend. openjarvis darf vor einem separaten operator-go keine runtime- shell- write- network- oder github-api-aktion ausfuehren. ein gewinnergebnis im shadow-retrieval beweist nutzen als capability aber nicht runtime-reife. final_decisi",
+          "source_set_id": "agent_ops_openjarvis_docs",
+          "suffix": ".json"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
+          "relative_path": "docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
+          "score": 18.0,
+          "size_bytes": 9268,
+          "snippet": "# deliverable-swarm-nutzungsuebersicht status: aktive lokale v1 scope: vega / vivi / lioncom / openclaw-nahe agentenarbeit quellmuster: vrsen/openswarm nur als muster uebernommen runtime-aenderungen: keine ## kurzbild der deliverable-swarm-vertrag ist die sichtbare struktur fuer agentenarbeit. er beantwortet vor der ausfuehrung vier fragen: - welche lane besitzt die arbeit - welches artefakt wird geliefert - wohin wird das artefakt geschrieben - welcher verifier beweist dass es nutzbar ist uebernommen wird openswarms gutes produktmuster: sichtbare spezialisten-lanes fuer konkrete outputs. nich",
+          "source_set_id": "agent_ops_quality_os",
+          "suffix": ".md"
+        }
+      ],
+      "truth_alignment": 5
+    },
+    {
+      "gate_awareness": 3,
+      "missing_source_patterns": [],
+      "missing_terms": [],
+      "question": "Was darf der Vivi Worker lokal tun und was nicht?",
+      "question_id": "vivi_worker_truth",
+      "source_precision": 5,
+      "status": "PASS",
+      "top_sources": [
+        {
+          "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Latest Session Context.md",
+          "relative_path": "Latest Session Context.md",
+          "score": 27.0,
+          "size_bytes": 1000137,
+          "snippet": "--- type: latest_session_context status: active updated: 2026-05-28 --- # latest session context ## update 2026-05-28 - quellwert sauber eingefroren - operator-entscheidung nach strategieklaerung: quellwert wird nicht als aktive launch- funnel- payment- oder membership-spur weitergetrieben sondern sauber als spaeter wiederverwendbares shelf-asset eingefroren. status: frozen_shelf_asset_operator_reopen_required . - wichtige trennung: room16 selbst ist nicht eingestampft. room16 bleibt die interne research-/evidence-/review-maschine eingefroren ist die quellwert-schaufenster-/produktisierungs-/g",
+          "source_set_id": "vega_backbone",
+          "suffix": ".md"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_policy.json",
+          "relative_path": "configs/openjarvis/openjarvis_policy.json",
+          "score": 27.0,
+          "size_bytes": 5026,
+          "snippet": "schema_version : 1 mode : shadow_read_only source_of_truth : false kill_switch : openjarvis_enabled : true runtime_execution_enabled : false runtime_permissions : allow_shell : false allow_write : false allow_network : false allow_github_api : false allowed_extensions : .cjs .json .md .mjs .py .toml .ts .tsx .yaml .yml max_file_bytes : 1200000 deny_globs : .env .env. /.env /.env. /.git/ /.venv/ /__pycache__/ /.pytest_cache/ /.ruff_cache/ /node_modules/ /.next/ /dist/ /dist-desktop/ /outputs/debug_bundles/ /reports/room16/runs/ /reports/room16/premium/translation-cache.json /secrets/ /credentia",
+          "source_set_id": "agent_ops_openjarvis_docs",
+          "suffix": ".json"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/components/portfolio-control-tower-page.tsx",
+          "relative_path": "components/portfolio-control-tower-page.tsx",
+          "score": 21.0,
+          "size_bytes": 81615,
+          "snippet": "use client import archive barchart3 calendardays clipboardcheck gitbranch hourglass listchecks shieldcheck shieldx from lucide-react import statuschip from /components/status-chip import card carddescription cardtitle from /components/ui/card import usecontrolplanedata from /components/use-control-plane-data import cn from /lib/cn import type planningqualitysurface portfolioexecutioncontract portfoliometriccardid portfoliorepositorystatus portfolioreviewcalendaritem portfoliostreammetric severity from /lib/types const portfoliometriccards: array id: portfoliometriccardid title: string descript",
+          "source_set_id": "lioncom_surface",
+          "suffix": ".tsx"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
+          "relative_path": "docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
+          "score": 21.0,
+          "size_bytes": 9268,
+          "snippet": "# deliverable-swarm-nutzungsuebersicht status: aktive lokale v1 scope: vega / vivi / lioncom / openclaw-nahe agentenarbeit quellmuster: vrsen/openswarm nur als muster uebernommen runtime-aenderungen: keine ## kurzbild der deliverable-swarm-vertrag ist die sichtbare struktur fuer agentenarbeit. er beantwortet vor der ausfuehrung vier fragen: - welche lane besitzt die arbeit - welches artefakt wird geliefert - wohin wird das artefakt geschrieben - welcher verifier beweist dass es nutzbar ist uebernommen wird openswarms gutes produktmuster: sichtbare spezialisten-lanes fuer konkrete outputs. nich",
+          "source_set_id": "agent_ops_quality_os",
+          "suffix": ".md"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/quality_os_operator_surface.json",
+          "relative_path": "outputs/project_intelligence_graph/quality_os_operator_surface.json",
+          "score": 21.0,
+          "size_bytes": 201908,
+          "snippet": "generated_at : 2026-05-28t12:34:17 00:00 status : pass source : pig_quality_os surface_version : v3 control_capabilities : approval_actions : true pause_resume_retry : true multi_run_history : true fresh_session_handoff : true long_run_completion_audit : true rule_propagation_audit : true operator_intent_contract : true impact_radius_assessment : true autonomy_governor : true vivi_vega_handoff_inbox : true fresh_session_readiness : true fresh_data_intake : true vivi_job_card_queue : true vivi_runner_mvp : true vivi_supervisor_audit : true commit_cleanup_go_package : true vivi_worker_mvp : true",
+          "source_set_id": "pig_surface",
+          "suffix": ".json"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
+          "relative_path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
+          "score": 18.0,
+          "size_bytes": 15465,
+          "snippet": "--- title: multi-agent research build roadmap status: implemented_internal_v1 date: 2026-05-21 owner: vega scope: internal-first --- # multi-agent research build roadmap ## kurzentscheidung wir bauen keinen mirofish-fork und keinen sofortigen lioncom-einbau. der richtige weg ist: 1. vega-multi-agent-research als lokalen codex/vivi-skill stabilisieren. status: erledigt. 2. den workflow als wiederholbaren research-/ideen-/strategie-baustein nutzen. status: erledigt fuer interne cli-/skill-nutzung. 3. nach 5-10 echten internen laeufen entscheiden ob daraus eine getrennte kleine app analog room16 ",
+          "source_set_id": "agent_ops_quality_os",
+          "suffix": ".md"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/lib/control-plane-v2/live-data.ts",
+          "relative_path": "lib/control-plane-v2/live-data.ts",
+          "score": 18.0,
+          "size_bytes": 80274,
+          "snippet": "import server-only import promises as fs from fs import paths from /lib/constants/paths import loadcontrolroomdata from /lib/control-room/loadcontrolroomdata import loadportfolioexecutioncontract loadportfoliorepositories from /lib/portfolio-control-tower import loadportfoliometrics from /lib/portfolio/portfolio-metrics import loadportfolioreviewcalendar from /lib/portfolio/review-calendar import type bridgepacket codexchatentry controlroomdata systemalert taskitem timelineentry vivireportentry workblockitem workintakeentry from /lib/control-room/types import as mock from /lib/mock-data import",
+          "source_set_id": "lioncom_surface",
+          "suffix": ".ts"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/VEGA_START_HERE.md",
+          "relative_path": "VEGA_START_HERE.md",
+          "score": 15.0,
+          "size_bytes": 7284,
+          "snippet": "--- type: vega_start status: active updated: 2026-05-28 aliases: - vega start here - vegapunk start here - vivi start here --- # vega_start_here wenn der user in zukunft nur sagt: lies dir vega_start_here durch dann ist das der eine pflicht-einstieg fuer meine start-session. ## lies in genau dieser reihenfolge - fuer die komplette systemuebersicht jetzt direkt auch dreamfactory systemhandbuch und dreamfactory systemkarte.canvas dreamfactory systemkarte nutzen 1. latest session context 2. backbone home 3. canonical/canonical index 4. review queue 5. memory/chat and idea ledger 6. memory/project",
+          "source_set_id": "vega_backbone",
+          "suffix": ".md"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
+          "relative_path": "configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
+          "score": 15.0,
+          "size_bytes": 21458,
+          "snippet": "schema_version : 1 gauntlet_id : openjarvis_decision_gauntlet_v1 title : openjarvis / jarvis decision gauntlet decision_goal : entscheiden ob jarvis in bjoerns system nur als ideen-/bausteinquelle als read-only shadow-capability als isolierter worker oder gar nicht genutzt werden soll. leading_truth : pig obsidian lioncom und deterministische verifier bleiben fuehrend. openjarvis darf vor einem separaten operator-go keine runtime- shell- write- network- oder github-api-aktion ausfuehren. ein gewinnergebnis im shadow-retrieval beweist nutzen als capability aber nicht runtime-reife. final_decisi",
+          "source_set_id": "agent_ops_openjarvis_docs",
+          "suffix": ".json"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/PORTFOLIO_PRODUCT_SURFACE_AUDIT.md",
+          "relative_path": "docs/agent_os/PORTFOLIO_PRODUCT_SURFACE_AUDIT.md",
+          "score": 15.0,
+          "size_bytes": 1496,
+          "snippet": "# portfolio-produktoberflaechen-audit status: aktive lokale v1 scope: lioncom / membership / utility / quellwert / vega-vivi-lieferoberflaechen runtime-aenderungen: keine ## zweck dieser audit ist der wiederholbare test ob unsere projektarbeit wie ein sichtbares produktsystem funktioniert und nicht nur als interne agentenleistung. jede kanonische projektkarte muss beantworten: - welche sichtbare oberflaeche existiert oder ist bewusst blockiert - welche deliverable-swarm-lanes besitzen die naechsten lieferobjekte - welche gates stoppen irreversible aktionen - was ist die naechste sichere aktion",
+          "source_set_id": "agent_ops_quality_os",
+          "suffix": ".md"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_CAPABILITY_LAB.md",
+          "relative_path": "docs/openjarvis/OPENJARVIS_CAPABILITY_LAB.md",
+          "score": 15.0,
+          "size_bytes": 1530,
+          "snippet": "# openjarvis capability lab ## zweck openjarvis wird nicht als ersatz fuer lioncom vivi vega pig oder das obsidian-backbone eingebaut. diese spur prueft openjarvis nur als externen capability-provider fuer retrieval code-qa-handoffs und spaetere github-digests. ## fuehrende regel openjarvis ist niemals source_of_truth . wahrheit bleibt bei pig obsidian repo-lokalen vertraegen und deterministischen verifiern. ## betriebsmodus - modus: shadow_read_only - shell: aus - writes: aus - netzwerk: aus - github api: aus - runtime-ausfuehrung: aus - secret-scan: pflicht vor jedem index - operator-go: pfl",
+          "source_set_id": "agent_ops_openjarvis_docs",
+          "suffix": ".md"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
+          "relative_path": "docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
+          "score": 15.0,
+          "size_bytes": 2616,
+          "snippet": "# openjarvis integration decision ## entscheidung openjarvis wird als gehaertetes capability-lab integriert nicht als control plane. ## live-trial-entscheidung 2026-05-25 nach operator-go wurden die drei zuvor blockierten trials sicher ausgefuehrt: - runtime-sandbox: pass_with_warnings . openjarvis 1.0.1 liess sich in einer isolierten sandbox installieren jarvis --help jarvis --version jarvis doctor preset-init und ein minimaler calculator-ask liefen. der code-assistant -preset aktiviert aber standardmaessig file_write shell_exec git_commit http_request und web_search deshalb bleibt er fuer ec",
+          "source_set_id": "agent_ops_openjarvis_docs",
+          "suffix": ".md"
+        }
+      ],
+      "truth_alignment": 5
+    },
+    {
+      "gate_awareness": 3,
+      "missing_source_patterns": [],
+      "missing_terms": [],
+      "question": "Wo soll der OpenJarvis Capability-Lab Zustand sichtbar werden?",
+      "question_id": "lioncom_surface_truth",
+      "source_precision": 5,
+      "status": "PASS",
+      "top_sources": [
+        {
+          "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_policy.json",
+          "relative_path": "configs/openjarvis/openjarvis_policy.json",
+          "score": 22.0,
+          "size_bytes": 5026,
+          "snippet": "schema_version : 1 mode : shadow_read_only source_of_truth : false kill_switch : openjarvis_enabled : true runtime_execution_enabled : false runtime_permissions : allow_shell : false allow_write : false allow_network : false allow_github_api : false allowed_extensions : .cjs .json .md .mjs .py .toml .ts .tsx .yaml .yml max_file_bytes : 1200000 deny_globs : .env .env. /.env /.env. /.git/ /.venv/ /__pycache__/ /.pytest_cache/ /.ruff_cache/ /node_modules/ /.next/ /dist/ /dist-desktop/ /outputs/debug_bundles/ /reports/room16/runs/ /reports/room16/premium/translation-cache.json /secrets/ /credentia",
+          "source_set_id": "agent_ops_openjarvis_docs",
+          "suffix": ".json"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Latest Session Context.md",
+          "relative_path": "Latest Session Context.md",
+          "score": 21.0,
+          "size_bytes": 1000137,
+          "snippet": "--- type: latest_session_context status: active updated: 2026-05-28 --- # latest session context ## update 2026-05-28 - quellwert sauber eingefroren - operator-entscheidung nach strategieklaerung: quellwert wird nicht als aktive launch- funnel- payment- oder membership-spur weitergetrieben sondern sauber als spaeter wiederverwendbares shelf-asset eingefroren. status: frozen_shelf_asset_operator_reopen_required . - wichtige trennung: room16 selbst ist nicht eingestampft. room16 bleibt die interne research-/evidence-/review-maschine eingefroren ist die quellwert-schaufenster-/produktisierungs-/g",
+          "source_set_id": "vega_backbone",
+          "suffix": ".md"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/quality_os_operator_surface.json",
+          "relative_path": "outputs/project_intelligence_graph/quality_os_operator_surface.json",
+          "score": 18.0,
+          "size_bytes": 201908,
+          "snippet": "generated_at : 2026-05-28t12:34:17 00:00 status : pass source : pig_quality_os surface_version : v3 control_capabilities : approval_actions : true pause_resume_retry : true multi_run_history : true fresh_session_handoff : true long_run_completion_audit : true rule_propagation_audit : true operator_intent_contract : true impact_radius_assessment : true autonomy_governor : true vivi_vega_handoff_inbox : true fresh_session_readiness : true fresh_data_intake : true vivi_job_card_queue : true vivi_runner_mvp : true vivi_supervisor_audit : true commit_cleanup_go_package : true vivi_worker_mvp : true",
+          "source_set_id": "pig_surface",
+          "suffix": ".json"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
+          "relative_path": "configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
+          "score": 13.0,
+          "size_bytes": 21458,
+          "snippet": "schema_version : 1 gauntlet_id : openjarvis_decision_gauntlet_v1 title : openjarvis / jarvis decision gauntlet decision_goal : entscheiden ob jarvis in bjoerns system nur als ideen-/bausteinquelle als read-only shadow-capability als isolierter worker oder gar nicht genutzt werden soll. leading_truth : pig obsidian lioncom und deterministische verifier bleiben fuehrend. openjarvis darf vor einem separaten operator-go keine runtime- shell- write- network- oder github-api-aktion ausfuehren. ein gewinnergebnis im shadow-retrieval beweist nutzen als capability aber nicht runtime-reife. final_decisi",
+          "source_set_id": "agent_ops_openjarvis_docs",
+          "suffix": ".json"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
+          "relative_path": "docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
+          "score": 13.0,
+          "size_bytes": 2616,
+          "snippet": "# openjarvis integration decision ## entscheidung openjarvis wird als gehaertetes capability-lab integriert nicht als control plane. ## live-trial-entscheidung 2026-05-25 nach operator-go wurden die drei zuvor blockierten trials sicher ausgefuehrt: - runtime-sandbox: pass_with_warnings . openjarvis 1.0.1 liess sich in einer isolierten sandbox installieren jarvis --help jarvis --version jarvis doctor preset-init und ein minimaler calculator-ask liefen. der code-assistant -preset aktiviert aber standardmaessig file_write shell_exec git_commit http_request und web_search deshalb bleibt er fuer ec",
+          "source_set_id": "agent_ops_openjarvis_docs",
+          "suffix": ".md"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/components/portfolio-control-tower-page.tsx",
+          "relative_path": "components/portfolio-control-tower-page.tsx",
+          "score": 12.0,
+          "size_bytes": 81615,
+          "snippet": "use client import archive barchart3 calendardays clipboardcheck gitbranch hourglass listchecks shieldcheck shieldx from lucide-react import statuschip from /components/status-chip import card carddescription cardtitle from /components/ui/card import usecontrolplanedata from /components/use-control-plane-data import cn from /lib/cn import type planningqualitysurface portfolioexecutioncontract portfoliometriccardid portfoliorepositorystatus portfolioreviewcalendaritem portfoliostreammetric severity from /lib/types const portfoliometriccards: array id: portfoliometriccardid title: string descript",
+          "source_set_id": "lioncom_surface",
+          "suffix": ".tsx"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/AGENT_CODING_GUARDRAILS.md",
+          "relative_path": "docs/agent_os/AGENT_CODING_GUARDRAILS.md",
+          "score": 12.0,
+          "size_bytes": 3021,
+          "snippet": "# agent coding guardrails status: aktive lokale playbook-schicht scope: vega / vivi / codex coding-arbeit runtime-aenderungen: keine ## zweck diese schicht uebernimmt die nuetzlichen muster aus obra/superpowers und multica-ai/andrej-karpathy-skills ohne deren runtime- oder hook-modell zu installieren. sie beantwortet eine engere frage als der deliverable-swarm-vertrag: wie soll ein coding-agent arbeiten damit diffs klein bleiben bugs wirklich verstanden werden und abschlussmeldungen belegt sind ## harte uebernahmeregel uebernommen wird nur als playbook und lokaler vertrag: - keine globale plug",
+          "source_set_id": "agent_ops_quality_os",
+          "suffix": ".md"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
+          "relative_path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
+          "score": 12.0,
+          "size_bytes": 15465,
+          "snippet": "--- title: multi-agent research build roadmap status: implemented_internal_v1 date: 2026-05-21 owner: vega scope: internal-first --- # multi-agent research build roadmap ## kurzentscheidung wir bauen keinen mirofish-fork und keinen sofortigen lioncom-einbau. der richtige weg ist: 1. vega-multi-agent-research als lokalen codex/vivi-skill stabilisieren. status: erledigt. 2. den workflow als wiederholbaren research-/ideen-/strategie-baustein nutzen. status: erledigt fuer interne cli-/skill-nutzung. 3. nach 5-10 echten internen laeufen entscheiden ob daraus eine getrennte kleine app analog room16 ",
+          "source_set_id": "agent_ops_quality_os",
+          "suffix": ".md"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/lib/control-plane-v2/live-data.ts",
+          "relative_path": "lib/control-plane-v2/live-data.ts",
+          "score": 12.0,
+          "size_bytes": 80274,
+          "snippet": "import server-only import promises as fs from fs import paths from /lib/constants/paths import loadcontrolroomdata from /lib/control-room/loadcontrolroomdata import loadportfolioexecutioncontract loadportfoliorepositories from /lib/portfolio-control-tower import loadportfoliometrics from /lib/portfolio/portfolio-metrics import loadportfolioreviewcalendar from /lib/portfolio/review-calendar import type bridgepacket codexchatentry controlroomdata systemalert taskitem timelineentry vivireportentry workblockitem workintakeentry from /lib/control-room/types import as mock from /lib/mock-data import",
+          "source_set_id": "lioncom_surface",
+          "suffix": ".ts"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_COMPONENT_ADAPTER.md",
+          "relative_path": "docs/openjarvis/OPENJARVIS_COMPONENT_ADAPTER.md",
+          "score": 10.0,
+          "size_bytes": 1669,
+          "snippet": "# openjarvis component adapter ## zweck der component adapter macht aus openjarvis ein teilelager: gute muster werden identifiziert bewertet und als eigene vega-/pig-/lioncom-bausteine nachgebaut oder gehaertet. die bewertung laeuft ueber komponenten statt ueber die frage ob openjarvis als gesamtsystem uebernommen wird. ## dauerhafte bausteine - github_dependabot_digest : read-only repo-/pr-/dependabot-digest mit gh . - tool_surface_audit : tool-inventar und deny-by-default-policy fuer gefaehrliche faehigkeiten wie shell writes git-commit und http. - skill_mining : externe skills nur lesen kla",
+          "source_set_id": "agent_ops_openjarvis_docs",
+          "suffix": ".md"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_DECISION_GAUNTLET.md",
+          "relative_path": "docs/openjarvis/OPENJARVIS_DECISION_GAUNTLET.md",
+          "score": 10.0,
+          "size_bytes": 2088,
+          "snippet": "# openjarvis decision gauntlet ## zweck der decision gauntlet ist die finale pruefschicht vor einer jarvis-entscheidung. er beantwortet nicht nur ob der shadow-test gut aussieht sondern welche arbeit und welche tests vollstaendig erledigt sein muessen bevor jarvis als baustein worker oder gar nicht uebernommen wird. ## fuehrende entscheidung openjarvis wird nicht automatisch eingebaut. es muss sich in vier ebenen beweisen: 1. shadow_read_only retrieval und code-qa gegen pig/obsidian. 2. operator-surface-sichtbarkeit in agent ops pig und lioncom. 3. runtime- github- und write-sandbox-trials nur",
+          "source_set_id": "agent_ops_openjarvis_docs",
+          "suffix": ".md"
+        },
+        {
+          "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/VEGA_START_HERE.md",
+          "relative_path": "VEGA_START_HERE.md",
+          "score": 9.0,
+          "size_bytes": 7284,
+          "snippet": "--- type: vega_start status: active updated: 2026-05-28 aliases: - vega start here - vegapunk start here - vivi start here --- # vega_start_here wenn der user in zukunft nur sagt: lies dir vega_start_here durch dann ist das der eine pflicht-einstieg fuer meine start-session. ## lies in genau dieser reihenfolge - fuer die komplette systemuebersicht jetzt direkt auch dreamfactory systemhandbuch und dreamfactory systemkarte.canvas dreamfactory systemkarte nutzen 1. latest session context 2. backbone home 3. canonical/canonical index 4. review queue 5. memory/chat and idea ledger 6. memory/project",
+          "source_set_id": "vega_backbone",
+          "suffix": ".md"
+        }
+      ],
+      "truth_alignment": 5
+    }
+  ],
+  "status": "PASS",
+  "warn_count": 0
+}

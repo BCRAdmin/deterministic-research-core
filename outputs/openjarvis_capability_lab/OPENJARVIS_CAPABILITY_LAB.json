@@ -1,0 +1,1441 @@
+{
+  "adoption_recommendation": "keep_shadow_mode_and_benchmark_retrieval_first",
+  "code_qa_shadow": {
+    "pass_count": 3,
+    "project_count": 3,
+    "projects": [
+      {
+        "matching_script_count": 0,
+        "matching_scripts": {},
+        "mutations_attempted": false,
+        "package_json": null,
+        "project_id": "agent_ops",
+        "pyproject_toml": "/Users/BjornRosinger/Documents/New project 2/pyproject.toml",
+        "recommended_mode": "read_only_handoff_only",
+        "root": "/Users/BjornRosinger/Documents/New project 2",
+        "status": "PASS"
+      },
+      {
+        "matching_script_count": 47,
+        "matching_scripts": {
+          "baseline:golden": "node scripts/run_golden_baseline.mjs",
+          "baseline:golden:due": "node scripts/run_golden_baseline_due.mjs",
+          "baseline:golden:due:dry": "node scripts/run_golden_baseline_due.mjs --dry-run",
+          "baseline:golden:fast": "node scripts/run_golden_baseline.mjs --fast",
+          "baseline:golden:install-agent": "bash ../scripts/install_golden_baseline_agent.sh",
+          "baseline:golden:local": "node scripts/run_golden_baseline.mjs --skip-network",
+          "build": "node scripts/prepare_next_build.mjs && next build",
+          "build:raw": "next build",
+          "clean:retention:dry": "bash ../scripts/clean_lioncom_runtime_artifacts.sh --skip-build-artifacts --prune-logs --prune-recovery",
+          "desktop:dist": "mkdir -p /tmp/lioncom-electron-builder-cache && ELECTRON_BUILDER_CACHE=/tmp/lioncom-electron-builder-cache npm run build && npm run desktop:icon && ELECTRON_BUILDER_CACHE=/tmp/lioncom-electron-builder-cache electron-builder --mac dmg",
+          "desktop:verify-v2": "node scripts/verify_desktop_bundle_v2.mjs",
+          "repair:vivi-transition-hygiene": "node scripts/reconcile_spurious_vivi_transition_repairs.mjs",
+          "verify:codex-loop-guards": "node scripts/reconcile_resolved_codex_loop_guards.mjs --verify",
+          "verify:control-plane-v2": "node scripts/verify_control_plane_v2_local.mjs",
+          "verify:control-plane-v2:mutating": "node scripts/verify_control_plane_v2_local.mjs --mutating",
+          "verify:control-plane-v2:release": "node scripts/verify_control_plane_v2_release.mjs",
+          "verify:control-plane-v2:static": "node scripts/verify_control_plane_api_contract_static.mjs",
+          "verify:control-plane-v2:visual": "node scripts/verify_control_plane_v2_visual.mjs",
+          "verify:materialized-followups": "node scripts/reconcile_repeated_materialized_followups.mjs --verify",
+          "verify:portfolio-status": "node scripts/verify_portfolio_status.mjs",
+          "verify:quellwert-membership-preview": "node scripts/verify_quellwert_membership_preview.cjs",
+          "verify:quellwert-public-catalog-contract": "node scripts/verify_quellwert_public_catalog_contract.cjs",
+          "verify:quellwert-softlaunch-readiness": "node scripts/verify_quellwert_softlaunch_readiness.cjs",
+          "verify:quellwert-visual-polish": "node scripts/verify_quellwert_visual_polish.cjs",
+          "verify:release-safe": "node scripts/verify_release_safe.mjs",
+          "verify:stale-refill-queue": "node scripts/reconcile_stale_autonomous_refill_queue.mjs --verify",
+          "verify:v2-dispatch-closures": "node scripts/reconcile_resolved_control_plane_v2_dispatches.mjs --verify",
+          "vivi:capability-router": "node scripts/verify_vivi_capability_router.mjs",
+          "vivi:flight-local": "node scripts/verify_vivi_flight_local_acceptance.mjs",
+          "vivi:image:generate": "node scripts/generate_vivi_image_local.mjs",
+          "vivi:image:install-provider": "bash scripts/install_vivi_image_provider_webui.sh",
+          "vivi:image:preflight": "node scripts/vivi_image_provider_preflight.mjs",
+          "vivi:image:provider-check": "node scripts/verify_vivi_image_provider.mjs",
+          "vivi:image:start-provider": "bash scripts/start_vivi_image_provider.sh",
+          "vivi:materializer-contract": "node scripts/verify_vivi_report_materializer_contract.mjs",
+          "vivi:model-canary": "node scripts/verify_vivi_model_route.mjs --canary",
+          "vivi:model-override": "node scripts/set_vivi_model_override.mjs",
+          "vivi:model-route": "node scripts/verify_vivi_model_route.mjs",
+          "vivi:night-health": "node scripts/check_vivi_night_run_health.mjs",
+          "vivi:night-repair": "node scripts/run_vivi_night_watchdog.mjs --repair",
+          "vivi:night-run": "node scripts/start_vivi_night_run.mjs",
+          "vivi:night-watchdog": "node scripts/run_vivi_night_watchdog.mjs",
+          "vivi:night-watchdog:install-agent": "bash ../scripts/install_vivi_night_watchdog_agent.sh",
+          "vivi:quality-gate-contract": "node scripts/verify_vivi_report_quality_gate_contract.mjs",
+          "vivi:session-health": "node scripts/verify_vivi_session_lifecycle.mjs",
+          "vivi:skill-registry": "node scripts/verify_vivi_skill_registry.mjs",
+          "vivi:skill-runtime": "node scripts/verify_vivi_skill_runtime.mjs"
+        },
+        "mutations_attempted": false,
+        "package_json": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/package.json",
+        "project_id": "lioncom",
+        "pyproject_toml": null,
+        "recommended_mode": "read_only_handoff_only",
+        "root": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board",
+        "status": "PASS"
+      },
+      {
+        "matching_script_count": 0,
+        "matching_scripts": {},
+        "mutations_attempted": false,
+        "package_json": null,
+        "project_id": "company_dossier_lab",
+        "pyproject_toml": "/Users/BjornRosinger/Documents/New project/company-dossier-lab/pyproject.toml",
+        "recommended_mode": "read_only_handoff_only",
+        "root": "/Users/BjornRosinger/Documents/New project/company-dossier-lab",
+        "status": "PASS"
+      }
+    ],
+    "status": "PASS"
+  },
+  "generated_at": "2026-05-28T12:34:58+00:00",
+  "hardening": {
+    "deny_globs": [
+      ".env",
+      ".env.*",
+      "**/.env",
+      "**/.env.*",
+      "**/.git/**",
+      "**/.venv/**",
+      "**/__pycache__/**",
+      "**/.pytest_cache/**",
+      "**/.ruff_cache/**",
+      "**/node_modules/**",
+      "**/.next/**",
+      "**/dist/**",
+      "**/dist-desktop/**",
+      "**/outputs/debug_bundles/**",
+      "**/reports/room16/runs/**",
+      "**/reports/room16/premium/translation-cache.json",
+      "**/secrets/**",
+      "**/credentials/**",
+      "**/cookies/**"
+    ],
+    "mode": "shadow_read_only",
+    "mutations_attempted": false,
+    "operator_go_required_for_runtime_execution": true,
+    "runtime_action_executed": false,
+    "runtime_permissions": {
+      "allow_github_api": false,
+      "allow_network": false,
+      "allow_shell": false,
+      "allow_write": false
+    },
+    "secret_scan_enabled": true,
+    "source_of_truth": false
+  },
+  "indexed_sources": [
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
+      "relative_path": "configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
+      "size_bytes": 21458,
+      "source_set_id": "agent_ops_openjarvis_docs",
+      "suffix": ".json"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_policy.json",
+      "relative_path": "configs/openjarvis/openjarvis_policy.json",
+      "size_bytes": 5026,
+      "source_set_id": "agent_ops_openjarvis_docs",
+      "suffix": ".json"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_ALLOWED_USE_CASES.md",
+      "relative_path": "docs/openjarvis/OPENJARVIS_ALLOWED_USE_CASES.md",
+      "size_bytes": 1265,
+      "source_set_id": "agent_ops_openjarvis_docs",
+      "suffix": ".md"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_CAPABILITY_ARENA.md",
+      "relative_path": "docs/openjarvis/OPENJARVIS_CAPABILITY_ARENA.md",
+      "size_bytes": 1387,
+      "source_set_id": "agent_ops_openjarvis_docs",
+      "suffix": ".md"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_CAPABILITY_LAB.md",
+      "relative_path": "docs/openjarvis/OPENJARVIS_CAPABILITY_LAB.md",
+      "size_bytes": 1530,
+      "source_set_id": "agent_ops_openjarvis_docs",
+      "suffix": ".md"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_COMPONENT_ADAPTER.md",
+      "relative_path": "docs/openjarvis/OPENJARVIS_COMPONENT_ADAPTER.md",
+      "size_bytes": 1669,
+      "source_set_id": "agent_ops_openjarvis_docs",
+      "suffix": ".md"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_DECISION_GAUNTLET.md",
+      "relative_path": "docs/openjarvis/OPENJARVIS_DECISION_GAUNTLET.md",
+      "size_bytes": 2088,
+      "source_set_id": "agent_ops_openjarvis_docs",
+      "suffix": ".md"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
+      "relative_path": "docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
+      "size_bytes": 2616,
+      "source_set_id": "agent_ops_openjarvis_docs",
+      "suffix": ".md"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_THREAT_MODEL.md",
+      "relative_path": "docs/openjarvis/OPENJARVIS_THREAT_MODEL.md",
+      "size_bytes": 1119,
+      "source_set_id": "agent_ops_openjarvis_docs",
+      "suffix": ".md"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/openjarvis_capability_lab.py",
+      "relative_path": "research_agent/ops/openjarvis_capability_lab.py",
+      "size_bytes": 21862,
+      "source_set_id": "agent_ops_openjarvis_docs",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/openjarvis_decision_gauntlet.py",
+      "relative_path": "research_agent/ops/openjarvis_decision_gauntlet.py",
+      "size_bytes": 17366,
+      "source_set_id": "agent_ops_openjarvis_docs",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/openjarvis_capability_lab.py",
+      "relative_path": "scripts/ops/openjarvis_capability_lab.py",
+      "size_bytes": 402,
+      "source_set_id": "agent_ops_openjarvis_docs",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/README.md",
+      "relative_path": "README.md",
+      "size_bytes": 2848,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".md"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/AGENT_CODING_GUARDRAILS.json",
+      "relative_path": "docs/agent_os/AGENT_CODING_GUARDRAILS.json",
+      "size_bytes": 1026,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".json"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/AGENT_CODING_GUARDRAILS.md",
+      "relative_path": "docs/agent_os/AGENT_CODING_GUARDRAILS.md",
+      "size_bytes": 3021,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".md"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/AGENT_OS_READINESS_CONTRACT.json",
+      "relative_path": "docs/agent_os/AGENT_OS_READINESS_CONTRACT.json",
+      "size_bytes": 1707,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".json"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/AGENT_OS_READINESS_PACK.md",
+      "relative_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
+      "size_bytes": 3783,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".md"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/BLOCK_6_PORTFOLIO_PREFLIGHT.md",
+      "relative_path": "docs/agent_os/BLOCK_6_PORTFOLIO_PREFLIGHT.md",
+      "size_bytes": 1244,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".md"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/BLOCK_8_SKILL_PATTERN_GOVERNANCE.md",
+      "relative_path": "docs/agent_os/BLOCK_8_SKILL_PATTERN_GOVERNANCE.md",
+      "size_bytes": 1578,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".md"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/DELIVERABLE_SWARM_CONTRACT.json",
+      "relative_path": "docs/agent_os/DELIVERABLE_SWARM_CONTRACT.json",
+      "size_bytes": 1018,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".json"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/DELIVERABLE_SWARM_CONTRACT.md",
+      "relative_path": "docs/agent_os/DELIVERABLE_SWARM_CONTRACT.md",
+      "size_bytes": 2206,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".md"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
+      "relative_path": "docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
+      "size_bytes": 9268,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".md"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.json",
+      "relative_path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.json",
+      "size_bytes": 6107,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".json"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
+      "relative_path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
+      "size_bytes": 15465,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".md"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/PAST_BLOCKS_CLOSURE_2026-05-21.json",
+      "relative_path": "docs/agent_os/PAST_BLOCKS_CLOSURE_2026-05-21.json",
+      "size_bytes": 704,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".json"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/PAST_BLOCKS_CLOSURE_2026-05-21.md",
+      "relative_path": "docs/agent_os/PAST_BLOCKS_CLOSURE_2026-05-21.md",
+      "size_bytes": 1113,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".md"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/PORTFOLIO_PRODUCT_SURFACE_AUDIT.md",
+      "relative_path": "docs/agent_os/PORTFOLIO_PRODUCT_SURFACE_AUDIT.md",
+      "size_bytes": 1496,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".md"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/docs/skills/CLAW_SKILL_PATTERN_DECISION_MATRIX.json",
+      "relative_path": "docs/skills/CLAW_SKILL_PATTERN_DECISION_MATRIX.json",
+      "size_bytes": 8691,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".json"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/docs/skills/CLAW_SKILL_PATTERN_DECISION_MATRIX.md",
+      "relative_path": "docs/skills/CLAW_SKILL_PATTERN_DECISION_MATRIX.md",
+      "size_bytes": 5650,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".md"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/docs/skills/EXTERNAL_SKILL_INTAKE_PACKAGE_README.md",
+      "relative_path": "docs/skills/EXTERNAL_SKILL_INTAKE_PACKAGE_README.md",
+      "size_bytes": 1252,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".md"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/docs/skills/EXTERNAL_SKILL_INTAKE_SOP.json",
+      "relative_path": "docs/skills/EXTERNAL_SKILL_INTAKE_SOP.json",
+      "size_bytes": 2813,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".json"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/docs/skills/EXTERNAL_SKILL_INTAKE_SOP.md",
+      "relative_path": "docs/skills/EXTERNAL_SKILL_INTAKE_SOP.md",
+      "size_bytes": 6502,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".md"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/docs/skills/HIGH_RISK_SKILLS_HOLD_REGISTER.json",
+      "relative_path": "docs/skills/HIGH_RISK_SKILLS_HOLD_REGISTER.json",
+      "size_bytes": 3426,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".json"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/docs/skills/HIGH_RISK_SKILLS_HOLD_REGISTER.md",
+      "relative_path": "docs/skills/HIGH_RISK_SKILLS_HOLD_REGISTER.md",
+      "size_bytes": 1704,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".md"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/docs/skills/LOCAL_SKILL_INVENTORY_RISK_SCAN.json",
+      "relative_path": "docs/skills/LOCAL_SKILL_INVENTORY_RISK_SCAN.json",
+      "size_bytes": 1249,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".json"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/docs/skills/LOCAL_SKILL_INVENTORY_RISK_SCAN.md",
+      "relative_path": "docs/skills/LOCAL_SKILL_INVENTORY_RISK_SCAN.md",
+      "size_bytes": 1254,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".md"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/docs/skills/SKILL_AUTHORING_POLICY.json",
+      "relative_path": "docs/skills/SKILL_AUTHORING_POLICY.json",
+      "size_bytes": 1876,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".json"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/docs/skills/SKILL_AUTHORING_POLICY.md",
+      "relative_path": "docs/skills/SKILL_AUTHORING_POLICY.md",
+      "size_bytes": 3450,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".md"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/docs/skills/VIVI_EXTERNAL_SKILL_REVIEW_CONTRACT.json",
+      "relative_path": "docs/skills/VIVI_EXTERNAL_SKILL_REVIEW_CONTRACT.json",
+      "size_bytes": 1601,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".json"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/docs/skills/VIVI_EXTERNAL_SKILL_REVIEW_CONTRACT.md",
+      "relative_path": "docs/skills/VIVI_EXTERNAL_SKILL_REVIEW_CONTRACT.md",
+      "size_bytes": 2559,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".md"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/pyproject.toml",
+      "relative_path": "pyproject.toml",
+      "size_bytes": 788,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".toml"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__init__.py",
+      "relative_path": "research_agent/ops/__init__.py",
+      "size_bytes": 541,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/automation_cards.py",
+      "relative_path": "research_agent/ops/automation_cards.py",
+      "size_bytes": 13435,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/coding_guardrails.py",
+      "relative_path": "research_agent/ops/coding_guardrails.py",
+      "size_bytes": 12434,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/deliverable_swarm.py",
+      "relative_path": "research_agent/ops/deliverable_swarm.py",
+      "size_bytes": 20647,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/guardrails.py",
+      "relative_path": "research_agent/ops/guardrails.py",
+      "size_bytes": 11641,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/memory_inbox.py",
+      "relative_path": "research_agent/ops/memory_inbox.py",
+      "size_bytes": 7814,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/openjarvis_capability_arena.py",
+      "relative_path": "research_agent/ops/openjarvis_capability_arena.py",
+      "size_bytes": 17489,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/openjarvis_capability_lab.py",
+      "relative_path": "research_agent/ops/openjarvis_capability_lab.py",
+      "size_bytes": 21862,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/openjarvis_component_adapter.py",
+      "relative_path": "research_agent/ops/openjarvis_component_adapter.py",
+      "size_bytes": 13831,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/openjarvis_decision_gauntlet.py",
+      "relative_path": "research_agent/ops/openjarvis_decision_gauntlet.py",
+      "size_bytes": 17366,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/operator_inbox.py",
+      "relative_path": "research_agent/ops/operator_inbox.py",
+      "size_bytes": 7561,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/past_blocks_closure.py",
+      "relative_path": "research_agent/ops/past_blocks_closure.py",
+      "size_bytes": 6314,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/portfolio_preflight_scan.py",
+      "relative_path": "research_agent/ops/portfolio_preflight_scan.py",
+      "size_bytes": 7409,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/portfolio_surface_audit.py",
+      "relative_path": "research_agent/ops/portfolio_surface_audit.py",
+      "size_bytes": 19117,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/quellwert_productization_hardening.py",
+      "relative_path": "research_agent/ops/quellwert_productization_hardening.py",
+      "size_bytes": 12015,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/readiness.py",
+      "relative_path": "research_agent/ops/readiness.py",
+      "size_bytes": 8086,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/review_workbenches.py",
+      "relative_path": "research_agent/ops/review_workbenches.py",
+      "size_bytes": 6002,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/skill_pattern_governance.py",
+      "relative_path": "research_agent/ops/skill_pattern_governance.py",
+      "size_bytes": 12864,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/skill_registry.py",
+      "relative_path": "research_agent/ops/skill_registry.py",
+      "size_bytes": 7784,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/terminal_backends.py",
+      "relative_path": "research_agent/ops/terminal_backends.py",
+      "size_bytes": 5333,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/vault_semantic_audit.py",
+      "relative_path": "research_agent/ops/vault_semantic_audit.py",
+      "size_bytes": 16232,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/agent_os_readiness.py",
+      "relative_path": "scripts/ops/agent_os_readiness.py",
+      "size_bytes": 23479,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/context_pack_builder.py",
+      "relative_path": "scripts/ops/context_pack_builder.py",
+      "size_bytes": 591,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/multi_agent_panel.py",
+      "relative_path": "scripts/ops/multi_agent_panel.py",
+      "size_bytes": 589,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/openjarvis_capability_arena.py",
+      "relative_path": "scripts/ops/openjarvis_capability_arena.py",
+      "size_bytes": 397,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/openjarvis_capability_lab.py",
+      "relative_path": "scripts/ops/openjarvis_capability_lab.py",
+      "size_bytes": 402,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/openjarvis_component_adapter.py",
+      "relative_path": "scripts/ops/openjarvis_component_adapter.py",
+      "size_bytes": 400,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/openjarvis_decision_gauntlet.py",
+      "relative_path": "scripts/ops/openjarvis_decision_gauntlet.py",
+      "size_bytes": 399,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/past_blocks_closure_check.py",
+      "relative_path": "scripts/ops/past_blocks_closure_check.py",
+      "size_bytes": 1668,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/portfolio_preflight_scan.py",
+      "relative_path": "scripts/ops/portfolio_preflight_scan.py",
+      "size_bytes": 1299,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/quellwert_productization_hardening_audit.py",
+      "relative_path": "scripts/ops/quellwert_productization_hardening_audit.py",
+      "size_bytes": 1857,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/skill_pattern_governance_check.py",
+      "relative_path": "scripts/ops/skill_pattern_governance_check.py",
+      "size_bytes": 1044,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/vault_semantic_audit.py",
+      "relative_path": "scripts/ops/vault_semantic_audit.py",
+      "size_bytes": 1343,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Backbone Home.md",
+      "relative_path": "Backbone Home.md",
+      "size_bytes": 2770,
+      "source_set_id": "vega_backbone",
+      "suffix": ".md"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Canonical/Canonical Index.md",
+      "relative_path": "Canonical/Canonical Index.md",
+      "size_bytes": 3733,
+      "source_set_id": "vega_backbone",
+      "suffix": ".md"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Latest Session Context.md",
+      "relative_path": "Latest Session Context.md",
+      "size_bytes": 1000137,
+      "source_set_id": "vega_backbone",
+      "suffix": ".md"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/VEGA_START_HERE.md",
+      "relative_path": "VEGA_START_HERE.md",
+      "size_bytes": 7284,
+      "source_set_id": "vega_backbone",
+      "suffix": ".md"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/operator_brief.json",
+      "relative_path": "outputs/project_intelligence_graph/operator_brief.json",
+      "size_bytes": 2761,
+      "source_set_id": "pig_surface",
+      "suffix": ".json"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/quality_os_operator_surface.json",
+      "relative_path": "outputs/project_intelligence_graph/quality_os_operator_surface.json",
+      "size_bytes": 201908,
+      "source_set_id": "pig_surface",
+      "suffix": ".json"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/components/portfolio-control-tower-page.tsx",
+      "relative_path": "components/portfolio-control-tower-page.tsx",
+      "size_bytes": 81615,
+      "source_set_id": "lioncom_surface",
+      "suffix": ".tsx"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/lib/control-plane-v2/live-data.ts",
+      "relative_path": "lib/control-plane-v2/live-data.ts",
+      "size_bytes": 80274,
+      "source_set_id": "lioncom_surface",
+      "suffix": ".ts"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/lib/types.ts",
+      "relative_path": "lib/types.ts",
+      "size_bytes": 30766,
+      "source_set_id": "lioncom_surface",
+      "suffix": ".ts"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/package.json",
+      "relative_path": "package.json",
+      "size_bytes": 8058,
+      "source_set_id": "lioncom_surface",
+      "suffix": ".json"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/scripts/verify_planning_quality_surface.mjs",
+      "relative_path": "scripts/verify_planning_quality_surface.mjs",
+      "size_bytes": 16371,
+      "source_set_id": "lioncom_surface",
+      "suffix": ".mjs"
+    }
+  ],
+  "mode": "shadow_read_only",
+  "next_safe_step": "Compare shadow retrieval answers against PIG/Obsidian before any OpenJarvis runtime execution.",
+  "non_actions": [
+    "no_openjarvis_runtime_execution",
+    "no_shell_exec",
+    "no_file_write_by_openjarvis",
+    "no_github_api",
+    "no_commit_push_release",
+    "no_secret_indexing"
+  ],
+  "path": "/Users/BjornRosinger/Documents/New project 2/outputs/openjarvis_capability_lab/OPENJARVIS_CAPABILITY_LAB.json",
+  "policy_errors": [],
+  "policy_path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_policy.json",
+  "preflight": {
+    "blocker_count": 0,
+    "finding_count": 27,
+    "findings": [
+      {
+        "code": "extension_not_allowed",
+        "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/DELIVERABLE_SWARM_OPERATING_MAP.canvas",
+        "severity": "info",
+        "source_set_id": "agent_ops_quality_os",
+        "suffix": ".canvas"
+      },
+      {
+        "code": "denied_by_policy",
+        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/__init__.cpython-312.pyc",
+        "pattern": "**/__pycache__/**",
+        "severity": "info",
+        "source_set_id": "agent_ops_quality_os"
+      },
+      {
+        "code": "denied_by_policy",
+        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/automation_cards.cpython-312.pyc",
+        "pattern": "**/__pycache__/**",
+        "severity": "info",
+        "source_set_id": "agent_ops_quality_os"
+      },
+      {
+        "code": "denied_by_policy",
+        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/coding_guardrails.cpython-312.pyc",
+        "pattern": "**/__pycache__/**",
+        "severity": "info",
+        "source_set_id": "agent_ops_quality_os"
+      },
+      {
+        "code": "denied_by_policy",
+        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/deliverable_swarm.cpython-312.pyc",
+        "pattern": "**/__pycache__/**",
+        "severity": "info",
+        "source_set_id": "agent_ops_quality_os"
+      },
+      {
+        "code": "denied_by_policy",
+        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/guardrails.cpython-312.pyc",
+        "pattern": "**/__pycache__/**",
+        "severity": "info",
+        "source_set_id": "agent_ops_quality_os"
+      },
+      {
+        "code": "denied_by_policy",
+        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/memory_inbox.cpython-312.pyc",
+        "pattern": "**/__pycache__/**",
+        "severity": "info",
+        "source_set_id": "agent_ops_quality_os"
+      },
+      {
+        "code": "denied_by_policy",
+        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/openjarvis_capability_arena.cpython-312.pyc",
+        "pattern": "**/__pycache__/**",
+        "severity": "info",
+        "source_set_id": "agent_ops_quality_os"
+      },
+      {
+        "code": "denied_by_policy",
+        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/openjarvis_capability_lab.cpython-312.pyc",
+        "pattern": "**/__pycache__/**",
+        "severity": "info",
+        "source_set_id": "agent_ops_quality_os"
+      },
+      {
+        "code": "denied_by_policy",
+        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/openjarvis_component_adapter.cpython-312.pyc",
+        "pattern": "**/__pycache__/**",
+        "severity": "info",
+        "source_set_id": "agent_ops_quality_os"
+      },
+      {
+        "code": "denied_by_policy",
+        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/openjarvis_decision_gauntlet.cpython-312.pyc",
+        "pattern": "**/__pycache__/**",
+        "severity": "info",
+        "source_set_id": "agent_ops_quality_os"
+      },
+      {
+        "code": "denied_by_policy",
+        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/operator_inbox.cpython-312.pyc",
+        "pattern": "**/__pycache__/**",
+        "severity": "info",
+        "source_set_id": "agent_ops_quality_os"
+      },
+      {
+        "code": "denied_by_policy",
+        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/past_blocks_closure.cpython-312.pyc",
+        "pattern": "**/__pycache__/**",
+        "severity": "info",
+        "source_set_id": "agent_ops_quality_os"
+      },
+      {
+        "code": "denied_by_policy",
+        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/portfolio_preflight_scan.cpython-312.pyc",
+        "pattern": "**/__pycache__/**",
+        "severity": "info",
+        "source_set_id": "agent_ops_quality_os"
+      },
+      {
+        "code": "denied_by_policy",
+        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/portfolio_surface_audit.cpython-312.pyc",
+        "pattern": "**/__pycache__/**",
+        "severity": "info",
+        "source_set_id": "agent_ops_quality_os"
+      },
+      {
+        "code": "denied_by_policy",
+        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/quellwert_productization_hardening.cpython-312.pyc",
+        "pattern": "**/__pycache__/**",
+        "severity": "info",
+        "source_set_id": "agent_ops_quality_os"
+      },
+      {
+        "code": "denied_by_policy",
+        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/readiness.cpython-312.pyc",
+        "pattern": "**/__pycache__/**",
+        "severity": "info",
+        "source_set_id": "agent_ops_quality_os"
+      },
+      {
+        "code": "denied_by_policy",
+        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/review_workbenches.cpython-312.pyc",
+        "pattern": "**/__pycache__/**",
+        "severity": "info",
+        "source_set_id": "agent_ops_quality_os"
+      },
+      {
+        "code": "denied_by_policy",
+        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/skill_pattern_governance.cpython-312.pyc",
+        "pattern": "**/__pycache__/**",
+        "severity": "info",
+        "source_set_id": "agent_ops_quality_os"
+      },
+      {
+        "code": "denied_by_policy",
+        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/skill_registry.cpython-312.pyc",
+        "pattern": "**/__pycache__/**",
+        "severity": "info",
+        "source_set_id": "agent_ops_quality_os"
+      },
+      {
+        "code": "denied_by_policy",
+        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/terminal_backends.cpython-312.pyc",
+        "pattern": "**/__pycache__/**",
+        "severity": "info",
+        "source_set_id": "agent_ops_quality_os"
+      },
+      {
+        "code": "denied_by_policy",
+        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/vault_semantic_audit.cpython-312.pyc",
+        "pattern": "**/__pycache__/**",
+        "severity": "info",
+        "source_set_id": "agent_ops_quality_os"
+      },
+      {
+        "code": "denied_by_policy",
+        "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/__pycache__/agent_os_readiness.cpython-312.pyc",
+        "pattern": "**/__pycache__/**",
+        "severity": "info",
+        "source_set_id": "agent_ops_quality_os"
+      },
+      {
+        "code": "denied_by_policy",
+        "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/__pycache__/openjarvis_component_adapter.cpython-312.pyc",
+        "pattern": "**/__pycache__/**",
+        "severity": "info",
+        "source_set_id": "agent_ops_quality_os"
+      },
+      {
+        "code": "denied_by_policy",
+        "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/__pycache__/quellwert_productization_hardening_audit.cpython-312.pyc",
+        "pattern": "**/__pycache__/**",
+        "severity": "info",
+        "source_set_id": "agent_ops_quality_os"
+      },
+      {
+        "code": "file_too_large",
+        "max_file_bytes": 1200000,
+        "path": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/full_check_report.json",
+        "severity": "warn",
+        "size_bytes": 1894317,
+        "source_set_id": "pig_surface"
+      },
+      {
+        "code": "file_too_large",
+        "max_file_bytes": 1200000,
+        "path": "/Users/BjornRosinger/Documents/New project/scripts/project_intelligence_graph/pig.py",
+        "severity": "warn",
+        "size_bytes": 1227062,
+        "source_set_id": "pig_surface"
+      }
+    ],
+    "status": "PASS"
+  },
+  "retrieval_benchmark": {
+    "pass_count": 4,
+    "question_count": 4,
+    "results": [
+      {
+        "gate_awareness": 3,
+        "missing_source_patterns": [],
+        "missing_terms": [],
+        "question": "Wie darf OpenJarvis in diesem System benutzt werden?",
+        "question_id": "openjarvis_shadow_policy",
+        "source_precision": 5,
+        "status": "PASS",
+        "top_sources": [
+          {
+            "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_policy.json",
+            "relative_path": "configs/openjarvis/openjarvis_policy.json",
+            "score": 22.0,
+            "size_bytes": 5026,
+            "snippet": "schema_version : 1 mode : shadow_read_only source_of_truth : false kill_switch : openjarvis_enabled : true runtime_execution_enabled : false runtime_permissions : allow_shell : false allow_write : false allow_network : false allow_github_api : false allowed_extensions : .cjs .json .md .mjs .py .toml .ts .tsx .yaml .yml max_file_bytes : 1200000 deny_globs : .env .env. /.env /.env. /.git/ /.venv/ /__pycache__/ /.pytest_cache/ /.ruff_cache/ /node_modules/ /.next/ /dist/ /dist-desktop/ /outputs/debug_bundles/ /reports/room16/runs/ /reports/room16/premium/translation-cache.json /secrets/ /credentia",
+            "source_set_id": "agent_ops_openjarvis_docs",
+            "suffix": ".json"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Latest Session Context.md",
+            "relative_path": "Latest Session Context.md",
+            "score": 18.0,
+            "size_bytes": 1000137,
+            "snippet": "--- type: latest_session_context status: active updated: 2026-05-28 --- # latest session context ## update 2026-05-28 - quellwert sauber eingefroren - operator-entscheidung nach strategieklaerung: quellwert wird nicht als aktive launch- funnel- payment- oder membership-spur weitergetrieben sondern sauber als spaeter wiederverwendbares shelf-asset eingefroren. status: frozen_shelf_asset_operator_reopen_required . - wichtige trennung: room16 selbst ist nicht eingestampft. room16 bleibt die interne research-/evidence-/review-maschine eingefroren ist die quellwert-schaufenster-/produktisierungs-/g",
+            "source_set_id": "vega_backbone",
+            "suffix": ".md"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/quality_os_operator_surface.json",
+            "relative_path": "outputs/project_intelligence_graph/quality_os_operator_surface.json",
+            "score": 15.0,
+            "size_bytes": 201908,
+            "snippet": "generated_at : 2026-05-28t12:34:17 00:00 status : pass source : pig_quality_os surface_version : v3 control_capabilities : approval_actions : true pause_resume_retry : true multi_run_history : true fresh_session_handoff : true long_run_completion_audit : true rule_propagation_audit : true operator_intent_contract : true impact_radius_assessment : true autonomy_governor : true vivi_vega_handoff_inbox : true fresh_session_readiness : true fresh_data_intake : true vivi_job_card_queue : true vivi_runner_mvp : true vivi_supervisor_audit : true commit_cleanup_go_package : true vivi_worker_mvp : true",
+            "source_set_id": "pig_surface",
+            "suffix": ".json"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
+            "relative_path": "configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
+            "score": 13.0,
+            "size_bytes": 21458,
+            "snippet": "schema_version : 1 gauntlet_id : openjarvis_decision_gauntlet_v1 title : openjarvis / jarvis decision gauntlet decision_goal : entscheiden ob jarvis in bjoerns system nur als ideen-/bausteinquelle als read-only shadow-capability als isolierter worker oder gar nicht genutzt werden soll. leading_truth : pig obsidian lioncom und deterministische verifier bleiben fuehrend. openjarvis darf vor einem separaten operator-go keine runtime- shell- write- network- oder github-api-aktion ausfuehren. ein gewinnergebnis im shadow-retrieval beweist nutzen als capability aber nicht runtime-reife. final_decisi",
+            "source_set_id": "agent_ops_openjarvis_docs",
+            "suffix": ".json"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_COMPONENT_ADAPTER.md",
+            "relative_path": "docs/openjarvis/OPENJARVIS_COMPONENT_ADAPTER.md",
+            "score": 13.0,
+            "size_bytes": 1669,
+            "snippet": "# openjarvis component adapter ## zweck der component adapter macht aus openjarvis ein teilelager: gute muster werden identifiziert bewertet und als eigene vega-/pig-/lioncom-bausteine nachgebaut oder gehaertet. die bewertung laeuft ueber komponenten statt ueber die frage ob openjarvis als gesamtsystem uebernommen wird. ## dauerhafte bausteine - github_dependabot_digest : read-only repo-/pr-/dependabot-digest mit gh . - tool_surface_audit : tool-inventar und deny-by-default-policy fuer gefaehrliche faehigkeiten wie shell writes git-commit und http. - skill_mining : externe skills nur lesen kla",
+            "source_set_id": "agent_ops_openjarvis_docs",
+            "suffix": ".md"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
+            "relative_path": "docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
+            "score": 12.0,
+            "size_bytes": 9268,
+            "snippet": "# deliverable-swarm-nutzungsuebersicht status: aktive lokale v1 scope: vega / vivi / lioncom / openclaw-nahe agentenarbeit quellmuster: vrsen/openswarm nur als muster uebernommen runtime-aenderungen: keine ## kurzbild der deliverable-swarm-vertrag ist die sichtbare struktur fuer agentenarbeit. er beantwortet vor der ausfuehrung vier fragen: - welche lane besitzt die arbeit - welches artefakt wird geliefert - wohin wird das artefakt geschrieben - welcher verifier beweist dass es nutzbar ist uebernommen wird openswarms gutes produktmuster: sichtbare spezialisten-lanes fuer konkrete outputs. nich",
+            "source_set_id": "agent_ops_quality_os",
+            "suffix": ".md"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
+            "relative_path": "docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
+            "score": 10.0,
+            "size_bytes": 2616,
+            "snippet": "# openjarvis integration decision ## entscheidung openjarvis wird als gehaertetes capability-lab integriert nicht als control plane. ## live-trial-entscheidung 2026-05-25 nach operator-go wurden die drei zuvor blockierten trials sicher ausgefuehrt: - runtime-sandbox: pass_with_warnings . openjarvis 1.0.1 liess sich in einer isolierten sandbox installieren jarvis --help jarvis --version jarvis doctor preset-init und ein minimaler calculator-ask liefen. der code-assistant -preset aktiviert aber standardmaessig file_write shell_exec git_commit http_request und web_search deshalb bleibt er fuer ec",
+            "source_set_id": "agent_ops_openjarvis_docs",
+            "suffix": ".md"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/VEGA_START_HERE.md",
+            "relative_path": "VEGA_START_HERE.md",
+            "score": 9.0,
+            "size_bytes": 7284,
+            "snippet": "--- type: vega_start status: active updated: 2026-05-28 aliases: - vega start here - vegapunk start here - vivi start here --- # vega_start_here wenn der user in zukunft nur sagt: lies dir vega_start_here durch dann ist das der eine pflicht-einstieg fuer meine start-session. ## lies in genau dieser reihenfolge - fuer die komplette systemuebersicht jetzt direkt auch dreamfactory systemhandbuch und dreamfactory systemkarte.canvas dreamfactory systemkarte nutzen 1. latest session context 2. backbone home 3. canonical/canonical index 4. review queue 5. memory/chat and idea ledger 6. memory/project",
+            "source_set_id": "vega_backbone",
+            "suffix": ".md"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_DECISION_GAUNTLET.md",
+            "relative_path": "docs/openjarvis/OPENJARVIS_DECISION_GAUNTLET.md",
+            "score": 7.0,
+            "size_bytes": 2088,
+            "snippet": "# openjarvis decision gauntlet ## zweck der decision gauntlet ist die finale pruefschicht vor einer jarvis-entscheidung. er beantwortet nicht nur ob der shadow-test gut aussieht sondern welche arbeit und welche tests vollstaendig erledigt sein muessen bevor jarvis als baustein worker oder gar nicht uebernommen wird. ## fuehrende entscheidung openjarvis wird nicht automatisch eingebaut. es muss sich in vier ebenen beweisen: 1. shadow_read_only retrieval und code-qa gegen pig/obsidian. 2. operator-surface-sichtbarkeit in agent ops pig und lioncom. 3. runtime- github- und write-sandbox-trials nur",
+            "source_set_id": "agent_ops_openjarvis_docs",
+            "suffix": ".md"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/openjarvis_decision_gauntlet.py",
+            "relative_path": "research_agent/ops/openjarvis_decision_gauntlet.py",
+            "score": 7.0,
+            "size_bytes": 17366,
+            "snippet": "openjarvis decision gauntlet. the gauntlet is the decision layer above the capability lab and arena. it turns the question should we use jarvis into a complete repeatable test matrix. local checks run deterministically. runtime github network and write tests are kept as explicit operator-gates until a separate approval exists. from __future__ import annotations import argparse import json from pathlib import path from typing import any from research_agent.ops.openjarvis_capability_arena import build_capability_arena from research_agent.ops.openjarvis_capability_lab import default_policy_path b",
+            "source_set_id": "agent_ops_openjarvis_docs",
+            "suffix": ".py"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/openjarvis_decision_gauntlet.py",
+            "relative_path": "research_agent/ops/openjarvis_decision_gauntlet.py",
+            "score": 7.0,
+            "size_bytes": 17366,
+            "snippet": "openjarvis decision gauntlet. the gauntlet is the decision layer above the capability lab and arena. it turns the question should we use jarvis into a complete repeatable test matrix. local checks run deterministically. runtime github network and write tests are kept as explicit operator-gates until a separate approval exists. from __future__ import annotations import argparse import json from pathlib import path from typing import any from research_agent.ops.openjarvis_capability_arena import build_capability_arena from research_agent.ops.openjarvis_capability_lab import default_policy_path b",
+            "source_set_id": "agent_ops_quality_os",
+            "suffix": ".py"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Canonical/Canonical Index.md",
+            "relative_path": "Canonical/Canonical Index.md",
+            "score": 6.0,
+            "size_bytes": 3733,
+            "snippet": "--- type: canonical_index status: active updated: 2026-05-28 --- # canonical index ## zweck das ist die zentrale wahrheitsschicht dieses wissensraums. ## schnellroute - rollen und personen zuerst: people/person - bjorn rosinger people/person - vivi people/person - vegapunk - governance und systemkern zuerst: companies/company - bcr ventures ug rules/rule - project before files decisions/decision - one truth two interfaces systems/system - obsidian knowledge base - aktive arbeit zuerst: project - lioncom dashboard project - membership finanzplattform project - utility websites portfolio project",
+            "source_set_id": "vega_backbone",
+            "suffix": ".md"
+          }
+        ],
+        "truth_alignment": 5
+      },
+      {
+        "gate_awareness": 3,
+        "missing_source_patterns": [],
+        "missing_terms": [],
+        "question": "Welche Grenzen bleiben Operator-Gates und dürfen nicht autonom überschritten werden?",
+        "question_id": "operator_gate_boundary",
+        "source_precision": 5,
+        "status": "PASS",
+        "top_sources": [
+          {
+            "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Latest Session Context.md",
+            "relative_path": "Latest Session Context.md",
+            "score": 30.0,
+            "size_bytes": 1000137,
+            "snippet": "--- type: latest_session_context status: active updated: 2026-05-28 --- # latest session context ## update 2026-05-28 - quellwert sauber eingefroren - operator-entscheidung nach strategieklaerung: quellwert wird nicht als aktive launch- funnel- payment- oder membership-spur weitergetrieben sondern sauber als spaeter wiederverwendbares shelf-asset eingefroren. status: frozen_shelf_asset_operator_reopen_required . - wichtige trennung: room16 selbst ist nicht eingestampft. room16 bleibt die interne research-/evidence-/review-maschine eingefroren ist die quellwert-schaufenster-/produktisierungs-/g",
+            "source_set_id": "vega_backbone",
+            "suffix": ".md"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_policy.json",
+            "relative_path": "configs/openjarvis/openjarvis_policy.json",
+            "score": 30.0,
+            "size_bytes": 5026,
+            "snippet": "schema_version : 1 mode : shadow_read_only source_of_truth : false kill_switch : openjarvis_enabled : true runtime_execution_enabled : false runtime_permissions : allow_shell : false allow_write : false allow_network : false allow_github_api : false allowed_extensions : .cjs .json .md .mjs .py .toml .ts .tsx .yaml .yml max_file_bytes : 1200000 deny_globs : .env .env. /.env /.env. /.git/ /.venv/ /__pycache__/ /.pytest_cache/ /.ruff_cache/ /node_modules/ /.next/ /dist/ /dist-desktop/ /outputs/debug_bundles/ /reports/room16/runs/ /reports/room16/premium/translation-cache.json /secrets/ /credentia",
+            "source_set_id": "agent_ops_openjarvis_docs",
+            "suffix": ".json"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/vault_semantic_audit.py",
+            "relative_path": "research_agent/ops/vault_semantic_audit.py",
+            "score": 21.0,
+            "size_bytes": 16232,
+            "snippet": "semantic ownership audit for the vega obsidian backbone. the older vault checks were mostly structural: links presence and headings. this layer checks whether active entities still have exactly one leading project surface and whether old project notes only mention successor lanes historically. from __future__ import annotations import json from dataclasses import asdict dataclass from pathlib import path from typing import sequence default_vault path /users/bjornrosinger/documents/obsidian/test vaul privat/human overview start_surfaces 00 dreamfactory home.md 01 projects.md 02 plans and status",
+            "source_set_id": "agent_ops_quality_os",
+            "suffix": ".py"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/VEGA_START_HERE.md",
+            "relative_path": "VEGA_START_HERE.md",
+            "score": 18.0,
+            "size_bytes": 7284,
+            "snippet": "--- type: vega_start status: active updated: 2026-05-28 aliases: - vega start here - vegapunk start here - vivi start here --- # vega_start_here wenn der user in zukunft nur sagt: lies dir vega_start_here durch dann ist das der eine pflicht-einstieg fuer meine start-session. ## lies in genau dieser reihenfolge - fuer die komplette systemuebersicht jetzt direkt auch dreamfactory systemhandbuch und dreamfactory systemkarte.canvas dreamfactory systemkarte nutzen 1. latest session context 2. backbone home 3. canonical/canonical index 4. review queue 5. memory/chat and idea ledger 6. memory/project",
+            "source_set_id": "vega_backbone",
+            "suffix": ".md"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
+            "relative_path": "configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
+            "score": 18.0,
+            "size_bytes": 21458,
+            "snippet": "schema_version : 1 gauntlet_id : openjarvis_decision_gauntlet_v1 title : openjarvis / jarvis decision gauntlet decision_goal : entscheiden ob jarvis in bjoerns system nur als ideen-/bausteinquelle als read-only shadow-capability als isolierter worker oder gar nicht genutzt werden soll. leading_truth : pig obsidian lioncom und deterministische verifier bleiben fuehrend. openjarvis darf vor einem separaten operator-go keine runtime- shell- write- network- oder github-api-aktion ausfuehren. ein gewinnergebnis im shadow-retrieval beweist nutzen als capability aber nicht runtime-reife. final_decisi",
+            "source_set_id": "agent_ops_openjarvis_docs",
+            "suffix": ".json"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
+            "relative_path": "docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
+            "score": 18.0,
+            "size_bytes": 9268,
+            "snippet": "# deliverable-swarm-nutzungsuebersicht status: aktive lokale v1 scope: vega / vivi / lioncom / openclaw-nahe agentenarbeit quellmuster: vrsen/openswarm nur als muster uebernommen runtime-aenderungen: keine ## kurzbild der deliverable-swarm-vertrag ist die sichtbare struktur fuer agentenarbeit. er beantwortet vor der ausfuehrung vier fragen: - welche lane besitzt die arbeit - welches artefakt wird geliefert - wohin wird das artefakt geschrieben - welcher verifier beweist dass es nutzbar ist uebernommen wird openswarms gutes produktmuster: sichtbare spezialisten-lanes fuer konkrete outputs. nich",
+            "source_set_id": "agent_ops_quality_os",
+            "suffix": ".md"
+          }
+        ],
+        "truth_alignment": 5
+      },
+      {
+        "gate_awareness": 3,
+        "missing_source_patterns": [],
+        "missing_terms": [],
+        "question": "Was darf der Vivi Worker lokal tun und was nicht?",
+        "question_id": "vivi_worker_truth",
+        "source_precision": 5,
+        "status": "PASS",
+        "top_sources": [
+          {
+            "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Latest Session Context.md",
+            "relative_path": "Latest Session Context.md",
+            "score": 27.0,
+            "size_bytes": 1000137,
+            "snippet": "--- type: latest_session_context status: active updated: 2026-05-28 --- # latest session context ## update 2026-05-28 - quellwert sauber eingefroren - operator-entscheidung nach strategieklaerung: quellwert wird nicht als aktive launch- funnel- payment- oder membership-spur weitergetrieben sondern sauber als spaeter wiederverwendbares shelf-asset eingefroren. status: frozen_shelf_asset_operator_reopen_required . - wichtige trennung: room16 selbst ist nicht eingestampft. room16 bleibt die interne research-/evidence-/review-maschine eingefroren ist die quellwert-schaufenster-/produktisierungs-/g",
+            "source_set_id": "vega_backbone",
+            "suffix": ".md"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_policy.json",
+            "relative_path": "configs/openjarvis/openjarvis_policy.json",
+            "score": 27.0,
+            "size_bytes": 5026,
+            "snippet": "schema_version : 1 mode : shadow_read_only source_of_truth : false kill_switch : openjarvis_enabled : true runtime_execution_enabled : false runtime_permissions : allow_shell : false allow_write : false allow_network : false allow_github_api : false allowed_extensions : .cjs .json .md .mjs .py .toml .ts .tsx .yaml .yml max_file_bytes : 1200000 deny_globs : .env .env. /.env /.env. /.git/ /.venv/ /__pycache__/ /.pytest_cache/ /.ruff_cache/ /node_modules/ /.next/ /dist/ /dist-desktop/ /outputs/debug_bundles/ /reports/room16/runs/ /reports/room16/premium/translation-cache.json /secrets/ /credentia",
+            "source_set_id": "agent_ops_openjarvis_docs",
+            "suffix": ".json"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/components/portfolio-control-tower-page.tsx",
+            "relative_path": "components/portfolio-control-tower-page.tsx",
+            "score": 21.0,
+            "size_bytes": 81615,
+            "snippet": "use client import archive barchart3 calendardays clipboardcheck gitbranch hourglass listchecks shieldcheck shieldx from lucide-react import statuschip from /components/status-chip import card carddescription cardtitle from /components/ui/card import usecontrolplanedata from /components/use-control-plane-data import cn from /lib/cn import type planningqualitysurface portfolioexecutioncontract portfoliometriccardid portfoliorepositorystatus portfolioreviewcalendaritem portfoliostreammetric severity from /lib/types const portfoliometriccards: array id: portfoliometriccardid title: string descript",
+            "source_set_id": "lioncom_surface",
+            "suffix": ".tsx"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
+            "relative_path": "docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md",
+            "score": 21.0,
+            "size_bytes": 9268,
+            "snippet": "# deliverable-swarm-nutzungsuebersicht status: aktive lokale v1 scope: vega / vivi / lioncom / openclaw-nahe agentenarbeit quellmuster: vrsen/openswarm nur als muster uebernommen runtime-aenderungen: keine ## kurzbild der deliverable-swarm-vertrag ist die sichtbare struktur fuer agentenarbeit. er beantwortet vor der ausfuehrung vier fragen: - welche lane besitzt die arbeit - welches artefakt wird geliefert - wohin wird das artefakt geschrieben - welcher verifier beweist dass es nutzbar ist uebernommen wird openswarms gutes produktmuster: sichtbare spezialisten-lanes fuer konkrete outputs. nich",
+            "source_set_id": "agent_ops_quality_os",
+            "suffix": ".md"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/quality_os_operator_surface.json",
+            "relative_path": "outputs/project_intelligence_graph/quality_os_operator_surface.json",
+            "score": 21.0,
+            "size_bytes": 201908,
+            "snippet": "generated_at : 2026-05-28t12:34:17 00:00 status : pass source : pig_quality_os surface_version : v3 control_capabilities : approval_actions : true pause_resume_retry : true multi_run_history : true fresh_session_handoff : true long_run_completion_audit : true rule_propagation_audit : true operator_intent_contract : true impact_radius_assessment : true autonomy_governor : true vivi_vega_handoff_inbox : true fresh_session_readiness : true fresh_data_intake : true vivi_job_card_queue : true vivi_runner_mvp : true vivi_supervisor_audit : true commit_cleanup_go_package : true vivi_worker_mvp : true",
+            "source_set_id": "pig_surface",
+            "suffix": ".json"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
+            "relative_path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
+            "score": 18.0,
+            "size_bytes": 15465,
+            "snippet": "--- title: multi-agent research build roadmap status: implemented_internal_v1 date: 2026-05-21 owner: vega scope: internal-first --- # multi-agent research build roadmap ## kurzentscheidung wir bauen keinen mirofish-fork und keinen sofortigen lioncom-einbau. der richtige weg ist: 1. vega-multi-agent-research als lokalen codex/vivi-skill stabilisieren. status: erledigt. 2. den workflow als wiederholbaren research-/ideen-/strategie-baustein nutzen. status: erledigt fuer interne cli-/skill-nutzung. 3. nach 5-10 echten internen laeufen entscheiden ob daraus eine getrennte kleine app analog room16 ",
+            "source_set_id": "agent_ops_quality_os",
+            "suffix": ".md"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/lib/control-plane-v2/live-data.ts",
+            "relative_path": "lib/control-plane-v2/live-data.ts",
+            "score": 18.0,
+            "size_bytes": 80274,
+            "snippet": "import server-only import promises as fs from fs import paths from /lib/constants/paths import loadcontrolroomdata from /lib/control-room/loadcontrolroomdata import loadportfolioexecutioncontract loadportfoliorepositories from /lib/portfolio-control-tower import loadportfoliometrics from /lib/portfolio/portfolio-metrics import loadportfolioreviewcalendar from /lib/portfolio/review-calendar import type bridgepacket codexchatentry controlroomdata systemalert taskitem timelineentry vivireportentry workblockitem workintakeentry from /lib/control-room/types import as mock from /lib/mock-data import",
+            "source_set_id": "lioncom_surface",
+            "suffix": ".ts"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/VEGA_START_HERE.md",
+            "relative_path": "VEGA_START_HERE.md",
+            "score": 15.0,
+            "size_bytes": 7284,
+            "snippet": "--- type: vega_start status: active updated: 2026-05-28 aliases: - vega start here - vegapunk start here - vivi start here --- # vega_start_here wenn der user in zukunft nur sagt: lies dir vega_start_here durch dann ist das der eine pflicht-einstieg fuer meine start-session. ## lies in genau dieser reihenfolge - fuer die komplette systemuebersicht jetzt direkt auch dreamfactory systemhandbuch und dreamfactory systemkarte.canvas dreamfactory systemkarte nutzen 1. latest session context 2. backbone home 3. canonical/canonical index 4. review queue 5. memory/chat and idea ledger 6. memory/project",
+            "source_set_id": "vega_backbone",
+            "suffix": ".md"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
+            "relative_path": "configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
+            "score": 15.0,
+            "size_bytes": 21458,
+            "snippet": "schema_version : 1 gauntlet_id : openjarvis_decision_gauntlet_v1 title : openjarvis / jarvis decision gauntlet decision_goal : entscheiden ob jarvis in bjoerns system nur als ideen-/bausteinquelle als read-only shadow-capability als isolierter worker oder gar nicht genutzt werden soll. leading_truth : pig obsidian lioncom und deterministische verifier bleiben fuehrend. openjarvis darf vor einem separaten operator-go keine runtime- shell- write- network- oder github-api-aktion ausfuehren. ein gewinnergebnis im shadow-retrieval beweist nutzen als capability aber nicht runtime-reife. final_decisi",
+            "source_set_id": "agent_ops_openjarvis_docs",
+            "suffix": ".json"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/PORTFOLIO_PRODUCT_SURFACE_AUDIT.md",
+            "relative_path": "docs/agent_os/PORTFOLIO_PRODUCT_SURFACE_AUDIT.md",
+            "score": 15.0,
+            "size_bytes": 1496,
+            "snippet": "# portfolio-produktoberflaechen-audit status: aktive lokale v1 scope: lioncom / membership / utility / quellwert / vega-vivi-lieferoberflaechen runtime-aenderungen: keine ## zweck dieser audit ist der wiederholbare test ob unsere projektarbeit wie ein sichtbares produktsystem funktioniert und nicht nur als interne agentenleistung. jede kanonische projektkarte muss beantworten: - welche sichtbare oberflaeche existiert oder ist bewusst blockiert - welche deliverable-swarm-lanes besitzen die naechsten lieferobjekte - welche gates stoppen irreversible aktionen - was ist die naechste sichere aktion",
+            "source_set_id": "agent_ops_quality_os",
+            "suffix": ".md"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_CAPABILITY_LAB.md",
+            "relative_path": "docs/openjarvis/OPENJARVIS_CAPABILITY_LAB.md",
+            "score": 15.0,
+            "size_bytes": 1530,
+            "snippet": "# openjarvis capability lab ## zweck openjarvis wird nicht als ersatz fuer lioncom vivi vega pig oder das obsidian-backbone eingebaut. diese spur prueft openjarvis nur als externen capability-provider fuer retrieval code-qa-handoffs und spaetere github-digests. ## fuehrende regel openjarvis ist niemals source_of_truth . wahrheit bleibt bei pig obsidian repo-lokalen vertraegen und deterministischen verifiern. ## betriebsmodus - modus: shadow_read_only - shell: aus - writes: aus - netzwerk: aus - github api: aus - runtime-ausfuehrung: aus - secret-scan: pflicht vor jedem index - operator-go: pfl",
+            "source_set_id": "agent_ops_openjarvis_docs",
+            "suffix": ".md"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
+            "relative_path": "docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
+            "score": 15.0,
+            "size_bytes": 2616,
+            "snippet": "# openjarvis integration decision ## entscheidung openjarvis wird als gehaertetes capability-lab integriert nicht als control plane. ## live-trial-entscheidung 2026-05-25 nach operator-go wurden die drei zuvor blockierten trials sicher ausgefuehrt: - runtime-sandbox: pass_with_warnings . openjarvis 1.0.1 liess sich in einer isolierten sandbox installieren jarvis --help jarvis --version jarvis doctor preset-init und ein minimaler calculator-ask liefen. der code-assistant -preset aktiviert aber standardmaessig file_write shell_exec git_commit http_request und web_search deshalb bleibt er fuer ec",
+            "source_set_id": "agent_ops_openjarvis_docs",
+            "suffix": ".md"
+          }
+        ],
+        "truth_alignment": 5
+      },
+      {
+        "gate_awareness": 3,
+        "missing_source_patterns": [],
+        "missing_terms": [],
+        "question": "Wo soll der OpenJarvis Capability-Lab Zustand sichtbar werden?",
+        "question_id": "lioncom_surface_truth",
+        "source_precision": 5,
+        "status": "PASS",
+        "top_sources": [
+          {
+            "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_policy.json",
+            "relative_path": "configs/openjarvis/openjarvis_policy.json",
+            "score": 22.0,
+            "size_bytes": 5026,
+            "snippet": "schema_version : 1 mode : shadow_read_only source_of_truth : false kill_switch : openjarvis_enabled : true runtime_execution_enabled : false runtime_permissions : allow_shell : false allow_write : false allow_network : false allow_github_api : false allowed_extensions : .cjs .json .md .mjs .py .toml .ts .tsx .yaml .yml max_file_bytes : 1200000 deny_globs : .env .env. /.env /.env. /.git/ /.venv/ /__pycache__/ /.pytest_cache/ /.ruff_cache/ /node_modules/ /.next/ /dist/ /dist-desktop/ /outputs/debug_bundles/ /reports/room16/runs/ /reports/room16/premium/translation-cache.json /secrets/ /credentia",
+            "source_set_id": "agent_ops_openjarvis_docs",
+            "suffix": ".json"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Latest Session Context.md",
+            "relative_path": "Latest Session Context.md",
+            "score": 21.0,
+            "size_bytes": 1000137,
+            "snippet": "--- type: latest_session_context status: active updated: 2026-05-28 --- # latest session context ## update 2026-05-28 - quellwert sauber eingefroren - operator-entscheidung nach strategieklaerung: quellwert wird nicht als aktive launch- funnel- payment- oder membership-spur weitergetrieben sondern sauber als spaeter wiederverwendbares shelf-asset eingefroren. status: frozen_shelf_asset_operator_reopen_required . - wichtige trennung: room16 selbst ist nicht eingestampft. room16 bleibt die interne research-/evidence-/review-maschine eingefroren ist die quellwert-schaufenster-/produktisierungs-/g",
+            "source_set_id": "vega_backbone",
+            "suffix": ".md"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/quality_os_operator_surface.json",
+            "relative_path": "outputs/project_intelligence_graph/quality_os_operator_surface.json",
+            "score": 18.0,
+            "size_bytes": 201908,
+            "snippet": "generated_at : 2026-05-28t12:34:17 00:00 status : pass source : pig_quality_os surface_version : v3 control_capabilities : approval_actions : true pause_resume_retry : true multi_run_history : true fresh_session_handoff : true long_run_completion_audit : true rule_propagation_audit : true operator_intent_contract : true impact_radius_assessment : true autonomy_governor : true vivi_vega_handoff_inbox : true fresh_session_readiness : true fresh_data_intake : true vivi_job_card_queue : true vivi_runner_mvp : true vivi_supervisor_audit : true commit_cleanup_go_package : true vivi_worker_mvp : true",
+            "source_set_id": "pig_surface",
+            "suffix": ".json"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
+            "relative_path": "configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
+            "score": 13.0,
+            "size_bytes": 21458,
+            "snippet": "schema_version : 1 gauntlet_id : openjarvis_decision_gauntlet_v1 title : openjarvis / jarvis decision gauntlet decision_goal : entscheiden ob jarvis in bjoerns system nur als ideen-/bausteinquelle als read-only shadow-capability als isolierter worker oder gar nicht genutzt werden soll. leading_truth : pig obsidian lioncom und deterministische verifier bleiben fuehrend. openjarvis darf vor einem separaten operator-go keine runtime- shell- write- network- oder github-api-aktion ausfuehren. ein gewinnergebnis im shadow-retrieval beweist nutzen als capability aber nicht runtime-reife. final_decisi",
+            "source_set_id": "agent_ops_openjarvis_docs",
+            "suffix": ".json"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
+            "relative_path": "docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
+            "score": 13.0,
+            "size_bytes": 2616,
+            "snippet": "# openjarvis integration decision ## entscheidung openjarvis wird als gehaertetes capability-lab integriert nicht als control plane. ## live-trial-entscheidung 2026-05-25 nach operator-go wurden die drei zuvor blockierten trials sicher ausgefuehrt: - runtime-sandbox: pass_with_warnings . openjarvis 1.0.1 liess sich in einer isolierten sandbox installieren jarvis --help jarvis --version jarvis doctor preset-init und ein minimaler calculator-ask liefen. der code-assistant -preset aktiviert aber standardmaessig file_write shell_exec git_commit http_request und web_search deshalb bleibt er fuer ec",
+            "source_set_id": "agent_ops_openjarvis_docs",
+            "suffix": ".md"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/components/portfolio-control-tower-page.tsx",
+            "relative_path": "components/portfolio-control-tower-page.tsx",
+            "score": 12.0,
+            "size_bytes": 81615,
+            "snippet": "use client import archive barchart3 calendardays clipboardcheck gitbranch hourglass listchecks shieldcheck shieldx from lucide-react import statuschip from /components/status-chip import card carddescription cardtitle from /components/ui/card import usecontrolplanedata from /components/use-control-plane-data import cn from /lib/cn import type planningqualitysurface portfolioexecutioncontract portfoliometriccardid portfoliorepositorystatus portfolioreviewcalendaritem portfoliostreammetric severity from /lib/types const portfoliometriccards: array id: portfoliometriccardid title: string descript",
+            "source_set_id": "lioncom_surface",
+            "suffix": ".tsx"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/AGENT_CODING_GUARDRAILS.md",
+            "relative_path": "docs/agent_os/AGENT_CODING_GUARDRAILS.md",
+            "score": 12.0,
+            "size_bytes": 3021,
+            "snippet": "# agent coding guardrails status: aktive lokale playbook-schicht scope: vega / vivi / codex coding-arbeit runtime-aenderungen: keine ## zweck diese schicht uebernimmt die nuetzlichen muster aus obra/superpowers und multica-ai/andrej-karpathy-skills ohne deren runtime- oder hook-modell zu installieren. sie beantwortet eine engere frage als der deliverable-swarm-vertrag: wie soll ein coding-agent arbeiten damit diffs klein bleiben bugs wirklich verstanden werden und abschlussmeldungen belegt sind ## harte uebernahmeregel uebernommen wird nur als playbook und lokaler vertrag: - keine globale plug",
+            "source_set_id": "agent_ops_quality_os",
+            "suffix": ".md"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
+            "relative_path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
+            "score": 12.0,
+            "size_bytes": 15465,
+            "snippet": "--- title: multi-agent research build roadmap status: implemented_internal_v1 date: 2026-05-21 owner: vega scope: internal-first --- # multi-agent research build roadmap ## kurzentscheidung wir bauen keinen mirofish-fork und keinen sofortigen lioncom-einbau. der richtige weg ist: 1. vega-multi-agent-research als lokalen codex/vivi-skill stabilisieren. status: erledigt. 2. den workflow als wiederholbaren research-/ideen-/strategie-baustein nutzen. status: erledigt fuer interne cli-/skill-nutzung. 3. nach 5-10 echten internen laeufen entscheiden ob daraus eine getrennte kleine app analog room16 ",
+            "source_set_id": "agent_ops_quality_os",
+            "suffix": ".md"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/lib/control-plane-v2/live-data.ts",
+            "relative_path": "lib/control-plane-v2/live-data.ts",
+            "score": 12.0,
+            "size_bytes": 80274,
+            "snippet": "import server-only import promises as fs from fs import paths from /lib/constants/paths import loadcontrolroomdata from /lib/control-room/loadcontrolroomdata import loadportfolioexecutioncontract loadportfoliorepositories from /lib/portfolio-control-tower import loadportfoliometrics from /lib/portfolio/portfolio-metrics import loadportfolioreviewcalendar from /lib/portfolio/review-calendar import type bridgepacket codexchatentry controlroomdata systemalert taskitem timelineentry vivireportentry workblockitem workintakeentry from /lib/control-room/types import as mock from /lib/mock-data import",
+            "source_set_id": "lioncom_surface",
+            "suffix": ".ts"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_COMPONENT_ADAPTER.md",
+            "relative_path": "docs/openjarvis/OPENJARVIS_COMPONENT_ADAPTER.md",
+            "score": 10.0,
+            "size_bytes": 1669,
+            "snippet": "# openjarvis component adapter ## zweck der component adapter macht aus openjarvis ein teilelager: gute muster werden identifiziert bewertet und als eigene vega-/pig-/lioncom-bausteine nachgebaut oder gehaertet. die bewertung laeuft ueber komponenten statt ueber die frage ob openjarvis als gesamtsystem uebernommen wird. ## dauerhafte bausteine - github_dependabot_digest : read-only repo-/pr-/dependabot-digest mit gh . - tool_surface_audit : tool-inventar und deny-by-default-policy fuer gefaehrliche faehigkeiten wie shell writes git-commit und http. - skill_mining : externe skills nur lesen kla",
+            "source_set_id": "agent_ops_openjarvis_docs",
+            "suffix": ".md"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_DECISION_GAUNTLET.md",
+            "relative_path": "docs/openjarvis/OPENJARVIS_DECISION_GAUNTLET.md",
+            "score": 10.0,
+            "size_bytes": 2088,
+            "snippet": "# openjarvis decision gauntlet ## zweck der decision gauntlet ist die finale pruefschicht vor einer jarvis-entscheidung. er beantwortet nicht nur ob der shadow-test gut aussieht sondern welche arbeit und welche tests vollstaendig erledigt sein muessen bevor jarvis als baustein worker oder gar nicht uebernommen wird. ## fuehrende entscheidung openjarvis wird nicht automatisch eingebaut. es muss sich in vier ebenen beweisen: 1. shadow_read_only retrieval und code-qa gegen pig/obsidian. 2. operator-surface-sichtbarkeit in agent ops pig und lioncom. 3. runtime- github- und write-sandbox-trials nur",
+            "source_set_id": "agent_ops_openjarvis_docs",
+            "suffix": ".md"
+          },
+          {
+            "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/VEGA_START_HERE.md",
+            "relative_path": "VEGA_START_HERE.md",
+            "score": 9.0,
+            "size_bytes": 7284,
+            "snippet": "--- type: vega_start status: active updated: 2026-05-28 aliases: - vega start here - vegapunk start here - vivi start here --- # vega_start_here wenn der user in zukunft nur sagt: lies dir vega_start_here durch dann ist das der eine pflicht-einstieg fuer meine start-session. ## lies in genau dieser reihenfolge - fuer die komplette systemuebersicht jetzt direkt auch dreamfactory systemhandbuch und dreamfactory systemkarte.canvas dreamfactory systemkarte nutzen 1. latest session context 2. backbone home 3. canonical/canonical index 4. review queue 5. memory/chat and idea ledger 6. memory/project",
+            "source_set_id": "vega_backbone",
+            "suffix": ".md"
+          }
+        ],
+        "truth_alignment": 5
+      }
+    ],
+    "status": "PASS",
+    "warn_count": 0
+  },
+  "runtime": {
+    "cli_path": null,
+    "note": "Runtime is detected only. The lab does not execute OpenJarvis in shadow_read_only mode.",
+    "python_imports": {
+      "jarvis": false,
+      "openjarvis": false
+    },
+    "runtime_available": false,
+    "runtime_execution_allowed": false,
+    "runtime_execution_attempted": false
+  },
+  "schema_version": 1,
+  "source_document_count": 85,
+  "source_of_truth": false,
+  "source_sets": [
+    {
+      "id": "agent_ops_openjarvis_docs",
+      "include_paths": [
+        "docs/openjarvis",
+        "configs/openjarvis/openjarvis_policy.json",
+        "configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
+        "research_agent/ops/openjarvis_capability_lab.py",
+        "research_agent/ops/openjarvis_decision_gauntlet.py",
+        "scripts/ops/openjarvis_capability_lab.py"
+      ],
+      "root": "/Users/BjornRosinger/Documents/New project 2"
+    },
+    {
+      "id": "agent_ops_quality_os",
+      "include_paths": [
+        "docs/agent_os",
+        "docs/skills",
+        "scripts/ops",
+        "research_agent/ops",
+        "README.md",
+        "pyproject.toml"
+      ],
+      "root": "/Users/BjornRosinger/Documents/New project 2"
+    },
+    {
+      "id": "vega_backbone",
+      "include_paths": [
+        "VEGA_START_HERE.md",
+        "Latest Session Context.md",
+        "Backbone Home.md",
+        "Canonical/Canonical Index.md"
+      ],
+      "root": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview"
+    },
+    {
+      "id": "pig_surface",
+      "include_paths": [
+        "scripts/project_intelligence_graph/pig.py",
+        "outputs/project_intelligence_graph/operator_brief.json",
+        "outputs/project_intelligence_graph/quality_os_operator_surface.json",
+        "outputs/project_intelligence_graph/full_check_report.json"
+      ],
+      "root": "/Users/BjornRosinger/Documents/New project"
+    },
+    {
+      "id": "lioncom_surface",
+      "include_paths": [
+        "components/portfolio-control-tower-page.tsx",
+        "lib/types.ts",
+        "lib/control-plane-v2/live-data.ts",
+        "scripts/verify_planning_quality_surface.mjs",
+        "package.json"
+      ],
+      "root": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board"
+    }
+  ],
+  "status": "PASS"
+}

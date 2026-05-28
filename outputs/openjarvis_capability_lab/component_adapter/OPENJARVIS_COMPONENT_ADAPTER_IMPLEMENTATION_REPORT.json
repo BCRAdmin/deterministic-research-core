@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-05-25T01:45:00Z",
+  "status": "PASS",
+  "workspaces": {
+    "agent_ops": "/Users/BjornRosinger/Documents/New project 2",
+    "pig": "/Users/BjornRosinger/Documents/New project",
+    "lioncom": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board"
+  },
+  "component_adapter": {
+    "status": "PASS",
+    "component_count": 6,
+    "adapt_ready_count": 4,
+    "gated_ready_count": 1,
+    "rejected_current_count": 1,
+    "github_mutations_attempted": false
+  },
+  "implemented_surfaces": [
+    "Agent Ops component adapter CLI and tests",
+    "Agent OS readiness summary",
+    "PIG operator surface and full-check gate",
+    "LIONCOM Portfolio Control Tower card",
+    "LIONCOM planning-quality and visual verifier checks",
+    "Local Codex skill openjarvis-capability-adapter"
+  ],
+  "validation": {
+    "agent_ops_py_compile": "PASS",
+    "agent_ops_openjarvis_tests": "17 passed",
+    "component_adapter_cli": "PASS",
+    "agent_os_readiness": "completed",
+    "pig_py_compile": "PASS",
+    "pig_openjarvis_component_adapter": "PASS",
+    "pig_operator_surface": "PASS",
+    "pig_full_check": "PASS",
+    "lioncom_planning_quality_surface": "PASS",
+    "lioncom_static_contract": "PASS",
+    "lioncom_tsc": "PASS",
+    "lioncom_build": "PASS",
+    "lioncom_visual": "PASS",
+    "agent_ops_diff_check": "PASS",
+    "lioncom_diff_check": "PASS"
+  },
+  "non_actions": [
+    "no_openjarvis_real_repo_runtime",
+    "no_github_mutation",
+    "no_commit",
+    "no_push",
+    "no_merge",
+    "no_release",
+    "no_public_shelf_member_action",
+    "no_payment_or_credential_action",
+    "no_external_send"
+  ],
+  "remaining_risks": [
+    "LIONCOM health reported overall=warning because existing git health was warning.",
+    "PIG path is not a git repository, so git diff --check is not applicable there.",
+    "LIONCOM has pre-existing/generated dirty artifacts outside touched source files.",
+    "Agent Ops contains generated output artifacts from readiness/lab runs that were not cleaned."
+  ]
+}

@@ -173,7 +173,7 @@ def default_project_surface_specs() -> list[ProjectSurfaceSpec]:
             project_id="quellwert",
             title="Quellwert",
             note_relative_path="Project - Quellwert.md",
-            expected_statuses=("local_preview",),
+            expected_statuses=("local_preview", "frozen_shelf_asset_operator_reopen_required"),
             owner_lanes=("research", "data", "docs"),
             visible_surfaces=(
                 "Research-/Archiv-/Methodik-Webseite",
@@ -183,8 +183,8 @@ def default_project_surface_specs() -> list[ProjectSurfaceSpec]:
             required_terms=("Research", "Archiv", "Methodik", "Room16"),
             gate_terms=("Promotion", "public_ready", "Operator-Go", "Non-Advice"),
             next_safe_action=(
-                "Research-/Archiv-/Methodik-Vertrauen stärken; Public-Promotion "
-                "nur über Source-Ledger, Non-Advice, Human Source Verification und Operator-Go."
+                "Keine aktive Quellwert-Produktarbeit ohne Operator-Reopen; bestehende "
+                "Surface, Gates und Audit-Bausteine als Shelf-Asset erhalten."
             ),
         ),
     ]

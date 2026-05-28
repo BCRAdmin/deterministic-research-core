@@ -61,6 +61,12 @@
       "status": "implemented_local_scan"
     },
     {
+      "capability": "agent_coding_guardrails",
+      "evidence": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/AGENT_CODING_GUARDRAILS.md",
+      "next_action": "Karpathy-Minimalismus und Superpowers-Verification/Debugging als lokale Coding-Checks nutzen; keine Plugin-Installation.",
+      "status": "implemented_local_playbook"
+    },
+    {
       "capability": "multi_channel_gateway",
       "evidence": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/OPERATOR_INBOX.md",
       "next_action": "Zuerst lokale Inbox nutzen, bevor ein externes Chat-Gateway erwogen wird.",

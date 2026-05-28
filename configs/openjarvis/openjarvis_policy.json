@@ -24,7 +24,7 @@
     ".yaml",
     ".yml"
   ],
-  "max_file_bytes": 1000000,
+  "max_file_bytes": 1200000,
   "deny_globs": [
     ".env",
     ".env.*",

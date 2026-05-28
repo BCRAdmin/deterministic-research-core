@@ -1,0 +1,85 @@
+{
+  "batches": [
+    {
+      "batch_id": "mem-batch-af49b62f48ee",
+      "candidate_count": 35,
+      "gate": "obsidian_promotion_review_required",
+      "kind": "agent_stack_learning",
+      "next_action": "route_to_agent_stack_note_or_reject_if_already_captured",
+      "route": "DreamFactory System/Agent Stack",
+      "sample_candidates": [
+        "mem-949266143276",
+        "mem-a695330844cb",
+        "mem-be7fc6e6484e",
+        "mem-41f9d439f681",
+        "mem-fd54cb2ca757"
+      ],
+      "source_count": 13,
+      "status": "ready_for_operator_batch_review"
+    },
+    {
+      "batch_id": "mem-batch-7b87885617a0",
+      "candidate_count": 1,
+      "gate": "obsidian_promotion_review_required",
+      "kind": "first_mention",
+      "next_action": "dedupe_against_target_note_then_promote_or_reject_batch",
+      "route": "Memory/First Mention Register",
+      "sample_candidates": [
+        "mem-980f7abdca86"
+      ],
+      "source_count": 1,
+      "status": "ready_for_operator_batch_review"
+    },
+    {
+      "batch_id": "mem-batch-913bf8bab264",
+      "candidate_count": 27,
+      "gate": "obsidian_promotion_review_required",
+      "kind": "general_learning",
+      "next_action": "dedupe_against_target_note_then_promote_or_reject_batch",
+      "route": "Memory/Learnings and Fixes",
+      "sample_candidates": [
+        "mem-09964fa8a4b8",
+        "mem-d4245c14614c",
+        "mem-52fb8778e13c",
+        "mem-5fe76e4804e1",
+        "mem-46ebb5981413"
+      ],
+      "source_count": 19,
+      "status": "ready_for_operator_batch_review"
+    },
+    {
+      "batch_id": "mem-batch-e84468485a0f",
+      "candidate_count": 36,
+      "gate": "obsidian_promotion_review_required",
+      "kind": "operator_gate_learning",
+      "next_action": "dedupe_against_target_note_then_promote_or_reject_batch",
+      "route": "Memory/Learnings and Fixes",
+      "sample_candidates": [
+        "mem-28d24b4dd8ae",
+        "mem-cb3f69cd12b2",
+        "mem-57cf7f45e73d",
+        "mem-6c5f7dd3539b",
+        "mem-d98fa8e52f44"
+      ],
+      "source_count": 25,
+      "status": "ready_for_operator_batch_review"
+    },
+    {
+      "batch_id": "mem-batch-ed1bdfdc47fb",
+      "candidate_count": 133,
+      "gate": "obsidian_promotion_review_required",
+      "kind": "workflow_learning",
+      "next_action": "dedupe_against_target_note_then_promote_or_reject_batch",
+      "route": "Memory/Learnings and Fixes",
+      "sample_candidates": [
+        "mem-fbb5e7133a42",
+        "mem-22fd4f6dc8e9",
+        "mem-7ed4e9eb64c5",
+        "mem-ac434ba3e5c9",
+        "mem-bc3a874acffd"
+      ],
+      "source_count": 45,
+      "status": "ready_for_operator_batch_review"
+    }
+  ]
+}

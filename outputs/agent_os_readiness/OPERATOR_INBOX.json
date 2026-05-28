@@ -18,7 +18,7 @@
       "required_action": "hold_oder_playbook_entscheidung_pruefen",
       "source": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/SKILL_REGISTRY.md",
       "status": "ready_for_review",
-      "summary": "29 lokale Skill-/Playbook-Eintraege klassifiziert; externe Installation bleibt verboten."
+      "summary": "40 lokale Skill-/Playbook-Eintraege klassifiziert; externe Installation bleibt verboten."
     },
     {
       "item_id": "memory-inbox-review",
@@ -28,7 +28,7 @@
       "required_action": "nur_nach_obsidian_routenpruefung_promoten",
       "source": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/MEMORY_INBOX_CANDIDATES.md",
       "status": "candidate_review",
-      "summary": "83 Memory-Kandidaten brauchen Promote-/Reject-/Merge-Review."
+      "summary": "232 Memory-Kandidaten brauchen Promote-/Reject-/Merge-Review."
     },
     {
       "item_id": "guardrail-gate-review",
@@ -38,7 +38,17 @@
       "required_action": "gates_vor_runtime_rechten_klaeren_oder_akzeptieren",
       "source": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/GUARDRAIL_SCAN.md",
       "status": "gate_review",
-      "summary": "36 Guardrail-Funde sind als Gates vor Runtime-Erweiterung festgehalten."
+      "summary": "40 Guardrail-Funde sind als Gates vor Runtime-Erweiterung festgehalten."
+    },
+    {
+      "item_id": "agent-coding-guardrails-review",
+      "lane": "coding_governance",
+      "operator_gate_required": false,
+      "priority": "P0",
+      "required_action": "bei_coding_tasks_als_default_review_gate_nutzen",
+      "source": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/AGENT_CODING_GUARDRAILS.md",
+      "status": "ready_for_review",
+      "summary": "7 Coding-Guardrails uebernehmen Karpathy-Minimalismus und Superpowers-Verification/Debugging als lokale Playbook-Schicht."
     },
     {
       "item_id": "vault-semantic-ownership-review",

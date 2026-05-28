@@ -1,0 +1,1812 @@
+{
+  "schema_version": 1,
+  "trial": "github_dependabot_digest_read_only",
+  "started_at": "2026-05-25T00:59:47Z",
+  "finished_at": "2026-05-25T00:59:54Z",
+  "account": "BCRAdmin",
+  "read_only": true,
+  "mutations_attempted": false,
+  "commands_used": [
+    "gh auth status",
+    "gh repo list BCRAdmin --limit 100 --json ...",
+    "gh pr list --repo <repo> --state open --limit 100 --json ..."
+  ],
+  "repo_count": 10,
+  "open_pr_count": 12,
+  "open_dependabot_pr_count": 12,
+  "repos": [
+    {
+      "repo": "BCRAdmin/company-dossier-lab",
+      "is_private": true,
+      "updated_at": "2026-05-21T20:43:14Z",
+      "url": "https://github.com/BCRAdmin/company-dossier-lab",
+      "primary_language": "Python",
+      "default_branch": "bcr-report-lab-original-trading-flow",
+      "open_pr_count": 11,
+      "dependabot_open_pr_count": 11
+    },
+    {
+      "repo": "BCRAdmin/LIONCOM",
+      "is_private": true,
+      "updated_at": "2026-05-21T06:11:24Z",
+      "url": "https://github.com/BCRAdmin/LIONCOM",
+      "primary_language": "TypeScript",
+      "default_branch": "reconcile/lioncom-origin-main-2026-05-02",
+      "open_pr_count": 0,
+      "dependabot_open_pr_count": 0
+    },
+    {
+      "repo": "BCRAdmin/deterministic-research-core",
+      "is_private": true,
+      "updated_at": "2026-05-21T05:13:39Z",
+      "url": "https://github.com/BCRAdmin/deterministic-research-core",
+      "primary_language": "Python",
+      "default_branch": "main",
+      "open_pr_count": 0,
+      "dependabot_open_pr_count": 0
+    },
+    {
+      "repo": "BCRAdmin/materialbedarf-rechner.de",
+      "is_private": true,
+      "updated_at": "2026-05-19T00:49:23Z",
+      "url": "https://github.com/BCRAdmin/materialbedarf-rechner.de",
+      "primary_language": "TypeScript",
+      "default_branch": "main",
+      "open_pr_count": 0,
+      "dependabot_open_pr_count": 0
+    },
+    {
+      "repo": "BCRAdmin/Kindergeld",
+      "is_private": true,
+      "updated_at": "2026-05-19T00:49:22Z",
+      "url": "https://github.com/BCRAdmin/Kindergeld",
+      "primary_language": "TypeScript",
+      "default_branch": "master",
+      "open_pr_count": 1,
+      "dependabot_open_pr_count": 1
+    },
+    {
+      "repo": "BCRAdmin/microtool-starter-kit",
+      "is_private": true,
+      "updated_at": "2026-05-18T19:28:44Z",
+      "url": "https://github.com/BCRAdmin/microtool-starter-kit",
+      "primary_language": "JavaScript",
+      "default_branch": "main",
+      "open_pr_count": 0,
+      "dependabot_open_pr_count": 0
+    },
+    {
+      "repo": "BCRAdmin/Vivi-os-v1",
+      "is_private": true,
+      "updated_at": "2026-05-18T01:43:45Z",
+      "url": "https://github.com/BCRAdmin/Vivi-os-v1",
+      "primary_language": "TypeScript",
+      "default_branch": "main",
+      "open_pr_count": 0,
+      "dependabot_open_pr_count": 0
+    },
+    {
+      "repo": "BCRAdmin/Shannon",
+      "is_private": true,
+      "updated_at": "2026-04-24T02:42:35Z",
+      "url": "https://github.com/BCRAdmin/Shannon",
+      "primary_language": "TypeScript",
+      "default_branch": "main",
+      "open_pr_count": 0,
+      "dependabot_open_pr_count": 0
+    },
+    {
+      "repo": "BCRAdmin/LIONCOM-codex",
+      "is_private": true,
+      "updated_at": "2026-04-15T12:11:44Z",
+      "url": "https://github.com/BCRAdmin/LIONCOM-codex",
+      "primary_language": null,
+      "default_branch": "",
+      "open_pr_count": 0,
+      "dependabot_open_pr_count": 0
+    },
+    {
+      "repo": "BCRAdmin/Vivi_Backup",
+      "is_private": false,
+      "updated_at": "2026-04-12T06:09:19Z",
+      "url": "https://github.com/BCRAdmin/Vivi_Backup",
+      "primary_language": null,
+      "default_branch": "",
+      "open_pr_count": 0,
+      "dependabot_open_pr_count": 0
+    }
+  ],
+  "open_dependabot_prs": [
+    {
+      "repo": "BCRAdmin/company-dossier-lab",
+      "author": {
+        "is_bot": true,
+        "login": "app/dependabot"
+      },
+      "baseRefName": "bcr-report-lab-original-trading-flow",
+      "headRefName": "dependabot/npm_and_yarn/room16-app/multi-f792d6d6d9",
+      "isDraft": false,
+      "labels": [
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzbQ",
+          "name": "dependencies",
+          "description": "Pull requests that update a dependency file",
+          "color": "0366d6"
+        },
+        {
+          "id": "LA_kwDOSgH4vc8AAAACkZyN7w",
+          "name": "javascript",
+          "description": "Pull requests that update javascript code",
+          "color": "168700"
+        }
+      ],
+      "mergeStateStatus": "CLEAN",
+      "number": 12,
+      "statusCheckRollup": [
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-23T13:33:12Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26334039146/job/77524704840",
+          "name": "python-core",
+          "startedAt": "2026-05-23T13:32:26Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-23T13:33:18Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26334038379/job/77524702984",
+          "name": "python-core",
+          "startedAt": "2026-05-23T13:32:24Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-23T13:32:49Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26334039146/job/77524704828",
+          "name": "room16-app",
+          "startedAt": "2026-05-23T13:32:25Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-23T13:32:49Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26334038379/job/77524702975",
+          "name": "room16-app",
+          "startedAt": "2026-05-23T13:32:24Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        }
+      ],
+      "title": "chore(deps): bump qs and express in /room16-app",
+      "updatedAt": "2026-05-23T13:32:20Z",
+      "url": "https://github.com/BCRAdmin/company-dossier-lab/pull/12"
+    },
+    {
+      "repo": "BCRAdmin/company-dossier-lab",
+      "author": {
+        "is_bot": true,
+        "login": "app/dependabot"
+      },
+      "baseRefName": "bcr-report-lab-original-trading-flow",
+      "headRefName": "dependabot/uv/idna-3.15",
+      "isDraft": false,
+      "labels": [
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzbQ",
+          "name": "dependencies",
+          "description": "Pull requests that update a dependency file",
+          "color": "0366d6"
+        },
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzcg",
+          "name": "python:uv",
+          "description": "Pull requests that update python:uv code",
+          "color": "2b67c6"
+        }
+      ],
+      "mergeStateStatus": "UNKNOWN",
+      "number": 10,
+      "statusCheckRollup": [
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-19T21:21:32Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26126045408/job/76839876677",
+          "name": "python-core",
+          "startedAt": "2026-05-19T21:20:42Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-19T21:21:25Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26126043397/job/76839870281",
+          "name": "python-core",
+          "startedAt": "2026-05-19T21:20:40Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-19T21:21:05Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26126045408/job/76839876738",
+          "name": "room16-app",
+          "startedAt": "2026-05-19T21:20:42Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-19T21:21:04Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26126043397/job/76839870178",
+          "name": "room16-app",
+          "startedAt": "2026-05-19T21:20:40Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        }
+      ],
+      "title": "chore(deps): bump idna from 3.10 to 3.15",
+      "updatedAt": "2026-05-19T21:20:36Z",
+      "url": "https://github.com/BCRAdmin/company-dossier-lab/pull/10"
+    },
+    {
+      "repo": "BCRAdmin/company-dossier-lab",
+      "author": {
+        "is_bot": true,
+        "login": "app/dependabot"
+      },
+      "baseRefName": "bcr-report-lab-original-trading-flow",
+      "headRefName": "dependabot/uv/langchain-openai-1.1.14",
+      "isDraft": false,
+      "labels": [
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzbQ",
+          "name": "dependencies",
+          "description": "Pull requests that update a dependency file",
+          "color": "0366d6"
+        },
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzcg",
+          "name": "python:uv",
+          "description": "Pull requests that update python:uv code",
+          "color": "2b67c6"
+        }
+      ],
+      "mergeStateStatus": "UNKNOWN",
+      "number": 9,
+      "statusCheckRollup": [
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:50:26Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009254299/job/76446560588",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:49:40Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:50:07Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009253507/job/76446558321",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:49:25Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:50Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009254299/job/76446560580",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:49:26Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:58Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009253507/job/76446558326",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:49:35Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        }
+      ],
+      "title": "chore(deps): bump langchain-openai from 0.3.23 to 1.1.14",
+      "updatedAt": "2026-05-18T01:48:58Z",
+      "url": "https://github.com/BCRAdmin/company-dossier-lab/pull/9"
+    },
+    {
+      "repo": "BCRAdmin/company-dossier-lab",
+      "author": {
+        "is_bot": true,
+        "login": "app/dependabot"
+      },
+      "baseRefName": "bcr-report-lab-original-trading-flow",
+      "headRefName": "dependabot/uv/langchain-core-1.3.3",
+      "isDraft": false,
+      "labels": [
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzbQ",
+          "name": "dependencies",
+          "description": "Pull requests that update a dependency file",
+          "color": "0366d6"
+        },
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzcg",
+          "name": "python:uv",
+          "description": "Pull requests that update python:uv code",
+          "color": "2b67c6"
+        }
+      ],
+      "mergeStateStatus": "UNKNOWN",
+      "number": 8,
+      "statusCheckRollup": [
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:50:26Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009253355/job/76446557931",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:49:37Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:59Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009252301/job/76446554483",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:49:09Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:59Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009253355/job/76446557932",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:49:35Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:37Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009252301/job/76446554490",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:49:14Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        }
+      ],
+      "title": "chore(deps): bump langchain-core from 0.3.83 to 1.3.3",
+      "updatedAt": "2026-05-18T01:48:55Z",
+      "url": "https://github.com/BCRAdmin/company-dossier-lab/pull/8"
+    },
+    {
+      "repo": "BCRAdmin/company-dossier-lab",
+      "author": {
+        "is_bot": true,
+        "login": "app/dependabot"
+      },
+      "baseRefName": "bcr-report-lab-original-trading-flow",
+      "headRefName": "dependabot/uv/langsmith-0.8.0",
+      "isDraft": false,
+      "labels": [
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzbQ",
+          "name": "dependencies",
+          "description": "Pull requests that update a dependency file",
+          "color": "0366d6"
+        },
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzcg",
+          "name": "python:uv",
+          "description": "Pull requests that update python:uv code",
+          "color": "2b67c6"
+        }
+      ],
+      "mergeStateStatus": "UNKNOWN",
+      "number": 7,
+      "statusCheckRollup": [
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:50:05Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009252310/job/76446554480",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:49:18Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:50:22Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009251323/job/76446551394",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:49:34Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:43Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009252310/job/76446554482",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:49:19Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:52Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009251323/job/76446551415",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:49:25Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        }
+      ],
+      "title": "chore(deps): bump langsmith from 0.3.45 to 0.8.0",
+      "updatedAt": "2026-05-18T01:48:53Z",
+      "url": "https://github.com/BCRAdmin/company-dossier-lab/pull/7"
+    },
+    {
+      "repo": "BCRAdmin/company-dossier-lab",
+      "author": {
+        "is_bot": true,
+        "login": "app/dependabot"
+      },
+      "baseRefName": "bcr-report-lab-original-trading-flow",
+      "headRefName": "dependabot/uv/lxml-6.1.0",
+      "isDraft": false,
+      "labels": [
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzbQ",
+          "name": "dependencies",
+          "description": "Pull requests that update a dependency file",
+          "color": "0366d6"
+        },
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzcg",
+          "name": "python:uv",
+          "description": "Pull requests that update python:uv code",
+          "color": "2b67c6"
+        }
+      ],
+      "mergeStateStatus": "UNKNOWN",
+      "number": 6,
+      "statusCheckRollup": [
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:50:04Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009251304/job/76446551246",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:49:19Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:46Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009250201/job/76446547971",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:49:01Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:24Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009251304/job/76446551225",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:48:56Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:33Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009250201/job/76446547976",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:49:08Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        }
+      ],
+      "title": "chore(deps): bump lxml from 5.4.0 to 6.1.0",
+      "updatedAt": "2026-05-18T01:48:50Z",
+      "url": "https://github.com/BCRAdmin/company-dossier-lab/pull/6"
+    },
+    {
+      "repo": "BCRAdmin/company-dossier-lab",
+      "author": {
+        "is_bot": true,
+        "login": "app/dependabot"
+      },
+      "baseRefName": "bcr-report-lab-original-trading-flow",
+      "headRefName": "dependabot/uv/langchain-text-splitters-1.1.2",
+      "isDraft": false,
+      "labels": [
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzbQ",
+          "name": "dependencies",
+          "description": "Pull requests that update a dependency file",
+          "color": "0366d6"
+        },
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzcg",
+          "name": "python:uv",
+          "description": "Pull requests that update python:uv code",
+          "color": "2b67c6"
+        }
+      ],
+      "mergeStateStatus": "UNKNOWN",
+      "number": 5,
+      "statusCheckRollup": [
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:50:00Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009251248/job/76446551212",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:49:11Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:53Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009250047/job/76446547597",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:48:54Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:23Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009251248/job/76446551170",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:48:59Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:38Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009250047/job/76446547594",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:49:13Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        }
+      ],
+      "title": "chore(deps): bump langchain-text-splitters from 0.3.8 to 1.1.2",
+      "updatedAt": "2026-05-18T01:48:50Z",
+      "url": "https://github.com/BCRAdmin/company-dossier-lab/pull/5"
+    },
+    {
+      "repo": "BCRAdmin/company-dossier-lab",
+      "author": {
+        "is_bot": true,
+        "login": "app/dependabot"
+      },
+      "baseRefName": "bcr-report-lab-original-trading-flow",
+      "headRefName": "dependabot/uv/langchain-0.3.30",
+      "isDraft": false,
+      "labels": [
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzbQ",
+          "name": "dependencies",
+          "description": "Pull requests that update a dependency file",
+          "color": "0366d6"
+        },
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzcg",
+          "name": "python:uv",
+          "description": "Pull requests that update python:uv code",
+          "color": "2b67c6"
+        }
+      ],
+      "mergeStateStatus": "UNKNOWN",
+      "number": 4,
+      "statusCheckRollup": [
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:43Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009249279/job/76446545437",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:48:53Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:36Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009248250/job/76446542508",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:48:49Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:16Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009249279/job/76446545427",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:48:51Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:13Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009248250/job/76446542513",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:48:49Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        }
+      ],
+      "title": "chore(deps): bump langchain from 0.3.25 to 0.3.30",
+      "updatedAt": "2026-05-18T01:48:46Z",
+      "url": "https://github.com/BCRAdmin/company-dossier-lab/pull/4"
+    },
+    {
+      "repo": "BCRAdmin/company-dossier-lab",
+      "author": {
+        "is_bot": true,
+        "login": "app/dependabot"
+      },
+      "baseRefName": "bcr-report-lab-original-trading-flow",
+      "headRefName": "dependabot/uv/python-multipart-0.0.27",
+      "isDraft": false,
+      "labels": [
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzbQ",
+          "name": "dependencies",
+          "description": "Pull requests that update a dependency file",
+          "color": "0366d6"
+        },
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzcg",
+          "name": "python:uv",
+          "description": "Pull requests that update python:uv code",
+          "color": "2b67c6"
+        }
+      ],
+      "mergeStateStatus": "UNKNOWN",
+      "number": 3,
+      "statusCheckRollup": [
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:44Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009249247/job/76446545367",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:48:51Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:45Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009248237/job/76446542503",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:48:50Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:17Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009249247/job/76446545363",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:48:51Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:16Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009248237/job/76446542536",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:48:49Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        }
+      ],
+      "title": "chore(deps): bump python-multipart from 0.0.18 to 0.0.27",
+      "updatedAt": "2026-05-18T01:48:46Z",
+      "url": "https://github.com/BCRAdmin/company-dossier-lab/pull/3"
+    },
+    {
+      "repo": "BCRAdmin/company-dossier-lab",
+      "author": {
+        "is_bot": true,
+        "login": "app/dependabot"
+      },
+      "baseRefName": "bcr-report-lab-original-trading-flow",
+      "headRefName": "dependabot/uv/python-dotenv-1.2.2",
+      "isDraft": false,
+      "labels": [
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzbQ",
+          "name": "dependencies",
+          "description": "Pull requests that update a dependency file",
+          "color": "0366d6"
+        },
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzcg",
+          "name": "python:uv",
+          "description": "Pull requests that update python:uv code",
+          "color": "2b67c6"
+        }
+      ],
+      "mergeStateStatus": "UNKNOWN",
+      "number": 2,
+      "statusCheckRollup": [
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:34Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009247336/job/76446539472",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:48:46Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:24Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009246593/job/76446536837",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:48:45Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:11Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009247336/job/76446539454",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:48:46Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:09Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009246593/job/76446536834",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:48:45Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        }
+      ],
+      "title": "chore(deps): bump python-dotenv from 1.1.0 to 1.2.2",
+      "updatedAt": "2026-05-18T01:48:42Z",
+      "url": "https://github.com/BCRAdmin/company-dossier-lab/pull/2"
+    },
+    {
+      "repo": "BCRAdmin/company-dossier-lab",
+      "author": {
+        "is_bot": true,
+        "login": "app/dependabot"
+      },
+      "baseRefName": "bcr-report-lab-original-trading-flow",
+      "headRefName": "dependabot/uv/urllib3-2.7.0",
+      "isDraft": false,
+      "labels": [
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzbQ",
+          "name": "dependencies",
+          "description": "Pull requests that update a dependency file",
+          "color": "0366d6"
+        },
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzcg",
+          "name": "python:uv",
+          "description": "Pull requests that update python:uv code",
+          "color": "2b67c6"
+        }
+      ],
+      "mergeStateStatus": "UNKNOWN",
+      "number": 1,
+      "statusCheckRollup": [
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:53Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009246424/job/76446536514",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:48:45Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:32Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009245053/job/76446532433",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:48:41Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:07Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009246424/job/76446536515",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:48:44Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:06Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009245053/job/76446532432",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:48:42Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        }
+      ],
+      "title": "chore(deps): bump urllib3 from 2.4.0 to 2.7.0",
+      "updatedAt": "2026-05-18T01:48:38Z",
+      "url": "https://github.com/BCRAdmin/company-dossier-lab/pull/1"
+    },
+    {
+      "repo": "BCRAdmin/Kindergeld",
+      "author": {
+        "is_bot": true,
+        "login": "app/dependabot"
+      },
+      "baseRefName": "master",
+      "headRefName": "dependabot/npm_and_yarn/fast-uri-3.1.2",
+      "isDraft": false,
+      "labels": [
+        {
+          "id": "LA_kwDOSIBFzM8AAAACjoJI6A",
+          "name": "dependencies",
+          "description": "Pull requests that update a dependency file",
+          "color": "0366d6"
+        },
+        {
+          "id": "LA_kwDOSIBFzM8AAAACjoJI7A",
+          "name": "javascript",
+          "description": "Pull requests that update javascript code",
+          "color": "168700"
+        }
+      ],
+      "mergeStateStatus": "UNKNOWN",
+      "number": 1,
+      "statusCheckRollup": [
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:48:09Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/Kindergeld/actions/runs/26009190597/job/76446370880",
+          "name": "lint-and-build",
+          "startedAt": "2026-05-18T01:46:40Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:48:26Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/Kindergeld/actions/runs/26009190588/job/76446370861",
+          "name": "playwright",
+          "startedAt": "2026-05-18T01:46:40Z",
+          "status": "COMPLETED",
+          "workflowName": "E2E"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:48:16Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://dash.cloudflare.com/?to=/71c41357b3bdbfda14d864368a16b3b0/pages/view/kindergeld/a24d18ad-deb4-4875-b621-7231ceebf16a",
+          "name": "Cloudflare Pages",
+          "startedAt": "2026-05-18T01:48:16Z",
+          "status": "COMPLETED",
+          "workflowName": ""
+        }
+      ],
+      "title": "Bump fast-uri from 3.1.0 to 3.1.2",
+      "updatedAt": "2026-05-18T01:48:16Z",
+      "url": "https://github.com/BCRAdmin/Kindergeld/pull/1"
+    }
+  ],
+  "all_open_prs": [
+    {
+      "repo": "BCRAdmin/company-dossier-lab",
+      "author": {
+        "is_bot": true,
+        "login": "app/dependabot"
+      },
+      "baseRefName": "bcr-report-lab-original-trading-flow",
+      "headRefName": "dependabot/npm_and_yarn/room16-app/multi-f792d6d6d9",
+      "isDraft": false,
+      "labels": [
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzbQ",
+          "name": "dependencies",
+          "description": "Pull requests that update a dependency file",
+          "color": "0366d6"
+        },
+        {
+          "id": "LA_kwDOSgH4vc8AAAACkZyN7w",
+          "name": "javascript",
+          "description": "Pull requests that update javascript code",
+          "color": "168700"
+        }
+      ],
+      "mergeStateStatus": "CLEAN",
+      "number": 12,
+      "statusCheckRollup": [
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-23T13:33:12Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26334039146/job/77524704840",
+          "name": "python-core",
+          "startedAt": "2026-05-23T13:32:26Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-23T13:33:18Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26334038379/job/77524702984",
+          "name": "python-core",
+          "startedAt": "2026-05-23T13:32:24Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-23T13:32:49Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26334039146/job/77524704828",
+          "name": "room16-app",
+          "startedAt": "2026-05-23T13:32:25Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-23T13:32:49Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26334038379/job/77524702975",
+          "name": "room16-app",
+          "startedAt": "2026-05-23T13:32:24Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        }
+      ],
+      "title": "chore(deps): bump qs and express in /room16-app",
+      "updatedAt": "2026-05-23T13:32:20Z",
+      "url": "https://github.com/BCRAdmin/company-dossier-lab/pull/12"
+    },
+    {
+      "repo": "BCRAdmin/company-dossier-lab",
+      "author": {
+        "is_bot": true,
+        "login": "app/dependabot"
+      },
+      "baseRefName": "bcr-report-lab-original-trading-flow",
+      "headRefName": "dependabot/uv/idna-3.15",
+      "isDraft": false,
+      "labels": [
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzbQ",
+          "name": "dependencies",
+          "description": "Pull requests that update a dependency file",
+          "color": "0366d6"
+        },
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzcg",
+          "name": "python:uv",
+          "description": "Pull requests that update python:uv code",
+          "color": "2b67c6"
+        }
+      ],
+      "mergeStateStatus": "UNKNOWN",
+      "number": 10,
+      "statusCheckRollup": [
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-19T21:21:32Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26126045408/job/76839876677",
+          "name": "python-core",
+          "startedAt": "2026-05-19T21:20:42Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-19T21:21:25Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26126043397/job/76839870281",
+          "name": "python-core",
+          "startedAt": "2026-05-19T21:20:40Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-19T21:21:05Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26126045408/job/76839876738",
+          "name": "room16-app",
+          "startedAt": "2026-05-19T21:20:42Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-19T21:21:04Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26126043397/job/76839870178",
+          "name": "room16-app",
+          "startedAt": "2026-05-19T21:20:40Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        }
+      ],
+      "title": "chore(deps): bump idna from 3.10 to 3.15",
+      "updatedAt": "2026-05-19T21:20:36Z",
+      "url": "https://github.com/BCRAdmin/company-dossier-lab/pull/10"
+    },
+    {
+      "repo": "BCRAdmin/company-dossier-lab",
+      "author": {
+        "is_bot": true,
+        "login": "app/dependabot"
+      },
+      "baseRefName": "bcr-report-lab-original-trading-flow",
+      "headRefName": "dependabot/uv/langchain-openai-1.1.14",
+      "isDraft": false,
+      "labels": [
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzbQ",
+          "name": "dependencies",
+          "description": "Pull requests that update a dependency file",
+          "color": "0366d6"
+        },
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzcg",
+          "name": "python:uv",
+          "description": "Pull requests that update python:uv code",
+          "color": "2b67c6"
+        }
+      ],
+      "mergeStateStatus": "UNKNOWN",
+      "number": 9,
+      "statusCheckRollup": [
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:50:26Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009254299/job/76446560588",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:49:40Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:50:07Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009253507/job/76446558321",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:49:25Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:50Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009254299/job/76446560580",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:49:26Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:58Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009253507/job/76446558326",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:49:35Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        }
+      ],
+      "title": "chore(deps): bump langchain-openai from 0.3.23 to 1.1.14",
+      "updatedAt": "2026-05-18T01:48:58Z",
+      "url": "https://github.com/BCRAdmin/company-dossier-lab/pull/9"
+    },
+    {
+      "repo": "BCRAdmin/company-dossier-lab",
+      "author": {
+        "is_bot": true,
+        "login": "app/dependabot"
+      },
+      "baseRefName": "bcr-report-lab-original-trading-flow",
+      "headRefName": "dependabot/uv/langchain-core-1.3.3",
+      "isDraft": false,
+      "labels": [
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzbQ",
+          "name": "dependencies",
+          "description": "Pull requests that update a dependency file",
+          "color": "0366d6"
+        },
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzcg",
+          "name": "python:uv",
+          "description": "Pull requests that update python:uv code",
+          "color": "2b67c6"
+        }
+      ],
+      "mergeStateStatus": "UNKNOWN",
+      "number": 8,
+      "statusCheckRollup": [
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:50:26Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009253355/job/76446557931",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:49:37Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:59Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009252301/job/76446554483",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:49:09Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:59Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009253355/job/76446557932",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:49:35Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:37Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009252301/job/76446554490",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:49:14Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        }
+      ],
+      "title": "chore(deps): bump langchain-core from 0.3.83 to 1.3.3",
+      "updatedAt": "2026-05-18T01:48:55Z",
+      "url": "https://github.com/BCRAdmin/company-dossier-lab/pull/8"
+    },
+    {
+      "repo": "BCRAdmin/company-dossier-lab",
+      "author": {
+        "is_bot": true,
+        "login": "app/dependabot"
+      },
+      "baseRefName": "bcr-report-lab-original-trading-flow",
+      "headRefName": "dependabot/uv/langsmith-0.8.0",
+      "isDraft": false,
+      "labels": [
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzbQ",
+          "name": "dependencies",
+          "description": "Pull requests that update a dependency file",
+          "color": "0366d6"
+        },
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzcg",
+          "name": "python:uv",
+          "description": "Pull requests that update python:uv code",
+          "color": "2b67c6"
+        }
+      ],
+      "mergeStateStatus": "UNKNOWN",
+      "number": 7,
+      "statusCheckRollup": [
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:50:05Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009252310/job/76446554480",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:49:18Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:50:22Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009251323/job/76446551394",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:49:34Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:43Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009252310/job/76446554482",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:49:19Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:52Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009251323/job/76446551415",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:49:25Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        }
+      ],
+      "title": "chore(deps): bump langsmith from 0.3.45 to 0.8.0",
+      "updatedAt": "2026-05-18T01:48:53Z",
+      "url": "https://github.com/BCRAdmin/company-dossier-lab/pull/7"
+    },
+    {
+      "repo": "BCRAdmin/company-dossier-lab",
+      "author": {
+        "is_bot": true,
+        "login": "app/dependabot"
+      },
+      "baseRefName": "bcr-report-lab-original-trading-flow",
+      "headRefName": "dependabot/uv/lxml-6.1.0",
+      "isDraft": false,
+      "labels": [
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzbQ",
+          "name": "dependencies",
+          "description": "Pull requests that update a dependency file",
+          "color": "0366d6"
+        },
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzcg",
+          "name": "python:uv",
+          "description": "Pull requests that update python:uv code",
+          "color": "2b67c6"
+        }
+      ],
+      "mergeStateStatus": "UNKNOWN",
+      "number": 6,
+      "statusCheckRollup": [
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:50:04Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009251304/job/76446551246",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:49:19Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:46Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009250201/job/76446547971",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:49:01Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:24Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009251304/job/76446551225",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:48:56Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:33Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009250201/job/76446547976",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:49:08Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        }
+      ],
+      "title": "chore(deps): bump lxml from 5.4.0 to 6.1.0",
+      "updatedAt": "2026-05-18T01:48:50Z",
+      "url": "https://github.com/BCRAdmin/company-dossier-lab/pull/6"
+    },
+    {
+      "repo": "BCRAdmin/company-dossier-lab",
+      "author": {
+        "is_bot": true,
+        "login": "app/dependabot"
+      },
+      "baseRefName": "bcr-report-lab-original-trading-flow",
+      "headRefName": "dependabot/uv/langchain-text-splitters-1.1.2",
+      "isDraft": false,
+      "labels": [
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzbQ",
+          "name": "dependencies",
+          "description": "Pull requests that update a dependency file",
+          "color": "0366d6"
+        },
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzcg",
+          "name": "python:uv",
+          "description": "Pull requests that update python:uv code",
+          "color": "2b67c6"
+        }
+      ],
+      "mergeStateStatus": "UNKNOWN",
+      "number": 5,
+      "statusCheckRollup": [
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:50:00Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009251248/job/76446551212",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:49:11Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:53Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009250047/job/76446547597",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:48:54Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:23Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009251248/job/76446551170",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:48:59Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:38Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009250047/job/76446547594",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:49:13Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        }
+      ],
+      "title": "chore(deps): bump langchain-text-splitters from 0.3.8 to 1.1.2",
+      "updatedAt": "2026-05-18T01:48:50Z",
+      "url": "https://github.com/BCRAdmin/company-dossier-lab/pull/5"
+    },
+    {
+      "repo": "BCRAdmin/company-dossier-lab",
+      "author": {
+        "is_bot": true,
+        "login": "app/dependabot"
+      },
+      "baseRefName": "bcr-report-lab-original-trading-flow",
+      "headRefName": "dependabot/uv/langchain-0.3.30",
+      "isDraft": false,
+      "labels": [
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzbQ",
+          "name": "dependencies",
+          "description": "Pull requests that update a dependency file",
+          "color": "0366d6"
+        },
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzcg",
+          "name": "python:uv",
+          "description": "Pull requests that update python:uv code",
+          "color": "2b67c6"
+        }
+      ],
+      "mergeStateStatus": "UNKNOWN",
+      "number": 4,
+      "statusCheckRollup": [
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:43Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009249279/job/76446545437",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:48:53Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:36Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009248250/job/76446542508",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:48:49Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:16Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009249279/job/76446545427",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:48:51Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:13Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009248250/job/76446542513",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:48:49Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        }
+      ],
+      "title": "chore(deps): bump langchain from 0.3.25 to 0.3.30",
+      "updatedAt": "2026-05-18T01:48:46Z",
+      "url": "https://github.com/BCRAdmin/company-dossier-lab/pull/4"
+    },
+    {
+      "repo": "BCRAdmin/company-dossier-lab",
+      "author": {
+        "is_bot": true,
+        "login": "app/dependabot"
+      },
+      "baseRefName": "bcr-report-lab-original-trading-flow",
+      "headRefName": "dependabot/uv/python-multipart-0.0.27",
+      "isDraft": false,
+      "labels": [
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzbQ",
+          "name": "dependencies",
+          "description": "Pull requests that update a dependency file",
+          "color": "0366d6"
+        },
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzcg",
+          "name": "python:uv",
+          "description": "Pull requests that update python:uv code",
+          "color": "2b67c6"
+        }
+      ],
+      "mergeStateStatus": "UNKNOWN",
+      "number": 3,
+      "statusCheckRollup": [
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:44Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009249247/job/76446545367",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:48:51Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:45Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009248237/job/76446542503",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:48:50Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:17Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009249247/job/76446545363",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:48:51Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:16Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009248237/job/76446542536",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:48:49Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        }
+      ],
+      "title": "chore(deps): bump python-multipart from 0.0.18 to 0.0.27",
+      "updatedAt": "2026-05-18T01:48:46Z",
+      "url": "https://github.com/BCRAdmin/company-dossier-lab/pull/3"
+    },
+    {
+      "repo": "BCRAdmin/company-dossier-lab",
+      "author": {
+        "is_bot": true,
+        "login": "app/dependabot"
+      },
+      "baseRefName": "bcr-report-lab-original-trading-flow",
+      "headRefName": "dependabot/uv/python-dotenv-1.2.2",
+      "isDraft": false,
+      "labels": [
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzbQ",
+          "name": "dependencies",
+          "description": "Pull requests that update a dependency file",
+          "color": "0366d6"
+        },
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzcg",
+          "name": "python:uv",
+          "description": "Pull requests that update python:uv code",
+          "color": "2b67c6"
+        }
+      ],
+      "mergeStateStatus": "UNKNOWN",
+      "number": 2,
+      "statusCheckRollup": [
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:34Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009247336/job/76446539472",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:48:46Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:24Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009246593/job/76446536837",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:48:45Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:11Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009247336/job/76446539454",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:48:46Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:09Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009246593/job/76446536834",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:48:45Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        }
+      ],
+      "title": "chore(deps): bump python-dotenv from 1.1.0 to 1.2.2",
+      "updatedAt": "2026-05-18T01:48:42Z",
+      "url": "https://github.com/BCRAdmin/company-dossier-lab/pull/2"
+    },
+    {
+      "repo": "BCRAdmin/company-dossier-lab",
+      "author": {
+        "is_bot": true,
+        "login": "app/dependabot"
+      },
+      "baseRefName": "bcr-report-lab-original-trading-flow",
+      "headRefName": "dependabot/uv/urllib3-2.7.0",
+      "isDraft": false,
+      "labels": [
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzbQ",
+          "name": "dependencies",
+          "description": "Pull requests that update a dependency file",
+          "color": "0366d6"
+        },
+        {
+          "id": "LA_kwDOSgH4vc8AAAACjoJzcg",
+          "name": "python:uv",
+          "description": "Pull requests that update python:uv code",
+          "color": "2b67c6"
+        }
+      ],
+      "mergeStateStatus": "UNKNOWN",
+      "number": 1,
+      "statusCheckRollup": [
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:53Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009246424/job/76446536514",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:48:45Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:32Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009245053/job/76446532433",
+          "name": "python-core",
+          "startedAt": "2026-05-18T01:48:41Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:07Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009246424/job/76446536515",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:48:44Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:49:06Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/company-dossier-lab/actions/runs/26009245053/job/76446532432",
+          "name": "room16-app",
+          "startedAt": "2026-05-18T01:48:42Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        }
+      ],
+      "title": "chore(deps): bump urllib3 from 2.4.0 to 2.7.0",
+      "updatedAt": "2026-05-18T01:48:38Z",
+      "url": "https://github.com/BCRAdmin/company-dossier-lab/pull/1"
+    },
+    {
+      "repo": "BCRAdmin/Kindergeld",
+      "author": {
+        "is_bot": true,
+        "login": "app/dependabot"
+      },
+      "baseRefName": "master",
+      "headRefName": "dependabot/npm_and_yarn/fast-uri-3.1.2",
+      "isDraft": false,
+      "labels": [
+        {
+          "id": "LA_kwDOSIBFzM8AAAACjoJI6A",
+          "name": "dependencies",
+          "description": "Pull requests that update a dependency file",
+          "color": "0366d6"
+        },
+        {
+          "id": "LA_kwDOSIBFzM8AAAACjoJI7A",
+          "name": "javascript",
+          "description": "Pull requests that update javascript code",
+          "color": "168700"
+        }
+      ],
+      "mergeStateStatus": "UNKNOWN",
+      "number": 1,
+      "statusCheckRollup": [
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:48:09Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/Kindergeld/actions/runs/26009190597/job/76446370880",
+          "name": "lint-and-build",
+          "startedAt": "2026-05-18T01:46:40Z",
+          "status": "COMPLETED",
+          "workflowName": "CI"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:48:26Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://github.com/BCRAdmin/Kindergeld/actions/runs/26009190588/job/76446370861",
+          "name": "playwright",
+          "startedAt": "2026-05-18T01:46:40Z",
+          "status": "COMPLETED",
+          "workflowName": "E2E"
+        },
+        {
+          "__typename": "CheckRun",
+          "completedAt": "2026-05-18T01:48:16Z",
+          "conclusion": "SUCCESS",
+          "detailsUrl": "https://dash.cloudflare.com/?to=/71c41357b3bdbfda14d864368a16b3b0/pages/view/kindergeld/a24d18ad-deb4-4875-b621-7231ceebf16a",
+          "name": "Cloudflare Pages",
+          "startedAt": "2026-05-18T01:48:16Z",
+          "status": "COMPLETED",
+          "workflowName": ""
+        }
+      ],
+      "title": "Bump fast-uri from 3.1.0 to 3.1.2",
+      "updatedAt": "2026-05-18T01:48:16Z",
+      "url": "https://github.com/BCRAdmin/Kindergeld/pull/1"
+    }
+  ],
+  "result": "PASS",
+  "notes": [
+    "No comments, labels, branches, commits, merges, notification mutations, or writes were attempted.",
+    "Digest proves read-only GitHub metadata can be collected with existing gh auth; Jarvis connector is not required for this core function."
+  ]
+}

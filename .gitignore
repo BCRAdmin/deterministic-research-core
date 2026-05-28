@@ -4,3 +4,10 @@ __pycache__/
 .pytest_cache/
 .DS_Store
 outputs/scenario_sandbox/
+outputs/openjarvis_capability_lab/**/runtime_sandbox/
+outputs/openjarvis_capability_lab/**/write_sandbox/
+outputs/openjarvis_capability_lab/**/logs/
+outputs/openjarvis_capability_lab/*.zip
+outputs/source_inputs/bcradmin_expansion_2026-05-18/
+outputs/source_inputs/stock_agent_codex_pack_2026-05-05/
+outputs/utility_websites/downloads_ingest_2026-05/

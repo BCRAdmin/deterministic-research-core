@@ -2,65 +2,65 @@
   "hits": [
     {
       "line": 4,
-      "path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
+      "path": "docs/agent_os/AGENT_CODING_GUARDRAILS.md",
       "score": -15.01516135413237,
-      "snippet": "Scope: LIONCOM / Vega / Vivi / OpenClaw / sichere Hermes-Musteruebernahme"
+      "snippet": "Scope: Vega / Vivi / Codex Coding-Arbeit"
     },
     {
-      "line": 28,
-      "path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
+      "line": 31,
+      "path": "docs/agent_os/AGENT_CODING_GUARDRAILS.md",
       "score": -5.7153496983870715,
-      "snippet": "```bash"
+      "snippet": "| Guardrail | Quelle | Gate | Wann nutzen |"
     },
     {
       "line": 9,
-      "path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
+      "path": "docs/agent_os/AGENT_CODING_GUARDRAILS.md",
       "score": -5.553400732241382,
-      "snippet": "Dieses Paket uebersetzt die nuetzlichen Hermes-Agent-Muster in sichere lokale"
+      "snippet": "Diese Schicht \u00fcbernimmt die n\u00fctzlichen Muster aus `obra/superpowers` und"
     },
     {
-      "line": 47,
-      "path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
+      "line": 52,
+      "path": "docs/agent_os/AGENT_CODING_GUARDRAILS.md",
       "score": -5.424031294657932,
-      "snippet": "- `VAULT_SEMANTIC_OWNERSHIP_AUDIT.md/json`: semantischer Drift-Check fuer aktive Projektowner, Startflaechen, alte Routing-Phrasen, Status-Aging und Gate-Inversion."
+      "snippet": "- Fehler komplett lesen"
     },
     {
-      "line": 195,
+      "line": 33,
       "path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
       "score": -3.742254418854729,
-      "snippet": "- Abrufdatum"
+      "snippet": "## Harte Grenzen"
     },
     {
-      "line": 193,
+      "line": 29,
       "path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
       "score": -3.6670987282384284,
-      "snippet": "- Titel"
+      "snippet": "- Alles bleibt `candidate_only`, bis Vega/Operator es pr\u00fcft."
     },
     {
-      "line": 196,
+      "line": 35,
       "path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
       "score": -3.6670987282384284,
-      "snippet": "- Nutzung im Lauf"
+      "snippet": "- Keine automatische Promotion von Agentenmeinungen in Obsidian, LIONCOM, Room16 oder Public-Artefakte."
     },
     {
-      "line": 41,
-      "path": "docs/media_ingest/TRANSCRIPTION_WORKFLOW.md",
+      "line": 26,
+      "path": "docs/media_ingest/NEXT_MEDIA_SAMPLE_BACKLOG.md",
       "score": -3.6670987282384284,
-      "snippet": "## Quality Checks"
+      "snippet": "- Date and duration if known."
     },
     {
-      "line": 191,
+      "line": 27,
       "path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
       "score": -3.5949023098355055,
-      "snippet": "- Source-Ledger im Kontextpaket:"
+      "snippet": "- 3-6 Rollen diskutieren in 1-3 Runden."
     },
     {
-      "line": 24,
-      "path": "docs/media_ingest/TRANSCRIPTION_WORKFLOW.md",
+      "line": 4,
+      "path": "docs/media_ingest/NEXT_MEDIA_SAMPLE_BACKLOG.md",
       "score": -3.5254937552549364,
-      "snippet": "- `source_url`"
+      "snippet": "Scope: Media Ingest Playbook next operator sample"
     }
   ],
-  "indexed_rows": 2463,
+  "indexed_rows": 7012,
   "query": "Hermes OR OpenClaw OR Vivi"
 }

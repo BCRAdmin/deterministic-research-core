@@ -31,7 +31,7 @@
       "viewpoint_id": "start_surface_alignment"
     },
     {
-      "catches": "Notes mit korrektem `status: waiting`, aber aktiv klingenden Body-Abschnitten.",
+      "catches": "Notes mit korrektem `waiting`/`parked` Status, aber aktiv klingenden Body-Abschnitten.",
       "operator_relief": "Vivi/Vega muessen nicht aus Chronik-Waenden die Fuehrung erraten.",
       "question": "Widersprechen alte Abschnitte dem Status oben in der Note?",
       "title": "Body-Semantik statt Frontmatter",

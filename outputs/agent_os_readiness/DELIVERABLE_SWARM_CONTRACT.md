@@ -1,8 +1,8 @@
 # Deliverable-Swarm-Vertrag
 
-Das ist die sichere lokale Uebernahme des OpenSwarm-Musters: sichtbare Spezialisten-Lanes und explizite Output-Vertraege, ohne externe Runtime-Installation.
+Das ist die sichere lokale Übernahme des OpenSwarm-Musters: sichtbare Spezialisten-Lanes und explizite Output-Verträge, ohne externe Runtime-Installation.
 
-Gueltig: `true`
+Gültig: `true`
 Fehler: `keine`
 Warnungen: `keine`
 
@@ -19,9 +19,9 @@ Warnungen: `keine`
 | `images` | `provider_gated_contract` | `R3_external_media_provider` | true | `outputs/deliverable_swarm/images` | `validate_prompt_reference_rights_output_path_and_qc` | `orchestrator, docs, slides` |
 | `video` | `provider_gated_contract` | `R3_external_media_provider` | true | `outputs/deliverable_swarm/video` | `validate_brief_duration_provider_cost_output_path_and_qc` | `orchestrator, images` |
 
-## Output-Vertraege
+## Output-Verträge
 
-| Vertrag | Lane | Artefakt | Standardpfad | Gate-Regel | Pruefung |
+| Vertrag | Lane | Artefakt | Standardpfad | Gate-Regel | Prüfung |
 | --- | --- | --- | --- | --- | --- |
 | `route-plan` | `orchestrator` | `route_plan` | `outputs/deliverable_swarm/orchestrator/{project}/route_plan.md` | `local_verification_required` | `validate_route_has_lane_owner_output_path_and_gate, git_diff_check_for_repo_outputs_when_applicable, operator_gate_check_if_required` |
 | `handoff-packet` | `orchestrator` | `handoff_packet` | `outputs/deliverable_swarm/orchestrator/{project}/handoff_packet.json` | `local_verification_required` | `validate_route_has_lane_owner_output_path_and_gate, git_diff_check_for_repo_outputs_when_applicable, operator_gate_check_if_required` |
@@ -57,6 +57,6 @@ Warnungen: `keine`
 - `auto_create_background_automation`
 - `unbounded_all_to_all_handoff`
 
-## Uebernahmeregel
+## Übernahmeregel
 
-Nutze diesen Vertrag als erste sichtbare Faehigkeitsoberflaeche fuer LIONCOM/Vivi/OpenClaw. Er darf Arbeit an bestehende lokale Skills und gepruefte Artefakt-Workflows routen, installiert aber weder OpenSwarm noch Composio, Systempakete oder Hintergrundagenten.
+Nutze diesen Vertrag als erste sichtbare Fähigkeitsoberfläche für LIONCOM/Vivi/OpenClaw. Er darf Arbeit an bestehende lokale Skills und geprüfte Artefakt-Workflows routen, installiert aber weder OpenSwarm noch Composio, Systempakete oder Hintergrundagenten.

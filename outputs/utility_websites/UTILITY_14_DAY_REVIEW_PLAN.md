@@ -4,7 +4,7 @@ Generated: 2026-05-21
 
 Mode: `no_ads_operating_mode_cmp_branch_closed`
 
-Source reference: `/Users/BjornRosinger/Downloads/Utility webseiten/outputs/utility_websites/UTILITY_14_DAY_REVIEW_PLAN.md`
+Source reference: `/Users/BjornRosinger/Documents/New project 2/outputs/utility_websites/downloads_ingest_2026-05/outputs/utility_websites/UTILITY_14_DAY_REVIEW_PLAN.md`
 
 ## Focus
 

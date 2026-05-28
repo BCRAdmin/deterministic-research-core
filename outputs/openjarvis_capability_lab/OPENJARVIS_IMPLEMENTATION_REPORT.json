@@ -1,0 +1,68 @@
+{
+  "generated_at": "2026-05-24T22:21:08Z",
+  "status": "completed_verified_shadow_read_only",
+  "scope": "OpenJarvis capability lab integration and hardening",
+  "mode": "shadow_read_only",
+  "source_of_truth": false,
+  "runtime_execution_attempted": false,
+  "runtime_action_executed": false,
+  "mutations_by_openjarvis": false,
+  "capabilities": {
+    "retrieval_benchmark": {
+      "status": "PASS",
+      "pass_count": 4,
+      "question_count": 4
+    },
+    "code_qa_shadow": {
+      "status": "PASS",
+      "pass_count": 3,
+      "project_count": 3
+    },
+    "preflight": {
+      "status": "PASS",
+      "blocker_count": 0
+    },
+    "runtime_available": false
+  },
+  "evidence_paths": {
+    "standalone_lab": "/Users/BjornRosinger/Documents/New project 2/outputs/openjarvis_capability_lab/OPENJARVIS_CAPABILITY_LAB.json",
+    "agent_os_readiness_lab": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/OPENJARVIS_CAPABILITY_LAB.json",
+    "pig_operator_surface": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/quality_os_operator_surface.json"
+  },
+  "validated_commands": [
+    {"command": "python3 scripts/ops/openjarvis_capability_lab.py", "status": "PASS"},
+    {"command": "python3 scripts/ops/agent_os_readiness.py", "status": "PASS"},
+    {"command": ".venv/bin/python -m pytest -q targeted agent-os/openjarvis tests", "status": "PASS", "result": "22 passed"},
+    {"command": ".venv/bin/python -m pytest -q", "status": "PASS", "collected_tests": 305},
+    {"command": ".venv/bin/ruff check targeted files", "status": "PASS"},
+    {"command": "python3 -m py_compile targeted python files", "status": "PASS"},
+    {"command": "JSON parse policy/schema/evidence", "status": "PASS"},
+    {"command": "Secret scan OpenJarvis source/docs/tests", "status": "PASS", "files": 10},
+    {"command": "python3 scripts/project_intelligence_graph/pig.py operator-surface --json", "status": "PASS"},
+    {"command": "python3 scripts/project_intelligence_graph/pig.py full-check --json", "status": "PASS"},
+    {"command": "node scripts/verify_planning_quality_surface.mjs", "status": "PASS"},
+    {"command": "npx tsc --noEmit", "status": "PASS"},
+    {"command": "npm run verify:control-plane-v2:static", "status": "PASS"},
+    {"command": "npm run build", "status": "PASS"},
+    {"command": "git diff --check", "status": "PASS"}
+  ],
+  "non_actions": [
+    "no_openjarvis_runtime_execution",
+    "no_shell_exec_by_openjarvis",
+    "no_file_write_by_openjarvis",
+    "no_network_by_openjarvis",
+    "no_github_api",
+    "no_github_pat_or_oauth",
+    "no_commit",
+    "no_push",
+    "no_merge",
+    "no_release",
+    "no_public_or_production_step",
+    "no_generated_artifact_cleanup"
+  ],
+  "risks": [
+    "OpenJarvis runtime is not installed/detected locally; real runtime testing needs separate Operator-Go.",
+    "GitHub notification digest remains a later auth-gated use case.",
+    "Pre-existing dirty/generated artifacts remain visible and were not cleaned."
+  ]
+}

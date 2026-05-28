@@ -1,6 +1,69 @@
 {
   "candidates": [
     {
+      "candidate_id": "mem-09964fa8a4b8",
+      "kind": "general_learning",
+      "line": 1,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/agent_os/AGENT_CODING_GUARDRAILS.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Agent Coding Guardrails"
+    },
+    {
+      "candidate_id": "mem-fbb5e7133a42",
+      "kind": "workflow_learning",
+      "line": 4,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/agent_os/AGENT_CODING_GUARDRAILS.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Scope: Vega / Vivi / Codex Coding-Arbeit"
+    },
+    {
+      "candidate_id": "mem-28d24b4dd8ae",
+      "kind": "operator_gate_learning",
+      "line": 31,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/agent_os/AGENT_CODING_GUARDRAILS.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "| Guardrail | Quelle | Gate | Wann nutzen |"
+    },
+    {
+      "candidate_id": "mem-d4245c14614c",
+      "kind": "general_learning",
+      "line": 76,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/agent_os/AGENT_CODING_GUARDRAILS.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`research_agent/ops/coding_guardrails.py`"
+    },
+    {
+      "candidate_id": "mem-52fb8778e13c",
+      "kind": "general_learning",
+      "line": 80,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/agent_os/AGENT_CODING_GUARDRAILS.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`outputs/agent_os_readiness/AGENT_CODING_GUARDRAILS.md`"
+    },
+    {
+      "candidate_id": "mem-5fe76e4804e1",
+      "kind": "general_learning",
+      "line": 81,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/agent_os/AGENT_CODING_GUARDRAILS.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`outputs/agent_os_readiness/AGENT_CODING_GUARDRAILS.json`"
+    },
+    {
+      "candidate_id": "mem-46ebb5981413",
+      "kind": "general_learning",
+      "line": 86,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/agent_os/AGENT_CODING_GUARDRAILS.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": ".venv/bin/pytest -q research_agent/tests/test_agent_os_coding_guardrails.py"
+    },
+    {
       "candidate_id": "mem-949266143276",
       "kind": "agent_stack_learning",
       "line": 4,
@@ -10,49 +73,85 @@
       "summary": "Scope: LIONCOM / Vega / Vivi / OpenClaw / sichere Hermes-Musteruebernahme"
     },
     {
-      "candidate_id": "mem-0a98c28f4a5e",
+      "candidate_id": "mem-a695330844cb",
       "kind": "agent_stack_learning",
       "line": 9,
       "route": "DreamFactory System/Agent Stack",
       "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
       "status": "candidate_needs_promotion_review",
-      "summary": "Dieses Paket uebersetzt die nuetzlichen Hermes-Agent-Muster in sichere lokale"
+      "summary": "Dieses Paket \u00fcbersetzt die n\u00fctzlichen Hermes-Agent-Muster in sichere lokale"
     },
     {
-      "candidate_id": "mem-efd92c4871a6",
+      "candidate_id": "mem-24d36b884b1c",
+      "kind": "general_learning",
+      "line": 20,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Agent Coding Guardrails als kuratierter Superpowers-/Karpathy-Transfer"
+    },
+    {
+      "candidate_id": "mem-be7fc6e6484e",
       "kind": "agent_stack_learning",
-      "line": 36,
+      "line": 37,
       "route": "DreamFactory System/Agent Stack",
       "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
       "status": "candidate_needs_promotion_review",
-      "summary": "`AGENT_OS_READINESS_REPORT.md/json`: Faehigkeitsmatrix und OpenClaw-Migrations-Trockenlauf."
+      "summary": "`AGENT_OS_READINESS_REPORT.md/json`: F\u00e4higkeitsmatrix und OpenClaw-Migrations-Trockenlauf."
     },
     {
-      "candidate_id": "mem-0310fbba3b20",
+      "candidate_id": "mem-f41056e99a3a",
       "kind": "general_learning",
-      "line": 50,
+      "line": 49,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`AGENT_CODING_GUARDRAILS.md/json`: lokale Coding-Agent-Guardrails aus Superpowers-/Karpathy-Patterns, ohne Plugin-Installation."
+    },
+    {
+      "candidate_id": "mem-543230d1346a",
+      "kind": "general_learning",
+      "line": 52,
       "route": "Memory/Learnings and Fixes",
       "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
       "status": "candidate_needs_promotion_review",
       "summary": "`GUARDRAIL_SCAN.md/json`: lokale statische Guardrail-Funde."
     },
     {
-      "candidate_id": "mem-038d7d222ec1",
+      "candidate_id": "mem-41f9d439f681",
       "kind": "agent_stack_learning",
-      "line": 64,
+      "line": 66,
       "route": "DreamFactory System/Agent Stack",
       "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
       "status": "candidate_needs_promotion_review",
       "summary": "Hermes ist ein Produktmuster-Benchmark. Jede Funktion, die Netzwerk,"
     },
     {
-      "candidate_id": "mem-38be4066dda5",
+      "candidate_id": "mem-cb3f69cd12b2",
+      "kind": "operator_gate_learning",
+      "line": 5,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/agent_os/BLOCK_8_SKILL_PATTERN_GOVERNANCE.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Block 8 fuehrt externe Skill-Repos und Skill-Patterns nicht als Runtime-Wahrheit ein. Gute Muster werden in lokale Playbooks, Hold-Register und Review-Gates \u00fcbersetzt. Riskante Runtime-Ideen bleiben blockiert, bis Source, Risiko, Operator-Gate und Obsidian-Kompatibilit\u00e4t gepr\u00fcft sind."
+    },
+    {
+      "candidate_id": "mem-57cf7f45e73d",
+      "kind": "operator_gate_learning",
+      "line": 35,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/agent_os/BLOCK_8_SKILL_PATTERN_GOVERNANCE.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "High-Risk-Hold-Items fehlen oder kein Operator-Gate erzwingen"
+    },
+    {
+      "candidate_id": "mem-fd54cb2ca757",
       "kind": "agent_stack_learning",
       "line": 10,
       "route": "DreamFactory System/Agent Stack",
       "source_path": "docs/agent_os/DELIVERABLE_SWARM_CONTRACT.md",
       "status": "candidate_needs_promotion_review",
-      "summary": "sichere lokale Oberflaeche fuer Vega-, Vivi-, LIONCOM- und OpenClaw-Arbeit."
+      "summary": "sichere lokale Oberfl\u00e4che f\u00fcr Vega-, Vivi-, LIONCOM- und OpenClaw-Arbeit."
     },
     {
       "candidate_id": "mem-74babc60b338",
@@ -82,13 +181,13 @@
       "summary": "1. `vega-multi-agent-research` als lokalen Codex/Vivi-Skill stabilisieren. Status: erledigt."
     },
     {
-      "candidate_id": "mem-3e0742b12c8e",
+      "candidate_id": "mem-6c5f7dd3539b",
       "kind": "operator_gate_learning",
       "line": 18,
       "route": "Memory/Learnings and Fixes",
       "source_path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
       "status": "candidate_needs_promotion_review",
-      "summary": "4. LIONCOM erst anbinden, wenn es einen nachweisbar nuetzlichen Run-Vertrag, Artefaktstruktur und Operator-Gate gibt. Status: Adapter bewusst nicht gebaut, weil CLI/Skill reicht."
+      "summary": "4. LIONCOM erst anbinden, wenn es einen nachweisbar n\u00fctzlichen Run-Vertrag, Artefaktstruktur und Operator-Gate gibt. Status: Adapter bewusst nicht gebaut, weil CLI/Skill reicht."
     },
     {
       "candidate_id": "mem-7ed4e9eb64c5",
@@ -100,13 +199,13 @@
       "summary": "Ein interner Scenario-/Research-Sandbox-Baustein, den Vega und Vivi bei passenden Aufgaben nutzen koennen:"
     },
     {
-      "candidate_id": "mem-52b17897e545",
+      "candidate_id": "mem-ac434ba3e5c9",
       "kind": "workflow_learning",
       "line": 29,
       "route": "Memory/Learnings and Fixes",
       "source_path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
       "status": "candidate_needs_promotion_review",
-      "summary": "Alles bleibt `candidate_only`, bis Vega/Operator es prueft."
+      "summary": "Alles bleibt `candidate_only`, bis Vega/Operator es pr\u00fcft."
     },
     {
       "candidate_id": "mem-bc3a874acffd",
@@ -136,13 +235,13 @@
       "summary": "Vega/Operator entscheidet, nicht der Moderator."
     },
     {
-      "candidate_id": "mem-b76e0eac9285",
+      "candidate_id": "mem-3daef9022d8a",
       "kind": "workflow_learning",
       "line": 116,
       "route": "Memory/Learnings and Fixes",
       "source_path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
       "status": "candidate_needs_promotion_review",
-      "summary": "Dauerhafte Regeln: nur nach Vega-Pruefung in `Learnings and Fixes`, Projektnote oder Skill-Routing."
+      "summary": "Dauerhafte Regeln: nur nach Vega-Pr\u00fcfung in `Learnings and Fixes`, Projektnote oder Skill-Routing."
     },
     {
       "candidate_id": "mem-e92a335507a4",
@@ -181,13 +280,13 @@
       "summary": "Ziel: Vivi und Codex sollen wissen, wann der Skill zu nutzen ist, ohne jedes Mal neu zu diskutieren."
     },
     {
-      "candidate_id": "mem-bef879c8e1d5",
+      "candidate_id": "mem-df2825c54ae0",
       "kind": "workflow_learning",
       "line": 302,
       "route": "Memory/Learnings and Fixes",
       "source_path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
       "status": "candidate_needs_promotion_review",
-      "summary": "Standardformulierungen fuer Vivi:"
+      "summary": "Standardformulierungen f\u00fcr Vivi:"
     },
     {
       "candidate_id": "mem-8b73ad563833",
@@ -208,13 +307,22 @@
       "summary": "8. P5: Vivi-Handoff-Template materialisiert."
     },
     {
-      "candidate_id": "mem-a2a7fb8008eb",
+      "candidate_id": "mem-d98fa8e52f44",
+      "kind": "operator_gate_learning",
+      "line": 9,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/agent_os/PAST_BLOCKS_CLOSURE_2026-05-21.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`Vivi model route snapshot`: closed by LIONCOM claim-start snapshot field `AutonomyClaim.modelRouteSnapshotAtClaimStart`, rendered in `TASK_CLAIMS.md` and propagated into the local duo loop prompt/heartbeat."
+    },
+    {
+      "candidate_id": "mem-1d6c9d9eab8a",
       "kind": "workflow_learning",
       "line": 4,
       "route": "Memory/Learnings and Fixes",
       "source_path": "docs/agent_os/PORTFOLIO_PRODUCT_SURFACE_AUDIT.md",
       "status": "candidate_needs_promotion_review",
-      "summary": "Scope: LIONCOM / Membership / Utility / Quellwert / Vega-Vivi-Lieferoberflaechen"
+      "summary": "Scope: LIONCOM / Membership / Utility / Quellwert / Vega-Vivi-Lieferoberfl\u00e4chen"
     },
     {
       "candidate_id": "mem-3dec566884cf",
@@ -424,6 +532,105 @@
       "summary": "VQG or Vega review result"
     },
     {
+      "candidate_id": "mem-075c0c3945dd",
+      "kind": "workflow_learning",
+      "line": 9,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/openjarvis/OPENJARVIS_CAPABILITY_ARENA.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`pig_obsidian_baseline`: nutzt nur `vega_backbone` und `pig_surface`."
+    },
+    {
+      "candidate_id": "mem-00236c56c0f2",
+      "kind": "operator_gate_learning",
+      "line": 18,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/openjarvis/OPENJARVIS_CAPABILITY_ARENA.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Operator-Gate-Begriffe"
+    },
+    {
+      "candidate_id": "mem-6325f4c9ef0f",
+      "kind": "workflow_learning",
+      "line": 5,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/openjarvis/OPENJARVIS_CAPABILITY_LAB.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "OpenJarvis wird nicht als Ersatz f\u00fcr LIONCOM, Vivi, Vega, PIG oder das Obsidian-Backbone eingebaut. Diese Spur pr\u00fcft OpenJarvis nur als externen Capability-Provider f\u00fcr Retrieval, Code-QA-Handoffs und sp\u00e4tere GitHub-Digests."
+    },
+    {
+      "candidate_id": "mem-04c503d15ca3",
+      "kind": "workflow_learning",
+      "line": 31,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/openjarvis/OPENJARVIS_CAPABILITY_LAB.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "kein Ersatz f\u00fcr Vivi Worker"
+    },
+    {
+      "candidate_id": "mem-762ec51556a5",
+      "kind": "workflow_learning",
+      "line": 6,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/openjarvis/OPENJARVIS_COMPONENT_ADAPTER.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "identifiziert, bewertet und als eigene Vega-/PIG-/LIONCOM-Bausteine"
+    },
+    {
+      "candidate_id": "mem-d1a05c580e79",
+      "kind": "workflow_learning",
+      "line": 37,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/openjarvis/OPENJARVIS_DECISION_GAUNTLET.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Kein Ersatz f\u00fcr PIG, Obsidian, LIONCOM, Vivi/Vega oder deterministische Verifier."
+    },
+    {
+      "candidate_id": "mem-f09f92e5d5b5",
+      "kind": "workflow_learning",
+      "line": 13,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Write-/Fix-Sandbox: `FAIL_FOR_ADOPTION`. Im Wegwerf-Repo erzeugte OpenJarvis nach ca. zwei Minuten keinen Patch und keine Testverbesserung. Die Vega/Codex-Kontrollprobe l\u00f6ste denselben Bug mit kleinem Patch und gr\u00fcnen Tests."
+    },
+    {
+      "candidate_id": "mem-432c36d77880",
+      "kind": "operator_gate_learning",
+      "line": 19,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Dein bestehendes System ist f\u00fchrend bei Operator-Gates, Claims, PIG-Verifikation, LIONCOM-Surface, Vivi Worker und deterministischer Qualit\u00e4t. OpenJarvis kann trotzdem als Vergleichs- und Teilelager n\u00fctzlich sein, besonders f\u00fcr Retrieval, Code-QA-Handoffs und Connector-Ideen."
+    },
+    {
+      "candidate_id": "mem-cb8f5f35502a",
+      "kind": "operator_gate_learning",
+      "line": 36,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Operator-Gates erkannt werden,"
+    },
+    {
+      "candidate_id": "mem-cfd64c130be0",
+      "kind": "operator_gate_learning",
+      "line": 45,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Abbruch bei Secret-Fund, Schreibversuch, Shell-/Netzwerkversuch, stale Memory ohne Warnung, falschem Truth-Claim oder Operator-Gate-Verletzung."
+    },
+    {
+      "candidate_id": "mem-ccd10a033829",
+      "kind": "operator_gate_learning",
+      "line": 27,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/openjarvis/OPENJARVIS_THREAT_MODEL.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Diese Aktionen bleiben immer Operator-Gate:"
+    },
+    {
       "candidate_id": "mem-614bf8e73a15",
       "kind": "workflow_learning",
       "line": 14,
@@ -613,9 +820,9 @@
       "summary": "QCOM raw Batch004 is now visibly superseded: Superseded by manual_focus_guardrail_final_check. Do not use for promotion."
     },
     {
-      "candidate_id": "mem-c5f312bf8c60",
+      "candidate_id": "mem-af1ca4be9cc8",
       "kind": "general_learning",
-      "line": 4,
+      "line": 8,
       "route": "Memory/Learnings and Fixes",
       "source_path": "outputs/quellwert_room16_operating/CURRENT_OPERATING_STATE.md",
       "status": "candidate_needs_promotion_review",
@@ -665,6 +872,78 @@
       "source_path": "outputs/quellwert_room16_operating/PASSED_SAMPLE_REVIEW.md",
       "status": "candidate_needs_promotion_review",
       "summary": "> Superseded by manual_focus_guardrail_final_check. Do not use for promotion."
+    },
+    {
+      "candidate_id": "mem-bde56610927a",
+      "kind": "general_learning",
+      "line": 63,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/quellwert_room16_operating/ROOM16_CLOSURE_BACKWARD_PLAN_2026-05-27.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Das 10D-Fenster ist der naechste harte Outcome-Zeitpunkt fuer Batch `guardrail_coverage_batch_004_ir_coverage`."
+    },
+    {
+      "candidate_id": "mem-a55964949563",
+      "kind": "general_learning",
+      "line": 80,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/quellwert_room16_operating/ROOM16_CLOSURE_BACKWARD_PLAN_2026-05-27.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`python3 scripts/outcomes/refresh_price_csvs_yahoo_chart.py --batch-id guardrail_coverage_batch_004_ir_coverage --target-date 2026-06-01 --write-report-json outputs/batches/guardrail_coverage_batch_004_ir_coverage/PRICE_DATA_REFRESH_10D.json`"
+    },
+    {
+      "candidate_id": "mem-17c4a7954bd2",
+      "kind": "operator_gate_learning",
+      "line": 36,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/quellwert_room16_operating/ROOM16_ROADMAP_STATUS_2026-05-27.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "| Quellwert Catalog Contract | `green` | `npm run verify:quellwert-public-catalog-contract` pass | GOOGL/SNOW/MSFT nur als operator-gated Beispiele |"
+    },
+    {
+      "candidate_id": "mem-75ff5174575c",
+      "kind": "general_learning",
+      "line": 14,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/quellwert_room16_operating/closure_sprint_2026-05-28/10D_OUTCOME_RUNNER_READINESS_2026-05-28.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "python3 scripts/outcomes/compute_outcome_window_artifacts.py --window 10D --batch-id guardrail_coverage_batch_004_ir_coverage --focus-batch-id manual_focus_guardrail_final_check"
+    },
+    {
+      "candidate_id": "mem-9229532870ec",
+      "kind": "workflow_learning",
+      "line": 39,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/quellwert_room16_operating/closure_sprint_2026-05-28/10D_OUTCOME_RUNNER_READINESS_2026-05-28.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`VIVI_OUTCOME_10D_REVIEW.json`"
+    },
+    {
+      "candidate_id": "mem-2f7b4354bd4a",
+      "kind": "general_learning",
+      "line": 34,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/quellwert_room16_operating/closure_sprint_2026-05-28/MANUAL_REVIEW_DECISIONS_2026-05-28.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Allowed use: internal risk calibration and deep-tech guardrail evidence."
+    },
+    {
+      "candidate_id": "mem-5c8e6b460120",
+      "kind": "operator_gate_learning",
+      "line": 35,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/quellwert_room16_operating/launch_pack_2026-05-27/QUELLWERT_48H_LAUNCH_PACK.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Legal/Compliance bleibt Operator-Gate vor externem Launch oder Payment."
+    },
+    {
+      "candidate_id": "mem-78867182757b",
+      "kind": "general_learning",
+      "line": 8,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/quellwert_room16_operating/launch_pack_2026-05-27/QUELLWERT_CURRENT_STATE_SUMMARY.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Batch: `guardrail_coverage_batch_004_ir_coverage`"
     },
     {
       "candidate_id": "mem-5214fad6e295",
@@ -746,6 +1025,1068 @@
       "source_path": "outputs/utility_websites/SKILL_GOVERNANCE_CROSSCHECK.md",
       "status": "candidate_needs_promotion_review",
       "summary": "| Vivi Skill Intake SOP read-only reference | pass |"
+    },
+    {
+      "candidate_id": "mem-90988fe8191e",
+      "kind": "workflow_learning",
+      "line": 1,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/AGENTS.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "AGENTS.md - Vega Bootstrap For Utility Projects"
+    },
+    {
+      "candidate_id": "mem-003a36331a24",
+      "kind": "workflow_learning",
+      "line": 7,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/AGENTS.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Treat this workspace as part of the ongoing Vega utility-project context."
+    },
+    {
+      "candidate_id": "mem-3408eaa949af",
+      "kind": "workflow_learning",
+      "line": 8,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/AGENTS.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Before substantive work, bootstrap from the Vega backbone."
+    },
+    {
+      "candidate_id": "mem-50959c0503da",
+      "kind": "workflow_learning",
+      "line": 12,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/AGENTS.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "1. `/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/VEGA_START_HERE.md`"
+    },
+    {
+      "candidate_id": "mem-464554572d6b",
+      "kind": "workflow_learning",
+      "line": 24,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/AGENTS.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Capture durable utility-project changes into the Vega memory notes."
+    },
+    {
+      "candidate_id": "mem-187aa6a28e6a",
+      "kind": "workflow_learning",
+      "line": 32,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/AGENTS.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`/Users/BjornRosinger/Documents/Codex/2026-04-22-sag-mir-was-vivi-als-letztes/VEGA_MEMORY_PENDING_SYNC.md`"
+    },
+    {
+      "candidate_id": "mem-1e491fc52ec9",
+      "kind": "workflow_learning",
+      "line": 7,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/DELTA_2026-04-29_4.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`/Users/BjornRosinger/Library/Application Support/LIONCOM/runtime-workspace/Human Overview/Canonical/People/Person - Vivi.md`"
+    },
+    {
+      "candidate_id": "mem-f12abe43704b",
+      "kind": "workflow_learning",
+      "line": 8,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/DELTA_2026-04-29_4.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`/Users/BjornRosinger/Library/Application Support/LIONCOM/runtime-workspace/Human Overview/Person - Vivi.md`"
+    },
+    {
+      "candidate_id": "mem-57eced8c6ef9",
+      "kind": "workflow_learning",
+      "line": 12,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/DELTA_2026-04-29_4.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "1) Canonical/People/Person - Vivi \u2014 neue Learnings v6.2\u2013v6.4 (NEU im Runtime-Mirror; fehlt im Live-Vault)"
+    },
+    {
+      "candidate_id": "mem-b75b3a54b738",
+      "kind": "general_learning",
+      "line": 21,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/DELTA_2026-04-29_4.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Next Step Delta Lock (v6.2): `Next Step` must not be copy-pasted from prior reports. If unchanged, state `unchanged since <prior-claim-id>` with reason."
+    },
+    {
+      "candidate_id": "mem-709eefc27590",
+      "kind": "workflow_learning",
+      "line": 22,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/DELTA_2026-04-29_4.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Rail Bloat Count Verification Lock (v6.2): Before every REPORT, run `wc -l VIVI_REPORTS.md` and include exact count if >1200."
+    },
+    {
+      "candidate_id": "mem-bbe22d6e29bb",
+      "kind": "workflow_learning",
+      "line": 24,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/DELTA_2026-04-29_4.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Quelle: `VIVI-REPORT-20260429-VIVI-QUALITY-DRIFT-SWEEP-v6.2` (Claim `VIVI-CLAIM-20260429160705347-NBD0`). Status im Mirror: `runtime_mirror_only; needs_live_vault_sync`."
+    },
+    {
+      "candidate_id": "mem-ccbfdf0a5f2c",
+      "kind": "workflow_learning",
+      "line": 32,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/DELTA_2026-04-29_4.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Person - Vivi Canonical Update Lock (v6.3): New checklist versions must be ingested into `Person - Vivi.md` within 2 claims of creation, or flagged `needs_live_vault_sync` with target section."
+    },
+    {
+      "candidate_id": "mem-83685eb4338a",
+      "kind": "workflow_learning",
+      "line": 34,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/DELTA_2026-04-29_4.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Quelle: `VIVI-REPORT-20260429-VIVI-QUALITY-DRIFT-SWEEP-v6.3` (Claim `VIVI-CLAIM-20260429161954441-NFHE`). Status im Mirror: `runtime_mirror_only; needs_live_vault_sync`."
+    },
+    {
+      "candidate_id": "mem-719cfeab8c63",
+      "kind": "workflow_learning",
+      "line": 40,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/DELTA_2026-04-29_4.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Pre-Report Raw-HTTP Retry Lock (v6.4): \"Historical unreachable\" reicht nicht. Jeder Report muss entweder frische curl-Proben ausfuehren oder `needs_vega_review` mit Begruendung nennen."
+    },
+    {
+      "candidate_id": "mem-87b3e0aadc8a",
+      "kind": "workflow_learning",
+      "line": 42,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/DELTA_2026-04-29_4.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Quelle: `VIVI-REPORT-20260429-VIVI-QUALITY-DRIFT-SWEEP-v6.4` (Claim `VIVI-CLAIM-20260429170002372-1P1E`). Status im Mirror: `runtime_mirror_only; needs_live_vault_sync`."
+    },
+    {
+      "candidate_id": "mem-b44e77773ef1",
+      "kind": "workflow_learning",
+      "line": 46,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/DELTA_2026-04-29_4.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "2) Person - Vivi (non-canonical short note) \u2014 Update 2026-04-29 v6.2 (NEU im Runtime-Mirror)"
+    },
+    {
+      "candidate_id": "mem-71a55f83f823",
+      "kind": "workflow_learning",
+      "line": 48,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/DELTA_2026-04-29_4.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Falls `Human Overview/Person - Vivi.md` im Live-Vault als Kurzanker genutzt wird: Append den folgenden Block (oder mergen, falls es schon eine andere v6.2-Variante gibt):"
+    },
+    {
+      "candidate_id": "mem-92a77eab3bef",
+      "kind": "workflow_learning",
+      "line": 50,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/DELTA_2026-04-29_4.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Update 2026-04-29 - Vivi Quality Checklist v6.2"
+    },
+    {
+      "candidate_id": "mem-3e27d16694cf",
+      "kind": "workflow_learning",
+      "line": 55,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/DELTA_2026-04-29_4.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "3) Stuck Experiments without Closure (`exp-20260426170500`, `exp-20260426164300`, `exp-20260426164100` seit 2026-04-26 auf `needs_vega_review`)."
+    },
+    {
+      "candidate_id": "mem-fa8d5dcbc985",
+      "kind": "workflow_learning",
+      "line": 57,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/DELTA_2026-04-29_4.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "5) Template Residue (`Next Step`/`Can Vivi Safely Continue`/etc. nicht neu geschrieben)."
+    },
+    {
+      "candidate_id": "mem-52e6b5a52a2d",
+      "kind": "workflow_learning",
+      "line": 63,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/DELTA_2026-04-29_4.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Stuck Experiment Review Lock: >48h `needs_vega_review` => Codex INBOX oder `needs_codex_review` mit IDs + Last-Update-Zeit."
+    },
+    {
+      "candidate_id": "mem-980f7abdca86",
+      "kind": "first_mention",
+      "line": 68,
+      "route": "Memory/First Mention Register",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/DELTA_2026-04-29_4.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "3) Memory/First Mention Register \u2014 neue Ersterwaehnungen (2026-04-29)"
+    },
+    {
+      "candidate_id": "mem-4163addad354",
+      "kind": "workflow_learning",
+      "line": 81,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/DELTA_2026-04-29_4.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Live-Vault Drift: `Person - Vivi.md` im Live-Vault fehlt mind. v6.2\u2013v6.4 Learnings (Runtime-Mirror-only). Ursache: Sync-Workflow/Permissions. Action: Merge Pack anwenden und in Folgereports Rollcall erzwingen."
+    },
+    {
+      "candidate_id": "mem-99909bf41241",
+      "kind": "workflow_learning",
+      "line": 89,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/DELTA_2026-04-29_4.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Merge `DELTA_2026-04-29_4.md` in Live-Vault: `Canonical/People/Person - Vivi.md` + optional `Person - Vivi.md`."
+    },
+    {
+      "candidate_id": "mem-14e2bd4b8bbf",
+      "kind": "workflow_learning",
+      "line": 16,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/obsidian-delta-2026-05-18.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Vivi-os-v1 posture: clean working tree and marked as legacy mirror; however Telegram-bot-token-like strings still exist in docs (`LEARNINGS.md`, `docs/telegram-*`) \u2192 **P0** remediation plan prepared (rotate/kill tokens + scrub to placeholders + add local secret scan because GitHub Secret Scanning is plan-blocked)."
+    },
+    {
+      "candidate_id": "mem-6c1836a170ae",
+      "kind": "agent_stack_learning",
+      "line": 18,
+      "route": "DreamFactory System/Agent Stack",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/obsidian-delta-2026-05-18.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "OpenClaw remains unarmed: `openclaw` not in PATH, `~/.openclaw` missing \u2192 **Beobachten** / reference_only."
+    },
+    {
+      "candidate_id": "mem-1d8ac0511900",
+      "kind": "workflow_learning",
+      "line": 30,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/obsidian-delta-2026-05-18.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "2026-05-18 \u2014 P0: Vivi-os-v1 token-like strings still present (even if archived)"
+    },
+    {
+      "candidate_id": "mem-a9c3a65f8301",
+      "kind": "workflow_learning",
+      "line": 1,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/obsidian-delta-2026-05-25.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Obsidian Delta \u2014 2026-05-25 (Vega Upstream/Base Audit)"
+    },
+    {
+      "candidate_id": "mem-5f4d8b55b734",
+      "kind": "agent_stack_learning",
+      "line": 17,
+      "route": "DreamFactory System/Agent Stack",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/obsidian-delta-2026-05-25.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "OpenClaw: still no `~/.openclaw` on this machine; OpenClaw remains a legacy path vocabulary (VPS `/root/.openclaw/workspace`) not a required dependency \u2192 **Beobachten**."
+    },
+    {
+      "candidate_id": "mem-7a0f99cbfdee",
+      "kind": "workflow_learning",
+      "line": 18,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/obsidian-delta-2026-05-25.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Security guard persists: Telegram token-like strings still exist in `Vivi-os-v1` docs (`LEARNINGS.md`, `docs/telegram-integration-konzept.md`, `docs/telegram-plugin-error-report.md`) \u2192 **Beobachten/P0** (rotate + scrub only when operator decides to share/publicize)."
+    },
+    {
+      "candidate_id": "mem-94af606ec4f2",
+      "kind": "workflow_learning",
+      "line": 24,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/obsidian-delta-2026-05-25.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "New Active Quality Task (2026-05-25): External Capability Adoption Harness (OpenJarvis \u2192 Vega)"
+    },
+    {
+      "candidate_id": "mem-ce0990a21aca",
+      "kind": "operator_gate_learning",
+      "line": 44,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/obsidian-delta-2026-05-25.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Proposed fix (operator-gated): patch the SKILL to locate scripts via absolute path or via `$HOME/.codex/...` and add a preflight \u201cscript exists\u201d check."
+    },
+    {
+      "candidate_id": "mem-747c2a227352",
+      "kind": "workflow_learning",
+      "line": 1,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/obsidian-delta-2026-05-26.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Obsidian Delta \u2014 2026-05-26 (Vega Upstream/Base Audit)"
+    },
+    {
+      "candidate_id": "mem-1bfafdddaa3e",
+      "kind": "workflow_learning",
+      "line": 18,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/obsidian-delta-2026-05-26.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`Person - Vivi` now carries **M6-Vivi-Autonomie-Stand 2026-05-26**: supervised dry-run kernel only; worker start / model-provider switches / runtime mutation / commit-cleanup / push / delete / publish / auth / spend / external comms remain closed without fresh scoped Operator-Go \u2192 **\u00dcbernehmen** (hard boundary)."
+    },
+    {
+      "candidate_id": "mem-0c16e9d5fa4e",
+      "kind": "operator_gate_learning",
+      "line": 21,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/obsidian-delta-2026-05-26.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "LIONCOM dirty `5` modified files (incl. `verify_planning_quality_surface.mjs`) \u2192 **Beobachten** (provenance/process risk; operator-gated cleanup/commit)."
+    },
+    {
+      "candidate_id": "mem-7167331866d9",
+      "kind": "agent_stack_learning",
+      "line": 24,
+      "route": "DreamFactory System/Agent Stack",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/obsidian-delta-2026-05-26.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "OpenClaw: still no `~/.openclaw` and `openclaw` not in PATH \u2192 **Beobachten** (legacy vocabulary only; modern scripts fail-soft)."
+    },
+    {
+      "candidate_id": "mem-d535d3898934",
+      "kind": "general_learning",
+      "line": 54,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/obsidian-delta-2026-05-26.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Proposed next step: classify dirt \u2192 operator decides commit/rollback."
+    },
+    {
+      "candidate_id": "mem-1a20741248a5",
+      "kind": "workflow_learning",
+      "line": 1,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/obsidian-delta-2026-05-27.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Obsidian Delta \u2014 2026-05-27 (Vega Upstream/Base Audit)"
+    },
+    {
+      "candidate_id": "mem-002cee440e66",
+      "kind": "agent_stack_learning",
+      "line": 19,
+      "route": "DreamFactory System/Agent Stack",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/obsidian-delta-2026-05-27.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "OpenClaw: `openclaw` nicht im PATH, `~/.openclaw` fehlt \u2192 **Beobachten** (reference_only)."
+    },
+    {
+      "candidate_id": "mem-60fbf8879cf5",
+      "kind": "general_learning",
+      "line": 33,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/obsidian-delta-2026-05-27.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Operator-safe next steps (kein Deploy/Publish):"
+    },
+    {
+      "candidate_id": "mem-f52bf13d28ae",
+      "kind": "workflow_learning",
+      "line": 1,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/obsidian-delta-2026-05-28.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Obsidian Delta \u2014 2026-05-28 (Vega Upstream/Base Audit)"
+    },
+    {
+      "candidate_id": "mem-87db85cc49ff",
+      "kind": "operator_gate_learning",
+      "line": 14,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/obsidian-delta-2026-05-28.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Local skill drift: `vivi-session-start`, `vega-obsidian-memory`, `vega-analysis-ingest` haben neue Content-Hashes (Update nach dem Audit vom `2026-05-27 12:35 CEST`) \u2192 **\u00dcbernehmen** (st\u00e4rkere Truth-/Supervisor-/Memory-Gates; keine Runtime-Aktivierung)."
+    },
+    {
+      "candidate_id": "mem-d515f6075f59",
+      "kind": "agent_stack_learning",
+      "line": 23,
+      "route": "DreamFactory System/Agent Stack",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/obsidian-delta-2026-05-28.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`openclaw` nicht im PATH und `~/.openclaw` fehlt \u2192 OpenClaw bleibt `reference_only`."
+    },
+    {
+      "candidate_id": "mem-f803cbe9f556",
+      "kind": "agent_stack_learning",
+      "line": 24,
+      "route": "DreamFactory System/Agent Stack",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/obsidian-delta-2026-05-28.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "repo-trace existiert: `Documents/DreamFactory/Vivi-os-v1/.openclaw/workspace-state.json` (bootstrapSeededAt `2026-04-12`) \u2192 **Beobachten**, aber **kein** aktiver Ausf\u00fchrungsweg ohne Preflight."
+    },
+    {
+      "candidate_id": "mem-7e43c1098e73",
+      "kind": "general_learning",
+      "line": 42,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/obsidian-delta-2026-05-28.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Operator-safe next steps (kein Deploy/Publish):"
+    },
+    {
+      "candidate_id": "mem-262f818499e4",
+      "kind": "workflow_learning",
+      "line": 32,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/outputs/utility_websites/CMP_FALLBACK_RECOMMENDATION.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Give the settings IDs to Vega/Codex for integration and smoke."
+    },
+    {
+      "candidate_id": "mem-66dae0cd3050",
+      "kind": "operator_gate_learning",
+      "line": 33,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/outputs/utility_websites/CMP_ROOT_CAUSE.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "AdSense nicht im Head laden; AdSense nur nach Consent und explizitem Operator-Gate laden."
+    },
+    {
+      "candidate_id": "mem-601853b2986a",
+      "kind": "workflow_learning",
+      "line": 36,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/outputs/utility_websites/OPERATOR_CMP_PURCHASE_AND_SETUP.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Provide To Vega/Codex"
+    },
+    {
+      "candidate_id": "mem-6bdbb73a466b",
+      "kind": "operator_gate_learning",
+      "line": 42,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/outputs/utility_websites/TCF_CMP_INTEGRATION_PLAN.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Nach gueltigem TCF-Consent: weiterhin blockiert, bis Operator-Gate explizit aktiv ist."
+    },
+    {
+      "candidate_id": "mem-e5523efdc8a7",
+      "kind": "operator_gate_learning",
+      "line": 7,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/outputs/utility_websites/UTILITY_NIGHTRUN_CYCLE_REPORT.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Stop reason: `vivi_review_has_no_p0_p1_fixes_and_manual_human_review_gate_exists`"
+    },
+    {
+      "candidate_id": "mem-c951ed291e7f",
+      "kind": "workflow_learning",
+      "line": 11,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/outputs/utility_websites/UTILITY_NIGHTRUN_CYCLE_REPORT.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Plan: Freeze Ads/CMP, prepare Materialbedarf partner path, keep Elterngeld conservative, run QA and Vivi review."
+    },
+    {
+      "candidate_id": "mem-03d9c0a779b6",
+      "kind": "workflow_learning",
+      "line": 19,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/outputs/utility_websites/UTILITY_NIGHTRUN_CYCLE_REPORT.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Vivi review status: `manual_human_review`"
+    },
+    {
+      "candidate_id": "mem-04131ab3d674",
+      "kind": "workflow_learning",
+      "line": 1,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-18.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Vega Upstream/Base Audit \u2014 DreamFactory (Daily)"
+    },
+    {
+      "candidate_id": "mem-e7e40ba76ea6",
+      "kind": "operator_gate_learning",
+      "line": 13,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-18.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "\u201cVega Maintenance Batch 1\u201d + LIONCOM security patch note (still operator-/scope-gated)."
+    },
+    {
+      "candidate_id": "mem-4a9b15fbc7a7",
+      "kind": "workflow_learning",
+      "line": 14,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-18.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Remote GitHub hardening closeout: 6 active repos green with Dependabot alerts + automated security fixes enabled; `Vivi-os-v1` archived; Branch Protection / Required Checks / Secret Scanning blocked by plan/API constraints (`HTTP 403` / `HTTP 422`), explicitly documented."
+    },
+    {
+      "candidate_id": "mem-b2e94b72d60e",
+      "kind": "workflow_learning",
+      "line": 72,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-18.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "3.2 `Documents/DreamFactory/Vivi-os-v1`"
+    },
+    {
+      "candidate_id": "mem-cc6ef2ba563d",
+      "kind": "workflow_learning",
+      "line": 75,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-18.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Branch `main`, HEAD `06408ec` (2026-05-18) \u201cdocs: mark vivi os as legacy mirror\u201d"
+    },
+    {
+      "candidate_id": "mem-0cdd5fcf5039",
+      "kind": "operator_gate_learning",
+      "line": 84,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-18.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Decision: **\u00dcbernehmen** remediation plan (P0), execution operator-gated."
+    },
+    {
+      "candidate_id": "mem-01350e236a7d",
+      "kind": "operator_gate_learning",
+      "line": 104,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-18.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Decision: **\u00dcbernehmen** hardening plan (P0), execution operator-gated."
+    },
+    {
+      "candidate_id": "mem-2b0cefa2beb8",
+      "kind": "agent_stack_learning",
+      "line": 119,
+      "route": "DreamFactory System/Agent Stack",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-18.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`openclaw` is not in PATH; `~/.openclaw` missing \u2192 OpenClaw remains **reference_only** in this environment."
+    },
+    {
+      "candidate_id": "mem-eacb1b1fa4ac",
+      "kind": "agent_stack_learning",
+      "line": 122,
+      "route": "DreamFactory System/Agent Stack",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-18.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Rule: do not adopt OpenClaw tooling in production workflows without a pinned version + sandboxed trial and a clear rollback plan."
+    },
+    {
+      "candidate_id": "mem-90d42a3c8acf",
+      "kind": "workflow_learning",
+      "line": 126,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-18.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "\u00dcbernehmen (truth + plan)**: Latest Session Context 2026-05-18 (Next15 template, Node24 pins, GitHub hardening reality), LIONCOM portfolio-control-tower + release-safety verifiers, runtime-workspace sync hardening plan, Vivi-os-v1 token remediation plan."
+    },
+    {
+      "candidate_id": "mem-e08a3b0279fe",
+      "kind": "agent_stack_learning",
+      "line": 127,
+      "route": "DreamFactory System/Agent Stack",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-18.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Beobachten**: Codex config mtime bump, plugin/skill caches unchanged, OpenClaw absent/unarmed."
+    },
+    {
+      "candidate_id": "mem-91afbf54b393",
+      "kind": "workflow_learning",
+      "line": 1,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-25.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Vega Upstream/Base Audit \u2014 DreamFactory (Daily)"
+    },
+    {
+      "candidate_id": "mem-d7c9498af5ef",
+      "kind": "agent_stack_learning",
+      "line": 4,
+      "route": "DreamFactory System/Agent Stack",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-25.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Scope: OpenClaw, DreamFactory upstream bases (local-only), Codex plugins/config, local skills, curated/plugin skill caches, and DreamFactory agent stack notes in the active Obsidian vault."
+    },
+    {
+      "candidate_id": "mem-7724dc08dc08",
+      "kind": "operator_gate_learning",
+      "line": 21,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-25.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Hard \u201cforbidden without Operator-Go\u201d boundary is consistent with Vivi/Vegapunk operator-gate model and prevents silent scope drift into write/shell/network."
+    },
+    {
+      "candidate_id": "mem-aa08f7c3573f",
+      "kind": "general_learning",
+      "line": 42,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-25.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "3. Optionally add a tiny wrapper script in the DreamFactory ops toolbox that calls the correct path and prints next steps."
+    },
+    {
+      "candidate_id": "mem-04336e829286",
+      "kind": "operator_gate_learning",
+      "line": 102,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-25.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "This is exactly the missing safety harness for upstream adoption: explicit policy, explicit gauntlet, measurable arena scoring, and operator-gated runtime escalation."
+    },
+    {
+      "candidate_id": "mem-24539f562ecb",
+      "kind": "agent_stack_learning",
+      "line": 109,
+      "route": "DreamFactory System/Agent Stack",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-25.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "7) OpenClaw status + path reality"
+    },
+    {
+      "candidate_id": "mem-42b05b76fcf3",
+      "kind": "agent_stack_learning",
+      "line": 112,
+      "route": "DreamFactory System/Agent Stack",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-25.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "No `~/.openclaw` present on this machine."
+    },
+    {
+      "candidate_id": "mem-7fbd4c1f38a5",
+      "kind": "agent_stack_learning",
+      "line": 113,
+      "route": "DreamFactory System/Agent Stack",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-25.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "A minimal `.openclaw/workspace-state.json` exists inside `Vivi-os-v1` (repo-local), and multiple DreamFactory docs/scripts reference `/root/.openclaw/workspace` for VPS deployment semantics."
+    },
+    {
+      "candidate_id": "mem-323e91bcac5f",
+      "kind": "agent_stack_learning",
+      "line": 114,
+      "route": "DreamFactory System/Agent Stack",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-25.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Decision: **Beobachten** (keep OpenClaw as *compatibility vocabulary*, not an active dependency)."
+    },
+    {
+      "candidate_id": "mem-265593b8732f",
+      "kind": "agent_stack_learning",
+      "line": 116,
+      "route": "DreamFactory System/Agent Stack",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-25.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "The system is already moving toward LIONCOM/PIG/Obsidian as truth + control plane; OpenClaw paths remain useful as a legacy host convention."
+    },
+    {
+      "candidate_id": "mem-7f8a2c9d5781",
+      "kind": "workflow_learning",
+      "line": 118,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-25.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "8) Security watch: Telegram token-like strings still in `Vivi-os-v1` docs"
+    },
+    {
+      "candidate_id": "mem-bbc146e2f0ec",
+      "kind": "workflow_learning",
+      "line": 122,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-25.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`/Users/BjornRosinger/Documents/DreamFactory/Vivi-os-v1/LEARNINGS.md`"
+    },
+    {
+      "candidate_id": "mem-da9ec183e6a3",
+      "kind": "workflow_learning",
+      "line": 123,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-25.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`/Users/BjornRosinger/Documents/DreamFactory/Vivi-os-v1/docs/telegram-integration-konzept.md`"
+    },
+    {
+      "candidate_id": "mem-90f2a6fa4cca",
+      "kind": "workflow_learning",
+      "line": 124,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-25.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`/Users/BjornRosinger/Documents/DreamFactory/Vivi-os-v1/docs/telegram-plugin-error-report.md`"
+    },
+    {
+      "candidate_id": "mem-f2a79d1b656d",
+      "kind": "workflow_learning",
+      "line": 134,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-25.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Local skills checksum snapshot: `/Users/BjornRosinger/.codex/automations/vega-upstream-base-audit/local-skill-sha256-2026-05-25.txt`"
+    },
+    {
+      "candidate_id": "mem-c0415549bc7e",
+      "kind": "workflow_learning",
+      "line": 135,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-25.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Curated skills checksum snapshot: `/Users/BjornRosinger/.codex/automations/vega-upstream-base-audit/curated-skill-sha256-2026-05-25.txt`"
+    },
+    {
+      "candidate_id": "mem-4d01950e529b",
+      "kind": "workflow_learning",
+      "line": 136,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-25.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Bundled skills checksum snapshot: `/Users/BjornRosinger/.codex/automations/vega-upstream-base-audit/bundled-skill-sha256-2026-05-25.txt`"
+    },
+    {
+      "candidate_id": "mem-47122dfcdd30",
+      "kind": "workflow_learning",
+      "line": 137,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-25.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Primary-runtime skills checksum snapshot: `/Users/BjornRosinger/.codex/automations/vega-upstream-base-audit/primary-runtime-skill-sha256-2026-05-25.txt`"
+    },
+    {
+      "candidate_id": "mem-80667684ed1b",
+      "kind": "workflow_learning",
+      "line": 138,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-25.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Obsidian paste pack (manual merge): `/Users/BjornRosinger/.codex/automations/vega-upstream-base-audit/obsidian-delta-2026-05-25.md`"
+    },
+    {
+      "candidate_id": "mem-7f2506168002",
+      "kind": "workflow_learning",
+      "line": 1,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-26.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Vega Upstream/Base Audit \u2014 DreamFactory (Daily)"
+    },
+    {
+      "candidate_id": "mem-987d3a8d0717",
+      "kind": "agent_stack_learning",
+      "line": 4,
+      "route": "DreamFactory System/Agent Stack",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-26.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Scope: OpenClaw, DreamFactory upstream bases (local-only), Codex plugins/config, local skills, curated/plugin skill caches, and DreamFactory agent stack notes in the active Obsidian vault."
+    },
+    {
+      "candidate_id": "mem-c19104a57503",
+      "kind": "workflow_learning",
+      "line": 14,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-26.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`Canonical/People/Person - Vivi.md` now carries an explicit **M6 Vivi Autonomy Stand (2026-05-26)**: dry-run/supervisor kernel only; no silent runtime start."
+    },
+    {
+      "candidate_id": "mem-81fcf3305d13",
+      "kind": "workflow_learning",
+      "line": 31,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-26.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "2) Vivi identity truth: explicit M6 autonomy stance (dry-run only)"
+    },
+    {
+      "candidate_id": "mem-56393c69967f",
+      "kind": "workflow_learning",
+      "line": 34,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-26.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`Human Overview/Canonical/People/Person - Vivi.md` now states: **M6-Vivi-Autonomie-Stand 2026-05-26** = supervised dry runs only; worker start, model/provider changes, runtime mutation, commit/cleanup/push/delete/publish, auth/credentials, spend, external comms remain closed without a fresh scoped Operator-Go."
+    },
+    {
+      "candidate_id": "mem-1401319ace23",
+      "kind": "operator_gate_learning",
+      "line": 37,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-26.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Prevents silent scope drift and unsafe escalation; consistent with existing operator-gate doctrine."
+    },
+    {
+      "candidate_id": "mem-11a42cca943b",
+      "kind": "workflow_learning",
+      "line": 40,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-26.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "2. Ensure Vivi reports always include requested/effective/fallback model truth and do not treat fallback as effective."
+    },
+    {
+      "candidate_id": "mem-460b03090e56",
+      "kind": "agent_stack_learning",
+      "line": 87,
+      "route": "DreamFactory System/Agent Stack",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-26.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`openclaw` is not in PATH and `~/.openclaw` is still missing on this machine."
+    },
+    {
+      "candidate_id": "mem-a6ea31c7750a",
+      "kind": "agent_stack_learning",
+      "line": 88,
+      "route": "DreamFactory System/Agent Stack",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-26.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "OpenClaw remains referenced as legacy host/vps vocabulary in `Vivi-os-v1` and as an optional secret path candidate in LIONCOM."
+    },
+    {
+      "candidate_id": "mem-d3278dc814dd",
+      "kind": "workflow_learning",
+      "line": 1,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-27.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Vega Upstream/Base Audit \u2014 DreamFactory (Daily)"
+    },
+    {
+      "candidate_id": "mem-12a418d0a0c3",
+      "kind": "agent_stack_learning",
+      "line": 4,
+      "route": "DreamFactory System/Agent Stack",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-27.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Scope: OpenClaw, DreamFactory upstream bases (local-only), Codex plugins/config, local skills, curated/plugin skill caches, and DreamFactory agent stack notes in the active Obsidian vault."
+    },
+    {
+      "candidate_id": "mem-8f0cd448f80a",
+      "kind": "workflow_learning",
+      "line": 14,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-27.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Obsidian backbone (Human Overview): no new updates after `2026-05-26` were detected in the key DreamFactory/Vega start surfaces (Latest Session Context, PIG system note, Person - Vivi, Learnings & Fixes)."
+    },
+    {
+      "candidate_id": "mem-5004b7f85282",
+      "kind": "operator_gate_learning",
+      "line": 37,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-27.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "keep operator-gated (`keep_operator_gated`)"
+    },
+    {
+      "candidate_id": "mem-d9009fe8d806",
+      "kind": "general_learning",
+      "line": 45,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-27.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "1. In `/Users/BjornRosinger/Documents/New project 2`: run unit tests for the new adapter (`pytest`/project test entry) and validate the generated outputs are read-only and guardrail-clean."
+    },
+    {
+      "candidate_id": "mem-e4d62b31dfeb",
+      "kind": "operator_gate_learning",
+      "line": 50,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-27.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "4. Keep `--run-github-digest` **operator-gated** (network + metadata scope); enforce \u201cmutations_attempted=false\u201d invariant with a regression test."
+    },
+    {
+      "candidate_id": "mem-ada5bfbfb0d4",
+      "kind": "agent_stack_learning",
+      "line": 92,
+      "route": "DreamFactory System/Agent Stack",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-27.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "5) OpenClaw status (local machine)"
+    },
+    {
+      "candidate_id": "mem-7a48aba5b3ed",
+      "kind": "agent_stack_learning",
+      "line": 95,
+      "route": "DreamFactory System/Agent Stack",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-27.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`openclaw` not in PATH; `~/.openclaw` missing."
+    },
+    {
+      "candidate_id": "mem-49b9e7a3653f",
+      "kind": "agent_stack_learning",
+      "line": 98,
+      "route": "DreamFactory System/Agent Stack",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-27.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "OpenClaw remains a documented vocabulary/system anchor, not an armed local dependency in this environment."
+    },
+    {
+      "candidate_id": "mem-383b3c47bda4",
+      "kind": "workflow_learning",
+      "line": 1,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-28.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Vega Upstream/Base Audit \u2014 DreamFactory (Daily)"
+    },
+    {
+      "candidate_id": "mem-98e48651ec7d",
+      "kind": "agent_stack_learning",
+      "line": 4,
+      "route": "DreamFactory System/Agent Stack",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-28.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Scope: OpenClaw, DreamFactory upstream bases (local-only), Codex plugins/config, local skills, curated plugin skill caches, and DreamFactory agent stack notes in the active Obsidian vault."
+    },
+    {
+      "candidate_id": "mem-b33337818ef6",
+      "kind": "workflow_learning",
+      "line": 11,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-28.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`~/.codex/skills/vivi-session-start/SKILL.md`"
+    },
+    {
+      "candidate_id": "mem-439d38b73629",
+      "kind": "workflow_learning",
+      "line": 12,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-28.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`~/.codex/skills/vega-obsidian-memory/SKILL.md`"
+    },
+    {
+      "candidate_id": "mem-d842cca8c35c",
+      "kind": "workflow_learning",
+      "line": 13,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-28.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`~/.codex/skills/vega-analysis-ingest/SKILL.md`"
+    },
+    {
+      "candidate_id": "mem-fd6daf1754d4",
+      "kind": "workflow_learning",
+      "line": 28,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-28.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`lioncom_control_plane_v2`: verifier output indicates API expectations like `/api/health`, `/api/control-plane-v2`, `/api/vega-chat`, `/api/vivi-model-catalog`; baseline evidence also shows mismatch between flight-pack `latest.json` timestamp and API snapshot timestamp."
+    },
+    {
+      "candidate_id": "mem-6c2846789844",
+      "kind": "agent_stack_learning",
+      "line": 45,
+      "route": "DreamFactory System/Agent Stack",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-28.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "2) OpenClaw status (local machine + repo traces)"
+    },
+    {
+      "candidate_id": "mem-2a11a466c929",
+      "kind": "agent_stack_learning",
+      "line": 48,
+      "route": "DreamFactory System/Agent Stack",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-28.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`openclaw`/`claw` not in PATH; `~/.openclaw` missing \u2192 local OpenClaw is **not armed**."
+    },
+    {
+      "candidate_id": "mem-a8fde2cc3b5b",
+      "kind": "agent_stack_learning",
+      "line": 49,
+      "route": "DreamFactory System/Agent Stack",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-28.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`Documents/DreamFactory/Vivi-os-v1/.openclaw/workspace-state.json` exists with `bootstrapSeededAt=2026-04-12T03:03:08.815Z` \u2192 repo carries OpenClaw vocabulary seed."
+    },
+    {
+      "candidate_id": "mem-b8abd80e93ee",
+      "kind": "agent_stack_learning",
+      "line": 51,
+      "route": "DreamFactory System/Agent Stack",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-28.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Beobachten** OpenClaw as vocabulary/host-reference."
+    },
+    {
+      "candidate_id": "mem-5f1a0cbeb486",
+      "kind": "agent_stack_learning",
+      "line": 52,
+      "route": "DreamFactory System/Agent Stack",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-28.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Ablehnen** treating OpenClaw as an active dependency until a fresh `armed_and_verified` preflight exists."
+    },
+    {
+      "candidate_id": "mem-2ca27a733289",
+      "kind": "workflow_learning",
+      "line": 59,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-28.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`Documents/DreamFactory/Vivi-os-v1` clean (`0` porcelain lines)."
+    },
+    {
+      "candidate_id": "mem-4026566d3418",
+      "kind": "operator_gate_learning",
+      "line": 63,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-28.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Prepared cleanup plan (operator-gated commits):"
+    },
+    {
+      "candidate_id": "mem-292dfc1be0e5",
+      "kind": "workflow_learning",
+      "line": 73,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-28.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`~/.codex/automations/vega-upstream-base-audit/local-skill-sha256-2026-05-28.txt`"
+    },
+    {
+      "candidate_id": "mem-21c9fd85692e",
+      "kind": "workflow_learning",
+      "line": 74,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-28.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`~/.codex/automations/vega-upstream-base-audit/curated-skill-sha256-2026-05-28.txt`"
+    },
+    {
+      "candidate_id": "mem-006363bc5060",
+      "kind": "workflow_learning",
+      "line": 75,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-28.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`~/.codex/automations/vega-upstream-base-audit/bundled-skill-sha256-2026-05-28.txt`"
+    },
+    {
+      "candidate_id": "mem-fb493ae39022",
+      "kind": "workflow_learning",
+      "line": 76,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "outputs/utility_websites/downloads_ingest_2026-05/report-2026-05-28.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "`~/.codex/automations/vega-upstream-base-audit/primary-runtime-skill-sha256-2026-05-28.txt`"
     }
   ]
 }

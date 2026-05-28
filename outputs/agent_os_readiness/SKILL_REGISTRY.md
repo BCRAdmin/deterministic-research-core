@@ -2,14 +2,15 @@
 
 This registry is a review surface, not a runtime installer.
 
-Records: 29
+Records: 40
 
 ## Decision Counts
 
-- `approved_local_review_helper`: 3
+- `approved_local_review_helper`: 10
 - `approved_playbook_only`: 12
 - `hold_for_operator_review`: 11
-- `review_before_runtime_use`: 3
+- `pattern_only_operator_gate`: 1
+- `review_before_runtime_use`: 6
 
 ## Registry
 
@@ -30,9 +31,20 @@ Records: 29
 | `validate-transcript-metadata-b9019b41` | Validate Transcript Metadata | `R1_local_read_only_helper` | `approved_local_review_helper` | false | 0 | `scripts/media_ingest/validate_transcript_metadata.py` |
 | `context-pack-builder-99c1794f` | Context Pack Builder | `R1_local_read_only_helper` | `approved_local_review_helper` | false | 0 | `scripts/ops/context_pack_builder.py` |
 | `multi-agent-panel-ddd58146` | Multi Agent Panel | `R1_local_read_only_helper` | `approved_local_review_helper` | false | 0 | `scripts/ops/multi_agent_panel.py` |
+| `openjarvis-capability-arena-541fae8c` | Openjarvis Capability Arena | `R1_local_read_only_helper` | `approved_local_review_helper` | false | 0 | `scripts/ops/openjarvis_capability_arena.py` |
+| `openjarvis-capability-lab-d3ef564b` | Openjarvis Capability Lab | `R1_local_read_only_helper` | `approved_local_review_helper` | false | 0 | `scripts/ops/openjarvis_capability_lab.py` |
+| `openjarvis-component-adapter-d2b232d1` | Openjarvis Component Adapter | `R1_local_read_only_helper` | `approved_local_review_helper` | false | 0 | `scripts/ops/openjarvis_component_adapter.py` |
+| `openjarvis-decision-gauntlet-39254b87` | Openjarvis Decision Gauntlet | `R1_local_read_only_helper` | `approved_local_review_helper` | false | 0 | `scripts/ops/openjarvis_decision_gauntlet.py` |
+| `portfolio-preflight-scan-4884f28d` | Portfolio Preflight Scan | `R1_local_read_only_helper` | `approved_local_review_helper` | false | 0 | `scripts/ops/portfolio_preflight_scan.py` |
+| `quellwert-productization-hardening-audit-27e3201e` | Quellwert Productization Hardening Audit | `R1_local_read_only_helper` | `approved_local_review_helper` | false | 0 | `scripts/ops/quellwert_productization_hardening_audit.py` |
+| `skill-pattern-governance-check-2b1701fc` | Skill Pattern Governance Check | `R1_local_read_only_helper` | `approved_local_review_helper` | false | 0 | `scripts/ops/skill_pattern_governance_check.py` |
 | `transcript-clean-fc425d3c` | Transcript Clean | `R2_local_write_or_exec_helper` | `review_before_runtime_use` | true | 0 | `scripts/media_ingest/prepare_media_ingest_folder.sh` |
 | `agent-os-readiness-ef832283` | Agent Os Readiness | `R2_local_write_or_exec_helper` | `review_before_runtime_use` | true | 0 | `scripts/ops/agent_os_readiness.py` |
+| `past-blocks-closure-check-357c5be8` | Past Blocks Closure Check | `R2_local_write_or_exec_helper` | `review_before_runtime_use` | true | 0 | `scripts/ops/past_blocks_closure_check.py` |
 | `vault-semantic-audit-09789ce6` | Vault Semantic Audit | `R2_local_write_or_exec_helper` | `review_before_runtime_use` | true | 0 | `scripts/ops/vault_semantic_audit.py` |
+| `compute-outcome-5d-artifacts-2dc9e6c4` | Compute Outcome 5D Artifacts | `R2_local_write_or_exec_helper` | `review_before_runtime_use` | true | 0 | `scripts/outcomes/compute_outcome_5d_artifacts.py` |
+| `compute-outcome-window-artifacts-c7f2807b` | Compute Outcome Window Artifacts | `R2_local_write_or_exec_helper` | `review_before_runtime_use` | true | 0 | `scripts/outcomes/compute_outcome_window_artifacts.py` |
+| `refresh-price-csvs-yahoo-chart-b7e456a8` | Refresh Price Csvs Yahoo Chart | `R3_network_or_install` | `pattern_only_operator_gate` | true | 1 | `scripts/outcomes/refresh_price_csvs_yahoo_chart.py` |
 | `automation-workflows-playbook-dc8fc5cb` | Automation Workflows Playbook | `R6_autonomous_or_background` | `hold_for_operator_review` | true | 4 | `docs/automation/AUTOMATION_WORKFLOWS_PLAYBOOK.md` |
 | `media-source-policy-3188eac1` | Media Source Policy | `R6_autonomous_or_background` | `hold_for_operator_review` | true | 2 | `docs/media_ingest/MEDIA_SOURCE_POLICY.md` |
 | `obsidian-media-note-policy-845205e4` | Obsidian Media Note Policy | `R6_autonomous_or_background` | `hold_for_operator_review` | true | 1 | `docs/media_ingest/OBSIDIAN_MEDIA_NOTE_POLICY.md` |

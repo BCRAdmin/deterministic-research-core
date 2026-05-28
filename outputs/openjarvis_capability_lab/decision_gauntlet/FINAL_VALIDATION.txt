@@ -1,0 +1,43 @@
+OpenJarvis Decision Gauntlet final validation
+Generated: 2026-05-25T00:41:43Z
+
+Core result:
+PASS decision gauntlet status=PASS
+PASS decision_status=ready_for_operator_gated_runtime_github_write_trials
+PASS workstreams=12
+PASS tests=78
+PASS local_executable=50
+PASS local_pass=50
+PASS local_fail=0
+PASS operator_gates=28
+PASS runtime_action_executed=false
+PASS source_of_truth=false
+
+Commands:
+PASS python3 -m py_compile research_agent/ops/openjarvis_decision_gauntlet.py scripts/ops/openjarvis_decision_gauntlet.py scripts/ops/agent_os_readiness.py
+PASS python3 -m py_compile scripts/project_intelligence_graph/pig.py
+PASS JSON parse configs/openjarvis/openjarvis_decision_gauntlet_plan.json
+PASS python3 scripts/ops/openjarvis_decision_gauntlet.py --json
+PASS python3 scripts/ops/agent_os_readiness.py
+PASS targeted pytest: 29 passed
+PASS full Agent Ops pytest: exit 0
+PASS collect-only count: 312 tests
+PASS ruff targeted files
+PASS PIG openjarvis-decision-gauntlet: PASS
+PASS PIG operator-surface: PASS, openjarvis_decision_gauntlet=true
+PASS PIG full-check: PASS, 36 steps, openjarvis_decision_gauntlet PASS
+PASS LIONCOM verify_planning_quality_surface
+PASS LIONCOM npx tsc --noEmit
+PASS LIONCOM npm run verify:control-plane-v2:static
+PASS LIONCOM npm run build after one transient .next manifest retry
+
+Observed transient:
+- One LIONCOM npm run build attempt failed after successful compile/static generation with a transient .next manifest ENOENT for robots.txt.
+- Immediate retry completed successfully. This is tracked as environment/build-cache flakiness, not a Jarvis Decision Gauntlet failure.
+
+Non-actions:
+- no OpenJarvis runtime execution
+- no OpenJarvis shell/write/network/GitHub API
+- no GitHub PAT or OAuth
+- no commit, push, merge, release, public or production step
+- no cleanup/deletion of existing dirty/generated artifacts

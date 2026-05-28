@@ -212,6 +212,33 @@ def default_job_cards(root: Path) -> list[AutomationJobCard]:
             ),
         ),
         AutomationJobCard(
+            job_id=make_job_id("OpenJarvis Component Adapter pruefen"),
+            name="OpenJarvis Component Adapter pruefen",
+            status="proposed_local_review_only",
+            schedule="woechentlich oder vor neuen OpenJarvis-Ideen",
+            workdir=workdir,
+            profile="default",
+            allowed_toolsets=("read_file", "search_files", "terminal_read_only"),
+            skills=("openjarvis-capability-adapter",),
+            context_from=(
+                "docs/openjarvis/OPENJARVIS_COMPONENT_ADAPTER.md",
+                "outputs/openjarvis_capability_lab/component_adapter/OPENJARVIS_COMPONENT_ADAPTER.md",
+            ),
+            delivery="local_file_only",
+            stop_conditions=(
+                "stop_if_runtime_execution_is_requested",
+                "stop_if_external_skill_install_is_suggested",
+                "stop_if_write_worker_adoption_is_suggested",
+                "stop_if_github_mutation_is_requested",
+            ),
+            prompt=(
+                "Pruefe OpenJarvis als Teilelager. Aktualisiere nur lokale Review-"
+                "Artefakte zum Component Adapter, Skill-Mining und read-only Digest. "
+                "Keine Runtime starten, keine externen Skills installieren, keine "
+                "GitHub-Mutationen und keine echten Projektdateien aendern."
+            ),
+        ),
+        AutomationJobCard(
             job_id=make_job_id("Guardrail-Coverage-Smoke pruefen"),
             name="Guardrail-Coverage-Smoke pruefen",
             status="proposed_local_review_only",

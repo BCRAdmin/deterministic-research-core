@@ -1,0 +1,31 @@
+Agent Ops source/test/docs:
+/Users/BjornRosinger/Documents/New project 2/research_agent/ops/openjarvis_capability_arena.py
+/Users/BjornRosinger/Documents/New project 2/scripts/ops/openjarvis_capability_arena.py
+/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_capability_arena_tasks.jsonl
+/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_policy.json
+/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_CAPABILITY_ARENA.md
+/Users/BjornRosinger/Documents/New project 2/research_agent/tests/test_openjarvis_capability_arena.py
+/Users/BjornRosinger/Documents/New project 2/scripts/ops/agent_os_readiness.py
+
+Agent Ops evidence:
+/Users/BjornRosinger/Documents/New project 2/outputs/openjarvis_capability_lab/capability_arena/CAPABILITY_ARENA_IMPLEMENTATION_REPORT.md
+/Users/BjornRosinger/Documents/New project 2/outputs/openjarvis_capability_lab/capability_arena/CAPABILITY_ARENA_IMPLEMENTATION_REPORT.json
+/Users/BjornRosinger/Documents/New project 2/outputs/openjarvis_capability_lab/capability_arena/FINAL_VALIDATION.txt
+/Users/BjornRosinger/Documents/New project 2/outputs/openjarvis_capability_lab/capability_arena/CAPABILITY_ARENA_SCOREBOARD.json
+/Users/BjornRosinger/Documents/New project 2/outputs/openjarvis_capability_lab/capability_arena/CAPABILITY_ARENA_SCOREBOARD.md
+/Users/BjornRosinger/Documents/New project 2/outputs/openjarvis_capability_lab/capability_arena/CAPABILITY_ARENA_PREFLIGHT.json
+/Users/BjornRosinger/Documents/New project 2/outputs/openjarvis_capability_lab/capability_arena/CAPABILITY_ARENA_TASK_RESULTS.jsonl
+/Users/BjornRosinger/Documents/New project 2/outputs/openjarvis_capability_lab/capability_arena/CAPABILITY_ARENA_FILE_LIST.txt
+
+PIG integration:
+/Users/BjornRosinger/Documents/New project/scripts/project_intelligence_graph/pig.py
+/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/quality_os_operator_surface.json
+/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/full_check_report.json
+
+LIONCOM integration:
+/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/lib/types.ts
+/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/components/portfolio-control-tower-page.tsx
+/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/scripts/verify_planning_quality_surface.mjs
+
+Memory:
+/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Latest Session Context.md

@@ -36,7 +36,7 @@
       ],
       "declared_status": "active",
       "findings": [],
-      "next_safe_action": "Nur Research-, Readiness- und Preview-Lieferobjekte oeffnen, bis Provider, Geld, Mail und echte externe Sends explizit frei sind.",
+      "next_safe_action": "Nur Research-, Readiness- und Preview-Lieferobjekte \u00f6ffnen, bis Provider, Geld, Mail und echte externe Sends explizit frei sind.",
       "note_path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Project - Membership Finanzplattform.md",
       "note_present": true,
       "owner_lanes": [
@@ -55,13 +55,13 @@
     {
       "audit_status": "verified_local_surface",
       "blocked_gates": [
-        "waiting",
+        "parked_no_current_intent",
         "Datenquellen-Hold",
         "Methodik"
       ],
-      "declared_status": "waiting",
+      "declared_status": "parked_no_current_intent",
       "findings": [],
-      "next_safe_action": "Wortquelle, Regelset und Datenschema entscheiden, bevor UI- oder SEO-Ausbau als aktiv gefuehrt wird.",
+      "next_safe_action": "Keine Solverarbeit starten; nur bei ausdruecklicher Reaktivierung Wortquelle, Regelset und Datenschema neu entscheiden.",
       "note_path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Project - Utility Wortcluster.md",
       "note_present": true,
       "owner_lanes": [
@@ -110,9 +110,9 @@
         "Operator-Go",
         "Non-Advice"
       ],
-      "declared_status": "local_preview",
+      "declared_status": "frozen_shelf_asset_operator_reopen_required",
       "findings": [],
-      "next_safe_action": "Research-/Archiv-/Methodik-Vertrauen staerken; Public-Promotion nur ueber Source-Ledger, Non-Advice, Human Source Verification und Operator-Go.",
+      "next_safe_action": "Keine aktive Quellwert-Produktarbeit ohne Operator-Reopen; bestehende Surface, Gates und Audit-Bausteine als Shelf-Asset erhalten.",
       "note_path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Project - Quellwert.md",
       "note_present": true,
       "owner_lanes": [

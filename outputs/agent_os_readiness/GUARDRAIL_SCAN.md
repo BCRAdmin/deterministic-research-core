@@ -1,12 +1,13 @@
 # Guardrail Scan
 
-Findings: 36
+Findings: 40
 Highest severity: `high`
 
 | File | Line | Check | Severity | Gate | Evidence |
 | --- | ---: | --- | --- | ---: | --- |
 | `docs/OUTCOME_MATURATION_POLICY_2026-05-18.md` | 65 | `auto_runtime_mutation` | `high` | true | - Quellwert-Publish-Go, |
 | `docs/OUTCOME_MATURATION_POLICY_2026-05-18.md` | 66 | `auto_runtime_mutation` | `high` | true | - Production-Go, |
+| `docs/agent_os/BLOCK_6_PORTFOLIO_PREFLIGHT.md` | 24 | `auto_runtime_mutation` | `high` | true | - changed archive or release artifacts such as `.zip`, `.dmg`, `.tar`, `.gz` |
 | `docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md` | 144 | `skill_memory_write` | `high` | true | 8. Wenn dauerhafte Projektwahrheit entstanden ist, in Obsidian oder Pending Sync sichern. |
 | `docs/automation/AUTOMATION_WORKFLOWS_PLAYBOOK.md` | 24 | `auto_runtime_mutation` | `high` | true | - Automatically release reports. |
 | `docs/automation/AUTOMATION_WORKFLOWS_PLAYBOOK.md` | 25 | `auto_runtime_mutation` | `high` | true | - Automatically enable Ads or Affiliate. |
@@ -19,6 +20,8 @@ Highest severity: `high`
 | `docs/memory/OBSIDIAN_MEMORY_PROMOTION_MAP.md` | 43 | `skill_memory_write` | `high` | true | | Vivi Review or Operator-Go plus evidence | `BACKBONE` | Write the smallest durable rule into Obsidian. | |
 | `docs/memory/OBSIDIAN_MEMORY_PROMOTION_MAP.md` | 94 | `auto_runtime_mutation` | `high` | true | - private, secret, credential, token, account or OAuth data in learning files |
 | `docs/memory/OBSIDIAN_MEMORY_PROMOTION_MAP.md` | 96 | `skill_background_or_self_modify` | `high` | true | - background memory mutation |
+| `docs/openjarvis/OPENJARVIS_ALLOWED_USE_CASES.md` | 18 | `auto_runtime_mutation` | `high` | true | - OAuth oder Connector-Aktivierung |
+| `docs/openjarvis/OPENJARVIS_THREAT_MODEL.md` | 34 | `auto_runtime_mutation` | `high` | true | - Commit, Push, Merge, Release, Public, Production, Payment oder Credentials |
 | `docs/skills/CLAW_SKILL_PATTERN_DECISION_MATRIX.json` | 34 | `skill_background_or_self_modify` | `high` | true | "P1": ["github", "word-docx", "excel-xlsx", "openai-whisper", "youtube-watcher", "humanizer"], |
 | `docs/skills/CLAW_SKILL_PATTERN_DECISION_MATRIX.md` | 36 | `skill_background_or_self_modify` | `high` | true | | `youtube-watcher` | yes | yes | transcript extraction pattern | source/copyright gates | transcript helper with attribution | unbounded video ingest | R3 | adopt as future playbook | P1 | 2-4d | media ingest | |
 | `docs/skills/CLAW_SKILL_PATTERN_DECISION_MATRIX.md` | 56 | `skill_background_or_self_modify` | `high` | true | - `youtube-watcher` |
@@ -36,6 +39,7 @@ Highest severity: `high`
 | `docs/skills/LOCAL_SKILL_INVENTORY_RISK_SCAN.md` | 29 | `skill_background_or_self_modify` | `high` | true | - Background execution. |
 | `docs/skills/VIVI_EXTERNAL_SKILL_REVIEW_CONTRACT.md` | 31 | `auto_runtime_mutation` | `high` | true | - credentials/OAuth/account access |
 | `docs/skills/VIVI_EXTERNAL_SKILL_REVIEW_CONTRACT.md` | 34 | `skill_background_or_self_modify` | `high` | true | - autonomous/background/update behavior |
+| `scripts/outcomes/refresh_price_csvs_yahoo_chart.py` | 15 | `skill_network_or_install` | `high` | true | YAHOO_CHART_BASE = "https://query1.finance.yahoo.com/v8/finance/chart" |
 | `scripts/skills/local_skill_inventory_scan.py` | 78 | `skill_network_or_install` | `high` | true | re.compile(r"\b(curl|wget|requests\.|fetch\(|axios\.|urllib\.request|http[s]?://)", re.I), |
 | `scripts/skills/local_skill_inventory_scan.py` | 117 | `skill_background_or_self_modify` | `high` | true | "Background, daemon or scheduled behavior needs an explicit gate.", |
 | `scripts/skills/local_skill_inventory_scan.py` | 118 | `skill_background_or_self_modify` | `high` | true | re.compile(r"\b(cron|daemon|background|launchctl|nohup|systemd|heartbeat|schedule)\b", re.I), |

@@ -1,0 +1,63 @@
+{
+  "gates": [
+    {
+      "category": "automation_prompt",
+      "check_id": "auto_runtime_mutation",
+      "finding_count": 15,
+      "gate_id": "guardrail-gate-e6fff2ece826",
+      "next_action": "convert_to_policy_engine_rule_before_runtime_expansion",
+      "operator_gate_required": true,
+      "sample_evidence": [
+        "- Quellwert-Publish-Go,",
+        "- Production-Go,",
+        "- changed archive or release artifacts such as `.zip`, `.dmg`, `.tar`, `.gz`"
+      ],
+      "severity": "high",
+      "status": "report_level_gate_active"
+    },
+    {
+      "category": "skill_package",
+      "check_id": "skill_background_or_self_modify",
+      "finding_count": 19,
+      "gate_id": "guardrail-gate-53982611432d",
+      "next_action": "convert_to_policy_engine_rule_before_runtime_expansion",
+      "operator_gate_required": true,
+      "sample_evidence": [
+        "- Automatically create runtime rights, API keys or background agents.",
+        "Applies to: Whisper / YouTube Watcher derived workflows, Room16, Quellwert, Vivi and Obsidian",
+        "Applies to: media notes created from Whisper / YouTube Watcher patterns"
+      ],
+      "severity": "high",
+      "status": "report_level_gate_active"
+    },
+    {
+      "category": "skill_package",
+      "check_id": "skill_memory_write",
+      "finding_count": 4,
+      "gate_id": "guardrail-gate-a535cf2e024d",
+      "next_action": "convert_to_policy_engine_rule_before_runtime_expansion",
+      "operator_gate_required": true,
+      "sample_evidence": [
+        "8. Wenn dauerhafte Projektwahrheit entstanden ist, in Obsidian oder Pending Sync sichern.",
+        "| Vivi Review or Operator-Go plus evidence | `BACKBONE` | Write the smallest durable rule into Obsidian. |",
+        "- memory overwrite outside the Obsidian Gate"
+      ],
+      "severity": "high",
+      "status": "report_level_gate_active"
+    },
+    {
+      "category": "skill_package",
+      "check_id": "skill_network_or_install",
+      "finding_count": 2,
+      "gate_id": "guardrail-gate-4c06c50461da",
+      "next_action": "convert_to_policy_engine_rule_before_runtime_expansion",
+      "operator_gate_required": true,
+      "sample_evidence": [
+        "YAHOO_CHART_BASE = \"https://query1.finance.yahoo.com/v8/finance/chart\"",
+        "re.compile(r\"\\b(curl|wget|requests\\.|fetch\\(|axios\\.|urllib\\.request|http[s]?://)\", re.I),"
+      ],
+      "severity": "high",
+      "status": "report_level_gate_active"
+    }
+  ]
+}

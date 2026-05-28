@@ -21,6 +21,16 @@
       "severity": "high"
     },
     {
+      "category": "automation_prompt",
+      "check_id": "auto_runtime_mutation",
+      "evidence": "- changed archive or release artifacts such as `.zip`, `.dmg`, `.tar`, `.gz`",
+      "file": "docs/agent_os/BLOCK_6_PORTFOLIO_PREFLIGHT.md",
+      "line": 24,
+      "message": "Automation prompts must not mutate runtime, credentials, launches, or public state.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
       "category": "skill_package",
       "check_id": "skill_memory_write",
       "evidence": "8. Wenn dauerhafte Projektwahrheit entstanden ist, in Obsidian oder Pending Sync sichern.",
@@ -137,6 +147,26 @@
       "file": "docs/memory/OBSIDIAN_MEMORY_PROMOTION_MAP.md",
       "line": 96,
       "message": "Background, self-update, or self-modifying behavior must stay gated.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "automation_prompt",
+      "check_id": "auto_runtime_mutation",
+      "evidence": "- OAuth oder Connector-Aktivierung",
+      "file": "docs/openjarvis/OPENJARVIS_ALLOWED_USE_CASES.md",
+      "line": 18,
+      "message": "Automation prompts must not mutate runtime, credentials, launches, or public state.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "automation_prompt",
+      "check_id": "auto_runtime_mutation",
+      "evidence": "- Commit, Push, Merge, Release, Public, Production, Payment oder Credentials",
+      "file": "docs/openjarvis/OPENJARVIS_THREAT_MODEL.md",
+      "line": 34,
+      "message": "Automation prompts must not mutate runtime, credentials, launches, or public state.",
       "operator_gate_required": true,
       "severity": "high"
     },
@@ -307,6 +337,16 @@
       "file": "docs/skills/VIVI_EXTERNAL_SKILL_REVIEW_CONTRACT.md",
       "line": 34,
       "message": "Background, self-update, or self-modifying behavior must stay gated.",
+      "operator_gate_required": true,
+      "severity": "high"
+    },
+    {
+      "category": "skill_package",
+      "check_id": "skill_network_or_install",
+      "evidence": "YAHOO_CHART_BASE = \"https://query1.finance.yahoo.com/v8/finance/chart\"",
+      "file": "scripts/outcomes/refresh_price_csvs_yahoo_chart.py",
+      "line": 15,
+      "message": "Skill package mentions network, downloads, installs, or package execution.",
       "operator_gate_required": true,
       "severity": "high"
     },

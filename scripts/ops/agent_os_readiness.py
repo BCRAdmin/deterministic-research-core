@@ -51,6 +51,10 @@ from research_agent.ops.openjarvis_capability_lab import (
     build_capability_lab,
     render_markdown as render_openjarvis_capability_lab_markdown,
 )
+from research_agent.ops.openjarvis_component_adapter import (
+    build_component_adapter,
+    render_markdown as render_openjarvis_component_adapter_markdown,
+)
 from research_agent.ops.openjarvis_capability_arena import (
     build_capability_arena,
     render_markdown as render_openjarvis_capability_arena_markdown,
@@ -406,6 +410,19 @@ def run_all(args: argparse.Namespace) -> int:
             ],
         },
     )
+    openjarvis_component_adapter = {
+        **build_component_adapter(),
+        "path": str(out / "OPENJARVIS_COMPONENT_ADAPTER.json"),
+    }
+    write_json(out / "OPENJARVIS_COMPONENT_ADAPTER.json", openjarvis_component_adapter)
+    write_text(
+        out / "OPENJARVIS_COMPONENT_ADAPTER.md",
+        render_openjarvis_component_adapter_markdown(openjarvis_component_adapter),
+    )
+    write_json(
+        out / "OPENJARVIS_COMPONENT_MATRIX.json",
+        {"components": openjarvis_component_adapter.get("component_matrix", [])},
+    )
 
     inbox_items = build_operator_inbox_items(
         root,
@@ -482,6 +499,11 @@ def run_all(args: argparse.Namespace) -> int:
         "openjarvis_decision_test_count": openjarvis_decision_gauntlet.get("summary", {}).get("test_count", 0),
         "openjarvis_decision_operator_gates": openjarvis_decision_gauntlet.get("summary", {}).get("operator_gate_count", 0),
         "openjarvis_decision_fail_count": openjarvis_decision_gauntlet.get("summary", {}).get("fail_count", 0),
+        "openjarvis_component_adapter_status": openjarvis_component_adapter.get("status", "UNKNOWN"),
+        "openjarvis_component_count": openjarvis_component_adapter.get("component_count", 0),
+        "openjarvis_component_adapt_ready_count": openjarvis_component_adapter.get("adapt_ready_count", 0),
+        "openjarvis_component_gated_ready_count": openjarvis_component_adapter.get("gated_ready_count", 0),
+        "openjarvis_component_rejected_current_count": openjarvis_component_adapter.get("rejected_current_count", 0),
         "vault_semantic_valid": vault_semantic_audit.valid,
         "vault_semantic_findings": len(vault_semantic_audit.findings),
         "vault_semantic_viewpoints": len(vault_semantic_audit.viewpoints),
@@ -510,6 +532,7 @@ def run_all(args: argparse.Namespace) -> int:
         and openjarvis_capability_lab.get("status") == "PASS"
         and openjarvis_capability_arena.get("status") == "PASS"
         and openjarvis_decision_gauntlet.get("status") == "PASS"
+        and openjarvis_component_adapter.get("status") == "PASS"
         and vault_semantic_audit.valid
         and inbox_validation.valid
         and not markdown_language_findings

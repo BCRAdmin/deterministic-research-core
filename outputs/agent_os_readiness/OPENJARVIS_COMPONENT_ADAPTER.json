@@ -1,0 +1,214 @@
+{
+  "adapt_ready_count": 4,
+  "adapter_id": "openjarvis_component_adapter_v1",
+  "automation_candidate": {
+    "allowed_actions": [
+      "read_repo_metadata",
+      "read_pr_metadata",
+      "write_local_digest"
+    ],
+    "forbidden_actions": [
+      "comment",
+      "label",
+      "branch",
+      "commit",
+      "merge",
+      "push",
+      "release"
+    ],
+    "id": "openjarvis_digest_weekly_review",
+    "schedule": "weekly_or_manual",
+    "status": "proposed_local_review_only"
+  },
+  "component_count": 6,
+  "component_matrix": [
+    {
+      "adoption_mode": "rebuild_locally",
+      "evidence": {
+        "github_dependabot_digest.mutations_attempted": false,
+        "github_dependabot_digest.open_dependabot_pr_count": 12,
+        "github_dependabot_digest.status": "PASS"
+      },
+      "id": "github_dependabot_digest",
+      "local_target": "PIG/LIONCOM read-only PR and dependency digest",
+      "reason": "The live trial proved a useful read-only digest can be produced with existing gh auth without adopting a Jarvis connector.",
+      "required_controls": [
+        "read_only_github_metadata",
+        "no_comments",
+        "no_labels",
+        "no_branches",
+        "no_merges",
+        "no_push"
+      ],
+      "risk": "low",
+      "source_pattern": "OpenJarvis connector and digest idea",
+      "status": "ADAPT_READY",
+      "title": "GitHub / Dependabot read-only digest",
+      "value": "high"
+    },
+    {
+      "adoption_mode": "copy_pattern_then_harden",
+      "evidence": {
+        "runtime_sandbox.status": "PASS_WITH_WARNINGS",
+        "runtime_sandbox.warnings": [
+          "uv was not globally installed; installed only in sandbox venv.",
+          "OpenJarvis pulled CPython 3.14.5 into sandbox because uv selected it.",
+          "code-assistant preset enables file_write, shell_exec, git_commit, http_request, web_search by default.",
+          "doctor can see local Ollama and model inventory; future tests must pin whether local engines are allowed.",
+          "docs/API mention --skip-scan in older context but current CLI uses --no-scan."
+        ]
+      },
+      "id": "tool_surface_audit",
+      "local_target": "Vega/PIG tool-permission matrix and operator gate surface",
+      "reason": "The registry is useful as an inventory pattern; its default code-assistant toolset is too broad for real repos.",
+      "required_controls": [
+        "explicit_allowlist",
+        "dangerous_tool_quarantine",
+        "disposable_workspace_lease_for_writes",
+        "no_git_commit_tool_in_real_repos",
+        "no_shell_tool_in_real_repos"
+      ],
+      "risk": "medium",
+      "source_pattern": "Jarvis registry exposes tools, agents, engines and memory backends",
+      "status": "ADAPT_READY",
+      "title": "Tool surface audit and deny-by-default wrapper",
+      "value": "high"
+    },
+    {
+      "adoption_mode": "mine_read_only_then_rebuild",
+      "evidence": {
+        "guardrail_findings": null,
+        "skill_registry_records": null
+      },
+      "id": "skill_mining",
+      "local_target": "Vega skill registry and curated local Codex skills",
+      "reason": "The best durable use is reading external skills as ideas, then writing small local skills under our guardrails.",
+      "required_controls": [
+        "no_external_skill_auto_install",
+        "secret_scan",
+        "prompt_injection_review",
+        "risk_classification",
+        "local_skill_validation"
+      ],
+      "risk": "medium",
+      "source_pattern": "OpenJarvis skill sources from Hermes, OpenClaw and GitHub",
+      "status": "ADAPT_READY",
+      "title": "External skill mining and local skill distillation",
+      "value": "high"
+    },
+    {
+      "adoption_mode": "keep_benchmark_and_copy_winning_queries",
+      "evidence": {
+        "arena.shadow_fail_count": null,
+        "arena.shadow_wins": null,
+        "arena.status": null
+      },
+      "id": "retrieval_shadow",
+      "local_target": "PIG/Obsidian retrieval arena",
+      "reason": "Arena results show broad context retrieval improves answers, while Obsidian remains the truth layer.",
+      "required_controls": [
+        "source_set_policy",
+        "deny_globs",
+        "secret_scan",
+        "source_citations",
+        "baseline_comparison"
+      ],
+      "risk": "low",
+      "source_pattern": "Jarvis memory and retrieval backends",
+      "status": "ADAPT_READY",
+      "title": "Retrieval and memory shadow benchmark",
+      "value": "medium_high"
+    },
+    {
+      "adoption_mode": "keep_operator_gated",
+      "evidence": {
+        "runtime_sandbox.openjarvis_version": "1.0.1",
+        "runtime_sandbox.safe_calculator_ask": "437"
+      },
+      "id": "runtime_sandbox_protocol",
+      "local_target": "Disposable runtime trial wrapper",
+      "reason": "OpenJarvis runs locally, but setup pulls toolchains and sees local model inventory; runtime use must stay explicitly scoped.",
+      "required_controls": [
+        "own_home",
+        "own_workspace",
+        "full_logs",
+        "manual_kill_plan",
+        "no_secret_mount",
+        "no_main_repo_write"
+      ],
+      "risk": "medium",
+      "source_pattern": "Jarvis local runtime and CLI",
+      "status": "GATED_READY",
+      "title": "Runtime sandbox protocol",
+      "value": "medium"
+    },
+    {
+      "adoption_mode": "reject_currently",
+      "evidence": {
+        "write_fix_sandbox.codex_baseline_tests": "4 passed",
+        "write_fix_sandbox.openjarvis_patch_created": false,
+        "write_fix_sandbox.status": "FAIL_FOR_OPENJARVIS_ADOPTION"
+      },
+      "id": "write_fix_worker",
+      "local_target": "None until a better wrapper exists",
+      "reason": "The live write sandbox produced no patch while Vega/Codex fixed the same toy bug immediately.",
+      "required_controls": [
+        "disposable_repo_only",
+        "tool_allowlist",
+        "time_limit",
+        "diff_required",
+        "tests_required",
+        "no_commit",
+        "no_push"
+      ],
+      "risk": "high",
+      "source_pattern": "Jarvis code-assistant with file and shell tools",
+      "status": "REJECT_CURRENT",
+      "title": "Write / fix worker",
+      "value": "low_current"
+    }
+  ],
+  "decision_frame": "copy_or_rebuild_the_best_parts",
+  "gated_ready_count": 1,
+  "generated_at": "2026-05-28T12:37:26+00:00",
+  "github_digest": {
+    "finding": "Existing gh CLI is enough for read-only Dependabot digest; no Jarvis connector is needed for this function yet.",
+    "mutations_attempted": false,
+    "open_dependabot_pr_count": 12,
+    "open_pr_count": 12,
+    "read_only": true,
+    "repo_count": 10,
+    "status": "PASS"
+  },
+  "hard_rules": [
+    "openjarvis_patterns_are_inspiration_not_authority",
+    "copy_good_patterns_into_vega_pig_lioncom_before_runtime_adoption",
+    "real_repo_writes_require_a_disposable_workspace_wrapper_first",
+    "github_digest_is_read_only_until_separate_operator_go",
+    "external_skills_are_mined_read_only_before_becoming_local_skills"
+  ],
+  "local_skill": {
+    "name": "openjarvis-capability-adapter",
+    "path": "/Users/BjornRosinger/.codex/skills/openjarvis-capability-adapter",
+    "purpose": "Guide Codex/Vega to harvest OpenJarvis ideas safely and route them through PIG/LIONCOM guardrails."
+  },
+  "next_build_targets": [
+    "wire_component_adapter_into_agent_os_readiness",
+    "surface_adapter_summary_in_pig_and_lioncom",
+    "keep_weekly_digest_as_local_review_job_card",
+    "iterate_skill_mining_against Hermes/OpenClaw sources only through guardrails"
+  ],
+  "overall_decision": "harvest_and_rebuild_selected_patterns",
+  "path": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/OPENJARVIS_COMPONENT_ADAPTER.json",
+  "rejected_current_count": 1,
+  "runtime_warnings": [
+    "uv was not globally installed; installed only in sandbox venv.",
+    "OpenJarvis pulled CPython 3.14.5 into sandbox because uv selected it.",
+    "code-assistant preset enables file_write, shell_exec, git_commit, http_request, web_search by default.",
+    "doctor can see local Ollama and model inventory; future tests must pin whether local engines are allowed.",
+    "docs/API mention --skip-scan in older context but current CLI uses --no-scan."
+  ],
+  "schema_version": 1,
+  "status": "PASS",
+  "trial_report_path": "/Users/BjornRosinger/Documents/New project 2/outputs/openjarvis_capability_lab/operator_trials/20260525T005539Z/reports/OPENJARVIS_OPERATOR_TRIALS_REPORT.json"
+}

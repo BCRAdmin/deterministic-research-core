@@ -1,0 +1,25 @@
+OpenJarvis Capability Lab final validation
+Generated: 2026-05-24T22:21:08Z
+
+PASS python3 scripts/ops/openjarvis_capability_lab.py
+PASS python3 scripts/ops/agent_os_readiness.py
+PASS targeted pytest: 22 passed
+PASS full Agent Ops pytest: exit 0, collect-only count 305
+PASS ruff targeted files
+PASS py_compile targeted Python files
+PASS JSON parse policy/schema/evidence
+PASS secret scan OpenJarvis source/docs/tests: 10 files
+PASS PIG operator-surface: OpenJarvis PASS, retrieval 4/4, runtime_action_executed=false
+PASS PIG full-check
+PASS LIONCOM verify_planning_quality_surface
+PASS LIONCOM npx tsc --noEmit
+PASS LIONCOM npm run verify:control-plane-v2:static
+PASS LIONCOM npm run build
+PASS git diff --check in Agent Ops and LIONCOM
+
+Non-actions:
+- no OpenJarvis runtime execution
+- no OpenJarvis shell/write/network/GitHub API
+- no GitHub PAT or OAuth
+- no commit, push, merge, release, public or production step
+- no cleanup/deletion of existing dirty/generated artifacts

@@ -1,0 +1,35 @@
+OpenJarvis Capability Arena v1 final validation
+Generated: 2026-05-24T23:06:29Z
+
+PASS python3 scripts/ops/openjarvis_capability_lab.py
+PASS python3 scripts/ops/openjarvis_capability_arena.py --json
+PASS arena scoreboard: status=PASS, tasks=30, source_documents=77
+PASS arena winner summary: openjarvis_shadow=12, pig_obsidian_baseline=0, tie=18
+PASS arena runtime: runtime_execution_attempted=false, runtime_action_executed=false
+PASS python3 scripts/ops/agent_os_readiness.py
+PASS targeted pytest: 25 tests, exit 0
+PASS full Agent Ops pytest: exit 0
+PASS collect-only count: 308 tests
+PASS py_compile targeted Python files
+PASS ruff targeted files
+PASS JSON/JSONL parse: policy/schema/evidence/tasks
+PASS PIG openjarvis-capability-arena: status=PASS, tasks=30
+PASS PIG operator-surface: status=PASS, openjarvis_capability_arena=true
+PASS PIG full-check: status=PASS, steps=35, arena_step=PASS
+PASS LIONCOM verify_planning_quality_surface
+PASS LIONCOM npx tsc --noEmit
+PASS LIONCOM npm run verify:control-plane-v2:static
+PASS LIONCOM npm run build after transient .next manifest retry
+PASS git diff --check in Agent Ops and LIONCOM
+INFO PIG workspace is not a git repository; PIG validation used py_compile, operator-surface and full-check
+
+Observed transient:
+- Initial LIONCOM npm run build attempts failed during Next manifest/page-data collection while workspace .next state had just been used by another Next process.
+- A clean retry completed successfully and rendered all app/API routes including /api/autonomy, /api/backups, /control-plane-v2, /robots.txt and /sitemap.xml.
+
+Non-actions:
+- no OpenJarvis runtime execution
+- no OpenJarvis shell/write/network/GitHub API
+- no GitHub PAT or OAuth
+- no commit, push, merge, release, public or production step
+- no cleanup/deletion of existing dirty/generated artifacts

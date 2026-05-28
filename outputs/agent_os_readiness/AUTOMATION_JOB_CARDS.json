@@ -190,6 +190,53 @@
         "terminal_read_only"
       ],
       "context_from": [
+        "docs/openjarvis/OPENJARVIS_COMPONENT_ADAPTER.md",
+        "outputs/openjarvis_capability_lab/component_adapter/OPENJARVIS_COMPONENT_ADAPTER.md"
+      ],
+      "delivery": "local_file_only",
+      "forbidden_actions": [
+        "automatically_change_code",
+        "automatically_release_reports",
+        "automatically_enable_ads_or_affiliate",
+        "automatically_loosen_guards",
+        "automatically_update_obsidian_backbone",
+        "automatically_publish",
+        "automatically_create_runtime_rights_api_keys_or_background_agents"
+      ],
+      "job_id": "openjarvis-component-adapter-pruefen-88d392cb",
+      "name": "OpenJarvis Component Adapter pruefen",
+      "no_action_if_not_mature": true,
+      "operator_gate_required": false,
+      "output_contract": [
+        "status",
+        "missing_data",
+        "allowed_next_action",
+        "blocked_gates",
+        "no_action_if_not_mature"
+      ],
+      "profile": "default",
+      "prompt": "Pruefe OpenJarvis als Teilelager. Aktualisiere nur lokale Review-Artefakte zum Component Adapter, Skill-Mining und read-only Digest. Keine Runtime starten, keine externen Skills installieren, keine GitHub-Mutationen und keine echten Projektdateien aendern.",
+      "risk_class": "R6_scheduled_review_constrained",
+      "schedule": "woechentlich oder vor neuen OpenJarvis-Ideen",
+      "skills": [
+        "openjarvis-capability-adapter"
+      ],
+      "status": "proposed_local_review_only",
+      "stop_conditions": [
+        "stop_if_runtime_execution_is_requested",
+        "stop_if_external_skill_install_is_suggested",
+        "stop_if_write_worker_adoption_is_suggested",
+        "stop_if_github_mutation_is_requested"
+      ],
+      "workdir": "/Users/BjornRosinger/Documents/New project 2"
+    },
+    {
+      "allowed_toolsets": [
+        "read_file",
+        "search_files",
+        "terminal_read_only"
+      ],
+      "context_from": [
         "outputs/agent_os_readiness/GUARDRAIL_SCAN.md"
       ],
       "delivery": "local_file_only",
@@ -298,6 +345,12 @@
     {
       "errors": [],
       "job_id": "skill-registry-drift-pruefen-22c0b2d4",
+      "valid": true,
+      "warnings": []
+    },
+    {
+      "errors": [],
+      "job_id": "openjarvis-component-adapter-pruefen-88d392cb",
       "valid": true,
       "warnings": []
     },

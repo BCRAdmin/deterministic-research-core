@@ -1,22 +1,28 @@
 {
-  "generated_at": "2026-05-21T00:14:40+02:00",
-  "review_name": "UTILITY_14_DAY_GSC_EVENT_REVIEW",
-  "review_status": "pending_not_mature",
-  "planned_better_14_day_review_date": "2026-06-01",
-  "decision": "continue_monitoring",
-  "secondary_decision": "no_action",
+    "generated_at": "2026-05-25T09:01:13+02:00",
+    "review_name": "UTILITY_14_DAY_GSC_EVENT_REVIEW",
+    "review_status": "pending_not_mature",
+    "heartbeat_check": {
+        "automation_id": "utility-websites-7-14-day-operating-review",
+        "checked_at": "2026-05-25T09:01:13+02:00",
+        "input_search_result": "No fresh GSC/Search Console export and no Plausible/event-count export found in active workspace or known Utility Downloads reference path.",
+        "stop_rule_applied": true
+    },
+    "planned_better_14_day_review_date": "2026-06-01",
+    "decision": "no_action",
+    "secondary_decision": "continue_monitoring",
   "source_references": [
     "outputs/utility_websites/UTILITY_14_DAY_REVIEW_PLAN.json",
     "outputs/utility_websites/MATERIALBEDARF_NO_ADS_REVENUE_ROADMAP.json",
     "outputs/utility_websites/MONETIZATION_READINESS_BOARD.json",
-    "/Users/BjornRosinger/Downloads/Utility webseiten/outputs/utility_websites/NEXT_GSC_EVENT_REVIEW_READINESS.md",
-    "/Users/BjornRosinger/Downloads/Utility webseiten/outputs/utility_websites/GSC_WAITING_WINDOW.md",
-    "/Users/BjornRosinger/Downloads/Utility webseiten/outputs/utility_websites/EVENT_TRACKING_VERIFICATION.md",
+    "/Users/BjornRosinger/Documents/New project 2/outputs/utility_websites/downloads_ingest_2026-05/outputs/utility_websites/NEXT_GSC_EVENT_REVIEW_READINESS.md",
+    "/Users/BjornRosinger/Documents/New project 2/outputs/utility_websites/downloads_ingest_2026-05/outputs/utility_websites/GSC_WAITING_WINDOW.md",
+    "/Users/BjornRosinger/Documents/New project 2/outputs/utility_websites/downloads_ingest_2026-05/outputs/utility_websites/EVENT_TRACKING_VERIFICATION.md",
     "/Users/BjornRosinger/Dreamfactory/utility webseite/materialbedarf-rechner.de/ops/GSC_LIVE_DASHBOARD_CHECK_2026-05-17.md",
     "/Users/BjornRosinger/Dreamfactory/utility webseite/mein-elterngeldrechner.de/ops/GSC_LIVE_DASHBOARD_CHECK_2026-05-17.md",
-    "/Users/BjornRosinger/Downloads/Utility webseiten/outputs/utility_websites/AFFILIATE_PARTNER_PREP_NEXT.md",
-    "/Users/BjornRosinger/Downloads/Utility webseiten/outputs/utility_websites/ADSENSE_FREEZE_DECISION.md",
-    "/Users/BjornRosinger/Downloads/Utility webseiten/outputs/utility_websites/CMP_BRANCH_CLOSED_DECISION.md"
+    "/Users/BjornRosinger/Documents/New project 2/outputs/utility_websites/downloads_ingest_2026-05/outputs/utility_websites/AFFILIATE_PARTNER_PREP_NEXT.md",
+    "/Users/BjornRosinger/Documents/New project 2/outputs/utility_websites/downloads_ingest_2026-05/outputs/utility_websites/ADSENSE_FREEZE_DECISION.md",
+    "/Users/BjornRosinger/Documents/New project 2/outputs/utility_websites/downloads_ingest_2026-05/outputs/utility_websites/CMP_BRANCH_CLOSED_DECISION.md"
   ],
   "data_availability": {
     "gsc_outcome_export_available": false,
@@ -133,25 +139,25 @@
     "ads_disabled": true,
     "adsense_frozen": true
   },
-  "decision_matrix": {
-    "continue_monitoring": true,
-    "small_ctr_adjustment": false,
-    "materialbedarf_result_ux_adjustment": false,
-    "affiliate_partner_application_ready": false,
-    "no_action": true
+    "decision_matrix": {
+        "continue_monitoring": false,
+        "small_ctr_adjustment": false,
+        "materialbedarf_result_ux_adjustment": false,
+        "affiliate_partner_application_ready": false,
+        "no_action": true
   },
   "guardrails": {
     "no_ads": true,
     "no_paid_cmp": true,
     "no_affiliate_live_links_without_partner_data": true,
     "no_large_rewrites": true,
-    "no_new_roadmap_cuts_without_data": true
-  },
-  "blocking_issues": [
-    "No fresh GSC page/query export for the 14-day outcome window is locally available.",
-    "No Plausible event-count export/API result for the readiness events is locally available.",
-    "The current local date is before the planned better 14-day review date of 2026-06-01."
-  ],
+        "no_new_roadmap_cuts_without_data": true
+    },
+    "blocking_issues": [
+        "No fresh GSC page/query export for the 14-day outcome window is locally available.",
+        "No Plausible event-count export/API result for the readiness events is locally available.",
+        "The current local date 2026-05-25 is before the planned better 14-day review date of 2026-06-01."
+    ],
   "next_allowed_step": "Run the 14-day review after 2026-06-01 with fresh GSC exports and Plausible event counts.",
   "runtime_changes": "none"
 }

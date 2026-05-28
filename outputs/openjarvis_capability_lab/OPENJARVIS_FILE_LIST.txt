@@ -1,0 +1,85 @@
+/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_decision_gauntlet_plan.json
+/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_policy.json
+/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_ALLOWED_USE_CASES.md
+/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_CAPABILITY_ARENA.md
+/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_CAPABILITY_LAB.md
+/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_COMPONENT_ADAPTER.md
+/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_DECISION_GAUNTLET.md
+/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md
+/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_THREAT_MODEL.md
+/Users/BjornRosinger/Documents/New project 2/research_agent/ops/openjarvis_capability_lab.py
+/Users/BjornRosinger/Documents/New project 2/research_agent/ops/openjarvis_decision_gauntlet.py
+/Users/BjornRosinger/Documents/New project 2/scripts/ops/openjarvis_capability_lab.py
+/Users/BjornRosinger/Documents/New project 2/README.md
+/Users/BjornRosinger/Documents/New project 2/docs/agent_os/AGENT_CODING_GUARDRAILS.json
+/Users/BjornRosinger/Documents/New project 2/docs/agent_os/AGENT_CODING_GUARDRAILS.md
+/Users/BjornRosinger/Documents/New project 2/docs/agent_os/AGENT_OS_READINESS_CONTRACT.json
+/Users/BjornRosinger/Documents/New project 2/docs/agent_os/AGENT_OS_READINESS_PACK.md
+/Users/BjornRosinger/Documents/New project 2/docs/agent_os/BLOCK_6_PORTFOLIO_PREFLIGHT.md
+/Users/BjornRosinger/Documents/New project 2/docs/agent_os/BLOCK_8_SKILL_PATTERN_GOVERNANCE.md
+/Users/BjornRosinger/Documents/New project 2/docs/agent_os/DELIVERABLE_SWARM_CONTRACT.json
+/Users/BjornRosinger/Documents/New project 2/docs/agent_os/DELIVERABLE_SWARM_CONTRACT.md
+/Users/BjornRosinger/Documents/New project 2/docs/agent_os/DELIVERABLE_SWARM_OPERATING_OVERVIEW.md
+/Users/BjornRosinger/Documents/New project 2/docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.json
+/Users/BjornRosinger/Documents/New project 2/docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md
+/Users/BjornRosinger/Documents/New project 2/docs/agent_os/PAST_BLOCKS_CLOSURE_2026-05-21.json
+/Users/BjornRosinger/Documents/New project 2/docs/agent_os/PAST_BLOCKS_CLOSURE_2026-05-21.md
+/Users/BjornRosinger/Documents/New project 2/docs/agent_os/PORTFOLIO_PRODUCT_SURFACE_AUDIT.md
+/Users/BjornRosinger/Documents/New project 2/docs/skills/CLAW_SKILL_PATTERN_DECISION_MATRIX.json
+/Users/BjornRosinger/Documents/New project 2/docs/skills/CLAW_SKILL_PATTERN_DECISION_MATRIX.md
+/Users/BjornRosinger/Documents/New project 2/docs/skills/EXTERNAL_SKILL_INTAKE_PACKAGE_README.md
+/Users/BjornRosinger/Documents/New project 2/docs/skills/EXTERNAL_SKILL_INTAKE_SOP.json
+/Users/BjornRosinger/Documents/New project 2/docs/skills/EXTERNAL_SKILL_INTAKE_SOP.md
+/Users/BjornRosinger/Documents/New project 2/docs/skills/HIGH_RISK_SKILLS_HOLD_REGISTER.json
+/Users/BjornRosinger/Documents/New project 2/docs/skills/HIGH_RISK_SKILLS_HOLD_REGISTER.md
+/Users/BjornRosinger/Documents/New project 2/docs/skills/LOCAL_SKILL_INVENTORY_RISK_SCAN.json
+/Users/BjornRosinger/Documents/New project 2/docs/skills/LOCAL_SKILL_INVENTORY_RISK_SCAN.md
+/Users/BjornRosinger/Documents/New project 2/docs/skills/SKILL_AUTHORING_POLICY.json
+/Users/BjornRosinger/Documents/New project 2/docs/skills/SKILL_AUTHORING_POLICY.md
+/Users/BjornRosinger/Documents/New project 2/docs/skills/VIVI_EXTERNAL_SKILL_REVIEW_CONTRACT.json
+/Users/BjornRosinger/Documents/New project 2/docs/skills/VIVI_EXTERNAL_SKILL_REVIEW_CONTRACT.md
+/Users/BjornRosinger/Documents/New project 2/pyproject.toml
+/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__init__.py
+/Users/BjornRosinger/Documents/New project 2/research_agent/ops/automation_cards.py
+/Users/BjornRosinger/Documents/New project 2/research_agent/ops/coding_guardrails.py
+/Users/BjornRosinger/Documents/New project 2/research_agent/ops/deliverable_swarm.py
+/Users/BjornRosinger/Documents/New project 2/research_agent/ops/guardrails.py
+/Users/BjornRosinger/Documents/New project 2/research_agent/ops/memory_inbox.py
+/Users/BjornRosinger/Documents/New project 2/research_agent/ops/openjarvis_capability_arena.py
+/Users/BjornRosinger/Documents/New project 2/research_agent/ops/openjarvis_capability_lab.py
+/Users/BjornRosinger/Documents/New project 2/research_agent/ops/openjarvis_component_adapter.py
+/Users/BjornRosinger/Documents/New project 2/research_agent/ops/openjarvis_decision_gauntlet.py
+/Users/BjornRosinger/Documents/New project 2/research_agent/ops/operator_inbox.py
+/Users/BjornRosinger/Documents/New project 2/research_agent/ops/past_blocks_closure.py
+/Users/BjornRosinger/Documents/New project 2/research_agent/ops/portfolio_preflight_scan.py
+/Users/BjornRosinger/Documents/New project 2/research_agent/ops/portfolio_surface_audit.py
+/Users/BjornRosinger/Documents/New project 2/research_agent/ops/quellwert_productization_hardening.py
+/Users/BjornRosinger/Documents/New project 2/research_agent/ops/readiness.py
+/Users/BjornRosinger/Documents/New project 2/research_agent/ops/review_workbenches.py
+/Users/BjornRosinger/Documents/New project 2/research_agent/ops/skill_pattern_governance.py
+/Users/BjornRosinger/Documents/New project 2/research_agent/ops/skill_registry.py
+/Users/BjornRosinger/Documents/New project 2/research_agent/ops/terminal_backends.py
+/Users/BjornRosinger/Documents/New project 2/research_agent/ops/vault_semantic_audit.py
+/Users/BjornRosinger/Documents/New project 2/scripts/ops/agent_os_readiness.py
+/Users/BjornRosinger/Documents/New project 2/scripts/ops/context_pack_builder.py
+/Users/BjornRosinger/Documents/New project 2/scripts/ops/multi_agent_panel.py
+/Users/BjornRosinger/Documents/New project 2/scripts/ops/openjarvis_capability_arena.py
+/Users/BjornRosinger/Documents/New project 2/scripts/ops/openjarvis_capability_lab.py
+/Users/BjornRosinger/Documents/New project 2/scripts/ops/openjarvis_component_adapter.py
+/Users/BjornRosinger/Documents/New project 2/scripts/ops/openjarvis_decision_gauntlet.py
+/Users/BjornRosinger/Documents/New project 2/scripts/ops/past_blocks_closure_check.py
+/Users/BjornRosinger/Documents/New project 2/scripts/ops/portfolio_preflight_scan.py
+/Users/BjornRosinger/Documents/New project 2/scripts/ops/quellwert_productization_hardening_audit.py
+/Users/BjornRosinger/Documents/New project 2/scripts/ops/skill_pattern_governance_check.py
+/Users/BjornRosinger/Documents/New project 2/scripts/ops/vault_semantic_audit.py
+/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Backbone Home.md
+/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Canonical/Canonical Index.md
+/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Latest Session Context.md
+/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/VEGA_START_HERE.md
+/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/operator_brief.json
+/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/quality_os_operator_surface.json
+/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/components/portfolio-control-tower-page.tsx
+/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/lib/control-plane-v2/live-data.ts
+/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/lib/types.ts
+/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/package.json
+/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/scripts/verify_planning_quality_surface.mjs

@@ -2,49 +2,56 @@
 
 Das sind vorgeschlagene sichere Automation Cards. Sie sind keine installierten Automationen.
 
-| Job | Status | Gueltig | Zeitplan | Lieferung | Toolsets |
+| Job | Status | Gültig | Zeitplan | Lieferung | Toolsets |
 | --- | --- | ---: | --- | --- | --- |
-| `Agent-OS-Readiness woechentlich pruefen` | `proposed_local_review_only` | true | woechentlich, manuelle Erstellung erforderlich | `local_file_only` | `read_file, search_files, terminal_read_only` |
-| `Memory-Inbox-Promotion pruefen` | `proposed_local_review_only` | true | woechentlich, manuelle Erstellung erforderlich | `local_file_only` | `read_file, search_files` |
-| `Vault Semantic Ownership pruefen` | `proposed_local_review_only` | true | woechentlich und vor jedem Claim 'Vault ist sauber' | `local_file_only` | `read_file, search_files, terminal_read_only` |
-| `Skill-Registry-Drift pruefen` | `proposed_local_review_only` | true | woechentlich, manuelle Erstellung erforderlich | `local_file_only` | `read_file, search_files, terminal_read_only` |
-| `Guardrail-Coverage-Smoke pruefen` | `proposed_local_review_only` | true | bei Bedarf vor Agent-OS-Runtime-Aenderungen | `local_file_only` | `read_file, search_files, terminal_read_only` |
-| `Deliverable-Swarm-Vertrag pruefen` | `proposed_local_review_only` | true | bei Bedarf vor neuen sichtbaren Agentenoberflaechen | `local_file_only` | `read_file, search_files, terminal_read_only` |
+| `Agent-OS-Readiness woechentlich pruefen` | `proposed_local_review_only` | true | wöchentlich, manuelle Erstellung erforderlich | `local_file_only` | `read_file, search_files, terminal_read_only` |
+| `Memory-Inbox-Promotion pruefen` | `proposed_local_review_only` | true | wöchentlich, manuelle Erstellung erforderlich | `local_file_only` | `read_file, search_files` |
+| `Vault Semantic Ownership pruefen` | `proposed_local_review_only` | true | wöchentlich und vor jedem Claim 'Vault ist sauber' | `local_file_only` | `read_file, search_files, terminal_read_only` |
+| `Skill-Registry-Drift pruefen` | `proposed_local_review_only` | true | wöchentlich, manuelle Erstellung erforderlich | `local_file_only` | `read_file, search_files, terminal_read_only` |
+| `OpenJarvis Component Adapter pruefen` | `proposed_local_review_only` | true | wöchentlich oder vor neuen OpenJarvis-Ideen | `local_file_only` | `read_file, search_files, terminal_read_only` |
+| `Guardrail-Coverage-Smoke pruefen` | `proposed_local_review_only` | true | bei Bedarf vor Agent-OS-Runtime-Änderungen | `local_file_only` | `read_file, search_files, terminal_read_only` |
+| `Deliverable-Swarm-Vertrag pruefen` | `proposed_local_review_only` | true | bei Bedarf vor neuen sichtbaren Agentenoberflächen | `local_file_only` | `read_file, search_files, terminal_read_only` |
 
 ## Validierungsdetails
 
-### agent-os-readiness-woechentlich-pruefen-ccd57fac
+### agent-os-readiness-wöchentlich-prüfen-ccd57fac
 
-- gueltig: `true`
+- gültig: `true`
 - fehler: `keine`
 - warnungen: `keine`
 
-### memory-inbox-promotion-pruefen-573b2f5c
+### memory-inbox-promotion-prüfen-573b2f5c
 
-- gueltig: `true`
+- gültig: `true`
 - fehler: `keine`
 - warnungen: `keine`
 
-### vault-semantic-ownership-pruefen-a61f1079
+### vault-semantic-ownership-prüfen-a61f1079
 
-- gueltig: `true`
+- gültig: `true`
 - fehler: `keine`
 - warnungen: `keine`
 
-### skill-registry-drift-pruefen-22c0b2d4
+### skill-registry-drift-prüfen-22c0b2d4
 
-- gueltig: `true`
+- gültig: `true`
 - fehler: `keine`
 - warnungen: `keine`
 
-### guardrail-coverage-smoke-pruefen-a820e6b9
+### openjarvis-component-adapter-prüfen-88d392cb
 
-- gueltig: `true`
+- gültig: `true`
 - fehler: `keine`
 - warnungen: `keine`
 
-### deliverable-swarm-vertrag-pruefen-e54a8577
+### guardrail-coverage-smoke-prüfen-a820e6b9
 
-- gueltig: `true`
+- gültig: `true`
+- fehler: `keine`
+- warnungen: `keine`
+
+### deliverable-swarm-vertrag-prüfen-e54a8577
+
+- gültig: `true`
 - fehler: `keine`
 - warnungen: `keine`

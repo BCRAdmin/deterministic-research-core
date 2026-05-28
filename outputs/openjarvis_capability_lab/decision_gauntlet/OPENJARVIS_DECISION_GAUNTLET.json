@@ -1,0 +1,1148 @@
+{
+  "adoption_recommendation": "do_not_rebuild_system; run_only_the_gated_runtime_github_write_trials_needed_for_final_decision",
+  "arena_summary": {
+    "baseline_average": 82.79,
+    "baseline_wins": 0,
+    "runtime_action_executed": false,
+    "shadow_average": 97.08,
+    "shadow_fail_count": 0,
+    "shadow_pass_count": 30,
+    "shadow_wins": 13,
+    "source_documents": 85,
+    "status": "PASS",
+    "task_count": 30,
+    "ties": 17
+  },
+  "decision_status": "ready_for_operator_gated_runtime_github_write_trials",
+  "final_decision_options": [
+    {
+      "id": "reject_or_keep_reference_only",
+      "meaning": "Jarvis bleibt nur Vergleichs- und Ideenquelle."
+    },
+    {
+      "id": "use_as_shadow_read_only_capability",
+      "meaning": "Jarvis-nahe Retrieval-/QA-/Digest-Muster werden read-only genutzt oder nachgebaut."
+    },
+    {
+      "id": "use_as_isolated_worker",
+      "meaning": "Jarvis bekommt nach Operator-Go einen isolierten Worker-Scope ohne Truth- oder Schreibhoheit."
+    },
+    {
+      "id": "adopt_selected_components",
+      "meaning": "Nur klar bessere Einzelkomponenten werden in LIONCOM/PIG/Vivi nachgebaut oder adaptiert."
+    }
+  ],
+  "gauntlet_id": "openjarvis_decision_gauntlet_v1",
+  "generated_at": "2026-05-28T12:35:27+00:00",
+  "lab_summary": {
+    "code_qa_status": "PASS",
+    "retrieval_pass_count": 4,
+    "retrieval_status": "PASS",
+    "runtime_action_executed": false,
+    "runtime_available": false,
+    "source_documents": 85,
+    "status": "PASS"
+  },
+  "minimum_local_requirements": {
+    "arena_max_shadow_failures": 0,
+    "arena_min_shadow_wins": 10,
+    "arena_min_tasks": 30,
+    "local_tests_must_pass": true,
+    "runtime_action_must_be_false": true,
+    "source_of_truth_must_be_false": true
+  },
+  "mode": "shadow_read_only",
+  "next_safe_step": "Use this gauntlet as the final decision checklist. Run no Jarvis runtime, GitHub or write-sandbox trial until the specific Operator-Gate is approved.",
+  "non_actions": [
+    "no_openjarvis_runtime_execution",
+    "no_openjarvis_shell",
+    "no_openjarvis_writes",
+    "no_openjarvis_network",
+    "no_github_api",
+    "no_pat_or_oauth",
+    "no_commit_push_release"
+  ],
+  "path": "/Users/BjornRosinger/Documents/New project 2/outputs/openjarvis_capability_lab/decision_gauntlet/OPENJARVIS_DECISION_GAUNTLET.json",
+  "plan_errors": [],
+  "plan_path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
+  "policy_path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_policy.json",
+  "runtime_action_executed": false,
+  "runtime_execution_attempted": false,
+  "schema_version": 1,
+  "source_of_truth": false,
+  "status": "PASS",
+  "summary": {
+    "fail_count": 0,
+    "local_executable_count": 50,
+    "operator_gate_count": 28,
+    "pass_count": 50,
+    "test_count": 78,
+    "workstream_count": 12
+  },
+  "title": "OpenJarvis / Jarvis Decision Gauntlet",
+  "workstreams": [
+    {
+      "fail_count": 0,
+      "goal": "Sicherstellen, dass Jarvis nie still zur Wahrheitsschicht oder ungeprüften Runtime wird.",
+      "id": "governance_truth_contract",
+      "operator_gate_count": 0,
+      "pass_count": 9,
+      "required_outcome": "Alle lokalen Policy- und Permission-Felder blockieren Mutationen.",
+      "status": "PASS",
+      "test_count": 9,
+      "tests": [
+        {
+          "actual": "shadow_read_only",
+          "artifact": "policy",
+          "assert": "equals",
+          "expected": "shadow_read_only",
+          "id": "gov_001_policy_shadow_mode",
+          "path": "mode",
+          "status": "PASS",
+          "title": "Policy erzwingt shadow_read_only"
+        },
+        {
+          "actual": false,
+          "artifact": "policy",
+          "assert": "equals",
+          "expected": false,
+          "id": "gov_002_not_source_of_truth",
+          "path": "source_of_truth",
+          "status": "PASS",
+          "title": "Policy verbietet Source-of-Truth-Rolle"
+        },
+        {
+          "actual": false,
+          "artifact": "policy",
+          "assert": "equals",
+          "expected": false,
+          "id": "gov_003_runtime_killswitch_off",
+          "path": "kill_switch.runtime_execution_enabled",
+          "status": "PASS",
+          "title": "Runtime-Execution-Kill-Switch ist aus"
+        },
+        {
+          "actual": false,
+          "artifact": "policy",
+          "assert": "equals",
+          "expected": false,
+          "id": "gov_004_shell_disabled",
+          "path": "runtime_permissions.allow_shell",
+          "status": "PASS",
+          "title": "Shell bleibt deaktiviert"
+        },
+        {
+          "actual": false,
+          "artifact": "policy",
+          "assert": "equals",
+          "expected": false,
+          "id": "gov_005_write_disabled",
+          "path": "runtime_permissions.allow_write",
+          "status": "PASS",
+          "title": "Writes bleiben deaktiviert"
+        },
+        {
+          "actual": false,
+          "artifact": "policy",
+          "assert": "equals",
+          "expected": false,
+          "id": "gov_006_network_disabled",
+          "path": "runtime_permissions.allow_network",
+          "status": "PASS",
+          "title": "Netzwerk bleibt deaktiviert"
+        },
+        {
+          "actual": false,
+          "artifact": "policy",
+          "assert": "equals",
+          "expected": false,
+          "id": "gov_007_github_api_disabled",
+          "path": "runtime_permissions.allow_github_api",
+          "status": "PASS",
+          "title": "GitHub-API bleibt deaktiviert"
+        },
+        {
+          "actual": false,
+          "artifact": "lab",
+          "assert": "equals",
+          "expected": false,
+          "id": "gov_008_lab_runtime_not_attempted",
+          "path": "runtime.runtime_execution_attempted",
+          "status": "PASS",
+          "title": "Capability Lab hat Runtime nicht ausgeführt"
+        },
+        {
+          "actual": false,
+          "artifact": "lab",
+          "assert": "equals",
+          "expected": false,
+          "id": "gov_009_lab_runtime_action_false",
+          "path": "hardening.runtime_action_executed",
+          "status": "PASS",
+          "title": "Capability Lab hat keine Runtime-Aktion ausgeführt"
+        }
+      ],
+      "title": "Governance- und Truth-Vertrag"
+    },
+    {
+      "fail_count": 0,
+      "goal": "Nur erlaubte Quellen indexieren; Secrets, Runtime-Artefakte und große Schmutzflächen blockieren.",
+      "id": "source_secret_hygiene",
+      "operator_gate_count": 0,
+      "pass_count": 7,
+      "required_outcome": "Preflight ist PASS und gefährliche Pfade sind in der Policy ausgeschlossen.",
+      "status": "PASS",
+      "test_count": 7,
+      "tests": [
+        {
+          "actual": "PASS",
+          "artifact": "lab",
+          "assert": "equals",
+          "expected": "PASS",
+          "id": "src_001_preflight_pass",
+          "path": "preflight.status",
+          "status": "PASS",
+          "title": "OpenJarvis Preflight ist PASS"
+        },
+        {
+          "actual": 0,
+          "artifact": "lab",
+          "assert": "equals",
+          "expected": 0,
+          "id": "src_002_no_preflight_blockers",
+          "path": "preflight.blocker_count",
+          "status": "PASS",
+          "title": "Preflight hat 0 Blocker"
+        },
+        {
+          "actual": 85,
+          "artifact": "lab",
+          "assert": "min",
+          "id": "src_003_source_count_min",
+          "minimum": 50,
+          "path": "source_document_count",
+          "status": "PASS",
+          "title": "Sicherer Index hat genügend Quellen"
+        },
+        {
+          "actual": [
+            ".env",
+            ".env.*",
+            "**/.env",
+            "**/.env.*",
+            "**/.git/**",
+            "**/.venv/**",
+            "**/__pycache__/**",
+            "**/.pytest_cache/**",
+            "**/.ruff_cache/**",
+            "**/node_modules/**",
+            "**/.next/**",
+            "**/dist/**",
+            "**/dist-desktop/**",
+            "**/outputs/debug_bundles/**",
+            "**/reports/room16/runs/**",
+            "**/reports/room16/premium/translation-cache.json",
+            "**/secrets/**",
+            "**/credentials/**",
+            "**/cookies/**"
+          ],
+          "artifact": "policy",
+          "assert": "contains",
+          "expected": "**/.env",
+          "id": "src_004_env_denied",
+          "path": "deny_globs",
+          "status": "PASS",
+          "title": ".env-Dateien werden ausgeschlossen"
+        },
+        {
+          "actual": [
+            ".env",
+            ".env.*",
+            "**/.env",
+            "**/.env.*",
+            "**/.git/**",
+            "**/.venv/**",
+            "**/__pycache__/**",
+            "**/.pytest_cache/**",
+            "**/.ruff_cache/**",
+            "**/node_modules/**",
+            "**/.next/**",
+            "**/dist/**",
+            "**/dist-desktop/**",
+            "**/outputs/debug_bundles/**",
+            "**/reports/room16/runs/**",
+            "**/reports/room16/premium/translation-cache.json",
+            "**/secrets/**",
+            "**/credentials/**",
+            "**/cookies/**"
+          ],
+          "artifact": "policy",
+          "assert": "contains",
+          "expected": "**/.git/**",
+          "id": "src_005_git_denied",
+          "path": "deny_globs",
+          "status": "PASS",
+          "title": ".git wird ausgeschlossen"
+        },
+        {
+          "actual": [
+            ".env",
+            ".env.*",
+            "**/.env",
+            "**/.env.*",
+            "**/.git/**",
+            "**/.venv/**",
+            "**/__pycache__/**",
+            "**/.pytest_cache/**",
+            "**/.ruff_cache/**",
+            "**/node_modules/**",
+            "**/.next/**",
+            "**/dist/**",
+            "**/dist-desktop/**",
+            "**/outputs/debug_bundles/**",
+            "**/reports/room16/runs/**",
+            "**/reports/room16/premium/translation-cache.json",
+            "**/secrets/**",
+            "**/credentials/**",
+            "**/cookies/**"
+          ],
+          "artifact": "policy",
+          "assert": "contains",
+          "expected": "**/.next/**",
+          "id": "src_006_next_denied",
+          "path": "deny_globs",
+          "status": "PASS",
+          "title": ".next wird ausgeschlossen"
+        },
+        {
+          "actual": [
+            ".env",
+            ".env.*",
+            "**/.env",
+            "**/.env.*",
+            "**/.git/**",
+            "**/.venv/**",
+            "**/__pycache__/**",
+            "**/.pytest_cache/**",
+            "**/.ruff_cache/**",
+            "**/node_modules/**",
+            "**/.next/**",
+            "**/dist/**",
+            "**/dist-desktop/**",
+            "**/outputs/debug_bundles/**",
+            "**/reports/room16/runs/**",
+            "**/reports/room16/premium/translation-cache.json",
+            "**/secrets/**",
+            "**/credentials/**",
+            "**/cookies/**"
+          ],
+          "artifact": "policy",
+          "assert": "contains",
+          "expected": "**/reports/room16/runs/**",
+          "id": "src_007_room16_runs_denied",
+          "path": "deny_globs",
+          "status": "PASS",
+          "title": "Room16 Runtime-Runs werden ausgeschlossen"
+        }
+      ],
+      "title": "Source-, Secret- und Index-Hygiene"
+    },
+    {
+      "fail_count": 0,
+      "goal": "Prüfen, ob Jarvis-nahe Retrievals echten Nutzen gegenüber vorhandenen Backbones bringen.",
+      "id": "retrieval_memory_quality",
+      "operator_gate_count": 0,
+      "pass_count": 7,
+      "required_outcome": "Retrieval-Lab und Arena liefern PASS, ohne Obsidian/PIG zu ersetzen.",
+      "status": "PASS",
+      "test_count": 7,
+      "tests": [
+        {
+          "actual": "PASS",
+          "artifact": "lab",
+          "assert": "equals",
+          "expected": "PASS",
+          "id": "ret_001_lab_status_pass",
+          "path": "status",
+          "status": "PASS",
+          "title": "Capability Lab ist PASS"
+        },
+        {
+          "actual": "PASS",
+          "artifact": "lab",
+          "assert": "equals",
+          "expected": "PASS",
+          "id": "ret_002_retrieval_pass",
+          "path": "retrieval_benchmark.status",
+          "status": "PASS",
+          "title": "Retrieval Benchmark ist PASS"
+        },
+        {
+          "actual": 4,
+          "artifact": "lab",
+          "assert": "min",
+          "id": "ret_003_retrieval_question_count",
+          "minimum": 4,
+          "path": "retrieval_benchmark.pass_count",
+          "status": "PASS",
+          "title": "Alle Lab-Retrieval-Fragen sind abgedeckt"
+        },
+        {
+          "actual": true,
+          "artifact": "file",
+          "assert": "exists",
+          "detail": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Latest Session Context.md",
+          "file": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Latest Session Context.md",
+          "id": "ret_004_latest_session_indexed",
+          "status": "PASS",
+          "title": "Latest Session Context ist im erlaubten Index"
+        },
+        {
+          "actual": true,
+          "artifact": "file",
+          "assert": "exists",
+          "detail": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Backbone Home.md",
+          "file": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Backbone Home.md",
+          "id": "ret_005_backbone_indexed",
+          "status": "PASS",
+          "title": "Backbone Home ist im erlaubten Index"
+        },
+        {
+          "actual": true,
+          "artifact": "file",
+          "assert": "exists",
+          "detail": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_CAPABILITY_LAB.md",
+          "file": "docs/openjarvis/OPENJARVIS_CAPABILITY_LAB.md",
+          "id": "ret_006_policy_docs_exist",
+          "status": "PASS",
+          "title": "OpenJarvis Policy-Doku existiert"
+        },
+        {
+          "actual": true,
+          "artifact": "file",
+          "assert": "exists",
+          "detail": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_CAPABILITY_ARENA.md",
+          "file": "docs/openjarvis/OPENJARVIS_CAPABILITY_ARENA.md",
+          "id": "ret_007_arena_docs_exist",
+          "status": "PASS",
+          "title": "OpenJarvis Arena-Doku existiert"
+        }
+      ],
+      "title": "Retrieval-, Memory- und Backbone-Qualität"
+    },
+    {
+      "fail_count": 0,
+      "goal": "Jarvis nicht nach Gefühl bewerten, sondern gegen messbare Aufgaben und Baseline vergleichen.",
+      "id": "arena_decision_quality",
+      "operator_gate_count": 0,
+      "pass_count": 8,
+      "required_outcome": "Shadow gewinnt klar, aber ohne Final-Adoption vor Runtime- und Auth-Gates.",
+      "status": "PASS",
+      "test_count": 8,
+      "tests": [
+        {
+          "actual": "PASS",
+          "artifact": "arena",
+          "assert": "equals",
+          "expected": "PASS",
+          "id": "arena_001_status_pass",
+          "path": "status",
+          "status": "PASS",
+          "title": "Arena ist PASS"
+        },
+        {
+          "actual": 30,
+          "artifact": "arena",
+          "assert": "min",
+          "id": "arena_002_task_count",
+          "minimum": 30,
+          "path": "evaluated_task_count",
+          "status": "PASS",
+          "title": "Arena hat mindestens 30 Aufgaben"
+        },
+        {
+          "actual": 30,
+          "artifact": "arena",
+          "assert": "min",
+          "id": "arena_003_shadow_all_pass",
+          "minimum": 30,
+          "path": "engine_summary.openjarvis_shadow.pass_count",
+          "status": "PASS",
+          "title": "Shadow hat mindestens 30 PASS"
+        },
+        {
+          "actual": 0,
+          "artifact": "arena",
+          "assert": "equals",
+          "expected": 0,
+          "id": "arena_004_shadow_no_fail",
+          "path": "engine_summary.openjarvis_shadow.fail_count",
+          "status": "PASS",
+          "title": "Shadow hat 0 FAIL"
+        },
+        {
+          "actual": 13,
+          "artifact": "arena",
+          "assert": "min",
+          "id": "arena_005_shadow_min_wins",
+          "minimum": 10,
+          "path": "winner_summary.openjarvis_shadow",
+          "status": "PASS",
+          "title": "Shadow gewinnt mindestens 10 Aufgaben"
+        },
+        {
+          "actual": 0,
+          "artifact": "arena",
+          "assert": "equals",
+          "expected": 0,
+          "id": "arena_006_baseline_no_wins",
+          "path": "winner_summary.pig_obsidian_baseline",
+          "status": "PASS",
+          "title": "Baseline gewinnt keine Arena-Aufgabe"
+        },
+        {
+          "actual": false,
+          "artifact": "arena",
+          "assert": "equals",
+          "expected": false,
+          "id": "arena_007_runtime_not_attempted",
+          "path": "runtime.runtime_execution_attempted",
+          "status": "PASS",
+          "title": "Arena hat Runtime nicht ausgeführt"
+        },
+        {
+          "actual": false,
+          "artifact": "arena",
+          "assert": "equals",
+          "expected": false,
+          "id": "arena_008_runtime_action_false",
+          "path": "runtime.runtime_action_executed",
+          "status": "PASS",
+          "title": "Arena hat keine Runtime-Aktion ausgeführt"
+        }
+      ],
+      "title": "Arena- und Entscheidungsqualität"
+    },
+    {
+      "fail_count": 0,
+      "goal": "Prüfen, ob Jarvis für README/package/Verifier-Erkennung und Handoff-Reports nützlich ist.",
+      "id": "code_qa_shadow",
+      "operator_gate_count": 0,
+      "pass_count": 5,
+      "required_outcome": "Mindestens Agent Ops, LIONCOM und Room16 werden read-only erkannt.",
+      "status": "PASS",
+      "test_count": 5,
+      "tests": [
+        {
+          "actual": "PASS",
+          "artifact": "lab",
+          "assert": "equals",
+          "expected": "PASS",
+          "id": "qa_001_code_qa_status",
+          "path": "code_qa_shadow.status",
+          "status": "PASS",
+          "title": "Code-QA Shadow ist PASS"
+        },
+        {
+          "actual": 3,
+          "artifact": "lab",
+          "assert": "min",
+          "id": "qa_002_code_qa_projects",
+          "minimum": 3,
+          "path": "code_qa_shadow.pass_count",
+          "status": "PASS",
+          "title": "Mindestens 3 Projekte werden erkannt"
+        },
+        {
+          "actual": true,
+          "artifact": "file",
+          "assert": "exists",
+          "detail": "/Users/BjornRosinger/Documents/New project 2/pyproject.toml",
+          "file": "pyproject.toml",
+          "id": "qa_003_agent_ops_pytest_exists",
+          "status": "PASS",
+          "title": "Agent-Ops Pytest ist vorhanden"
+        },
+        {
+          "actual": true,
+          "artifact": "file",
+          "assert": "exists",
+          "detail": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/package.json",
+          "file": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/package.json",
+          "id": "qa_004_lioncom_package_exists",
+          "status": "PASS",
+          "title": "LIONCOM package.json ist vorhanden"
+        },
+        {
+          "actual": true,
+          "artifact": "file",
+          "assert": "exists",
+          "detail": "/Users/BjornRosinger/Documents/New project/company-dossier-lab/room16-app/package.json",
+          "file": "/Users/BjornRosinger/Documents/New project/company-dossier-lab/room16-app/package.json",
+          "id": "qa_005_room16_package_exists",
+          "status": "PASS",
+          "title": "Room16 package.json ist vorhanden"
+        }
+      ],
+      "title": "Code-QA Shadow"
+    },
+    {
+      "fail_count": 0,
+      "goal": "Jarvis-Ergebnisse müssen dort sichtbar sein, wo Björn entscheidet.",
+      "id": "operator_surface_integration",
+      "operator_gate_count": 0,
+      "pass_count": 5,
+      "required_outcome": "Agent-OS, PIG und LIONCOM zeigen Lab, Arena und Decision-Gauntlet ohne Runtime-Freigabe.",
+      "status": "PASS",
+      "test_count": 5,
+      "tests": [
+        {
+          "actual": true,
+          "artifact": "file",
+          "assert": "exists",
+          "detail": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/OPENJARVIS_CAPABILITY_ARENA_SCOREBOARD.json",
+          "file": "outputs/agent_os_readiness/OPENJARVIS_CAPABILITY_ARENA_SCOREBOARD.json",
+          "id": "surf_001_agent_os_arena_scoreboard",
+          "status": "PASS",
+          "title": "Agent-OS Arena-Scoreboard existiert"
+        },
+        {
+          "actual": true,
+          "artifact": "file",
+          "assert": "exists",
+          "detail": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/quality_os_operator_surface.json",
+          "file": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/quality_os_operator_surface.json",
+          "id": "surf_002_pig_operator_surface_exists",
+          "status": "PASS",
+          "title": "PIG Operator Surface existiert"
+        },
+        {
+          "actual": true,
+          "artifact": "json_file",
+          "assert": "equals",
+          "expected": true,
+          "file": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/quality_os_operator_surface.json",
+          "id": "surf_003_pig_surface_has_arena",
+          "path": "control_capabilities.openjarvis_capability_arena",
+          "status": "PASS",
+          "title": "PIG Surface kennt OpenJarvis Arena"
+        },
+        {
+          "actual": true,
+          "artifact": "file",
+          "assert": "contains_text",
+          "detail": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/lib/types.ts",
+          "expected": "openjarvis_capability_arena",
+          "file": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/lib/types.ts",
+          "id": "surf_004_lioncom_types_have_arena",
+          "status": "PASS",
+          "title": "LIONCOM Types enthalten Arena-Surface"
+        },
+        {
+          "actual": true,
+          "artifact": "file",
+          "assert": "contains_text",
+          "detail": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/components/portfolio-control-tower-page.tsx",
+          "expected": "OpenJarvis Capability Arena",
+          "file": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/components/portfolio-control-tower-page.tsx",
+          "id": "surf_005_lioncom_ui_has_arena",
+          "status": "PASS",
+          "title": "LIONCOM UI zeigt Arena"
+        }
+      ],
+      "title": "PIG-/LIONCOM-Operator-Surface"
+    },
+    {
+      "fail_count": 0,
+      "goal": "Echte Jarvis-Runtime nur isoliert, reversibel und ohne Zugriff auf Hauptrepos prüfen.",
+      "id": "runtime_sandbox_operator_gate",
+      "operator_gate_count": 7,
+      "pass_count": 0,
+      "required_outcome": "Alle Runtime-Prüfungen sind vorbereitet, bleiben aber ohne Operator-Go blockiert.",
+      "status": "PASS",
+      "test_count": 7,
+      "tests": [
+        {
+          "actual": "not_executed",
+          "artifact": "operator_gate",
+          "assert": "operator_gate",
+          "detail": "Blocked until explicit Operator-Go: openjarvis_runtime_install_or_version_probe",
+          "id": "run_001_install_probe_gated",
+          "operator_gate": "openjarvis_runtime_install_or_version_probe",
+          "runtime_action_executed": false,
+          "status": "OPERATOR_GATE",
+          "title": "Jarvis Install-/Version-Probe braucht Operator-Go"
+        },
+        {
+          "actual": "not_executed",
+          "artifact": "operator_gate",
+          "assert": "operator_gate",
+          "detail": "Blocked until explicit Operator-Go: runtime_disposable_workspace_only",
+          "id": "run_002_runtime_no_main_repo_write",
+          "operator_gate": "runtime_disposable_workspace_only",
+          "runtime_action_executed": false,
+          "status": "OPERATOR_GATE",
+          "title": "Runtime darf keine Hauptrepo-Writes haben"
+        },
+        {
+          "actual": "not_executed",
+          "artifact": "operator_gate",
+          "assert": "operator_gate",
+          "detail": "Blocked until explicit Operator-Go: runtime_no_secret_mount",
+          "id": "run_003_runtime_no_secret_mount",
+          "operator_gate": "runtime_no_secret_mount",
+          "runtime_action_executed": false,
+          "status": "OPERATOR_GATE",
+          "title": "Runtime darf keine Secrets mounten"
+        },
+        {
+          "actual": "not_executed",
+          "artifact": "operator_gate",
+          "assert": "operator_gate",
+          "detail": "Blocked until explicit Operator-Go: runtime_timeout_and_kill_switch",
+          "id": "run_004_runtime_timeout_required",
+          "operator_gate": "runtime_timeout_and_kill_switch",
+          "runtime_action_executed": false,
+          "status": "OPERATOR_GATE",
+          "title": "Runtime braucht Timeout und Kill-Switch"
+        },
+        {
+          "actual": "not_executed",
+          "artifact": "operator_gate",
+          "assert": "operator_gate",
+          "detail": "Blocked until explicit Operator-Go: runtime_full_logs_required",
+          "id": "run_005_runtime_logs_required",
+          "operator_gate": "runtime_full_logs_required",
+          "runtime_action_executed": false,
+          "status": "OPERATOR_GATE",
+          "title": "Runtime braucht vollständige Logs"
+        },
+        {
+          "actual": "not_executed",
+          "artifact": "operator_gate",
+          "assert": "operator_gate",
+          "detail": "Blocked until explicit Operator-Go: runtime_rollback_plan_required",
+          "id": "run_006_runtime_rollback_required",
+          "operator_gate": "runtime_rollback_plan_required",
+          "runtime_action_executed": false,
+          "status": "OPERATOR_GATE",
+          "title": "Runtime braucht Rollback-/Cleanup-Plan"
+        },
+        {
+          "actual": "not_executed",
+          "artifact": "operator_gate",
+          "assert": "operator_gate",
+          "detail": "Blocked until explicit Operator-Go: runtime_decision_after_evidence_only",
+          "id": "run_007_runtime_decision_after_evidence",
+          "operator_gate": "runtime_decision_after_evidence_only",
+          "runtime_action_executed": false,
+          "status": "OPERATOR_GATE",
+          "title": "Runtime darf erst nach Evidence bewertet werden"
+        }
+      ],
+      "title": "Runtime-Sandbox-Pilot"
+    },
+    {
+      "fail_count": 0,
+      "goal": "Prüfen, ob Jarvis fertige Connector-Logik spart, ohne PRs, Issues oder Kommentare zu verändern.",
+      "id": "github_digest_operator_gate",
+      "operator_gate_count": 6,
+      "pass_count": 0,
+      "required_outcome": "Nur read-only Digest nach Auth-Gate; keine Kommentare, keine Labels, keine Branches.",
+      "status": "PASS",
+      "test_count": 6,
+      "tests": [
+        {
+          "actual": "not_executed",
+          "artifact": "operator_gate",
+          "assert": "operator_gate",
+          "detail": "Blocked until explicit Operator-Go: github_pat_or_oauth_required",
+          "id": "gh_001_pat_gate",
+          "operator_gate": "github_pat_or_oauth_required",
+          "runtime_action_executed": false,
+          "status": "OPERATOR_GATE",
+          "title": "PAT/OAuth bleibt Operator-Gate"
+        },
+        {
+          "actual": "not_executed",
+          "artifact": "operator_gate",
+          "assert": "operator_gate",
+          "detail": "Blocked until explicit Operator-Go: github_notifications_read_only",
+          "id": "gh_002_notifications_read_only",
+          "operator_gate": "github_notifications_read_only",
+          "runtime_action_executed": false,
+          "status": "OPERATOR_GATE",
+          "title": "Notifications nur read-only"
+        },
+        {
+          "actual": "not_executed",
+          "artifact": "operator_gate",
+          "assert": "operator_gate",
+          "detail": "Blocked until explicit Operator-Go: github_no_pr_comments",
+          "id": "gh_003_no_pr_comments",
+          "operator_gate": "github_no_pr_comments",
+          "runtime_action_executed": false,
+          "status": "OPERATOR_GATE",
+          "title": "Keine automatischen PR-Kommentare"
+        },
+        {
+          "actual": "not_executed",
+          "artifact": "operator_gate",
+          "assert": "operator_gate",
+          "detail": "Blocked until explicit Operator-Go: github_no_issue_or_label_mutation",
+          "id": "gh_004_no_issue_mutation",
+          "operator_gate": "github_no_issue_or_label_mutation",
+          "runtime_action_executed": false,
+          "status": "OPERATOR_GATE",
+          "title": "Keine Issue-/Label-Mutation"
+        },
+        {
+          "actual": "not_executed",
+          "artifact": "operator_gate",
+          "assert": "operator_gate",
+          "detail": "Blocked until explicit Operator-Go: github_digest_comparison_required",
+          "id": "gh_005_digest_compare_required",
+          "operator_gate": "github_digest_comparison_required",
+          "runtime_action_executed": false,
+          "status": "OPERATOR_GATE",
+          "title": "Digest muss gegen eigene PIG/Dependabot-Sicht verglichen werden"
+        },
+        {
+          "actual": "not_executed",
+          "artifact": "operator_gate",
+          "assert": "operator_gate",
+          "detail": "Blocked until explicit Operator-Go: github_auth_cleanup_required",
+          "id": "gh_006_auth_cleanup_required",
+          "operator_gate": "github_auth_cleanup_required",
+          "runtime_action_executed": false,
+          "status": "OPERATOR_GATE",
+          "title": "Auth-Cleanup und Token-Rotation müssen dokumentiert sein"
+        }
+      ],
+      "title": "GitHub-/Dependabot-Digest-Pilot"
+    },
+    {
+      "fail_count": 0,
+      "goal": "Nur in Wegwerf-Repo prüfen, ob Jarvis bessere Fix-Vorschläge liefert als Codex/Vega.",
+      "id": "write_fix_sandbox_operator_gate",
+      "operator_gate_count": 6,
+      "pass_count": 0,
+      "required_outcome": "Keine Writes in echten Repos; Patchqualität wird deterministisch geprüft.",
+      "status": "PASS",
+      "test_count": 6,
+      "tests": [
+        {
+          "actual": "not_executed",
+          "artifact": "operator_gate",
+          "assert": "operator_gate",
+          "detail": "Blocked until explicit Operator-Go: write_disposable_repo_only",
+          "id": "write_001_disposable_repo_only",
+          "operator_gate": "write_disposable_repo_only",
+          "runtime_action_executed": false,
+          "status": "OPERATOR_GATE",
+          "title": "Writes nur in Wegwerf-Repo"
+        },
+        {
+          "actual": "not_executed",
+          "artifact": "operator_gate",
+          "assert": "operator_gate",
+          "detail": "Blocked until explicit Operator-Go: write_patch_diff_required",
+          "id": "write_002_patch_diff_required",
+          "operator_gate": "write_patch_diff_required",
+          "runtime_action_executed": false,
+          "status": "OPERATOR_GATE",
+          "title": "Jeder Write braucht Patch-Diff"
+        },
+        {
+          "actual": "not_executed",
+          "artifact": "operator_gate",
+          "assert": "operator_gate",
+          "detail": "Blocked until explicit Operator-Go: write_tests_before_after",
+          "id": "write_003_tests_before_after",
+          "operator_gate": "write_tests_before_after",
+          "runtime_action_executed": false,
+          "status": "OPERATOR_GATE",
+          "title": "Vorher/Nachher-Tests sind Pflicht"
+        },
+        {
+          "actual": "not_executed",
+          "artifact": "operator_gate",
+          "assert": "operator_gate",
+          "detail": "Blocked until explicit Operator-Go: write_no_autocommit",
+          "id": "write_004_no_autocommit",
+          "operator_gate": "write_no_autocommit",
+          "runtime_action_executed": false,
+          "status": "OPERATOR_GATE",
+          "title": "Kein Autocommit"
+        },
+        {
+          "actual": "not_executed",
+          "artifact": "operator_gate",
+          "assert": "operator_gate",
+          "detail": "Blocked until explicit Operator-Go: write_no_push",
+          "id": "write_005_no_push",
+          "operator_gate": "write_no_push",
+          "runtime_action_executed": false,
+          "status": "OPERATOR_GATE",
+          "title": "Kein Push"
+        },
+        {
+          "actual": "not_executed",
+          "artifact": "operator_gate",
+          "assert": "operator_gate",
+          "detail": "Blocked until explicit Operator-Go: write_codex_review_required",
+          "id": "write_006_codex_review_required",
+          "operator_gate": "write_codex_review_required",
+          "runtime_action_executed": false,
+          "status": "OPERATOR_GATE",
+          "title": "Codex/Vega Review entscheidet über Übernahme"
+        }
+      ],
+      "title": "Write-/Fix-Sandbox-Pilot"
+    },
+    {
+      "fail_count": 0,
+      "goal": "Nach Tests nicht diskutieren, sondern anhand fester Schwellen entscheiden.",
+      "id": "decision_roi_exit_criteria",
+      "operator_gate_count": 4,
+      "pass_count": 4,
+      "required_outcome": "Entscheidung bleibt blockiert, bis Shadow, Runtime, GitHub und Sandbox jeweils Evidence haben.",
+      "status": "PASS",
+      "test_count": 8,
+      "tests": [
+        {
+          "actual": 13,
+          "artifact": "arena",
+          "assert": "min",
+          "id": "roi_001_shadow_threshold",
+          "minimum": 10,
+          "path": "winner_summary.openjarvis_shadow",
+          "status": "PASS",
+          "title": "Shadow-Win-Schwelle erfüllt"
+        },
+        {
+          "actual": 0,
+          "artifact": "arena",
+          "assert": "equals",
+          "expected": 0,
+          "id": "roi_002_no_shadow_failure",
+          "path": "engine_summary.openjarvis_shadow.fail_count",
+          "status": "PASS",
+          "title": "Kein Shadow-Fail"
+        },
+        {
+          "actual": false,
+          "artifact": "policy",
+          "assert": "equals",
+          "expected": false,
+          "id": "roi_003_baseline_not_replaced",
+          "path": "source_of_truth",
+          "status": "PASS",
+          "title": "Baseline bleibt als Truth-Schicht erhalten"
+        },
+        {
+          "actual": "not_executed",
+          "artifact": "operator_gate",
+          "assert": "operator_gate",
+          "detail": "Blocked until explicit Operator-Go: runtime_evidence_required_before_adoption",
+          "id": "roi_004_runtime_evidence_required",
+          "operator_gate": "runtime_evidence_required_before_adoption",
+          "runtime_action_executed": false,
+          "status": "OPERATOR_GATE",
+          "title": "Runtime-Evidence bleibt vor Adoption Pflicht"
+        },
+        {
+          "actual": "not_executed",
+          "artifact": "operator_gate",
+          "assert": "operator_gate",
+          "detail": "Blocked until explicit Operator-Go: github_auth_evidence_required_before_digest",
+          "id": "roi_005_auth_evidence_required",
+          "operator_gate": "github_auth_evidence_required_before_digest",
+          "runtime_action_executed": false,
+          "status": "OPERATOR_GATE",
+          "title": "GitHub/Auth-Evidence bleibt vor Digest-Adoption Pflicht"
+        },
+        {
+          "actual": "not_executed",
+          "artifact": "operator_gate",
+          "assert": "operator_gate",
+          "detail": "Blocked until explicit Operator-Go: write_sandbox_evidence_required_before_adoption",
+          "id": "roi_006_write_evidence_required",
+          "operator_gate": "write_sandbox_evidence_required_before_adoption",
+          "runtime_action_executed": false,
+          "status": "OPERATOR_GATE",
+          "title": "Write-Sandbox-Evidence bleibt vor Fix-Adoption Pflicht"
+        },
+        {
+          "actual": "not_executed",
+          "artifact": "operator_gate",
+          "assert": "operator_gate",
+          "detail": "Blocked until explicit Operator-Go: cost_time_ceiling_required",
+          "id": "roi_007_cost_ceiling_required",
+          "operator_gate": "cost_time_ceiling_required",
+          "runtime_action_executed": false,
+          "status": "OPERATOR_GATE",
+          "title": "Kosten-/Zeit-Ceiling muss vor Runtime-Test gesetzt sein"
+        },
+        {
+          "actual": [
+            {
+              "id": "reject_or_keep_reference_only",
+              "meaning": "Jarvis bleibt nur Vergleichs- und Ideenquelle."
+            },
+            {
+              "id": "use_as_shadow_read_only_capability",
+              "meaning": "Jarvis-nahe Retrieval-/QA-/Digest-Muster werden read-only genutzt oder nachgebaut."
+            },
+            {
+              "id": "use_as_isolated_worker",
+              "meaning": "Jarvis bekommt nach Operator-Go einen isolierten Worker-Scope ohne Truth- oder Schreibhoheit."
+            },
+            {
+              "id": "adopt_selected_components",
+              "meaning": "Nur klar bessere Einzelkomponenten werden in LIONCOM/PIG/Vivi nachgebaut oder adaptiert."
+            }
+          ],
+          "artifact": "plan",
+          "assert": "not_empty",
+          "id": "roi_008_exit_option_defined",
+          "path": "final_decision_options",
+          "status": "PASS",
+          "title": "Reject-/Keep-Reference-Exit ist definiert"
+        }
+      ],
+      "title": "ROI-, Risiko- und Exit-Kriterien"
+    },
+    {
+      "fail_count": 0,
+      "goal": "Jeder Jarvis-Test muss als prüfbares Bundle nach ChatGPT/Vega/PIG gegeben werden können.",
+      "id": "observability_evidence_pack",
+      "operator_gate_count": 0,
+      "pass_count": 5,
+      "required_outcome": "Reports, Scoreboards, Task-Results und Validierung sind vorhanden.",
+      "status": "PASS",
+      "test_count": 5,
+      "tests": [
+        {
+          "actual": true,
+          "artifact": "file",
+          "assert": "exists",
+          "detail": "/Users/BjornRosinger/Documents/New project 2/outputs/openjarvis_capability_lab/OPENJARVIS_CAPABILITY_LAB.json",
+          "file": "outputs/openjarvis_capability_lab/OPENJARVIS_CAPABILITY_LAB.json",
+          "id": "obs_001_lab_json_exists",
+          "status": "PASS",
+          "title": "Lab JSON existiert"
+        },
+        {
+          "actual": true,
+          "artifact": "file",
+          "assert": "exists",
+          "detail": "/Users/BjornRosinger/Documents/New project 2/outputs/openjarvis_capability_lab/capability_arena/CAPABILITY_ARENA_SCOREBOARD.json",
+          "file": "outputs/openjarvis_capability_lab/capability_arena/CAPABILITY_ARENA_SCOREBOARD.json",
+          "id": "obs_002_arena_json_exists",
+          "status": "PASS",
+          "title": "Arena JSON existiert"
+        },
+        {
+          "actual": true,
+          "artifact": "file",
+          "assert": "exists",
+          "detail": "/Users/BjornRosinger/Documents/New project 2/outputs/openjarvis_capability_lab/capability_arena/CAPABILITY_ARENA_TASK_RESULTS.jsonl",
+          "file": "outputs/openjarvis_capability_lab/capability_arena/CAPABILITY_ARENA_TASK_RESULTS.jsonl",
+          "id": "obs_003_arena_task_results_exists",
+          "status": "PASS",
+          "title": "Arena Task Results existieren"
+        },
+        {
+          "actual": true,
+          "artifact": "file",
+          "assert": "exists",
+          "detail": "/Users/BjornRosinger/Documents/New project 2/outputs/openjarvis_capability_lab/capability_arena/FINAL_VALIDATION.txt",
+          "file": "outputs/openjarvis_capability_lab/capability_arena/FINAL_VALIDATION.txt",
+          "id": "obs_004_arena_validation_exists",
+          "status": "PASS",
+          "title": "Arena Final Validation existiert"
+        },
+        {
+          "actual": true,
+          "artifact": "file",
+          "assert": "exists",
+          "detail": "/Users/BjornRosinger/Documents/New project 2/outputs/openjarvis_capability_lab/openjarvis-capability-arena-v1-20260525.zip",
+          "file": "outputs/openjarvis_capability_lab/openjarvis-capability-arena-v1-20260525.zip",
+          "id": "obs_005_review_zip_exists",
+          "status": "PASS",
+          "title": "Arena Review-ZIP existiert"
+        }
+      ],
+      "title": "Observability und Evidence-Pack"
+    },
+    {
+      "fail_count": 0,
+      "goal": "Jarvis-Tests dürfen bestehende Dirty Trees, Generated Artefakte oder Operator-Gates nicht verwischen.",
+      "id": "rollback_cleanup_boundaries",
+      "operator_gate_count": 5,
+      "pass_count": 0,
+      "required_outcome": "Cleanup/Commit/Push bleiben separat und nachweisbar gated.",
+      "status": "PASS",
+      "test_count": 5,
+      "tests": [
+        {
+          "actual": "not_executed",
+          "artifact": "operator_gate",
+          "assert": "operator_gate",
+          "detail": "Blocked until explicit Operator-Go: commit_requires_operator_go",
+          "id": "rb_001_no_commit_gate",
+          "operator_gate": "commit_requires_operator_go",
+          "runtime_action_executed": false,
+          "status": "OPERATOR_GATE",
+          "title": "Commit bleibt Operator-Gate"
+        },
+        {
+          "actual": "not_executed",
+          "artifact": "operator_gate",
+          "assert": "operator_gate",
+          "detail": "Blocked until explicit Operator-Go: push_requires_operator_go",
+          "id": "rb_002_no_push_gate",
+          "operator_gate": "push_requires_operator_go",
+          "runtime_action_executed": false,
+          "status": "OPERATOR_GATE",
+          "title": "Push bleibt Operator-Gate"
+        },
+        {
+          "actual": "not_executed",
+          "artifact": "operator_gate",
+          "assert": "operator_gate",
+          "detail": "Blocked until explicit Operator-Go: cleanup_requires_operator_go",
+          "id": "rb_003_no_cleanup_gate",
+          "operator_gate": "cleanup_requires_operator_go",
+          "runtime_action_executed": false,
+          "status": "OPERATOR_GATE",
+          "title": "Cleanup bleibt Operator-Gate"
+        },
+        {
+          "actual": "not_executed",
+          "artifact": "operator_gate",
+          "assert": "operator_gate",
+          "detail": "Blocked until explicit Operator-Go: delete_requires_operator_go",
+          "id": "rb_004_no_delete_gate",
+          "operator_gate": "delete_requires_operator_go",
+          "runtime_action_executed": false,
+          "status": "OPERATOR_GATE",
+          "title": "Delete bleibt Operator-Gate"
+        },
+        {
+          "actual": "not_executed",
+          "artifact": "operator_gate",
+          "assert": "operator_gate",
+          "detail": "Blocked until explicit Operator-Go: release_public_production_requires_operator_go",
+          "id": "rb_005_no_release_gate",
+          "operator_gate": "release_public_production_requires_operator_go",
+          "runtime_action_executed": false,
+          "status": "OPERATOR_GATE",
+          "title": "Release/Public/Production bleibt Operator-Gate"
+        }
+      ],
+      "title": "Rollback-, Cleanup- und Commit-Grenzen"
+    }
+  ]
+}

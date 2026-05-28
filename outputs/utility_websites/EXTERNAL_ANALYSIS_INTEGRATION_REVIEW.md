@@ -11,7 +11,7 @@ This review reconciles the older/external Materialbedarf and Elterngeld analysis
 1. Current 2026-05-21 operator state.
 2. Skill-governance docs in `docs/skills` and `docs/memory` as read-only references.
 3. Obsidian utility roadmap and reconciliation notes as historical context.
-4. Existing utility outputs in `/Users/BjornRosinger/Downloads/Utility webseiten/outputs/utility_websites`.
+4. Existing utility outputs in `/Users/BjornRosinger/Documents/New project 2/outputs/utility_websites/downloads_ingest_2026-05/outputs/utility_websites`.
 5. Raw old Deep Research files only if locally available.
 
 ## Global Decisions

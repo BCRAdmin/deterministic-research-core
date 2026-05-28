@@ -1,0 +1,92 @@
+{
+  "generated_at": "2026-05-24T23:06:29Z",
+  "status": "PASS",
+  "scope": "openjarvis_capability_arena_v1",
+  "mode": "shadow_read_only",
+  "source_of_truth": false,
+  "runtime_execution_attempted": false,
+  "runtime_action_executed": false,
+  "arena": {
+    "task_count": 30,
+    "source_document_count": 77,
+    "baseline_document_count": 8,
+    "shadow_document_count": 77,
+    "winner_summary": {
+      "openjarvis_shadow": 12,
+      "pig_obsidian_baseline": 0,
+      "tie": 18
+    },
+    "openjarvis_shadow": {
+      "average_score": 98.25,
+      "pass_count": 30,
+      "warn_count": 0,
+      "fail_count": 0,
+      "win_count": 12,
+      "tie_count": 18
+    },
+    "pig_obsidian_baseline": {
+      "average_score": 85.73,
+      "pass_count": 20,
+      "warn_count": 9,
+      "fail_count": 1,
+      "win_count": 0,
+      "tie_count": 18
+    }
+  },
+  "implemented_files": [
+    "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/openjarvis_capability_arena.py",
+    "/Users/BjornRosinger/Documents/New project 2/scripts/ops/openjarvis_capability_arena.py",
+    "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_capability_arena_tasks.jsonl",
+    "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_CAPABILITY_ARENA.md",
+    "/Users/BjornRosinger/Documents/New project 2/research_agent/tests/test_openjarvis_capability_arena.py",
+    "/Users/BjornRosinger/Documents/New project 2/scripts/ops/agent_os_readiness.py",
+    "/Users/BjornRosinger/Documents/New project/scripts/project_intelligence_graph/pig.py",
+    "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/lib/types.ts",
+    "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/components/portfolio-control-tower-page.tsx",
+    "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/scripts/verify_planning_quality_surface.mjs",
+    "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Latest Session Context.md"
+  ],
+  "validation": {
+    "openjarvis_capability_lab": "PASS",
+    "openjarvis_capability_arena": "PASS",
+    "agent_os_readiness": "completed",
+    "targeted_pytest": "25 tests, exit 0",
+    "full_pytest": "exit 0, collect-only 308 tests",
+    "py_compile": "pass",
+    "ruff": "pass",
+    "json_jsonl_parse": "pass",
+    "pig_openjarvis_capability_arena": "PASS",
+    "pig_operator_surface": "PASS",
+    "pig_full_check": "PASS, 35 steps",
+    "lioncom_surface_verifier": "PASS",
+    "lioncom_tsc": "pass",
+    "lioncom_static_contract": "pass",
+    "lioncom_build": "pass after transient .next manifest retry",
+    "git_diff_check": "pass in Agent Ops and LIONCOM; PIG workspace is not a git repo"
+  },
+  "non_actions": [
+    "no_openjarvis_runtime_execution",
+    "no_openjarvis_shell",
+    "no_openjarvis_writes",
+    "no_openjarvis_network",
+    "no_github_api",
+    "no_pat_or_oauth",
+    "no_commit",
+    "no_push",
+    "no_merge",
+    "no_release",
+    "no_public_or_production_step"
+  ],
+  "adoption_recommendation": "promote_shadow_retrieval_benchmark_to_next_read_only_trial",
+  "next_safe_steps": [
+    "Run a narrower read-only Memory/Retrieval Trial against current-state questions.",
+    "Only after Operator-Go, evaluate a read-only GitHub/Dependabot digest with no writes.",
+    "Keep OpenJarvis below PIG/Obsidian/LIONCOM as capability provider, never as truth source."
+  ],
+  "risks": [
+    "No actual OpenJarvis runtime was executed.",
+    "GitHub digest remains auth-gated and untested.",
+    "LIONCOM build showed transient .next manifest failures before a clean PASS retry.",
+    "Dirty/generated artifacts remain intentionally uncleaned and uncommitted."
+  ]
+}

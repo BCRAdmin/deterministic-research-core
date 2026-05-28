@@ -6,7 +6,7 @@ Overall status: `no_ads_operating_mode_adsense_frozen`
 
 Monetization release: `blocked`
 
-Source reference: `/Users/BjornRosinger/Downloads/Utility webseiten/outputs/utility_websites/MONETIZATION_READINESS_BOARD.md`
+Source reference: `/Users/BjornRosinger/Documents/New project 2/outputs/utility_websites/downloads_ingest_2026-05/outputs/utility_websites/MONETIZATION_READINESS_BOARD.md`
 
 ## Site Status
 

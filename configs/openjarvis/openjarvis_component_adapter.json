@@ -1,0 +1,166 @@
+{
+  "schema_version": 1,
+  "adapter_id": "openjarvis_component_adapter_v1",
+  "title": "OpenJarvis Component Adapter",
+  "goal": "Harvest useful OpenJarvis patterns and rebuild them inside Vega/PIG/LIONCOM without granting OpenJarvis durable authority.",
+  "decision_frame": "copy_or_rebuild_the_best_parts",
+  "components": [
+    {
+      "id": "github_dependabot_digest",
+      "title": "GitHub / Dependabot read-only digest",
+      "source_pattern": "OpenJarvis connector and digest idea",
+      "local_target": "PIG/LIONCOM read-only PR and dependency digest",
+      "adoption_mode": "rebuild_locally",
+      "value": "high",
+      "risk": "low",
+      "reason": "The live trial proved a useful read-only digest can be produced with existing gh auth without adopting a Jarvis connector.",
+      "required_controls": [
+        "read_only_github_metadata",
+        "no_comments",
+        "no_labels",
+        "no_branches",
+        "no_merges",
+        "no_push"
+      ],
+      "evidence_keys": [
+        "github_dependabot_digest.status",
+        "github_dependabot_digest.open_dependabot_pr_count",
+        "github_dependabot_digest.mutations_attempted"
+      ]
+    },
+    {
+      "id": "tool_surface_audit",
+      "title": "Tool surface audit and deny-by-default wrapper",
+      "source_pattern": "Jarvis registry exposes tools, agents, engines and memory backends",
+      "local_target": "Vega/PIG tool-permission matrix and operator gate surface",
+      "adoption_mode": "copy_pattern_then_harden",
+      "value": "high",
+      "risk": "medium",
+      "reason": "The registry is useful as an inventory pattern; its default code-assistant toolset is too broad for real repos.",
+      "required_controls": [
+        "explicit_allowlist",
+        "dangerous_tool_quarantine",
+        "disposable_workspace_lease_for_writes",
+        "no_git_commit_tool_in_real_repos",
+        "no_shell_tool_in_real_repos"
+      ],
+      "evidence_keys": [
+        "runtime_sandbox.status",
+        "runtime_sandbox.warnings"
+      ]
+    },
+    {
+      "id": "skill_mining",
+      "title": "External skill mining and local skill distillation",
+      "source_pattern": "OpenJarvis skill sources from Hermes, OpenClaw and GitHub",
+      "local_target": "Vega skill registry and curated local Codex skills",
+      "adoption_mode": "mine_read_only_then_rebuild",
+      "value": "high",
+      "risk": "medium",
+      "reason": "The best durable use is reading external skills as ideas, then writing small local skills under our guardrails.",
+      "required_controls": [
+        "no_external_skill_auto_install",
+        "secret_scan",
+        "prompt_injection_review",
+        "risk_classification",
+        "local_skill_validation"
+      ],
+      "evidence_keys": [
+        "skill_registry_records",
+        "guardrail_findings"
+      ]
+    },
+    {
+      "id": "retrieval_shadow",
+      "title": "Retrieval and memory shadow benchmark",
+      "source_pattern": "Jarvis memory and retrieval backends",
+      "local_target": "PIG/Obsidian retrieval arena",
+      "adoption_mode": "keep_benchmark_and_copy_winning_queries",
+      "value": "medium_high",
+      "risk": "low",
+      "reason": "Arena results show broad context retrieval improves answers, while Obsidian remains the truth layer.",
+      "required_controls": [
+        "source_set_policy",
+        "deny_globs",
+        "secret_scan",
+        "source_citations",
+        "baseline_comparison"
+      ],
+      "evidence_keys": [
+        "arena.status",
+        "arena.shadow_wins",
+        "arena.shadow_fail_count"
+      ]
+    },
+    {
+      "id": "runtime_sandbox_protocol",
+      "title": "Runtime sandbox protocol",
+      "source_pattern": "Jarvis local runtime and CLI",
+      "local_target": "Disposable runtime trial wrapper",
+      "adoption_mode": "keep_operator_gated",
+      "value": "medium",
+      "risk": "medium",
+      "reason": "OpenJarvis runs locally, but setup pulls toolchains and sees local model inventory; runtime use must stay explicitly scoped.",
+      "required_controls": [
+        "own_home",
+        "own_workspace",
+        "full_logs",
+        "manual_kill_plan",
+        "no_secret_mount",
+        "no_main_repo_write"
+      ],
+      "evidence_keys": [
+        "runtime_sandbox.openjarvis_version",
+        "runtime_sandbox.safe_calculator_ask"
+      ]
+    },
+    {
+      "id": "write_fix_worker",
+      "title": "Write / fix worker",
+      "source_pattern": "Jarvis code-assistant with file and shell tools",
+      "local_target": "None until a better wrapper exists",
+      "adoption_mode": "reject_currently",
+      "value": "low_current",
+      "risk": "high",
+      "reason": "The live write sandbox produced no patch while Vega/Codex fixed the same toy bug immediately.",
+      "required_controls": [
+        "disposable_repo_only",
+        "tool_allowlist",
+        "time_limit",
+        "diff_required",
+        "tests_required",
+        "no_commit",
+        "no_push"
+      ],
+      "evidence_keys": [
+        "write_fix_sandbox.status",
+        "write_fix_sandbox.openjarvis_patch_created",
+        "write_fix_sandbox.codex_baseline_tests"
+      ]
+    }
+  ],
+  "automation_candidate": {
+    "id": "openjarvis_digest_weekly_review",
+    "status": "proposed_local_review_only",
+    "schedule": "weekly_or_manual",
+    "allowed_actions": [
+      "read_repo_metadata",
+      "read_pr_metadata",
+      "write_local_digest"
+    ],
+    "forbidden_actions": [
+      "comment",
+      "label",
+      "branch",
+      "commit",
+      "merge",
+      "push",
+      "release"
+    ]
+  },
+  "local_skill": {
+    "name": "openjarvis-capability-adapter",
+    "path": "/Users/BjornRosinger/.codex/skills/openjarvis-capability-adapter",
+    "purpose": "Guide Codex/Vega to harvest OpenJarvis ideas safely and route them through PIG/LIONCOM guardrails."
+  }
+}

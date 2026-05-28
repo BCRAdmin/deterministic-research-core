@@ -1,0 +1,198 @@
+{
+  "blocker_count": 0,
+  "finding_count": 27,
+  "findings": [
+    {
+      "code": "extension_not_allowed",
+      "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/DELIVERABLE_SWARM_OPERATING_MAP.canvas",
+      "severity": "info",
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".canvas"
+    },
+    {
+      "code": "denied_by_policy",
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/__init__.cpython-312.pyc",
+      "pattern": "**/__pycache__/**",
+      "severity": "info",
+      "source_set_id": "agent_ops_quality_os"
+    },
+    {
+      "code": "denied_by_policy",
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/automation_cards.cpython-312.pyc",
+      "pattern": "**/__pycache__/**",
+      "severity": "info",
+      "source_set_id": "agent_ops_quality_os"
+    },
+    {
+      "code": "denied_by_policy",
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/coding_guardrails.cpython-312.pyc",
+      "pattern": "**/__pycache__/**",
+      "severity": "info",
+      "source_set_id": "agent_ops_quality_os"
+    },
+    {
+      "code": "denied_by_policy",
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/deliverable_swarm.cpython-312.pyc",
+      "pattern": "**/__pycache__/**",
+      "severity": "info",
+      "source_set_id": "agent_ops_quality_os"
+    },
+    {
+      "code": "denied_by_policy",
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/guardrails.cpython-312.pyc",
+      "pattern": "**/__pycache__/**",
+      "severity": "info",
+      "source_set_id": "agent_ops_quality_os"
+    },
+    {
+      "code": "denied_by_policy",
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/memory_inbox.cpython-312.pyc",
+      "pattern": "**/__pycache__/**",
+      "severity": "info",
+      "source_set_id": "agent_ops_quality_os"
+    },
+    {
+      "code": "denied_by_policy",
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/openjarvis_capability_arena.cpython-312.pyc",
+      "pattern": "**/__pycache__/**",
+      "severity": "info",
+      "source_set_id": "agent_ops_quality_os"
+    },
+    {
+      "code": "denied_by_policy",
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/openjarvis_capability_lab.cpython-312.pyc",
+      "pattern": "**/__pycache__/**",
+      "severity": "info",
+      "source_set_id": "agent_ops_quality_os"
+    },
+    {
+      "code": "denied_by_policy",
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/openjarvis_component_adapter.cpython-312.pyc",
+      "pattern": "**/__pycache__/**",
+      "severity": "info",
+      "source_set_id": "agent_ops_quality_os"
+    },
+    {
+      "code": "denied_by_policy",
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/openjarvis_decision_gauntlet.cpython-312.pyc",
+      "pattern": "**/__pycache__/**",
+      "severity": "info",
+      "source_set_id": "agent_ops_quality_os"
+    },
+    {
+      "code": "denied_by_policy",
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/operator_inbox.cpython-312.pyc",
+      "pattern": "**/__pycache__/**",
+      "severity": "info",
+      "source_set_id": "agent_ops_quality_os"
+    },
+    {
+      "code": "denied_by_policy",
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/past_blocks_closure.cpython-312.pyc",
+      "pattern": "**/__pycache__/**",
+      "severity": "info",
+      "source_set_id": "agent_ops_quality_os"
+    },
+    {
+      "code": "denied_by_policy",
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/portfolio_preflight_scan.cpython-312.pyc",
+      "pattern": "**/__pycache__/**",
+      "severity": "info",
+      "source_set_id": "agent_ops_quality_os"
+    },
+    {
+      "code": "denied_by_policy",
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/portfolio_surface_audit.cpython-312.pyc",
+      "pattern": "**/__pycache__/**",
+      "severity": "info",
+      "source_set_id": "agent_ops_quality_os"
+    },
+    {
+      "code": "denied_by_policy",
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/quellwert_productization_hardening.cpython-312.pyc",
+      "pattern": "**/__pycache__/**",
+      "severity": "info",
+      "source_set_id": "agent_ops_quality_os"
+    },
+    {
+      "code": "denied_by_policy",
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/readiness.cpython-312.pyc",
+      "pattern": "**/__pycache__/**",
+      "severity": "info",
+      "source_set_id": "agent_ops_quality_os"
+    },
+    {
+      "code": "denied_by_policy",
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/review_workbenches.cpython-312.pyc",
+      "pattern": "**/__pycache__/**",
+      "severity": "info",
+      "source_set_id": "agent_ops_quality_os"
+    },
+    {
+      "code": "denied_by_policy",
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/skill_pattern_governance.cpython-312.pyc",
+      "pattern": "**/__pycache__/**",
+      "severity": "info",
+      "source_set_id": "agent_ops_quality_os"
+    },
+    {
+      "code": "denied_by_policy",
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/skill_registry.cpython-312.pyc",
+      "pattern": "**/__pycache__/**",
+      "severity": "info",
+      "source_set_id": "agent_ops_quality_os"
+    },
+    {
+      "code": "denied_by_policy",
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/terminal_backends.cpython-312.pyc",
+      "pattern": "**/__pycache__/**",
+      "severity": "info",
+      "source_set_id": "agent_ops_quality_os"
+    },
+    {
+      "code": "denied_by_policy",
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/vault_semantic_audit.cpython-312.pyc",
+      "pattern": "**/__pycache__/**",
+      "severity": "info",
+      "source_set_id": "agent_ops_quality_os"
+    },
+    {
+      "code": "denied_by_policy",
+      "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/__pycache__/agent_os_readiness.cpython-312.pyc",
+      "pattern": "**/__pycache__/**",
+      "severity": "info",
+      "source_set_id": "agent_ops_quality_os"
+    },
+    {
+      "code": "denied_by_policy",
+      "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/__pycache__/openjarvis_component_adapter.cpython-312.pyc",
+      "pattern": "**/__pycache__/**",
+      "severity": "info",
+      "source_set_id": "agent_ops_quality_os"
+    },
+    {
+      "code": "denied_by_policy",
+      "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/__pycache__/quellwert_productization_hardening_audit.cpython-312.pyc",
+      "pattern": "**/__pycache__/**",
+      "severity": "info",
+      "source_set_id": "agent_ops_quality_os"
+    },
+    {
+      "code": "file_too_large",
+      "max_file_bytes": 1200000,
+      "path": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/full_check_report.json",
+      "severity": "warn",
+      "size_bytes": 1894317,
+      "source_set_id": "pig_surface"
+    },
+    {
+      "code": "file_too_large",
+      "max_file_bytes": 1200000,
+      "path": "/Users/BjornRosinger/Documents/New project/scripts/project_intelligence_graph/pig.py",
+      "severity": "warn",
+      "size_bytes": 1227062,
+      "source_set_id": "pig_surface"
+    }
+  ],
+  "status": "PASS"
+}

@@ -1,0 +1,197 @@
+{
+  "contract": {
+    "blocked_defaults": [
+      "global_session_hook",
+      "skill_trigger_before_every_reply",
+      "spec_commit_for_small_tasks",
+      "auto_worktree_creation",
+      "auto_subagent_driven_development",
+      "external_plugin_vendoring_without_license_gate"
+    ],
+    "items": [
+      {
+        "applies_to": [
+          "planning",
+          "code_change",
+          "review"
+        ],
+        "gate_level": "soft",
+        "guardrail_id": "state_assumptions_and_tradeoffs",
+        "required_behavior": [
+          "relevante Annahmen kurz nennen",
+          "bei echter Mehrdeutigkeit Alternativen mit Empfehlung zeigen",
+          "bei unklaerbarer Blockade eine konkrete Frage stellen"
+        ],
+        "required_evidence": [
+          "assumptions note",
+          "chosen approach or blocker"
+        ],
+        "source_patterns": [
+          "karpathy-guidelines"
+        ],
+        "title": "Annahmen und Tradeoffs sichtbar machen",
+        "trigger": "unklare Anforderungen, mehrere plausible Loesungen oder riskante implizite Annahmen"
+      },
+      {
+        "applies_to": [
+          "code_change",
+          "docs_change",
+          "config_change"
+        ],
+        "gate_level": "soft",
+        "guardrail_id": "minimal_surgical_change",
+        "required_behavior": [
+          "nur Zeilen anfassen, die auf den Auftrag einzahlen",
+          "lokalen Stil und bestehende Hilfsfunktionen bevorzugen",
+          "keine Drive-by-Refactors oder spekulativen Abstraktionen"
+        ],
+        "required_evidence": [
+          "changed files trace to request",
+          "unrelated findings reported but not edited"
+        ],
+        "source_patterns": [
+          "karpathy-guidelines"
+        ],
+        "title": "Minimal und chirurgisch aendern",
+        "trigger": "bestehenden Code, Doku oder Konfiguration aendern"
+      },
+      {
+        "applies_to": [
+          "planning",
+          "implementation",
+          "handoff"
+        ],
+        "gate_level": "soft",
+        "guardrail_id": "goal_driven_execution",
+        "required_behavior": [
+          "kleinstes pruefbares Ziel festlegen",
+          "Verifikation pro Schritt benennen",
+          "bei groesseren Aenderungen Plan oder Taskliste fuehren"
+        ],
+        "required_evidence": [
+          "success criteria",
+          "verification command list"
+        ],
+        "source_patterns": [
+          "karpathy-guidelines",
+          "superpowers:writing-plans"
+        ],
+        "title": "Erfolgskriterien vor Ausfuehrung klaeren",
+        "trigger": "mehrschrittige Implementierung, Bugfix oder Review-Auftrag"
+      },
+      {
+        "applies_to": [
+          "completion",
+          "commit",
+          "handoff",
+          "review"
+        ],
+        "gate_level": "hard",
+        "guardrail_id": "evidence_before_completion",
+        "required_behavior": [
+          "frischen passenden Verify-Befehl ausfuehren",
+          "Output und Exit-Code lesen",
+          "Status nur so stark formulieren, wie die Evidenz traegt"
+        ],
+        "required_evidence": [
+          "fresh verification evidence",
+          "command exit status",
+          "remaining risk if any"
+        ],
+        "source_patterns": [
+          "superpowers:verification-before-completion"
+        ],
+        "title": "Keine Abschlussbehauptung ohne frische Evidenz",
+        "trigger": "vor Erfolgsmeldung, Commit, PR, Handoff oder 'fertig'-Claim"
+      },
+      {
+        "applies_to": [
+          "debugging",
+          "ci_failure",
+          "runtime_failure"
+        ],
+        "gate_level": "hard",
+        "guardrail_id": "root_cause_before_fix",
+        "required_behavior": [
+          "Fehler komplett lesen und reproduzierbare Spur suchen",
+          "aktuelle Diff-/Umgebungsveraenderungen pruefen",
+          "Hypothese formulieren und minimal testen",
+          "Fix erst nach nachvollziehbarer Ursache setzen"
+        ],
+        "required_evidence": [
+          "root cause note",
+          "reproduction or diagnostic evidence",
+          "fix verification"
+        ],
+        "source_patterns": [
+          "superpowers:systematic-debugging"
+        ],
+        "title": "Root Cause vor Fix",
+        "trigger": "Bug, Testfehler, Buildfehler, Runtime-Anomalie oder wiederholter Fix-Fail"
+      },
+      {
+        "applies_to": [
+          "git_flow",
+          "pr_flow"
+        ],
+        "gate_level": "situational",
+        "guardrail_id": "explicit_branch_finish",
+        "required_behavior": [
+          "Tests vor Abschlussoptionen frisch pruefen",
+          "Merge, PR, Behalten oder Verwerfen als separate Operator-Entscheidung behandeln",
+          "destruktive Branch-/Worktree-Aktionen nie ohne klare Freigabe"
+        ],
+        "required_evidence": [
+          "test result before finish",
+          "selected finish option"
+        ],
+        "source_patterns": [
+          "superpowers:finishing-a-development-branch",
+          "superpowers:using-git-worktrees"
+        ],
+        "title": "Branch-Abschluss explizit machen",
+        "trigger": "nach groesserem Branch-/PR- oder Worktree-Task"
+      },
+      {
+        "applies_to": [
+          "skill_authoring",
+          "playbook_governance"
+        ],
+        "gate_level": "situational",
+        "guardrail_id": "skill_behavior_pressure_test",
+        "required_behavior": [
+          "nicht nur Syntax validieren",
+          "Druckszenario gegen bekannte Rationalisierungen testen",
+          "Vorher/Nachher-Learning dokumentieren"
+        ],
+        "required_evidence": [
+          "pressure scenario",
+          "observed failure or pass behavior",
+          "updated skill rule"
+        ],
+        "source_patterns": [
+          "superpowers:writing-skills"
+        ],
+        "title": "Skills gegen Verhalten testen",
+        "trigger": "neue oder geaenderte lokale Vega/Vivi/Codex-Skills und Playbooks"
+      }
+    ],
+    "name": "Agent Coding Guardrails",
+    "runtime_policy": "playbook_only",
+    "situational_transfers": [
+      "worktree_finish_menu_for_explicit_git_flows",
+      "plan_review_loop_for_large_implementation",
+      "skill_pressure_testing_for_local_skill_changes"
+    ],
+    "source_repos": [
+      "https://github.com/obra/superpowers",
+      "https://github.com/multica-ai/andrej-karpathy-skills"
+    ],
+    "status": "active_local_playbook"
+  },
+  "validation": {
+    "errors": [],
+    "valid": true,
+    "warnings": []
+  }
+}

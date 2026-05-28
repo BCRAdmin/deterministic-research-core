@@ -1,0 +1,56 @@
+{
+  "checks": [
+    {
+      "check_id": "review_queue_closure_status",
+      "detail": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Review Queue.md",
+      "valid": true
+    },
+    {
+      "check_id": "lioncom_claim_start_snapshot_service",
+      "detail": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/lib/services/autonomyService.ts",
+      "valid": true
+    },
+    {
+      "check_id": "lioncom_runner_snapshot_propagation",
+      "detail": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/scripts/run_local_duo_loop.sh",
+      "valid": true
+    },
+    {
+      "check_id": "lioncom_snapshot_closure_doc",
+      "detail": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/docs/vivi-model-route-snapshot-closure-2026-05-21.md",
+      "valid": true
+    },
+    {
+      "check_id": "agent_os_vault_semantic_audit_artifact",
+      "detail": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/VAULT_SEMANTIC_OWNERSHIP_AUDIT.md",
+      "valid": true
+    },
+    {
+      "check_id": "agent_os_report_only_automation_card",
+      "detail": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/AUTOMATION_JOB_CARDS.md",
+      "valid": true
+    },
+    {
+      "check_id": "agent_os_operator_inbox_semantic_review",
+      "detail": "/Users/BjornRosinger/Documents/New project 2/outputs/agent_os_readiness/OPERATOR_INBOX.md",
+      "valid": true
+    },
+    {
+      "check_id": "standalone_semantic_audit_output",
+      "detail": "/Users/BjornRosinger/Documents/New project 2/outputs/vault_semantic_audit/VAULT_SEMANTIC_OWNERSHIP_AUDIT.md",
+      "valid": true
+    }
+  ],
+  "monitoring_windows": [
+    "Utility 14-Day GSC/Event Review",
+    "Quellwert / Room16 outcome and publish gates",
+    "Dependabot, CI and Node maintenance"
+  ],
+  "operator_gates": [
+    "GitHub Pro / Public repo decision",
+    "LIONCOM main / baseline decision",
+    "Public, production, monetization and financial gates"
+  ],
+  "remaining_past_blocks": [],
+  "valid": true
+}
