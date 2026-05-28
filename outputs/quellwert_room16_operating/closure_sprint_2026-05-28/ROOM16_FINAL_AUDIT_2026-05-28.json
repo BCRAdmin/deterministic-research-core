@@ -1,0 +1,139 @@
+{
+  "as_of": "2026-05-28",
+  "status": "local_ready_operator_gated_not_external_ready",
+  "executive_decision": {
+    "local_closure_package": "ready",
+    "external_launch": "NO-GO",
+    "operator_review": "ready"
+  },
+  "completed_blocks": [
+    {
+      "block": "Operator-Go Checklist",
+      "result": "complete",
+      "audit_note": "External launch remains gated."
+    },
+    {
+      "block": "GOOGL Source Review",
+      "result": "complete_pass",
+      "audit_note": "Official Alphabet Q1 2026 release checked; source registry delta closed."
+    },
+    {
+      "block": "Manual Review Packet 1 - MSFT",
+      "result": "complete_reject_public_packet",
+      "audit_note": "Internal seed only; direct PDF publish blocked."
+    },
+    {
+      "block": "Manual Review Packet 2 - RGTI Complete",
+      "result": "complete_keep_hidden",
+      "audit_note": "Speculative/vendor-source packet remains hidden."
+    },
+    {
+      "block": "Manual Review Packet 3 - RGTI Reading Version",
+      "result": "complete_archive_internal",
+      "audit_note": "Not a publish report."
+    },
+    {
+      "block": "10D Outcome",
+      "result": "runner_complete_pending_price_data",
+      "earliest_evaluation_date": "2026-06-01"
+    },
+    {
+      "block": "Private Soft Launch",
+      "result": "prepared_but_blocked"
+    },
+    {
+      "block": "Revenue Test",
+      "result": "prepared_but_blocked_no_checkout_no_advice_language"
+    }
+  ],
+  "verification": [
+    {
+      "check": "Outcome window registry",
+      "command": ".venv/bin/python -m pytest research_agent/tests/test_outcome_windows.py",
+      "result": "pass",
+      "detail": "3 passed"
+    },
+    {
+      "check": "Generic outcome runner syntax",
+      "command": "python3 -m py_compile scripts/outcomes/compute_outcome_window_artifacts.py",
+      "result": "pass"
+    },
+    {
+      "check": "10D readiness",
+      "command": "python3 scripts/outcomes/compute_outcome_window_artifacts.py --window 10D --readiness-only",
+      "result": "pass_expected_pending_price_data"
+    },
+    {
+      "check": "5D smoke for generic runner",
+      "command": "python3 scripts/outcomes/compute_outcome_window_artifacts.py --window 5D --output-root /tmp/room16-window-runner-smoke",
+      "result": "pass",
+      "computed_rows": 37,
+      "unique_tickers": 32
+    },
+    {
+      "check": "Quellwert catalog contract",
+      "command": "npm run verify:quellwert-public-catalog-contract",
+      "result": "pass"
+    },
+    {
+      "check": "Quellwert membership preview",
+      "command": "LIONCOM_BASE_URL=http://127.0.0.1:4110 npm run verify:quellwert-membership-preview",
+      "result": "pass"
+    },
+    {
+      "check": "Quellwert visual polish",
+      "command": "LIONCOM_BASE_URL=http://127.0.0.1:4110 npm run verify:quellwert-visual-polish",
+      "result": "pass",
+      "outRoot": "/Users/BjornRosinger/Documents/New project/mission-control-board-mirror/.runtime/quellwert-visual-polish/2026-05-28T00-22-47-307Z"
+    },
+    {
+      "check": "Quellwert typecheck",
+      "command": "npm run typecheck",
+      "result": "pass"
+    },
+    {
+      "check": "Room16 review gate",
+      "command": "npm run verify:review-gate-status",
+      "result": "WARN_expected",
+      "summary": {
+        "total_reports": 14,
+        "manual_review": 3,
+        "hidden_by_gate": 14,
+        "public_ready": 0,
+        "member_ready": 0,
+        "effective_public": 0
+      }
+    },
+    {
+      "check": "Room16 manual-review packets",
+      "command": "npm run verify:manual-review-packets",
+      "result": "WARN_expected",
+      "packet_count": 3,
+      "missing_file_count": 0
+    },
+    {
+      "check": "Room16 publish readiness",
+      "command": "npm run verify:publish-readiness",
+      "result": "WARN_expected",
+      "promotion_readiness_status": "blocked"
+    },
+    {
+      "check": "Room16 public gate",
+      "command": "npm run verify:public-gate",
+      "result": "pass"
+    },
+    {
+      "check": "Closure JSON validity",
+      "command": "local JSON parse over closure sprint artifacts",
+      "result": "pass"
+    }
+  ],
+  "remaining_gates": [
+    "Run true 10D outcome on 2026-06-01.",
+    "Operator reviews the 10D artifacts.",
+    "Operator/legal confirms publication boundary and non-advice language.",
+    "Operator chooses external URL/domain.",
+    "Private soft launch starts only after 10D plus Operator-Go.",
+    "Revenue test starts only as no-checkout/no-payment/no-advice-language test."
+  ]
+}

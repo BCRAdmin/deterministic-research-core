@@ -1,0 +1,58 @@
+{
+  "artifact_id": "quellwert_freeze_state_2026_05_28",
+  "generated_at": "2026-05-28T14:08:35+02:00",
+  "status": "frozen_shelf_asset_operator_reopen_required",
+  "freezes": {
+    "quellwert_external_launch": true,
+    "quellwert_private_soft_launch": true,
+    "quellwert_revenue_test": true,
+    "quellwert_checkout_payment": true,
+    "quellwert_founding_circle_live_funnel": true,
+    "quellwert_public_stock_analysis_samples": true
+  },
+  "does_not_freeze": {
+    "room16_internal_research_engine": true,
+    "room16_evidence_and_quality_hardening": true,
+    "reusable_publication_gates": true
+  },
+  "preserved_assets": [
+    "quellwert_visual_website_direction",
+    "landing_page_shell",
+    "methodology_surface",
+    "launch_pack_reference_only",
+    "artifact_state_machine",
+    "policy_as_code",
+    "source_registry_gate",
+    "outcome_readiness_gate",
+    "closure_audit_package"
+  ],
+  "stopped_paths": [
+    "external_launch",
+    "private_soft_launch",
+    "revenue_test",
+    "checkout",
+    "payment_activation",
+    "founding_circle_live_offer",
+    "public_stock_analysis_campaign",
+    "retail_stock_picks_or_signal_product"
+  ],
+  "leading_evidence": {
+    "closure_audit_zip": "outputs/quellwert_room16_operating/ROOM16_QUELLWERT_FINAL_CLOSURE_AUDIT_2026-05-28.zip",
+    "productization_hardening_audit": "outputs/quellwert_room16_operating/productization_hardening_2026-05-28/QUELLWERT_PRODUCTIZATION_HARDENING_AUDIT_2026-05-28.md",
+    "closure_sprint": "outputs/quellwert_room16_operating/closure_sprint_2026-05-28/",
+    "launch_pack_reference_only": "outputs/quellwert_room16_operating/launch_pack_2026-05-27/"
+  },
+  "reopen_requires": [
+    "explicit_operator_decision",
+    "new_target_lane",
+    "artifact_state_definition",
+    "publish_route_contract",
+    "source_registry_requirements",
+    "policy_as_code_enforcement",
+    "data_freshness_gate",
+    "rollback_killswitch_drill",
+    "legal_compliance_gate",
+    "operator_go"
+  ],
+  "external_launch_go": false
+}

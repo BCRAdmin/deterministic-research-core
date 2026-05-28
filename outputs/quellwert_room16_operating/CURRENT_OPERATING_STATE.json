@@ -1,7 +1,15 @@
 {
   "state_name": "quellwert_room16_current_operating_state",
-  "generated_at": "2026-05-20T15:18:45+02:00",
-  "current_session_date": "2026-05-20",
+  "quellwert_freeze": {
+    "status": "frozen_shelf_asset_operator_reopen_required",
+    "updated_at": "2026-05-28T14:08:35+02:00",
+    "decision": "Quellwert is preserved as a reusable showcase, methodology and publication-surface asset. Launch, revenue, membership, checkout and public stock-analysis paths are closed until a new explicit operator decision.",
+    "room16_boundary": "Room16 is not frozen by this Quellwert decision; it remains a separate internal research/evidence/review engine.",
+    "freeze_state_path": "outputs/quellwert_room16_operating/freeze_2026-05-28/QUELLWERT_FREEZE_STATE_2026-05-28.json",
+    "reuse_ledger_path": "outputs/quellwert_room16_operating/freeze_2026-05-28/QUELLWERT_REUSE_LEDGER_2026-05-28.json"
+  },
+  "generated_at": "2026-05-27T18:05:12+02:00",
+  "current_session_date": "2026-05-27",
   "batch": {
     "id": "guardrail_coverage_batch_004_ir_coverage",
     "operating_status": "GREEN Operating Baseline",
@@ -28,9 +36,23 @@
   },
   "outcome_5d": {
     "target_date": "2026-05-22",
-    "status": "pending",
+    "status": "computed",
     "price_refresh_status_path": "outputs/batches/guardrail_coverage_batch_004_ir_coverage/PRICE_DATA_REFRESH_5D.json",
-    "blocked_by": "missing local source-returned ticker and benchmark closes for 2026-05-22",
+    "computed_rows": 37,
+    "pending_rows": 0,
+    "false_pass_flags": 1,
+    "false_pass_candidates": [
+      "AVGO"
+    ],
+    "false_block_flags": 3,
+    "false_block_candidates": [
+      "NOW",
+      "RKLB",
+      "ZS"
+    ],
+    "watchlist_review_path": "outputs/batches/guardrail_coverage_batch_004_ir_coverage/OUTCOME_5D_WATCHLIST_REVIEW.json",
+    "triage_summary_path": "outputs/batches/guardrail_coverage_batch_004_ir_coverage/OUTCOME_5D_TRIAGE_SUMMARY.json",
+    "vivi_outcome_path": "outputs/batches/guardrail_coverage_batch_004_ir_coverage/VIVI_OUTCOME_5D_REVIEW.json",
     "no_synthetic_prices": true,
     "no_replacement_end_date": true,
     "no_forward_fill": true
@@ -42,7 +64,7 @@
       "RKLB",
       "ZS"
     ],
-    "status": "carry_forward_to_5d_when_target_date_is_available",
+    "status": "5d_review_computed_monitor_to_10d",
     "do_not_change_until": "2026-06-01 10D minimum for any calibration/guard review"
   },
   "data_ops_p0_replacement": {
@@ -154,9 +176,7 @@
         "confirmed next earnings date"
       ]
     },
-    "blocking_issues": [
-      "5D outcome cannot be computed until local ticker and benchmark CSVs contain source-returned 2026-05-22 closes."
-    ]
+    "blocking_issues": []
   },
   "policies": {
     "no_public_output_without_promotion_gate": true,
@@ -168,8 +188,8 @@
     "no_synthetic_prices": true
   },
   "next_hard_outcome_window": {
-    "window": "5D",
-    "date": "2026-05-22",
-    "status": "pending_price_data"
+    "window": "10D",
+    "date": "2026-06-01",
+    "status": "pending_future_window"
   }
 }

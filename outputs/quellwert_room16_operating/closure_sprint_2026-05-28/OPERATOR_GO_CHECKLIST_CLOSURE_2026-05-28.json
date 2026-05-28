@@ -1,0 +1,44 @@
+{
+  "as_of": "2026-05-28",
+  "status": "local_ready_operator_gated",
+  "go_no_go": "NO-GO for external launch",
+  "blocks": [
+    {
+      "name": "GOOGL Source Review",
+      "status": "closed_passed_local_preview_only"
+    },
+    {
+      "name": "3 Manual Review Packets",
+      "status": "closed_no_packet_publishable"
+    },
+    {
+      "name": "10D Outcome",
+      "status": "runner_built_pending_price_data",
+      "earliest_evaluation_date": "2026-06-01"
+    },
+    {
+      "name": "Private Soft Launch",
+      "status": "blocked_until_10d_and_operator_go"
+    },
+    {
+      "name": "Revenue Test",
+      "status": "definition_only_no_checkout_no_advice_language"
+    },
+    {
+      "name": "External URL / Domain",
+      "status": "operator_decision_required"
+    },
+    {
+      "name": "Legal / Compliance",
+      "status": "operator_legal_required"
+    }
+  ],
+  "operator_go_required_confirmations": [
+    "10D outcome artifacts exist and are reviewed after 2026-06-01.",
+    "External URL/domain is selected intentionally.",
+    "Legal/compliance review confirms non-advice posture and publication boundary.",
+    "Soft launch audience is private and controlled.",
+    "Revenue test has no checkout and no transaction/recommendation language.",
+    "Rollback path is documented before any external surface is opened."
+  ]
+}

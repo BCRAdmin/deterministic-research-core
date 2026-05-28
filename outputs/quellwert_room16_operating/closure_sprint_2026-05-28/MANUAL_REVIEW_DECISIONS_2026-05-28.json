@@ -1,0 +1,56 @@
+{
+  "as_of": "2026-05-28",
+  "block": "3 Manual Review Packets",
+  "status": "closed_no_packet_publishable",
+  "policy": {
+    "no_public_promotion": true,
+    "no_member_promotion": true,
+    "no_effective_public_release": true,
+    "new_public_artifact_required_for_future_use": true
+  },
+  "review_tests": [
+    "source_integrity",
+    "non_advice_language",
+    "provenance_clarity",
+    "public_copy_safety",
+    "operator_visibility"
+  ],
+  "decisions": [
+    {
+      "ticker": "MSFT",
+      "file": "/Users/BjornRosinger/Documents/Room 16 Reports/Microsoft (MSFT)/2026-05-16 Room 16 MSFT DeepSeek V4 Complete Dossier.pdf",
+      "decision": "reject_public_packet_keep_internal_seed",
+      "public_member_status": "blocked",
+      "rationale": [
+        "Contains draft recommendation/action framing.",
+        "Contains HOLD and transaction-classification language.",
+        "Primary SEC/IR verification remains a review concern."
+      ],
+      "allowed_use": "internal research seed or future rewritten non-advice article after source re-verification"
+    },
+    {
+      "ticker": "RGTI",
+      "file": "/Users/BjornRosinger/Documents/Room 16 Reports/Rigetti Computing (RGTI)/2026-05-15 Room 16 RGTI DeepSeek V4 Complete Dossier.pdf",
+      "decision": "reject_public_packet_keep_hidden",
+      "public_member_status": "blocked",
+      "rationale": [
+        "Manual-review and publishable=false posture.",
+        "Vendor/unverified source status.",
+        "Speculative deep-tech early-commercial profile."
+      ],
+      "allowed_use": "internal risk calibration and guardrail evidence"
+    },
+    {
+      "ticker": "RGTI",
+      "file": "/Users/BjornRosinger/Documents/Room 16 Reports/Rigetti Computing (RGTI)/2026-05-15 Room 16 RGTI Internal Manual Review Reading Version.pdf",
+      "decision": "archive_internal_review_only",
+      "public_member_status": "blocked",
+      "rationale": [
+        "Explicitly not a publish_report.",
+        "Internal manual-review reading version only.",
+        "Not suitable as public or member artifact."
+      ],
+      "allowed_use": "canonical internal reading and future regression sample"
+    }
+  ]
+}

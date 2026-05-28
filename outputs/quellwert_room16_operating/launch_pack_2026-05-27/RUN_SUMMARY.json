@@ -1,0 +1,35 @@
+{
+  "artifact_id": "quellwert_launch_pack_run_summary_2026_05_27",
+  "generated_at": "2026-05-27T21:53:31+02:00",
+  "status": "complete_operator_gated",
+  "built_artifacts": [
+    "QUELLWERT_SCOPE_LOCK.md",
+    "QUELLWERT_CURRENT_STATE_SUMMARY.md",
+    "QUELLWERT_CURRENT_STATE_SUMMARY.json",
+    "QUELLWERT_PUBLIC_GATE_MATRIX.md",
+    "QUELLWERT_PUBLIC_GATE_MATRIX.json",
+    "QUELLWERT_48H_LAUNCH_PACK.md",
+    "FOUNDING_CIRCLE_OFFER_DRAFT.md",
+    "PUBLIC_SAMPLE_ANALYSIS_REVIEW.md",
+    "QUELLWERT_COPY_COMPLIANCE_REVIEW.md",
+    "QUELLWERT_OPERATOR_GO_CHECKLIST.md"
+  ],
+  "validation": {
+    "quellwert_public_catalog_contract": "PASS",
+    "quellwert_softlaunch_readiness": "PASS",
+    "static_hard_signal_scan": "PASS"
+  },
+  "authorizes": [
+    "operator review",
+    "private launch preparation",
+    "waitlist interest copy review"
+  ],
+  "does_not_authorize": [
+    "external public launch",
+    "search indexing",
+    "payment",
+    "checkout",
+    "paid investment-recommendation-like output",
+    "Room16 auto-publishing"
+  ]
+}

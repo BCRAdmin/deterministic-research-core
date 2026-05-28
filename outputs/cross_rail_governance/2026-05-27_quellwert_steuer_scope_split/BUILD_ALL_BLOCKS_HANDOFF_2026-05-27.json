@@ -1,0 +1,52 @@
+{
+  "handoff_id": "build_all_blocks_handoff_2026_05_27",
+  "generated_at": "2026-05-27T21:53:31+02:00",
+  "status": "complete_operator_gated",
+  "quellwert": {
+    "path": "/Users/BjornRosinger/Documents/New project 2/outputs/quellwert_room16_operating/launch_pack_2026-05-27/",
+    "package": "/Users/BjornRosinger/Documents/New project 2/outputs/quellwert_room16_operating/QUELLWERT_48H_LAUNCH_PACK_2026-05-27.zip",
+    "sha256": "8b5ef4a47666dc279c14855635276b21ae34e3022cd9f3aa577cd890debccfb8",
+    "built_artifacts": [
+      "QUELLWERT_SCOPE_LOCK.md",
+      "QUELLWERT_CURRENT_STATE_SUMMARY.md/json",
+      "QUELLWERT_PUBLIC_GATE_MATRIX.md/json",
+      "QUELLWERT_48H_LAUNCH_PACK.md",
+      "FOUNDING_CIRCLE_OFFER_DRAFT.md",
+      "PUBLIC_SAMPLE_ANALYSIS_REVIEW.md",
+      "QUELLWERT_COPY_COMPLIANCE_REVIEW.md",
+      "QUELLWERT_OPERATOR_GO_CHECKLIST.md",
+      "RUN_SUMMARY.md/json"
+    ],
+    "validation": {
+      "json_parse": "PASS",
+      "zip_test": "PASS",
+      "verify_quellwert_public_catalog_contract": "PASS",
+      "verify_quellwert_softlaunch_readiness": "PASS",
+      "static_hard_signal_scan": "PASS"
+    },
+    "gate": "operator_review_only_no_external_launch_no_payment"
+  },
+  "steuer_kanzlei": {
+    "path": "/Users/BjornRosinger/Documents/New project/steuerbuero-rollforward-assist/outputs/pending/2026-05-27_fixture_blocked_package/",
+    "package": "/Users/BjornRosinger/Documents/New project/steuerbuero-rollforward-assist/outputs/pending/STEUERBUERO_KAP_PILOT_PACKAGE_pending_2026-05-27.zip",
+    "sha256": "2d747fac4d2236a30f8ba36e0ae17bb9a599a2db8ec1f959c0a0ccf105705048",
+    "built_artifacts": [
+      "README.md",
+      "FIXTURE_ACTIVATION_BLOCKED.md/json",
+      "CURRENT_STATE_SUMMARY.md/json",
+      "OPERATOR_RUNBOOK.md",
+      "STEUERBUERO_KAP_PILOT_PACKAGE_pending.md",
+      "PACKAGE_MANIFEST.json"
+    ],
+    "validation": {
+      "json_parse": "PASS",
+      "zip_test": "PASS",
+      "fixture_absent_check": "PASS"
+    },
+    "gate": "blocked_pending_only_until_ERL_2024_exists"
+  },
+  "next_operator_decisions": [
+    "Review Quellwert launch pack and decide whether to open private preview preparation.",
+    "Place anonymized ERL_2024.xlsx only when Steuer/Kanzlei should move from blocked/pending into real-fixture intake."
+  ]
+}

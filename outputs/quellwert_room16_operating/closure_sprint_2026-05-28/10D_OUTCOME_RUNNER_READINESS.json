@@ -1,0 +1,241 @@
+{
+  "batch_id": "guardrail_coverage_batch_004_ir_coverage",
+  "coverage": {
+    "benchmark_latest_by_symbol": {
+      "QQQ": {
+        "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/QQQ.csv",
+        "latest_date": "2026-05-22",
+        "target_date_available": false
+      },
+      "SMH": {
+        "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/SMH.csv",
+        "latest_date": "2026-05-22",
+        "target_date_available": false
+      },
+      "SPY": {
+        "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/SPY.csv",
+        "latest_date": "2026-05-22",
+        "target_date_available": false
+      }
+    },
+    "computed_rows_expected": 37,
+    "missing_benchmark_tickers": [
+      "QQQ",
+      "SMH",
+      "SPY"
+    ],
+    "missing_price_tickers": [
+      "AAPL",
+      "ACHR",
+      "AMD",
+      "AMZN",
+      "ASTS",
+      "AVGO",
+      "CRM",
+      "CRWD",
+      "DDOG",
+      "GOOGL",
+      "INTC",
+      "IONQ",
+      "JOBY",
+      "LCID",
+      "MDB",
+      "META",
+      "MRVL",
+      "MSFT",
+      "MU",
+      "NET",
+      "NFLX",
+      "NOW",
+      "NVDA",
+      "PANW",
+      "PLUG",
+      "QBTS",
+      "QCOM",
+      "RGTI",
+      "RIVN",
+      "RKLB",
+      "SNOW",
+      "ZS"
+    ],
+    "ticker_latest_by_symbol": {
+      "AAPL": {
+        "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/AAPL.csv",
+        "latest_date": "2026-05-22",
+        "target_date_available": false
+      },
+      "ACHR": {
+        "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/ACHR.csv",
+        "latest_date": "2026-05-22",
+        "target_date_available": false
+      },
+      "AMD": {
+        "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/AMD.csv",
+        "latest_date": "2026-05-22",
+        "target_date_available": false
+      },
+      "AMZN": {
+        "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/AMZN.csv",
+        "latest_date": "2026-05-22",
+        "target_date_available": false
+      },
+      "ASTS": {
+        "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/ASTS.csv",
+        "latest_date": "2026-05-22",
+        "target_date_available": false
+      },
+      "AVGO": {
+        "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/AVGO.csv",
+        "latest_date": "2026-05-22",
+        "target_date_available": false
+      },
+      "CRM": {
+        "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/CRM.csv",
+        "latest_date": "2026-05-22",
+        "target_date_available": false
+      },
+      "CRWD": {
+        "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/CRWD.csv",
+        "latest_date": "2026-05-22",
+        "target_date_available": false
+      },
+      "DDOG": {
+        "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/DDOG.csv",
+        "latest_date": "2026-05-22",
+        "target_date_available": false
+      },
+      "GOOGL": {
+        "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/GOOGL.csv",
+        "latest_date": "2026-05-22",
+        "target_date_available": false
+      },
+      "INTC": {
+        "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/INTC.csv",
+        "latest_date": "2026-05-22",
+        "target_date_available": false
+      },
+      "IONQ": {
+        "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/IONQ.csv",
+        "latest_date": "2026-05-22",
+        "target_date_available": false
+      },
+      "JOBY": {
+        "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/JOBY.csv",
+        "latest_date": "2026-05-22",
+        "target_date_available": false
+      },
+      "LCID": {
+        "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/LCID.csv",
+        "latest_date": "2026-05-22",
+        "target_date_available": false
+      },
+      "MDB": {
+        "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/MDB.csv",
+        "latest_date": "2026-05-22",
+        "target_date_available": false
+      },
+      "META": {
+        "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/META.csv",
+        "latest_date": "2026-05-22",
+        "target_date_available": false
+      },
+      "MRVL": {
+        "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/MRVL.csv",
+        "latest_date": "2026-05-22",
+        "target_date_available": false
+      },
+      "MSFT": {
+        "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/MSFT.csv",
+        "latest_date": "2026-05-22",
+        "target_date_available": false
+      },
+      "MU": {
+        "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/MU.csv",
+        "latest_date": "2026-05-22",
+        "target_date_available": false
+      },
+      "NET": {
+        "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/NET.csv",
+        "latest_date": "2026-05-22",
+        "target_date_available": false
+      },
+      "NFLX": {
+        "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/NFLX.csv",
+        "latest_date": "2026-05-22",
+        "target_date_available": false
+      },
+      "NOW": {
+        "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/NOW.csv",
+        "latest_date": "2026-05-22",
+        "target_date_available": false
+      },
+      "NVDA": {
+        "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/NVDA.csv",
+        "latest_date": "2026-05-22",
+        "target_date_available": false
+      },
+      "PANW": {
+        "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/PANW.csv",
+        "latest_date": "2026-05-22",
+        "target_date_available": false
+      },
+      "PLUG": {
+        "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/PLUG.csv",
+        "latest_date": "2026-05-22",
+        "target_date_available": false
+      },
+      "QBTS": {
+        "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/QBTS.csv",
+        "latest_date": "2026-05-22",
+        "target_date_available": false
+      },
+      "QCOM": {
+        "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/QCOM.csv",
+        "latest_date": "2026-05-22",
+        "target_date_available": false
+      },
+      "RGTI": {
+        "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/RGTI.csv",
+        "latest_date": "2026-05-22",
+        "target_date_available": false
+      },
+      "RIVN": {
+        "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/RIVN.csv",
+        "latest_date": "2026-05-22",
+        "target_date_available": false
+      },
+      "RKLB": {
+        "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/RKLB.csv",
+        "latest_date": "2026-05-22",
+        "target_date_available": false
+      },
+      "SNOW": {
+        "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/SNOW.csv",
+        "latest_date": "2026-05-22",
+        "target_date_available": false
+      },
+      "ZS": {
+        "csv_path": "outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices/ZS.csv",
+        "latest_date": "2026-05-22",
+        "target_date_available": false
+      }
+    },
+    "unique_tickers_expected": 32
+  },
+  "earliest_evaluation_date": "2026-06-01",
+  "focus_batch_id": "manual_focus_guardrail_final_check",
+  "generated_at": "2026-05-28T00:20:39Z",
+  "policy": {
+    "monitoring_only": true,
+    "no_calibration_from_single_window": true,
+    "no_forward_fill": true,
+    "no_replacement_end_date": true,
+    "no_synthetic_prices": true
+  },
+  "price_basis_date": "2026-05-15",
+  "ready_command": "python3 scripts/outcomes/compute_outcome_window_artifacts.py --window 10D --batch-id guardrail_coverage_batch_004_ir_coverage --focus-batch-id manual_focus_guardrail_final_check",
+  "runner": "scripts/outcomes/compute_outcome_window_artifacts.py",
+  "status": "pending_price_data",
+  "trading_days": 10,
+  "window": "10D"
+}

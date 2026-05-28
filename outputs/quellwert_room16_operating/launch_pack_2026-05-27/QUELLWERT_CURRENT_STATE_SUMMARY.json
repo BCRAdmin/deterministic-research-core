@@ -1,0 +1,73 @@
+{
+  "artifact_id": "quellwert_current_state_summary_2026_05_27",
+  "generated_at": "2026-05-27T21:53:31+02:00",
+  "status": "launch_pack_ready_for_operator_review",
+  "batch": {
+    "id": "guardrail_coverage_batch_004_ir_coverage",
+    "internal_operating_status": "GREEN Operating Baseline",
+    "current_period_coverage": "32/32",
+    "price_basis_date": "2026-05-15",
+    "public_output_policy": "Promotion-gated; no unattended public release",
+    "vivi_review": "pass"
+  },
+  "outcomes": {
+    "outcome_1d": {
+      "status": "computed",
+      "computed_rows": 37,
+      "pending_rows": 0,
+      "false_pass_flags": 0
+    },
+    "outcome_5d": {
+      "status": "computed",
+      "computed_rows": 37,
+      "pending_rows": 0,
+      "false_pass_candidates": [
+        "AVGO"
+      ],
+      "curated_false_block_candidates": [
+        "NOW",
+        "RKLB",
+        "ZS"
+      ],
+      "positive_monitor": [
+        "MDB"
+      ]
+    },
+    "next_hard_window": {
+      "window": "10D",
+      "date": "2026-06-01"
+    }
+  },
+  "public_surface": {
+    "routes_checked": [
+      "/membership",
+      "/membership/analysen",
+      "/membership/methodik",
+      "/membership/archiv",
+      "/membership/verifier",
+      "/membership/impressum",
+      "/membership/datenschutz",
+      "/membership/kontakt"
+    ],
+    "public_sample_analyses": [
+      "GOOGL",
+      "SNOW",
+      "MSFT"
+    ],
+    "hidden_review_cases": [
+      "NVDA",
+      "MU"
+    ],
+    "verifiers": {
+      "verify_quellwert_public_catalog_contract": "PASS",
+      "verify_quellwert_softlaunch_readiness": "PASS",
+      "static_hard_signal_scan": "PASS"
+    }
+  },
+  "remaining_gates": [
+    "operator_go_required",
+    "legal_copy_review_required_before_external_launch",
+    "compliance_review_required_before_payment_or_investment_recommendation_like_paid_output",
+    "GOOGL sourceReview needs_review remains visible"
+  ]
+}

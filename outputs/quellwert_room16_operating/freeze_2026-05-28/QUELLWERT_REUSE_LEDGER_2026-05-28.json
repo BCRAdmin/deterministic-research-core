@@ -1,0 +1,26 @@
+{
+  "artifact_id": "quellwert_reuse_ledger_2026_05_28",
+  "generated_at": "2026-05-28T14:08:35+02:00",
+  "reusable_now": [
+    "quellwert_visual_surface",
+    "public_catalog_archive_patterns",
+    "artifact_state_machine",
+    "policy_as_code",
+    "source_registry_gate",
+    "outcome_runner",
+    "closure_and_hardening_audits"
+  ],
+  "frozen_reference_only": [
+    "founding_circle_draft",
+    "launch_revenue_roadmap",
+    "public_sample_analysis_review",
+    "48h_launch_pack"
+  ],
+  "not_reusable_without_redesign": [
+    "retail_membership_positioning",
+    "stock_pick_signal_framing",
+    "outcome_performance_as_sales_proof",
+    "manual_review_pdfs_as_public_content"
+  ],
+  "principle": "Reuse infrastructure, patterns and visual craft. Do not reuse launch claims, payment funnel assumptions or public financial-research positioning."
+}

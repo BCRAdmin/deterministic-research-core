@@ -35,6 +35,7 @@ def test_outcome_windows_include_required_horizons():
     assert OUTCOME_WINDOWS == {
         "1d": 1,
         "5d": 5,
+        "10d": 10,
         "20d": 20,
         "60d": 60,
         "90d": 90,

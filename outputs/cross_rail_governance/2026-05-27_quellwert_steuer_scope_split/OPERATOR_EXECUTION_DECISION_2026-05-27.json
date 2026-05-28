@@ -1,0 +1,73 @@
+{
+  "decision_id": "operator_execution_decision_quellwert_first_steuer_pending_2026_05_27",
+  "generated_at": "2026-05-27T21:46:35+02:00",
+  "status": "active_operator_decision",
+  "primary_active_workstream": "quellwert_48h_launch_pack_sprint",
+  "parallel_limited_workstream": "steuer_kanzlei_blocked_pending_package",
+  "operator_decision": [
+    "Prepare Quellwert 48h Launch Pack Sprint because it has the clear launch and revenue path.",
+    "In parallel, create or maintain only a Steuer/Kanzlei Blocked/Pending Package.",
+    "Do not start Steuer Safety/Inspection, SHA/Manifest, Real Template Structure Audit, KAP Mapping v2 Calibration, or Real Fixture Dry-Run until ERL_2024.xlsx exists.",
+    "Move Quellwert to soft launch only after Public, Non-Advice, and Operator gates pass.",
+    "Move Steuer to Controlled KAP Pilot only after Real Fixture Dry-Run plus Excel Integrity Guard pass."
+  ],
+  "quellwert": {
+    "next_work_allowed": true,
+    "next_work": [
+      "QUELLWERT_SCOPE_LOCK.md",
+      "QUELLWERT_CURRENT_STATE_SUMMARY.md/json",
+      "QUELLWERT_PUBLIC_GATE_MATRIX.md/json",
+      "QUELLWERT_48H_LAUNCH_PACK.md",
+      "FOUNDING_CIRCLE_OFFER_DRAFT.md",
+      "PUBLIC_SAMPLE_ANALYSIS_REVIEW.md",
+      "QUELLWERT_COPY_COMPLIANCE_REVIEW.md",
+      "QUELLWERT_OPERATOR_GO_CHECKLIST.md"
+    ],
+    "soft_launch_gate": [
+      "public gate pass",
+      "non-advice gate pass",
+      "operator gate explicit"
+    ],
+    "blocked": [
+      "soft launch before public/non-advice/operator gate",
+      "payment/checkout before compliance/operator gate",
+      "using Room16 outcome monitoring as publish/rating/guard/calibration/report authority"
+    ]
+  },
+  "steuer_kanzlei": {
+    "next_work_allowed": "blocked_pending_only",
+    "fixture_path": "/Users/BjornRosinger/Documents/New project/steuerbuero-rollforward-assist/fixtures/anonymized/templates/ERL_2024.xlsx",
+    "fixture_status": "missing",
+    "runtime_policy": "local deterministic Excel-first without AI/LLM runtime or AI/LLM tax decisions",
+    "allowed_while_fixture_missing": [
+      "fixture presence check",
+      "FIXTURE_ACTIVATION_BLOCKED.md/json",
+      "CURRENT_STATE_SUMMARY.md/json",
+      "OPERATOR_RUNBOOK.md",
+      "STEUERBUERO_KAP_PILOT_PACKAGE_pending.md or pending zip",
+      "exact file-placement instruction"
+    ],
+    "allowed_after_fixture_present": [
+      "Safety/Inspection",
+      "SHA/Manifest",
+      "Real Template Structure Audit",
+      "KAP Mapping v2 Calibration",
+      "Real Fixture Dry-Run on a copy",
+      "Excel Integrity Guard"
+    ],
+    "controlled_pilot_gate": [
+      "real fixture dry-run pass",
+      "Excel Integrity Guard pass",
+      "human/operator review boundaries accepted"
+    ],
+    "blocked": [
+      "feature expansion while ERL_2024.xlsx is missing",
+      "AI/LLM tax processing",
+      "DATEV integration",
+      "OCR",
+      "real client/person data",
+      "writing into original Excel files"
+    ]
+  },
+  "parallelism_rule": "Parallel work is allowed only if rails stay separated: Quellwert active launch work plus Steuer blocked/pending readiness only."
+}

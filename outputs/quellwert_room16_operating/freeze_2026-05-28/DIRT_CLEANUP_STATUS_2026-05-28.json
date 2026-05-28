@@ -1,0 +1,22 @@
+{
+  "artifact_id": "quellwert_dirt_cleanup_status_2026_05_28",
+  "generated_at": "2026-05-28T14:08:35+02:00",
+  "status": "quellwert_scope_ready_for_commit_global_dirty_outside_scope",
+  "cleanup_scope": [
+    "quellwert_freeze_state",
+    "quellwert_reuse_ledger",
+    "current_operating_state_freeze_marker",
+    "productization_hardening_gates",
+    "outcome_window_runner_10d_readiness",
+    "quellwert_room16_closure_launch_freeze_evidence",
+    "batch_004_5d_price_evidence"
+  ],
+  "excluded_scopes": [
+    "openjarvis_agent_os_readiness",
+    "openjarvis_runtime_sandbox",
+    "utility_websites_outputs",
+    "vault_semantic_audit_outputs",
+    "source_input_packs_outside_quellwert_freeze_scope"
+  ],
+  "decision": "Stage and commit Quellwert/Room16 freeze scope only. Do not delete, revert or commit unrelated cross-rail dirt under this cleanup."
+}

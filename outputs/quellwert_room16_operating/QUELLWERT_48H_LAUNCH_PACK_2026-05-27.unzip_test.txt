@@ -1,0 +1,15 @@
+Archive:  QUELLWERT_48H_LAUNCH_PACK_2026-05-27.zip
+    testing: launch_pack_2026-05-27/   OK
+    testing: launch_pack_2026-05-27/RUN_SUMMARY.json   OK
+    testing: launch_pack_2026-05-27/RUN_SUMMARY.md   OK
+    testing: launch_pack_2026-05-27/FOUNDING_CIRCLE_OFFER_DRAFT.md   OK
+    testing: launch_pack_2026-05-27/QUELLWERT_OPERATOR_GO_CHECKLIST.md   OK
+    testing: launch_pack_2026-05-27/QUELLWERT_COPY_COMPLIANCE_REVIEW.md   OK
+    testing: launch_pack_2026-05-27/QUELLWERT_CURRENT_STATE_SUMMARY.json   OK
+    testing: launch_pack_2026-05-27/QUELLWERT_CURRENT_STATE_SUMMARY.md   OK
+    testing: launch_pack_2026-05-27/PUBLIC_SAMPLE_ANALYSIS_REVIEW.md   OK
+    testing: launch_pack_2026-05-27/QUELLWERT_SCOPE_LOCK.md   OK
+    testing: launch_pack_2026-05-27/QUELLWERT_PUBLIC_GATE_MATRIX.md   OK
+    testing: launch_pack_2026-05-27/QUELLWERT_PUBLIC_GATE_MATRIX.json   OK
+    testing: launch_pack_2026-05-27/QUELLWERT_48H_LAUNCH_PACK.md   OK
+No errors detected in compressed data of QUELLWERT_48H_LAUNCH_PACK_2026-05-27.zip.

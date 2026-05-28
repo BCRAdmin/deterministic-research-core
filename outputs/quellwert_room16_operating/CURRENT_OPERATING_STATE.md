@@ -1,6 +1,10 @@
 # Current Operating State
 
-- Generated at: `2026-05-20T15:18:45+02:00`
+- Generated at: `2026-05-27T18:05:12+02:00`
+- Freeze update: `2026-05-28T14:08:35+02:00`
+- Quellwert freeze status: `frozen_shelf_asset_operator_reopen_required`
+- Freeze decision: Quellwert is preserved as a reusable showcase/methodology/publication-surface asset; launch, revenue, membership, checkout and public stock-analysis paths are closed until a new explicit operator decision.
+- Room16 status boundary: Room16 is not frozen by this Quellwert decision; it remains a separate internal research/evidence/review engine.
 - Batch: `guardrail_coverage_batch_004_ir_coverage`
 - Operating status: `GREEN Operating Baseline`
 - Current-period coverage: `32/32`
@@ -16,8 +20,13 @@
 - False pass flags: `0`
 - 1D provisional false-block watchlist: `MDB`, `NOW`, `RKLB`, `ZS`
 - 1D policy: watchlist-only; no calibration, guard, rating, or report change
-- Next hard outcome window: `5D` on `2026-05-22`
-- `OUTCOME_5D_REVIEW`: pending until local CSVs contain source-returned `2026-05-22` ticker and benchmark closes
+- `OUTCOME_5D_REVIEW`: computed
+- 5D computed rows: `37`
+- 5D pending rows: `0`
+- 5D false pass flags: `1` (`AVGO`)
+- 5D curated false-block flags: `3` (`NOW`, `RKLB`, `ZS`)
+- 5D policy: no calibration, guard, rating, or report change
+- Next hard outcome window: `10D` on `2026-06-01`
 
 ## Data-Ops P0 Replacement
 
@@ -45,5 +54,6 @@
 
 - No system-level blockers.
 - Remaining blockers are ticker-level evidence gaps.
+- No 5D price-data blocker remains; local source-returned ticker and benchmark rows for `2026-05-22` are present.
 - Public output remains blocked unless the Promotion Gate is explicitly satisfied.
 - No guard, rating, calibration, or report changes are authorized from 1D/5D monitoring alone.

@@ -1,0 +1,58 @@
+{
+  "as_of": "2026-05-28",
+  "block": "GOOGL Source Review",
+  "status": "closed_passed_local_preview_only",
+  "decision": "Source review is closed for local Quellwert public-preview use; external publication remains blocked.",
+  "primary_source": "https://s206.q4cdn.com/479360582/files/doc_financials/2026/q1/2026q1-alphabet-earnings-release.pdf",
+  "local_bundle": "outputs/batches/phase12_current_batch_003/chatgpt_review_bundle/GOOGL",
+  "verified_figures": [
+    {
+      "figure": "Q1 2026 revenue",
+      "value": "109.9B USD",
+      "status": "pass"
+    },
+    {
+      "figure": "Google Cloud revenue",
+      "value": "20.0B USD",
+      "status": "pass"
+    },
+    {
+      "figure": "Google Cloud growth",
+      "value": "63%",
+      "status": "pass"
+    },
+    {
+      "figure": "Operating margin",
+      "value": "36.1%",
+      "status": "pass"
+    },
+    {
+      "figure": "Other income net gain",
+      "value": "37.7B USD",
+      "status": "pass"
+    },
+    {
+      "figure": "Q1 2026 capex",
+      "value": "35.674B USD",
+      "status": "pass"
+    },
+    {
+      "figure": "TTM free cash flow",
+      "value": "64.429B USD",
+      "status": "pass"
+    }
+  ],
+  "gate_state": {
+    "publicPreviewReady": true,
+    "externalPublicationReady": false,
+    "operatorGoRequired": true,
+    "source_registry_delta_review": "pass"
+  },
+  "hard_blocks_remaining": [
+    "operator_go",
+    "external_url/domain_decision",
+    "legal_final_review",
+    "private_soft_launch_after_10d",
+    "revenue_test_without_checkout_or_advice_language"
+  ]
+}

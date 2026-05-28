@@ -1,0 +1,90 @@
+{
+  "artifact_id": "quellwert_steuer_scope_split_2026_05_27",
+  "generated_at": "2026-05-27T19:05:00+02:00",
+  "source_file": "/Users/BjornRosinger/Downloads/GETRENNTE_ROADMAP_QUELLWERT_STEUER.md",
+  "source_type": "roadmap_prompt_pack",
+  "status": "active_governance",
+  "tracks": {
+    "quellwert_room16_lioncom": {
+      "purpose": "public and revenue-facing non-advice research surface with Room16 as internal evidence engine",
+      "next_step": "48h Quellwert Launch Pack Sprint",
+      "allowed": [
+        "public route verification",
+        "Founding Circle waitlist/interest offer",
+        "public-safe sample analysis review",
+        "public gate matrix",
+        "no-trading-token and no-advice-copy checks",
+        "visual smoke",
+        "operator go checklist"
+      ],
+      "blocked": [
+        "personalised investment advice",
+        "buy/sell-now language",
+        "price targets",
+        "model portfolio",
+        "promised returns",
+        "public or member release from outcome monitoring alone",
+        "guard/rating/report/calibration changes from 1D/5D alone",
+        "payment/checkout/production without operator and compliance gate",
+        "KAP/DATEV/ERL workbook/tax workflow work"
+      ]
+    },
+    "steuer_kanzlei_rollforward": {
+      "purpose": "local deterministic Excel-first tax-office rollforward and KAP MVP without AI/LLM runtime",
+      "definition": "Vega is only the external project/coding/governance assistant role; it is not part of the tax product, tax runtime, or tax decision logic.",
+      "ai_llm_policy": {
+        "product_uses_ai_or_llm": false,
+        "cloud_llm_allowed": false,
+        "local_llm_tax_decisions_allowed": false,
+        "deterministic_excel_first_workflow": true
+      },
+      "verified_blocker": {
+        "path": "/Users/BjornRosinger/Documents/New project/steuerbuero-rollforward-assist/fixtures/anonymized/templates/ERL_2024.xlsx",
+        "status": "missing"
+      },
+      "next_step_if_missing": "Blocked/Pending package only",
+      "next_step_if_present": "real-template intake and audit before feature expansion",
+      "allowed": [
+        "fixture presence check",
+        "SHA/manifest",
+        "privacy/anonymization review",
+        "workbook inspection",
+        "real-template structure audit",
+        "KAP mapping calibration",
+        "real-fixture dry-run on copy",
+        "Excel Integrity Guard",
+        "operator runbook"
+      ],
+      "blocked": [
+        "UI expansion",
+        "OCR",
+        "DATEV integration",
+        "cloud LLM/provider processing",
+        "LLMs for tax decisions",
+        "new tax domains without explicit scope",
+        "real client/person data",
+        "final tax decisions without human professional review",
+        "writing into original Excel files",
+        "Quellwert/Room16/founding-circle/equities-research logic",
+        "AI/LLM-based tax processing or tax decisions"
+      ]
+    }
+  },
+  "shared_patterns_only": [
+    "SHA/file manifests",
+    "source/evidence registries",
+    "verifier discipline",
+    "operator gates",
+    "runbooks",
+    "read-only-first workflow",
+    "clear status semantics"
+  ],
+  "do_not_share": [
+    "domain evidence",
+    "launch criteria",
+    "claims",
+    "source data",
+    "public readiness conclusions",
+    "Vega/Codex governance work as tax runtime"
+  ]
+}

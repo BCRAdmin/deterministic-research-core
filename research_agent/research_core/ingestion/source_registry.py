@@ -33,6 +33,10 @@ class SourceRegistryEntry(BaseModel):
     url: Optional[str] = None
     retrieved_at: Optional[str] = None
     used_for: List[str] = Field(default_factory=list)
+    owner: Optional[str] = None
+    source_tier: Optional[str] = None
+    claim_ids: List[str] = Field(default_factory=list)
+    freshness_status: Optional[str] = None
 
     def resolved_authority_rank(self) -> int:
         return self.authority_rank or SOURCE_AUTHORITY.get(self.source_type, 99)

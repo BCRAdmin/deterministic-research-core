@@ -1,0 +1,74 @@
+{
+  "artifact_id": "quellwert_public_gate_matrix_2026_05_27",
+  "generated_at": "2026-05-27T21:53:31+02:00",
+  "matrix_status": "preview_pass_operator_gated",
+  "gates": [
+    {
+      "gate": "public_routes_reachable",
+      "status": "PASS",
+      "evidence": "npm run verify:quellwert-softlaunch-readiness"
+    },
+    {
+      "gate": "public_catalog_contract",
+      "status": "PASS",
+      "evidence": "npm run verify:quellwert-public-catalog-contract"
+    },
+    {
+      "gate": "non_advice_copy_visible",
+      "status": "PASS",
+      "evidence": "public pages and catalog metadata"
+    },
+    {
+      "gate": "forbidden_trading_tokens_absent",
+      "status": "PASS",
+      "evidence": "catalog verifier and static scan"
+    },
+    {
+      "gate": "hidden_review_cases_hidden",
+      "status": "PASS",
+      "evidence": "NVDA and MU hidden/404 in verifier"
+    },
+    {
+      "gate": "robots_blocks_indexing",
+      "status": "PASS",
+      "evidence": "softlaunch verifier"
+    },
+    {
+      "gate": "googl_source_review",
+      "status": "WARN",
+      "evidence": "sourceReview=needs_review"
+    },
+    {
+      "gate": "legal_copy_finality",
+      "status": "WARN",
+      "evidence": "preview legal pages are not final legal review"
+    },
+    {
+      "gate": "founding_circle_offer",
+      "status": "DRAFT",
+      "evidence": "offer draft only"
+    },
+    {
+      "gate": "payment_checkout",
+      "status": "BLOCKED",
+      "evidence": "operator/compliance gate not opened"
+    },
+    {
+      "gate": "external_soft_launch",
+      "status": "OPERATOR_GATED",
+      "evidence": "explicit operator go required"
+    }
+  ],
+  "authorizes": [
+    "operator_review",
+    "private_feedback_preparation",
+    "waitlist_interest_copy_review"
+  ],
+  "does_not_authorize": [
+    "external_public_launch",
+    "payment_or_checkout_activation",
+    "paid_investment_recommendation_like_output",
+    "search_indexing",
+    "Room16 auto-publish"
+  ]
+}

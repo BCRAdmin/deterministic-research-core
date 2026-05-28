@@ -1,0 +1,167 @@
+{
+  "roadmap_id": "quellwert_launch_revenue_2026_05_27",
+  "generated_at": "2026-05-27T18:13:54+02:00",
+  "project": "Quellwert / Room16",
+  "status": "operator_decision_ready",
+  "primary_goal": "launch soon enough to learn from real users and create first revenue without weakening research, compliance, or public-output gates",
+  "strategic_decision": "Launch Quellwert as a trusted non-advice research surface with a paid founder cohort while keeping Room16 as the internal evidence engine.",
+  "revenue_thesis": [
+    "Launch a public trust surface with methodology, archive, and safe sample analyses.",
+    "Sell a limited founding cohort before building a heavy membership platform.",
+    "Keep paid output as evidence-backed company research and decision context, not personalised investment advice.",
+    "Use custom research/dossier work as the fastest cash bridge while membership proof develops."
+  ],
+  "launch_lanes": [
+    {
+      "lane": "public_trust_surface",
+      "goal": "make Quellwert visible and trustworthy",
+      "deliverables": [
+        "landing page",
+        "methodology page",
+        "archive",
+        "legal pages",
+        "safe sample analysis pages"
+      ],
+      "blocked_content": [
+        "Buy",
+        "Sell",
+        "price targets",
+        "promised returns",
+        "portfolio instructions",
+        "personalised advice"
+      ],
+      "candidate_public_examples": [
+        "GOOGL",
+        "SNOW",
+        "MSFT"
+      ]
+    },
+    {
+      "lane": "paid_founder_cohort",
+      "goal": "first recurring revenue with controlled scope",
+      "offer": "Quellwert Founding Circle",
+      "package": [
+        "weekly research brief",
+        "company watchlist notes",
+        "methodology notes",
+        "monthly live or async Q&A"
+      ],
+      "price_tests_eur": {
+        "reader_monthly": "19-49",
+        "pro_research_ops_monthly": "99-199",
+        "custom_dossier_one_off": "499-1500"
+      },
+      "delivery_mode": "manual first via payment link or invoice and email/Notion/locked page delivery",
+      "first_cohort_limit": "10-25"
+    },
+    {
+      "lane": "room16_evidence_engine",
+      "goal": "keep internal research useful without pretending it is public-ready automation",
+      "outcome_tracking": [
+        {
+          "window": "10D",
+          "date": "2026-06-01"
+        },
+        {
+          "window": "20D",
+          "date": "2026-06-15"
+        },
+        {
+          "window": "60D",
+          "date": "2026-08-12"
+        }
+      ],
+      "current_5d_signals": {
+        "false_pass_candidate": [
+          "AVGO"
+        ],
+        "curated_false_block_candidates": [
+          "NOW",
+          "RKLB",
+          "ZS"
+        ],
+        "positive_monitor": [
+          "MDB"
+        ]
+      },
+      "policy": "Do not relax guards, ratings, calibration, reports, or public output from 1D/5D alone."
+    }
+  ],
+  "timeline": [
+    {
+      "phase": "days_0_3_launch_pack",
+      "actions": [
+        "Freeze public-safe positioning.",
+        "Finalise landing, analyses, methodology, archive, imprint, privacy, and contact routes.",
+        "Build Founding Circle offer page.",
+        "Add waitlist or payment-intent CTA.",
+        "Run visual, content, legal-copy, and no-trading-token verifiers."
+      ]
+    },
+    {
+      "phase": "days_4_7_soft_launch",
+      "actions": [
+        "Publish public preview after operator gate.",
+        "Send first private announcement to warm network.",
+        "Collect 20-50 qualified emails or conversations.",
+        "Ask whether users would pay for weekly evidence-backed company research."
+      ]
+    },
+    {
+      "phase": "days_8_14_first_money",
+      "actions": [
+        "Convert 5-10 founding users or sell 1-3 custom dossiers.",
+        "Deliver manually.",
+        "Create first paid brief from already-safe internal material.",
+        "Keep company-specific action language behind compliance review."
+      ]
+    },
+    {
+      "phase": "days_15_30_repeatable_cadence",
+      "actions": [
+        "Publish one public article per week.",
+        "Publish one paid research brief per week.",
+        "Add simple member archive only if paid users exist.",
+        "Decide by day 30 whether to double down, narrow niche, raise price, or pivot offer."
+      ]
+    }
+  ],
+  "compliance_gates": {
+    "requires_dedicated_review_before_investment_recommendations": true,
+    "no_personalised_advice": true,
+    "no_model_portfolio": true,
+    "no_price_targets": true,
+    "no_buy_sell_now": true,
+    "no_guaranteed_returns": true,
+    "disclose_positions_and_conflicts": true,
+    "sources": [
+      "https://www.bafin.de/EN/Aufsicht/BoersenMaerkte/Marktmissbrauch/Anlagestrategie/anlagestrategie_node_en.html",
+      "https://www.bafin.de/EN/DieBaFin/AufgabenGeschichte/Wertpapieraufsicht/wertpapieraufsicht_artikel_en.html",
+      "https://www.esma.europa.eu/node/97066"
+    ]
+  },
+  "success_metrics": {
+    "day_7": [
+      "public preview live",
+      "no blocked legal/public-output gate",
+      "20+ qualified signups or direct conversations"
+    ],
+    "day_14": [
+      "5+ paid founding users or 1+ paid custom dossier"
+    ],
+    "day_30": [
+      "500-2000 EUR monthly run-rate or clear evidence-based niche pivot"
+    ],
+    "quality_floor": "No public material bypasses promotion gate, non-advice, human source verification, and operator go."
+  },
+  "immediate_next_step": {
+    "name": "48-hour Quellwert Launch Pack Sprint",
+    "steps": [
+      "Verify current public Quellwert surface.",
+      "Create the Founding Circle offer page.",
+      "Prepare one public sample article and one paid brief outline.",
+      "Add waitlist/payment-intent CTA.",
+      "Run verifiers and operator review."
+    ]
+  }
+}

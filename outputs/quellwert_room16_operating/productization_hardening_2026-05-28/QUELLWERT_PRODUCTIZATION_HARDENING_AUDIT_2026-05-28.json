@@ -1,0 +1,263 @@
+{
+  "artifact_id": "quellwert_productization_hardening_audit_2026_05_28",
+  "artifact_state_results": [
+    {
+      "artifact_id": "MSFT-1",
+      "block_count": 0,
+      "findings": [],
+      "state": "research_seed",
+      "status": "pass",
+      "warn_count": 0
+    },
+    {
+      "artifact_id": "RGTI-2",
+      "block_count": 0,
+      "findings": [],
+      "state": "internal_review",
+      "status": "pass",
+      "warn_count": 0
+    },
+    {
+      "artifact_id": "RGTI-3",
+      "block_count": 0,
+      "findings": [],
+      "state": "internal_review",
+      "status": "pass",
+      "warn_count": 0
+    }
+  ],
+  "audit_scope": [
+    "artifact_state_machine",
+    "policy_as_code",
+    "source_registry_claim_mapping",
+    "10d_outcome_readiness",
+    "manual_review_visibility_gates",
+    "production_observability_rollback_control_inventory"
+  ],
+  "external_launch_go": false,
+  "generated_at": "2026-05-28T12:13:22Z",
+  "no_external_actions": true,
+  "operator_legal_data_gates_remaining": [
+    "true 10D outcome on 2026-06-01 with real closes",
+    "operator review of 10D artifacts",
+    "legal/compliance confirmation of publication boundary and non-advice posture",
+    "external URL/domain decision",
+    "production controls, observability and rollback drills before any external surface"
+  ],
+  "outcome_readiness_result": {
+    "block_count": 0,
+    "findings": [],
+    "status": "pass",
+    "warn_count": 0
+  },
+  "p0_closed_local": [
+    "Manual-review packets are classified as internal_review/research_seed and remain blocked from public/member routing.",
+    "Policy-as-code scanner is executable for public/member candidate copy.",
+    "GOOGL claim-to-source registry can be checked locally against required claims.",
+    "10D outcome readiness keeps the expected pending_price_data stop without synthetic prices, forward-fill or replacement dates."
+  ],
+  "p0_open_gated": [
+    "No external publishable public_brief/member_brief is authorized; only internal/local-preview gating is verified.",
+    "Artifact-State-Machine is implemented locally, but production UI/API/sitemap wiring still needs a dedicated integration pass before launch.",
+    "Policy-as-Code is implemented locally, but must be wired into every future publish/public/member route before any external surface.",
+    "10D outcome remains pending_price_data until real 2026-06-01 ticker and benchmark closes exist.",
+    "Source Registry still needs owner/freshness/provenance completion before external publishability."
+  ],
+  "p1_control_results": {
+    "observability_controls": [
+      {
+        "control": "publish_events",
+        "existing_gate_status": "not_present",
+        "operator_gate_required": "true",
+        "status": "missing_local_drill_evidence"
+      },
+      {
+        "control": "policy_violation_events",
+        "existing_gate_status": "not_present",
+        "operator_gate_required": "true",
+        "status": "missing_local_drill_evidence"
+      },
+      {
+        "control": "freshness_lag_metric",
+        "existing_gate_status": "not_present",
+        "operator_gate_required": "true",
+        "status": "missing_local_drill_evidence"
+      },
+      {
+        "control": "source_coverage_metric",
+        "existing_gate_status": "not_present",
+        "operator_gate_required": "true",
+        "status": "missing_local_drill_evidence"
+      },
+      {
+        "control": "error_tracking",
+        "existing_gate_status": "not_present",
+        "operator_gate_required": "true",
+        "status": "missing_local_drill_evidence"
+      },
+      {
+        "control": "slo_recovery_time",
+        "existing_gate_status": "not_present",
+        "operator_gate_required": "true",
+        "status": "missing_local_drill_evidence"
+      }
+    ],
+    "production_controls": [
+      {
+        "control": "branch_deploy_protection",
+        "existing_gate_status": "not_present",
+        "operator_gate_required": "true",
+        "status": "missing_local_drill_evidence"
+      },
+      {
+        "control": "codeowners_required_reviewers",
+        "existing_gate_status": "not_present",
+        "operator_gate_required": "true",
+        "status": "missing_local_drill_evidence"
+      },
+      {
+        "control": "environment_gates",
+        "existing_gate_status": "not_present",
+        "operator_gate_required": "true",
+        "status": "missing_local_drill_evidence"
+      },
+      {
+        "control": "secret_hardening",
+        "existing_gate_status": "not_present",
+        "operator_gate_required": "true",
+        "status": "missing_local_drill_evidence"
+      },
+      {
+        "control": "sast_sca_dast",
+        "existing_gate_status": "not_present",
+        "operator_gate_required": "true",
+        "status": "missing_local_drill_evidence"
+      },
+      {
+        "control": "sbom",
+        "existing_gate_status": "not_present",
+        "operator_gate_required": "true",
+        "status": "missing_local_drill_evidence"
+      },
+      {
+        "control": "attestations_provenance",
+        "existing_gate_status": "not_present",
+        "operator_gate_required": "true",
+        "status": "missing_local_drill_evidence"
+      }
+    ],
+    "rollback_controls": [
+      {
+        "control": "unpublish_drill",
+        "existing_gate_status": "not_present",
+        "operator_gate_required": "true",
+        "status": "missing_local_drill_evidence"
+      },
+      {
+        "control": "route_block_drill",
+        "existing_gate_status": "not_present",
+        "operator_gate_required": "true",
+        "status": "missing_local_drill_evidence"
+      },
+      {
+        "control": "catalog_block_drill",
+        "existing_gate_status": "not_present",
+        "operator_gate_required": "true",
+        "status": "missing_local_drill_evidence"
+      },
+      {
+        "control": "api_block_drill",
+        "existing_gate_status": "not_present",
+        "operator_gate_required": "true",
+        "status": "missing_local_drill_evidence"
+      },
+      {
+        "control": "preview_production_separation_drill",
+        "existing_gate_status": "not_present",
+        "operator_gate_required": "true",
+        "status": "missing_local_drill_evidence"
+      }
+    ],
+    "status": "operator_gated"
+  },
+  "p1_open_gated": [
+    "Production controls still need evidence: branch_deploy_protection, codeowners_required_reviewers, environment_gates, secret_hardening, sast_sca_dast, sbom, attestations_provenance.",
+    "Observability still needs evidence: publish_events, policy_violation_events, freshness_lag_metric, source_coverage_metric, error_tracking, slo_recovery_time.",
+    "Rollback/Kill-Switch still needs drill evidence: unpublish_drill, route_block_drill, catalog_block_drill, api_block_drill, preview_production_separation_drill.",
+    "Total P1 control evidence gaps: 18."
+  ],
+  "policy_results": [
+    {
+      "block_count": 0,
+      "findings": [],
+      "path": "outputs/quellwert_room16_operating/launch_pack_2026-05-27/FOUNDING_CIRCLE_OFFER_DRAFT.md",
+      "status": "pass",
+      "warn_count": 0
+    },
+    {
+      "block_count": 0,
+      "findings": [],
+      "path": "outputs/quellwert_room16_operating/launch_pack_2026-05-27/PUBLIC_SAMPLE_ANALYSIS_REVIEW.md",
+      "status": "pass",
+      "warn_count": 0
+    }
+  ],
+  "source_registry_result": {
+    "block_count": 4,
+    "findings": [
+      {
+        "claim": "google_cloud_growth",
+        "code": "MISSING_SOURCE_FOR_CLAIM",
+        "found": null,
+        "message": "Required claim has no SourceRegistry mapping.",
+        "severity": "block",
+        "source_id": null
+      },
+      {
+        "claim": "google_cloud_revenue",
+        "code": "MISSING_SOURCE_FOR_CLAIM",
+        "found": null,
+        "message": "Required claim has no SourceRegistry mapping.",
+        "severity": "block",
+        "source_id": null
+      },
+      {
+        "claim": "operating_margin",
+        "code": "MISSING_SOURCE_FOR_CLAIM",
+        "found": null,
+        "message": "Required claim has no SourceRegistry mapping.",
+        "severity": "block",
+        "source_id": null
+      },
+      {
+        "claim": "operating_margin",
+        "code": "MISSING_PRIMARY_SOURCE_FOR_HARD_CLAIM",
+        "found": null,
+        "message": "Hard financial claims require a primary/official source.",
+        "severity": "block",
+        "source_id": null
+      },
+      {
+        "claim": null,
+        "code": "SOURCE_OWNER_MISSING",
+        "found": null,
+        "message": "Publishable-source ownership is not assigned yet.",
+        "severity": "warning",
+        "source_id": "GOOGL_SEC_COMPANYFACTS_1652044"
+      },
+      {
+        "claim": null,
+        "code": "SOURCE_OWNER_MISSING",
+        "found": null,
+        "message": "Publishable-source ownership is not assigned yet.",
+        "severity": "warning",
+        "source_id": "GOOGL_YAHOO_CHART_PRICE_CSV"
+      }
+    ],
+    "registry_id": "GOOGL_2026-05-08",
+    "status": "blocked",
+    "warn_count": 2
+  },
+  "state_truth": "local_ready_operator_gated_not_external_ready",
+  "status": "local_hardening_pass_external_blocked"
+}

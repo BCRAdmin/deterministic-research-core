@@ -1,0 +1,46 @@
+{
+  "blocking_issues": [],
+  "do_not_change": [
+    "No guard loosening.",
+    "No calibration changes from 5D alone.",
+    "No rating or report changes from outcome monitoring artifacts.",
+    "No synthetic prices, replacement end dates, or forward-fill."
+  ],
+  "false_block_candidates": [
+    "NOW",
+    "RKLB",
+    "ZS"
+  ],
+  "false_pass_candidates": [
+    "AVGO"
+  ],
+  "fix_list_for_codex": [],
+  "human_review_required": false,
+  "non_blocking_issues": [
+    {
+      "artifact": "outputs/batches/guardrail_coverage_batch_004_ir_coverage/OUTCOME_5D_TRIAGE_SUMMARY.json",
+      "category": "Outcome Monitoring",
+      "confidence": "high",
+      "evidence": {
+        "false_block_candidates": [
+          "NOW",
+          "RKLB",
+          "ZS"
+        ],
+        "false_pass_candidates": [
+          "AVGO"
+        ]
+      },
+      "issue": "5D outcome triage computed; monitoring-only flags present.",
+      "severity": "info"
+    }
+  ],
+  "review_metadata": {
+    "batch_id": "guardrail_coverage_batch_004_ir_coverage",
+    "bundle_id": "guardrail_coverage_batch_004_ir_coverage_outcome_5d_review",
+    "reviewed_at": "2026-05-28T06:34:46Z",
+    "reviewer": "Vivi",
+    "schema_version": "v1.1"
+  },
+  "review_status": "pass"
+}
