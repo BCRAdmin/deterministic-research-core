@@ -1,0 +1,401 @@
+{
+  "run_id": "2026-05-28-documents-project-folder-audit",
+  "generated_at": "2026-05-28T13:30:08.901254+00:00",
+  "documents_root": "/Users/BjornRosinger/Documents",
+  "summary": {
+    "top_level_folder_count": 25,
+    "git_repos_found": [
+      "/Users/BjornRosinger/Documents/Midjurney",
+      "/Users/BjornRosinger/Documents/New project 2"
+    ],
+    "safe_to_keep_namespaces": [
+      "DreamFactory",
+      "Obsidian",
+      "Codex",
+      "BCR Ventures",
+      "Room 16 Reports"
+    ],
+    "do_not_rename_without_migration": [
+      "New project",
+      "New project 2",
+      "Midjurney"
+    ],
+    "clear_cleanup_candidates": [
+      "New%20project",
+      "docs",
+      "dashboard",
+      "prompts"
+    ]
+  },
+  "folders": [
+    {
+      "path": "/Users/BjornRosinger/Documents/Arbeitsstunden und Finanzen ",
+      "name": "Arbeitsstunden und Finanzen ",
+      "status": "personal_or_business_archive_not_evaluated",
+      "finding": "Kein aktiver Vega-Projektpfad erkannt; vermutlich persönlicher, geschäftlicher oder App-/Medien-Archivordner.",
+      "recommended_action": "Nicht automatisch verschieben.",
+      "size_bytes": 39391199,
+      "file_count": 43,
+      "markers": [],
+      "git_status": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/BCR Group",
+      "name": "BCR Group",
+      "status": "personal_or_business_archive_not_evaluated",
+      "finding": "Kein aktiver Vega-Projektpfad erkannt; vermutlich persönlicher, geschäftlicher oder App-/Medien-Archivordner.",
+      "recommended_action": "Nicht automatisch verschieben.",
+      "size_bytes": 93584798,
+      "file_count": 280,
+      "markers": [],
+      "git_status": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/BCR Ventures",
+      "name": "BCR Ventures",
+      "status": "ok_business_project_namespace",
+      "finding": "BCR Ventures enthält Brand, Membership-Finanzplattform und Toolsuite; als Business-/Produktablage plausibel.",
+      "recommended_action": "Beibehalten; spätere Struktur optional unter Produktachsen schärfen.",
+      "size_bytes": 6531267,
+      "file_count": 61,
+      "markers": [],
+      "git_status": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/Blog",
+      "name": "Blog",
+      "status": "personal_or_business_archive_not_evaluated",
+      "finding": "Kein aktiver Vega-Projektpfad erkannt; vermutlich persönlicher, geschäftlicher oder App-/Medien-Archivordner.",
+      "recommended_action": "Nicht automatisch verschieben.",
+      "size_bytes": 89341706,
+      "file_count": 239,
+      "markers": [],
+      "git_status": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/Brother Scans",
+      "name": "Brother Scans",
+      "status": "personal_or_business_archive_not_evaluated",
+      "finding": "Kein aktiver Vega-Projektpfad erkannt; vermutlich persönlicher, geschäftlicher oder App-/Medien-Archivordner.",
+      "recommended_action": "Nicht automatisch verschieben.",
+      "size_bytes": 137735348,
+      "file_count": 33,
+      "markers": [],
+      "git_status": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/Call Recorder Aufzeichnungen",
+      "name": "Call Recorder Aufzeichnungen",
+      "status": "personal_or_business_archive_not_evaluated",
+      "finding": "Kein aktiver Vega-Projektpfad erkannt; vermutlich persönlicher, geschäftlicher oder App-/Medien-Archivordner.",
+      "recommended_action": "Nicht automatisch verschieben.",
+      "size_bytes": 195030418,
+      "file_count": 8,
+      "markers": [],
+      "git_status": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/Codex",
+      "name": "Codex",
+      "status": "ok_agent_archive_namespace",
+      "finding": "Codex-Session-/Backup-/Pending-Sync-Archiv; als technischer Archivcontainer plausibel.",
+      "recommended_action": "Beibehalten, später separat nach alten Backups prüfen.",
+      "size_bytes": 42881909,
+      "file_count": 96,
+      "markers": [
+        "AGENTS.md"
+      ],
+      "git_status": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/dashboard",
+      "name": "dashboard",
+      "status": "misplaced_root_runtime_or_template_leak",
+      "finding": "Top-Level-Leak aus Autonomy/LIONCOM/New-project-Struktur; nicht als eigenständiger Projektordner sinnvoll.",
+      "recommended_action": "Nach Sicherungscheck in passenden Workspace archivieren oder löschen; root frei halten.",
+      "size_bytes": 74037,
+      "file_count": 7,
+      "markers": [],
+      "git_status": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/docs",
+      "name": "docs",
+      "status": "misplaced_root_runtime_or_template_leak",
+      "finding": "Top-Level-Leak aus Autonomy/LIONCOM/New-project-Struktur; nicht als eigenständiger Projektordner sinnvoll.",
+      "recommended_action": "Nach Sicherungscheck in passenden Workspace archivieren oder löschen; root frei halten.",
+      "size_bytes": 7835,
+      "file_count": 2,
+      "markers": [],
+      "git_status": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/DreamFactory",
+      "name": "DreamFactory",
+      "status": "ok_primary_project_namespace",
+      "finding": "Richtiger Sammelpfad für LIONCOM/Vivi/DreamFactory laut Backbone und aktueller Nutzung.",
+      "recommended_action": "Beibehalten; Unterordner separat über Projektstatus prüfen.",
+      "size_bytes": 4244427492,
+      "file_count": 67124,
+      "markers": [],
+      "git_status": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/Exported Calls",
+      "name": "Exported Calls",
+      "status": "personal_or_business_archive_not_evaluated",
+      "finding": "Kein aktiver Vega-Projektpfad erkannt; vermutlich persönlicher, geschäftlicher oder App-/Medien-Archivordner.",
+      "recommended_action": "Nicht automatisch verschieben.",
+      "size_bytes": 51335340,
+      "file_count": 2,
+      "markers": [],
+      "git_status": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/Frank Beteiligung- und Verwaltungs GmbH",
+      "name": "Frank Beteiligung- und Verwaltungs GmbH",
+      "status": "personal_or_business_archive_not_evaluated",
+      "finding": "Kein aktiver Vega-Projektpfad erkannt; vermutlich persönlicher, geschäftlicher oder App-/Medien-Archivordner.",
+      "recommended_action": "Nicht automatisch verschieben.",
+      "size_bytes": 13869758,
+      "file_count": 78,
+      "markers": [],
+      "git_status": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/Hintergrund:Bildschirmschoner Bilder",
+      "name": "Hintergrund:Bildschirmschoner Bilder",
+      "status": "personal_or_business_archive_not_evaluated",
+      "finding": "Kein aktiver Vega-Projektpfad erkannt; vermutlich persönlicher, geschäftlicher oder App-/Medien-Archivordner.",
+      "recommended_action": "Nicht automatisch verschieben.",
+      "size_bytes": 230592713,
+      "file_count": 103,
+      "markers": [],
+      "git_status": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/Midjurney",
+      "name": "Midjurney",
+      "status": "documented_project_but_misspelled_name",
+      "finding": "Vault-dokumentiertes Starter-Kit, aber Ordnername ist offensichtlich falsch geschrieben; Git-Repo ohne Commit.",
+      "recommended_action": "Empfohlen: nach `Midjourney` umbenennen und Vault-Referenzen aktualisieren.",
+      "size_bytes": 52618,
+      "file_count": 28,
+      "markers": [
+        ".git",
+        "README.md",
+        "docs"
+      ],
+      "git_status": {
+        "branch": "## No commits yet on main",
+        "dirty_lines": [
+          "?? README.md",
+          "?? docs/",
+          "?? links/",
+          "?? templates/"
+        ],
+        "dirty_count_visible": 4
+      }
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project",
+      "name": "New project",
+      "status": "active_legacy_workspace_bad_name",
+      "finding": "Aktiv und stark im Vault referenziert, aber semantisch falsch/generisch benannt; enthält PIG, Mission-Control-Mirror, Room16, Kanzlei und Runtime-/Quarantine-Anteile.",
+      "recommended_action": "Nicht ad hoc umbenennen. Nur per formaler Migration mit Link-/Vault-/Script-Update.",
+      "size_bytes": 7316958236,
+      "file_count": 120898,
+      "markers": [
+        "README.md",
+        "AGENTS.md",
+        "pyproject.toml",
+        "docs",
+        "outputs"
+      ],
+      "git_status": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2",
+      "name": "New project 2",
+      "status": "active_legacy_workspace_bad_name",
+      "finding": "Aktives Git-Repo für Research-Agent/Agent-OS/Quellwert-Operating; Name ist generisch, aber aktuell Arbeitsrealität.",
+      "recommended_action": "Nicht ad hoc umbenennen. Später als `room16-quellwert-research-core` oder ähnlich migrieren.",
+      "size_bytes": 1270649381,
+      "file_count": 13148,
+      "markers": [
+        ".git",
+        "README.md",
+        "pyproject.toml",
+        "docs",
+        "outputs",
+        "research_agent"
+      ],
+      "git_status": {
+        "branch": "## main...origin/main [ahead 5]",
+        "dirty_lines": [],
+        "dirty_count_visible": 0
+      }
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New%20project",
+      "name": "New%20project",
+      "status": "wrong_url_encoded_leftover",
+      "finding": "URL-encoded Restpfad aus altem Leerzeichen-Bug; enthält nur .DS_Store und leere Runtime-Unterordner.",
+      "recommended_action": "Sicherer Lösch-/Quarantäne-Kandidat nach Operator-Go.",
+      "size_bytes": 16720,
+      "file_count": 7,
+      "markers": [],
+      "git_status": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/Obsidian",
+      "name": "Obsidian",
+      "status": "ok_knowledge_namespace",
+      "finding": "Aktiver Vault liegt korrekt unter Obsidian/Test Vaul Privat.",
+      "recommended_action": "Beibehalten.",
+      "size_bytes": 4167142,
+      "file_count": 371,
+      "markers": [],
+      "git_status": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/prompts",
+      "name": "prompts",
+      "status": "misplaced_root_runtime_or_template_leak",
+      "finding": "Top-Level-Leak aus Autonomy/LIONCOM/New-project-Struktur; nicht als eigenständiger Projektordner sinnvoll.",
+      "recommended_action": "Nach Sicherungscheck in passenden Workspace archivieren oder löschen; root frei halten.",
+      "size_bytes": 1617,
+      "file_count": 1,
+      "markers": [],
+      "git_status": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/Room 16 Reports",
+      "name": "Room 16 Reports",
+      "status": "ok_documented_operator_shelf",
+      "finding": "Im Vault als fester Room16-Leseordner dokumentiert.",
+      "recommended_action": "Beibehalten; nicht in Code-Workspace verschieben.",
+      "size_bytes": 1097023,
+      "file_count": 38,
+      "markers": [],
+      "git_status": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/Vorlagemasken Stuerbüro",
+      "name": "Vorlagemasken Stuerbüro",
+      "status": "likely_domain_asset_review_name",
+      "finding": "Steuerbüro-Template-/Vorlagenordner; Name nutzt Mischform `Stuerbüro` und könnte fachlich zur Kanzlei-/Steuer-Rail gehören.",
+      "recommended_action": "Nicht automatisch verschieben; erst Inhalt/Datenschutz prüfen.",
+      "size_bytes": 1817344,
+      "file_count": 6,
+      "markers": [],
+      "git_status": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/WebEx",
+      "name": "WebEx",
+      "status": "personal_or_business_archive_not_evaluated",
+      "finding": "Kein aktiver Vega-Projektpfad erkannt; vermutlich persönlicher, geschäftlicher oder App-/Medien-Archivordner.",
+      "recommended_action": "Nicht automatisch verschieben.",
+      "size_bytes": 64,
+      "file_count": 0,
+      "markers": [],
+      "git_status": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/Wohnungskauf",
+      "name": "Wohnungskauf",
+      "status": "personal_or_business_archive_not_evaluated",
+      "finding": "Kein aktiver Vega-Projektpfad erkannt; vermutlich persönlicher, geschäftlicher oder App-/Medien-Archivordner.",
+      "recommended_action": "Nicht automatisch verschieben.",
+      "size_bytes": 122429179,
+      "file_count": 55,
+      "markers": [],
+      "git_status": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/wp-stb-roesinger-redesign",
+      "name": "wp-stb-roesinger-redesign",
+      "status": "documented_project_but_loose_root_location",
+      "finding": "Im Vault als lokaler UI-Prototyp dokumentiert; Root-Lage ist okay für Prototyp, aber nicht ideal für längerfristige Projektablage.",
+      "recommended_action": "Bei Fortführung unter BCR Ventures oder DreamFactory/Client-Prototypes migrieren.",
+      "size_bytes": 6019567,
+      "file_count": 18,
+      "markers": [],
+      "git_status": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/Zwift",
+      "name": "Zwift",
+      "status": "personal_or_business_archive_not_evaluated",
+      "finding": "Kein aktiver Vega-Projektpfad erkannt; vermutlich persönlicher, geschäftlicher oder App-/Medien-Archivordner.",
+      "recommended_action": "Nicht automatisch verschieben.",
+      "size_bytes": 6775280,
+      "file_count": 48,
+      "markers": [],
+      "git_status": null
+    }
+  ],
+  "specific_findings": [
+    {
+      "severity": "P0 cleanup candidate",
+      "path": "/Users/BjornRosinger/Documents/New%20project",
+      "finding": "Falscher URL-encoded Pfad aus dokumentiertem `New%20project`-Bug; heute nur .DS_Store/leere Runtime-Struktur.",
+      "action": "Nach kurzem Operator-Go löschen oder in Cleanup-Quarantine verschieben."
+    },
+    {
+      "severity": "P0 naming truth mismatch",
+      "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Vault Visibility and Location.md",
+      "finding": "Vault-Notiz behauptet noch, `/Users/BjornRosinger/Documents/New project` existiere nicht mehr sichtbar; aktueller Backbone nutzt ihn wieder aktiv.",
+      "action": "Memory/Location-Note aktualisieren."
+    },
+    {
+      "severity": "P1 structure debt",
+      "path": "/Users/BjornRosinger/Documents/New project",
+      "finding": "Aktiver Legacy-Umbrella mit generischem Namen, vielen Produktachsen und Runtime-Dirt; Name ist falsch, Pfad ist aktuell trotzdem kanonisch referenziert.",
+      "action": "Formale Migration planen, nicht spontan umbenennen."
+    },
+    {
+      "severity": "P1 structure debt",
+      "path": "/Users/BjornRosinger/Documents/New project 2",
+      "finding": "Aktives Repo mit generischem Namen; für Agent-OS/Research-Agent/Quellwert-Operating semantisch zu unklar.",
+      "action": "Bei nächstem ruhigen Fenster Zielnamen festlegen und Verweis-Migration bauen."
+    },
+    {
+      "severity": "P1 root leak",
+      "path": "/Users/BjornRosinger/Documents/{docs,dashboard,prompts}",
+      "finding": "Lose Root-Ordner mit Autonomy-/Dashboard-/Prompt-Dateien; teils identisch zu `/Users/BjornRosinger/Documents/New project`, teils stale gegenüber LIONCOM.",
+      "action": "Nach Sicherungscheck in Projekt-Quarantine oder New-project-Archive verschieben/löschen."
+    },
+    {
+      "severity": "P1 name cleanup",
+      "path": "/Users/BjornRosinger/Documents/Midjurney",
+      "finding": "Dokumentiertes Starter-Kit, aber Name ist Tippfehler. Vault verweist mehrfach darauf, daher nicht blind umbenennen.",
+      "action": "Rename-Migration `Midjurney` -> `Midjourney` mit Vault-Link-Update."
+    },
+    {
+      "severity": "P2 project hygiene",
+      "path": "/Users/BjornRosinger/Documents/New project/Library",
+      "finding": "Mac-ähnlicher `Library/Application Support/LIONCOM/...`-Pfad innerhalb des Legacy-Umbrellas; wirkt wie falsch kopierter Runtime-Pfad.",
+      "action": "In einem Cleanup-Lauf gegen echten Runtime-Workspace abgleichen und dann quarantänisieren."
+    },
+    {
+      "severity": "P2 worktree/archive review",
+      "path": "/Users/BjornRosinger/Documents/New project/company-dossier-lab-*",
+      "finding": "Mehrere Room16/Company-Dossier-Snapshot-/Worktree-Ordner sind im Vault erklärbar, aber langfristig eher Archive als aktive Projektordner.",
+      "action": "Erst nach Git-/PR-/Evidence-Abgleich archivieren."
+    },
+    {
+      "severity": "P2 loose prototype",
+      "path": "/Users/BjornRosinger/Documents/wp-stb-roesinger-redesign",
+      "finding": "Dokumentierter UI-Prototyp, aber lose im Documents-Root.",
+      "action": "Bei Reaktivierung unter BCR Ventures oder DreamFactory/Client-Prototypes einsortieren."
+    }
+  ],
+  "migration_rules": [
+    "Aktive, stark referenzierte Workspaces nicht per Finder/`mv` umbenennen.",
+    "Erst Zielnamen festlegen, dann Vault-Referenzen, Scripts, AGENTS.md, Git remotes/worktrees und Handoffs gemeinsam migrieren.",
+    "Root von `/Users/BjornRosinger/Documents` künftig nur für große Namespaces und persönliche Dokumente nutzen, nicht für Runtime-Ordner wie `docs`, `dashboard`, `prompts`.",
+    "Echte Operator-Shelves wie `Room 16 Reports` getrennt von Code-Workspaces lassen."
+  ]
+}
