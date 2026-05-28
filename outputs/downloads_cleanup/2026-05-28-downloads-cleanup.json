@@ -1,0 +1,308 @@
+{
+  "run_id": "2026-05-28-downloads-cleanup",
+  "generated_at": "2026-05-28T13:22:39.106289+00:00",
+  "downloads_root": "/Users/BjornRosinger/Downloads",
+  "before": {
+    "bytes": 3925247469,
+    "files": 20059
+  },
+  "after": {
+    "bytes": 956364629,
+    "files": 244
+  },
+  "deleted_count": 33,
+  "deleted_bytes": 2968881784,
+  "protected_kept": [
+    "/Users/BjornRosinger/Downloads/Detaillierte Ausarbeitung zum Room16-Quellwert Closure Audit.pdf",
+    "/Users/BjornRosinger/Downloads/m12_quality_hardening_verification_pack_20260526T114626Z.post_pack_manifest.json",
+    "/Users/BjornRosinger/Downloads/m12_quality_hardening_verification_pack_20260526T114626Z.zip",
+    "/Users/BjornRosinger/Downloads/m12_quality_hardening_verification_pack_20260526T114626Z.zip.sha256",
+    "/Users/BjornRosinger/Downloads/m13_dual_verification_audit_pack_20260527T234841Z.post_pack_manifest.json",
+    "/Users/BjornRosinger/Downloads/m13_dual_verification_audit_pack_20260527T234841Z.unpacked_verification.json",
+    "/Users/BjornRosinger/Downloads/m13_dual_verification_audit_pack_20260527T234841Z.zip",
+    "/Users/BjornRosinger/Downloads/quellwert_full_audit_deep_research_20260527T181900Z.zip",
+    "/Users/BjornRosinger/Downloads/quellwert_full_audit_deep_research_20260527T181900Z.zip.sha256",
+    "/Users/BjornRosinger/Downloads/ws2b_c_full_audit_pack_20260527T143900Z.zip",
+    "/Users/BjornRosinger/Downloads/ws2b_c_full_audit_pack_20260527T143900Z.zip.post_pack_manifest.json",
+    "/Users/BjornRosinger/Downloads/ws2b_c_full_audit_pack_20260527T143900Z.zip.sha256",
+    "/Users/BjornRosinger/Downloads/ws2b_full_audit_pack_20260527T125529Z.zip",
+    "/Users/BjornRosinger/Downloads/ws2b_full_audit_pack_20260527T125529Z.zip.sha256",
+    "/Users/BjornRosinger/Downloads/ws2c_full_audit_pack_20260527T230450Z.post_pack_manifest.json",
+    "/Users/BjornRosinger/Downloads/ws2c_full_audit_pack_20260527T230450Z.unpacked_verification.json",
+    "/Users/BjornRosinger/Downloads/ws2c_full_audit_pack_20260527T230450Z.zip",
+    "/Users/BjornRosinger/Downloads/ws2c_full_audit_pack_20260527T230450Z.zip.sha256"
+  ],
+  "deleted": [
+    {
+      "path": "/Users/BjornRosinger/Downloads/LM-Studio-0.4.7-4-arm64.dmg",
+      "name": "LM-Studio-0.4.7-4-arm64.dmg",
+      "category": "installed_app_installer",
+      "reason": "LM Studio.app exists in /Applications; installer is processed Download dirt",
+      "bytes": 549802585,
+      "sha256": "5749b9a0af870816993ebead00955af7c8dbdc810f5ace9c7006bfd465ec832f"
+    },
+    {
+      "path": "/Users/BjornRosinger/Downloads/LM-Studio-0.4.2-2-arm64.dmg",
+      "name": "LM-Studio-0.4.2-2-arm64.dmg",
+      "category": "installed_app_installer_superseded",
+      "reason": "LM Studio.app exists in /Applications; older installer superseded by 0.4.7 installer and app install",
+      "bytes": 527774018,
+      "sha256": "25a76e958c878972beb10769ed8ea6e6542490f933badf4ef4b73d91c5bb6d1e"
+    },
+    {
+      "path": "/Users/BjornRosinger/Downloads/Claude.dmg",
+      "name": "Claude.dmg",
+      "category": "installed_app_installer",
+      "reason": "Claude.app exists in /Applications; installer is processed Download dirt",
+      "bytes": 253466349,
+      "sha256": "b4801deeff87cd44b517e4df2f1e28f48a2076ee246d215a2d9dabd517ae371d"
+    },
+    {
+      "path": "/Users/BjornRosinger/Downloads/Claude-2.dmg",
+      "name": "Claude-2.dmg",
+      "category": "installed_app_installer",
+      "reason": "Claude.app exists in /Applications; second installer copy is processed Download dirt",
+      "bytes": 283811503,
+      "sha256": "006ada79fcf31b4767472511bd8eb94cb72c85245656475eb4ac923663df00f5"
+    },
+    {
+      "path": "/Users/BjornRosinger/Downloads/Obsidian-1.12.7.dmg",
+      "name": "Obsidian-1.12.7.dmg",
+      "category": "installed_app_installer",
+      "reason": "Obsidian.app exists in /Applications; installer is processed Download dirt",
+      "bytes": 213334249,
+      "sha256": "3b85c13b4ce55512e86e170a7cd2a494e2db695ac888c0601e153cb85b77881b"
+    },
+    {
+      "path": "/Users/BjornRosinger/Downloads/Codex.dmg",
+      "name": "Codex.dmg",
+      "category": "installed_app_installer",
+      "reason": "Codex.app exists in /Applications; installer is processed Download dirt",
+      "bytes": 193841786,
+      "sha256": "b9239e3fb228ccf879e042b23f2470435c53c1f2fc9484ad592dbb89b83b8abf"
+    },
+    {
+      "path": "/Users/BjornRosinger/Downloads/Codex (1).dmg",
+      "name": "Codex (1).dmg",
+      "category": "installed_app_installer_duplicate",
+      "reason": "Codex.app exists in /Applications; exact duplicate of Codex.dmg",
+      "bytes": 193841786,
+      "sha256": "b9239e3fb228ccf879e042b23f2470435c53c1f2fc9484ad592dbb89b83b8abf"
+    },
+    {
+      "path": "/Users/BjornRosinger/Downloads/Ollama.dmg",
+      "name": "Ollama.dmg",
+      "category": "installed_app_installer",
+      "reason": "Ollama.app exists in /Applications; installer is processed Download dirt",
+      "bytes": 164280671,
+      "sha256": "60424a1fb5c7afce75ed8cd8ae814de8ccb1c21692fe6a1f4aeaa6a92af24ad9"
+    },
+    {
+      "path": "/Users/BjornRosinger/Downloads/exodus-macos-arm64-26.5.7.dmg",
+      "name": "exodus-macos-arm64-26.5.7.dmg",
+      "category": "installed_app_installer",
+      "reason": "Exodus.app exists in /Applications; installer is processed Download dirt",
+      "bytes": 166937309,
+      "sha256": "842d73adf1d88fea4bfcccb8967cd964d0451905c37b898f2f3e6fdf9f73d7ad"
+    },
+    {
+      "path": "/Users/BjornRosinger/Downloads/OpenCode Desktop.dmg",
+      "name": "OpenCode Desktop.dmg",
+      "category": "installed_app_installer",
+      "reason": "OpenCode.app exists in /Applications; installer is processed Download dirt",
+      "bytes": 49111519,
+      "sha256": "85dc286d0b39a21e2b577a0b420e852fc776935c008cc976aa766f48fce9ccdd"
+    },
+    {
+      "path": "/Users/BjornRosinger/Downloads/Install Mullvad VPN.dmg",
+      "name": "Install Mullvad VPN.dmg",
+      "category": "installed_app_installer",
+      "reason": "Mullvad VPN.app exists in /Applications; installer is processed Download dirt",
+      "bytes": 3117116,
+      "sha256": "99648956d7b543e0ca1c0cfd192905586bc1b74bfe8f6ae7ebf4bba01f1e6330"
+    },
+    {
+      "path": "/Users/BjornRosinger/Downloads/Install Mullvad VPN-2.dmg",
+      "name": "Install Mullvad VPN-2.dmg",
+      "category": "installed_app_installer",
+      "reason": "Mullvad VPN.app exists in /Applications; second installer is processed Download dirt",
+      "bytes": 3177213,
+      "sha256": "240a324c655989b50bc52e4ab380caac733821b4565e032fceedc4496f16d77a"
+    },
+    {
+      "path": "/Users/BjornRosinger/Downloads/Minecraft.dmg",
+      "name": "Minecraft.dmg",
+      "category": "installed_app_installer",
+      "reason": "Minecraft.app exists in /Applications; installer is processed Download dirt",
+      "bytes": 2656665,
+      "sha256": "82c59d9b3285017e2d6d1b035f539415c1feb50d7875a4f034cc29af27327b48"
+    },
+    {
+      "path": "/Users/BjornRosinger/Downloads/Prism Launcher.app",
+      "name": "Prism Launcher.app",
+      "category": "installed_app_duplicate_copy",
+      "reason": "Prism Launcher.app exists in /Applications; Downloads app copy is redundant",
+      "bytes": 110449664,
+      "sha256": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Downloads/PokerStars-2",
+      "name": "PokerStars-2",
+      "category": "installed_app_installer_folder",
+      "reason": "PokerStars.app exists in /Applications; folder contains PokerStars.dmg installer",
+      "bytes": 55745768,
+      "sha256": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Downloads/PokerStars",
+      "name": "PokerStars",
+      "category": "installed_app_empty_download_folder",
+      "reason": "PokerStars.app exists in /Applications; folder only contains download metadata",
+      "bytes": 968,
+      "sha256": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Downloads/ws2c_full_audit_pack_20260527T230124Z",
+      "name": "ws2c_full_audit_pack_20260527T230124Z",
+      "category": "unpacked_superseded_audit_copy",
+      "reason": "older unpacked WS2C audit folder; later canonical WS2C zip is kept",
+      "bytes": 39948940,
+      "sha256": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Downloads/ws2c_full_audit_pack_20260527T230450Z",
+      "name": "ws2c_full_audit_pack_20260527T230450Z",
+      "category": "unpacked_audit_copy",
+      "reason": "unpacked WS2C audit folder; canonical zip and sidecars are kept",
+      "bytes": 41111755,
+      "sha256": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Downloads/m13_dual_verification_audit_pack_20260527T234752Z",
+      "name": "m13_dual_verification_audit_pack_20260527T234752Z",
+      "category": "unpacked_superseded_audit_copy",
+      "reason": "older unpacked M13 audit folder; later canonical M13 zip is kept",
+      "bytes": 40093792,
+      "sha256": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Downloads/m13_dual_verification_audit_pack_20260527T234841Z",
+      "name": "m13_dual_verification_audit_pack_20260527T234841Z",
+      "category": "unpacked_audit_copy",
+      "reason": "unpacked M13 audit folder; canonical zip and sidecars are kept",
+      "bytes": 40053232,
+      "sha256": null
+    },
+    {
+      "path": "/Users/BjornRosinger/Downloads/quellwert_full_audit_deep_research_20260527T181900Z (1).zip",
+      "name": "quellwert_full_audit_deep_research_20260527T181900Z (1).zip",
+      "category": "exact_duplicate",
+      "reason": "duplicate of canonical Quellwert audit zip, canonical copy is kept",
+      "bytes": 32329096,
+      "sha256": "e51f853d778616edc82934320492689afba9d9123ec2c20074c2b0d8381b051f"
+    },
+    {
+      "path": "/Users/BjornRosinger/Downloads/vega_b15_maturity_next_3h_pack (1).zip",
+      "name": "vega_b15_maturity_next_3h_pack (1).zip",
+      "category": "exact_duplicate",
+      "reason": "duplicate download copy",
+      "bytes": 39979,
+      "sha256": "5c3bc45a63f6ed7d18134b393aa8d4ebd49def9226f564b33fab2cecee881b4e"
+    },
+    {
+      "path": "/Users/BjornRosinger/Downloads/vega_macro_reset_no_more_ministeps_pack (1).zip",
+      "name": "vega_macro_reset_no_more_ministeps_pack (1).zip",
+      "category": "exact_duplicate",
+      "reason": "duplicate download copy",
+      "bytes": 18354,
+      "sha256": "023daa0fecf4cba9b38fb92b50c54776d2c4f103ea1786e6d58c6670c0f72315"
+    },
+    {
+      "path": "/Users/BjornRosinger/Downloads/vega_m2_current_surface_integrity_masterprompt_pack (1).zip",
+      "name": "vega_m2_current_surface_integrity_masterprompt_pack (1).zip",
+      "category": "exact_duplicate",
+      "reason": "duplicate download copy",
+      "bytes": 29028,
+      "sha256": "5be7078f8e1439e881a2ed18bc812371888fa94c18e021db26f2cf0aec85911e"
+    },
+    {
+      "path": "/Users/BjornRosinger/Downloads/vega_deep_research_language_alignment_pack (1).zip",
+      "name": "vega_deep_research_language_alignment_pack (1).zip",
+      "category": "exact_duplicate",
+      "reason": "duplicate download copy",
+      "bytes": 14596,
+      "sha256": "a8ca6270f40c78fc0d78fc4da0e512a38c0cfc7619e22483dc6e3868d3f48dac"
+    },
+    {
+      "path": "/Users/BjornRosinger/Downloads/kanzlei_rollforward_next_roadmap_pack (1).zip",
+      "name": "kanzlei_rollforward_next_roadmap_pack (1).zip",
+      "category": "exact_duplicate",
+      "reason": "duplicate download copy",
+      "bytes": 12313,
+      "sha256": "bcf3efb82500f52abea1c241a814791e43555425cd418d41a46eab85bb67b93a"
+    },
+    {
+      "path": "/Users/BjornRosinger/Downloads/GETRENNTE_ROADMAP_QUELLWERT_STEUER (1).md",
+      "name": "GETRENNTE_ROADMAP_QUELLWERT_STEUER (1).md",
+      "category": "exact_duplicate",
+      "reason": "duplicate download copy",
+      "bytes": 24697,
+      "sha256": "21e0d1480e4f11a01cac9bd4f783a93f73e812b806ed22b19b1eed71d7098aae"
+    },
+    {
+      "path": "/Users/BjornRosinger/Downloads/deep-research-report (1).md",
+      "name": "deep-research-report (1).md",
+      "category": "exact_duplicate",
+      "reason": "duplicate of deep-research-report.md",
+      "bytes": 42147,
+      "sha256": "81e5610fa83857e86751d1585feab9a00100e8291f64c65571c450cd255b4bc4"
+    },
+    {
+      "path": "/Users/BjornRosinger/Downloads/m12_quality_hardening_verification_pack_20260526T103731Z.zip",
+      "name": "m12_quality_hardening_verification_pack_20260526T103731Z.zip",
+      "category": "superseded_delivery",
+      "reason": "superseded by m12_quality_hardening_verification_pack_20260526T114626Z.zip",
+      "bytes": 1016511,
+      "sha256": "07c4a507e22da070c32b130d90ca77d9cff79afb399f16889dd4a01081aea9ff"
+    },
+    {
+      "path": "/Users/BjornRosinger/Downloads/vega_m3r_m12_final_review_pack_20260526T0215Z.zip",
+      "name": "vega_m3r_m12_final_review_pack_20260526T0215Z.zip",
+      "category": "superseded_delivery",
+      "reason": "superseded by vega_m3r_m12_final_review_pack_20260526T022641Z.zip",
+      "bytes": 1299632,
+      "sha256": "4b0d078338128d5fa0a5ba1196994200155203ab6055217e8713abd20bfcdb9b"
+    },
+    {
+      "path": "/Users/BjornRosinger/Downloads/vega_b46_b55_changes_check_pack_20260525T164200Z.zip",
+      "name": "vega_b46_b55_changes_check_pack_20260525T164200Z.zip",
+      "category": "superseded_delivery",
+      "reason": "superseded by sanitized clean2 B46-B55 change pack",
+      "bytes": 500124,
+      "sha256": "88e81d20b2e29a446c703660897ec0505b9361158f12b73e9a4275ba94d7a680"
+    },
+    {
+      "path": "/Users/BjornRosinger/Downloads/vega_b46_b55_changes_check_pack_sanitized_20260525T164306Z.zip",
+      "name": "vega_b46_b55_changes_check_pack_sanitized_20260525T164306Z.zip",
+      "category": "superseded_delivery",
+      "reason": "superseded by sanitized clean2 B46-B55 change pack",
+      "bytes": 499228,
+      "sha256": "90f9e0bbaa90d0015bfea09cafa6a8f9e60c0d547bdf96a221d4a43100bb05c0"
+    },
+    {
+      "path": "/Users/BjornRosinger/Downloads/vega_b46_b55_changes_check_pack_sanitized_clean_20260525T164404Z.zip",
+      "name": "vega_b46_b55_changes_check_pack_sanitized_clean_20260525T164404Z.zip",
+      "category": "superseded_delivery",
+      "reason": "superseded by sanitized clean2 B46-B55 change pack",
+      "bytes": 499191,
+      "sha256": "c60aefa00147b9c0939dc5d5b376dd0aee06cefb214f7e6340648a89cf7763c2"
+    }
+  ],
+  "skipped": [],
+  "left_intentionally": [
+    "personal PDFs, images, videos, CSVs and user documents",
+    "leading Room16/Quellwert, M13, WS2C, WS2B/WS2B-C and M12 114626Z audit zips/sidecars",
+    "non-installed or potentially special-purpose installers such as jre-8u481-macosx-aarch64.dmg",
+    "non-duplicate latest delivery packs retained for historical traceability"
+  ]
+}
