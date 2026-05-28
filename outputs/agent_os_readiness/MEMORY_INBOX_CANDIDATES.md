@@ -2,24 +2,27 @@
 
 These are promotion candidates. They are not canonical memory until reviewed.
 
-Candidates: 232
+Candidates: 235
 
 | Candidate | Route | Kind | Source | Line | Summary |
 | --- | --- | --- | --- | ---: | --- |
 | `mem-09964fa8a4b8` | `Memory/Learnings and Fixes` | `general_learning` | `docs/agent_os/AGENT_CODING_GUARDRAILS.md` | 1 | Agent Coding Guardrails |
 | `mem-fbb5e7133a42` | `Memory/Learnings and Fixes` | `workflow_learning` | `docs/agent_os/AGENT_CODING_GUARDRAILS.md` | 4 | Scope: Vega / Vivi / Codex Coding-Arbeit |
 | `mem-28d24b4dd8ae` | `Memory/Learnings and Fixes` | `operator_gate_learning` | `docs/agent_os/AGENT_CODING_GUARDRAILS.md` | 31 | | Guardrail | Quelle | Gate | Wann nutzen | |
-| `mem-d4245c14614c` | `Memory/Learnings and Fixes` | `general_learning` | `docs/agent_os/AGENT_CODING_GUARDRAILS.md` | 76 | `research_agent/ops/coding_guardrails.py` |
-| `mem-52fb8778e13c` | `Memory/Learnings and Fixes` | `general_learning` | `docs/agent_os/AGENT_CODING_GUARDRAILS.md` | 80 | `outputs/agent_os_readiness/AGENT_CODING_GUARDRAILS.md` |
-| `mem-5fe76e4804e1` | `Memory/Learnings and Fixes` | `general_learning` | `docs/agent_os/AGENT_CODING_GUARDRAILS.md` | 81 | `outputs/agent_os_readiness/AGENT_CODING_GUARDRAILS.json` |
-| `mem-46ebb5981413` | `Memory/Learnings and Fixes` | `general_learning` | `docs/agent_os/AGENT_CODING_GUARDRAILS.md` | 86 | .venv/bin/pytest -q research_agent/tests/test_agent_os_coding_guardrails.py |
+| `mem-5d2bcae3914c` | `Memory/Learnings and Fixes` | `workflow_learning` | `docs/agent_os/AGENT_CODING_GUARDRAILS.md` | 38 | | Autonome Mustererkennung vor Abschluss | `operator_expectation_autonomy_model`, `documents-root-hygiene`, `vega-operator-learning` | soft | Operator-Korrektur, wiederkehrender Dirt, Pfadchaos, Scope-Drift oder Clean-/Fertig-Claim | |
+| `mem-6ef9641e2c49` | `Memory/Learnings and Fixes` | `workflow_learning` | `docs/agent_os/AGENT_CODING_GUARDRAILS.md` | 65 | bei Vega-/Vivi-Systemarbeit Documents-Root-Hygiene als Preflight berücksichtigen |
+| `mem-8fa733b48898` | `Memory/Learnings and Fixes` | `general_learning` | `docs/agent_os/AGENT_CODING_GUARDRAILS.md` | 85 | `research_agent/ops/coding_guardrails.py` |
+| `mem-b6c87faefe08` | `Memory/Learnings and Fixes` | `general_learning` | `docs/agent_os/AGENT_CODING_GUARDRAILS.md` | 89 | `outputs/agent_os_readiness/AGENT_CODING_GUARDRAILS.md` |
+| `mem-ca6ef519484d` | `Memory/Learnings and Fixes` | `general_learning` | `docs/agent_os/AGENT_CODING_GUARDRAILS.md` | 90 | `outputs/agent_os_readiness/AGENT_CODING_GUARDRAILS.json` |
+| `mem-840004a372eb` | `Memory/Learnings and Fixes` | `general_learning` | `docs/agent_os/AGENT_CODING_GUARDRAILS.md` | 95 | .venv/bin/pytest -q research_agent/tests/test_agent_os_coding_guardrails.py |
 | `mem-949266143276` | `DreamFactory System/Agent Stack` | `agent_stack_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 4 | Scope: LIONCOM / Vega / Vivi / OpenClaw / sichere Hermes-Musterübernahme |
 | `mem-a695330844cb` | `DreamFactory System/Agent Stack` | `agent_stack_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 9 | Dieses Paket übersetzt die nützlichen Hermes-Agent-Muster in sichere lokale |
 | `mem-24d36b884b1c` | `Memory/Learnings and Fixes` | `general_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 20 | Agent Coding Guardrails als kuratierter Superpowers-/Karpathy-Transfer |
-| `mem-be7fc6e6484e` | `DreamFactory System/Agent Stack` | `agent_stack_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 37 | `AGENT_OS_READINESS_REPORT.md/json`: Fähigkeitsmatrix und OpenClaw-Migrations-Trockenlauf. |
-| `mem-f41056e99a3a` | `Memory/Learnings and Fixes` | `general_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 49 | `AGENT_CODING_GUARDRAILS.md/json`: lokale Coding-Agent-Guardrails aus Superpowers-/Karpathy-Patterns, ohne Plugin-Installation. |
-| `mem-543230d1346a` | `Memory/Learnings and Fixes` | `general_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 52 | `GUARDRAIL_SCAN.md/json`: lokale statische Guardrail-Funde. |
-| `mem-41f9d439f681` | `DreamFactory System/Agent Stack` | `agent_stack_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 66 | Hermes ist ein Produktmuster-Benchmark. Jede Funktion, die Netzwerk, |
+| `mem-83511b38bb41` | `Memory/Learnings and Fixes` | `workflow_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 22 | Documents-Root-Hygiene als Standard-Preflight für Vega-/Vivi-Systemarbeit |
+| `mem-fcc321c06f7b` | `DreamFactory System/Agent Stack` | `agent_stack_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 40 | `AGENT_OS_READINESS_REPORT.md/json`: Fähigkeitsmatrix und OpenClaw-Migrations-Trockenlauf. |
+| `mem-b5466ed7c41f` | `Memory/Learnings and Fixes` | `general_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 52 | `AGENT_CODING_GUARDRAILS.md/json`: lokale Coding-Agent-Guardrails aus Superpowers-/Karpathy-Patterns, ohne Plugin-Installation. |
+| `mem-9ed5a188a2d4` | `Memory/Learnings and Fixes` | `general_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 55 | `GUARDRAIL_SCAN.md/json`: lokale statische Guardrail-Funde. |
+| `mem-93d7fb19201f` | `DreamFactory System/Agent Stack` | `agent_stack_learning` | `docs/agent_os/AGENT_OS_READINESS_PACK.md` | 69 | Hermes ist ein Produktmuster-Benchmark. Jede Funktion, die Netzwerk, |
 | `mem-cb3f69cd12b2` | `Memory/Learnings and Fixes` | `operator_gate_learning` | `docs/agent_os/BLOCK_8_SKILL_PATTERN_GOVERNANCE.md` | 5 | Block 8 fuehrt externe Skill-Repos und Skill-Patterns nicht als Runtime-Wahrheit ein. Gute Muster werden in lokale Playbooks, Hold-Register und Review-Gates übersetzt. Riskante Runtime-Ideen bleiben blockiert, bis Source, Risiko, Operator-Gate und Obsidian-Kompatibilität geprüft sind. |
 | `mem-57cf7f45e73d` | `Memory/Learnings and Fixes` | `operator_gate_learning` | `docs/agent_os/BLOCK_8_SKILL_PATTERN_GOVERNANCE.md` | 35 | High-Risk-Hold-Items fehlen oder kein Operator-Gate erzwingen |
 | `mem-fd54cb2ca757` | `DreamFactory System/Agent Stack` | `agent_stack_learning` | `docs/agent_os/DELIVERABLE_SWARM_CONTRACT.md` | 10 | sichere lokale Oberfläche für Vega-, Vivi-, LIONCOM- und OpenClaw-Arbeit. |

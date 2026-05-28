@@ -88,7 +88,7 @@
     ],
     "status": "PASS"
   },
-  "generated_at": "2026-05-28T12:37:00+00:00",
+  "generated_at": "2026-05-28T17:23:47+00:00",
   "hardening": {
     "deny_globs": [
       ".env",
@@ -219,14 +219,14 @@
     {
       "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/AGENT_CODING_GUARDRAILS.json",
       "relative_path": "docs/agent_os/AGENT_CODING_GUARDRAILS.json",
-      "size_bytes": 1026,
+      "size_bytes": 1146,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".json"
     },
     {
       "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/AGENT_CODING_GUARDRAILS.md",
       "relative_path": "docs/agent_os/AGENT_CODING_GUARDRAILS.md",
-      "size_bytes": 3021,
+      "size_bytes": 3739,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".md"
     },
@@ -240,7 +240,7 @@
     {
       "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/AGENT_OS_READINESS_PACK.md",
       "relative_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
-      "size_bytes": 3783,
+      "size_bytes": 3994,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".md"
     },
@@ -429,7 +429,7 @@
     {
       "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/coding_guardrails.py",
       "relative_path": "research_agent/ops/coding_guardrails.py",
-      "size_bytes": 12434,
+      "size_bytes": 14165,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
@@ -437,6 +437,13 @@
       "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/deliverable_swarm.py",
       "relative_path": "research_agent/ops/deliverable_swarm.py",
       "size_bytes": 20647,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".py"
+    },
+    {
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/documents_root_hygiene.py",
+      "relative_path": "research_agent/ops/documents_root_hygiene.py",
+      "size_bytes": 8770,
       "source_set_id": "agent_ops_quality_os",
       "suffix": ".py"
     },
@@ -574,6 +581,13 @@
       "suffix": ".py"
     },
     {
+      "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/documents_root_hygiene_check.py",
+      "relative_path": "scripts/ops/documents_root_hygiene_check.py",
+      "size_bytes": 1019,
+      "source_set_id": "agent_ops_quality_os",
+      "suffix": ".py"
+    },
+    {
       "path": "/Users/BjornRosinger/Documents/New project 2/scripts/ops/multi_agent_panel.py",
       "relative_path": "scripts/ops/multi_agent_panel.py",
       "size_bytes": 589,
@@ -653,21 +667,21 @@
     {
       "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Canonical/Canonical Index.md",
       "relative_path": "Canonical/Canonical Index.md",
-      "size_bytes": 3733,
+      "size_bytes": 4523,
       "source_set_id": "vega_backbone",
       "suffix": ".md"
     },
     {
       "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Latest Session Context.md",
       "relative_path": "Latest Session Context.md",
-      "size_bytes": 1000137,
+      "size_bytes": 1019340,
       "source_set_id": "vega_backbone",
       "suffix": ".md"
     },
     {
       "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/VEGA_START_HERE.md",
       "relative_path": "VEGA_START_HERE.md",
-      "size_bytes": 7284,
+      "size_bytes": 8499,
       "source_set_id": "vega_backbone",
       "suffix": ".md"
     },
@@ -681,14 +695,14 @@
     {
       "path": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/quality_os_operator_surface.json",
       "relative_path": "outputs/project_intelligence_graph/quality_os_operator_surface.json",
-      "size_bytes": 201908,
+      "size_bytes": 207858,
       "source_set_id": "pig_surface",
       "suffix": ".json"
     },
     {
       "path": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/components/portfolio-control-tower-page.tsx",
       "relative_path": "components/portfolio-control-tower-page.tsx",
-      "size_bytes": 81615,
+      "size_bytes": 83411,
       "source_set_id": "lioncom_surface",
       "suffix": ".tsx"
     },
@@ -702,7 +716,7 @@
     {
       "path": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/lib/types.ts",
       "relative_path": "lib/types.ts",
-      "size_bytes": 30766,
+      "size_bytes": 32365,
       "source_set_id": "lioncom_surface",
       "suffix": ".ts"
     },
@@ -716,7 +730,7 @@
     {
       "path": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/scripts/verify_planning_quality_surface.mjs",
       "relative_path": "scripts/verify_planning_quality_surface.mjs",
-      "size_bytes": 16371,
+      "size_bytes": 18587,
       "source_set_id": "lioncom_surface",
       "suffix": ".mjs"
     }
@@ -736,7 +750,7 @@
   "policy_path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_policy.json",
   "preflight": {
     "blocker_count": 0,
-    "finding_count": 27,
+    "finding_count": 28,
     "findings": [
       {
         "code": "extension_not_allowed",
@@ -769,6 +783,13 @@
       {
         "code": "denied_by_policy",
         "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/deliverable_swarm.cpython-312.pyc",
+        "pattern": "**/__pycache__/**",
+        "severity": "info",
+        "source_set_id": "agent_ops_quality_os"
+      },
+      {
+        "code": "denied_by_policy",
+        "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/documents_root_hygiene.cpython-312.pyc",
         "pattern": "**/__pycache__/**",
         "severity": "info",
         "source_set_id": "agent_ops_quality_os"
@@ -918,7 +939,7 @@
         "max_file_bytes": 1200000,
         "path": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/full_check_report.json",
         "severity": "warn",
-        "size_bytes": 1894317,
+        "size_bytes": 1907005,
         "source_set_id": "pig_surface"
       },
       {
@@ -926,7 +947,7 @@
         "max_file_bytes": 1200000,
         "path": "/Users/BjornRosinger/Documents/New project/scripts/project_intelligence_graph/pig.py",
         "severity": "warn",
-        "size_bytes": 1227062,
+        "size_bytes": 1231077,
         "source_set_id": "pig_surface"
       }
     ],
@@ -958,19 +979,10 @@
             "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Latest Session Context.md",
             "relative_path": "Latest Session Context.md",
             "score": 18.0,
-            "size_bytes": 1000137,
-            "snippet": "--- type: latest_session_context status: active updated: 2026-05-28 --- # latest session context ## update 2026-05-28 - quellwert sauber eingefroren - operator-entscheidung nach strategieklaerung: quellwert wird nicht als aktive launch- funnel- payment- oder membership-spur weitergetrieben sondern sauber als spaeter wiederverwendbares shelf-asset eingefroren. status: frozen_shelf_asset_operator_reopen_required . - wichtige trennung: room16 selbst ist nicht eingestampft. room16 bleibt die interne research-/evidence-/review-maschine eingefroren ist die quellwert-schaufenster-/produktisierungs-/g",
+            "size_bytes": 1019340,
+            "snippet": "--- type: latest_session_context status: active updated: 2026-05-28 --- # latest session context ## update 2026-05-28 - german output gate coverage repariert - operator-befund bestaetigt: der deutsch-check war nicht inhaltlich kaputt aber zu eng verdrahtet. er pruefte nur outputs/project_intelligence_graph plus vier registry-ziele und uebersah dadurch pig-markdown-doku sowie aktive codex-skill-runbooks. - fix im pig-workspace: german_output_quality_gate.py erkennt zusaetzliche ascii-umlaut-staemme wie aehn aend ausfuehr gehoer groess laeuf laeng nuetz raeum zaehl pig.py expandiert registry-zie",
             "source_set_id": "vega_backbone",
             "suffix": ".md"
-          },
-          {
-            "path": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/quality_os_operator_surface.json",
-            "relative_path": "outputs/project_intelligence_graph/quality_os_operator_surface.json",
-            "score": 15.0,
-            "size_bytes": 201908,
-            "snippet": "generated_at : 2026-05-28t12:34:17 00:00 status : pass source : pig_quality_os surface_version : v3 control_capabilities : approval_actions : true pause_resume_retry : true multi_run_history : true fresh_session_handoff : true long_run_completion_audit : true rule_propagation_audit : true operator_intent_contract : true impact_radius_assessment : true autonomy_governor : true vivi_vega_handoff_inbox : true fresh_session_readiness : true fresh_data_intake : true vivi_job_card_queue : true vivi_runner_mvp : true vivi_supervisor_audit : true commit_cleanup_go_package : true vivi_worker_mvp : true",
-            "source_set_id": "pig_surface",
-            "suffix": ".json"
           },
           {
             "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
@@ -1000,6 +1012,15 @@
             "suffix": ".md"
           },
           {
+            "path": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/quality_os_operator_surface.json",
+            "relative_path": "outputs/project_intelligence_graph/quality_os_operator_surface.json",
+            "score": 12.0,
+            "size_bytes": 207858,
+            "snippet": "generated_at : 2026-05-28t17:20:34 00:00 status : pass source : pig_quality_os surface_version : v3 control_capabilities : approval_actions : true pause_resume_retry : true multi_run_history : true fresh_session_handoff : true long_run_completion_audit : true rule_propagation_audit : true operator_intent_contract : true impact_radius_assessment : true autonomy_governor : true vivi_vega_handoff_inbox : true fresh_session_readiness : true fresh_data_intake : true vivi_job_card_queue : true vivi_runner_mvp : true vivi_supervisor_audit : true commit_cleanup_go_package : true vivi_worker_mvp : true",
+            "source_set_id": "pig_surface",
+            "suffix": ".json"
+          },
+          {
             "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
             "relative_path": "docs/openjarvis/OPENJARVIS_INTEGRATION_DECISION.md",
             "score": 10.0,
@@ -1012,7 +1033,7 @@
             "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/VEGA_START_HERE.md",
             "relative_path": "VEGA_START_HERE.md",
             "score": 9.0,
-            "size_bytes": 7284,
+            "size_bytes": 8499,
             "snippet": "--- type: vega_start status: active updated: 2026-05-28 aliases: - vega start here - vegapunk start here - vivi start here --- # vega_start_here wenn der user in zukunft nur sagt: lies dir vega_start_here durch dann ist das der eine pflicht-einstieg fuer meine start-session. ## lies in genau dieser reihenfolge - fuer die komplette systemuebersicht jetzt direkt auch dreamfactory systemhandbuch und dreamfactory systemkarte.canvas dreamfactory systemkarte nutzen 1. latest session context 2. backbone home 3. canonical/canonical index 4. review queue 5. memory/chat and idea ledger 6. memory/project",
             "source_set_id": "vega_backbone",
             "suffix": ".md"
@@ -1048,7 +1069,7 @@
             "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Canonical/Canonical Index.md",
             "relative_path": "Canonical/Canonical Index.md",
             "score": 6.0,
-            "size_bytes": 3733,
+            "size_bytes": 4523,
             "snippet": "--- type: canonical_index status: active updated: 2026-05-28 --- # canonical index ## zweck das ist die zentrale wahrheitsschicht dieses wissensraums. ## schnellroute - rollen und personen zuerst: people/person - bjorn rosinger people/person - vivi people/person - vegapunk - governance und systemkern zuerst: companies/company - bcr ventures ug rules/rule - project before files decisions/decision - one truth two interfaces systems/system - obsidian knowledge base - aktive arbeit zuerst: project - lioncom dashboard project - membership finanzplattform project - utility websites portfolio project",
             "source_set_id": "vega_backbone",
             "suffix": ".md"
@@ -1069,8 +1090,8 @@
             "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Latest Session Context.md",
             "relative_path": "Latest Session Context.md",
             "score": 30.0,
-            "size_bytes": 1000137,
-            "snippet": "--- type: latest_session_context status: active updated: 2026-05-28 --- # latest session context ## update 2026-05-28 - quellwert sauber eingefroren - operator-entscheidung nach strategieklaerung: quellwert wird nicht als aktive launch- funnel- payment- oder membership-spur weitergetrieben sondern sauber als spaeter wiederverwendbares shelf-asset eingefroren. status: frozen_shelf_asset_operator_reopen_required . - wichtige trennung: room16 selbst ist nicht eingestampft. room16 bleibt die interne research-/evidence-/review-maschine eingefroren ist die quellwert-schaufenster-/produktisierungs-/g",
+            "size_bytes": 1019340,
+            "snippet": "--- type: latest_session_context status: active updated: 2026-05-28 --- # latest session context ## update 2026-05-28 - german output gate coverage repariert - operator-befund bestaetigt: der deutsch-check war nicht inhaltlich kaputt aber zu eng verdrahtet. er pruefte nur outputs/project_intelligence_graph plus vier registry-ziele und uebersah dadurch pig-markdown-doku sowie aktive codex-skill-runbooks. - fix im pig-workspace: german_output_quality_gate.py erkennt zusaetzliche ascii-umlaut-staemme wie aehn aend ausfuehr gehoer groess laeuf laeng nuetz raeum zaehl pig.py expandiert registry-zie",
             "source_set_id": "vega_backbone",
             "suffix": ".md"
           },
@@ -1096,7 +1117,7 @@
             "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/VEGA_START_HERE.md",
             "relative_path": "VEGA_START_HERE.md",
             "score": 18.0,
-            "size_bytes": 7284,
+            "size_bytes": 8499,
             "snippet": "--- type: vega_start status: active updated: 2026-05-28 aliases: - vega start here - vegapunk start here - vivi start here --- # vega_start_here wenn der user in zukunft nur sagt: lies dir vega_start_here durch dann ist das der eine pflicht-einstieg fuer meine start-session. ## lies in genau dieser reihenfolge - fuer die komplette systemuebersicht jetzt direkt auch dreamfactory systemhandbuch und dreamfactory systemkarte.canvas dreamfactory systemkarte nutzen 1. latest session context 2. backbone home 3. canonical/canonical index 4. review queue 5. memory/chat and idea ledger 6. memory/project",
             "source_set_id": "vega_backbone",
             "suffix": ".md"
@@ -1135,8 +1156,8 @@
             "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Latest Session Context.md",
             "relative_path": "Latest Session Context.md",
             "score": 27.0,
-            "size_bytes": 1000137,
-            "snippet": "--- type: latest_session_context status: active updated: 2026-05-28 --- # latest session context ## update 2026-05-28 - quellwert sauber eingefroren - operator-entscheidung nach strategieklaerung: quellwert wird nicht als aktive launch- funnel- payment- oder membership-spur weitergetrieben sondern sauber als spaeter wiederverwendbares shelf-asset eingefroren. status: frozen_shelf_asset_operator_reopen_required . - wichtige trennung: room16 selbst ist nicht eingestampft. room16 bleibt die interne research-/evidence-/review-maschine eingefroren ist die quellwert-schaufenster-/produktisierungs-/g",
+            "size_bytes": 1019340,
+            "snippet": "--- type: latest_session_context status: active updated: 2026-05-28 --- # latest session context ## update 2026-05-28 - german output gate coverage repariert - operator-befund bestaetigt: der deutsch-check war nicht inhaltlich kaputt aber zu eng verdrahtet. er pruefte nur outputs/project_intelligence_graph plus vier registry-ziele und uebersah dadurch pig-markdown-doku sowie aktive codex-skill-runbooks. - fix im pig-workspace: german_output_quality_gate.py erkennt zusaetzliche ascii-umlaut-staemme wie aehn aend ausfuehr gehoer groess laeuf laeng nuetz raeum zaehl pig.py expandiert registry-zie",
             "source_set_id": "vega_backbone",
             "suffix": ".md"
           },
@@ -1153,7 +1174,7 @@
             "path": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/components/portfolio-control-tower-page.tsx",
             "relative_path": "components/portfolio-control-tower-page.tsx",
             "score": 21.0,
-            "size_bytes": 81615,
+            "size_bytes": 83411,
             "snippet": "use client import archive barchart3 calendardays clipboardcheck gitbranch hourglass listchecks shieldcheck shieldx from lucide-react import statuschip from /components/status-chip import card carddescription cardtitle from /components/ui/card import usecontrolplanedata from /components/use-control-plane-data import cn from /lib/cn import type planningqualitysurface portfolioexecutioncontract portfoliometriccardid portfoliorepositorystatus portfolioreviewcalendaritem portfoliostreammetric severity from /lib/types const portfoliometriccards: array id: portfoliometriccardid title: string descript",
             "source_set_id": "lioncom_surface",
             "suffix": ".tsx"
@@ -1171,8 +1192,8 @@
             "path": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/quality_os_operator_surface.json",
             "relative_path": "outputs/project_intelligence_graph/quality_os_operator_surface.json",
             "score": 21.0,
-            "size_bytes": 201908,
-            "snippet": "generated_at : 2026-05-28t12:34:17 00:00 status : pass source : pig_quality_os surface_version : v3 control_capabilities : approval_actions : true pause_resume_retry : true multi_run_history : true fresh_session_handoff : true long_run_completion_audit : true rule_propagation_audit : true operator_intent_contract : true impact_radius_assessment : true autonomy_governor : true vivi_vega_handoff_inbox : true fresh_session_readiness : true fresh_data_intake : true vivi_job_card_queue : true vivi_runner_mvp : true vivi_supervisor_audit : true commit_cleanup_go_package : true vivi_worker_mvp : true",
+            "size_bytes": 207858,
+            "snippet": "generated_at : 2026-05-28t17:20:34 00:00 status : pass source : pig_quality_os surface_version : v3 control_capabilities : approval_actions : true pause_resume_retry : true multi_run_history : true fresh_session_handoff : true long_run_completion_audit : true rule_propagation_audit : true operator_intent_contract : true impact_radius_assessment : true autonomy_governor : true vivi_vega_handoff_inbox : true fresh_session_readiness : true fresh_data_intake : true vivi_job_card_queue : true vivi_runner_mvp : true vivi_supervisor_audit : true commit_cleanup_go_package : true vivi_worker_mvp : true",
             "source_set_id": "pig_surface",
             "suffix": ".json"
           },
@@ -1198,7 +1219,7 @@
             "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/VEGA_START_HERE.md",
             "relative_path": "VEGA_START_HERE.md",
             "score": 15.0,
-            "size_bytes": 7284,
+            "size_bytes": 8499,
             "snippet": "--- type: vega_start status: active updated: 2026-05-28 aliases: - vega start here - vegapunk start here - vivi start here --- # vega_start_here wenn der user in zukunft nur sagt: lies dir vega_start_here durch dann ist das der eine pflicht-einstieg fuer meine start-session. ## lies in genau dieser reihenfolge - fuer die komplette systemuebersicht jetzt direkt auch dreamfactory systemhandbuch und dreamfactory systemkarte.canvas dreamfactory systemkarte nutzen 1. latest session context 2. backbone home 3. canonical/canonical index 4. review queue 5. memory/chat and idea ledger 6. memory/project",
             "source_set_id": "vega_backbone",
             "suffix": ".md"
@@ -1264,19 +1285,10 @@
             "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Latest Session Context.md",
             "relative_path": "Latest Session Context.md",
             "score": 21.0,
-            "size_bytes": 1000137,
-            "snippet": "--- type: latest_session_context status: active updated: 2026-05-28 --- # latest session context ## update 2026-05-28 - quellwert sauber eingefroren - operator-entscheidung nach strategieklaerung: quellwert wird nicht als aktive launch- funnel- payment- oder membership-spur weitergetrieben sondern sauber als spaeter wiederverwendbares shelf-asset eingefroren. status: frozen_shelf_asset_operator_reopen_required . - wichtige trennung: room16 selbst ist nicht eingestampft. room16 bleibt die interne research-/evidence-/review-maschine eingefroren ist die quellwert-schaufenster-/produktisierungs-/g",
+            "size_bytes": 1019340,
+            "snippet": "--- type: latest_session_context status: active updated: 2026-05-28 --- # latest session context ## update 2026-05-28 - german output gate coverage repariert - operator-befund bestaetigt: der deutsch-check war nicht inhaltlich kaputt aber zu eng verdrahtet. er pruefte nur outputs/project_intelligence_graph plus vier registry-ziele und uebersah dadurch pig-markdown-doku sowie aktive codex-skill-runbooks. - fix im pig-workspace: german_output_quality_gate.py erkennt zusaetzliche ascii-umlaut-staemme wie aehn aend ausfuehr gehoer groess laeuf laeng nuetz raeum zaehl pig.py expandiert registry-zie",
             "source_set_id": "vega_backbone",
             "suffix": ".md"
-          },
-          {
-            "path": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/quality_os_operator_surface.json",
-            "relative_path": "outputs/project_intelligence_graph/quality_os_operator_surface.json",
-            "score": 18.0,
-            "size_bytes": 201908,
-            "snippet": "generated_at : 2026-05-28t12:34:17 00:00 status : pass source : pig_quality_os surface_version : v3 control_capabilities : approval_actions : true pause_resume_retry : true multi_run_history : true fresh_session_handoff : true long_run_completion_audit : true rule_propagation_audit : true operator_intent_contract : true impact_radius_assessment : true autonomy_governor : true vivi_vega_handoff_inbox : true fresh_session_readiness : true fresh_data_intake : true vivi_job_card_queue : true vivi_runner_mvp : true vivi_supervisor_audit : true commit_cleanup_go_package : true vivi_worker_mvp : true",
-            "source_set_id": "pig_surface",
-            "suffix": ".json"
           },
           {
             "path": "/Users/BjornRosinger/Documents/New project 2/configs/openjarvis/openjarvis_decision_gauntlet_plan.json",
@@ -1300,7 +1312,7 @@
             "path": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/components/portfolio-control-tower-page.tsx",
             "relative_path": "components/portfolio-control-tower-page.tsx",
             "score": 12.0,
-            "size_bytes": 81615,
+            "size_bytes": 83411,
             "snippet": "use client import archive barchart3 calendardays clipboardcheck gitbranch hourglass listchecks shieldcheck shieldx from lucide-react import statuschip from /components/status-chip import card carddescription cardtitle from /components/ui/card import usecontrolplanedata from /components/use-control-plane-data import cn from /lib/cn import type planningqualitysurface portfolioexecutioncontract portfoliometriccardid portfoliorepositorystatus portfolioreviewcalendaritem portfoliostreammetric severity from /lib/types const portfoliometriccards: array id: portfoliometriccardid title: string descript",
             "source_set_id": "lioncom_surface",
             "suffix": ".tsx"
@@ -1309,7 +1321,7 @@
             "path": "/Users/BjornRosinger/Documents/New project 2/docs/agent_os/AGENT_CODING_GUARDRAILS.md",
             "relative_path": "docs/agent_os/AGENT_CODING_GUARDRAILS.md",
             "score": 12.0,
-            "size_bytes": 3021,
+            "size_bytes": 3739,
             "snippet": "# agent coding guardrails status: aktive lokale playbook-schicht scope: vega / vivi / codex coding-arbeit runtime-aenderungen: keine ## zweck diese schicht uebernimmt die nuetzlichen muster aus obra/superpowers und multica-ai/andrej-karpathy-skills ohne deren runtime- oder hook-modell zu installieren. sie beantwortet eine engere frage als der deliverable-swarm-vertrag: wie soll ein coding-agent arbeiten damit diffs klein bleiben bugs wirklich verstanden werden und abschlussmeldungen belegt sind ## harte uebernahmeregel uebernommen wird nur als playbook und lokaler vertrag: - keine globale plug",
             "source_set_id": "agent_ops_quality_os",
             "suffix": ".md"
@@ -1333,6 +1345,15 @@
             "suffix": ".ts"
           },
           {
+            "path": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/quality_os_operator_surface.json",
+            "relative_path": "outputs/project_intelligence_graph/quality_os_operator_surface.json",
+            "score": 12.0,
+            "size_bytes": 207858,
+            "snippet": "generated_at : 2026-05-28t17:20:34 00:00 status : pass source : pig_quality_os surface_version : v3 control_capabilities : approval_actions : true pause_resume_retry : true multi_run_history : true fresh_session_handoff : true long_run_completion_audit : true rule_propagation_audit : true operator_intent_contract : true impact_radius_assessment : true autonomy_governor : true vivi_vega_handoff_inbox : true fresh_session_readiness : true fresh_data_intake : true vivi_job_card_queue : true vivi_runner_mvp : true vivi_supervisor_audit : true commit_cleanup_go_package : true vivi_worker_mvp : true",
+            "source_set_id": "pig_surface",
+            "suffix": ".json"
+          },
+          {
             "path": "/Users/BjornRosinger/Documents/New project 2/docs/openjarvis/OPENJARVIS_COMPONENT_ADAPTER.md",
             "relative_path": "docs/openjarvis/OPENJARVIS_COMPONENT_ADAPTER.md",
             "score": 10.0,
@@ -1354,7 +1375,7 @@
             "path": "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/VEGA_START_HERE.md",
             "relative_path": "VEGA_START_HERE.md",
             "score": 9.0,
-            "size_bytes": 7284,
+            "size_bytes": 8499,
             "snippet": "--- type: vega_start status: active updated: 2026-05-28 aliases: - vega start here - vegapunk start here - vivi start here --- # vega_start_here wenn der user in zukunft nur sagt: lies dir vega_start_here durch dann ist das der eine pflicht-einstieg fuer meine start-session. ## lies in genau dieser reihenfolge - fuer die komplette systemuebersicht jetzt direkt auch dreamfactory systemhandbuch und dreamfactory systemkarte.canvas dreamfactory systemkarte nutzen 1. latest session context 2. backbone home 3. canonical/canonical index 4. review queue 5. memory/chat and idea ledger 6. memory/project",
             "source_set_id": "vega_backbone",
             "suffix": ".md"
@@ -1378,7 +1399,7 @@
     "runtime_execution_attempted": false
   },
   "schema_version": 1,
-  "source_document_count": 85,
+  "source_document_count": 87,
   "source_of_truth": false,
   "source_sets": [
     {

@@ -2,11 +2,11 @@
 
 This registry is a review surface, not a runtime installer.
 
-Records: 40
+Records: 41
 
 ## Decision Counts
 
-- `approved_local_review_helper`: 10
+- `approved_local_review_helper`: 11
 - `approved_playbook_only`: 12
 - `hold_for_operator_review`: 11
 - `pattern_only_operator_gate`: 1
@@ -30,6 +30,7 @@ Records: 40
 | `media-ingest-helper-scripts-25212885` | Media Ingest Helper Scripts | `R0_doc_only_pattern` | `approved_playbook_only` | false | 0 | `scripts/media_ingest/README.md` |
 | `validate-transcript-metadata-b9019b41` | Validate Transcript Metadata | `R1_local_read_only_helper` | `approved_local_review_helper` | false | 0 | `scripts/media_ingest/validate_transcript_metadata.py` |
 | `context-pack-builder-99c1794f` | Context Pack Builder | `R1_local_read_only_helper` | `approved_local_review_helper` | false | 0 | `scripts/ops/context_pack_builder.py` |
+| `documents-root-hygiene-check-11888f01` | Documents Root Hygiene Check | `R1_local_read_only_helper` | `approved_local_review_helper` | false | 0 | `scripts/ops/documents_root_hygiene_check.py` |
 | `multi-agent-panel-ddd58146` | Multi Agent Panel | `R1_local_read_only_helper` | `approved_local_review_helper` | false | 0 | `scripts/ops/multi_agent_panel.py` |
 | `openjarvis-capability-arena-541fae8c` | Openjarvis Capability Arena | `R1_local_read_only_helper` | `approved_local_review_helper` | false | 0 | `scripts/ops/openjarvis_capability_arena.py` |
 | `openjarvis-capability-lab-d3ef564b` | Openjarvis Capability Lab | `R1_local_read_only_helper` | `approved_local_review_helper` | false | 0 | `scripts/ops/openjarvis_capability_lab.py` |

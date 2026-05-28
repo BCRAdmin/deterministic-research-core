@@ -19,48 +19,48 @@
       "snippet": "Diese Schicht \u00fcbernimmt die n\u00fctzlichen Muster aus `obra/superpowers` und"
     },
     {
-      "line": 52,
+      "line": 51,
       "path": "docs/agent_os/AGENT_CODING_GUARDRAILS.md",
       "score": -5.424031294657932,
-      "snippet": "- Fehler komplett lesen"
+      "snippet": "### Bugs und CI-Fails"
     },
     {
-      "line": 33,
+      "line": 17,
       "path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
       "score": -3.742254418854729,
-      "snippet": "## Harte Grenzen"
+      "snippet": "3. Nach 5-10 echten internen L\u00e4ufen entscheiden, ob daraus eine getrennte kleine App analog Room16 entsteht. Status: 5 technische Piloten gruen; keine App jetzt."
     },
     {
-      "line": 29,
+      "line": 15,
       "path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
       "score": -3.6670987282384284,
-      "snippet": "- Alles bleibt `candidate_only`, bis Vega/Operator es pr\u00fcft."
+      "snippet": "1. `vega-multi-agent-research` als lokalen Codex/Vivi-Skill stabilisieren. Status: erledigt."
     },
     {
-      "line": 35,
+      "line": 18,
       "path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
       "score": -3.6670987282384284,
-      "snippet": "- Keine automatische Promotion von Agentenmeinungen in Obsidian, LIONCOM, Room16 oder Public-Artefakte."
+      "snippet": "4. LIONCOM erst anbinden, wenn es einen nachweisbar n\u00fctzlichen Run-Vertrag, Artefaktstruktur und Operator-Gate gibt. Status: Adapter bewusst nicht gebaut, weil CLI/Skill reicht."
     },
     {
-      "line": 26,
+      "line": 12,
       "path": "docs/media_ingest/NEXT_MEDIA_SAMPLE_BACKLOG.md",
       "score": -3.6670987282384284,
-      "snippet": "- Date and duration if known."
+      "snippet": "## Allowed Sample Types"
     },
     {
-      "line": 27,
+      "line": 11,
       "path": "docs/agent_os/MULTI_AGENT_RESEARCH_BUILD_ROADMAP.md",
       "score": -3.5949023098355055,
-      "snippet": "- 3-6 Rollen diskutieren in 1-3 Runden."
+      "snippet": "## Kurzentscheidung"
     },
     {
-      "line": 4,
-      "path": "docs/media_ingest/NEXT_MEDIA_SAMPLE_BACKLOG.md",
+      "line": 42,
+      "path": "docs/media_ingest/MEDIA_SOURCE_POLICY.md",
       "score": -3.5254937552549364,
-      "snippet": "Scope: Media Ingest Playbook next operator sample"
+      "snippet": "## Source Rank"
     }
   ],
-  "indexed_rows": 7012,
+  "indexed_rows": 7023,
   "query": "Hermes OR OpenClaw OR Vivi"
 }

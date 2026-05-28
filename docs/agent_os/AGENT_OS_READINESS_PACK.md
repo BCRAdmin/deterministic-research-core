@@ -18,6 +18,8 @@ Arbeitsoberflaechen:
 - Vault Semantic Ownership Audit für Projektwahrheit, Startflächen und alte Gewohnheitsrouten
 - Guardrails-as-Code
 - Agent Coding Guardrails als kuratierter Superpowers-/Karpathy-Transfer
+- Operator-Erwartungsmodell / Warn-First als Mustererkennung vor Abschluss
+- Documents-Root-Hygiene als Standard-Preflight für Vega-/Vivi-Systemarbeit
 - Operator-Inbox-Vertrag
 - Terminal-Backend-Verträge
 
@@ -28,6 +30,7 @@ Secret-Importer und kein autonomer Hintergrundagent.
 
 ```bash
 python3 scripts/ops/agent_os_readiness.py
+python3 scripts/ops/documents_root_hygiene_check.py --json
 ```
 
 Standard-Outputs werden nach `outputs/agent_os_readiness/` geschrieben.

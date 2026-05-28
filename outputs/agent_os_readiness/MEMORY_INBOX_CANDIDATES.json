@@ -28,36 +28,54 @@
       "summary": "| Guardrail | Quelle | Gate | Wann nutzen |"
     },
     {
-      "candidate_id": "mem-d4245c14614c",
+      "candidate_id": "mem-5d2bcae3914c",
+      "kind": "workflow_learning",
+      "line": 38,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/agent_os/AGENT_CODING_GUARDRAILS.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "| Autonome Mustererkennung vor Abschluss | `operator_expectation_autonomy_model`, `documents-root-hygiene`, `vega-operator-learning` | soft | Operator-Korrektur, wiederkehrender Dirt, Pfadchaos, Scope-Drift oder Clean-/Fertig-Claim |"
+    },
+    {
+      "candidate_id": "mem-6ef9641e2c49",
+      "kind": "workflow_learning",
+      "line": 65,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/agent_os/AGENT_CODING_GUARDRAILS.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "bei Vega-/Vivi-Systemarbeit Documents-Root-Hygiene als Preflight ber\u00fccksichtigen"
+    },
+    {
+      "candidate_id": "mem-8fa733b48898",
       "kind": "general_learning",
-      "line": 76,
+      "line": 85,
       "route": "Memory/Learnings and Fixes",
       "source_path": "docs/agent_os/AGENT_CODING_GUARDRAILS.md",
       "status": "candidate_needs_promotion_review",
       "summary": "`research_agent/ops/coding_guardrails.py`"
     },
     {
-      "candidate_id": "mem-52fb8778e13c",
+      "candidate_id": "mem-b6c87faefe08",
       "kind": "general_learning",
-      "line": 80,
+      "line": 89,
       "route": "Memory/Learnings and Fixes",
       "source_path": "docs/agent_os/AGENT_CODING_GUARDRAILS.md",
       "status": "candidate_needs_promotion_review",
       "summary": "`outputs/agent_os_readiness/AGENT_CODING_GUARDRAILS.md`"
     },
     {
-      "candidate_id": "mem-5fe76e4804e1",
+      "candidate_id": "mem-ca6ef519484d",
       "kind": "general_learning",
-      "line": 81,
+      "line": 90,
       "route": "Memory/Learnings and Fixes",
       "source_path": "docs/agent_os/AGENT_CODING_GUARDRAILS.md",
       "status": "candidate_needs_promotion_review",
       "summary": "`outputs/agent_os_readiness/AGENT_CODING_GUARDRAILS.json`"
     },
     {
-      "candidate_id": "mem-46ebb5981413",
+      "candidate_id": "mem-840004a372eb",
       "kind": "general_learning",
-      "line": 86,
+      "line": 95,
       "route": "Memory/Learnings and Fixes",
       "source_path": "docs/agent_os/AGENT_CODING_GUARDRAILS.md",
       "status": "candidate_needs_promotion_review",
@@ -91,36 +109,45 @@
       "summary": "Agent Coding Guardrails als kuratierter Superpowers-/Karpathy-Transfer"
     },
     {
-      "candidate_id": "mem-be7fc6e6484e",
+      "candidate_id": "mem-83511b38bb41",
+      "kind": "workflow_learning",
+      "line": 22,
+      "route": "Memory/Learnings and Fixes",
+      "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
+      "status": "candidate_needs_promotion_review",
+      "summary": "Documents-Root-Hygiene als Standard-Preflight f\u00fcr Vega-/Vivi-Systemarbeit"
+    },
+    {
+      "candidate_id": "mem-fcc321c06f7b",
       "kind": "agent_stack_learning",
-      "line": 37,
+      "line": 40,
       "route": "DreamFactory System/Agent Stack",
       "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
       "status": "candidate_needs_promotion_review",
       "summary": "`AGENT_OS_READINESS_REPORT.md/json`: F\u00e4higkeitsmatrix und OpenClaw-Migrations-Trockenlauf."
     },
     {
-      "candidate_id": "mem-f41056e99a3a",
+      "candidate_id": "mem-b5466ed7c41f",
       "kind": "general_learning",
-      "line": 49,
+      "line": 52,
       "route": "Memory/Learnings and Fixes",
       "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
       "status": "candidate_needs_promotion_review",
       "summary": "`AGENT_CODING_GUARDRAILS.md/json`: lokale Coding-Agent-Guardrails aus Superpowers-/Karpathy-Patterns, ohne Plugin-Installation."
     },
     {
-      "candidate_id": "mem-543230d1346a",
+      "candidate_id": "mem-9ed5a188a2d4",
       "kind": "general_learning",
-      "line": 52,
+      "line": 55,
       "route": "Memory/Learnings and Fixes",
       "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
       "status": "candidate_needs_promotion_review",
       "summary": "`GUARDRAIL_SCAN.md/json`: lokale statische Guardrail-Funde."
     },
     {
-      "candidate_id": "mem-41f9d439f681",
+      "candidate_id": "mem-93d7fb19201f",
       "kind": "agent_stack_learning",
-      "line": 66,
+      "line": 69,
       "route": "DreamFactory System/Agent Stack",
       "source_path": "docs/agent_os/AGENT_OS_READINESS_PACK.md",
       "status": "candidate_needs_promotion_review",

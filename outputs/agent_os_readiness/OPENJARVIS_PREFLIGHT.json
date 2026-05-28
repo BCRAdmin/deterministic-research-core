@@ -1,6 +1,6 @@
 {
   "blocker_count": 0,
-  "finding_count": 27,
+  "finding_count": 28,
   "findings": [
     {
       "code": "extension_not_allowed",
@@ -33,6 +33,13 @@
     {
       "code": "denied_by_policy",
       "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/deliverable_swarm.cpython-312.pyc",
+      "pattern": "**/__pycache__/**",
+      "severity": "info",
+      "source_set_id": "agent_ops_quality_os"
+    },
+    {
+      "code": "denied_by_policy",
+      "path": "/Users/BjornRosinger/Documents/New project 2/research_agent/ops/__pycache__/documents_root_hygiene.cpython-312.pyc",
       "pattern": "**/__pycache__/**",
       "severity": "info",
       "source_set_id": "agent_ops_quality_os"
@@ -182,7 +189,7 @@
       "max_file_bytes": 1200000,
       "path": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/full_check_report.json",
       "severity": "warn",
-      "size_bytes": 1894317,
+      "size_bytes": 1907005,
       "source_set_id": "pig_surface"
     },
     {
@@ -190,7 +197,7 @@
       "max_file_bytes": 1200000,
       "path": "/Users/BjornRosinger/Documents/New project/scripts/project_intelligence_graph/pig.py",
       "severity": "warn",
-      "size_bytes": 1227062,
+      "size_bytes": 1231077,
       "source_set_id": "pig_surface"
     }
   ],

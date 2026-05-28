@@ -1,17 +1,17 @@
 {
   "adoption_recommendation": "do_not_rebuild_system; run_only_the_gated_runtime_github_write_trials_needed_for_final_decision",
   "arena_summary": {
-    "baseline_average": 82.79,
+    "baseline_average": 82.81,
     "baseline_wins": 0,
     "runtime_action_executed": false,
-    "shadow_average": 97.08,
+    "shadow_average": 96.5,
     "shadow_fail_count": 0,
     "shadow_pass_count": 30,
-    "shadow_wins": 13,
-    "source_documents": 85,
+    "shadow_wins": 12,
+    "source_documents": 87,
     "status": "PASS",
     "task_count": 30,
-    "ties": 17
+    "ties": 18
   },
   "decision_status": "ready_for_operator_gated_runtime_github_write_trials",
   "final_decision_options": [
@@ -33,14 +33,14 @@
     }
   ],
   "gauntlet_id": "openjarvis_decision_gauntlet_v1",
-  "generated_at": "2026-05-28T12:37:26+00:00",
+  "generated_at": "2026-05-28T17:24:13+00:00",
   "lab_summary": {
     "code_qa_status": "PASS",
     "retrieval_pass_count": 4,
     "retrieval_status": "PASS",
     "runtime_action_executed": false,
     "runtime_available": false,
-    "source_documents": 85,
+    "source_documents": 87,
     "status": "PASS"
   },
   "minimum_local_requirements": {
@@ -215,7 +215,7 @@
           "title": "Preflight hat 0 Blocker"
         },
         {
-          "actual": 85,
+          "actual": 87,
           "artifact": "lab",
           "assert": "min",
           "id": "src_003_source_count_min",
@@ -481,7 +481,7 @@
           "title": "Shadow hat 0 FAIL"
         },
         {
-          "actual": 13,
+          "actual": 12,
           "artifact": "arena",
           "assert": "min",
           "id": "arena_005_shadow_min_wins",
@@ -911,7 +911,7 @@
       "test_count": 8,
       "tests": [
         {
-          "actual": 13,
+          "actual": 12,
           "artifact": "arena",
           "assert": "min",
           "id": "roi_001_shadow_threshold",

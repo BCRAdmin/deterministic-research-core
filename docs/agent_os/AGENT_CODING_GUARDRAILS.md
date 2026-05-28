@@ -35,6 +35,7 @@ Sie beantwortet eine engere Frage als der Deliverable-Swarm-Vertrag:
 | Erfolgskriterien vor Ausführung klaeren | `karpathy-guidelines`, `superpowers:writing-plans` | soft | mehrschrittige Arbeit |
 | Keine Abschlussbehauptung ohne frische Evidenz | `superpowers:verification-before-completion` | hard | vor Fertig-, Pass-, Commit-, PR- oder Handoff-Claims |
 | Root Cause vor Fix | `superpowers:systematic-debugging` | hard | Bugs, Tests, Build, CI, Runtime-Anomalien |
+| Autonome Mustererkennung vor Abschluss | `operator_expectation_autonomy_model`, `documents-root-hygiene`, `vega-operator-learning` | soft | Operator-Korrektur, wiederkehrender Dirt, Pfadchaos, Scope-Drift oder Clean-/Fertig-Claim |
 | Branch-Abschluss explizit machen | `superpowers:finishing-a-development-branch`, `superpowers:using-git-worktrees` | situational | echte Git-/PR-/Worktree-Flows |
 | Skills gegen Verhalten testen | `superpowers:writing-skills` | situational | neue oder geänderte lokale Skills/Playbooks |
 
@@ -54,6 +55,14 @@ Sie beantwortet eine engere Frage als der Deliverable-Swarm-Vertrag:
 - Hypothese formulieren
 - minimalen Fix setzen
 - Verifikation dokumentieren
+
+### Operator-Korrektur und wiederkehrende Muster
+
+- Feedback wie `das hättest du selbst merken müssen` als Systemsignal behandeln
+- Muster und Root Cause klassifizieren, nicht nur den Einzelfall reparieren
+- bestehende Regel, Verifier oder Memory-Spur suchen
+- fehlende Härtung Warn-First als Review-, Verifier- oder Memory-Delta routen
+- bei Vega-/Vivi-Systemarbeit Documents-Root-Hygiene als Preflight berücksichtigen
 
 ### Größere Implementierungen
 
@@ -84,5 +93,6 @@ Verifier:
 
 ```bash
 .venv/bin/pytest -q research_agent/tests/test_agent_os_coding_guardrails.py
+python3 scripts/ops/documents_root_hygiene_check.py --json
 python3 scripts/ops/agent_os_readiness.py
 ```

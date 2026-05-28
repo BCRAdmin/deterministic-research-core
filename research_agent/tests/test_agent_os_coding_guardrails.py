@@ -31,6 +31,19 @@ def test_verification_and_debugging_guardrails_are_hard_gates() -> None:
     assert "root cause note" in by_id["root_cause_before_fix"].required_evidence
 
 
+def test_operator_expectation_guardrail_is_warn_first_preflight() -> None:
+    contract = default_coding_guardrails()
+    validation = validate_coding_guardrails(contract)
+    by_id = {item.guardrail_id: item for item in contract.items}
+    guardrail = by_id["autonomous_pattern_detection_before_completion"]
+
+    assert validation.valid is True
+    assert guardrail.gate_level == "soft"
+    assert "operator_expectation_autonomy_model" in guardrail.source_patterns
+    assert "pattern classification" in guardrail.required_evidence
+    assert any("Documents-Root-Hygiene" in behavior for behavior in guardrail.required_behavior)
+
+
 def test_missing_required_guardrail_invalidates_contract() -> None:
     contract = default_coding_guardrails()
     broken = replace(

@@ -13,7 +13,7 @@
 ## Lab / Arena
 
 - Lab: `PASS`, Retrieval `4`, Code-QA `PASS`, Runtime-Aktion `False`
-- Arena: `PASS`, Aufgaben `30`, Shadow Wins `13`, Baseline Wins `0`, Shadow FAIL `0`
+- Arena: `PASS`, Aufgaben `30`, Shadow Wins `12`, Baseline Wins `0`, Shadow FAIL `0`
 
 ## Entscheidung
 

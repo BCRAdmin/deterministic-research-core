@@ -170,7 +170,7 @@
   ],
   "decision_frame": "copy_or_rebuild_the_best_parts",
   "gated_ready_count": 1,
-  "generated_at": "2026-05-28T12:37:26+00:00",
+  "generated_at": "2026-05-28T17:24:13+00:00",
   "github_digest": {
     "finding": "Existing gh CLI is enough for read-only Dependabot digest; no Jarvis connector is needed for this function yet.",
     "mutations_attempted": false,

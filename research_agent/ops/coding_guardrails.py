@@ -15,8 +15,9 @@ REQUIRED_GUARDRAIL_IDS = (
     "state_assumptions_and_tradeoffs",
     "minimal_surgical_change",
     "goal_driven_execution",
-    "evidence_before_completion",
     "root_cause_before_fix",
+    "autonomous_pattern_detection_before_completion",
+    "evidence_before_completion",
     "explicit_branch_finish",
     "skill_behavior_pressure_test",
 )
@@ -115,20 +116,6 @@ def default_coding_guardrails() -> CodingGuardrailContract:
             applies_to=("planning", "implementation", "handoff"),
         ),
         CodingGuardrail(
-            guardrail_id="evidence_before_completion",
-            title="Keine Abschlussbehauptung ohne frische Evidenz",
-            source_patterns=("superpowers:verification-before-completion",),
-            trigger="vor Erfolgsmeldung, Commit, PR, Handoff oder 'fertig'-Claim",
-            required_behavior=(
-                "frischen passenden Verify-Befehl ausfuehren",
-                "Output und Exit-Code lesen",
-                "Status nur so stark formulieren, wie die Evidenz traegt",
-            ),
-            required_evidence=("fresh verification evidence", "command exit status", "remaining risk if any"),
-            gate_level="hard",
-            applies_to=("completion", "commit", "handoff", "review"),
-        ),
-        CodingGuardrail(
             guardrail_id="root_cause_before_fix",
             title="Root Cause vor Fix",
             source_patterns=("superpowers:systematic-debugging",),
@@ -142,6 +129,46 @@ def default_coding_guardrails() -> CodingGuardrailContract:
             required_evidence=("root cause note", "reproduction or diagnostic evidence", "fix verification"),
             gate_level="hard",
             applies_to=("debugging", "ci_failure", "runtime_failure"),
+        ),
+        CodingGuardrail(
+            guardrail_id="autonomous_pattern_detection_before_completion",
+            title="Autonome Mustererkennung vor Abschluss",
+            source_patterns=(
+                "operator_expectation_autonomy_model",
+                "documents-root-hygiene",
+                "vega-operator-learning",
+            ),
+            trigger=(
+                "Operator-Korrektur, wiederkehrender Dirt, Pfadchaos, Scope-Drift "
+                "oder sauber/fertig/geschlossen-Claim"
+            ),
+            required_behavior=(
+                "Fehlmuster klassifizieren, bevor der Einzelfix als abgeschlossen gilt",
+                "bestehende Regel, Verifier oder Memory-Spur suchen",
+                "fehlende Haertung Warn-First als Review-, Verifier- oder Memory-Delta routen",
+                "Documents-Root-Hygiene bei Vega/Vivi-Systemarbeit als Standard-Preflight beruecksichtigen",
+            ),
+            required_evidence=(
+                "pattern classification",
+                "root cause or existing-rule check",
+                "verifier or memory route",
+            ),
+            gate_level="soft",
+            applies_to=("completion", "system_hardening", "docs_change", "repo_hygiene", "agent_ops"),
+        ),
+        CodingGuardrail(
+            guardrail_id="evidence_before_completion",
+            title="Keine Abschlussbehauptung ohne frische Evidenz",
+            source_patterns=("superpowers:verification-before-completion",),
+            trigger="vor Erfolgsmeldung, Commit, PR, Handoff oder 'fertig'-Claim",
+            required_behavior=(
+                "frischen passenden Verify-Befehl ausfuehren",
+                "Output und Exit-Code lesen",
+                "Status nur so stark formulieren, wie die Evidenz traegt",
+            ),
+            required_evidence=("fresh verification evidence", "command exit status", "remaining risk if any"),
+            gate_level="hard",
+            applies_to=("completion", "commit", "handoff", "review"),
         ),
         CodingGuardrail(
             guardrail_id="explicit_branch_finish",
@@ -226,6 +253,11 @@ def validate_coding_guardrails(contract: CodingGuardrailContract) -> CodingGuard
         errors.append("completion_guardrail_not_hard")
     if by_id.get("root_cause_before_fix", None) and by_id["root_cause_before_fix"].gate_level != "hard":
         errors.append("debugging_guardrail_not_hard")
+    if (
+        by_id.get("autonomous_pattern_detection_before_completion", None)
+        and by_id["autonomous_pattern_detection_before_completion"].gate_level != "soft"
+    ):
+        errors.append("operator_expectation_guardrail_not_warn_first")
 
     return CodingGuardrailValidation(valid=not errors, errors=tuple(errors), warnings=tuple(warnings))
 
@@ -295,6 +327,7 @@ def render_coding_guardrails_markdown(
             "",
             "- Bei kleinen klaren Aufgaben nur die minimal passende Guardrail anwenden.",
             "- Bei Bugs ist `root_cause_before_fix` hart.",
+            "- Bei Operator-Korrektur, wiederkehrendem Dirt, Pfadchaos oder Scope-Drift ist `autonomous_pattern_detection_before_completion` Warn-First-Preflight.",
             "- Vor Abschlussclaims ist `evidence_before_completion` hart.",
             "- Git-/Worktree- und Skill-Test-Patterns sind situativ, nicht global.",
         ]

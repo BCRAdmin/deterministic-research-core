@@ -10,8 +10,9 @@
     "state_assumptions_and_tradeoffs",
     "minimal_surgical_change",
     "goal_driven_execution",
-    "evidence_before_completion",
     "root_cause_before_fix",
+    "autonomous_pattern_detection_before_completion",
+    "evidence_before_completion",
     "explicit_branch_finish",
     "skill_behavior_pressure_test"
   ],
@@ -29,6 +30,7 @@
   ],
   "verifiers": [
     ".venv/bin/pytest -q research_agent/tests/test_agent_os_coding_guardrails.py",
+    "python3 scripts/ops/documents_root_hygiene_check.py --json",
     "python3 scripts/ops/agent_os_readiness.py"
   ]
 }

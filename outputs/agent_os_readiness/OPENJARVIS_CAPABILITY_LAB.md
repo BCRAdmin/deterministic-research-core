@@ -3,7 +3,7 @@
 - Status: `PASS`
 - Modus: `shadow_read_only`
 - Source of Truth: `False`
-- Dokumente im sicheren Index: `85`
+- Dokumente im sicheren Index: `87`
 - Preflight: `PASS` (0 Blocker)
 - Retrieval Benchmark: `PASS` (4/4 PASS)
 - Code-QA Shadow: `PASS` (3/3 PASS)
@@ -26,7 +26,7 @@
 - Status: `PASS`
 - Fehlende Begriffe: `none`
 - Fehlende Quellenmuster: `none`
-- Top-Quellen: `configs/openjarvis/openjarvis_policy.json, Latest Session Context.md, outputs/project_intelligence_graph/quality_os_operator_surface.json`
+- Top-Quellen: `configs/openjarvis/openjarvis_policy.json, Latest Session Context.md, configs/openjarvis/openjarvis_decision_gauntlet_plan.json`
 
 ### operator_gate_boundary
 
@@ -47,7 +47,7 @@
 - Status: `PASS`
 - Fehlende Begriffe: `none`
 - Fehlende Quellenmuster: `none`
-- Top-Quellen: `configs/openjarvis/openjarvis_policy.json, Latest Session Context.md, outputs/project_intelligence_graph/quality_os_operator_surface.json`
+- Top-Quellen: `configs/openjarvis/openjarvis_policy.json, Latest Session Context.md, configs/openjarvis/openjarvis_decision_gauntlet_plan.json`
 
 ## Code-QA Shadow
 

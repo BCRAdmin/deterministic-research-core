@@ -133,7 +133,7 @@
       "workstream_title": "Source-, Secret- und Index-Hygiene"
     },
     {
-      "actual": 85,
+      "actual": 87,
       "artifact": "lab",
       "assert": "min",
       "id": "src_003_source_count_min",
@@ -405,7 +405,7 @@
       "workstream_title": "Arena- und Entscheidungsqualit\u00e4t"
     },
     {
-      "actual": 13,
+      "actual": 12,
       "artifact": "arena",
       "assert": "min",
       "id": "arena_005_shadow_min_wins",
@@ -823,7 +823,7 @@
       "workstream_title": "Write-/Fix-Sandbox-Pilot"
     },
     {
-      "actual": 13,
+      "actual": 12,
       "artifact": "arena",
       "assert": "min",
       "id": "roi_001_shadow_threshold",

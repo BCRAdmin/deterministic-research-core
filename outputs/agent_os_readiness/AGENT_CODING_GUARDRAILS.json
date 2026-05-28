@@ -81,31 +81,6 @@
       },
       {
         "applies_to": [
-          "completion",
-          "commit",
-          "handoff",
-          "review"
-        ],
-        "gate_level": "hard",
-        "guardrail_id": "evidence_before_completion",
-        "required_behavior": [
-          "frischen passenden Verify-Befehl ausfuehren",
-          "Output und Exit-Code lesen",
-          "Status nur so stark formulieren, wie die Evidenz traegt"
-        ],
-        "required_evidence": [
-          "fresh verification evidence",
-          "command exit status",
-          "remaining risk if any"
-        ],
-        "source_patterns": [
-          "superpowers:verification-before-completion"
-        ],
-        "title": "Keine Abschlussbehauptung ohne frische Evidenz",
-        "trigger": "vor Erfolgsmeldung, Commit, PR, Handoff oder 'fertig'-Claim"
-      },
-      {
-        "applies_to": [
           "debugging",
           "ci_failure",
           "runtime_failure"
@@ -128,6 +103,60 @@
         ],
         "title": "Root Cause vor Fix",
         "trigger": "Bug, Testfehler, Buildfehler, Runtime-Anomalie oder wiederholter Fix-Fail"
+      },
+      {
+        "applies_to": [
+          "completion",
+          "system_hardening",
+          "docs_change",
+          "repo_hygiene",
+          "agent_ops"
+        ],
+        "gate_level": "soft",
+        "guardrail_id": "autonomous_pattern_detection_before_completion",
+        "required_behavior": [
+          "Fehlmuster klassifizieren, bevor der Einzelfix als abgeschlossen gilt",
+          "bestehende Regel, Verifier oder Memory-Spur suchen",
+          "fehlende Haertung Warn-First als Review-, Verifier- oder Memory-Delta routen",
+          "Documents-Root-Hygiene bei Vega/Vivi-Systemarbeit als Standard-Preflight beruecksichtigen"
+        ],
+        "required_evidence": [
+          "pattern classification",
+          "root cause or existing-rule check",
+          "verifier or memory route"
+        ],
+        "source_patterns": [
+          "operator_expectation_autonomy_model",
+          "documents-root-hygiene",
+          "vega-operator-learning"
+        ],
+        "title": "Autonome Mustererkennung vor Abschluss",
+        "trigger": "Operator-Korrektur, wiederkehrender Dirt, Pfadchaos, Scope-Drift oder sauber/fertig/geschlossen-Claim"
+      },
+      {
+        "applies_to": [
+          "completion",
+          "commit",
+          "handoff",
+          "review"
+        ],
+        "gate_level": "hard",
+        "guardrail_id": "evidence_before_completion",
+        "required_behavior": [
+          "frischen passenden Verify-Befehl ausfuehren",
+          "Output und Exit-Code lesen",
+          "Status nur so stark formulieren, wie die Evidenz traegt"
+        ],
+        "required_evidence": [
+          "fresh verification evidence",
+          "command exit status",
+          "remaining risk if any"
+        ],
+        "source_patterns": [
+          "superpowers:verification-before-completion"
+        ],
+        "title": "Keine Abschlussbehauptung ohne frische Evidenz",
+        "trigger": "vor Erfolgsmeldung, Commit, PR, Handoff oder 'fertig'-Claim"
       },
       {
         "applies_to": [

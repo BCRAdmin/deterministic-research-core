@@ -183,6 +183,19 @@
       "triggers": []
     },
     {
+      "description": "\"\"\"Check that Vega/Vivi did not create project folders in Documents root.\"\"\"",
+      "finding_count": 0,
+      "highest_guardrail_severity": "none",
+      "operator_gate_required": false,
+      "path": "scripts/ops/documents_root_hygiene_check.py",
+      "risk_class": "R1_local_read_only_helper",
+      "runtime_decision": "approved_local_review_helper",
+      "skill_id": "documents-root-hygiene-check-11888f01",
+      "source_type": "playbook_or_helper",
+      "title": "Documents Root Hygiene Check",
+      "triggers": []
+    },
+    {
       "description": "\"\"\"Repo entrypoint for the local Vega multi-agent research skill runner.\"\"\"",
       "finding_count": 0,
       "highest_guardrail_severity": "none",
