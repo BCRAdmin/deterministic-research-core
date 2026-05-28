@@ -33,7 +33,7 @@
     }
   ],
   "gauntlet_id": "openjarvis_decision_gauntlet_v1",
-  "generated_at": "2026-05-28T18:07:10+00:00",
+  "generated_at": "2026-05-28T18:39:11+00:00",
   "lab_summary": {
     "code_qa_status": "PASS",
     "retrieval_pass_count": 4,
@@ -577,8 +577,8 @@
           "actual": true,
           "artifact": "file",
           "assert": "exists",
-          "detail": "/Users/BjornRosinger/Documents/New project/company-dossier-lab/room16-app/package.json",
-          "file": "/Users/BjornRosinger/Documents/New project/company-dossier-lab/room16-app/package.json",
+          "detail": "/Users/BjornRosinger/Documents/DreamFactory/Project-Intelligence-Graph/company-dossier-lab/room16-app/package.json",
+          "file": "/Users/BjornRosinger/Documents/DreamFactory/Project-Intelligence-Graph/company-dossier-lab/room16-app/package.json",
           "id": "qa_005_room16_package_exists",
           "status": "PASS",
           "title": "Room16 package.json ist vorhanden"
@@ -610,8 +610,8 @@
           "actual": true,
           "artifact": "file",
           "assert": "exists",
-          "detail": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/quality_os_operator_surface.json",
-          "file": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/quality_os_operator_surface.json",
+          "detail": "/Users/BjornRosinger/Documents/DreamFactory/Project-Intelligence-Graph/outputs/project_intelligence_graph/quality_os_operator_surface.json",
+          "file": "/Users/BjornRosinger/Documents/DreamFactory/Project-Intelligence-Graph/outputs/project_intelligence_graph/quality_os_operator_surface.json",
           "id": "surf_002_pig_operator_surface_exists",
           "status": "PASS",
           "title": "PIG Operator Surface existiert"
@@ -621,7 +621,7 @@
           "artifact": "json_file",
           "assert": "equals",
           "expected": true,
-          "file": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/quality_os_operator_surface.json",
+          "file": "/Users/BjornRosinger/Documents/DreamFactory/Project-Intelligence-Graph/outputs/project_intelligence_graph/quality_os_operator_surface.json",
           "id": "surf_003_pig_surface_has_arena",
           "path": "control_capabilities.openjarvis_capability_arena",
           "status": "PASS",

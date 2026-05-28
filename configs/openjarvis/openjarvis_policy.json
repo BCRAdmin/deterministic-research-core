@@ -49,7 +49,7 @@
   "source_sets": [
     {
       "id": "agent_ops_openjarvis_docs",
-      "root": "/Users/BjornRosinger/Documents/New project 2",
+      "root": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops",
       "include_paths": [
         "docs/openjarvis",
         "configs/openjarvis/openjarvis_policy.json",
@@ -61,7 +61,7 @@
     },
     {
       "id": "agent_ops_quality_os",
-      "root": "/Users/BjornRosinger/Documents/New project 2",
+      "root": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops",
       "include_paths": [
         "docs/agent_os",
         "docs/skills",
@@ -83,7 +83,7 @@
     },
     {
       "id": "pig_surface",
-      "root": "/Users/BjornRosinger/Documents/New project",
+      "root": "/Users/BjornRosinger/Documents/DreamFactory/Project-Intelligence-Graph",
       "include_paths": [
         "scripts/project_intelligence_graph/pig.py",
         "outputs/project_intelligence_graph/operator_brief.json",
@@ -165,7 +165,7 @@
   "qa_shadow_projects": [
     {
       "id": "agent_ops",
-      "root": "/Users/BjornRosinger/Documents/New project 2",
+      "root": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops",
       "expected_script_keywords": [
         "pytest",
         "ruff",
@@ -185,7 +185,7 @@
     },
     {
       "id": "company_dossier_lab",
-      "root": "/Users/BjornRosinger/Documents/New project/company-dossier-lab",
+      "root": "/Users/BjornRosinger/Documents/DreamFactory/Project-Intelligence-Graph/company-dossier-lab",
       "expected_script_keywords": [
         "verify",
         "test",

@@ -187,17 +187,17 @@
     {
       "code": "file_too_large",
       "max_file_bytes": 1200000,
-      "path": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/full_check_report.json",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Project-Intelligence-Graph/outputs/project_intelligence_graph/full_check_report.json",
       "severity": "warn",
-      "size_bytes": 1987257,
+      "size_bytes": 2052721,
       "source_set_id": "pig_surface"
     },
     {
       "code": "file_too_large",
       "max_file_bytes": 1200000,
-      "path": "/Users/BjornRosinger/Documents/New project/scripts/project_intelligence_graph/pig.py",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Project-Intelligence-Graph/scripts/project_intelligence_graph/pig.py",
       "severity": "warn",
-      "size_bytes": 1231309,
+      "size_bytes": 1231660,
       "source_set_id": "pig_surface"
     }
   ],

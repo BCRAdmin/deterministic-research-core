@@ -108,7 +108,7 @@
         {"id": "qa_002_code_qa_projects", "title": "Mindestens 3 Projekte werden erkannt", "artifact": "lab", "assert": "min", "path": "code_qa_shadow.pass_count", "minimum": 3},
         {"id": "qa_003_agent_ops_pytest_exists", "title": "Agent-Ops Pytest ist vorhanden", "artifact": "file", "assert": "exists", "file": "pyproject.toml"},
         {"id": "qa_004_lioncom_package_exists", "title": "LIONCOM package.json ist vorhanden", "artifact": "file", "assert": "exists", "file": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/package.json"},
-        {"id": "qa_005_room16_package_exists", "title": "Room16 package.json ist vorhanden", "artifact": "file", "assert": "exists", "file": "/Users/BjornRosinger/Documents/New project/company-dossier-lab/room16-app/package.json"}
+        {"id": "qa_005_room16_package_exists", "title": "Room16 package.json ist vorhanden", "artifact": "file", "assert": "exists", "file": "/Users/BjornRosinger/Documents/DreamFactory/Project-Intelligence-Graph/company-dossier-lab/room16-app/package.json"}
       ]
     },
     {
@@ -118,8 +118,8 @@
       "required_outcome": "Agent-OS, PIG und LIONCOM zeigen Lab, Arena und Decision-Gauntlet ohne Runtime-Freigabe.",
       "tests": [
         {"id": "surf_001_agent_os_arena_scoreboard", "title": "Agent-OS Arena-Scoreboard existiert", "artifact": "file", "assert": "exists", "file": "outputs/agent_os_readiness/OPENJARVIS_CAPABILITY_ARENA_SCOREBOARD.json"},
-        {"id": "surf_002_pig_operator_surface_exists", "title": "PIG Operator Surface existiert", "artifact": "file", "assert": "exists", "file": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/quality_os_operator_surface.json"},
-        {"id": "surf_003_pig_surface_has_arena", "title": "PIG Surface kennt OpenJarvis Arena", "artifact": "json_file", "assert": "equals", "file": "/Users/BjornRosinger/Documents/New project/outputs/project_intelligence_graph/quality_os_operator_surface.json", "path": "control_capabilities.openjarvis_capability_arena", "expected": true},
+        {"id": "surf_002_pig_operator_surface_exists", "title": "PIG Operator Surface existiert", "artifact": "file", "assert": "exists", "file": "/Users/BjornRosinger/Documents/DreamFactory/Project-Intelligence-Graph/outputs/project_intelligence_graph/quality_os_operator_surface.json"},
+        {"id": "surf_003_pig_surface_has_arena", "title": "PIG Surface kennt OpenJarvis Arena", "artifact": "json_file", "assert": "equals", "file": "/Users/BjornRosinger/Documents/DreamFactory/Project-Intelligence-Graph/outputs/project_intelligence_graph/quality_os_operator_surface.json", "path": "control_capabilities.openjarvis_capability_arena", "expected": true},
         {"id": "surf_004_lioncom_types_have_arena", "title": "LIONCOM Types enthalten Arena-Surface", "artifact": "file", "assert": "contains_text", "file": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/lib/types.ts", "expected": "openjarvis_capability_arena"},
         {"id": "surf_005_lioncom_ui_has_arena", "title": "LIONCOM UI zeigt Arena", "artifact": "file", "assert": "contains_text", "file": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/components/portfolio-control-tower-page.tsx", "expected": "OpenJarvis Capability Arena"}
       ]

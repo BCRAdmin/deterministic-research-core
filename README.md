@@ -6,14 +6,16 @@ Canonical local path:
 /Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops
 ```
 
-Legacy compatibility path:
+Retired legacy path:
 
 ```text
 /Users/BjornRosinger/Documents/New project 2
 ```
 
-`New project 2` is only a symlink kept for older Vault notes, scripts, and
-audit packages. New work should use the canonical Room16 path above.
+`New project 2` must not exist as a root folder or root symlink in
+`/Users/BjornRosinger/Documents`. The old compatibility link was archived under
+`/Users/BjornRosinger/Documents/Codex/path-hygiene-compatibility-links/`.
+New work must use the canonical Room16 path above.
 
 This project keeps LLM agents out of the accounting and calculation layer.
 

@@ -7,14 +7,22 @@ from pathlib import Path
 import re
 
 
-LEGACY_WORKSPACE_NAMES = {
-    "New project": "legacy_active_pig_lioncom_room16_workspace",
-}
-
-MIGRATED_COMPATIBILITY_LINKS = {
+RETIRED_ROOT_NAMES = {
+    "New project": (
+        "retired_new_project_root_present",
+        "project_intelligence_graph",
+    ),
     "New project 2": (
-        "legacy_research_agent_ops_compatibility_symlink",
+        "retired_new_project_2_root_present",
         "research_agent_ops",
+    ),
+    "Room 16 Reports": (
+        "retired_room16_reports_root_present",
+        "room16_reports",
+    ),
+    "wp-stb-roesinger-redesign": (
+        "retired_wp_stb_root_present",
+        "client_prototype_wp_stb",
     ),
 }
 
@@ -25,8 +33,8 @@ FORBIDDEN_ROOT_DIRS = {
     "prompts": "root_runtime_leak",
 }
 
-KNOWN_RENAME_REVIEW_DIRS = {
-    "Midjurney": "documented_project_but_misspelled_name",
+ALLOWED_OPERATOR_APP_ROOTS = {
+    "Midjurney",
 }
 
 GENERIC_NAME_PATTERNS = (
@@ -50,12 +58,24 @@ class DocumentsRootFinding:
 
 def canonical_paths(documents_root: Path) -> dict[str, Path]:
     return {
+        "project_intelligence_graph": documents_root
+        / "DreamFactory"
+        / "Project-Intelligence-Graph",
         "room16_reports": documents_root / "DreamFactory" / "Room16" / "Reports",
         "research_agent_ops": documents_root
         / "DreamFactory"
         / "Room16"
         / "research-agent-ops",
         "client_prototypes": documents_root / "BCR Ventures" / "client-prototypes",
+        "client_prototype_wp_stb": documents_root
+        / "BCR Ventures"
+        / "client-prototypes"
+        / "wp-stb-roesinger-redesign",
+        "root_compatibility_links_archive": documents_root
+        / "Codex"
+        / "path-hygiene-compatibility-links"
+        / "2026-05-28"
+        / "root-links",
         "path_hygiene_quarantine": documents_root
         / "Codex"
         / "path-hygiene-quarantine"
@@ -89,40 +109,20 @@ def scan_documents_root(documents_root: Path) -> dict[str, object]:
         if not child.is_dir() and not child.is_symlink():
             continue
         name = child.name
-        if name in LEGACY_WORKSPACE_NAMES:
+        if name in ALLOWED_OPERATOR_APP_ROOTS:
+            continue
+        if name in RETIRED_ROOT_NAMES:
+            code, canonical_key = RETIRED_ROOT_NAMES[name]
+            canonical_path = paths[canonical_key]
             findings.append(
                 DocumentsRootFinding(
-                    "warning",
+                    "error",
                     str(child),
-                    LEGACY_WORKSPACE_NAMES[name],
-                    "Legacy workspace remains allowed only because it is already referenced.",
-                    "Do not create more generic `New project` workspaces; migrate this one formally later.",
+                    code,
+                    "Retired legacy root path must not exist directly under Documents.",
+                    f"Use canonical path `{canonical_path}`. Historical root links, if needed, belong under `{paths['root_compatibility_links_archive']}`.",
                 )
             )
-            continue
-        if name in MIGRATED_COMPATIBILITY_LINKS:
-            code, canonical_key = MIGRATED_COMPATIBILITY_LINKS[name]
-            canonical_path = paths[canonical_key]
-            if child.is_symlink() and child.resolve() == canonical_path.resolve():
-                findings.append(
-                    DocumentsRootFinding(
-                        "warning",
-                        str(child),
-                        code,
-                        "Migrated legacy workspace root link exists for compatibility only.",
-                        f"Use canonical workspace `{canonical_path}` for new work.",
-                    )
-                )
-            else:
-                findings.append(
-                    DocumentsRootFinding(
-                        "error",
-                        str(child),
-                        "migrated_workspace_must_be_symlink",
-                        "New project 2 was migrated and must not be a real Documents-root workspace anymore.",
-                        f"Move the real workspace to `{canonical_path}` and leave only a compatibility symlink.",
-                    )
-                )
             continue
         if name in FORBIDDEN_ROOT_DIRS:
             findings.append(
@@ -132,17 +132,6 @@ def scan_documents_root(documents_root: Path) -> dict[str, object]:
                     FORBIDDEN_ROOT_DIRS[name],
                     "Project or runtime material is misplaced directly under Documents.",
                     "Move it into an approved namespace such as DreamFactory, BCR Ventures, Codex, or Obsidian.",
-                )
-            )
-            continue
-        if name in KNOWN_RENAME_REVIEW_DIRS:
-            findings.append(
-                DocumentsRootFinding(
-                    "warning",
-                    str(child),
-                    KNOWN_RENAME_REVIEW_DIRS[name],
-                    "Known project folder remains usable but has a spelling/name issue.",
-                    "Migrate it with Vault-link updates instead of creating another root folder.",
                 )
             )
             continue
@@ -157,29 +146,19 @@ def scan_documents_root(documents_root: Path) -> dict[str, object]:
                 )
             )
 
-    reports_link = root / "Room 16 Reports"
+    canonical_pig = paths["project_intelligence_graph"]
+    if not canonical_pig.exists():
+        findings.append(
+            DocumentsRootFinding(
+                "error",
+                str(canonical_pig),
+                "canonical_project_intelligence_graph_missing",
+                "Canonical Project Intelligence Graph workspace is missing.",
+                "Restore it before running Vega/PIG/LIONCOM/Room16 control flows.",
+            )
+        )
+
     canonical_reports = paths["room16_reports"]
-    if reports_link.exists() or reports_link.is_symlink():
-        if reports_link.is_symlink() and reports_link.resolve() == canonical_reports.resolve():
-            findings.append(
-                DocumentsRootFinding(
-                    "warning",
-                    str(reports_link),
-                    "legacy_compatibility_symlink",
-                    "Legacy Room 16 Reports root link exists for compatibility only.",
-                    f"Write new Room16 reports to `{canonical_reports}`.",
-                )
-            )
-        else:
-            findings.append(
-                DocumentsRootFinding(
-                    "error",
-                    str(reports_link),
-                    "room16_reports_root_folder",
-                    "Room 16 Reports must not be a real root folder anymore.",
-                    f"Move data to `{canonical_reports}` and leave only a compatibility symlink if needed.",
-                )
-            )
     if not canonical_reports.exists():
         findings.append(
             DocumentsRootFinding(
@@ -203,29 +182,7 @@ def scan_documents_root(documents_root: Path) -> dict[str, object]:
             )
         )
 
-    prototype_link = root / "wp-stb-roesinger-redesign"
-    canonical_prototype = paths["client_prototypes"] / "wp-stb-roesinger-redesign"
-    if prototype_link.exists() or prototype_link.is_symlink():
-        if prototype_link.is_symlink() and prototype_link.resolve() == canonical_prototype.resolve():
-            findings.append(
-                DocumentsRootFinding(
-                    "warning",
-                    str(prototype_link),
-                    "legacy_client_prototype_symlink",
-                    "Legacy wp-stb root link exists for compatibility only.",
-                    f"Write new prototype files to `{canonical_prototype}`.",
-                )
-            )
-        else:
-            findings.append(
-                DocumentsRootFinding(
-                    "error",
-                    str(prototype_link),
-                    "client_prototype_must_live_under_bcr_ventures",
-                    "Client prototype material must not be a real root folder.",
-                    f"Move it to `{canonical_prototype}` and leave only a compatibility symlink if needed.",
-                )
-            )
+    canonical_prototype = paths["client_prototype_wp_stb"]
     if not canonical_prototype.exists():
         findings.append(
             DocumentsRootFinding(

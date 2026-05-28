@@ -43,10 +43,10 @@
       "snippet": "3. Nach 5-10 echten internen L\u00e4ufen entscheiden, ob daraus eine getrennte kleine App analog Room16 entsteht. Status: 5 technische Piloten gruen; keine App jetzt."
     },
     {
-      "line": 28,
+      "line": 24,
       "path": "docs/media_ingest/MEDIA_SOURCE_POLICY.md",
       "score": -3.6670987282384284,
-      "snippet": "- source URL or local source path"
+      "snippet": "## Download Rule"
     },
     {
       "line": 9,
@@ -55,12 +55,12 @@
       "snippet": "# Multi-Agent Research Build Roadmap"
     },
     {
-      "line": 6,
+      "line": 3,
       "path": "docs/media_ingest/MEDIA_SOURCE_POLICY.md",
       "score": -3.5254937552549364,
-      "snippet": "## Allowed Sources"
+      "snippet": "Status: internal policy"
     }
   ],
-  "indexed_rows": 7101,
+  "indexed_rows": 7103,
   "query": "Hermes OR OpenClaw OR Vivi"
 }
