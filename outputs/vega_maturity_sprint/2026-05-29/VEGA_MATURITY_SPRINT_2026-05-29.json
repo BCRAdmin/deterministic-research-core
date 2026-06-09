@@ -1,0 +1,168 @@
+{
+  "deliverables": [
+    {
+      "artifact_states": {
+        "internal_review": {
+          "api_visibility": "internal_only",
+          "member_route": "blocked",
+          "public_route": "blocked",
+          "sitemap": "excluded"
+        },
+        "member_brief": {
+          "api_visibility": "member_candidate_only_after_gate",
+          "member_route": "requires_member_legal_auth_payment_go",
+          "public_route": "blocked_or_teaser_only_after_legal_go",
+          "sitemap": "excluded_unless_public_teaser_go"
+        },
+        "public_brief": {
+          "api_visibility": "public_candidate_only_after_gate",
+          "member_route": "blocked",
+          "public_route": "requires_policy_source_freshness_operator_legal_go",
+          "sitemap": "included_only_after_go"
+        },
+        "research_seed": {
+          "api_visibility": "internal_only",
+          "member_route": "blocked",
+          "public_route": "blocked",
+          "sitemap": "excluded"
+        }
+      },
+      "chain": [
+        "room16_report",
+        "artifact_state",
+        "policy_scan",
+        "source_registry",
+        "surface_visibility"
+      ],
+      "evidence": "productization=local_hardening_pass_external_blocked; effectivePublic=0; effectiveMember=0",
+      "id": "publishability_contract",
+      "open_gate": "actual external public/member route activation remains operator/legal/data-gated",
+      "purpose": "Bindet Room16-Report, artifact_state, policy_scan, source_registry und surface_visibility in eine lokale Stop-Logik.",
+      "status": "pass_local_contract_external_blocked",
+      "title": "End-to-end Publishability Contract"
+    },
+    {
+      "dashboard_surface": "local_report_first; LIONCOM panel wiring remains next local integration block",
+      "event_namespace": "vega.*",
+      "events": [
+        "vega.publishability.contract_evaluated",
+        "vega.policy.scan_completed",
+        "vega.source_registry.coverage_checked",
+        "vega.freshness.stop_triggered",
+        "vega.rollback.drill_recorded",
+        "vega.supply_chain.local_dependency_reviewed"
+      ],
+      "evidence": "6 events; 6 metrics; no external telemetry sink configured",
+      "id": "observability_baseline",
+      "metrics": [
+        "vega_publishability_block_total",
+        "vega_policy_violation_total",
+        "vega_source_claim_coverage_ratio",
+        "vega_freshness_lag_seconds",
+        "vega_recovery_time_seconds",
+        "vega_rollback_drill_success_total"
+      ],
+      "open_gate": "tool choice and production telemetry sink remain operator-gated",
+      "purpose": "Definiert eine OpenTelemetry-kompatible lokale Event- und Metriklinie f\u00fcr Request-, Job-, Publish-, Freshness-, Policy-, Source- und Recovery-Signale.",
+      "status": "pass_local_schema_defined",
+      "title": "Observability Baseline"
+    },
+    {
+      "drill_evidence": [
+        {
+          "drill": "route_block",
+          "evidence": "internal_review and research_seed map to public_route=blocked",
+          "status": "pass_contract_simulated"
+        },
+        {
+          "drill": "catalog_block",
+          "evidence": "effectivePublic=0 effectiveMember=0",
+          "status": "pass_contract_simulated"
+        },
+        {
+          "drill": "api_block",
+          "evidence": "api_visibility remains internal_only unless artifact and operator gates pass",
+          "status": "pass_contract_simulated"
+        },
+        {
+          "drill": "surface_unpublish",
+          "evidence": "surface visibility derives from contract state and can return to blocked",
+          "status": "pass_contract_simulated"
+        }
+      ],
+      "evidence": "route_block=pass_contract_simulated; catalog_block=pass_contract_simulated; api_block=pass_contract_simulated; surface_unpublish=pass_contract_simulated",
+      "id": "rollback_kill_switch",
+      "open_gate": "real production rollback drill is blocked until there is an operator-approved production-like environment",
+      "purpose": "H\u00e4lt lokale Route-, Catalog-, API- und Surface-Unpublish-Drills als R\u00fccknahmevertrag fest.",
+      "status": "pass_local_contract_drill",
+      "title": "Rollback / Kill-Switch Rail"
+    },
+    {
+      "evidence": "policy minimum defined; no SBOM/provenance claim issued",
+      "id": "supply_chain_compliance_minimum",
+      "minimum_line": {
+        "approval_gate": "operator_legal_go_required",
+        "non_pypi_dependency_policy": {
+          "requirements": [
+            "origin",
+            "local_path",
+            "owner",
+            "review_date",
+            "risk_note",
+            "recheck_command"
+          ],
+          "tradingagents": "local_dependency_allowlist_review_required"
+        },
+        "provenance_attestation": "required_before_external_release",
+        "responsibility_matrix": "operator_legal_engineering_required_before_reopen",
+        "ropa": "draft_required_before_real_person_or_customer_data",
+        "sbom": "required_before_external_release"
+      },
+      "open_gate": "actual SBOM, provenance and legal artifacts remain next implementation work",
+      "purpose": "Schlie\u00dft den Null-Alert-Irrtum und macht non-PyPI/lokale Dependencies sowie Compliance-Betriebsartefakte sichtbar.",
+      "status": "pass_local_policy_defined_operator_gated",
+      "title": "Supply-Chain / Compliance Minimum"
+    }
+  ],
+  "external_ready": false,
+  "generated_at": "2026-05-28T23:19:40Z",
+  "hard_gates_kept_closed": [
+    "deploy",
+    "public_or_production",
+    "payment_or_checkout",
+    "auth_or_credentials",
+    "external_sends",
+    "real_customer_data",
+    "delete",
+    "room16_rerun",
+    "financial_advice_or_transaction_language"
+  ],
+  "no_external_actions": true,
+  "operator_decision": {
+    "blocked_until_operator_go": [
+      "legal/compliance review",
+      "real 10D data review",
+      "production observability decision",
+      "rollback drill acceptance",
+      "external surface/domain/analytics decision"
+    ],
+    "next_safe_block": "wire this contract into the operator surface and keep Quellwert frozen until explicit reopen",
+    "recommendation": "continue_local_maturity_before_product_reopen"
+  },
+  "production_ready": false,
+  "source_report": {
+    "hash_verified_if_present": true,
+    "path": "/Users/BjornRosinger/Downloads/deep-research-report (1).md",
+    "sha256": "d166c2352cd0d564d4ed7237175e4733ef4d071df7c9e66f59bee7afd13a4bb0"
+  },
+  "sprint_id": "vega_maturity_sprint_2026_05_29",
+  "status": "local_maturity_run_pass_operator_gated",
+  "summary": {
+    "deliverable_count": 4,
+    "failed_count": 0,
+    "productization_status": "local_hardening_pass_external_blocked",
+    "visibility_effective_member": 0,
+    "visibility_effective_public": 0,
+    "warning_count": 0
+  }
+}
