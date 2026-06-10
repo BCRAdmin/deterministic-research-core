@@ -66,3 +66,21 @@ def test_documents_root_hygiene_blocks_retired_root_names(tmp_path: Path) -> Non
         "retired_room16_reports_root_present",
         "retired_wp_stb_root_present",
     }
+
+
+def test_documents_root_hygiene_blocks_desktop_markdown(tmp_path: Path) -> None:
+    (tmp_path / "DreamFactory" / "Project-Intelligence-Graph").mkdir(parents=True)
+    (tmp_path / "DreamFactory" / "Room16" / "Reports").mkdir(parents=True)
+    (tmp_path / "DreamFactory" / "Room16" / "research-agent-ops").mkdir(parents=True)
+    (tmp_path / "BCR Ventures" / "client-prototypes" / "wp-stb-roesinger-redesign").mkdir(
+        parents=True
+    )
+    desktop = tmp_path / "Desktop"
+    desktop.mkdir()
+    (desktop / "loose-note.md").write_text("# loose\n", encoding="utf-8")
+
+    payload = scan_documents_root(tmp_path, desktop_root=desktop)
+
+    assert payload["ok"] is False
+    assert payload["error_count"] == 1
+    assert payload["findings"][0]["code"] == "desktop_markdown_output_present"

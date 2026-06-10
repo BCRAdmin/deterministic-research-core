@@ -88,8 +88,13 @@ def _is_generic_forbidden_name(name: str) -> bool:
     return any(pattern.match(name) for pattern in GENERIC_NAME_PATTERNS)
 
 
-def scan_documents_root(documents_root: Path) -> dict[str, object]:
+def scan_documents_root(documents_root: Path, desktop_root: Path | None = None) -> dict[str, object]:
     root = documents_root.expanduser().resolve()
+    desktop = (
+        desktop_root.expanduser().resolve()
+        if desktop_root is not None
+        else root.parent / "Desktop"
+    )
     paths = canonical_paths(root)
     findings: list[DocumentsRootFinding] = []
 
@@ -104,6 +109,24 @@ def scan_documents_root(documents_root: Path) -> dict[str, object]:
             )
         )
         return _payload(root, findings)
+
+    if desktop.exists():
+        for markdown_file in sorted(
+            [
+                *desktop.glob("*.md"),
+                *desktop.glob("*.markdown"),
+            ],
+            key=lambda path: path.name.lower(),
+        ):
+            findings.append(
+                DocumentsRootFinding(
+                    "error",
+                    str(markdown_file),
+                    "desktop_markdown_output_present",
+                    "Markdown files must not be left on the Desktop.",
+                    "Move durable notes into the active Obsidian vault, BCR Ventures, DreamFactory, Codex pending-placement, or another approved namespace.",
+                )
+            )
 
     for child in sorted(root.iterdir(), key=lambda path: path.name.lower()):
         if not child.is_dir() and not child.is_symlink():
