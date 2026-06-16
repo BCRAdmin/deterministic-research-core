@@ -1,7 +1,6 @@
 {
   "batch_id": "guardrail_coverage_batch_004_ir_coverage",
-  "five_day_end_date": "2026-05-22",
-  "generated_at": "2026-05-28T08:34:46+02:00",
+  "generated_at": "2026-06-15T14:16:22+02:00",
   "overall_status": {
     "benchmark_coverage": {
       "computed_rows_with_benchmark": 37,
@@ -44,101 +43,111 @@
       "benchmark": "SMH",
       "benchmark_return_pct": 3.5913,
       "excess_return_pct": -8.025,
-      "five_day_return_pct": -4.4337,
       "interpretation": "worth monitoring",
       "original_status": "manual_review",
       "rating_external_display": "Hold",
-      "ticker": "NVDA"
+      "ticker": "NVDA",
+      "window": "5D",
+      "window_return_pct": -4.4337
     },
     {
       "benchmark": "SMH",
       "benchmark_return_pct": 3.5913,
       "excess_return_pct": -6.1901,
-      "five_day_return_pct": -2.5988,
       "interpretation": "possible false pass",
       "original_status": "passed",
       "rating_external_display": "Hold",
-      "ticker": "AVGO"
+      "ticker": "AVGO",
+      "window": "5D",
+      "window_return_pct": -2.5988
     },
     {
       "benchmark": "QQQ",
       "benchmark_return_pct": 1.2145,
       "excess_return_pct": -4.695,
-      "five_day_return_pct": -3.4805,
       "interpretation": "worth monitoring",
       "original_status": "passed",
       "rating_external_display": "Hold",
-      "ticker": "GOOGL"
+      "ticker": "GOOGL",
+      "window": "5D",
+      "window_return_pct": -3.4805
     },
     {
       "benchmark": "SPY",
       "benchmark_return_pct": 0.8753,
       "excess_return_pct": -4.1866,
-      "five_day_return_pct": -3.3113,
       "interpretation": "worth monitoring",
       "original_status": "manual_review",
       "rating_external_display": "Underweight",
-      "ticker": "LCID"
+      "ticker": "LCID",
+      "window": "5D",
+      "window_return_pct": -3.3113
     },
     {
       "benchmark": "QQQ",
       "benchmark_return_pct": 1.2145,
       "excess_return_pct": -2.0085,
-      "five_day_return_pct": -0.794,
       "interpretation": "normal noise",
       "original_status": "passed",
       "rating_external_display": "Hold",
-      "ticker": "MSFT"
+      "ticker": "MSFT",
+      "window": "5D",
+      "window_return_pct": -0.794
     },
     {
       "benchmark": "QQQ",
       "benchmark_return_pct": 1.2145,
       "excess_return_pct": -1.8608,
-      "five_day_return_pct": -0.6463,
       "interpretation": "normal noise",
       "original_status": "passed",
       "rating_external_display": "Hold",
-      "ticker": "META"
+      "ticker": "META",
+      "window": "5D",
+      "window_return_pct": -0.6463
     },
     {
       "benchmark": "SPY",
       "benchmark_return_pct": 0.8753,
       "excess_return_pct": -0.8753,
-      "five_day_return_pct": 0.0,
       "interpretation": "normal noise",
       "original_status": "manual_review",
       "rating_external_display": "Hold",
-      "ticker": "PLUG"
+      "ticker": "PLUG",
+      "window": "5D",
+      "window_return_pct": 0.0
     },
     {
       "benchmark": "QQQ",
       "benchmark_return_pct": 1.2145,
       "excess_return_pct": -0.3892,
-      "five_day_return_pct": 0.8253,
       "interpretation": "normal noise",
       "original_status": "manual_review",
       "rating_external_display": "Hold",
-      "ticker": "AMZN"
+      "ticker": "AMZN",
+      "window": "5D",
+      "window_return_pct": 0.8253
     },
     {
       "benchmark": "SMH",
       "benchmark_return_pct": 3.5913,
       "excess_return_pct": 0.0435,
-      "five_day_return_pct": 3.6348,
       "interpretation": "normal noise",
       "original_status": "manual_review",
       "rating_external_display": "Hold",
-      "ticker": "MU"
+      "ticker": "MU",
+      "window": "5D",
+      "window_return_pct": 3.6348
     },
     {
       "benchmark": "QQQ",
       "benchmark_return_pct": 1.2145,
       "excess_return_pct": 0.6012,
-      "five_day_return_pct": 1.8157,
       "interpretation": "normal noise",
       "original_status": "passed",
       "rating_external_display": "Hold",
-      "ticker": "NFLX"
+      "ticker": "NFLX",
+      "window": "5D",
+      "window_return_pct": 1.8157
     }
   ],
   "top_positive_excess_returns": [
@@ -146,102 +155,113 @@
       "benchmark": "QQQ",
       "benchmark_return_pct": 1.2145,
       "excess_return_pct": 46.7967,
-      "five_day_return_pct": 48.0112,
       "interpretation": "worth monitoring",
       "original_status": "manual_review",
       "rating_external_display": "Manual Review / Preliminary Underweight",
-      "ticker": "RGTI"
+      "ticker": "RGTI",
+      "window": "5D",
+      "window_return_pct": 48.0112
     },
     {
       "benchmark": "QQQ",
       "benchmark_return_pct": 1.2145,
       "excess_return_pct": 43.2572,
-      "five_day_return_pct": 44.4717,
       "interpretation": "worth monitoring",
       "original_status": "manual_review",
       "rating_external_display": "Manual Review / Preliminary Underweight",
-      "ticker": "QBTS"
+      "ticker": "QBTS",
+      "window": "5D",
+      "window_return_pct": 44.4717
     },
     {
       "benchmark": "QQQ",
       "benchmark_return_pct": 1.2145,
       "excess_return_pct": 25.3064,
-      "five_day_return_pct": 26.5209,
       "interpretation": "worth monitoring",
       "original_status": "manual_review",
       "rating_external_display": "Manual Review / Preliminary Underweight",
-      "ticker": "ASTS"
+      "ticker": "ASTS",
+      "window": "5D",
+      "window_return_pct": 26.5209
     },
     {
       "benchmark": "QQQ",
       "benchmark_return_pct": 1.2145,
       "excess_return_pct": 21.2879,
-      "five_day_return_pct": 22.5024,
       "interpretation": "worth monitoring",
       "original_status": "manual_review",
       "rating_external_display": "Manual Review / Hold Pending FCF and Execution Evidence",
-      "ticker": "IONQ"
+      "ticker": "IONQ",
+      "window": "5D",
+      "window_return_pct": 22.5024
     },
     {
       "benchmark": "SMH",
       "benchmark_return_pct": 3.5913,
       "excess_return_pct": 14.6081,
-      "five_day_return_pct": 18.1994,
       "interpretation": "worth monitoring",
       "original_status": "manual_review",
       "rating_external_display": "Hold Pending FCF Support",
-      "ticker": "QCOM"
+      "ticker": "QCOM",
+      "window": "5D",
+      "window_return_pct": 18.1994
     },
     {
       "benchmark": "QQQ",
       "benchmark_return_pct": 1.2145,
       "excess_return_pct": 12.0236,
-      "five_day_return_pct": 13.2381,
       "interpretation": "possible false block",
       "original_status": "manual_review",
       "rating_external_display": "Hold",
-      "ticker": "ZS"
+      "ticker": "ZS",
+      "window": "5D",
+      "window_return_pct": 13.2381
     },
     {
       "benchmark": "QQQ",
       "benchmark_return_pct": 1.2145,
       "excess_return_pct": 10.4641,
-      "five_day_return_pct": 11.6786,
       "interpretation": "worth monitoring",
       "original_status": "manual_review",
       "rating_external_display": "Hold",
-      "ticker": "CRWD"
+      "ticker": "CRWD",
+      "window": "5D",
+      "window_return_pct": 11.6786
     },
     {
       "benchmark": "QQQ",
       "benchmark_return_pct": 1.2145,
       "excess_return_pct": 8.2054,
-      "five_day_return_pct": 9.4199,
       "interpretation": "worth monitoring",
       "original_status": "manual_review",
       "rating_external_display": "Hold",
-      "ticker": "NET"
+      "ticker": "NET",
+      "window": "5D",
+      "window_return_pct": 9.4199
     },
     {
       "benchmark": "QQQ",
       "benchmark_return_pct": 1.2145,
       "excess_return_pct": 8.1397,
-      "five_day_return_pct": 9.3542,
       "interpretation": "worth monitoring",
       "original_status": "passed",
       "rating_external_display": "Hold with Underweight Bias",
-      "ticker": "SNOW"
+      "ticker": "SNOW",
+      "window": "5D",
+      "window_return_pct": 9.3542
     },
     {
       "benchmark": "QQQ",
       "benchmark_return_pct": 1.2145,
       "excess_return_pct": 7.5937,
-      "five_day_return_pct": 8.8082,
       "interpretation": "possible false block",
       "original_status": "manual_review",
       "rating_external_display": "Manual Review / Hold Pending FCF and Execution Evidence",
-      "ticker": "RKLB"
+      "ticker": "RKLB",
+      "window": "5D",
+      "window_return_pct": 8.8082
     }
   ],
-  "window": "5D"
+  "window": "5D",
+  "window_end_date": "2026-05-22"
 }

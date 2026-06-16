@@ -46,16 +46,16 @@ Top lists are deduped by ticker and prefer manual_focus_guardrail_final_check wh
 ## Passed Reports Check
 
 - Strong negative threshold: <= -3.0000% excess.
-- Passed tickers with strong negative 5D excess:
+- Passed tickers with strong negative excess:
 - AVGO
 - Possible false pass suspicion: yes
-- Action: no action unless repeated at 10D/20D.
+- Action: no action unless repeated at later windows after 5D.
 
 ## Manual-Review Missed-Opportunity Watchlist
 
 | Ticker | 5D excess % | Status | Recommended action |
 |---|---:|---|---|
-| MDB | 3.2608 | monitor | keep monitoring; confirm again at 10D |
+| MDB | 3.2608 | monitor | keep monitoring; confirm again at next window |
 | NOW | 6.2116 | confirmed_outperformance | keep on watchlist; inspect manual_review reason + data ops |
 | RKLB | 7.5937 | confirmed_outperformance | keep on watchlist; inspect manual_review reason + data ops |
 | ZS | 12.0236 | confirmed_outperformance | keep on watchlist; inspect manual_review reason + data ops |

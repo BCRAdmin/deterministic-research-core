@@ -1,16 +1,16 @@
 # Price Data Refresh 5D
 
 - Batch: `guardrail_coverage_batch_004_ir_coverage`
-- Generated at: `2026-05-28T08:34:33+02:00`
+- Generated at: `2026-06-15T12:16:17Z`
 - Price basis date: `2026-05-15`
 - Target 5D outcome date: `2026-05-22`
-- Current session date: `2026-05-28`
+- Current session date: `2026-06-15`
 - Provider attempted: Local CSV coverage check (no refresh executed)
 - Policy: no synthetic prices, no replacement end date, no forward-fill
 
 ## Status
 
-- `OUTCOME_5D_REVIEW`: computed
+- `OUTCOME_5D_REVIEW`: ready_to_compute
 - 5D evaluable: `true`
 - Price latest date range: `2026-05-22` to `2026-05-22`
 - Benchmark latest date range: `2026-05-22` to `2026-05-22`
@@ -60,11 +60,11 @@ All local CSVs contain source-returned rows dated `2026-05-22`. 5D outcome is ev
 | ASTS | QQQ | 2026-05-22 | yes | ready |
 | ACHR | QQQ | 2026-05-22 | yes | ready |
 | JOBY | QQQ | 2026-05-22 | yes | ready |
-| RIVN | QQQ | 2026-05-22 | yes | ready |
-| LCID | QQQ | 2026-05-22 | yes | ready |
-| PLUG | QQQ | 2026-05-22 | yes | ready |
+| RIVN | SPY | 2026-05-22 | yes | ready |
+| LCID | SPY | 2026-05-22 | yes | ready |
+| PLUG | SPY | 2026-05-22 | yes | ready |
 
 ## Decision
 
-- Price prerequisite met; `OUTCOME_5D_REVIEW` computed.
+- Price prerequisite met; 5D computation may proceed.
 - Do not change guards, ratings, calibration, or reports.
