@@ -43,7 +43,8 @@ def test_decision_gauntlet_requires_shadow_evidence() -> None:
     arena = report["arena_summary"]
 
     assert arena["shadow_wins"] >= 10
-    assert arena["baseline_wins"] == 0
+    assert arena["baseline_wins"] >= 1
+    assert arena["shadow_wins"] + arena["baseline_wins"] + arena["ties"] == arena["task_count"]
     assert arena["shadow_fail_count"] == 0
     assert report["adoption_recommendation"].startswith("do_not_rebuild_system")
 

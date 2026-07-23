@@ -1,11 +1,14 @@
 {
   "batch_id": "guardrail_coverage_batch_004_ir_coverage",
-  "generated_at": "2026-06-15T14:16:22+02:00",
+  "five_day_end_date": "2026-05-22",
+  "generated_at": "2026-07-19T18:29:18+02:00",
   "watchlist": [
     {
       "benchmark": "QQQ",
       "benchmark_return_pct": 1.2145,
       "excess_return_pct": 3.2608,
+      "five_day_end_date": "2026-05-22",
+      "five_day_return_pct": 4.4753,
       "manual_review_reason_codes": [
         "PRICE_DATE_BEFORE_AS_OF_DATE",
         "EARNINGS_DATE_UNAVAILABLE",
@@ -19,15 +22,14 @@
       "original_rating_external_display": "Hold",
       "original_status": "manual_review",
       "status": "still_positive_monitor",
-      "ticker": "MDB",
-      "window": "5D",
-      "window_end_date": "2026-05-22",
-      "window_return_pct": 4.4753
+      "ticker": "MDB"
     },
     {
       "benchmark": "QQQ",
       "benchmark_return_pct": 1.2145,
       "excess_return_pct": 6.2116,
+      "five_day_end_date": "2026-05-22",
+      "five_day_return_pct": 7.4261,
       "manual_review_reason_codes": [
         "PRICE_DATE_BEFORE_AS_OF_DATE",
         "EARNINGS_DATE_UNAVAILABLE",
@@ -41,15 +43,14 @@
       "original_rating_external_display": "Hold",
       "original_status": "manual_review",
       "status": "confirmed_outperformance",
-      "ticker": "NOW",
-      "window": "5D",
-      "window_end_date": "2026-05-22",
-      "window_return_pct": 7.4261
+      "ticker": "NOW"
     },
     {
       "benchmark": "QQQ",
       "benchmark_return_pct": 1.2145,
       "excess_return_pct": 7.5937,
+      "five_day_end_date": "2026-05-22",
+      "five_day_return_pct": 8.8082,
       "manual_review_reason_codes": [
         "EXTREME_VALUATION_REQUIRES_REVIEW",
         "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH_MANUAL_REVIEW_PROFILE",
@@ -65,15 +66,14 @@
       "original_rating_external_display": "Manual Review / Hold Pending FCF and Execution Evidence",
       "original_status": "manual_review",
       "status": "confirmed_outperformance",
-      "ticker": "RKLB",
-      "window": "5D",
-      "window_end_date": "2026-05-22",
-      "window_return_pct": 8.8082
+      "ticker": "RKLB"
     },
     {
       "benchmark": "QQQ",
       "benchmark_return_pct": 1.2145,
       "excess_return_pct": 12.0236,
+      "five_day_end_date": "2026-05-22",
+      "five_day_return_pct": 13.2381,
       "manual_review_reason_codes": [
         "PRICE_DATE_BEFORE_AS_OF_DATE",
         "EARNINGS_DATE_UNAVAILABLE",
@@ -86,12 +86,8 @@
       "original_rating_external_display": "Hold",
       "original_status": "manual_review",
       "status": "confirmed_outperformance",
-      "ticker": "ZS",
-      "window": "5D",
-      "window_end_date": "2026-05-22",
-      "window_return_pct": 13.2381
+      "ticker": "ZS"
     }
   ],
-  "window": "5D",
-  "window_end_date": "2026-05-22"
+  "window": "5D"
 }

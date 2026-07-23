@@ -37,6 +37,8 @@
     "render_mode",
     "pdf_path",
     "page_count",
+    "rendered_pages_checked_with_PyMuPDF_fitz",
+    "pypdf_text_extract_sanity_only_not_visual_approval",
     "text_extract_sanity",
     "unicode_test",
     "status_lane_consistency"

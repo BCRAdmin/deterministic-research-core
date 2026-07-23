@@ -170,7 +170,7 @@
   ],
   "decision_frame": "copy_or_rebuild_the_best_parts",
   "gated_ready_count": 1,
-  "generated_at": "2026-05-28T12:35:27+00:00",
+  "generated_at": "2026-07-13T07:12:05+00:00",
   "github_digest": {
     "finding": "Existing gh CLI is enough for read-only Dependabot digest; no Jarvis connector is needed for this function yet.",
     "mutations_attempted": false,
@@ -199,7 +199,7 @@
     "iterate_skill_mining_against Hermes/OpenClaw sources only through guardrails"
   ],
   "overall_decision": "harvest_and_rebuild_selected_patterns",
-  "path": "/Users/BjornRosinger/Documents/New project 2/outputs/openjarvis_capability_lab/component_adapter/OPENJARVIS_COMPONENT_ADAPTER.json",
+  "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/outputs/openjarvis_capability_lab/component_adapter/OPENJARVIS_COMPONENT_ADAPTER.json",
   "rejected_current_count": 1,
   "runtime_warnings": [
     "uv was not globally installed; installed only in sandbox venv.",
@@ -210,5 +210,5 @@
   ],
   "schema_version": 1,
   "status": "PASS",
-  "trial_report_path": "/Users/BjornRosinger/Documents/New project 2/outputs/openjarvis_capability_lab/operator_trials/20260525T005539Z/reports/OPENJARVIS_OPERATOR_TRIALS_REPORT.json"
+  "trial_report_path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/outputs/openjarvis_capability_lab/operator_trials/20260525T005539Z/reports/OPENJARVIS_OPERATOR_TRIALS_REPORT.json"
 }

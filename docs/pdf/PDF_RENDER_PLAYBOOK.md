@@ -17,6 +17,12 @@ PDF is a final or internal render artifact, not proof that content is approved. 
 | `internal_best_pdf` | Optional internal render for operator reading. | No |
 | `public_final_pdf` | Final promoted render after gates. | Yes, only after promotion |
 
+## Render-QA toolchain
+
+- Render every `public_final_pdf` page with PyMuPDF (`fitz`) and inspect the rendered pages for clipping, broken tables, empty pages, and Unicode defects.
+- Use `pypdf` only for structural and text-extraction sanity checks. A successful `pypdf` read is not visual approval.
+- Keep source, rendered evidence, lane, page count, and promotion status together in the final QA record.
+
 ## Rules
 
 - A PDF is not evidence of content approval.

@@ -1,70 +1,69 @@
 # Price Data Refresh 5D
 
-- Batch: `guardrail_coverage_batch_004_ir_coverage`
-- Generated at: `2026-06-15T12:16:17Z`
-- Price basis date: `2026-05-15`
-- Target 5D outcome date: `2026-05-22`
-- Current session date: `2026-06-15`
-- Provider attempted: Local CSV coverage check (no refresh executed)
-- Policy: no synthetic prices, no replacement end date, no forward-fill
+- Batch: guardrail_coverage_batch_004_ir_coverage
+- Generated at: 2026-07-19T16:29:29Z
+- Policy: local CSV coverage check only; no network refresh executed
+- Price directory: `outputs/source_inputs/guardrail_coverage_batch_004_ir_coverage/prices`
+- Basis date: 2026-05-15
+- Required 5D end date: 2026-05-22
+- Tickers checked: 32
+- Benchmarks checked: 3 (QQQ, SMH, SPY)
+- Status: ready
+- Outcome 5D review status: ready_to_compute
 
-## Status
+## Blocking Coverage
 
-- `OUTCOME_5D_REVIEW`: ready_to_compute
-- 5D evaluable: `true`
-- Price latest date range: `2026-05-22` to `2026-05-22`
-- Benchmark latest date range: `2026-05-22` to `2026-05-22`
-- Missing ticker target-date bars: `0`
-- Missing benchmark target-date bars: `0`
+- Missing ticker bars for 2026-05-22: none
+- Missing ticker basis bars for 2026-05-15: none
+- Missing benchmark bars for 2026-05-22: none
+- Missing benchmark basis bars for 2026-05-15: none
 
-All local CSVs contain source-returned rows dated `2026-05-22`. 5D outcome is evaluable without synthetic prices, replacement end dates, or forward-fill.
+## Enforcement
 
-## Benchmark Coverage
+- No calibration change.
+- No guard change.
+- No rating change.
+- No report change.
+- No synthetic prices.
+- No replacement end date.
+- No forward-fill.
 
-| Benchmark | Latest local date | Target date present | Status |
-|---|---|---|---|
-| QQQ | 2026-05-22 | yes | ready |
-| SMH | 2026-05-22 | yes | ready |
-| SPY | 2026-05-22 | yes | ready |
+## Coverage Table
 
-## Ticker Coverage
-
-| Ticker | Benchmark | Latest local date | Target date present | Status |
-|---|---|---|---|---|
-| GOOGL | QQQ | 2026-05-22 | yes | ready |
-| SNOW | QQQ | 2026-05-22 | yes | ready |
-| MSFT | QQQ | 2026-05-22 | yes | ready |
-| AAPL | QQQ | 2026-05-22 | yes | ready |
-| META | QQQ | 2026-05-22 | yes | ready |
-| AMZN | QQQ | 2026-05-22 | yes | ready |
-| NFLX | QQQ | 2026-05-22 | yes | ready |
-| CRM | QQQ | 2026-05-22 | yes | ready |
-| DDOG | QQQ | 2026-05-22 | yes | ready |
-| NOW | QQQ | 2026-05-22 | yes | ready |
-| MDB | QQQ | 2026-05-22 | yes | ready |
-| NET | QQQ | 2026-05-22 | yes | ready |
-| ZS | QQQ | 2026-05-22 | yes | ready |
-| CRWD | QQQ | 2026-05-22 | yes | ready |
-| PANW | QQQ | 2026-05-22 | yes | ready |
-| NVDA | SMH | 2026-05-22 | yes | ready |
-| AMD | SMH | 2026-05-22 | yes | ready |
-| AVGO | SMH | 2026-05-22 | yes | ready |
-| QCOM | SMH | 2026-05-22 | yes | ready |
-| MU | SMH | 2026-05-22 | yes | ready |
-| MRVL | SMH | 2026-05-22 | yes | ready |
-| INTC | SMH | 2026-05-22 | yes | ready |
-| RGTI | QQQ | 2026-05-22 | yes | ready |
-| IONQ | QQQ | 2026-05-22 | yes | ready |
-| QBTS | QQQ | 2026-05-22 | yes | ready |
-| RKLB | QQQ | 2026-05-22 | yes | ready |
-| ASTS | QQQ | 2026-05-22 | yes | ready |
-| ACHR | QQQ | 2026-05-22 | yes | ready |
-| JOBY | QQQ | 2026-05-22 | yes | ready |
-| RIVN | SPY | 2026-05-22 | yes | ready |
-| LCID | SPY | 2026-05-22 | yes | ready |
-| PLUG | SPY | 2026-05-22 | yes | ready |
-
-## Decision
-
-- Price prerequisite met; 5D computation may proceed.
-- Do not change guards, ratings, calibration, or reports.
+| Symbol | Role | CSV | Basis bar | End bar | Latest local date | Status |
+|---|---|---|---|---|---|---|
+| GOOGL | ticker | yes | yes | yes | 2026-05-22 | ready |
+| SNOW | ticker | yes | yes | yes | 2026-05-22 | ready |
+| MSFT | ticker | yes | yes | yes | 2026-05-22 | ready |
+| AAPL | ticker | yes | yes | yes | 2026-05-22 | ready |
+| META | ticker | yes | yes | yes | 2026-05-22 | ready |
+| AMZN | ticker | yes | yes | yes | 2026-05-22 | ready |
+| NFLX | ticker | yes | yes | yes | 2026-05-22 | ready |
+| CRM | ticker | yes | yes | yes | 2026-05-22 | ready |
+| DDOG | ticker | yes | yes | yes | 2026-05-22 | ready |
+| NOW | ticker | yes | yes | yes | 2026-05-22 | ready |
+| MDB | ticker | yes | yes | yes | 2026-05-22 | ready |
+| NET | ticker | yes | yes | yes | 2026-05-22 | ready |
+| ZS | ticker | yes | yes | yes | 2026-05-22 | ready |
+| CRWD | ticker | yes | yes | yes | 2026-05-22 | ready |
+| PANW | ticker | yes | yes | yes | 2026-05-22 | ready |
+| NVDA | ticker | yes | yes | yes | 2026-05-22 | ready |
+| AMD | ticker | yes | yes | yes | 2026-05-22 | ready |
+| AVGO | ticker | yes | yes | yes | 2026-05-22 | ready |
+| QCOM | ticker | yes | yes | yes | 2026-05-22 | ready |
+| MU | ticker | yes | yes | yes | 2026-05-22 | ready |
+| MRVL | ticker | yes | yes | yes | 2026-05-22 | ready |
+| INTC | ticker | yes | yes | yes | 2026-05-22 | ready |
+| RGTI | ticker | yes | yes | yes | 2026-05-22 | ready |
+| IONQ | ticker | yes | yes | yes | 2026-05-22 | ready |
+| QBTS | ticker | yes | yes | yes | 2026-05-22 | ready |
+| RKLB | ticker | yes | yes | yes | 2026-05-22 | ready |
+| ASTS | ticker | yes | yes | yes | 2026-05-22 | ready |
+| ACHR | ticker | yes | yes | yes | 2026-05-22 | ready |
+| JOBY | ticker | yes | yes | yes | 2026-05-22 | ready |
+| RIVN | ticker | yes | yes | yes | 2026-05-22 | ready |
+| LCID | ticker | yes | yes | yes | 2026-05-22 | ready |
+| PLUG | ticker | yes | yes | yes | 2026-05-22 | ready |
+| QQQ | benchmark | yes | yes | yes | 2026-05-22 | ready |
+| SMH | benchmark | yes | yes | yes | 2026-05-22 | ready |
+| SPY | benchmark | yes | yes | yes | 2026-05-22 | ready |

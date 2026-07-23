@@ -64,6 +64,7 @@
       "root": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops",
       "include_paths": [
         "docs/agent_os",
+        "docs/pdf",
         "docs/skills",
         "scripts/ops",
         "research_agent/ops",

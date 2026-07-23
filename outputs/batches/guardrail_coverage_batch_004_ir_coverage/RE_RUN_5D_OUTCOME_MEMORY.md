@@ -1,1 +1,36 @@
-- 2026-06-15T12:16:53Z Re-ran 5D outcome check for guardrail_coverage_batch_004_ir_coverage from local CSV coverage only. PRICE_DATA_REFRESH_5D refreshed with session date 2026-06-15 and all required 2026-05-22 bars present for 32 tickers plus QQQ/SMH/SPY. Recomputed OUTCOME_5D_REVIEW, OUTCOME_5D_WATCHLIST_REVIEW, OUTCOME_5D_TRIAGE_SUMMARY, and VIVI_OUTCOME_5D_REVIEW. JSON parse validation passed for all five artifacts. Status: computed_rows=37 pending_rows=0 false_pass=AVGO false_blocks=NOW,RKLB,ZS watchlist=MDB monitor; NOW/RKLB/ZS confirmed_outperformance; Vivi=pass. Runtime: about 4 minutes.
+# Re-run 5D Outcome Memory
+
+```json
+{
+  "blocking_issues": [],
+  "computed_rows": 37,
+  "computed_unique_tickers": 32,
+  "false_block_flags": [
+    "NOW",
+    "RKLB",
+    "ZS"
+  ],
+  "false_pass_flags": [
+    "AVGO"
+  ],
+  "generated_at": "2026-07-19T16:29:29Z",
+  "pending_rows": 0,
+  "policy_enforced": [
+    "no_calibration",
+    "no_guard_changes",
+    "no_rating_changes",
+    "no_report_changes",
+    "no_synthetic_prices",
+    "no_replacement_end_date",
+    "no_forward_fill"
+  ],
+  "price_refresh_status": "ready",
+  "vivi_outcome_status": "pass",
+  "watchlist_status": {
+    "MDB": "still_positive_monitor",
+    "NOW": "confirmed_outperformance",
+    "RKLB": "confirmed_outperformance",
+    "ZS": "confirmed_outperformance"
+  }
+}
+```
