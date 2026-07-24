@@ -84,3 +84,28 @@ def test_documents_root_hygiene_blocks_desktop_markdown(tmp_path: Path) -> None:
     assert payload["ok"] is False
     assert payload["error_count"] == 1
     assert payload["findings"][0]["code"] == "desktop_markdown_output_present"
+
+
+def test_documents_root_hygiene_blocks_retired_pseudo_projects(tmp_path: Path) -> None:
+    (tmp_path / "DreamFactory" / "Project-Intelligence-Graph").mkdir(parents=True)
+    (tmp_path / "DreamFactory" / "Room16" / "Reports").mkdir(parents=True)
+    (tmp_path / "DreamFactory" / "Room16" / "research-agent-ops").mkdir(parents=True)
+    (tmp_path / "BCR Ventures" / "client-prototypes" / "wp-stb-roesinger-redesign").mkdir(
+        parents=True
+    )
+    (tmp_path / "LIONCOM Vivi Ablage").mkdir()
+    (tmp_path / "System optimization").mkdir()
+    (tmp_path / "BCR Group" / "BCR Ventures").mkdir(parents=True)
+
+    payload = scan_documents_root(tmp_path, desktop_root=tmp_path / "Desktop")
+
+    assert payload["ok"] is False
+    assert {
+        finding["code"]
+        for finding in payload["findings"]
+        if finding["severity"] == "error"
+    } == {
+        "retired_lioncom_vivi_ablag_root_present",
+        "retired_system_optimization_root_present",
+        "duplicate_bcr_ventures_root_present",
+    }

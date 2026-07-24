@@ -108,7 +108,7 @@
         {"id": "qa_002_code_qa_projects", "title": "Mindestens 3 Projekte werden erkannt", "artifact": "lab", "assert": "min", "path": "code_qa_shadow.pass_count", "minimum": 3},
         {"id": "qa_003_agent_ops_pytest_exists", "title": "Agent-Ops Pytest ist vorhanden", "artifact": "file", "assert": "exists", "file": "pyproject.toml"},
         {"id": "qa_004_lioncom_package_exists", "title": "LIONCOM package.json ist vorhanden", "artifact": "file", "assert": "exists", "file": "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/package.json"},
-        {"id": "qa_005_room16_package_exists", "title": "Room16 package.json ist vorhanden", "artifact": "file", "assert": "exists", "file": "/Users/BjornRosinger/Documents/DreamFactory/Project-Intelligence-Graph/company-dossier-lab/room16-app/package.json"}
+        {"id": "qa_005_room16_package_exists", "title": "Room16 package.json ist vorhanden", "artifact": "file", "assert": "exists", "file": "/Users/BjornRosinger/Documents/DreamFactory/Room16/company-dossier-lab/room16-app/package.json"}
       ]
     },
     {

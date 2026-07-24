@@ -186,7 +186,7 @@
     },
     {
       "id": "company_dossier_lab",
-      "root": "/Users/BjornRosinger/Documents/DreamFactory/Project-Intelligence-Graph/company-dossier-lab",
+      "root": "/Users/BjornRosinger/Documents/DreamFactory/Room16/company-dossier-lab",
       "expected_script_keywords": [
         "verify",
         "test",

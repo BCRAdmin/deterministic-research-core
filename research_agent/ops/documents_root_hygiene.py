@@ -24,6 +24,14 @@ RETIRED_ROOT_NAMES = {
         "retired_wp_stb_root_present",
         "client_prototype_wp_stb",
     ),
+    "LIONCOM Vivi Ablage": (
+        "retired_lioncom_vivi_ablag_root_present",
+        "lioncom_runtime",
+    ),
+    "System optimization": (
+        "retired_system_optimization_root_present",
+        "dreamfactory_tools",
+    ),
 }
 
 FORBIDDEN_ROOT_DIRS = {
@@ -71,6 +79,8 @@ def canonical_paths(documents_root: Path) -> dict[str, Path]:
         / "BCR Ventures"
         / "client-prototypes"
         / "wp-stb-roesinger-redesign",
+        "lioncom_runtime": documents_root / "DreamFactory" / "LIONCOM" / ".runtime",
+        "dreamfactory_tools": documents_root / "DreamFactory" / "Tools",
         "root_compatibility_links_archive": documents_root
         / "Codex"
         / "path-hygiene-compatibility-links"
@@ -214,6 +224,18 @@ def scan_documents_root(documents_root: Path, desktop_root: Path | None = None) 
                 "canonical_client_prototype_missing",
                 "Canonical wp-stb client prototype folder is missing.",
                 "Restore it under BCR Ventures before continuing client-prototype work.",
+            )
+        )
+
+    legacy_bcr_ventures = root / "BCR Group" / "BCR Ventures"
+    if legacy_bcr_ventures.exists():
+        findings.append(
+            DocumentsRootFinding(
+                "error",
+                str(legacy_bcr_ventures),
+                "duplicate_bcr_ventures_root_present",
+                "BCR Ventures must not exist in two Documents namespaces.",
+                f"Use only `{root / 'BCR Ventures'}`.",
             )
         )
 
