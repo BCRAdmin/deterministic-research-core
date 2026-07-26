@@ -11,6 +11,7 @@ from research_agent.current.runner import (
     CurrentResearchRequest,
     run_current_research,
 )
+from research_agent.run_pipeline import build_data_packet
 from research_agent.sources.bse.bse_provider import BseIssuer
 from research_agent.sources.prices.price_provider_base import PriceProviderBase
 
@@ -261,3 +262,34 @@ def test_current_runner_routes_public_bse_issuer_without_sec_or_api_key(
     assert result["jurisdiction"] == "HU"
     assert result["isin"] == "HU0000000001"
     assert result["price_provider"] == "bse"
+
+
+def test_data_packet_uses_explicit_exchange_price_currency():
+    packet = build_data_packet(
+        ticker="ANY",
+        as_of_date="2026-07-24",
+        prices=pd.DataFrame(
+            [
+                {
+                    "date": "2026-07-23",
+                    "open": 6900,
+                    "high": 7000,
+                    "low": 6850,
+                    "close": 6950,
+                    "volume": 8914,
+                }
+            ]
+        ),
+        fundamentals={
+            "company_name": "ANY Security Printing Company",
+            "latest_fiscal_year": "FY2025",
+            "latest_quarter": "FY2026_Q1",
+            "fiscal_year_end": "12-31",
+        },
+        news=[],
+        price_currency="HUF",
+    )
+
+    assert packet.price_basis.currency == "HUF"
+    assert packet.fiscal_context.latest_fiscal_year == "FY2025"
+    assert packet.fiscal_context.latest_quarter == "FY2026_Q1"

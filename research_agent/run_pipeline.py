@@ -128,6 +128,7 @@ def run_research_pipeline(
         prices=normalized_prices,
         fundamentals=normalized_fundamentals,
         news=normalized_news,
+        price_currency=config.price_currency,
     )
     freshness = evaluate_price_freshness(
         data_packet.price_basis.date,
@@ -522,6 +523,7 @@ def build_data_packet(
     prices,
     fundamentals: dict[str, Any],
     news: list[dict[str, Any]],
+    price_currency: str = "USD",
 ) -> DataPacket:
     latest_price = prices.iloc[-1]
     latest_event = _next_earnings_event(news)
@@ -533,7 +535,7 @@ def build_data_packet(
         price_basis=PriceBasis(
             close=float(latest_price["close"]),
             date=str(latest_price["date"]),
-            currency=fundamentals.get("currency", "USD"),
+            currency=price_currency,
             source=fundamentals.get("price_source", "ohlcv_provider"),
         ),
         fiscal_context=FiscalContext(
@@ -714,10 +716,51 @@ def _load_ir_guidance_inputs(ticker: str, release_dir: str) -> tuple[dict[str, A
     fundamentals: dict[str, Any] = {}
     if payload.get("company_name"):
         fundamentals["company_name"] = str(payload["company_name"])
+    metrics = payload.get("metrics") or []
+    annual_periods = [
+        row
+        for row in metrics
+        if row.get("period_bucket") == "annual"
+        and row.get("fiscal_year") is not None
+    ]
+    if annual_periods:
+        latest_annual = max(
+            annual_periods,
+            key=lambda row: (
+                int(row.get("fiscal_year") or 0),
+                str(row.get("end_date") or row.get("date") or ""),
+            ),
+        )
+        fundamentals["latest_fiscal_year"] = (
+            f"FY{int(latest_annual['fiscal_year'])}"
+        )
+        annual_end = str(
+            latest_annual.get("end_date") or latest_annual.get("date") or ""
+        )
+        if len(annual_end) >= 10:
+            fundamentals["fiscal_year_end"] = annual_end[5:10]
+    quarterly_periods = [
+        row
+        for row in metrics
+        if row.get("period_bucket") == "quarterly"
+        and row.get("fiscal_period")
+    ]
+    if quarterly_periods:
+        latest_quarter = max(
+            quarterly_periods,
+            key=lambda row: str(row.get("end_date") or row.get("date") or ""),
+        )
+        fundamentals["latest_quarter"] = str(
+            latest_quarter.get("period")
+            or (
+                f"FY{int(latest_quarter['fiscal_year'])}_"
+                f"{latest_quarter['fiscal_period']}"
+            )
+        )
     canonical_metrics: list[CanonicalMetric] = []
     metric_evidence, metric_fundamentals, metric_canonical = _ir_current_metric_inputs(
         ticker=ticker,
-        metrics=payload.get("metrics") or [],
+        metrics=metrics,
         source_id=source_id,
         source_type=source_type,
         url=payload.get("url"),
