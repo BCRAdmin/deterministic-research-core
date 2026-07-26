@@ -750,13 +750,15 @@ def _load_ir_guidance_inputs(ticker: str, release_dir: str) -> tuple[dict[str, A
             quarterly_periods,
             key=lambda row: str(row.get("end_date") or row.get("date") or ""),
         )
-        fundamentals["latest_quarter"] = str(
+        latest_quarter_label = str(
             latest_quarter.get("period")
             or (
                 f"FY{int(latest_quarter['fiscal_year'])}_"
                 f"{latest_quarter['fiscal_period']}"
             )
         )
+        fundamentals["latest_quarter"] = latest_quarter_label
+        fundamentals["fiscal_period"] = f"TTM through {latest_quarter_label}"
     canonical_metrics: list[CanonicalMetric] = []
     metric_evidence, metric_fundamentals, metric_canonical = _ir_current_metric_inputs(
         ticker=ticker,

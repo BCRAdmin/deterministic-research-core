@@ -11,7 +11,7 @@ from research_agent.current.runner import (
     CurrentResearchRequest,
     run_current_research,
 )
-from research_agent.run_pipeline import build_data_packet
+from research_agent.run_pipeline import _load_ir_guidance_inputs, build_data_packet
 from research_agent.sources.bse.bse_provider import BseIssuer
 from research_agent.sources.prices.price_provider_base import PriceProviderBase
 
@@ -293,3 +293,50 @@ def test_data_packet_uses_explicit_exchange_price_currency():
     assert packet.price_basis.currency == "HUF"
     assert packet.fiscal_context.latest_fiscal_year == "FY2025"
     assert packet.fiscal_context.latest_quarter == "FY2026_Q1"
+
+
+def test_official_metrics_preserve_ttm_fiscal_period(tmp_path):
+    release_dir = tmp_path / "official"
+    release_dir.mkdir()
+    (release_dir / "ANY.json").write_text(
+        json.dumps(
+            {
+                "company_name": "ANY Security Printing Company",
+                "source_id": "BSE_ANY_OFFICIAL_FINANCIALS",
+                "source_type": "company_ir",
+                "metrics": [
+                    {
+                        "metric_name": "revenue",
+                        "value": 71_000_000_000,
+                        "unit": "HUF",
+                        "period": "FY2025",
+                        "period_bucket": "annual",
+                        "fiscal_year": 2025,
+                        "fiscal_period": "FY",
+                        "end_date": "2025-12-31",
+                    },
+                    {
+                        "metric_name": "revenue",
+                        "value": 17_000_000_000,
+                        "unit": "HUF",
+                        "period": "FY2026_Q1",
+                        "period_bucket": "quarterly",
+                        "fiscal_year": 2026,
+                        "fiscal_period": "Q1",
+                        "end_date": "2026-03-31",
+                    },
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    fundamentals, _evidence, _canonical = _load_ir_guidance_inputs(
+        "ANY",
+        str(release_dir),
+    )
+
+    assert fundamentals["latest_fiscal_year"] == "FY2025"
+    assert fundamentals["latest_quarter"] == "FY2026_Q1"
+    assert fundamentals["fiscal_period"] == "TTM through FY2026_Q1"
+    assert fundamentals["fiscal_year_end"] == "12-31"
