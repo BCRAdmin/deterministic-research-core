@@ -102,8 +102,10 @@ branch.
 The generic current runner stages sources below `.runtime/current-research`
 and writes only final authority/report outputs below the ignored output root.
 For U.S. SEC filers it uses the official SEC ticker map, CompanyFacts, and
-submissions APIs. Other jurisdictions require their own official-registry
-adapter; they must not be handled through ticker-specific exceptions.
+submissions APIs. For Budapest Stock Exchange equities it uses the official
+BSE issuer profile, issuer-submitted IFRS financial tables and exchange OHLCV.
+Other jurisdictions require their own official-registry adapter; they must not
+be handled through ticker-specific exceptions.
 
 The first enabled market adapter is Massive/Polygon daily aggregates. It is
 classified as `trusted_market_data_vendor` because the provider documents

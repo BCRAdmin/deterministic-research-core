@@ -5,6 +5,7 @@ description = "Deterministic calculation and validation layer for stock research
 requires-python = ">=3.9"
 dependencies = [
   "numpy>=1.24",
+  "openpyxl>=3.1",
   "pandas>=2.0",
   "pydantic>=2.0",
 ]

@@ -55,6 +55,11 @@ def net_cash(
     marketable_securities: Optional[float],
     total_debt: Optional[float],
 ):
+    if total_debt is None or all(
+        value is None
+        for value in (cash_and_equivalents, short_term_investments, marketable_securities)
+    ):
+        return None
     liquid_assets = (
         (cash_and_equivalents or 0)
         + (short_term_investments or 0)
@@ -131,10 +136,15 @@ def calculate_fundamental_metrics(
     short_term_investments = _optional_float(balance_sheet.get("short_term_investments"))
     marketable_securities = _optional_float(balance_sheet.get("marketable_securities"))
     total_debt = _optional_float(balance_sheet.get("total_debt"))
+    liquid_values = (
+        cash_and_equivalents,
+        short_term_investments,
+        marketable_securities,
+    )
     cash_and_investments = (
-        (cash_and_equivalents or 0)
-        + (short_term_investments or 0)
-        + (marketable_securities or 0)
+        None
+        if all(value is None for value in liquid_values)
+        else sum(value or 0.0 for value in liquid_values)
     )
     current_assets = _optional_float(balance_sheet.get("current_assets"))
     current_liabilities = _optional_float(balance_sheet.get("current_liabilities"))

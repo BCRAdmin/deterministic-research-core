@@ -71,9 +71,17 @@ configured authority-grade market provider, stages temporary inputs below
 Outputs appear below `research_agent/data/outputs/`, which is intentionally
 Git-ignored except for `.gitkeep`.
 
-There are no ticker-specific provider exceptions. A security absent from the
-SEC map stops with an explicit jurisdiction-adapter gap. Vendor fundamentals
-and weak price feeds do not silently replace missing authority sources.
+For equities listed on the Budapest Stock Exchange, the same command uses the
+public official BSE issuer profile, issuer-submitted IFRS Excel tables and BSE
+historical OHLCV. This path requires neither SEC identity nor a Massive key.
+Aliases, WKNs and ISINs are resolved by the product before the canonical BSE
+ticker enters this core.
+
+There are no ticker-specific provider exceptions. A security absent from all
+enabled official jurisdiction adapters stops with an explicit adapter gap.
+Vendor fundamentals and weak price feeds do not silently replace missing
+authority sources. Metrics not present in the official tables remain
+unavailable rather than becoming zero.
 
 Primary references:
 
@@ -83,6 +91,8 @@ Primary references:
   https://www.sec.gov/files/company_tickers.json
 - Massive daily aggregates:
   https://massive.com/docs/rest/stocks/aggregates/custom-bars
+- Budapest Stock Exchange company profiles and issuer-submitted financials:
+  https://www.bse.hu/pages/company_profile/
 
 ## Markdown Report Auditor
 

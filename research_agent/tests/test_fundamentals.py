@@ -31,6 +31,14 @@ def test_balance_sheet_and_sbc_ratios_are_deterministic():
     }
 
 
+def test_missing_balance_sheet_inputs_do_not_become_zero():
+    assert net_cash(None, None, None, None) is None
+    assert net_cash(50, None, None, None) is None
+    metrics = calculate_fundamental_metrics({"quarterly": {}, "balance_sheet": {}})
+    assert metrics.cash_and_investments is None
+    assert metrics.net_cash is None
+
+
 def test_calculate_fundamental_metrics_builds_ttm_margins_and_fcf():
     metrics = calculate_fundamental_metrics(
         {
@@ -72,4 +80,3 @@ def test_calculate_fundamental_metrics_builds_ttm_margins_and_fcf():
     assert metrics.current_ratio == 2
     assert metrics.debt_to_equity == 0.075
     assert metrics.sbc_to_non_gaap_operating_income == 18 / 80
-

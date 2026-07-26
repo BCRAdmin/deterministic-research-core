@@ -37,7 +37,11 @@ from research_agent.quality.deeptech_manual_review import (
     assess_speculative_deep_tech_manual_review,
     manual_review_banner,
 )
-from research_agent.reconciliation.canonical_financials import CanonicalMetric, save_canonical_financials
+from research_agent.reconciliation.canonical_financials import (
+    CanonicalFinancials,
+    CanonicalMetric,
+    save_canonical_financials,
+)
 from research_agent.reconciliation.reconciliation_report import (
     render_current_period_reconciliation_summary,
     render_reconciliation_report,
@@ -202,7 +206,11 @@ def run_research_pipeline(
         evidence_ledger, "evidence_ledger", ticker, as_of_date, packet_root=packet_root
     )
     evidence_report_path = _save_evidence_report(
-        evidence_ledger, ticker, as_of_date, packet_root=packet_root
+        evidence_ledger,
+        metrics_packet,
+        ticker,
+        as_of_date,
+        packet_root=packet_root,
     )
     validation_report = run_all_validations(
         data_packet=data_packet,
@@ -600,8 +608,19 @@ def _load_source_ingestion_inputs(ticker: str, as_of_date: str, config: ReportCo
         _merge_fundamentals(fundamentals, guidance_fundamentals)
         _apply_cash_and_marketable_total(fundamentals, guidance_fundamentals)
         evidence_items.extend(guidance_evidence)
-        if canonical_financials is not None and guidance_canonical:
-            canonical_financials.metrics.extend(guidance_canonical)
+        if guidance_canonical:
+            if canonical_financials is None:
+                canonical_financials = CanonicalFinancials(
+                    ticker=ticker.upper(),
+                    as_of_date=as_of_date,
+                    metrics=guidance_canonical,
+                )
+            else:
+                canonical_financials.metrics.extend(guidance_canonical)
+            _merge_fundamentals(
+                fundamentals,
+                canonical_financials_to_fundamentals(canonical_financials),
+            )
     news = load_news(ticker)
     if config.earnings_calendar_path:
         earnings_event = select_next_earnings_event(
@@ -657,7 +676,7 @@ def _price_evidence_items(
             authority_rank=rank_source(source_type),
             statement=f"{ticker.upper()} closed at {close} on {date}.",
             value=close,
-            unit="USD",
+            unit=config.price_currency if config else "USD",
             period="daily",
             date=date,
             url=config.price_source_url if config else None,
@@ -693,6 +712,8 @@ def _load_ir_guidance_inputs(ticker: str, release_dir: str) -> tuple[dict[str, A
         for guidance in ranges
     ]
     fundamentals: dict[str, Any] = {}
+    if payload.get("company_name"):
+        fundamentals["company_name"] = str(payload["company_name"])
     canonical_metrics: list[CanonicalMetric] = []
     metric_evidence, metric_fundamentals, metric_canonical = _ir_current_metric_inputs(
         ticker=ticker,
@@ -784,7 +805,15 @@ def _ir_current_metric_inputs(
                 reconciliation_notes=[row.get("reconciliation_note") or "Current-period IR/Earnings Release metric ingested explicitly."],
             )
         )
-        if metric_name in {"revenue", "operating_cash_flow", "sbc"} and period_bucket in {"annual", "ttm"}:
+        if metric_name in {
+            "revenue",
+            "gross_profit",
+            "operating_income",
+            "net_income",
+            "operating_cash_flow",
+            "capex",
+            "sbc",
+        } and period_bucket in {"annual", "ttm"}:
             fundamentals["annual"][metric_name] = value
         elif metric_name in {"free_cash_flow", "adjusted_free_cash_flow"} and period_bucket in {"annual", "ttm"}:
             fundamentals["annual"][metric_name] = value
@@ -792,6 +821,8 @@ def _ir_current_metric_inputs(
             fundamentals["balance_sheet"][metric_name] = value
         elif metric_name == "cash_and_marketable_securities":
             fundamentals["_cash_and_marketable_securities"] = value
+        elif metric_name == "shares_diluted":
+            fundamentals.setdefault("share_data", {})["diluted_share_count"] = value
     if "operating_cash_flow" in values and "free_cash_flow" in values:
         fundamentals["annual"]["operating_cash_flow"] = values["operating_cash_flow"]
         fundamentals["annual"]["capex"] = max(values["operating_cash_flow"] - values["free_cash_flow"], 0.0)
@@ -801,7 +832,15 @@ def _ir_current_metric_inputs(
 def _ir_supports_metrics(metric_name: str) -> list[str]:
     aliases = {
         "revenue": ["revenue", "revenue_ttm"],
+        "gross_profit": ["gross_profit", "gross_profit_ttm", "gross_margin_ttm"],
+        "operating_income": [
+            "operating_income",
+            "operating_income_ttm",
+            "operating_margin_ttm",
+        ],
+        "net_income": ["net_income", "net_income_ttm", "net_margin_ttm"],
         "operating_cash_flow": ["operating_cash_flow", "operating_cash_flow_ttm"],
+        "capex": ["capex", "capex_ttm", "free_cash_flow_ttm"],
         "free_cash_flow": ["free_cash_flow", "free_cash_flow_ttm", "company_defined_fcf"],
         "adjusted_free_cash_flow": ["adjusted_free_cash_flow", "free_cash_flow_ttm", "company_defined_fcf"],
         "adjusted_free_cash_flow_margin": ["adjusted_free_cash_flow_margin", "free_cash_flow_margin_guidance"],
@@ -811,6 +850,7 @@ def _ir_supports_metrics(metric_name: str) -> list[str]:
         "short_term_investments": ["short_term_investments", "cash_and_investments"],
         "total_debt": ["total_debt", "debt", "net_cash"],
         "cash_and_marketable_securities": ["cash_and_marketable_securities", "cash_and_investments"],
+        "shares_diluted": ["shares_diluted", "diluted_share_count"],
     }
     return aliases.get(metric_name, [metric_name])
 
@@ -890,19 +930,21 @@ def save_json_packet(
 
 def _save_evidence_report(
     evidence_ledger,
+    metrics_packet,
     ticker: str,
     as_of_date: str,
     *,
     packet_root: Path = Path("research_agent/data/packets"),
 ) -> Path:
     target = packet_root / ticker.upper() / as_of_date / "evidence_report.md"
+    required_metrics = ["revenue_ttm"]
+    if metrics_packet.fundamentals.free_cash_flow_ttm is not None:
+        required_metrics.append("free_cash_flow_ttm")
+    if metrics_packet.fundamentals.sbc_to_revenue is not None:
+        required_metrics.append("sbc_to_revenue")
     markdown = render_evidence_report(
         evidence_ledger,
-        required_metrics=[
-            "revenue_ttm",
-            "free_cash_flow_ttm",
-            "sbc_to_revenue",
-        ],
+        required_metrics=required_metrics,
     )
     return save_evidence_report(markdown, target)
 

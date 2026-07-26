@@ -11,6 +11,7 @@ from research_agent.current.runner import (
     CurrentResearchRequest,
     run_current_research,
 )
+from research_agent.sources.bse.bse_provider import BseIssuer
 from research_agent.sources.prices.price_provider_base import PriceProviderBase
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -67,6 +68,51 @@ class _FakePrices(PriceProviderBase):
 
 class _WeakPrices(_FakePrices):
     source_type = "yahoo_finance"
+
+
+class _NoBse:
+    def resolve(self, ticker):
+        return None
+
+
+class _FakeBse(_FakePrices):
+    source_type = "exchange_ohlcv"
+    source_url = "https://www.bse.hu/pages/company_profile/%24security/GENR"
+
+    def resolve(self, ticker):
+        if ticker != "GENR":
+            return None
+        return BseIssuer(
+            ticker="GENR",
+            company_name="Generic Hungarian Research Plc.",
+            isin="HU0000000001",
+            currency="HUF",
+            issuer_id="1",
+            security_id="2",
+            profile_url=self.source_url,
+        )
+
+    def build_financial_payload(self, issuer, *, as_of_date, retrieved_at):
+        return {
+            "company_name": issuer.company_name,
+            "source_id": "BSE_GENR_OFFICIAL_FINANCIALS",
+            "source_type": "company_ir",
+            "url": issuer.profile_url,
+            "retrieved_at": retrieved_at,
+            "metrics": [
+                {
+                    "metric_name": "revenue",
+                    "value": 1_000_000_000,
+                    "unit": "HUF",
+                    "period": "FY2025",
+                    "period_bucket": "annual",
+                    "start_date": "2025-01-01",
+                    "end_date": "2025-12-31",
+                    "date": "2025-12-31",
+                    "statement_type": "income_statement",
+                }
+            ],
+        }
 
 
 class _StoredSnowSec(_FakeSec):
@@ -128,11 +174,12 @@ def test_current_runner_stages_generic_inputs_and_returns_authority(monkeypatch,
 
 
 def test_current_runner_rejects_unsupported_official_issuer(tmp_path):
-    with pytest.raises(CurrentResearchError, match="official SEC ticker map"):
+    with pytest.raises(CurrentResearchError, match="official issuer adapters"):
         run_current_research(
             _request(tmp_path, ticker="OTHER"),
             price_provider=_FakePrices(),
             sec_client=_FakeSec(ticker="GENR"),
+            bse_provider=_NoBse(),
         )
 
 
@@ -176,3 +223,41 @@ def test_current_runner_builds_real_authority_bundle_from_generic_adapters(tmp_p
     assert result["analysis_allowed"] is True
     assert manifest["analysis_allowed"] is True
     assert manifest["contract_id"] == "room16.research_authority_bundle"
+
+
+def test_current_runner_routes_public_bse_issuer_without_sec_or_api_key(
+    monkeypatch,
+    tmp_path,
+):
+    def fake_pipeline(ticker, as_of_date, config):
+        assert ticker == "GENR"
+        assert config.cik_records_path is None
+        assert config.sec_companyfacts_path is None
+        assert config.price_source_type == "exchange_ohlcv"
+        assert config.price_currency == "HUF"
+        assert Path(config.ir_release_dir, "GENR.json").exists()
+        authority = tmp_path / "outputs" / ticker / as_of_date / "authority_bundle"
+        authority.mkdir(parents=True)
+        (authority / "authority_manifest.json").write_text(
+            json.dumps(
+                {
+                    "contract_id": "room16.research_authority_bundle",
+                    "analysis_allowed": True,
+                }
+            ),
+            encoding="utf-8",
+        )
+
+    monkeypatch.setattr(runner, "run_research_pipeline", fake_pipeline)
+    request = CurrentResearchRequest(
+        ticker="GENR",
+        as_of_date="2026-07-26",
+        staging_root=str(tmp_path / "staging"),
+        output_root=str(tmp_path / "outputs"),
+    )
+    result = run_current_research(request, bse_provider=_FakeBse())
+
+    assert result["status"] == "authority_ready"
+    assert result["jurisdiction"] == "HU"
+    assert result["isin"] == "HU0000000001"
+    assert result["price_provider"] == "bse"

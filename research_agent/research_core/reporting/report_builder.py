@@ -53,7 +53,7 @@ def render_markdown_report(
         raise RuntimeError("Blocking validation errors. Final report generation stopped.")
     claims = list(claims or [])
     if evidence_ledger is not None:
-        _enforce_evidence_grounding(evidence_ledger, claims)
+        _enforce_evidence_grounding(evidence_ledger, claims, metrics_packet)
 
     sections = [
         f"# {data_packet.ticker} Research Report",
@@ -220,8 +220,13 @@ def _fmt_pct(value: Optional[float]) -> str:
 def _enforce_evidence_grounding(
     evidence_ledger: EvidenceLedger,
     claims: list[ResearchClaim],
+    metrics_packet: MetricsPacket,
 ) -> None:
-    required_metrics = ["free_cash_flow_ttm", "sbc_to_revenue", "close"]
+    required_metrics = ["close"]
+    if metrics_packet.fundamentals.free_cash_flow_ttm is not None:
+        required_metrics.append("free_cash_flow_ttm")
+    if metrics_packet.fundamentals.sbc_to_revenue is not None:
+        required_metrics.append("sbc_to_revenue")
     blocking = []
     for metric in required_metrics:
         issue = validate_metric_evidence(metric, evidence_ledger)

@@ -28,6 +28,7 @@ class ReportConfig(BaseModel):
     price_source_type: str = "exchange_ohlcv"
     price_source_url: Optional[str] = None
     price_retrieved_at: Optional[str] = None
+    price_currency: str = "USD"
     cik_records_path: Optional[str] = None
     sec_companyfacts_path: Optional[str] = None
     sec_user_agent: Optional[str] = None
