@@ -7,6 +7,7 @@ SOURCE_AUTHORITY_RANKS = {
     "earnings_release": 1,
     "earnings_transcript": 2,
     "exchange_ohlcv": 2,
+    "trusted_market_data_vendor": 2,
     "official_press_release": 2,
     "earnings_calendar": 3,
     "reuters": 3,

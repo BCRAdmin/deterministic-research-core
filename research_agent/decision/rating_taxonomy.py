@@ -14,14 +14,13 @@ class Rating(str, Enum):
 
 
 RATING_DEFINITIONS = {
-    Rating.STRONG_BUY: "Aggressively build position now.",
-    Rating.BUY: "Build position, valuation and setup are attractive.",
-    Rating.ACCUMULATE: "Build position gradually, usually on pullbacks or confirmation.",
-    Rating.HOLD: "Maintain existing position; no strong add or reduce signal.",
-    Rating.TACTICAL_TRIM: "Reduce partial exposure due to timing/risk, but keep core.",
-    Rating.TACTICAL_UNDERWEIGHT: "Temporarily below target weight due to risk/reward or event risk.",
-    Rating.UNDERWEIGHT: "Structurally below benchmark/target weight.",
-    Rating.SELL: "Exit most or all of position.",
-    Rating.AVOID: "Do not initiate; unsuitable setup.",
+    Rating.STRONG_BUY: "Highest-conviction positive research view.",
+    Rating.BUY: "Positive research view; valuation and setup are attractive.",
+    Rating.ACCUMULATE: "Constructive research view, conditional on pullbacks or confirmation.",
+    Rating.HOLD: "Neutral research view; no strong positive or negative signal.",
+    Rating.TACTICAL_TRIM: "Cautious research view due to timing or event risk.",
+    Rating.TACTICAL_UNDERWEIGHT: "Defensive research view due to risk/reward or event risk.",
+    Rating.UNDERWEIGHT: "Structurally cautious research view relative to the benchmark.",
+    Rating.SELL: "Strong negative research view.",
+    Rating.AVOID: "Unsuitable current research setup.",
 }
-

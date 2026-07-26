@@ -1,0 +1,559 @@
+"""Create and verify the only supported hand-off into Room16 report generation.
+
+The bundle is deliberately company-agnostic. It validates packet identity,
+source authority, evidence coverage, calculation status, and rating permission
+without branching on a ticker or company name.
+"""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import shutil
+from datetime import date, datetime, timezone
+from pathlib import Path
+from typing import Any, Iterable, Mapping
+
+
+AUTHORITY_CONTRACT_ID = "room16.research_authority_bundle"
+AUTHORITY_CONTRACT_VERSION = 1
+PIPELINE_VERSION = "research_agent_v0.1.0"
+
+REQUIRED_PACKET_FILES = {
+    "data_packet": "data_packet.json",
+    "metrics_packet": "metrics_packet.json",
+    "validation_report": "validation_report.json",
+    "decision_packet": "decision_packet.json",
+    "evidence_ledger": "evidence_ledger.json",
+}
+
+PRIMARY_FINANCIAL_SOURCE_TYPES = {"company_ir", "sec_filing"}
+PRICE_SOURCE_TYPES = {"exchange_ohlcv", "trusted_market_data_vendor"}
+FINANCIAL_SOURCE_USES = {
+    "revenue",
+    "revenue_ttm",
+    "gross_profit",
+    "operating_income",
+    "net_income",
+    "operating_cash_flow",
+    "capex",
+    "free_cash_flow",
+    "sbc",
+    "cash",
+    "debt",
+    "shares",
+    "eps",
+}
+PRICE_SOURCE_USES = {"price", "volume", "technical_indicators"}
+MATERIAL_METRIC_KEYS = {
+    "revenue_ttm",
+    "operating_income_ttm",
+    "net_income_ttm",
+    "operating_cash_flow_ttm",
+    "capex_ttm",
+    "free_cash_flow_ttm",
+    "sbc_ttm",
+    "cash_and_investments",
+    "total_debt",
+    "close",
+    "sma_50",
+    "sma_200",
+    "rsi_14",
+    "avg_volume_20",
+}
+
+
+class AuthorityBundleError(ValueError):
+    """Raised when a research authority bundle cannot be built or verified."""
+
+
+def _read_json(path: Path) -> dict[str, Any]:
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except FileNotFoundError as exc:
+        raise AuthorityBundleError(f"required authority artifact missing: {path}") from exc
+    except json.JSONDecodeError as exc:
+        raise AuthorityBundleError(f"invalid JSON authority artifact: {path}") from exc
+    if not isinstance(payload, dict):
+        raise AuthorityBundleError(f"authority artifact must contain a JSON object: {path}")
+    return payload
+
+
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _normalized_symbol(value: Any) -> str:
+    return str(value or "").strip().upper()
+
+
+def _iso_date(value: Any) -> str:
+    text = str(value or "").strip()
+    try:
+        return date.fromisoformat(text).isoformat()
+    except ValueError as exc:
+        raise AuthorityBundleError(f"invalid ISO date in authority packet: {text!r}") from exc
+
+
+def _check(
+    checks: list[dict[str, Any]],
+    check_id: str,
+    passed: bool,
+    *,
+    blocking: bool = True,
+    detail: str = "",
+) -> None:
+    checks.append(
+        {
+            "check_id": check_id,
+            "status": "pass" if passed else "fail",
+            "blocking": blocking,
+            "detail": detail,
+        }
+    )
+
+
+def _metric_items(metrics_packet: Mapping[str, Any]) -> Iterable[tuple[str, Any]]:
+    for section in ("technical", "fundamentals", "valuation"):
+        values = metrics_packet.get(section)
+        if not isinstance(values, Mapping):
+            continue
+        for key, value in values.items():
+            if key in MATERIAL_METRIC_KEYS and value is not None:
+                yield key, value
+
+
+def _resolve_source_registry_path(
+    packet_dir: Path,
+    data_packet: Mapping[str, Any],
+    explicit_path: str | Path | None,
+) -> Path:
+    if explicit_path:
+        return Path(explicit_path).expanduser().resolve()
+    adjacent = packet_dir / "source_registry.json"
+    if adjacent.exists():
+        return adjacent
+    registry_id = str(data_packet.get("source_registry_id") or "").strip()
+    packets_root = packet_dir.parent.parent
+    candidate = packets_root / f"{registry_id}_source_registry.json"
+    if registry_id and candidate.exists():
+        return candidate
+    raise AuthorityBundleError(
+        "source_registry.json is missing; pass source_registry_path or keep the "
+        "registered source file beside the packet hierarchy"
+    )
+
+
+def _build_validated_context(
+    *,
+    data_packet: Mapping[str, Any],
+    metrics_packet: Mapping[str, Any],
+    validation_report: Mapping[str, Any],
+    decision_packet: Mapping[str, Any],
+    source_registry: Mapping[str, Any],
+    evidence_ledger: Mapping[str, Any],
+) -> str:
+    evidence_items = evidence_ledger.get("evidence_items")
+    evidence_items = evidence_items if isinstance(evidence_items, list) else []
+    evidence_summary = {
+        "item_count": len(evidence_items),
+        "source_ids": sorted(
+            {
+                str(item.get("source_id"))
+                for item in evidence_items
+                if isinstance(item, Mapping) and item.get("source_id")
+            }
+        ),
+        "supported_metrics": sorted(
+            {
+                str(metric)
+                for item in evidence_items
+                if isinstance(item, Mapping)
+                for metric in item.get("supports_metrics") or []
+            }
+        ),
+    }
+    payload = {
+        "data_packet": data_packet,
+        "metrics_packet": metrics_packet,
+        "validation_report": validation_report,
+        "decision_packet": decision_packet,
+        "source_registry": source_registry,
+        "evidence_summary": evidence_summary,
+    }
+    return "\n".join(
+        [
+            "# Room16 Validated Research Context",
+            "",
+            "This context is the sole factual and numerical authority for the report.",
+            "Interpret it, but do not invent, refresh, or replace values in it.",
+            "Missing information must remain explicitly unavailable.",
+            "The final rating must remain within `decision_packet.rating_permission.allowed_ratings`.",
+            "",
+            "```json",
+            json.dumps(payload, indent=2, sort_keys=True, ensure_ascii=False),
+            "```",
+            "",
+        ]
+    )
+
+
+def _assess_packets(
+    *,
+    data_packet: Mapping[str, Any],
+    metrics_packet: Mapping[str, Any],
+    validation_report: Mapping[str, Any],
+    decision_packet: Mapping[str, Any],
+    source_registry: Mapping[str, Any],
+    evidence_ledger: Mapping[str, Any],
+) -> tuple[list[dict[str, Any]], str, str]:
+    checks: list[dict[str, Any]] = []
+    ticker = _normalized_symbol(data_packet.get("ticker"))
+    as_of_date = _iso_date(data_packet.get("as_of_date"))
+    _check(checks, "ticker_present", bool(ticker), detail=ticker)
+
+    packet_identities = {
+        "data_packet": (
+            _normalized_symbol(data_packet.get("ticker")),
+            str(data_packet.get("as_of_date") or ""),
+        ),
+        "metrics_packet": (
+            _normalized_symbol(metrics_packet.get("ticker")),
+            str(metrics_packet.get("as_of_date") or ""),
+        ),
+        "validation_report": (
+            _normalized_symbol(validation_report.get("ticker")),
+            str(validation_report.get("as_of_date") or ""),
+        ),
+        "decision_packet": (
+            _normalized_symbol(decision_packet.get("ticker")),
+            str(decision_packet.get("as_of_date") or ""),
+        ),
+        "evidence_ledger": (
+            _normalized_symbol(evidence_ledger.get("ticker")),
+            str(evidence_ledger.get("as_of_date") or ""),
+        ),
+    }
+    expected_identity = (ticker, as_of_date)
+    mismatches = {
+        name: identity
+        for name, identity in packet_identities.items()
+        if identity != expected_identity
+    }
+    _check(
+        checks,
+        "packet_identity_consistent",
+        not mismatches,
+        detail=json.dumps(mismatches, sort_keys=True),
+    )
+
+    price_basis = data_packet.get("price_basis")
+    price_basis = price_basis if isinstance(price_basis, Mapping) else {}
+    price_date = str(price_basis.get("date") or "")
+    try:
+        price_not_future = bool(price_date) and date.fromisoformat(price_date) <= date.fromisoformat(as_of_date)
+    except ValueError:
+        price_not_future = False
+    _check(checks, "price_basis_not_after_as_of", price_not_future, detail=price_date)
+
+    validation_issues = validation_report.get("issues")
+    validation_issues = validation_issues if isinstance(validation_issues, list) else []
+    blocking_issue_codes = [
+        str(issue.get("code") or "")
+        for issue in validation_issues
+        if isinstance(issue, Mapping) and str(issue.get("severity") or "").lower() == "error"
+    ]
+    validation_clean = not bool(validation_report.get("has_blocking_errors")) and not blocking_issue_codes
+    _check(
+        checks,
+        "deterministic_validation_clean",
+        validation_clean,
+        detail=",".join(blocking_issue_codes),
+    )
+
+    registry_id = str(source_registry.get("registry_id") or "")
+    _check(
+        checks,
+        "source_registry_identity",
+        bool(registry_id) and registry_id == str(data_packet.get("source_registry_id") or ""),
+        detail=registry_id,
+    )
+    sources = source_registry.get("sources")
+    sources = sources if isinstance(sources, list) else []
+    source_ids = {
+        str(source.get("source_id") or "")
+        for source in sources
+        if isinstance(source, Mapping) and source.get("source_id")
+    }
+    source_tickers = {
+        _normalized_symbol(source.get("ticker"))
+        for source in sources
+        if isinstance(source, Mapping)
+    }
+    _check(
+        checks,
+        "source_ticker_consistent",
+        bool(source_tickers) and source_tickers == {ticker},
+        detail=",".join(sorted(source_tickers)),
+    )
+
+    def source_supports(
+        source: Mapping[str, Any],
+        *,
+        source_types: set[str],
+        used_for: set[str],
+        max_rank: int,
+    ) -> bool:
+        source_type = str(source.get("source_type") or "")
+        source_uses = {str(item) for item in source.get("used_for") or []}
+        try:
+            rank = int(source.get("authority_rank") or 99)
+        except (TypeError, ValueError):
+            rank = 99
+        return source_type in source_types and rank <= max_rank and bool(source_uses & used_for)
+
+    has_primary_financial = any(
+        isinstance(source, Mapping)
+        and source_supports(
+            source,
+            source_types=PRIMARY_FINANCIAL_SOURCE_TYPES,
+            used_for=FINANCIAL_SOURCE_USES,
+            max_rank=1,
+        )
+        for source in sources
+    )
+    _check(checks, "primary_financial_source_present", has_primary_financial)
+    has_price_source = any(
+        isinstance(source, Mapping)
+        and source_supports(
+            source,
+            source_types=PRICE_SOURCE_TYPES,
+            used_for=PRICE_SOURCE_USES,
+            max_rank=2,
+        )
+        for source in sources
+    )
+    _check(checks, "authoritative_price_source_present", has_price_source)
+
+    evidence_items = evidence_ledger.get("evidence_items")
+    evidence_items = evidence_items if isinstance(evidence_items, list) else []
+    unknown_evidence_sources = sorted(
+        {
+            str(item.get("source_id") or "")
+            for item in evidence_items
+            if isinstance(item, Mapping)
+            and item.get("source_id")
+            and str(item.get("source_id")) not in source_ids
+        }
+    )
+    evidence_tickers = {
+        _normalized_symbol(item.get("ticker"))
+        for item in evidence_items
+        if isinstance(item, Mapping)
+    }
+    _check(
+        checks,
+        "evidence_ledger_present",
+        bool(evidence_items),
+        detail=f"items={len(evidence_items)}",
+    )
+    _check(
+        checks,
+        "evidence_sources_registered",
+        not unknown_evidence_sources,
+        detail=",".join(unknown_evidence_sources),
+    )
+    _check(
+        checks,
+        "evidence_ticker_consistent",
+        bool(evidence_tickers) and evidence_tickers == {ticker},
+        detail=",".join(sorted(evidence_tickers)),
+    )
+
+    supported_metrics = {
+        str(metric)
+        for item in evidence_items
+        if isinstance(item, Mapping)
+        for metric in item.get("supports_metrics") or []
+    }
+    material_metrics = {name for name, _ in _metric_items(metrics_packet)}
+    missing_metric_evidence = sorted(material_metrics - supported_metrics)
+    _check(
+        checks,
+        "material_metrics_evidence_mapped",
+        not missing_metric_evidence,
+        detail=",".join(missing_metric_evidence),
+    )
+
+    permission = decision_packet.get("rating_permission")
+    permission = permission if isinstance(permission, Mapping) else {}
+    preferred = str(permission.get("preferred_rating") or "")
+    allowed = {str(item) for item in permission.get("allowed_ratings") or []}
+    blocked = {str(item) for item in permission.get("blocked_ratings") or []}
+    _check(
+        checks,
+        "decision_permission_consistent",
+        bool(preferred) and preferred in allowed and preferred not in blocked,
+        detail=preferred,
+    )
+    return checks, ticker, as_of_date
+
+
+def build_authority_bundle(
+    *,
+    packet_dir: str | Path,
+    output_dir: str | Path,
+    source_registry_path: str | Path | None = None,
+    pipeline_version: str = PIPELINE_VERSION,
+) -> dict[str, Any]:
+    """Export a self-contained, hashed authority bundle from validated packets."""
+
+    source_dir = Path(packet_dir).expanduser().resolve()
+    target_dir = Path(output_dir).expanduser().resolve()
+    payloads: dict[str, dict[str, Any]] = {}
+    source_paths: dict[str, Path] = {}
+    for role, filename in REQUIRED_PACKET_FILES.items():
+        path = source_dir / filename
+        source_paths[role] = path
+        payloads[role] = _read_json(path)
+    registry_path = _resolve_source_registry_path(
+        source_dir,
+        payloads["data_packet"],
+        source_registry_path,
+    )
+    source_paths["source_registry"] = registry_path
+    payloads["source_registry"] = _read_json(registry_path)
+
+    checks, ticker, as_of_date = _assess_packets(
+        data_packet=payloads["data_packet"],
+        metrics_packet=payloads["metrics_packet"],
+        validation_report=payloads["validation_report"],
+        decision_packet=payloads["decision_packet"],
+        source_registry=payloads["source_registry"],
+        evidence_ledger=payloads["evidence_ledger"],
+    )
+    blocking_failures = [
+        item["check_id"]
+        for item in checks
+        if item["blocking"] and item["status"] != "pass"
+    ]
+
+    target_dir.mkdir(parents=True, exist_ok=True)
+    artifacts: dict[str, dict[str, Any]] = {}
+    for role, source_path in source_paths.items():
+        target_path = target_dir / source_path.name
+        shutil.copy2(source_path, target_path)
+        artifacts[role] = {
+            "path": target_path.name,
+            "sha256": _sha256(target_path),
+            "bytes": target_path.stat().st_size,
+        }
+
+    context_path = target_dir / "validated_context.md"
+    context_path.write_text(
+        _build_validated_context(
+            data_packet=payloads["data_packet"],
+            metrics_packet=payloads["metrics_packet"],
+            validation_report=payloads["validation_report"],
+            decision_packet=payloads["decision_packet"],
+            source_registry=payloads["source_registry"],
+            evidence_ledger=payloads["evidence_ledger"],
+        ),
+        encoding="utf-8",
+    )
+    artifacts["validated_context"] = {
+        "path": context_path.name,
+        "sha256": _sha256(context_path),
+        "bytes": context_path.stat().st_size,
+    }
+
+    manifest = {
+        "contract_id": AUTHORITY_CONTRACT_ID,
+        "contract_version": AUTHORITY_CONTRACT_VERSION,
+        "pipeline_version": pipeline_version,
+        "generated_at": datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
+        "ticker": ticker,
+        "as_of_date": as_of_date,
+        "analysis_allowed": not blocking_failures,
+        "blocking_failures": blocking_failures,
+        "checks": checks,
+        "artifacts": artifacts,
+        "rating_permission": payloads["decision_packet"].get("rating_permission") or {},
+    }
+    manifest_path = target_dir / "authority_manifest.json"
+    manifest_path.write_text(
+        json.dumps(manifest, indent=2, sort_keys=True, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
+    return manifest
+
+
+def verify_authority_bundle(bundle_dir: str | Path) -> dict[str, Any]:
+    """Verify identity, hashes, packets, and permission without mutating the bundle."""
+
+    root = Path(bundle_dir).expanduser().resolve()
+    manifest = _read_json(root / "authority_manifest.json")
+    checks: list[dict[str, Any]] = []
+    _check(
+        checks,
+        "contract_identity",
+        manifest.get("contract_id") == AUTHORITY_CONTRACT_ID
+        and manifest.get("contract_version") == AUTHORITY_CONTRACT_VERSION,
+        detail=f"{manifest.get('contract_id')}@{manifest.get('contract_version')}",
+    )
+    artifacts = manifest.get("artifacts")
+    artifacts = artifacts if isinstance(artifacts, Mapping) else {}
+    payloads: dict[str, dict[str, Any]] = {}
+    for role in (*REQUIRED_PACKET_FILES.keys(), "source_registry", "validated_context"):
+        item = artifacts.get(role)
+        if not isinstance(item, Mapping):
+            _check(checks, f"artifact_{role}", False, detail="manifest entry missing")
+            continue
+        path = root / str(item.get("path") or "")
+        exists = path.is_file()
+        hash_matches = exists and _sha256(path) == str(item.get("sha256") or "")
+        _check(
+            checks,
+            f"artifact_{role}",
+            bool(exists and hash_matches),
+            detail=str(path),
+        )
+        if role != "validated_context" and exists and hash_matches:
+            payloads[role] = _read_json(path)
+
+    if all(role in payloads for role in (*REQUIRED_PACKET_FILES.keys(), "source_registry")):
+        packet_checks, ticker, as_of_date = _assess_packets(
+            data_packet=payloads["data_packet"],
+            metrics_packet=payloads["metrics_packet"],
+            validation_report=payloads["validation_report"],
+            decision_packet=payloads["decision_packet"],
+            source_registry=payloads["source_registry"],
+            evidence_ledger=payloads["evidence_ledger"],
+        )
+        checks.extend(packet_checks)
+        _check(
+            checks,
+            "manifest_identity_matches_packets",
+            _normalized_symbol(manifest.get("ticker")) == ticker
+            and str(manifest.get("as_of_date") or "") == as_of_date,
+        )
+    blocking_failures = [
+        item["check_id"]
+        for item in checks
+        if item["blocking"] and item["status"] != "pass"
+    ]
+    manifest_allows = bool(manifest.get("analysis_allowed"))
+    verified = manifest_allows and not blocking_failures
+    return {
+        "contract_id": AUTHORITY_CONTRACT_ID,
+        "contract_version": AUTHORITY_CONTRACT_VERSION,
+        "status": "pass" if verified else "fail",
+        "analysis_allowed": verified,
+        "blocking_failures": blocking_failures,
+        "checks": checks,
+        "manifest": manifest,
+    }

@@ -25,8 +25,64 @@ Core rule:
 - Python validates metrics and logic.
 - LLM agents may only interpret validated packets.
 - Final reports may use numbers only from `data_packet.json`, `metrics_packet.json`, `validation_report.json`, or explicitly registered sources in `source_registry.json`.
+- Every report-capable run must export and pass a
+  `room16.research_authority_bundle@1`; there is no configuration switch that
+  bypasses this hand-off.
+- Runtime-discovered sources are merged into the registry before validation,
+  and calculated technical values retain their OHLCV provenance.
+- The deterministic decision packet expresses a research stance and
+  confirmation/risk markers. It does not prescribe personal position sizes,
+  holdings, entries, exits, or new-money actions.
 
 The initial build includes Pydantic packet schemas, technical/fundamental/valuation calculations, source-authority checks, trade/rating/news validation rules, regression tests for known failures, and a pipeline skeleton that stops report generation on blocking validation errors.
+
+## Mandatory Room16 Handoff
+
+For each ticker and analysis date the pipeline writes:
+
+```text
+<output_dir>/<TICKER>/<YYYY-MM-DD>/authority_bundle/
+```
+
+The bundle contains copied input packets, the source registry, evidence
+ledger, a compact validated context, and a manifest with hashes and blocking
+checks. `company-dossier-lab` verifies the complete bundle before any model
+call.
+
+The binding contract is documented in
+[`docs/RESEARCH_AUTHORITY_CONTRACT.md`](docs/RESEARCH_AUTHORITY_CONTRACT.md).
+
+## Current Research Ingestion
+
+The generic current-data entry point is:
+
+```bash
+ROOM16_SEC_USER_AGENT="Room16 Name contact@example.com" \
+MASSIVE_API_KEY="<secret>" \
+python -m research_agent.current \
+  --ticker <TICKER> \
+  --date <YYYY-MM-DD>
+```
+
+It resolves the issuer through the official SEC ticker map, fetches SEC
+CompanyFacts and submissions, obtains daily SIP-derived OHLCV through the
+configured authority-grade market provider, stages temporary inputs below
+`.runtime/current-research/`, and invokes the same deterministic pipeline.
+Outputs appear below `research_agent/data/outputs/`, which is intentionally
+Git-ignored except for `.gitkeep`.
+
+There are no ticker-specific provider exceptions. A security absent from the
+SEC map stops with an explicit jurisdiction-adapter gap. Vendor fundamentals
+and weak price feeds do not silently replace missing authority sources.
+
+Primary references:
+
+- SEC EDGAR APIs:
+  https://www.sec.gov/search-filings/edgar-application-programming-interfaces
+- SEC ticker map:
+  https://www.sec.gov/files/company_tickers.json
+- Massive daily aggregates:
+  https://massive.com/docs/rest/stocks/aggregates/custom-bars
 
 ## Markdown Report Auditor
 
@@ -50,9 +106,12 @@ The final Investment Committee layer receives a deterministic `DecisionPacket` w
 - `blocked_ratings`
 - `preferred_rating`
 - signal scores for fundamentals, technicals, valuation, and risk
-- an action policy derived from the preferred rating
+- a neutral research-stance policy derived from the preferred rating
 
-The final writer may not output a blocked rating. This keeps tactical trims from becoming accidental `Sell` calls and staged entries from becoming unconstrained `Buy` calls.
+The final writer may not output a blocked rating. This keeps cautious research
+views from becoming accidental `Sell` calls and constructive views from
+becoming unconstrained `Buy` calls. Personal portfolio instructions are not
+part of the deterministic packet.
 
 ## Auto-Repair And Quality Gate
 

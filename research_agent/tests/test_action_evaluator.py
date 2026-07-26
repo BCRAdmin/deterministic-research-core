@@ -25,7 +25,7 @@ def _outcome(
 
 def test_staged_entry_succeeds_when_pullback_available_without_stop_hit():
     evaluation = evaluate_action_policy(
-        {"primary_action": "Staged accumulation"},
+        {"research_stance": "Constructive bias, conditional on staged confirmation"},
         _outcome(max_drawdown_pct=-0.07, hit_stop=False),
     )
 
@@ -36,7 +36,7 @@ def test_staged_entry_succeeds_when_pullback_available_without_stop_hit():
 
 def test_staged_entry_fails_when_stop_is_hit():
     evaluation = evaluate_action_policy(
-        {"primary_action": "Staged accumulation"},
+        {"research_stance": "Constructive bias, conditional on staged confirmation"},
         _outcome(max_drawdown_pct=-0.07, hit_stop=True),
     )
 
@@ -46,7 +46,7 @@ def test_staged_entry_fails_when_stop_is_hit():
 
 def test_trim_succeeds_when_later_drawdown_validates_reduction():
     evaluation = evaluate_action_policy(
-        {"primary_action": "Trim partial exposure"},
+        {"research_stance": "Cautious bias while timing risk remains elevated"},
         _outcome(return_pct=-0.04, max_drawdown_pct=-0.11),
     )
 
@@ -55,7 +55,7 @@ def test_trim_succeeds_when_later_drawdown_validates_reduction():
 
 def test_hold_fails_on_severe_downside():
     evaluation = evaluate_action_policy(
-        {"primary_action": "Maintain existing position"},
+        {"research_stance": "Neutral bias pending stronger confirmation"},
         _outcome(return_pct=-0.14, max_drawdown_pct=-0.18),
     )
 

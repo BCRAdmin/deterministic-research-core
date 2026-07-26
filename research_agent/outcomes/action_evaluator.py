@@ -23,8 +23,12 @@ def evaluate_action_policy(
     pullback_threshold: float = -0.05,
     trim_drawdown_threshold: float = -0.08,
 ) -> ActionEvaluation:
-    primary_action = str(action_policy.get("primary_action", "Manual review required"))
-    normalized = primary_action.lower()
+    research_stance = str(
+        action_policy.get("research_stance")
+        or action_policy.get("primary_action")
+        or "Manual review required"
+    )
+    normalized = research_stance.lower()
     notes: list[str] = []
     max_drawdown = outcome.max_drawdown_pct
     max_gain = outcome.max_gain_pct
@@ -33,30 +37,30 @@ def evaluate_action_policy(
     pullback_available = max_drawdown is not None and max_drawdown <= pullback_threshold
     breakout_available = max_gain is not None and max_gain >= abs(pullback_threshold)
 
-    if "staged" in normalized or "accumulation" in normalized:
+    if "constructive" in normalized or "staged" in normalized or "accumulation" in normalized:
         success = pullback_available and outcome.hit_stop is not True
-        notes.append("Staged accumulation succeeds when a pullback entry appears without immediately breaking the stop.")
-        return _evaluation(primary_action, success, notes, outcome, pullback_available, breakout_available)
+        notes.append("A conditional constructive view is validated when a pullback appears without an immediate downside breach.")
+        return _evaluation(research_stance, success, notes, outcome, pullback_available, breakout_available)
 
-    if "trim" in normalized or "reduce" in normalized or "below target" in normalized:
+    if "cautious" in normalized or "defensive" in normalized or "trim" in normalized or "reduce" in normalized or "below target" in normalized:
         drawdown_confirmed = max_drawdown is not None and max_drawdown <= trim_drawdown_threshold
         weakness_confirmed = return_pct is not None and return_pct < 0
         success = drawdown_confirmed or weakness_confirmed
-        notes.append("Trim or underweight action succeeds when later weakness validates risk reduction.")
-        return _evaluation(primary_action, success, notes, outcome, pullback_available, breakout_available)
+        notes.append("A cautious or defensive view is validated when later weakness confirms the risk signal.")
+        return _evaluation(research_stance, success, notes, outcome, pullback_available, breakout_available)
 
-    if "maintain" in normalized or "hold" in normalized:
+    if "neutral" in normalized or "maintain" in normalized or "hold" in normalized:
         success = return_pct is not None and return_pct > -0.10
-        notes.append("Hold action succeeds when the position avoids severe downside.")
-        return _evaluation(primary_action, success, notes, outcome, pullback_available, breakout_available)
+        notes.append("A neutral view is validated when the security avoids severe downside.")
+        return _evaluation(research_stance, success, notes, outcome, pullback_available, breakout_available)
 
     if "buy" in normalized or "build" in normalized:
         success = return_pct is not None and return_pct > 0 and outcome.hit_stop is not True
         notes.append("Immediate buy/build actions require positive follow-through without stop breach.")
-        return _evaluation(primary_action, success, notes, outcome, pullback_available, breakout_available)
+        return _evaluation(research_stance, success, notes, outcome, pullback_available, breakout_available)
 
     return _evaluation(
-        primary_action,
+        research_stance,
         None,
         ["Action policy is not specific enough for deterministic outcome evaluation."],
         outcome,

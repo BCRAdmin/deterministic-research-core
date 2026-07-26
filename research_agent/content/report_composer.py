@@ -205,7 +205,9 @@ def _render_investment_thesis(
         parts.append("- Cash-conversion basis: FCF is unavailable in the evidence set and should be treated as a data limitation.")
     if ev_sales is not None:
         parts.append(f"- Valuation constraint: EV/Sales is `{ev_sales:.2f}x`.")
-    parts.append(f"- Action implication: for `{data_packet.ticker}`, position sizing should follow the business, valuation and technical evidence.")
+    parts.append(
+        f"- Research implication: the stance for `{data_packet.ticker}` remains conditional on the business, valuation and technical evidence."
+    )
     return "\n".join(parts)
 
 
@@ -229,14 +231,11 @@ def _render_scenario_view(decision_packet: DecisionPacket) -> str:
 
 def _render_action_policy(decision_packet: DecisionPacket) -> str:
     policy = decision_packet.action_policy or {}
-    primary_action = policy.get("primary_action", "Maintain rating discipline and avoid adding without better risk/reward.")
-    lines = [f"Primary action: {primary_action}."]
-    if policy.get("trim_size"):
-        lines.append(f"Trim sizing: {policy['trim_size']}.")
-    if policy.get("initial_position"):
-        lines.append(f"Initial position: {policy['initial_position']}.")
-    if policy.get("new_money"):
-        lines.append(f"New money: {policy['new_money']}.")
+    research_stance = policy.get("research_stance", "Manual review required")
+    lines = [f"Research stance: {research_stance}."]
+    conditions = policy.get("confirmation_conditions") or []
+    if conditions:
+        lines.append("Confirmation conditions: " + "; ".join(str(item) for item in conditions) + ".")
     return "\n".join(lines)
 
 

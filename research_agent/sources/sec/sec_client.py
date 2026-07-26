@@ -80,3 +80,23 @@ class SecClient:
     def get_submissions(self, cik: str) -> Dict[str, Any]:
         cik10 = str(cik).zfill(10)
         return self.get_json(f"/submissions/CIK{cik10}.json")
+
+    def get_company_tickers(self) -> Dict[str, Any]:
+        """Return the official SEC ticker/CIK mapping.
+
+        The mapping lives on www.sec.gov rather than data.sec.gov, so use a
+        short-lived client with the same identity, retry, cache, and rate
+        policies instead of bypassing the SEC access contract.
+        """
+
+        website_config = SecClientConfig(
+            user_agent=self.config.user_agent,
+            base_url="https://www.sec.gov",
+            request_delay_seconds=self.config.request_delay_seconds,
+            timeout_seconds=self.config.timeout_seconds,
+            max_retries=self.config.max_retries,
+            use_cache=self.config.use_cache,
+            cache_dir=self.config.cache_dir,
+            cache_ttl_hours=self.config.cache_ttl_hours,
+        )
+        return SecClient(website_config).get_json("/files/company_tickers.json")

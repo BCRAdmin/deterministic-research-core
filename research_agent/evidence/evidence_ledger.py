@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import Iterable, List, Optional, Union
 
 from pydantic import BaseModel, Field
 
@@ -10,6 +10,11 @@ from research_agent.evidence.evidence_item import EvidenceItem
 from research_agent.evidence.source_ranker import rank_source
 from research_agent.research_core.ingestion.source_registry import SourceRegistry
 from research_agent.research_core.models.metrics_packet import MetricsPacket
+
+OHLCV_AUTHORITY_SOURCE_TYPES = {
+    "exchange_ohlcv",
+    "trusted_market_data_vendor",
+}
 
 
 class EvidenceLedger(BaseModel):
@@ -74,6 +79,90 @@ def build_evidence_ledger_from_source_registry(
                 )
             )
     return EvidenceLedger(ticker=ticker.upper(), as_of_date=as_of_date, evidence_items=items)
+
+
+def build_technical_derivation_evidence(
+    *,
+    ticker: str,
+    as_of_date: str,
+    metrics_packet: MetricsPacket,
+    source_registry: Optional[SourceRegistry],
+    runtime_evidence: Iterable[EvidenceItem] = (),
+) -> list[EvidenceItem]:
+    """Map calculated technical values back to one registered OHLCV source."""
+
+    candidates: list[tuple[int, str, str, Optional[str], Optional[str]]] = []
+    for item in runtime_evidence:
+        if item.source_type in OHLCV_AUTHORITY_SOURCE_TYPES:
+            candidates.append(
+                (
+                    item.authority_rank,
+                    item.source_id,
+                    item.source_type,
+                    item.url,
+                    item.retrieved_at,
+                )
+            )
+    if source_registry is not None:
+        for source in source_registry.sources:
+            if source.source_type in OHLCV_AUTHORITY_SOURCE_TYPES:
+                candidates.append(
+                    (
+                        source.resolved_authority_rank(),
+                        source.source_id,
+                        source.source_type,
+                        source.url,
+                        source.retrieved_at,
+                    )
+                )
+    if not candidates:
+        return []
+
+    authority_rank, source_id, source_type, url, retrieved_at = sorted(
+        candidates,
+        key=lambda item: (item[0], item[1]),
+    )[0]
+    technical = metrics_packet.technical
+    metric_units = {
+        "close": "USD",
+        "sma_50": "USD",
+        "sma_200": "USD",
+        "rsi_14": "index",
+        "avg_volume_20": "shares",
+    }
+    evidence: list[EvidenceItem] = []
+    for metric_name, unit in metric_units.items():
+        value = getattr(technical, metric_name, None)
+        if value is None:
+            continue
+        evidence.append(
+            EvidenceItem(
+                evidence_id=(
+                    f"{ticker.upper()}_DETERMINISTIC_{metric_name.upper()}_"
+                    f"{technical.indicator_date}"
+                ),
+                ticker=ticker.upper(),
+                claim_type=(
+                    "price_data" if metric_name == "close" else "technical_metric"
+                ),
+                source_id=source_id,
+                source_type=source_type,
+                authority_rank=authority_rank,
+                statement=(
+                    f"{metric_name} was calculated deterministically from the "
+                    f"registered OHLCV source {source_id}."
+                ),
+                value=float(value),
+                unit=unit,
+                period="daily_history",
+                date=technical.indicator_date,
+                url=url,
+                retrieved_at=retrieved_at,
+                supports_metrics=[metric_name],
+                confidence="high",
+            )
+        )
+    return evidence
 
 
 def save_evidence_ledger(ledger: EvidenceLedger, path: Union[str, Path]) -> Path:
@@ -147,7 +236,10 @@ def _metric_value(metrics_packet: Optional[MetricsPacket], metric_name: str) -> 
 def _claim_type_for_metric(metric_name: str, source_type: str):
     if metric_name in {"company_guidance_eps", "guidance"}:
         return "guidance"
-    if metric_name in {"close", "price", "price_data", "price_basis"} or source_type == "exchange_ohlcv":
+    if (
+        metric_name in {"close", "price", "price_data", "price_basis"}
+        or source_type in OHLCV_AUTHORITY_SOURCE_TYPES
+    ):
         return "price_data"
     if metric_name.startswith("sma") or metric_name.startswith("ema") or metric_name in {"rsi_14", "macd_histogram"}:
         return "technical_metric"

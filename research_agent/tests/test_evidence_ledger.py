@@ -1,6 +1,20 @@
 from research_agent.evidence.evidence_item import EvidenceItem
-from research_agent.evidence.evidence_ledger import EvidenceLedger, build_evidence_ledger_from_source_registry
-from research_agent.research_core.ingestion.source_registry import SourceRegistry, SourceRegistryEntry
+from research_agent.evidence.evidence_ledger import (
+    EvidenceLedger,
+    build_evidence_ledger_from_source_registry,
+    build_technical_derivation_evidence,
+)
+from research_agent.research_core.ingestion.source_registry import (
+    SourceRegistry,
+    SourceRegistryEntry,
+    merge_evidence_sources,
+)
+from research_agent.research_core.models.metrics_packet import (
+    FundamentalMetrics,
+    MetricsPacket,
+    TechnicalMetrics,
+    ValuationMetrics,
+)
 
 
 def test_evidence_ledger_finds_metric_and_primary_evidence():
@@ -76,3 +90,74 @@ def test_eps_source_registry_does_not_create_pseudo_guidance_or_consensus():
     assert ledger.find_by_metric("eps")
     assert not ledger.find_by_metric("company_guidance_eps")
     assert not ledger.find_by_metric("consensus_forward_eps")
+
+
+def test_runtime_evidence_sources_are_merged_without_company_rules():
+    evidence = EvidenceItem(
+        evidence_id="GENERIC_FILING_REVENUE",
+        ticker="GENERIC",
+        claim_type="financial_metric",
+        source_id="GENERIC_FILING_001",
+        source_type="sec_filing",
+        authority_rank=1,
+        statement="Revenue was reported in the filing.",
+        supports_metrics=["revenue_ttm"],
+        confidence="high",
+    )
+
+    registry = merge_evidence_sources(
+        None,
+        registry_id="GENERIC_2026-07-01",
+        ticker="GENERIC",
+        evidence_items=[evidence],
+    )
+
+    assert registry.source_ids() == {"GENERIC_FILING_001"}
+    assert registry.sources[0].used_for == ["revenue_ttm"]
+    assert registry.sources[0].owner == "deterministic_research_pipeline"
+
+
+def test_technical_metrics_are_derived_from_registered_ohlcv():
+    registry = SourceRegistry(
+        registry_id="GENERIC_2026-07-01",
+        sources=[
+            SourceRegistryEntry(
+                source_id="GENERIC_EXCHANGE",
+                ticker="GENERIC",
+                source_type="exchange_ohlcv",
+                authority_rank=2,
+                used_for=["price", "volume"],
+            )
+        ],
+    )
+    metrics = MetricsPacket(
+        ticker="GENERIC",
+        as_of_date="2026-07-01",
+        technical=TechnicalMetrics(
+            indicator_date="2026-07-01",
+            close=100.0,
+            sma_50=95.0,
+            sma_200=80.0,
+            rsi_14=55.0,
+            avg_volume_20=1_000_000,
+        ),
+        fundamentals=FundamentalMetrics(fiscal_period="TTM"),
+        valuation=ValuationMetrics(),
+    )
+
+    evidence = build_technical_derivation_evidence(
+        ticker="GENERIC",
+        as_of_date="2026-07-01",
+        metrics_packet=metrics,
+        source_registry=registry,
+    )
+
+    assert {item.supports_metrics[0] for item in evidence} == {
+        "close",
+        "sma_50",
+        "sma_200",
+        "rsi_14",
+        "avg_volume_20",
+    }
+    assert {item.source_id for item in evidence} == {"GENERIC_EXCHANGE"}
+    assert all(item.claim_type in {"price_data", "technical_metric"} for item in evidence)

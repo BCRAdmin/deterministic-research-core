@@ -26,3 +26,28 @@ def test_sec_client_companyfacts_path_zero_pads_cik(monkeypatch):
 
     assert client.get_companyfacts("1441816") == {"ok": True}
     assert captured["path"] == "/api/xbrl/companyfacts/CIK0001441816.json"
+
+
+def test_sec_company_ticker_map_uses_official_website_with_same_identity(monkeypatch):
+    captured = {}
+
+    def fake_get_json(self, path):
+        captured["base_url"] = self.config.base_url
+        captured["user_agent"] = self.config.user_agent
+        captured["path"] = path
+        return {"0": {"ticker": "GENR", "cik_str": 123}}
+
+    monkeypatch.setattr(SecClient, "get_json", fake_get_json)
+    client = SecClient(
+        SecClientConfig(
+            user_agent="ResearchAgent contact@example.com",
+            use_cache=False,
+        )
+    )
+
+    assert client.get_company_tickers()["0"]["ticker"] == "GENR"
+    assert captured == {
+        "base_url": "https://www.sec.gov",
+        "user_agent": "ResearchAgent contact@example.com",
+        "path": "/files/company_tickers.json",
+    }

@@ -20,9 +20,13 @@ from research_agent.content.report_composer import compose_research_report, save
 from research_agent.audit.report_linter import audit_markdown_report
 from research_agent.decision.rating_engine import build_decision_packet
 from research_agent.evidence.evidence_item import EvidenceItem
-from research_agent.evidence.evidence_ledger import build_evidence_ledger_from_source_registry
+from research_agent.evidence.evidence_ledger import (
+    build_evidence_ledger_from_source_registry,
+    build_technical_derivation_evidence,
+)
 from research_agent.evidence.evidence_report import render_evidence_report, save_evidence_report
 from research_agent.evidence.source_ranker import rank_source
+from research_agent.integration.authority_bundle import build_authority_bundle
 from research_agent.outcomes.report_manifest import build_report_manifest, save_report_manifest
 from research_agent.quality.quality_score import (
     calculate_quality_score,
@@ -51,7 +55,12 @@ from research_agent.research_core.calculations.valuation import calculate_valuat
 from research_agent.research_core.ingestion.fundamentals_loader import load_fundamentals
 from research_agent.research_core.ingestion.news_loader import load_news
 from research_agent.research_core.ingestion.price_loader import load_price_history
-from research_agent.research_core.ingestion.source_registry import SourceRegistry, load_source_registry
+from research_agent.research_core.ingestion.source_registry import (
+    SourceRegistry,
+    load_source_registry,
+    merge_evidence_sources,
+    save_source_registry,
+)
 from research_agent.research_core.models.data_packet import (
     CompanyGuidanceEPS,
     DataPacket,
@@ -122,7 +131,10 @@ def run_research_pipeline(
         reference_date=config.freshness_reference_date,
         max_trading_day_age=config.freshness_max_trading_days,
     )
-    data_packet_path = save_json_packet(data_packet, "data_packet", ticker, as_of_date)
+    packet_root = Path(config.packet_dir)
+    data_packet_path = save_json_packet(
+        data_packet, "data_packet", ticker, as_of_date, packet_root=packet_root
+    )
 
     technical_metrics = calculate_technical_metrics(normalized_prices, data_packet)
     fundamental_metrics = calculate_fundamental_metrics(
@@ -145,16 +157,40 @@ def run_research_pipeline(
         fundamentals=fundamental_metrics,
         valuation=valuation_metrics or ValuationMetrics(),
     )
-    metrics_packet_path = save_json_packet(metrics_packet, "metrics_packet", ticker, as_of_date)
+    metrics_packet_path = save_json_packet(
+        metrics_packet, "metrics_packet", ticker, as_of_date, packet_root=packet_root
+    )
     reconciliation_paths = _save_reconciliation_artifacts(
         canonical_financials=canonical_financials,
         metrics_packet=metrics_packet,
         warnings=reconciliation_warnings,
         ticker=ticker,
         as_of_date=as_of_date,
+        packet_root=packet_root,
     )
 
-    source_registry = _load_optional_source_registry(data_packet.source_registry_id)
+    source_registry = _load_optional_source_registry(
+        data_packet.source_registry_id, packet_root=packet_root
+    )
+    source_evidence_items.extend(
+        build_technical_derivation_evidence(
+            ticker=data_packet.ticker,
+            as_of_date=data_packet.as_of_date,
+            metrics_packet=metrics_packet,
+            source_registry=source_registry,
+            runtime_evidence=source_evidence_items,
+        )
+    )
+    source_registry = merge_evidence_sources(
+        source_registry,
+        registry_id=data_packet.source_registry_id,
+        ticker=data_packet.ticker,
+        evidence_items=source_evidence_items,
+    )
+    source_registry_path = _source_registry_path(
+        data_packet.source_registry_id, packet_root=packet_root
+    )
+    save_source_registry(source_registry, source_registry_path)
     evidence_ledger = build_evidence_ledger_from_source_registry(
         ticker=data_packet.ticker,
         as_of_date=data_packet.as_of_date,
@@ -162,14 +198,20 @@ def run_research_pipeline(
         metrics_packet=metrics_packet,
     )
     evidence_ledger.evidence_items.extend(source_evidence_items)
-    evidence_ledger_path = save_json_packet(evidence_ledger, "evidence_ledger", ticker, as_of_date)
-    evidence_report_path = _save_evidence_report(evidence_ledger, ticker, as_of_date)
+    evidence_ledger_path = save_json_packet(
+        evidence_ledger, "evidence_ledger", ticker, as_of_date, packet_root=packet_root
+    )
+    evidence_report_path = _save_evidence_report(
+        evidence_ledger, ticker, as_of_date, packet_root=packet_root
+    )
     validation_report = run_all_validations(
         data_packet=data_packet,
         metrics_packet=metrics_packet,
         source_registry=source_registry,
     )
-    validation_report_path = save_json_packet(validation_report, "validation_report", ticker, as_of_date)
+    validation_report_path = save_json_packet(
+        validation_report, "validation_report", ticker, as_of_date, packet_root=packet_root
+    )
 
     if validation_report.has_blocking_errors and config.block_on_validation_errors:
         raise RuntimeError("Blocking validation errors. Final report generation stopped.")
@@ -178,7 +220,21 @@ def run_research_pipeline(
         metrics_packet=metrics_packet,
         validation_report=validation_report,
     )
-    decision_packet_path = save_json_packet(decision_packet, "decision_packet", ticker, as_of_date)
+    decision_packet_path = save_json_packet(
+        decision_packet, "decision_packet", ticker, as_of_date, packet_root=packet_root
+    )
+    authority_bundle_dir = Path(config.output_dir) / data_packet.ticker / data_packet.as_of_date / "authority_bundle"
+    authority_manifest = build_authority_bundle(
+        packet_dir=data_packet_path.parent,
+        source_registry_path=source_registry_path,
+        output_dir=authority_bundle_dir,
+    )
+    if not authority_manifest["analysis_allowed"]:
+        failures = ", ".join(authority_manifest["blocking_failures"])
+        raise RuntimeError(
+            "Research authority bundle rejected report generation: "
+            f"{failures or 'unknown authority failure'}"
+        )
 
     claims = generate_research_claims(
         data_packet=data_packet,
@@ -419,7 +475,7 @@ def run_research_pipeline(
         pipeline_version="research_agent_v0.1.0",
         metadata={
             "data_packet_path": str(data_packet_path),
-            "source_registry_path": str(_optional_source_registry_path(data_packet.source_registry_id) or ""),
+            "source_registry_path": str(source_registry_path),
             "quality_score_path": str(quality_report_path),
             "publish_quality_score": quality_report.publish_quality_score,
             "internal_research_quality_score": quality_report.internal_research_quality_score,
@@ -442,6 +498,9 @@ def run_research_pipeline(
             "analyst_claims_path": str(analyst_claims_path),
             "evidence_ledger_path": str(evidence_ledger_path),
             "evidence_report_path": str(evidence_report_path),
+            "authority_bundle_path": str(authority_bundle_dir),
+            "authority_contract_id": authority_manifest["contract_id"],
+            "authority_contract_version": authority_manifest["contract_version"],
             **reconciliation_paths,
         },
     )
@@ -504,7 +563,7 @@ def _load_source_ingestion_inputs(ticker: str, as_of_date: str, config: ReportCo
         "price_source": "csv_price_provider",
         "source_registry_id": f"{ticker.upper()}_{as_of_date}",
     }
-    evidence_items = _price_evidence_items(ticker, prices)
+    evidence_items = _price_evidence_items(ticker, prices, config)
     canonical_financials = None
     reconciliation_warnings: list[dict] = []
     if config.cik_records_path:
@@ -572,25 +631,37 @@ def _build_canonical_from_companyfacts(ticker: str, as_of_date: str, cik: str, c
     return build_canonical_financials_from_facts(ticker=ticker, as_of_date=as_of_date, facts=facts)
 
 
-def _price_evidence_items(ticker: str, prices) -> list[EvidenceItem]:
+def _price_evidence_items(
+    ticker: str,
+    prices,
+    config: Optional[ReportConfig] = None,
+) -> list[EvidenceItem]:
     if prices.empty:
         return []
     latest = prices.iloc[-1]
     close = float(latest["close"])
     date = str(latest["date"])
+    source_id = (
+        config.price_source_id
+        if config and config.price_source_id
+        else f"{ticker.upper()}_CSV_PRICE_PROVIDER"
+    )
+    source_type = config.price_source_type if config else "exchange_ohlcv"
     return [
         EvidenceItem(
             evidence_id=f"{ticker.upper()}_CSV_PRICE_CLOSE_{date}",
             ticker=ticker.upper(),
             claim_type="price_data",
-            source_id=f"{ticker.upper()}_CSV_PRICE_PROVIDER",
-            source_type="exchange_ohlcv",
-            authority_rank=rank_source("exchange_ohlcv"),
+            source_id=source_id,
+            source_type=source_type,
+            authority_rank=rank_source(source_type),
             statement=f"{ticker.upper()} closed at {close} on {date}.",
             value=close,
             unit="USD",
             period="daily",
             date=date,
+            url=config.price_source_url if config else None,
+            retrieved_at=config.price_retrieved_at if config else None,
             supports_metrics=["close", "price_data", "price_basis"],
             confidence="high",
         )
@@ -802,16 +873,29 @@ def _read_ir_release_payload(path: Path) -> dict[str, Any]:
     }
 
 
-def save_json_packet(model, packet_name: str, ticker: str, as_of_date: str) -> Path:
-    target_dir = Path("research_agent/data/packets") / ticker.upper() / as_of_date
+def save_json_packet(
+    model,
+    packet_name: str,
+    ticker: str,
+    as_of_date: str,
+    *,
+    packet_root: Path = Path("research_agent/data/packets"),
+) -> Path:
+    target_dir = packet_root / ticker.upper() / as_of_date
     target_dir.mkdir(parents=True, exist_ok=True)
     target = target_dir / f"{packet_name}.json"
     target.write_text(json.dumps(_model_to_dict(model), indent=2, sort_keys=True), encoding="utf-8")
     return target
 
 
-def _save_evidence_report(evidence_ledger, ticker: str, as_of_date: str) -> Path:
-    target = Path("research_agent/data/packets") / ticker.upper() / as_of_date / "evidence_report.md"
+def _save_evidence_report(
+    evidence_ledger,
+    ticker: str,
+    as_of_date: str,
+    *,
+    packet_root: Path = Path("research_agent/data/packets"),
+) -> Path:
+    target = packet_root / ticker.upper() / as_of_date / "evidence_report.md"
     markdown = render_evidence_report(
         evidence_ledger,
         required_metrics=[
@@ -823,10 +907,18 @@ def _save_evidence_report(evidence_ledger, ticker: str, as_of_date: str) -> Path
     return save_evidence_report(markdown, target)
 
 
-def _save_reconciliation_artifacts(canonical_financials, metrics_packet, warnings: list[dict], ticker: str, as_of_date: str) -> dict[str, str]:
+def _save_reconciliation_artifacts(
+    canonical_financials,
+    metrics_packet,
+    warnings: list[dict],
+    ticker: str,
+    as_of_date: str,
+    *,
+    packet_root: Path = Path("research_agent/data/packets"),
+) -> dict[str, str]:
     if canonical_financials is None:
         return {}
-    target_dir = Path("research_agent/data/packets") / ticker.upper() / as_of_date
+    target_dir = packet_root / ticker.upper() / as_of_date
     canonical_path = save_canonical_financials(canonical_financials, target_dir / "canonical_financials.json")
     report_path = save_reconciliation_report(
         render_reconciliation_report(canonical_financials, warnings),
@@ -845,18 +937,34 @@ def _save_reconciliation_artifacts(canonical_financials, metrics_packet, warning
     }
 
 
-def _load_optional_source_registry(source_registry_id: str) -> Optional[SourceRegistry]:
-    path = _optional_source_registry_path(source_registry_id)
+def _load_optional_source_registry(
+    source_registry_id: str,
+    *,
+    packet_root: Path = Path("research_agent/data/packets"),
+) -> Optional[SourceRegistry]:
+    path = _optional_source_registry_path(source_registry_id, packet_root=packet_root)
     if path is None:
         return None
     return load_source_registry(path)
 
 
-def _optional_source_registry_path(source_registry_id: str) -> Optional[Path]:
-    path = Path("research_agent/data/packets") / f"{source_registry_id}_source_registry.json"
+def _optional_source_registry_path(
+    source_registry_id: str,
+    *,
+    packet_root: Path = Path("research_agent/data/packets"),
+) -> Optional[Path]:
+    path = _source_registry_path(source_registry_id, packet_root=packet_root)
     if not path.exists():
         return None
     return path
+
+
+def _source_registry_path(
+    source_registry_id: str,
+    *,
+    packet_root: Path = Path("research_agent/data/packets"),
+) -> Path:
+    return packet_root / f"{source_registry_id}_source_registry.json"
 
 
 def _save_model_json(model, path: Path) -> Path:

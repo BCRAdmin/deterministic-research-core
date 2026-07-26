@@ -21,8 +21,13 @@ class ReportConfig(BaseModel):
     freshness_reference_date: Optional[str] = None
     freshness_max_trading_days: int = 2
     output_dir: str = "research_agent/data/outputs"
+    packet_dir: str = "research_agent/data/packets"
     price_csv_dir: Optional[str] = None
     price_start_date: Optional[str] = None
+    price_source_id: Optional[str] = None
+    price_source_type: str = "exchange_ohlcv"
+    price_source_url: Optional[str] = None
+    price_retrieved_at: Optional[str] = None
     cik_records_path: Optional[str] = None
     sec_companyfacts_path: Optional[str] = None
     sec_user_agent: Optional[str] = None

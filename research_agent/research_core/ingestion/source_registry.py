@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import Iterable, List, Optional, Union
 
 from pydantic import BaseModel, Field
 
@@ -12,6 +12,7 @@ SOURCE_AUTHORITY = {
     "sec_filing": 1,
     "earnings_transcript": 2,
     "exchange_ohlcv": 2,
+    "trusted_market_data_vendor": 2,
     "reuters": 3,
     "barrons": 3,
     "marketwatch": 3,
@@ -68,6 +69,76 @@ def save_source_registry(registry: SourceRegistry, path: Union[str, Path]) -> No
     target.parent.mkdir(parents=True, exist_ok=True)
     payload = _model_to_dict(registry)
     target.write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
+
+
+def merge_evidence_sources(
+    registry: Optional[SourceRegistry],
+    *,
+    registry_id: str,
+    ticker: str,
+    evidence_items: Iterable[object],
+) -> SourceRegistry:
+    """Register every runtime evidence source without ticker-specific rules.
+
+    Source ingestion can discover filings, releases, events, and price feeds
+    after an initial registry was created. The registry must be expanded before
+    validation and export so the evidence ledger never points at an undeclared
+    source.
+    """
+
+    symbol = ticker.strip().upper()
+    if registry is None:
+        registry = SourceRegistry(registry_id=registry_id)
+    if registry.registry_id != registry_id:
+        raise ValueError(
+            f"source registry identity mismatch: {registry.registry_id} != {registry_id}"
+        )
+
+    by_id = {source.source_id: source for source in registry.sources}
+    for evidence in evidence_items:
+        source_id = str(getattr(evidence, "source_id", "") or "").strip()
+        evidence_ticker = str(getattr(evidence, "ticker", "") or "").strip().upper()
+        if not source_id:
+            raise ValueError("runtime evidence has no source_id")
+        if evidence_ticker != symbol:
+            raise ValueError(
+                f"runtime evidence ticker mismatch: {evidence_ticker} != {symbol}"
+            )
+        metrics = {
+            str(metric)
+            for metric in getattr(evidence, "supports_metrics", []) or []
+            if str(metric)
+        }
+        existing = by_id.get(source_id)
+        if existing is None:
+            existing = SourceRegistryEntry(
+                source_id=source_id,
+                ticker=symbol,
+                source_type=str(getattr(evidence, "source_type", "") or "unknown"),
+                authority_rank=int(getattr(evidence, "authority_rank", 99) or 99),
+                url=getattr(evidence, "url", None),
+                retrieved_at=getattr(evidence, "retrieved_at", None),
+                used_for=sorted(metrics),
+                owner="deterministic_research_pipeline",
+            )
+            registry.sources.append(existing)
+            by_id[source_id] = existing
+            continue
+        if existing.ticker.strip().upper() != symbol:
+            raise ValueError(
+                f"registered source ticker mismatch: {existing.ticker} != {symbol}"
+            )
+        existing.used_for = sorted(set(existing.used_for) | metrics)
+        evidence_rank = int(getattr(evidence, "authority_rank", 99) or 99)
+        existing.authority_rank = min(
+            existing.resolved_authority_rank(),
+            evidence_rank,
+        )
+        if not existing.url:
+            existing.url = getattr(evidence, "url", None)
+        if not existing.retrieved_at:
+            existing.retrieved_at = getattr(evidence, "retrieved_at", None)
+    return registry
 
 
 def _model_to_dict(model: BaseModel) -> dict:
