@@ -103,6 +103,14 @@ def run_current_research(
     bse = bse_provider or BseIssuerProvider()
     bse_issuer = bse.resolve(symbol) if issuer is None else None
     if issuer is None and bse_issuer is None:
+        if sec is None:
+            raise CurrentResearchError(
+                f"{symbol} was not checked against the SEC issuer registry because "
+                "ROOM16_SEC_USER_AGENT is missing or invalid, and no other enabled "
+                "official jurisdiction adapter recognized it. Configure a SEC "
+                "contact identity before retrying a US issuer; Room16 will not "
+                "substitute vendor fundamentals."
+            )
         raise CurrentResearchError(
             f"{symbol} is not available through the configured official issuer adapters. "
             "Configure SEC identity for SEC filers or add the issuer's official "

@@ -184,6 +184,21 @@ def test_current_runner_rejects_unsupported_official_issuer(tmp_path):
         )
 
 
+def test_current_runner_names_missing_sec_identity_before_adapter_lookup(tmp_path):
+    request = CurrentResearchRequest(
+        ticker="RIOT",
+        as_of_date="2026-07-26",
+        staging_root=str(tmp_path / "staging"),
+        output_root=str(tmp_path / "outputs"),
+    )
+    with pytest.raises(CurrentResearchError, match="ROOM16_SEC_USER_AGENT"):
+        run_current_research(
+            request,
+            price_provider=_FakePrices(),
+            bse_provider=_NoBse(),
+        )
+
+
 def test_current_runner_rejects_non_authority_price_provider(tmp_path):
     with pytest.raises(CurrentResearchError, match="not authority-grade"):
         run_current_research(
