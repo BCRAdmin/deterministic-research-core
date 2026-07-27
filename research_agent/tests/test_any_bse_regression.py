@@ -1,5 +1,9 @@
 import pandas as pd
 
+from research_agent.research_core.ingestion.source_registry import (
+    SourceRegistry,
+    SourceRegistryEntry,
+)
 from research_agent.research_core.calculations.fundamentals import (
     calculate_fundamental_metrics,
 )
@@ -9,6 +13,14 @@ from research_agent.research_core.calculations.technicals import (
 from research_agent.research_core.calculations.valuation import (
     calculate_valuation_metrics,
 )
+from research_agent.research_core.models.data_packet import DataPacket, PriceBasis
+from research_agent.research_core.models.metrics_packet import (
+    FundamentalMetrics,
+    MetricsPacket,
+    TechnicalMetrics,
+    ValuationMetrics,
+)
+from research_agent.research_core.validation.runner import run_all_validations
 from research_agent.sources.bse.bse_provider import (
     BseIssuer,
     _back_adjust_dividends,
@@ -138,3 +150,70 @@ def test_any_bearish_alignment_is_not_falsely_called_death_cross():
     assert metrics.signals["ma_50_200_state"] == "bearish_alignment"
     assert metrics.signals["cross_event"] == "none"
     assert metrics.signals["death_cross"] is False
+
+
+def test_any_validation_blocks_incomplete_bse_core_and_unadjusted_actions():
+    def validate(*, used_for, adjustment_status):
+        data = DataPacket(
+            ticker="ANY",
+            company_name=ISSUER.company_name,
+            as_of_date="2026-07-24",
+            price_basis=PriceBasis(
+                close=6_950,
+                date="2026-07-24",
+                currency="HUF",
+                source="BSE_ANY_OFFICIAL_OHLCV",
+                series_adjustment_status=adjustment_status,
+                corporate_action_count=1,
+            ),
+            source_registry_id="ANY_2026_07_24",
+        )
+        metrics = MetricsPacket(
+            ticker="ANY",
+            as_of_date="2026-07-24",
+            technical=TechnicalMetrics(
+                indicator_date="2026-07-24",
+                close=6_950,
+                price_series_basis=adjustment_status,
+                corporate_action_count=1,
+            ),
+            fundamentals=FundamentalMetrics(fiscal_period="TTM through FY2026_Q1"),
+            valuation=ValuationMetrics(),
+        )
+        registry = SourceRegistry(
+            registry_id=data.source_registry_id,
+            sources=[
+                SourceRegistryEntry(
+                    source_id="BSE_ANY_OFFICIAL_FINANCIALS",
+                    ticker="ANY",
+                    source_type="company_ir",
+                    used_for=used_for,
+                )
+            ],
+        )
+        return run_all_validations(data, metrics, registry)
+
+    incomplete = validate(
+        used_for=["revenue"],
+        adjustment_status="corporate_action_adjusted",
+    )
+    unadjusted = validate(
+        used_for=[
+            "operating_cash_flow",
+            "capex",
+            "cash_and_equivalents",
+            "total_debt",
+            "listed_share_count",
+            "economic_share_count",
+        ],
+        adjustment_status="unadjusted_or_provider_default",
+    )
+
+    assert incomplete.has_blocking_errors
+    assert "BSE_OFFICIAL_FINANCIAL_CORE_INCOMPLETE" in {
+        issue.code for issue in incomplete.issues
+    }
+    assert unadjusted.has_blocking_errors
+    assert "CORPORATE_ACTION_ADJUSTMENT_MISSING" in {
+        issue.code for issue in unadjusted.issues
+    }
