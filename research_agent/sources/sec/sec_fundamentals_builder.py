@@ -20,9 +20,22 @@ SEC_FUNDAMENTAL_METRICS = [
     "short_term_investments",
     "current_assets",
     "current_liabilities",
+    "total_debt",
+    "debt_current",
+    "debt_noncurrent",
+    "lease_liability_current",
+    "lease_liability_noncurrent",
     "equity",
     "sbc",
+    "buybacks",
+    "dividends_paid",
+    "treasury_stock_value",
+    "treasury_share_count",
+    "depreciation_and_amortization",
+    "interest_expense",
     "shares_diluted",
+    "listed_share_count",
+    "eps_diluted",
 ]
 
 
@@ -68,7 +81,6 @@ def build_sec_fundamentals_from_companyfacts(
                 annual.value if annual else None,
             )
 
-    evidence_items.extend(_derived_metric_evidence(ticker, cik, metrics))
     return metrics, evidence_items
 
 
@@ -86,6 +98,11 @@ def _assign_normalized_metric(
         "operating_cash_flow",
         "capex",
         "sbc",
+        "buybacks",
+        "dividends_paid",
+        "depreciation_and_amortization",
+        "interest_expense",
+        "eps_diluted",
     }:
         metrics["quarterly"][metric] = quarterly_values
     elif metric in {
@@ -93,14 +110,28 @@ def _assign_normalized_metric(
         "short_term_investments",
         "current_assets",
         "current_liabilities",
+        "total_debt",
+        "debt_current",
+        "debt_noncurrent",
+        "lease_liability_current",
+        "lease_liability_noncurrent",
         "equity",
+        "treasury_stock_value",
     }:
         metrics["balance_sheet"][metric] = (
             quarterly_values[-1] if quarterly_values else annual_value
         )
     elif metric == "shares_diluted":
         metrics["share_data"]["diluted_share_count"] = (
-            annual_value if annual_value is not None else quarterly_values[-1]
+            quarterly_values[-1] if quarterly_values else annual_value
+        )
+    elif metric == "listed_share_count":
+        metrics["share_data"]["listed_share_count"] = (
+            quarterly_values[-1] if quarterly_values else annual_value
+        )
+    elif metric == "treasury_share_count":
+        metrics["share_data"]["treasury_share_count"] = (
+            quarterly_values[-1] if quarterly_values else annual_value
         )
 
 

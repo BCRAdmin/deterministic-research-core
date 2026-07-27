@@ -2,6 +2,7 @@ import pytest
 
 from research_agent.research_core.calculations.fundamentals import (
     calculate_fundamental_metrics,
+    debt_to_equity,
     free_cash_flow,
     net_cash,
     safe_divide,
@@ -52,6 +53,7 @@ def test_calculate_fundamental_metrics_builds_ttm_margins_and_fcf():
                 "capex": [2, 2, 3, 3],
                 "finance_lease_principal_payments": [1, 1, 1, 1],
                 "sbc": [4, 4, 5, 5],
+                "interest_expense": [1, 1, 1, 1],
             },
             "balance_sheet": {
                 "cash_and_equivalents": 40,
@@ -65,18 +67,31 @@ def test_calculate_fundamental_metrics_builds_ttm_margins_and_fcf():
             },
             "share_data": {
                 "diluted_share_count": 100,
+                "listed_share_count": 98,
+                "treasury_share_count": 40,
                 "diluted_share_count_prior_year": 95,
                 "buybacks": 3,
             },
             "non_gaap_operating_income_ttm": 80,
+            "free_cash_flow_definition_basis": "issuer_defined",
         },
         FCFDefinitionConfig(),
     )
 
     assert metrics.revenue_ttm == 460
-    assert metrics.free_cash_flow_ttm == 72
+    assert metrics.free_cash_flow_ttm == 76
+    assert metrics.free_cash_flow_conversion_ttm == 76 / 26
+    assert metrics.free_cash_flow_definition_basis == "issuer_defined"
+    assert metrics.operating_income_interest_coverage_ttm == 52 / 4
+    assert metrics.free_cash_flow_interest_coverage_ttm == 76 / 4
     assert metrics.gross_margin_ttm == 322 / 460
     assert metrics.net_cash == 40
     assert metrics.current_ratio == 2
     assert metrics.debt_to_equity == 0.075
     assert metrics.sbc_to_non_gaap_operating_income == 18 / 80
+    assert metrics.economic_share_count == 98
+
+
+def test_debt_to_equity_is_not_reported_for_non_positive_equity():
+    assert debt_to_equity(40, 0) is None
+    assert debt_to_equity(40, -1) is None

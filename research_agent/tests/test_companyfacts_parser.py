@@ -4,6 +4,7 @@ from research_agent.sources.sec.sec_fundamentals_builder import (
 )
 from research_agent.reconciliation.source_reconciler import (
     build_canonical_financials_from_facts,
+    canonical_financials_to_fundamentals,
 )
 
 
@@ -391,3 +392,113 @@ def test_share_scale_warnings_are_coalesced_for_one_issuer_history():
 
     assert len(scale_warnings) == 1
     assert scale_warnings[0]["count"] == 2
+
+
+def test_companyfacts_maps_point_in_time_shares_debt_leases_and_buybacks():
+    companyfacts = {
+        "facts": {
+            "dei": {
+                "EntityCommonStockSharesOutstanding": {
+                    "units": {
+                        "shares": [
+                            {
+                                "val": 710_505_859,
+                                "fy": 2026,
+                                "fp": "Q1",
+                                "form": "10-Q",
+                                "filed": "2026-05-07",
+                                "end": "2026-03-31",
+                                "accn": "mcd-q1",
+                            }
+                        ]
+                    }
+                }
+            },
+            "us-gaap": {
+                "LongTermDebtNoncurrent": {
+                    "units": {
+                        "USD": [
+                            {
+                                "val": 40_105_000_000,
+                                "fy": 2026,
+                                "fp": "Q1",
+                                "form": "10-Q",
+                                "filed": "2026-05-07",
+                                "end": "2026-03-31",
+                                "accn": "mcd-q1",
+                            }
+                        ]
+                    }
+                },
+                "OperatingLeaseLiabilityCurrent": {
+                    "units": {
+                        "USD": [
+                            {
+                                "val": 707_000_000,
+                                "fy": 2026,
+                                "fp": "Q1",
+                                "form": "10-Q",
+                                "filed": "2026-05-07",
+                                "end": "2026-03-31",
+                                "accn": "mcd-q1",
+                            }
+                        ]
+                    }
+                },
+                "OperatingLeaseLiabilityNoncurrent": {
+                    "units": {
+                        "USD": [
+                            {
+                                "val": 14_069_000_000,
+                                "fy": 2026,
+                                "fp": "Q1",
+                                "form": "10-Q",
+                                "filed": "2026-05-07",
+                                "end": "2026-03-31",
+                                "accn": "mcd-q1",
+                            }
+                        ]
+                    }
+                },
+                "PaymentsForRepurchaseOfCommonStock": {
+                    "units": {
+                        "USD": [
+                            {
+                                "val": 396_000_000,
+                                "fy": 2026,
+                                "fp": "Q1",
+                                "form": "10-Q",
+                                "filed": "2026-05-07",
+                                "start": "2026-01-01",
+                                "end": "2026-03-31",
+                                "accn": "mcd-q1",
+                            }
+                        ]
+                    }
+                },
+            },
+        }
+    }
+    parser = CompanyFactsParser("MCD", "63908", companyfacts)
+    facts = [
+        fact
+        for metric in (
+            "listed_share_count",
+            "debt_noncurrent",
+            "lease_liability_current",
+            "lease_liability_noncurrent",
+            "buybacks",
+        )
+        for fact in parser.get_facts_for_metric(metric)
+    ]
+    canonical, _ = build_canonical_financials_from_facts(
+        "MCD", "2026-07-24", facts
+    )
+    fundamentals = canonical_financials_to_fundamentals(canonical)
+
+    assert fundamentals["share_data"]["listed_share_count"] == 710_505_859
+    assert fundamentals["balance_sheet"]["total_debt"] == 40_105_000_000
+    assert (
+        fundamentals["balance_sheet"]["total_lease_liabilities"]
+        == 14_776_000_000
+    )

@@ -37,6 +37,7 @@ class CurrentResearchRequest(BaseModel):
     output_root: str = "research_agent/data/outputs"
     ir_release_dir: Optional[str] = None
     earnings_calendar_path: Optional[str] = None
+    official_news_dir: Optional[str] = None
 
     @field_validator("ticker")
     @classmethod
@@ -210,7 +211,11 @@ def run_current_research(
             f"Price provider source type {source_type!r} is not authority-grade."
         )
     source_url = str(getattr(provider, "source_url", "") or "")
-    price_source_id = f"{symbol}_{provider_name.upper()}_DAILY_OHLCV"
+    price_source_id = (
+        f"{symbol}_US_MARKET_DAILY_OHLCV"
+        if provider_name == "nasdaq"
+        else f"{symbol}_{provider_name.upper()}_DAILY_OHLCV"
+    )
     registry_id = f"{symbol}_{request.as_of_date}"
     registry_sources = [
         SourceRegistryEntry(
@@ -254,6 +259,7 @@ def run_current_research(
         sec_user_agent=request.sec_user_agent or None,
         ir_release_dir=str(ir_release_dir) if ir_release_dir else None,
         earnings_calendar_path=earnings_calendar_path,
+        official_news_dir=request.official_news_dir,
         price_currency=bse_issuer.currency if bse_issuer else "USD",
     )
     run_research_pipeline(symbol, request.as_of_date, config)
@@ -307,6 +313,7 @@ def request_from_environment(ticker: str, as_of_date: str) -> CurrentResearchReq
         output_root=os.environ.get(
             "ROOM16_RESEARCH_AUTHORITY_ROOT", "research_agent/data/outputs"
         ),
+        official_news_dir=os.environ.get("ROOM16_OFFICIAL_NEWS_DIR") or None,
     )
 
 

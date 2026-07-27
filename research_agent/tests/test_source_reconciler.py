@@ -199,3 +199,59 @@ def test_stale_balance_sheet_metric_is_not_treated_as_current():
 
     assert fundamentals["balance_sheet"]["cash_and_equivalents"] == 289_176_000
     assert "short_term_investments" not in fundamentals["balance_sheet"]
+
+
+def test_ttm_bridge_does_not_skip_q4_when_current_q1_arrives():
+    facts = [
+        _fact("revenue", 5_956, "Q1", "2025-01-01", "2025-03-31", "q1-2025"),
+        _fact("revenue", 6_843, "Q2", "2025-04-01", "2025-06-30", "q2-2025"),
+        _fact("revenue", 7_078, "Q3", "2025-07-01", "2025-09-30", "q3-2025"),
+        _fact("revenue", 26_885, "FY", "2025-01-01", "2025-12-31", "fy-2025"),
+        _fact("revenue", 6_517, "Q1", "2026-01-01", "2026-03-31", "q1-2026"),
+    ]
+
+    canonical, _ = build_canonical_financials_from_facts(
+        "MCD", "2026-07-24", facts
+    )
+    fundamentals = canonical_financials_to_fundamentals(canonical)
+
+    assert fundamentals["quarterly"]["revenue"] == [
+        6_843,
+        7_078,
+        7_008,
+        6_517,
+    ]
+    assert sum(fundamentals["quarterly"]["revenue"]) == 27_446
+    bridge = fundamentals["ttm_bridges"]["revenue"]
+    assert bridge["formula_id"] == (
+        "annual_minus_prior_interim_plus_current_interim"
+    )
+    assert bridge["operands"] == {
+        "annual": 26_885,
+        "prior_interim": 5_956,
+        "current_interim": 6_517,
+    }
+
+
+def test_ttm_bridge_subtracts_matching_prior_interim_for_current_q2():
+    facts = [
+        _fact("revenue", 10, "Q1", "2025-01-01", "2025-03-31", "q1-2025"),
+        _fact("revenue", 20, "Q2", "2025-04-01", "2025-06-30", "q2-2025"),
+        _fact("revenue", 30, "Q3", "2025-07-01", "2025-09-30", "q3-2025"),
+        _fact("revenue", 100, "FY", "2025-01-01", "2025-12-31", "fy-2025"),
+        _fact("revenue", 11, "Q1", "2026-01-01", "2026-03-31", "q1-2026"),
+        _fact("revenue", 22, "Q2", "2026-04-01", "2026-06-30", "q2-2026"),
+    ]
+
+    canonical, _ = build_canonical_financials_from_facts(
+        "TEST", "2026-07-24", facts
+    )
+    fundamentals = canonical_financials_to_fundamentals(canonical)
+
+    assert fundamentals["quarterly"]["revenue"] == [30, 40, 11, 22]
+    assert sum(fundamentals["quarterly"]["revenue"]) == 103
+    assert fundamentals["ttm_bridges"]["revenue"]["operands"] == {
+        "annual": 100,
+        "prior_interim": 30,
+        "current_interim": 33,
+    }

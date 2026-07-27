@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -25,6 +25,25 @@ class EventInfo(BaseModel):
     status: str = "unavailable"
 
 
+class MaterialNewsEvent(BaseModel):
+    date: str
+    headline: str
+    event_type: str
+    source_id: str
+    source_type: str
+    url: Optional[str] = None
+    summary: Optional[str] = None
+
+
+class NewsCoverage(BaseModel):
+    status: str = "unavailable"
+    checked_at: Optional[str] = None
+    window_start: Optional[str] = None
+    window_end: Optional[str] = None
+    sources_checked: List[str] = Field(default_factory=list)
+    material_events: List[MaterialNewsEvent] = Field(default_factory=list)
+
+
 class ForwardEPS(BaseModel):
     value: Optional[float] = None
     source_type: Optional[str] = None
@@ -49,6 +68,7 @@ class DataPacket(BaseModel):
     price_basis: PriceBasis
     fiscal_context: FiscalContext = Field(default_factory=FiscalContext)
     next_events: EventInfo = Field(default_factory=EventInfo)
+    news_coverage: NewsCoverage = Field(default_factory=NewsCoverage)
     source_registry_id: str
     forward_eps: Optional[ForwardEPS] = None
     company_guidance_eps: Optional[CompanyGuidanceEPS] = None

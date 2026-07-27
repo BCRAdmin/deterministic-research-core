@@ -241,11 +241,18 @@ def canonical_financials_to_fundamentals(canonical: CanonicalFinancials) -> dict
         "operating_cash_flow",
         "capex",
         "sbc",
+        "buybacks",
+        "dividends_paid",
+        "depreciation_and_amortization",
+        "interest_expense",
+        "eps_diluted",
     }
     for metric_name in duration_metrics:
-        values, issue = _compatible_trailing_period_values(canonical, metric_name)
+        values, issue, bridge = _compatible_trailing_period_values(canonical, metric_name)
         if len(values) == 4:
             fundamentals["quarterly"][metric_name] = values
+            if bridge:
+                fundamentals.setdefault("ttm_bridges", {})[metric_name] = bridge
         else:
             annual = _latest_annual_metric(canonical, metric_name)
             if annual is not None:
@@ -260,6 +267,11 @@ def canonical_financials_to_fundamentals(canonical: CanonicalFinancials) -> dict
         "current_liabilities",
         "equity",
         "total_debt",
+        "debt_current",
+        "debt_noncurrent",
+        "lease_liability_current",
+        "lease_liability_noncurrent",
+        "treasury_stock_value",
     }
     for metric_name in balance_sheet_metrics:
         selected = _latest_current_metric(canonical, metric_name, require_gaap=True)
@@ -267,6 +279,10 @@ def canonical_financials_to_fundamentals(canonical: CanonicalFinancials) -> dict
             fundamentals["balance_sheet"][metric_name] = selected.value
         elif canonical.metrics_for(metric_name):
             fundamentals["reconciliation_issues"].append(_stale_metric_issue(metric_name))
+
+    _derive_debt_and_lease_totals(canonical, fundamentals)
+    _derive_revenue_growth(canonical, fundamentals)
+    _derive_fiscal_context(canonical, fundamentals)
 
     share_metrics = {
         "shares_diluted": "diluted_share_count",
@@ -289,7 +305,7 @@ def canonical_financials_to_fundamentals(canonical: CanonicalFinancials) -> dict
 
 def _compatible_trailing_period_values(
     canonical: CanonicalFinancials, metric_name: str
-) -> tuple[list[float], Optional[dict]]:
+) -> tuple[list[float], Optional[dict], Optional[dict]]:
     quarterly = _dedupe_period_metrics(
         [
             metric
@@ -303,18 +319,39 @@ def _compatible_trailing_period_values(
             and 70 <= metric.duration_days <= 110
         ]
     )
-    if len(quarterly) >= 4:
-        return [metric.value for metric in quarterly[-4:]], None
-
     annual = _latest_annual_metric(canonical, metric_name)
     if annual is not None:
         derived = _derive_q4_and_trailing_values(annual, quarterly)
         if derived is not None:
-            return derived, None
+            values, bridge = derived
+            return values, None, bridge
+
+    if len(quarterly) >= 4 and _quarters_are_contiguous(quarterly[-4:]):
+        selected = quarterly[-4:]
+        return (
+            [metric.value for metric in selected],
+            None,
+            {
+                "formula_id": "sum_four_contiguous_quarters",
+                "operands": {
+                    metric.period: metric.value
+                    for metric in selected
+                },
+                "period_start": selected[0].start_date,
+                "period_end": selected[-1].end_date,
+                "source_ids": sorted(
+                    {
+                        source_id
+                        for metric in selected
+                        for source_id in metric.source_ids
+                    }
+                ),
+            },
+        )
 
     available = canonical.metrics_for(metric_name)
     if available and not any(_is_current_metric(canonical, metric) for metric in available):
-        return [], _stale_metric_issue(metric_name)
+        return [], _stale_metric_issue(metric_name), None
     return [], {
         "severity": "warning",
         "code": "MISSING_COMPATIBLE_DENOMINATOR"
@@ -322,7 +359,7 @@ def _compatible_trailing_period_values(
         else "MISSING_COMPATIBLE_NUMERATOR",
         "metric": metric_name,
         "message": f"Could not build four compatible quarterly periods for {metric_name}; ratio inputs should use annual fallback or remain unavailable.",
-    }
+    }, None
 
 
 def _dedupe_period_metrics(metrics: list[CanonicalMetric]) -> list[CanonicalMetric]:
@@ -424,7 +461,7 @@ def _stale_metric_issue(metric_name: str) -> dict:
 
 def _derive_q4_and_trailing_values(
     annual: CanonicalMetric, quarterly: list[CanonicalMetric]
-) -> Optional[list[float]]:
+) -> Optional[tuple[list[float], dict]]:
     annual_quarters = [
         metric
         for metric in quarterly
@@ -447,10 +484,162 @@ def _derive_q4_and_trailing_values(
         metric for metric in quarterly if metric.start_date and metric.start_date > annual_end
     ]
     values = [metric.value for metric in first_three[-3:]] + [q4_value]
+    bridge = {
+        "formula_id": "annual_minus_q1_q2_q3_plus_post_annual_quarters",
+        "operands": {
+            "annual": annual.value,
+            **{
+                metric.period: metric.value
+                for metric in first_three[-3:]
+            },
+            "derived_q4": q4_value,
+        },
+        "period_start": first_three[0].start_date,
+        "period_end": annual.end_date,
+        "source_ids": sorted(
+            {
+                source_id
+                for metric in [annual, *first_three]
+                for source_id in metric.source_ids
+            }
+        ),
+    }
     if trailing_after_annual:
         combined = values + [metric.value for metric in trailing_after_annual]
-        return combined[-4:]
-    return values[-4:]
+        selected = combined[-4:]
+        post_annual_quarter_count = min(len(trailing_after_annual), 3)
+        bridge["formula_id"] = "annual_minus_prior_interim_plus_current_interim"
+        bridge["operands"] = {
+            "annual": annual.value,
+            "prior_interim": sum(
+                metric.value
+                for metric in first_three[:post_annual_quarter_count]
+            ),
+            "current_interim": sum(
+                metric.value for metric in trailing_after_annual
+            ),
+        }
+        bridge["period_end"] = trailing_after_annual[-1].end_date
+        bridge["source_ids"] = sorted(
+            set(bridge["source_ids"])
+            | {
+                source_id
+                for metric in trailing_after_annual
+                for source_id in metric.source_ids
+            }
+        )
+        return selected, bridge
+    return values[-4:], bridge
+
+
+def _quarters_are_contiguous(metrics: list[CanonicalMetric]) -> bool:
+    if len(metrics) != 4:
+        return False
+    try:
+        starts = [date.fromisoformat(metric.start_date or "") for metric in metrics]
+        ends = [date.fromisoformat(metric.end_date or "") for metric in metrics]
+    except ValueError:
+        return False
+    return all(
+        0 <= (starts[index] - ends[index - 1]).days <= 4
+        for index in range(1, len(metrics))
+    )
+
+
+def _derive_debt_and_lease_totals(
+    canonical: CanonicalFinancials,
+    fundamentals: dict,
+) -> None:
+    balance = fundamentals["balance_sheet"]
+    aggregate = _latest_current_metric(
+        canonical, "total_debt", require_gaap=True
+    )
+    current = _latest_current_metric(
+        canonical, "debt_current", require_gaap=True
+    )
+    noncurrent = _latest_current_metric(
+        canonical, "debt_noncurrent", require_gaap=True
+    )
+    component_end_dates = [
+        metric.end_date for metric in (current, noncurrent) if metric is not None
+    ]
+    latest_component_date = max(component_end_dates) if component_end_dates else None
+    if noncurrent is not None and (
+        aggregate is None
+        or (
+            latest_component_date is not None
+            and (aggregate.end_date or "") < latest_component_date
+        )
+    ):
+        current_value = (
+            current.value
+            if current is not None and current.end_date == noncurrent.end_date
+            else 0.0
+        )
+        balance["total_debt"] = current_value + noncurrent.value
+        balance["debt_current"] = current_value
+        balance["debt_noncurrent"] = noncurrent.value
+    if (
+        noncurrent is not None
+        and current is not None
+        and current.end_date != noncurrent.end_date
+    ):
+        balance.pop("debt_current", None)
+
+    lease_current = balance.get("lease_liability_current")
+    lease_noncurrent = balance.get("lease_liability_noncurrent")
+    if lease_current is not None or lease_noncurrent is not None:
+        balance["total_lease_liabilities"] = (
+            float(lease_current or 0.0) + float(lease_noncurrent or 0.0)
+        )
+
+
+def _derive_revenue_growth(
+    canonical: CanonicalFinancials,
+    fundamentals: dict,
+) -> None:
+    annual = sorted(
+        _dedupe_period_metrics(
+            [
+                metric
+                for metric in canonical.metrics_for("revenue")
+                if metric.period_bucket == "annual"
+                and metric.basis == "gaap"
+                and metric.start_date
+                and metric.end_date
+            ]
+        ),
+        key=lambda metric: metric.end_date or "",
+    )
+    if len(annual) < 2 or annual[-2].value == 0:
+        return
+    fundamentals["revenue_growth_yoy"] = (
+        annual[-1].value - annual[-2].value
+    ) / annual[-2].value
+
+
+def _derive_fiscal_context(
+    canonical: CanonicalFinancials,
+    fundamentals: dict,
+) -> None:
+    quarterly = sorted(
+        [
+            metric
+            for metric in canonical.metrics
+            if metric.period_bucket == "quarterly"
+            and metric.end_date
+            and _is_current_metric(canonical, metric)
+        ],
+        key=lambda metric: metric.end_date or "",
+    )
+    if not quarterly:
+        return
+    latest = quarterly[-1]
+    fundamentals["fiscal_period"] = (
+        f"TTM through FY{latest.fiscal_year}_{latest.fiscal_period}"
+        if latest.fiscal_year and latest.fiscal_period
+        else f"TTM through {latest.end_date}"
+    )
 
 
 def _guidance_consensus_warnings(metric_name: str, metrics: list[CanonicalMetric]) -> list[dict]:
@@ -492,7 +681,15 @@ def _low_confidence_warnings(metrics: list[CanonicalMetric]) -> list[dict]:
 def _statement_type(metric_name: str):
     if metric_name in {"revenue", "gross_profit", "operating_income", "net_income", "eps_diluted"}:
         return "income_statement"
-    if metric_name in {"operating_cash_flow", "capex", "sbc"}:
+    if metric_name in {
+        "operating_cash_flow",
+        "capex",
+        "sbc",
+        "buybacks",
+        "dividends_paid",
+        "depreciation_and_amortization",
+        "interest_expense",
+    }:
         return "cash_flow"
     if metric_name in {
         "cash_and_equivalents",
@@ -500,6 +697,14 @@ def _statement_type(metric_name: str):
         "total_assets",
         "total_liabilities",
         "stockholders_equity",
+        "total_debt",
+        "debt_current",
+        "debt_noncurrent",
+        "lease_liability_current",
+        "lease_liability_noncurrent",
+        "treasury_stock_value",
+        "treasury_share_count",
+        "listed_share_count",
     }:
         return "balance_sheet"
     if "guidance" in metric_name:

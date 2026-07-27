@@ -90,6 +90,42 @@ def determine_rating_permission(
     )
 
 
+def determine_unconstrained_analytical_rating(
+    scores: SignalScores,
+) -> tuple[Rating, str]:
+    """Reach the research conclusion before any action or publication policy."""
+
+    fundamental = scores.fundamental_score
+    technical = scores.technical_score
+    valuation = scores.valuation_score
+    risk = scores.risk_score
+    if fundamental >= 2 and technical >= 1 and valuation >= 0 and risk >= -1:
+        return (
+            Rating.ACCUMULATE,
+            "Strong business quality and constructive technical evidence support an overweight analytical stance.",
+        )
+    if fundamental >= 1 and technical <= -1:
+        rating = Rating.TACTICAL_UNDERWEIGHT if risk <= -2 else Rating.HOLD
+        return (
+            rating,
+            "Positive business quality is offset by weak technical evidence and measured risk.",
+        )
+    if fundamental <= -1 and technical <= -1:
+        return (
+            Rating.UNDERWEIGHT,
+            "Weak fundamental and technical evidence support an underweight analytical stance.",
+        )
+    if fundamental >= 1 and technical >= 1 and risk <= -2:
+        return (
+            Rating.HOLD,
+            "Constructive fundamentals and trend are offset by elevated measured risk.",
+        )
+    return (
+        Rating.HOLD,
+        "Mixed evidence supports a neutral analytical stance.",
+    )
+
+
 def build_decision_packet(
     metrics_packet: MetricsPacket,
     validation_report: Optional[ValidationReport] = None,
@@ -111,10 +147,15 @@ def build_decision_packet(
         validation_report=validation_report,
         audit_report=audit_report,
     )
+    analytical_rating, analytical_reason = (
+        determine_unconstrained_analytical_rating(scores)
+    )
     return DecisionPacket(
         ticker=metrics_packet.ticker,
         as_of_date=metrics_packet.as_of_date,
         signal_scores=scores,
+        analytical_rating_unconstrained=analytical_rating,
+        analytical_rating_reason=analytical_reason,
         rating_permission=permission,
         action_policy=build_action_policy(permission.preferred_rating, metrics_packet),
         key_reasons=_build_key_reasons(scores, action_class),

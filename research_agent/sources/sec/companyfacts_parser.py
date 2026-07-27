@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Optional
 
 from research_agent.evidence.evidence_item import EvidenceItem
 from research_agent.evidence.source_ranker import rank_source
-from research_agent.sources.sec.xbrl_concepts import US_GAAP_CONCEPTS
+from research_agent.sources.sec.xbrl_concepts import DEI_CONCEPTS, US_GAAP_CONCEPTS
 
 
 @dataclass
@@ -34,22 +34,29 @@ class CompanyFactsParser:
         self.cik = str(cik).zfill(10)
         self.data = companyfacts_json
 
-    def _get_us_gaap_facts(self, concept: str) -> list[dict]:
-        facts = self.data.get("facts", {}).get("us-gaap", {}).get(concept, {}).get("units", {})
+    def _get_facts(self, namespace: str, concept: str) -> list[dict]:
+        facts = self.data.get("facts", {}).get(namespace, {}).get(concept, {}).get("units", {})
         all_facts = []
         for unit, rows in facts.items():
             for row in rows:
                 normalized = dict(row)
                 normalized["_unit"] = unit
                 normalized["_concept"] = concept
+                normalized["_namespace"] = namespace
                 all_facts.append(normalized)
         return all_facts
 
     def get_facts_for_metric(self, metric_name: str) -> List[ParsedFact]:
-        concepts = US_GAAP_CONCEPTS.get(metric_name, [])
+        concepts = [
+            ("us-gaap", concept)
+            for concept in US_GAAP_CONCEPTS.get(metric_name, [])
+        ] + [
+            ("dei", concept)
+            for concept in DEI_CONCEPTS.get(metric_name, [])
+        ]
         parsed: List[ParsedFact] = []
-        for concept in concepts:
-            for row in self._get_us_gaap_facts(concept):
+        for namespace, concept in concepts:
+            for row in self._get_facts(namespace, concept):
                 if "val" not in row:
                     continue
                 raw_value = float(row["val"])
@@ -72,7 +79,7 @@ class CompanyFactsParser:
                         end=row.get("end"),
                         accession=row.get("accn"),
                         frame=row.get("frame"),
-                        concept=row.get("_concept"),
+                        concept=f"{namespace}:{row.get('_concept')}",
                         raw_value=raw_value,
                         normalization_note=normalization_note,
                     )
@@ -116,7 +123,7 @@ class CompanyFactsParser:
     def _matching_fact_value(self, concept: str, target: dict) -> Optional[float]:
         candidates = [
             row
-            for row in self._get_us_gaap_facts(concept)
+            for row in self._get_facts("us-gaap", concept)
             if row.get("start") == target.get("start")
             and row.get("end") == target.get("end")
             and row.get("accn") == target.get("accn")
@@ -125,7 +132,7 @@ class CompanyFactsParser:
         if not candidates:
             candidates = [
                 row
-                for row in self._get_us_gaap_facts(concept)
+                for row in self._get_facts("us-gaap", concept)
                 if row.get("start") == target.get("start")
                 and row.get("end") == target.get("end")
                 and row.get("form") == target.get("form")
@@ -182,6 +189,13 @@ class CompanyFactsParser:
             date=fact.end,
             supports_metrics=[fact.metric_name, _metrics_packet_name(fact.metric_name)],
             confidence="high",
+            formula_id=None,
+            raw_value=fact.raw_value,
+            normalized_value=fact.value,
+            source_lineage=[fact.accession] if fact.accession else [],
+            duration_days=_duration_days(fact.start, fact.end),
+            audited=fact.form == "10-K",
+            amendment_status="amended" if fact.form in {"10-K/A", "10-Q/A"} else "original",
         )
 
 
@@ -194,6 +208,22 @@ def _metrics_packet_name(metric_name: str) -> str:
         "operating_cash_flow",
         "capex",
         "sbc",
+        "buybacks",
+        "dividends_paid",
+        "depreciation_and_amortization",
+        "interest_expense",
+        "eps_diluted",
     }:
         return f"{metric_name}_ttm"
     return metric_name
+
+
+def _duration_days(start: Optional[str], end: Optional[str]) -> Optional[int]:
+    if not start or not end:
+        return None
+    from datetime import date
+
+    try:
+        return (date.fromisoformat(end) - date.fromisoformat(start)).days
+    except ValueError:
+        return None

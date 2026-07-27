@@ -21,6 +21,7 @@ from research_agent.audit.report_linter import audit_markdown_report
 from research_agent.decision.rating_engine import build_decision_packet
 from research_agent.evidence.evidence_item import EvidenceItem
 from research_agent.evidence.evidence_ledger import (
+    build_fundamental_derivation_evidence,
     build_evidence_ledger_from_source_registry,
     build_technical_derivation_evidence,
 )
@@ -57,7 +58,10 @@ from research_agent.research_core.calculations.fundamentals import calculate_fun
 from research_agent.research_core.calculations.technicals import calculate_technical_metrics
 from research_agent.research_core.calculations.valuation import calculate_valuation_metrics
 from research_agent.research_core.ingestion.fundamentals_loader import load_fundamentals
-from research_agent.research_core.ingestion.news_loader import load_news
+from research_agent.research_core.ingestion.news_loader import (
+    load_news,
+    news_evidence_items,
+)
 from research_agent.research_core.ingestion.price_loader import load_price_history
 from research_agent.research_core.ingestion.source_registry import (
     SourceRegistry,
@@ -71,6 +75,8 @@ from research_agent.research_core.models.data_packet import (
     EventInfo,
     FiscalContext,
     ForwardEPS,
+    MaterialNewsEvent,
+    NewsCoverage,
     PriceBasis,
 )
 from research_agent.research_core.models.metrics_packet import MetricsPacket, ValuationMetrics
@@ -184,6 +190,14 @@ def run_research_pipeline(
             metrics_packet=metrics_packet,
             source_registry=source_registry,
             runtime_evidence=source_evidence_items,
+        )
+    )
+    source_evidence_items.extend(
+        build_fundamental_derivation_evidence(
+            ticker=data_packet.ticker,
+            as_of_date=data_packet.as_of_date,
+            metrics_packet=metrics_packet,
+            normalized_fundamentals=normalized_fundamentals,
         )
     )
     source_registry = merge_evidence_sources(
@@ -528,6 +542,33 @@ def build_data_packet(
     latest_price = prices.iloc[-1]
     latest_event = _next_earnings_event(news)
     event_confirmed = bool(latest_event.get("confirmed")) if latest_event else False
+    coverage_record = next(
+        (
+            item
+            for item in news
+            if item.get("event_type") == "coverage_manifest"
+        ),
+        {},
+    )
+    material_events = [
+        MaterialNewsEvent(
+            date=str(item.get("date") or "")[:10],
+            headline=str(item.get("headline") or ""),
+            event_type=str(item.get("event_type") or "company_event"),
+            source_id=str(item.get("source_id") or ""),
+            source_type=str(item.get("source_type") or ""),
+            url=item.get("url"),
+            summary=item.get("summary"),
+        )
+        for item in news
+        if item.get("event_type") != "coverage_manifest"
+        and item.get("material", True)
+        and item.get("date")
+        and str(item.get("date"))[:10] <= as_of_date
+        and item.get("headline")
+        and item.get("source_id")
+        and item.get("source_type")
+    ]
     return DataPacket(
         ticker=ticker.upper(),
         company_name=fundamentals.get("company_name"),
@@ -554,6 +595,16 @@ def build_data_packet(
             confirmed=event_confirmed,
             source=(latest_event.get("source_id") or latest_event.get("source")) if latest_event else None,
             status=(latest_event.get("status") or ("confirmed" if event_confirmed else "unconfirmed")) if latest_event else "unavailable",
+        ),
+        news_coverage=NewsCoverage(
+            status=str(coverage_record.get("status") or "unavailable"),
+            checked_at=coverage_record.get("checked_at"),
+            window_start=coverage_record.get("window_start"),
+            window_end=coverage_record.get("window_end"),
+            sources_checked=[
+                str(value) for value in coverage_record.get("sources_checked") or []
+            ],
+            material_events=material_events,
         ),
         source_registry_id=fundamentals.get("source_registry_id", f"{ticker.upper()}_{as_of_date}"),
         forward_eps=ForwardEPS(**fundamentals["forward_eps"]) if fundamentals.get("forward_eps") else None,
@@ -638,7 +689,27 @@ def _load_source_ingestion_inputs(ticker: str, as_of_date: str, config: ReportCo
             reconciliation_warnings.extend(
                 canonical_fundamentals.get("reconciliation_issues", [])
             )
-    news = load_news(ticker)
+    news = load_news(
+        ticker,
+        config.official_news_dir or "research_agent/data/raw",
+    )
+    issuer_fcf_formulas = {
+        str(item.get("issuer_fcf_formula"))
+        for item in news
+        if item.get("issuer_fcf_formula")
+    }
+    if len(issuer_fcf_formulas) > 1:
+        raise ValueError(
+            "official news inputs contain conflicting issuer FCF definitions"
+        )
+    if issuer_fcf_formulas:
+        issuer_fcf_formula = issuer_fcf_formulas.pop()
+        if issuer_fcf_formula != config.fcf_definition.formula_id:
+            raise ValueError(
+                "configured FCF formula conflicts with the issuer definition"
+            )
+        fundamentals["free_cash_flow_definition_basis"] = "issuer_defined"
+    evidence_items.extend(news_evidence_items(ticker, news))
     if config.earnings_calendar_path:
         earnings_event = select_next_earnings_event(
             ticker=ticker,

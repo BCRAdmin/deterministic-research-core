@@ -332,6 +332,49 @@ def test_data_packet_uses_explicit_exchange_price_currency():
     assert packet.fiscal_context.latest_quarter == "FY2026_Q1"
 
 
+def test_data_packet_exposes_validated_material_news_coverage():
+    packet = build_data_packet(
+        ticker="MCD",
+        as_of_date="2026-07-24",
+        prices=pd.DataFrame(
+            [
+                {
+                    "date": "2026-07-24",
+                    "open": 264,
+                    "high": 266,
+                    "low": 263,
+                    "close": 264.76,
+                    "volume": 100,
+                }
+            ]
+        ),
+        fundamentals={"company_name": "MCDONALDS CORP"},
+        news=[
+            {
+                "event_type": "coverage_manifest",
+                "status": "complete",
+                "checked_at": "2026-07-27T00:00:00Z",
+                "window_start": "2026-03-31",
+                "window_end": "2026-07-24",
+                "sources_checked": ["company IR"],
+            },
+            {
+                "event_type": "strategy",
+                "material": True,
+                "date": "2026-06-01",
+                "headline": "McDonald's > NEXT",
+                "source_id": "MCD_IR_NEXT_2026",
+                "source_type": "company_ir",
+                "url": "https://example.com/next",
+            },
+        ],
+    )
+
+    assert packet.news_coverage.status == "complete"
+    assert packet.news_coverage.window_end == "2026-07-24"
+    assert packet.news_coverage.material_events[0].source_id == "MCD_IR_NEXT_2026"
+
+
 def test_official_metrics_preserve_ttm_fiscal_period(tmp_path):
     release_dir = tmp_path / "official"
     release_dir.mkdir()

@@ -54,6 +54,7 @@ def _packet_set(root: Path, ticker: str = "GENERIC", as_of: str = "2026-07-01") 
                 "free_cash_flow_ttm": 100_000_000.0,
                 "operating_cash_flow_ttm": 120_000_000.0,
                 "capex_ttm": 20_000_000.0,
+                "free_cash_flow_formula": "cfo_minus_capex",
             },
             "valuation": {"price_to_fcf": 20.0},
         },
@@ -72,6 +73,7 @@ def _packet_set(root: Path, ticker: str = "GENERIC", as_of: str = "2026-07-01") 
         {
             "ticker": ticker,
             "as_of_date": as_of,
+            "analytical_rating_unconstrained": "Accumulate",
             "rating_permission": {
                 "allowed_ratings": ["Hold", "Accumulate"],
                 "blocked_ratings": ["Sell"],
@@ -101,6 +103,13 @@ def _packet_set(root: Path, ticker: str = "GENERIC", as_of: str = "2026-07-01") 
                     "ticker": ticker,
                     "source_id": f"{ticker}_SEC",
                     "supports_metrics": supported_metrics[5:],
+                    "formula_id": "sum_four_contiguous_quarters",
+                    "formula_operands": {
+                        "q1": 1.0,
+                        "q2": 1.0,
+                        "q3": 1.0,
+                        "q4": 1.0,
+                    },
                 },
                 {
                     "evidence_id": f"{ticker}_PRICE",

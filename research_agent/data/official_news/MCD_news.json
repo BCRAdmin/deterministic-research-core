@@ -1,0 +1,49 @@
+{
+  "coverage_status": "complete",
+  "checked_at": "2026-07-27T00:00:00Z",
+  "window_start": "2026-03-31",
+  "window_end": "2026-07-24",
+  "sources_checked": [
+    "McDonald's Financial Information",
+    "McDonald's Corporate Stories and Press Releases"
+  ],
+  "events": [
+    {
+      "date": "2026-05-07",
+      "headline": "McDonald's Reports First Quarter 2026 Results",
+      "event_type": "earnings_results",
+      "material": true,
+      "source_id": "MCD_IR_Q1_2026_RESULTS",
+      "source_type": "company_ir",
+      "authority_rank": 1,
+      "url": "https://corporate.mcdonalds.com/corpmcd/our-stories/article/Q1-2026-results.html",
+      "retrieved_at": "2026-07-27T00:00:00Z",
+      "issuer_fcf_formula": "cfo_minus_capex",
+      "summary": "McDonald's reported 3.8% global comparable-sales growth, 3.9% U.S. comparable-sales growth, 4% revenue growth in constant currencies and 6% operating-income growth in constant currencies for Q1 2026. The official release describes more than 45,000 locations in over 100 countries and says approximately 95% are operated by independent local business owners."
+    },
+    {
+      "date": "2026-06-01",
+      "headline": "Our Next Era of Growth & Productivity: Introducing McDonald's > NEXT",
+      "event_type": "strategy",
+      "material": true,
+      "source_id": "MCD_IR_NEXT_2026",
+      "source_type": "company_ir",
+      "authority_rank": 1,
+      "url": "https://corporate.mcdonalds.com/corpmcd/our-stories/article/NEXT-announcement.html",
+      "retrieved_at": "2026-07-27T00:00:00Z",
+      "summary": "McDonald's introduced the NEXT strategy to pursue growth and productivity by attracting more customers and improving restaurant unit economics."
+    },
+    {
+      "date": "2026-05-07",
+      "headline": "McDonald's 2026 outlook in the Q1 Form 10-Q",
+      "event_type": "company_outlook",
+      "material": true,
+      "source_id": "SEC_0000063908_2026_Q1_OUTLOOK",
+      "source_type": "sec_filing",
+      "authority_rank": 1,
+      "url": "https://www.sec.gov/Archives/edgar/data/63908/000006390826000051/mcd-20260331.htm",
+      "retrieved_at": "2026-07-27T00:00:00Z",
+      "summary": "For 2026 McDonald's expected operating margin in the mid-to-high 40% range, capital expenditures of $3.7-$3.9 billion, about 2,600 gross openings, about 2,100 net additions and free-cash-flow conversion in the low-to-mid 80% range."
+    }
+  ]
+}

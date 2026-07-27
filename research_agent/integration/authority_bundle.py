@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import shutil
 from datetime import date, datetime, timezone
 from pathlib import Path
@@ -55,6 +56,9 @@ MATERIAL_METRIC_KEYS = {
     "sbc_ttm",
     "cash_and_investments",
     "total_debt",
+    "listed_share_count",
+    "market_cap",
+    "enterprise_value",
     "close",
     "sma_50",
     "sma_200",
@@ -389,6 +393,80 @@ def _assess_packets(
         detail=",".join(missing_metric_evidence),
     )
 
+    fundamentals = metrics_packet.get("fundamentals")
+    fundamentals = fundamentals if isinstance(fundamentals, Mapping) else {}
+    valuation = metrics_packet.get("valuation")
+    valuation = valuation if isinstance(valuation, Mapping) else {}
+    listed_share_count = fundamentals.get("listed_share_count")
+    market_cap = valuation.get("market_cap")
+    share_basis = str(valuation.get("market_cap_share_basis") or "")
+    _check(
+        checks,
+        "market_cap_uses_point_in_time_shares",
+        not (
+            market_cap is not None
+            and listed_share_count is not None
+            and share_basis != "listed_share_count"
+        ),
+        detail=share_basis,
+    )
+
+    ttm_metric_names = {
+        name
+        for name in (
+            "revenue_ttm",
+            "operating_income_ttm",
+            "net_income_ttm",
+            "operating_cash_flow_ttm",
+            "capex_ttm",
+            "free_cash_flow_ttm",
+            "sbc_ttm",
+        )
+        if fundamentals.get(name) is not None
+    }
+    ttm_evidence = {
+        metric
+        for item in evidence_items
+        if isinstance(item, Mapping)
+        and (
+            (
+                item.get("formula_id")
+                and isinstance(item.get("formula_operands"), Mapping)
+                and item.get("formula_operands")
+            )
+            or (
+                item.get("value") is not None
+                and re.search(
+                    r"(?:^|_)FY$|^FY\d{4}$",
+                    str(item.get("period") or ""),
+                    re.IGNORECASE,
+                )
+            )
+        )
+        for metric in item.get("supports_metrics") or []
+    }
+    missing_ttm_bridges = sorted(ttm_metric_names - ttm_evidence)
+    _check(
+        checks,
+        "ttm_formula_operands_evidenced",
+        not missing_ttm_bridges,
+        detail=",".join(missing_ttm_bridges),
+    )
+
+    fcf_formula = str(fundamentals.get("free_cash_flow_formula") or "")
+    _check(
+        checks,
+        "fcf_definition_explicit",
+        fundamentals.get("free_cash_flow_ttm") is None
+        or fcf_formula
+        in {
+            "cfo_minus_capex",
+            "company_defined",
+            "analyst_defined",
+        },
+        detail=fcf_formula,
+    )
+
     permission = decision_packet.get("rating_permission")
     permission = permission if isinstance(permission, Mapping) else {}
     preferred = str(permission.get("preferred_rating") or "")
@@ -399,6 +477,15 @@ def _assess_packets(
         "decision_permission_consistent",
         bool(preferred) and preferred in allowed and preferred not in blocked,
         detail=preferred,
+    )
+    analytical_rating = str(
+        decision_packet.get("analytical_rating_unconstrained") or ""
+    )
+    _check(
+        checks,
+        "analytical_rating_independent_present",
+        bool(analytical_rating),
+        detail=analytical_rating,
     )
     return checks, ticker, as_of_date
 

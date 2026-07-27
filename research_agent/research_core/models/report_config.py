@@ -4,9 +4,9 @@ from pydantic import BaseModel, Field
 
 
 class FCFDefinitionConfig(BaseModel):
-    formula_id: str = "cfo_minus_capex_minus_finance_leases"
+    formula_id: str = "cfo_minus_capex"
     subtract_capex: bool = True
-    subtract_finance_lease_principal_payments: bool = True
+    subtract_finance_lease_principal_payments: bool = False
     company_adjustments: float = 0.0
     metadata: Dict[str, object] = Field(default_factory=dict)
 
@@ -34,3 +34,4 @@ class ReportConfig(BaseModel):
     sec_user_agent: Optional[str] = None
     earnings_calendar_path: Optional[str] = None
     ir_release_dir: Optional[str] = None
+    official_news_dir: Optional[str] = None

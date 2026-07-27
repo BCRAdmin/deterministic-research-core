@@ -73,6 +73,8 @@ def current_ratio(current_assets: float, current_liabilities: float):
 
 
 def debt_to_equity(total_debt: float, equity: float):
+    if equity <= 0:
+        return None
     return safe_divide(total_debt, equity)
 
 
@@ -109,6 +111,27 @@ def calculate_fundamental_metrics(
     company_defined_fcf_ttm = _ttm_or_annual_if_present(quarterly, annual, "free_cash_flow")
     adjusted_fcf_ttm = _ttm_or_annual_if_present(quarterly, annual, "adjusted_free_cash_flow")
     sbc_ttm = _ttm_or_annual_if_present(quarterly, annual, "sbc")
+    diluted_eps_ttm = _ttm_or_annual_if_present(
+        quarterly, annual, "eps_diluted"
+    )
+    buybacks_ttm = _ttm_or_annual_if_present(quarterly, annual, "buybacks")
+    dividends_paid_ttm = _ttm_or_annual_if_present(
+        quarterly, annual, "dividends_paid"
+    )
+    depreciation_and_amortization_ttm = _ttm_or_annual_if_present(
+        quarterly, annual, "depreciation_and_amortization"
+    )
+    interest_expense_ttm = _ttm_or_annual_if_present(
+        quarterly, annual, "interest_expense"
+    )
+    if (
+        ebitda_ttm is None
+        and operating_income_ttm is not None
+        and depreciation_and_amortization_ttm is not None
+    ):
+        ebitda_ttm = (
+            operating_income_ttm + depreciation_and_amortization_ttm
+        )
 
     finance_lease_principal_ttm = _ttm_if_present(
         quarterly,
@@ -137,6 +160,20 @@ def calculate_fundamental_metrics(
     short_term_investments = _optional_float(balance_sheet.get("short_term_investments"))
     marketable_securities = _optional_float(balance_sheet.get("marketable_securities"))
     total_debt = _optional_float(balance_sheet.get("total_debt"))
+    debt_current = _optional_float(balance_sheet.get("debt_current"))
+    debt_noncurrent = _optional_float(balance_sheet.get("debt_noncurrent"))
+    lease_liability_current = _optional_float(
+        balance_sheet.get("lease_liability_current")
+    )
+    lease_liability_noncurrent = _optional_float(
+        balance_sheet.get("lease_liability_noncurrent")
+    )
+    total_lease_liabilities = _optional_float(
+        balance_sheet.get("total_lease_liabilities")
+    )
+    treasury_stock_value = _optional_float(
+        balance_sheet.get("treasury_stock_value")
+    )
     liquid_values = (
         cash_and_equivalents,
         short_term_investments,
@@ -156,8 +193,14 @@ def calculate_fundamental_metrics(
     treasury_share_count = _optional_float(share_data.get("treasury_share_count"))
     economic_share_count = _optional_float(share_data.get("economic_share_count"))
     if economic_share_count is None and listed_share_count is not None:
-        economic_share_count = listed_share_count - (treasury_share_count or 0.0)
-    trailing_eps = safe_divide(net_income_ttm, economic_share_count or diluted_share_count)
+        # SEC DEI outstanding shares are already net of treasury shares.
+        economic_share_count = listed_share_count
+    trailing_eps = diluted_eps_ttm
+    if trailing_eps is None:
+        trailing_eps = safe_divide(
+            net_income_ttm,
+            economic_share_count or diluted_share_count,
+        )
     prior_diluted_share_count = _optional_float(share_data.get("diluted_share_count_prior_year"))
     diluted_share_count_yoy = _yoy_change(diluted_share_count, prior_diluted_share_count)
 
@@ -180,10 +223,16 @@ def calculate_fundamental_metrics(
         capex_ttm=capex_ttm,
         free_cash_flow_ttm=fcf_ttm,
         free_cash_flow_formula=fcf_definition.formula_id,
+        free_cash_flow_definition_basis=(
+            str(fundamentals.get("free_cash_flow_definition_basis"))
+            if fundamentals.get("free_cash_flow_definition_basis")
+            else None
+        ),
         gross_margin_ttm=gross_margin(gross_profit_ttm, revenue_ttm) if gross_profit_ttm is not None and revenue_ttm is not None else None,
         operating_margin_ttm=operating_margin(operating_income_ttm, revenue_ttm) if operating_income_ttm is not None and revenue_ttm is not None else None,
         net_margin_ttm=net_margin(net_income_ttm, revenue_ttm) if net_income_ttm is not None and revenue_ttm is not None else None,
         fcf_margin_ttm=safe_divide(fcf_ttm, revenue_ttm),
+        free_cash_flow_conversion_ttm=safe_divide(fcf_ttm, net_income_ttm),
         sbc_ttm=sbc_ttm,
         sbc_to_revenue=ratios["sbc_to_revenue"],
         sbc_to_fcf=ratios["sbc_to_fcf"],
@@ -193,6 +242,11 @@ def calculate_fundamental_metrics(
         marketable_securities=marketable_securities,
         cash_and_investments=cash_and_investments,
         total_debt=total_debt,
+        debt_current=debt_current,
+        debt_noncurrent=debt_noncurrent,
+        lease_liability_current=lease_liability_current,
+        lease_liability_noncurrent=lease_liability_noncurrent,
+        total_lease_liabilities=total_lease_liabilities,
         current_assets=current_assets,
         current_liabilities=current_liabilities,
         equity=equity,
@@ -203,10 +257,24 @@ def calculate_fundamental_metrics(
         diluted_share_count=diluted_share_count,
         listed_share_count=listed_share_count,
         treasury_share_count=treasury_share_count,
+        treasury_stock_value=treasury_stock_value,
         economic_share_count=economic_share_count,
         trailing_eps=trailing_eps,
         diluted_share_count_yoy=diluted_share_count_yoy,
-        buybacks=_optional_float(share_data.get("buybacks")),
+        buybacks=buybacks_ttm
+        if buybacks_ttm is not None
+        else _optional_float(share_data.get("buybacks")),
+        dividends_paid=dividends_paid_ttm,
+        depreciation_and_amortization_ttm=depreciation_and_amortization_ttm,
+        interest_expense_ttm=interest_expense_ttm,
+        operating_income_interest_coverage_ttm=safe_divide(
+            operating_income_ttm,
+            interest_expense_ttm,
+        ),
+        free_cash_flow_interest_coverage_ttm=safe_divide(
+            fcf_ttm,
+            interest_expense_ttm,
+        ),
     )
 
 

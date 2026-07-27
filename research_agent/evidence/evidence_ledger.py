@@ -165,6 +165,296 @@ def build_technical_derivation_evidence(
     return evidence
 
 
+def build_fundamental_derivation_evidence(
+    *,
+    ticker: str,
+    as_of_date: str,
+    metrics_packet: MetricsPacket,
+    normalized_fundamentals: dict,
+) -> list[EvidenceItem]:
+    """Keep every material TTM transformation and its operands auditable."""
+
+    bridges = normalized_fundamentals.get("ttm_bridges")
+    if not isinstance(bridges, dict):
+        return []
+    source_id = f"SEC_{ticker.upper()}_DERIVED_TTM"
+    evidence: list[EvidenceItem] = []
+    for raw_metric, bridge in sorted(bridges.items()):
+        if not isinstance(bridge, dict):
+            continue
+        metric_name = {
+            "revenue": "revenue_ttm",
+            "operating_income": "operating_income_ttm",
+            "net_income": "net_income_ttm",
+            "operating_cash_flow": "operating_cash_flow_ttm",
+            "capex": "capex_ttm",
+            "sbc": "sbc_ttm",
+            "buybacks": "buybacks",
+            "dividends_paid": "dividends_paid",
+            "depreciation_and_amortization": "depreciation_and_amortization_ttm",
+            "interest_expense": "interest_expense_ttm",
+            "eps_diluted": "trailing_eps",
+        }.get(str(raw_metric), f"{raw_metric}_ttm")
+        value = _metric_value(metrics_packet, metric_name)
+        if value is None:
+            continue
+        operands = {
+            str(key): float(value)
+            for key, value in (bridge.get("operands") or {}).items()
+            if isinstance(value, (int, float))
+        }
+        formula_id = str(bridge.get("formula_id") or "unknown_ttm_formula")
+        evidence.append(
+            EvidenceItem(
+                evidence_id=(
+                    f"{ticker.upper()}_DETERMINISTIC_"
+                    f"{_safe_metric_id(metric_name)}_{as_of_date}"
+                ),
+                ticker=ticker.upper(),
+                claim_type="financial_metric",
+                source_id=source_id,
+                source_type="sec_filing",
+                authority_rank=1,
+                statement=(
+                    f"{metric_name}={value:g} was derived deterministically "
+                    f"with {formula_id}; operands={operands}."
+                ),
+                value=value,
+                unit=_unit_for_metric(metric_name),
+                period=(
+                    f"{bridge.get('period_start') or 'unknown'}"
+                    f"..{bridge.get('period_end') or as_of_date}"
+                ),
+                date=str(bridge.get("period_end") or as_of_date),
+                supports_metrics=[metric_name, str(raw_metric)],
+                confidence="high",
+                formula_id=formula_id,
+                formula_operands=operands,
+                normalized_value=value,
+                source_lineage=sorted(
+                    {
+                        str(source_id)
+                        for source_id in bridge.get("source_ids") or []
+                        if source_id
+                    }
+                ),
+            )
+        )
+    fundamentals = metrics_packet.fundamentals
+    if (
+        fundamentals.free_cash_flow_ttm is not None
+        and fundamentals.operating_cash_flow_ttm is not None
+        and fundamentals.capex_ttm is not None
+    ):
+        formula_id = str(
+            fundamentals.free_cash_flow_formula or "cfo_minus_capex"
+        )
+        operands = {
+            "operating_cash_flow_ttm": float(
+                fundamentals.operating_cash_flow_ttm
+            ),
+            "capex_ttm": float(fundamentals.capex_ttm),
+        }
+        evidence.append(
+            EvidenceItem(
+                evidence_id=(
+                    f"{ticker.upper()}_DETERMINISTIC_FREE_CASH_FLOW_TTM_"
+                    f"{as_of_date}"
+                ),
+                ticker=ticker.upper(),
+                claim_type="financial_metric",
+                source_id=source_id,
+                source_type="sec_filing",
+                authority_rank=1,
+                statement=(
+                    f"free_cash_flow_ttm={fundamentals.free_cash_flow_ttm:g} "
+                    f"was derived with {formula_id}; operands={operands}."
+                ),
+                value=float(fundamentals.free_cash_flow_ttm),
+                unit="usd",
+                period=f"TTM through {as_of_date}",
+                date=as_of_date,
+                supports_metrics=["free_cash_flow_ttm", "free_cash_flow"],
+                confidence="high",
+                formula_id=formula_id,
+                formula_operands=operands,
+                normalized_value=float(fundamentals.free_cash_flow_ttm),
+            )
+        )
+    if (
+        fundamentals.free_cash_flow_ttm is not None
+        and fundamentals.net_income_ttm is not None
+        and fundamentals.free_cash_flow_conversion_ttm is not None
+    ):
+        operands = {
+            "free_cash_flow_ttm": float(fundamentals.free_cash_flow_ttm),
+            "net_income_ttm": float(fundamentals.net_income_ttm),
+        }
+        evidence.append(
+            EvidenceItem(
+                evidence_id=(
+                    f"{ticker.upper()}_DETERMINISTIC_"
+                    f"FREE_CASH_FLOW_CONVERSION_TTM_{as_of_date}"
+                ),
+                ticker=ticker.upper(),
+                claim_type="financial_metric",
+                source_id=source_id,
+                source_type="sec_filing",
+                authority_rank=1,
+                statement=(
+                    "free_cash_flow_conversion_ttm="
+                    f"{fundamentals.free_cash_flow_conversion_ttm:g} was "
+                    "derived as free_cash_flow_ttm / net_income_ttm."
+                ),
+                value=float(fundamentals.free_cash_flow_conversion_ttm),
+                unit="percent",
+                period=f"TTM through {as_of_date}",
+                date=as_of_date,
+                supports_metrics=["free_cash_flow_conversion_ttm"],
+                confidence="high",
+                formula_id="fcf_divided_by_net_income",
+                formula_operands=operands,
+                normalized_value=float(
+                    fundamentals.free_cash_flow_conversion_ttm
+                ),
+            )
+        )
+    coverage_metrics = (
+        (
+            "operating_income_interest_coverage_ttm",
+            fundamentals.operating_income_interest_coverage_ttm,
+            fundamentals.operating_income_ttm,
+            "operating_income_ttm",
+            "operating_income_divided_by_interest_expense",
+        ),
+        (
+            "free_cash_flow_interest_coverage_ttm",
+            fundamentals.free_cash_flow_interest_coverage_ttm,
+            fundamentals.free_cash_flow_ttm,
+            "free_cash_flow_ttm",
+            "free_cash_flow_divided_by_interest_expense",
+        ),
+    )
+    for metric_name, value, numerator, numerator_name, formula_id in coverage_metrics:
+        if (
+            value is None
+            or numerator is None
+            or fundamentals.interest_expense_ttm is None
+        ):
+            continue
+        operands = {
+            numerator_name: float(numerator),
+            "interest_expense_ttm": float(fundamentals.interest_expense_ttm),
+        }
+        evidence.append(
+            EvidenceItem(
+                evidence_id=(
+                    f"{ticker.upper()}_DETERMINISTIC_"
+                    f"{_safe_metric_id(metric_name)}_{as_of_date}"
+                ),
+                ticker=ticker.upper(),
+                claim_type="financial_metric",
+                source_id=source_id,
+                source_type="deterministic_calculation",
+                authority_rank=1,
+                statement=(
+                    f"{metric_name}={value:g} was derived with {formula_id}; "
+                    f"operands={operands}."
+                ),
+                value=float(value),
+                unit="multiple",
+                period=f"TTM through {as_of_date}",
+                date=as_of_date,
+                supports_metrics=[metric_name],
+                confidence="high",
+                formula_id=formula_id,
+                formula_operands=operands,
+                normalized_value=float(value),
+            )
+        )
+    valuation = metrics_packet.valuation
+    technical = metrics_packet.technical
+    if (
+        valuation.market_cap is not None
+        and fundamentals.listed_share_count is not None
+    ):
+        operands = {
+            "close": float(technical.close),
+            "listed_share_count": float(fundamentals.listed_share_count),
+        }
+        evidence.append(
+            EvidenceItem(
+                evidence_id=(
+                    f"{ticker.upper()}_DETERMINISTIC_MARKET_CAP_{as_of_date}"
+                ),
+                ticker=ticker.upper(),
+                claim_type="valuation_metric",
+                source_id=source_id,
+                source_type="deterministic_calculation",
+                authority_rank=1,
+                statement=(
+                    f"market_cap={valuation.market_cap:g} was calculated from "
+                    f"the as-of close and point-in-time outstanding shares."
+                ),
+                value=float(valuation.market_cap),
+                unit="usd",
+                period=f"as of {as_of_date}",
+                date=as_of_date,
+                supports_metrics=["market_cap", "listed_share_count"],
+                confidence="high",
+                formula_id="close_times_point_in_time_shares",
+                formula_operands=operands,
+                normalized_value=float(valuation.market_cap),
+            )
+        )
+    if (
+        valuation.enterprise_value is not None
+        and valuation.market_cap is not None
+        and fundamentals.total_debt is not None
+        and fundamentals.cash_and_equivalents is not None
+    ):
+        operands = {
+            "market_cap": float(valuation.market_cap),
+            "total_debt": float(fundamentals.total_debt),
+            "cash_and_equivalents": float(
+                fundamentals.cash_and_equivalents
+            ),
+            "short_term_investments": float(
+                fundamentals.short_term_investments or 0.0
+            ),
+            "marketable_securities": float(
+                fundamentals.marketable_securities or 0.0
+            ),
+        }
+        evidence.append(
+            EvidenceItem(
+                evidence_id=(
+                    f"{ticker.upper()}_DETERMINISTIC_ENTERPRISE_VALUE_"
+                    f"{as_of_date}"
+                ),
+                ticker=ticker.upper(),
+                claim_type="valuation_metric",
+                source_id=source_id,
+                source_type="deterministic_calculation",
+                authority_rank=1,
+                statement=(
+                    f"enterprise_value={valuation.enterprise_value:g} was "
+                    "calculated from market cap, debt and liquid assets."
+                ),
+                value=float(valuation.enterprise_value),
+                unit="usd",
+                period=f"as of {as_of_date}",
+                date=as_of_date,
+                supports_metrics=["enterprise_value"],
+                confidence="high",
+                formula_id="market_cap_plus_debt_minus_liquid_assets",
+                formula_operands=operands,
+                normalized_value=float(valuation.enterprise_value),
+            )
+        )
+    return evidence
+
+
 def save_evidence_ledger(ledger: EvidenceLedger, path: Union[str, Path]) -> Path:
     target = Path(path)
     target.parent.mkdir(parents=True, exist_ok=True)

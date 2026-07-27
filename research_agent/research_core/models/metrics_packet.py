@@ -44,10 +44,12 @@ class FundamentalMetrics(BaseModel):
     capex_ttm: Optional[float] = None
     free_cash_flow_ttm: Optional[float] = None
     free_cash_flow_formula: Optional[str] = None
+    free_cash_flow_definition_basis: Optional[str] = None
     gross_margin_ttm: Optional[float] = None
     operating_margin_ttm: Optional[float] = None
     net_margin_ttm: Optional[float] = None
     fcf_margin_ttm: Optional[float] = None
+    free_cash_flow_conversion_ttm: Optional[float] = None
     sbc_ttm: Optional[float] = None
     sbc_to_revenue: Optional[float] = None
     sbc_to_fcf: Optional[float] = None
@@ -57,6 +59,11 @@ class FundamentalMetrics(BaseModel):
     marketable_securities: Optional[float] = None
     cash_and_investments: Optional[float] = None
     total_debt: Optional[float] = None
+    debt_current: Optional[float] = None
+    debt_noncurrent: Optional[float] = None
+    lease_liability_current: Optional[float] = None
+    lease_liability_noncurrent: Optional[float] = None
+    total_lease_liabilities: Optional[float] = None
     current_assets: Optional[float] = None
     current_liabilities: Optional[float] = None
     equity: Optional[float] = None
@@ -67,10 +74,16 @@ class FundamentalMetrics(BaseModel):
     diluted_share_count: Optional[float] = None
     listed_share_count: Optional[float] = None
     treasury_share_count: Optional[float] = None
+    treasury_stock_value: Optional[float] = None
     economic_share_count: Optional[float] = None
     trailing_eps: Optional[float] = None
     diluted_share_count_yoy: Optional[float] = None
     buybacks: Optional[float] = None
+    dividends_paid: Optional[float] = None
+    depreciation_and_amortization_ttm: Optional[float] = None
+    interest_expense_ttm: Optional[float] = None
+    operating_income_interest_coverage_ttm: Optional[float] = None
+    free_cash_flow_interest_coverage_ttm: Optional[float] = None
 
 
 class ValuationMetrics(BaseModel):

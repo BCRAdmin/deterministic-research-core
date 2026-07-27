@@ -2,6 +2,7 @@ from research_agent.evidence.evidence_item import EvidenceItem
 from research_agent.evidence.evidence_ledger import (
     EvidenceLedger,
     build_evidence_ledger_from_source_registry,
+    build_fundamental_derivation_evidence,
     build_technical_derivation_evidence,
 )
 from research_agent.research_core.ingestion.source_registry import (
@@ -161,3 +162,46 @@ def test_technical_metrics_are_derived_from_registered_ohlcv():
     }
     assert {item.source_id for item in evidence} == {"GENERIC_EXCHANGE"}
     assert all(item.claim_type in {"price_data", "technical_metric"} for item in evidence)
+
+
+def test_interest_coverage_is_precomputed_with_auditable_operands():
+    metrics = MetricsPacket(
+        ticker="GENERIC",
+        as_of_date="2026-07-01",
+        technical=TechnicalMetrics(indicator_date="2026-07-01", close=100.0),
+        fundamentals=FundamentalMetrics(
+            fiscal_period="TTM",
+            operating_income_ttm=120.0,
+            free_cash_flow_ttm=80.0,
+            interest_expense_ttm=20.0,
+            operating_income_interest_coverage_ttm=6.0,
+            free_cash_flow_interest_coverage_ttm=4.0,
+        ),
+        valuation=ValuationMetrics(),
+    )
+
+    evidence = build_fundamental_derivation_evidence(
+        ticker="GENERIC",
+        as_of_date="2026-07-01",
+        metrics_packet=metrics,
+        normalized_fundamentals={"ttm_bridges": {}},
+    )
+    by_metric = {
+        item.supports_metrics[0]: item
+        for item in evidence
+        if item.supports_metrics
+        and item.supports_metrics[0].endswith("interest_coverage_ttm")
+    }
+
+    assert by_metric[
+        "operating_income_interest_coverage_ttm"
+    ].formula_id == "operating_income_divided_by_interest_expense"
+    assert by_metric[
+        "free_cash_flow_interest_coverage_ttm"
+    ].formula_id == "free_cash_flow_divided_by_interest_expense"
+    assert by_metric[
+        "operating_income_interest_coverage_ttm"
+    ].formula_operands == {
+        "operating_income_ttm": 120.0,
+        "interest_expense_ttm": 20.0,
+    }

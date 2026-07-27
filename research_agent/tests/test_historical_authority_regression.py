@@ -28,10 +28,10 @@ REQUIRED_PACKETS = (
 )
 
 
-def test_historical_corpus_passes_company_agnostic_authority_contract(
+def test_legacy_historical_corpus_is_rejected_by_hardened_authority_contract(
     tmp_path: Path,
 ) -> None:
-    """Use the full stored corpus as regression input, not ticker branches."""
+    """Keep the stored pre-hardening corpus as a company-agnostic negative fixture."""
 
     cases = [
         path
@@ -107,7 +107,16 @@ def test_historical_corpus_passes_company_agnostic_authority_contract(
         if not manifest["analysis_allowed"]:
             failures[ticker] = manifest["blocking_failures"]
 
-    assert not failures
+    assert set(failures) == {path.parent.name for path in cases}
+    hardened_blockers = {
+        "ttm_formula_operands_evidenced",
+        "fcf_definition_explicit",
+        "analytical_rating_independent_present",
+    }
+    assert all(
+        hardened_blockers.intersection(blockers)
+        for blockers in failures.values()
+    )
 
 
 def test_authority_runtime_paths_do_not_contain_company_overrides() -> None:
