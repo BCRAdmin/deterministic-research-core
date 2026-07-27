@@ -25,23 +25,27 @@ def reconcile_metric(metric_name: str, candidate_metrics: Iterable[CanonicalMetr
     warnings: list[dict] = []
     ignored_variant_count = _ignored_variant_count(candidates)
     if ignored_variant_count:
-        warnings.append({
-            "severity": "info",
-            "code": "SOURCE_FRAME_VARIANT_IGNORED",
-            "metric": metric_name,
-            "count": ignored_variant_count,
-            "message": f"Ignored {ignored_variant_count} SEC frame/concept variants across distinct periods for {metric_name}.",
-        })
+        warnings.append(
+            {
+                "severity": "info",
+                "code": "SOURCE_FRAME_VARIANT_IGNORED",
+                "metric": metric_name,
+                "count": ignored_variant_count,
+                "message": f"Ignored {ignored_variant_count} SEC frame/concept variants across distinct periods for {metric_name}.",
+            }
+        )
 
     period_mismatch_count = _period_mismatch_count(candidates)
     if period_mismatch_count:
-        warnings.append({
-            "severity": "info",
-            "code": "PERIOD_TYPE_MISMATCH_IGNORED",
-            "metric": metric_name,
-            "count": period_mismatch_count,
-            "message": f"Ignored {period_mismatch_count} annual/quarterly/YTD period-type variants for {metric_name}.",
-        })
+        warnings.append(
+            {
+                "severity": "info",
+                "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+                "metric": metric_name,
+                "count": period_mismatch_count,
+                "message": f"Ignored {period_mismatch_count} annual/quarterly/YTD period-type variants for {metric_name}.",
+            }
+        )
 
     by_comparison_key: dict[tuple, list[CanonicalMetric]] = defaultdict(list)
     for metric in candidates:
@@ -61,28 +65,37 @@ def reconcile_metric(metric_name: str, candidate_metrics: Iterable[CanonicalMetr
         values = {metric.value for metric in metrics}
         if len(values) > 1:
             if top.period_bucket == "ytd":
-                warnings.append({
-                    "severity": "info",
-                    "code": "PERIOD_TYPE_MISMATCH_IGNORED",
-                    "metric": metric_name,
-                    "period_type": top.period_bucket,
-                    "count": 1,
-                    "message": (
-                        f"Ignored YTD source disagreement for {metric_name} ({top.period}); "
-                        "YTD facts are kept separate and are not used as quarterly/annual canonical metrics."
-                    ),
-                })
-                top = _with_note(top, "Ignored YTD source disagreement because YTD facts are not merged into quarterly/annual metrics.")
+                warnings.append(
+                    {
+                        "severity": "info",
+                        "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+                        "metric": metric_name,
+                        "period_type": top.period_bucket,
+                        "count": 1,
+                        "message": (
+                            f"Ignored YTD source disagreement for {metric_name} ({top.period}); "
+                            "YTD facts are kept separate and are not used as quarterly/annual canonical metrics."
+                        ),
+                    }
+                )
+                top = _with_note(
+                    top,
+                    "Ignored YTD source disagreement because YTD facts are not merged into quarterly/annual metrics.",
+                )
             else:
-                warnings.append({
-                    "severity": "warning",
-                    "code": "TRUE_SOURCE_VALUE_DISAGREEMENT",
-                    "metric": metric_name,
-                    "basis": top.basis,
-                    "period_type": top.period_bucket,
-                    "message": f"Comparable sources disagree for {metric_name} ({top.basis}, {top.period_bucket}, {top.period}).",
-                })
-                top = _with_note(top, "Selected highest-confidence source among disagreeing values.")
+                warnings.append(
+                    {
+                        "severity": "warning",
+                        "code": "TRUE_SOURCE_VALUE_DISAGREEMENT",
+                        "metric": metric_name,
+                        "basis": top.basis,
+                        "period_type": top.period_bucket,
+                        "message": f"Comparable sources disagree for {metric_name} ({top.basis}, {top.period_bucket}, {top.period}).",
+                    }
+                )
+                top = _with_note(
+                    top, "Selected highest-confidence source among disagreeing values."
+                )
         canonical.append(top)
 
     warnings.extend(_guidance_consensus_warnings(metric_name, canonical))
@@ -132,8 +145,20 @@ def canonical_metric_from_parsed_fact(
         confidence=confidence,
         reconciliation_notes=[
             f"Resolved as {resolved.period_type}/{resolved.period_bucket} period {resolved.period_label}.",
+            *([fact.normalization_note] if getattr(fact, "normalization_note", None) else []),
         ],
     )
+    if getattr(fact, "normalization_note", None):
+        warnings.append(
+            {
+                "severity": "info",
+                "code": "SEC_SHARE_SCALE_NORMALIZED",
+                "metric": fact.metric_name,
+                "raw_value": fact.raw_value,
+                "normalized_value": fact.value,
+                "message": fact.normalization_note,
+            }
+        )
     return canonical, warnings
 
 
@@ -159,7 +184,43 @@ def build_canonical_financials_from_facts(
         warnings.extend(metric_warnings)
         canonical_metrics.extend(reconciled)
 
-    return CanonicalFinancials(ticker=ticker.upper(), as_of_date=as_of_date, metrics=canonical_metrics), warnings
+    return (
+        CanonicalFinancials(
+            ticker=ticker.upper(),
+            as_of_date=as_of_date,
+            metrics=canonical_metrics,
+        ),
+        _coalesce_share_scale_warnings(warnings),
+    )
+
+
+def _coalesce_share_scale_warnings(warnings: list[dict]) -> list[dict]:
+    share_scale = [
+        warning for warning in warnings if warning.get("code") == "SEC_SHARE_SCALE_NORMALIZED"
+    ]
+    if len(share_scale) <= 1:
+        return warnings
+
+    others = [
+        warning for warning in warnings if warning.get("code") != "SEC_SHARE_SCALE_NORMALIZED"
+    ]
+    latest = share_scale[-1]
+    others.append(
+        {
+            "severity": "info",
+            "code": "SEC_SHARE_SCALE_NORMALIZED",
+            "metric": "shares_diluted",
+            "count": len(share_scale),
+            "latest_raw_value": latest.get("raw_value"),
+            "latest_normalized_value": latest.get("normalized_value"),
+            "message": (
+                f"Normalized {len(share_scale)} SEC diluted-share observations "
+                "with a consistent power-of-ten scale reconciled against "
+                "same-period net income and diluted EPS."
+            ),
+        }
+    )
+    return others
 
 
 def canonical_financials_to_fundamentals(canonical: CanonicalFinancials) -> dict:
@@ -205,9 +266,7 @@ def canonical_financials_to_fundamentals(canonical: CanonicalFinancials) -> dict
         if selected is not None:
             fundamentals["balance_sheet"][metric_name] = selected.value
         elif canonical.metrics_for(metric_name):
-            fundamentals["reconciliation_issues"].append(
-                _stale_metric_issue(metric_name)
-            )
+            fundamentals["reconciliation_issues"].append(_stale_metric_issue(metric_name))
 
     share_metrics = {
         "shares_diluted": "diluted_share_count",
@@ -224,23 +283,26 @@ def canonical_financials_to_fundamentals(canonical: CanonicalFinancials) -> dict
         if selected is not None:
             fundamentals["share_data"][output_name] = selected.value
         elif canonical.metrics_for(metric_name):
-            fundamentals["reconciliation_issues"].append(
-                _stale_metric_issue(metric_name)
-            )
+            fundamentals["reconciliation_issues"].append(_stale_metric_issue(metric_name))
     return fundamentals
 
 
-def _compatible_trailing_period_values(canonical: CanonicalFinancials, metric_name: str) -> tuple[list[float], Optional[dict]]:
-    quarterly = _dedupe_period_metrics([
-        metric for metric in canonical.metrics_for(metric_name)
-        if metric.period_bucket == "quarterly"
-        and metric.basis == "gaap"
-        and _is_current_metric(canonical, metric)
-        and metric.start_date
-        and metric.end_date
-        and metric.duration_days is not None
-        and 70 <= metric.duration_days <= 110
-    ])
+def _compatible_trailing_period_values(
+    canonical: CanonicalFinancials, metric_name: str
+) -> tuple[list[float], Optional[dict]]:
+    quarterly = _dedupe_period_metrics(
+        [
+            metric
+            for metric in canonical.metrics_for(metric_name)
+            if metric.period_bucket == "quarterly"
+            and metric.basis == "gaap"
+            and _is_current_metric(canonical, metric)
+            and metric.start_date
+            and metric.end_date
+            and metric.duration_days is not None
+            and 70 <= metric.duration_days <= 110
+        ]
+    )
     if len(quarterly) >= 4:
         return [metric.value for metric in quarterly[-4:]], None
 
@@ -255,7 +317,9 @@ def _compatible_trailing_period_values(canonical: CanonicalFinancials, metric_na
         return [], _stale_metric_issue(metric_name)
     return [], {
         "severity": "warning",
-        "code": "MISSING_COMPATIBLE_DENOMINATOR" if metric_name == "revenue" else "MISSING_COMPATIBLE_NUMERATOR",
+        "code": "MISSING_COMPATIBLE_DENOMINATOR"
+        if metric_name == "revenue"
+        else "MISSING_COMPATIBLE_NUMERATOR",
         "metric": metric_name,
         "message": f"Could not build four compatible quarterly periods for {metric_name}; ratio inputs should use annual fallback or remain unavailable.",
     }
@@ -275,14 +339,19 @@ def _dedupe_period_metrics(metrics: list[CanonicalMetric]) -> list[CanonicalMetr
             continue
         key = (metric.start_date, metric.end_date)
         existing = by_dates.get(key)
-        if existing is None or _confidence_rank(metric.confidence) >= _confidence_rank(existing.confidence):
+        if existing is None or _confidence_rank(metric.confidence) >= _confidence_rank(
+            existing.confidence
+        ):
             by_dates[key] = metric
     return sorted(by_dates.values(), key=lambda item: item.end_date or "")
 
 
-def _latest_annual_metric(canonical: CanonicalFinancials, metric_name: str) -> Optional[CanonicalMetric]:
+def _latest_annual_metric(
+    canonical: CanonicalFinancials, metric_name: str
+) -> Optional[CanonicalMetric]:
     annual = [
-        metric for metric in canonical.metrics_for(metric_name)
+        metric
+        for metric in canonical.metrics_for(metric_name)
         if metric.period_bucket == "annual"
         and metric.basis == "gaap"
         and _is_current_metric(canonical, metric)
@@ -311,8 +380,7 @@ def _latest_current_metric(
     candidates = [
         metric
         for metric in canonical.metrics_for(metric_name)
-        if (not require_gaap or metric.basis == "gaap")
-        and _is_current_metric(canonical, metric)
+        if (not require_gaap or metric.basis == "gaap") and _is_current_metric(canonical, metric)
     ]
     if not candidates:
         return None
@@ -354,9 +422,12 @@ def _stale_metric_issue(metric_name: str) -> dict:
     }
 
 
-def _derive_q4_and_trailing_values(annual: CanonicalMetric, quarterly: list[CanonicalMetric]) -> Optional[list[float]]:
+def _derive_q4_and_trailing_values(
+    annual: CanonicalMetric, quarterly: list[CanonicalMetric]
+) -> Optional[list[float]]:
     annual_quarters = [
-        metric for metric in quarterly
+        metric
+        for metric in quarterly
         if metric.start_date
         and metric.end_date
         and annual.start_date
@@ -373,8 +444,7 @@ def _derive_q4_and_trailing_values(annual: CanonicalMetric, quarterly: list[Cano
         return None
     annual_end = annual.end_date or ""
     trailing_after_annual = [
-        metric for metric in quarterly
-        if metric.start_date and metric.start_date > annual_end
+        metric for metric in quarterly if metric.start_date and metric.start_date > annual_end
     ]
     values = [metric.value for metric in first_three[-3:]] + [q4_value]
     if trailing_after_annual:
@@ -395,12 +465,14 @@ def _guidance_consensus_warnings(metric_name: str, metrics: list[CanonicalMetric
                 continue
             diff = abs(consensus_metric.value - guidance_metric.value) / abs(guidance_metric.value)
             if diff > 0.10:
-                warnings.append({
-                    "severity": "warning",
-                    "code": "CONSENSUS_GUIDANCE_MISMATCH",
-                    "metric": metric_name,
-                    "message": f"Consensus and company guidance differ by {diff:.1%}.",
-                })
+                warnings.append(
+                    {
+                        "severity": "warning",
+                        "code": "CONSENSUS_GUIDANCE_MISMATCH",
+                        "metric": metric_name,
+                        "message": f"Consensus and company guidance differ by {diff:.1%}.",
+                    }
+                )
     return warnings
 
 
@@ -422,7 +494,13 @@ def _statement_type(metric_name: str):
         return "income_statement"
     if metric_name in {"operating_cash_flow", "capex", "sbc"}:
         return "cash_flow"
-    if metric_name in {"cash_and_equivalents", "short_term_investments", "total_assets", "total_liabilities", "stockholders_equity"}:
+    if metric_name in {
+        "cash_and_equivalents",
+        "short_term_investments",
+        "total_assets",
+        "total_liabilities",
+        "stockholders_equity",
+    }:
         return "balance_sheet"
     if "guidance" in metric_name:
         return "guidance"
@@ -495,4 +573,8 @@ def _period_mismatch_count(metrics: list[CanonicalMetric]) -> int:
 
 def _with_note(metric: CanonicalMetric, note: str) -> CanonicalMetric:
     notes = list(metric.reconciliation_notes) + [note]
-    return metric.model_copy(update={"reconciliation_notes": notes}) if hasattr(metric, "model_copy") else metric.copy(update={"reconciliation_notes": notes})
+    return (
+        metric.model_copy(update={"reconciliation_notes": notes})
+        if hasattr(metric, "model_copy")
+        else metric.copy(update={"reconciliation_notes": notes})
+    )

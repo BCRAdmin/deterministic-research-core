@@ -7,7 +7,11 @@ from typing import Any, Optional, Union
 
 
 class SecCache:
-    def __init__(self, cache_dir: Union[str, Path] = "research_agent/data/cache/sec", ttl_hours: int = 24):
+    def __init__(
+        self,
+        cache_dir: Union[str, Path] = ".runtime/cache/sec",
+        ttl_hours: int = 24,
+    ):
         self.cache_dir = Path(cache_dir)
         self.cache_dir.mkdir(parents=True, exist_ok=True)
         self.ttl = timedelta(hours=ttl_hours)

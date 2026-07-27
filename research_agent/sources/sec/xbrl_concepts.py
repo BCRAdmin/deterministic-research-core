@@ -14,6 +14,12 @@ US_GAAP_CONCEPTS = {
         "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents",
     ],
     "short_term_investments": ["ShortTermInvestments", "MarketableSecuritiesCurrent"],
+    "current_assets": ["AssetsCurrent"],
+    "current_liabilities": ["LiabilitiesCurrent"],
+    "equity": [
+        "StockholdersEquity",
+        "StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest",
+    ],
     "total_assets": ["Assets"],
     "total_liabilities": ["Liabilities"],
     "stockholders_equity": [

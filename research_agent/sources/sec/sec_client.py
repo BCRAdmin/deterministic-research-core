@@ -20,7 +20,7 @@ class SecClientConfig:
     timeout_seconds: int = 30
     max_retries: int = 3
     use_cache: bool = True
-    cache_dir: str = "research_agent/data/cache/sec"
+    cache_dir: str = ".runtime/cache/sec"
     cache_ttl_hours: int = 24
 
 
@@ -30,7 +30,9 @@ class SecClient:
             raise ValueError("SEC User-Agent must identify app/company and contact email.")
         self.config = config
         self.rate_limiter = SecRateLimiter(config.request_delay_seconds)
-        self.cache = SecCache(config.cache_dir, config.cache_ttl_hours) if config.use_cache else None
+        self.cache = (
+            SecCache(config.cache_dir, config.cache_ttl_hours) if config.use_cache else None
+        )
 
     def get_json(self, path: str) -> Dict[str, Any]:
         if not path.startswith("/"):
@@ -54,7 +56,9 @@ class SecClient:
                         "Accept": "application/json",
                     },
                 )
-                with urllib.request.urlopen(request, timeout=self.config.timeout_seconds) as response:
+                with urllib.request.urlopen(
+                    request, timeout=self.config.timeout_seconds
+                ) as response:
                     raw = response.read()
                     if response.headers.get("Content-Encoding") == "gzip":
                         raw = gzip.decompress(raw)

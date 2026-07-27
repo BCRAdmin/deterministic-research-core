@@ -1,0 +1,50 @@
+from research_agent.research_core.calculations.valuation import (
+    calculate_valuation_metrics,
+)
+from research_agent.research_core.models.metrics_packet import FundamentalMetrics
+
+
+def _fundamentals(**updates):
+    payload = {
+        "fiscal_period": "TTM",
+        "revenue_ttm": 25_000_000_000,
+        "operating_income_ttm": 11_000_000_000,
+        "net_income_ttm": 8_400_000_000,
+        "free_cash_flow_ttm": 7_200_000_000,
+        "cash_and_equivalents": 1_000_000_000,
+        "diluted_share_count": 713_500_000,
+        "trailing_eps": 8_400_000_000 / 713_500_000,
+    }
+    payload.update(updates)
+    return FundamentalMetrics(**payload)
+
+
+def test_market_multiples_survive_but_ev_stays_unavailable_without_debt():
+    valuation = calculate_valuation_metrics(
+        264.76,
+        _fundamentals(total_debt=None),
+    )
+
+    assert round(valuation.market_cap) == 188_906_260_000
+    assert valuation.price_to_fcf is not None
+    assert valuation.trailing_pe is not None
+    assert valuation.enterprise_value is None
+    assert valuation.ev_to_sales is None
+    assert valuation.ev_to_ebit is None
+
+
+def test_ev_is_calculated_only_with_debt_and_cash_present():
+    complete = calculate_valuation_metrics(
+        264.76,
+        _fundamentals(total_debt=40_000_000_000),
+    )
+    missing_cash = calculate_valuation_metrics(
+        264.76,
+        _fundamentals(
+            total_debt=40_000_000_000,
+            cash_and_equivalents=None,
+        ),
+    )
+
+    assert complete.enterprise_value == 227_906_260_000
+    assert missing_cash.enterprise_value is None

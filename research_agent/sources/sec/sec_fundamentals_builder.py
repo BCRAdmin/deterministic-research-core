@@ -18,6 +18,9 @@ SEC_FUNDAMENTAL_METRICS = [
     "capex",
     "cash_and_equivalents",
     "short_term_investments",
+    "current_assets",
+    "current_liabilities",
+    "equity",
     "sbc",
     "shares_diluted",
 ]
@@ -40,7 +43,12 @@ def build_sec_fundamentals_from_companyfacts(
     companyfacts_json: dict[str, Any],
 ) -> tuple[dict[str, Any], list[EvidenceItem]]:
     parser = CompanyFactsParser(ticker=ticker, cik=cik, companyfacts_json=companyfacts_json)
-    metrics: dict[str, Any] = {"quarterly": {}, "balance_sheet": {}, "share_data": {}, "source": "sec_companyfacts"}
+    metrics: dict[str, Any] = {
+        "quarterly": {},
+        "balance_sheet": {},
+        "share_data": {},
+        "source": "sec_companyfacts",
+    }
     evidence_items: list[EvidenceItem] = []
 
     for metric in SEC_FUNDAMENTAL_METRICS:
@@ -53,7 +61,12 @@ def build_sec_fundamentals_from_companyfacts(
         if quarterly:
             metrics[f"{metric}_latest_4_quarters"] = [fact.value for fact in quarterly]
             evidence_items.extend(parser.to_evidence_item(fact) for fact in quarterly)
-            _assign_normalized_metric(metrics, metric, [fact.value for fact in quarterly], annual.value if annual else None)
+            _assign_normalized_metric(
+                metrics,
+                metric,
+                [fact.value for fact in quarterly],
+                annual.value if annual else None,
+            )
 
     evidence_items.extend(_derived_metric_evidence(ticker, cik, metrics))
     return metrics, evidence_items
@@ -65,12 +78,30 @@ def _assign_normalized_metric(
     quarterly_values: list[float],
     annual_value: Optional[float],
 ) -> None:
-    if metric in {"revenue", "gross_profit", "operating_income", "net_income", "operating_cash_flow", "capex", "sbc"}:
+    if metric in {
+        "revenue",
+        "gross_profit",
+        "operating_income",
+        "net_income",
+        "operating_cash_flow",
+        "capex",
+        "sbc",
+    }:
         metrics["quarterly"][metric] = quarterly_values
-    elif metric in {"cash_and_equivalents", "short_term_investments"}:
-        metrics["balance_sheet"][metric] = annual_value if annual_value is not None else quarterly_values[-1]
+    elif metric in {
+        "cash_and_equivalents",
+        "short_term_investments",
+        "current_assets",
+        "current_liabilities",
+        "equity",
+    }:
+        metrics["balance_sheet"][metric] = (
+            quarterly_values[-1] if quarterly_values else annual_value
+        )
     elif metric == "shares_diluted":
-        metrics["share_data"]["diluted_share_count"] = annual_value if annual_value is not None else quarterly_values[-1]
+        metrics["share_data"]["diluted_share_count"] = (
+            annual_value if annual_value is not None else quarterly_values[-1]
+        )
 
 
 def _derived_metric_evidence(ticker: str, cik: str, metrics: dict[str, Any]) -> list[EvidenceItem]:
@@ -100,7 +131,13 @@ def _derived_metric_evidence(ticker: str, cik: str, metrics: dict[str, Any]) -> 
             )
         )
 
-    if revenue_values and sbc_values and len(revenue_values) == 4 and len(sbc_values) == 4 and sum(revenue_values) != 0:
+    if (
+        revenue_values
+        and sbc_values
+        and len(revenue_values) == 4
+        and len(sbc_values) == 4
+        and sum(revenue_values) != 0
+    ):
         ratio = sum(sbc_values) / sum(revenue_values)
         evidence_items.append(
             EvidenceItem(

@@ -9,13 +9,26 @@ def test_sec_client_requires_user_agent_email():
 
 
 def test_sec_client_accepts_identifying_user_agent():
-    client = SecClient(SecClientConfig(user_agent="ResearchAgent contact@example.com", use_cache=False))
+    client = SecClient(
+        SecClientConfig(user_agent="ResearchAgent contact@example.com", use_cache=False)
+    )
 
     assert client.config.user_agent == "ResearchAgent contact@example.com"
 
 
+def test_sec_client_default_cache_is_runtime_only():
+    config = SecClientConfig(
+        user_agent="ResearchAgent contact@example.com",
+        use_cache=False,
+    )
+
+    assert config.cache_dir == ".runtime/cache/sec"
+
+
 def test_sec_client_companyfacts_path_zero_pads_cik(monkeypatch):
-    client = SecClient(SecClientConfig(user_agent="ResearchAgent contact@example.com", use_cache=False))
+    client = SecClient(
+        SecClientConfig(user_agent="ResearchAgent contact@example.com", use_cache=False)
+    )
     captured = {}
 
     def fake_get_json(path):
