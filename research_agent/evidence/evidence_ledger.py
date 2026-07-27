@@ -171,14 +171,20 @@ def build_fundamental_derivation_evidence(
     as_of_date: str,
     metrics_packet: MetricsPacket,
     normalized_fundamentals: dict,
+    price_source_id: Optional[str] = None,
+    runtime_evidence: Iterable[EvidenceItem] = (),
 ) -> list[EvidenceItem]:
     """Keep every material TTM transformation and its operands auditable."""
 
     bridges = normalized_fundamentals.get("ttm_bridges")
     if not isinstance(bridges, dict):
-        return []
+        bridges = {}
     source_id = f"SEC_{ticker.upper()}_DERIVED_TTM"
+    valuation_lineage = [source_id]
+    if price_source_id:
+        valuation_lineage.append(price_source_id)
     evidence: list[EvidenceItem] = []
+    runtime_items = list(runtime_evidence)
     for raw_metric, bridge in sorted(bridges.items()):
         if not isinstance(bridge, dict):
             continue
@@ -241,6 +247,141 @@ def build_fundamental_derivation_evidence(
             )
         )
     fundamentals = metrics_packet.fundamentals
+    debt_components = {
+        metric_name: float(value)
+        for metric_name, value in (
+            ("debt_current", fundamentals.debt_current),
+            ("debt_noncurrent", fundamentals.debt_noncurrent),
+        )
+        if value is not None
+    }
+    if (
+        fundamentals.total_debt is not None
+        and debt_components
+        and abs(
+            sum(debt_components.values()) - float(fundamentals.total_debt)
+        )
+        <= max(1e-9, abs(float(fundamentals.total_debt)) * 1e-9)
+    ):
+        evidence.append(
+            EvidenceItem(
+                evidence_id=(
+                    f"{ticker.upper()}_DETERMINISTIC_TOTAL_DEBT_"
+                    f"{as_of_date}"
+                ),
+                ticker=ticker.upper(),
+                claim_type="financial_metric",
+                source_id=source_id,
+                source_type="sec_filing",
+                authority_rank=1,
+                statement=(
+                    f"total_debt={fundamentals.total_debt:g} was derived from "
+                    f"the available debt components; operands={debt_components}."
+                ),
+                value=float(fundamentals.total_debt),
+                unit="usd",
+                period=f"as of {as_of_date}",
+                date=as_of_date,
+                supports_metrics=["total_debt"],
+                confidence="high",
+                formula_id="sum_available_interest_bearing_debt_components",
+                formula_operands=debt_components,
+                normalized_value=float(fundamentals.total_debt),
+                source_lineage=_operand_source_lineage(
+                    runtime_items,
+                    debt_components,
+                    fallback_source_id=source_id,
+                ),
+            )
+        )
+    liquid_assets = {
+        metric_name: float(value)
+        for metric_name, value in (
+            ("cash_and_equivalents", fundamentals.cash_and_equivalents),
+            ("short_term_investments", fundamentals.short_term_investments),
+            ("marketable_securities", fundamentals.marketable_securities),
+        )
+        if value is not None
+    }
+    if (
+        fundamentals.net_cash is not None
+        and fundamentals.total_debt is not None
+        and liquid_assets
+    ):
+        operands = {
+            **liquid_assets,
+            "total_debt": float(fundamentals.total_debt),
+        }
+        evidence.append(
+            EvidenceItem(
+                evidence_id=(
+                    f"{ticker.upper()}_DETERMINISTIC_NET_CASH_{as_of_date}"
+                ),
+                ticker=ticker.upper(),
+                claim_type="financial_metric",
+                source_id=source_id,
+                source_type="sec_filing",
+                authority_rank=1,
+                statement=(
+                    f"net_cash={fundamentals.net_cash:g} was calculated from "
+                    f"liquid assets less debt; operands={operands}."
+                ),
+                value=float(fundamentals.net_cash),
+                unit="usd",
+                period=f"as of {as_of_date}",
+                date=as_of_date,
+                supports_metrics=["net_cash"],
+                confidence="high",
+                formula_id="liquid_assets_minus_total_debt",
+                formula_operands=operands,
+                normalized_value=float(fundamentals.net_cash),
+                source_lineage=_operand_source_lineage(
+                    runtime_items,
+                    operands,
+                    fallback_source_id=source_id,
+                ),
+            )
+        )
+    if (
+        fundamentals.sbc_to_revenue is not None
+        and fundamentals.sbc_ttm is not None
+        and fundamentals.revenue_ttm is not None
+    ):
+        operands = {
+            "sbc_ttm": float(fundamentals.sbc_ttm),
+            "revenue_ttm": float(fundamentals.revenue_ttm),
+        }
+        evidence.append(
+            EvidenceItem(
+                evidence_id=(
+                    f"{ticker.upper()}_DETERMINISTIC_SBC_TO_REVENUE_"
+                    f"{as_of_date}"
+                ),
+                ticker=ticker.upper(),
+                claim_type="financial_metric",
+                source_id=source_id,
+                source_type="sec_filing",
+                authority_rank=1,
+                statement=(
+                    f"sbc_to_revenue={fundamentals.sbc_to_revenue:g} was "
+                    f"calculated from TTM values; operands={operands}."
+                ),
+                value=float(fundamentals.sbc_to_revenue),
+                unit="fraction",
+                period=f"TTM through {as_of_date}",
+                date=as_of_date,
+                supports_metrics=["sbc_to_revenue"],
+                confidence="high",
+                formula_id="sbc_ttm_divided_by_revenue_ttm",
+                formula_operands=operands,
+                normalized_value=float(fundamentals.sbc_to_revenue),
+                source_lineage=_operand_source_lineage(
+                    runtime_items,
+                    operands,
+                    fallback_source_id=source_id,
+                ),
+            )
+        )
     if (
         fundamentals.free_cash_flow_ttm is not None
         and fundamentals.operating_cash_flow_ttm is not None
@@ -405,6 +546,7 @@ def build_fundamental_derivation_evidence(
                 formula_id="close_times_point_in_time_shares",
                 formula_operands=operands,
                 normalized_value=float(valuation.market_cap),
+                source_lineage=valuation_lineage,
             )
         )
     if (
@@ -450,9 +592,109 @@ def build_fundamental_derivation_evidence(
                 formula_id="market_cap_plus_debt_minus_liquid_assets",
                 formula_operands=operands,
                 normalized_value=float(valuation.enterprise_value),
+                source_lineage=valuation_lineage,
+            )
+        )
+    ratio_metrics = (
+        (
+            "ev_to_sales",
+            valuation.ev_to_sales,
+            valuation.enterprise_value,
+            "enterprise_value",
+            fundamentals.revenue_ttm,
+            "revenue_ttm",
+            "enterprise_value_divided_by_revenue_ttm",
+        ),
+        (
+            "price_to_fcf",
+            valuation.price_to_fcf,
+            valuation.market_cap,
+            "market_cap",
+            fundamentals.free_cash_flow_ttm,
+            "free_cash_flow_ttm",
+            "market_cap_divided_by_free_cash_flow_ttm",
+        ),
+    )
+    for (
+        metric_name,
+        value,
+        numerator,
+        numerator_name,
+        denominator,
+        denominator_name,
+        formula_id,
+    ) in ratio_metrics:
+        if value is None or numerator is None or denominator is None:
+            continue
+        operands = {
+            numerator_name: float(numerator),
+            denominator_name: float(denominator),
+        }
+        evidence.append(
+            EvidenceItem(
+                evidence_id=(
+                    f"{ticker.upper()}_DETERMINISTIC_"
+                    f"{_safe_metric_id(metric_name)}_{as_of_date}"
+                ),
+                ticker=ticker.upper(),
+                claim_type="valuation_metric",
+                source_id=source_id,
+                source_type="sec_filing",
+                authority_rank=1,
+                statement=(
+                    f"{metric_name}={value:g} was calculated with "
+                    f"{formula_id}; operands={operands}."
+                ),
+                value=float(value),
+                unit="multiple",
+                period=f"as of {as_of_date}",
+                date=as_of_date,
+                supports_metrics=[metric_name],
+                confidence="high",
+                formula_id=formula_id,
+                formula_operands=operands,
+                normalized_value=float(value),
+                source_lineage=valuation_lineage,
             )
         )
     return evidence
+
+
+def _operand_source_lineage(
+    evidence_items: Iterable[EvidenceItem],
+    operands: dict[str, float],
+    *,
+    fallback_source_id: str,
+) -> list[str]:
+    source_ids: list[str] = []
+    for metric_name, value in operands.items():
+        matches = [
+            item
+            for item in evidence_items
+            if metric_name in item.supports_metrics
+            and item.value is not None
+            and abs(float(item.value) - value)
+            <= max(1e-9, abs(value) * 1e-9)
+            and (
+                item.formula_id
+                or item.raw_value is not None
+                or item.normalized_value is not None
+                or (item.date and item.period)
+            )
+        ]
+        source_ids.extend(
+            item.source_id
+            for item in sorted(
+                matches,
+                key=lambda item: (
+                    item.date or "",
+                    -item.authority_rank,
+                    item.evidence_id,
+                ),
+                reverse=True,
+            )[:1]
+        )
+    return list(dict.fromkeys(source_ids)) or [fallback_source_id]
 
 
 def save_evidence_ledger(ledger: EvidenceLedger, path: Union[str, Path]) -> Path:

@@ -653,6 +653,7 @@ def _bundle_tickers(
         "report_manifest.json",
         "quality_score.json",
         "decision_packet.json",
+        "fact_ledger.json",
         "evidence_report.md",
         "current_period_reconciliation_summary.md",
         "metrics_packet.json",
@@ -945,4 +946,3 @@ def _yes(value: Any) -> str:
 
 def _utc_now() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
-

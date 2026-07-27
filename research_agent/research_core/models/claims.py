@@ -1,6 +1,6 @@
-from typing import List, Optional
+from typing import Dict, List, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class ResearchClaim(BaseModel):
@@ -11,8 +11,9 @@ class ResearchClaim(BaseModel):
     claim: str
     claim_text: Optional[str] = None
     evidence_metrics: List[str]
-    metric_refs: List[str] = []
-    evidence_ids: List[str] = []
+    metric_refs: List[str] = Field(default_factory=list)
+    metric_values: Dict[str, float] = Field(default_factory=dict)
+    evidence_ids: List[str] = Field(default_factory=list)
     source_ids: List[str]
     confidence: str
     importance: Optional[str] = None

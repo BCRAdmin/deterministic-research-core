@@ -171,13 +171,19 @@ def test_interest_coverage_is_precomputed_with_auditable_operands():
         technical=TechnicalMetrics(indicator_date="2026-07-01", close=100.0),
         fundamentals=FundamentalMetrics(
             fiscal_period="TTM",
+            revenue_ttm=200.0,
             operating_income_ttm=120.0,
             free_cash_flow_ttm=80.0,
             interest_expense_ttm=20.0,
             operating_income_interest_coverage_ttm=6.0,
             free_cash_flow_interest_coverage_ttm=4.0,
         ),
-        valuation=ValuationMetrics(),
+        valuation=ValuationMetrics(
+            market_cap=1_000.0,
+            enterprise_value=1_200.0,
+            price_to_fcf=12.5,
+            ev_to_sales=6.0,
+        ),
     )
 
     evidence = build_fundamental_derivation_evidence(
@@ -185,6 +191,7 @@ def test_interest_coverage_is_precomputed_with_auditable_operands():
         as_of_date="2026-07-01",
         metrics_packet=metrics,
         normalized_fundamentals={"ttm_bridges": {}},
+        price_source_id="GENERIC_EXCHANGE",
     )
     by_metric = {
         item.supports_metrics[0]: item
@@ -205,3 +212,20 @@ def test_interest_coverage_is_precomputed_with_auditable_operands():
         "operating_income_ttm": 120.0,
         "interest_expense_ttm": 20.0,
     }
+    by_metric = {
+        item.supports_metrics[0]: item
+        for item in evidence
+        if item.supports_metrics
+    }
+    assert by_metric["price_to_fcf"].formula_operands == {
+        "market_cap": 1_000.0,
+        "free_cash_flow_ttm": 80.0,
+    }
+    assert by_metric["ev_to_sales"].formula_operands == {
+        "enterprise_value": 1_200.0,
+        "revenue_ttm": 200.0,
+    }
+    assert by_metric["ev_to_sales"].source_lineage == [
+        "SEC_GENERIC_DERIVED_TTM",
+        "GENERIC_EXCHANGE",
+    ]

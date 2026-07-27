@@ -422,6 +422,7 @@ def _artifacts_from_report_manifest(report_manifest: Optional[dict]) -> dict[str
         "quality_score.json": metadata.get("quality_score_path"),
         "internal_best_report.md": metadata.get("internal_best_report_path"),
         "analyst_claims.json": metadata.get("analyst_claims_path"),
+        "fact_ledger.json": metadata.get("fact_ledger_path"),
         "evidence_ledger.json": metadata.get("evidence_ledger_path"),
         "evidence_report.md": metadata.get("evidence_report_path"),
         "canonical_financials.json": metadata.get("canonical_financials_path"),

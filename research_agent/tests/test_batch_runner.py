@@ -174,6 +174,7 @@ def test_batch_runner_indexes_report_manifest_metadata_artifacts(tmp_path):
             )
             (packet_dir / "reconciliation_report.md").write_text("# reconciliation", encoding="utf-8")
             (report_dir / "quality_score.json").write_text("{\"total_score\": 90, \"publishable\": true}", encoding="utf-8")
+            (report_dir / "fact_ledger.json").write_text("{\"claims\": []}", encoding="utf-8")
             (target / "final_report.md").write_text("# report", encoding="utf-8")
             manifest = {
                 "quality_score": 90,
@@ -187,6 +188,7 @@ def test_batch_runner_indexes_report_manifest_metadata_artifacts(tmp_path):
                 "metadata": {
                     "data_packet_path": str(packet_dir / "data_packet.json"),
                     "quality_score_path": str(report_dir / "quality_score.json"),
+                    "fact_ledger_path": str(report_dir / "fact_ledger.json"),
                     "evidence_ledger_path": str(packet_dir / "evidence_ledger.json"),
                     "canonical_financials_path": str(packet_dir / "canonical_financials.json"),
                     "reconciliation_report_path": str(packet_dir / "reconciliation_report.md"),
@@ -211,6 +213,7 @@ def test_batch_runner_indexes_report_manifest_metadata_artifacts(tmp_path):
     artifacts = manifest.items[0].artifacts
 
     assert "evidence_ledger.json" in artifacts
+    assert "fact_ledger.json" in artifacts
     assert "reconciliation_report.md" in artifacts
     assert "final_report.md" in artifacts
     assert manifest.items[0].counts["canonical_metrics_created"] == 1

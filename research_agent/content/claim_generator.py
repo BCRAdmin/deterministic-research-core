@@ -187,7 +187,7 @@ class _ClaimBuilder:
             "valuation",
             "valuation_metric",
             f"Valuation is framed by EV/Sales of {_multiple(self.metrics.valuation.ev_to_sales)}; this directly limits how aggressive the {preferred} stance should be.",
-            ["revenue_ttm", "free_cash_flow_ttm", "close"],
+            ["ev_to_sales", "enterprise_value", "revenue_ttm"],
             "medium",
             "high",
             counterargument="Packet-derived valuation can still be blocked by sanity guards when source reconciliation is suspect.",
@@ -198,7 +198,7 @@ class _ClaimBuilder:
             "valuation",
             "valuation_metric",
             f"For {ticker}, P/FCF is {_multiple(self.metrics.valuation.price_to_fcf)} and should be read against {profile['valuation_lens']}; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
-            ["free_cash_flow_ttm", "revenue_ttm"],
+            ["price_to_fcf", "market_cap", "free_cash_flow_ttm"],
             "medium",
             "medium",
             implication="The rating should stay conservative when multiples are expensive, missing or flagged.",
@@ -209,7 +209,7 @@ class _ClaimBuilder:
             "technical",
             "technical_metric",
             f"The technical setup uses close {_plain_number(self.metrics.technical.close)}, 50-SMA {_plain_number(self.metrics.technical.sma_50)}, 200-SMA {_plain_number(self.metrics.technical.sma_200)} and RSI {_number(self.metrics.technical.rsi_14)}, creating timing risk if price cannot reclaim trend support.",
-            ["technical_indicators", "close"],
+            ["close", "sma_50", "sma_200", "rsi_14"],
             "high",
             "high",
             implication="Timing language should follow the validated technical trend state.",
@@ -219,7 +219,7 @@ class _ClaimBuilder:
             "technical",
             "technical_metric",
             f"{ticker}'s close of {_plain_number(self.metrics.technical.close)} and moving-average position imply {_technical_interpretation(self.metrics)}, so entries should be staged, delayed or trimmed according to business evidence and risk/reward.",
-            ["technical_indicators", "close"],
+            ["close", "sma_50", "sma_200", "rsi_14"],
             "medium",
             "medium",
             counterargument="Technical weakness can be temporary if fundamentals and catalysts improve.",
@@ -242,7 +242,7 @@ class _ClaimBuilder:
             "bull",
             "technical_metric",
             f"A constructive technical bull path for {ticker} requires confirmation beyond the current RSI of {_number(self.metrics.technical.rsi_14)} and moving-average setup.",
-            ["technical_indicators", "close"],
+            ["rsi_14", "sma_50", "sma_200", "close"],
             "medium",
             "medium",
             implication="Add or accumulate language should require confirmation when the preferred rating is not Buy.",
@@ -305,7 +305,7 @@ class _ClaimBuilder:
             "catalyst",
             "technical_metric",
             f"Trigger language should use evidence-backed levels such as 50-SMA {_plain_number(self.metrics.technical.sma_50)} and 200-SMA {_plain_number(self.metrics.technical.sma_200)}, not unvalidated price targets.",
-            ["technical_indicators", "close"],
+            ["sma_50", "sma_200"],
             "medium",
             "medium",
             implication="Use confirmation language instead of hard price targets unless risk/reward levels are validated.",
@@ -351,6 +351,11 @@ class _ClaimBuilder:
                 claim_text=text,
                 evidence_metrics=metrics,
                 metric_refs=metrics,
+                metric_values={
+                    metric: value
+                    for metric in metrics
+                    if (value := self._metric_value(metric)) is not None
+                },
                 evidence_ids=[item.evidence_id for item in evidence],
                 source_ids=list(dict.fromkeys(item.source_id for item in evidence)),
                 confidence=confidence,
@@ -359,6 +364,15 @@ class _ClaimBuilder:
                 investment_implication=implication,
             )
         )
+
+    def _metric_value(self, metric_name: str) -> Optional[float]:
+        for section_name in ("fundamentals", "technical", "valuation"):
+            section = getattr(self.metrics, section_name)
+            if hasattr(section, metric_name):
+                value = getattr(section, metric_name)
+                if isinstance(value, (int, float)):
+                    return float(value)
+        return _canonical_value(self.canonical, metric_name)
 
     def _evidence_for(self, metrics: list[str]) -> list[EvidenceItem]:
         matched: list[EvidenceItem] = []
@@ -1001,7 +1015,6 @@ def _current_period_claim_specs(
         sbc = _canonical_value(canonical_financials, "sbc")
         cash = _canonical_value(canonical_financials, "cash_and_equivalents")
         securities = _canonical_value(canonical_financials, "marketable_securities")
-        cash_and_securities = (cash or 0) + (securities or 0) if cash is not None or securities is not None else None
         specs.extend([
             {
                 "section": "Business & Segment Context",
@@ -1032,7 +1045,7 @@ def _current_period_claim_specs(
                 "kind": "current_period",
                 "evidence_type": "financial_metric",
                 "text": (
-                    f"DDOG's FY2025 SBC of {_money(sbc)} and cash plus marketable securities of {_money(cash_and_securities)} define the equity-quality tradeoff: "
+                    f"DDOG's FY2025 SBC of {_money(sbc)}, cash of {_money(cash)} and marketable securities of {_money(securities)} define the equity-quality tradeoff: "
                     "liquidity is strong, but compensation intensity still matters for shareholders."
                 ),
                 "metrics": ["sbc", "cash_and_equivalents", "marketable_securities"],
@@ -1053,7 +1066,6 @@ def _current_period_claim_specs(
         sbc = _canonical_value(canonical_financials, "sbc")
         cash = _canonical_value(canonical_financials, "cash_and_equivalents")
         securities = _canonical_value(canonical_financials, "marketable_securities")
-        cash_and_securities = (cash or 0) + (securities or 0) if cash is not None or securities is not None else None
         specs.extend([
             {
                 "section": "Business & Segment Context",
@@ -1084,7 +1096,7 @@ def _current_period_claim_specs(
                 "kind": "current_period",
                 "evidence_type": "financial_metric",
                 "text": (
-                    f"CRM's FY2026 SBC of {_money(sbc)} and cash plus marketable securities of {_money(cash_and_securities)} frame the capital-return debate: "
+                    f"CRM's FY2026 SBC of {_money(sbc)}, cash of {_money(cash)} and marketable securities of {_money(securities)} frame the capital-return debate: "
                     "shareholder returns are more compelling if AI/product execution improves without higher dilution."
                 ),
                 "metrics": ["sbc", "cash_and_equivalents", "marketable_securities"],
@@ -1303,7 +1315,7 @@ def _early_commercial_capital_intensive_specs(
             "text": (
                 f"Valuation is stretched versus current scale: EV/Sales is {_multiple(v.ev_to_sales)}, while backlog of {_money(backlog)} is not enough by itself to offset market-cap expectations."
             ),
-            "metrics": ["revenue_ttm", "backlog", "close"],
+            "metrics": ["ev_to_sales", "enterprise_value", "revenue_ttm", "backlog"],
             "counterargument": "High EV/Sales can persist if growth and execution exceed expectations.",
             "implication": "High valuation blocks clean Buy/Accumulate unless backlog conversion and FCF path improve.",
         },
@@ -1315,7 +1327,7 @@ def _early_commercial_capital_intensive_specs(
                 f"Technical setup is timing evidence only: close {_plain_number(metrics.technical.close)}, RSI {_number(metrics.technical.rsi_14)} "
                 "and high volatility should not dominate the fundamental classification."
             ),
-            "metrics": ["technical_indicators", "close"],
+            "metrics": ["close", "rsi_14"],
             "counterargument": "Momentum can support position timing, not business-quality proof.",
             "implication": "Technical claims must stay secondary to FCF, backlog conversion and execution evidence.",
         },

@@ -33,6 +33,25 @@ def test_content_generator_creates_minimum_evidence_mapped_claims():
     assert quality["evidence_mapped_claim_ratio"] >= 0.90
     assert quality["hard_claim_evidence_ratio"] == 1.0
     assert all(claim.evidence_ids for claim in claims)
+    valuation_claim = next(
+        claim for claim in claims if "EV/Sales" in claim.claim
+    )
+    technical_claim = next(
+        claim for claim in claims if "50-SMA" in claim.claim
+    )
+    assert valuation_claim.metric_refs == [
+        "ev_to_sales",
+        "enterprise_value",
+        "revenue_ttm",
+    ]
+    assert valuation_claim.metric_values["ev_to_sales"] == metrics.valuation.ev_to_sales
+    assert technical_claim.metric_refs == [
+        "close",
+        "sma_50",
+        "sma_200",
+        "rsi_14",
+    ]
+    assert technical_claim.metric_values["sma_200"] == metrics.technical.sma_200
 
 
 def test_composed_claim_report_can_pass_quality_when_audit_is_clean():

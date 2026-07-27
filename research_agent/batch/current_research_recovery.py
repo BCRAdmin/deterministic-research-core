@@ -1031,6 +1031,7 @@ def _bundle_tickers(
         "report_manifest.json",
         "quality_score.json",
         "decision_packet.json",
+        "fact_ledger.json",
         "audit_report.json",
         "evidence_report.md",
         "current_period_reconciliation_summary.md",

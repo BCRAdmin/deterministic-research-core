@@ -25,6 +25,7 @@ from research_agent.evidence.evidence_ledger import (
     build_evidence_ledger_from_source_registry,
     build_technical_derivation_evidence,
 )
+from research_agent.evidence.fact_ledger import build_fact_ledger, save_fact_ledger
 from research_agent.evidence.evidence_report import render_evidence_report, save_evidence_report
 from research_agent.evidence.source_ranker import rank_source
 from research_agent.integration.authority_bundle import build_authority_bundle
@@ -183,14 +184,21 @@ def run_research_pipeline(
     source_registry = _load_optional_source_registry(
         data_packet.source_registry_id, packet_root=packet_root
     )
-    source_evidence_items.extend(
-        build_technical_derivation_evidence(
-            ticker=data_packet.ticker,
-            as_of_date=data_packet.as_of_date,
-            metrics_packet=metrics_packet,
-            source_registry=source_registry,
-            runtime_evidence=source_evidence_items,
-        )
+    technical_derivation_evidence = build_technical_derivation_evidence(
+        ticker=data_packet.ticker,
+        as_of_date=data_packet.as_of_date,
+        metrics_packet=metrics_packet,
+        source_registry=source_registry,
+        runtime_evidence=source_evidence_items,
+    )
+    source_evidence_items.extend(technical_derivation_evidence)
+    price_source_id = next(
+        (
+            item.source_id
+            for item in technical_derivation_evidence
+            if "close" in item.supports_metrics
+        ),
+        None,
     )
     source_evidence_items.extend(
         build_fundamental_derivation_evidence(
@@ -198,6 +206,8 @@ def run_research_pipeline(
             as_of_date=data_packet.as_of_date,
             metrics_packet=metrics_packet,
             normalized_fundamentals=normalized_fundamentals,
+            price_source_id=price_source_id,
+            runtime_evidence=source_evidence_items,
         )
     )
     source_registry = merge_evidence_sources(
@@ -246,19 +256,6 @@ def run_research_pipeline(
     decision_packet_path = save_json_packet(
         decision_packet, "decision_packet", ticker, as_of_date, packet_root=packet_root
     )
-    authority_bundle_dir = Path(config.output_dir) / data_packet.ticker / data_packet.as_of_date / "authority_bundle"
-    authority_manifest = build_authority_bundle(
-        packet_dir=data_packet_path.parent,
-        source_registry_path=source_registry_path,
-        output_dir=authority_bundle_dir,
-    )
-    if not authority_manifest["analysis_allowed"]:
-        failures = ", ".join(authority_manifest["blocking_failures"])
-        raise RuntimeError(
-            "Research authority bundle rejected report generation: "
-            f"{failures or 'unknown authority failure'}"
-        )
-
     claims = generate_research_claims(
         data_packet=data_packet,
         metrics_packet=metrics_packet,
@@ -273,6 +270,28 @@ def run_research_pipeline(
         claims,
         manifest_output_dir / "analyst_claims.json",
     )
+    fact_ledger_path = save_fact_ledger(
+        build_fact_ledger(
+            data_packet=data_packet,
+            claims=claims,
+            evidence_ledger=evidence_ledger,
+            source_registry=source_registry,
+        ),
+        manifest_output_dir / "fact_ledger.json",
+    )
+    authority_bundle_dir = manifest_output_dir / "authority_bundle"
+    authority_manifest = build_authority_bundle(
+        packet_dir=data_packet_path.parent,
+        source_registry_path=source_registry_path,
+        fact_ledger_path=fact_ledger_path,
+        output_dir=authority_bundle_dir,
+    )
+    if not authority_manifest["analysis_allowed"]:
+        failures = ", ".join(authority_manifest["blocking_failures"])
+        raise RuntimeError(
+            "Research authority bundle rejected report generation: "
+            f"{failures or 'unknown authority failure'}"
+        )
 
     if claim_metrics["analyst_claim_count"] >= 15 and claim_metrics["hard_claim_evidence_ratio"] == 1.0:
         report = compose_research_report(
@@ -519,6 +538,7 @@ def run_research_pipeline(
             "publish_report_quality_score_path": publish_quality_path,
             "internal_best_report_path": internal_best_report_path,
             "analyst_claims_path": str(analyst_claims_path),
+            "fact_ledger_path": str(fact_ledger_path),
             "evidence_ledger_path": str(evidence_ledger_path),
             "evidence_report_path": str(evidence_report_path),
             "authority_bundle_path": str(authority_bundle_dir),

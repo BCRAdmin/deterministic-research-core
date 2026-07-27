@@ -495,6 +495,7 @@ def build_authority_bundle(
     packet_dir: str | Path,
     output_dir: str | Path,
     source_registry_path: str | Path | None = None,
+    fact_ledger_path: str | Path | None = None,
     pipeline_version: str = PIPELINE_VERSION,
 ) -> dict[str, Any]:
     """Export a self-contained, hashed authority bundle from validated packets."""
@@ -514,6 +515,10 @@ def build_authority_bundle(
     )
     source_paths["source_registry"] = registry_path
     payloads["source_registry"] = _read_json(registry_path)
+    if fact_ledger_path:
+        ledger_path = Path(fact_ledger_path).expanduser().resolve()
+        source_paths["fact_ledger"] = ledger_path
+        payloads["fact_ledger"] = _read_json(ledger_path)
 
     checks, ticker, as_of_date = _assess_packets(
         data_packet=payloads["data_packet"],
@@ -523,6 +528,18 @@ def build_authority_bundle(
         source_registry=payloads["source_registry"],
         evidence_ledger=payloads["evidence_ledger"],
     )
+    if "fact_ledger" in payloads:
+        fact_ledger = payloads["fact_ledger"]
+        _check(
+            checks,
+            "fact_ledger_identity_matches_packets",
+            _normalized_symbol(fact_ledger.get("ticker")) == ticker
+            and str(fact_ledger.get("report_asof") or "") == as_of_date,
+            detail=(
+                f"{fact_ledger.get('ticker')}@"
+                f"{fact_ledger.get('report_asof')}"
+            ),
+        )
     blocking_failures = [
         item["check_id"]
         for item in checks
@@ -595,7 +612,13 @@ def verify_authority_bundle(bundle_dir: str | Path) -> dict[str, Any]:
     artifacts = manifest.get("artifacts")
     artifacts = artifacts if isinstance(artifacts, Mapping) else {}
     payloads: dict[str, dict[str, Any]] = {}
-    for role in (*REQUIRED_PACKET_FILES.keys(), "source_registry", "validated_context"):
+    optional_roles = ("fact_ledger",) if "fact_ledger" in artifacts else ()
+    for role in (
+        *REQUIRED_PACKET_FILES.keys(),
+        "source_registry",
+        *optional_roles,
+        "validated_context",
+    ):
         item = artifacts.get(role)
         if not isinstance(item, Mapping):
             _check(checks, f"artifact_{role}", False, detail="manifest entry missing")
@@ -628,6 +651,17 @@ def verify_authority_bundle(bundle_dir: str | Path) -> dict[str, Any]:
             _normalized_symbol(manifest.get("ticker")) == ticker
             and str(manifest.get("as_of_date") or "") == as_of_date,
         )
+        if "fact_ledger" in payloads:
+            _check(
+                checks,
+                "fact_ledger_identity_matches_packets",
+                _normalized_symbol(payloads["fact_ledger"].get("ticker"))
+                == ticker
+                and str(
+                    payloads["fact_ledger"].get("report_asof") or ""
+                )
+                == as_of_date,
+            )
     blocking_failures = [
         item["check_id"]
         for item in checks

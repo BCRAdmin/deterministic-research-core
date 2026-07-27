@@ -197,6 +197,32 @@ def test_authority_bundle_detects_tampering(tmp_path: Path) -> None:
     assert "artifact_metrics_packet" in verification["blocking_failures"]
 
 
+def test_authority_bundle_carries_and_verifies_fact_ledger(tmp_path: Path) -> None:
+    packet_dir, registry_path = _packet_set(tmp_path)
+    fact_ledger_path = tmp_path / "fact_ledger.json"
+    _write_json(
+        fact_ledger_path,
+        {
+            "ticker": "GENERIC",
+            "report_asof": "2026-07-01",
+            "claims": [{"claim_id": "GENERIC_FACT_CLOSE"}],
+            "sources": [],
+        },
+    )
+    output_dir = tmp_path / "bundle"
+
+    manifest = build_authority_bundle(
+        packet_dir=packet_dir,
+        source_registry_path=registry_path,
+        fact_ledger_path=fact_ledger_path,
+        output_dir=output_dir,
+    )
+    verification = verify_authority_bundle(output_dir)
+
+    assert manifest["artifacts"]["fact_ledger"]["path"] == "fact_ledger.json"
+    assert verification["status"] == "pass"
+
+
 def test_authority_bundle_blocks_unregistered_evidence(tmp_path: Path) -> None:
     packet_dir, registry_path = _packet_set(tmp_path)
     ledger_path = packet_dir / "evidence_ledger.json"

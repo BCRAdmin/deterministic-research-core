@@ -21,6 +21,7 @@ ARTIFACT_NAMES = [
     "quality_score.json",
     "publish_report_quality_score.json",
     "analyst_claims.json",
+    "fact_ledger.json",
     "evidence_ledger.json",
     "evidence_report.md",
     "canonical_financials.json",
