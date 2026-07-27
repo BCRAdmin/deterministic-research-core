@@ -199,6 +199,28 @@ def test_current_runner_names_missing_sec_identity_before_adapter_lookup(tmp_pat
         )
 
 
+def test_auto_price_provider_uses_public_nasdaq_without_paid_key():
+    request = CurrentResearchRequest(
+        ticker="RIOT",
+        as_of_date="2026-07-24",
+        sec_user_agent="Room16 operator@example.com",
+    )
+    provider = runner._build_price_provider(request)
+    assert provider.provider_id == "nasdaq"
+    assert provider.source_type == "exchange_ohlcv"
+
+
+def test_explicit_massive_provider_still_requires_key():
+    request = CurrentResearchRequest(
+        ticker="RIOT",
+        as_of_date="2026-07-24",
+        sec_user_agent="Room16 operator@example.com",
+        price_provider="massive",
+    )
+    with pytest.raises(CurrentResearchError, match="Massive/Polygon API key"):
+        runner._build_price_provider(request)
+
+
 def test_current_runner_rejects_non_authority_price_provider(tmp_path):
     with pytest.raises(CurrentResearchError, match="not authority-grade"):
         run_current_research(

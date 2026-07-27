@@ -610,7 +610,13 @@ def _load_source_ingestion_inputs(ticker: str, as_of_date: str, config: ReportCo
             companyfacts_json=raw,
         )
         fundamentals.update(sec_metrics)
-        fundamentals.update(canonical_financials_to_fundamentals(canonical_financials))
+        canonical_fundamentals = canonical_financials_to_fundamentals(
+            canonical_financials
+        )
+        fundamentals.update(canonical_fundamentals)
+        reconciliation_warnings.extend(
+            canonical_fundamentals.get("reconciliation_issues", [])
+        )
     if config.ir_release_dir:
         guidance_fundamentals, guidance_evidence, guidance_canonical = _load_ir_guidance_inputs(ticker, config.ir_release_dir)
         _merge_fundamentals(fundamentals, guidance_fundamentals)
@@ -625,9 +631,12 @@ def _load_source_ingestion_inputs(ticker: str, as_of_date: str, config: ReportCo
                 )
             else:
                 canonical_financials.metrics.extend(guidance_canonical)
-            _merge_fundamentals(
-                fundamentals,
-                canonical_financials_to_fundamentals(canonical_financials),
+            canonical_fundamentals = canonical_financials_to_fundamentals(
+                canonical_financials
+            )
+            _merge_fundamentals(fundamentals, canonical_fundamentals)
+            reconciliation_warnings.extend(
+                canonical_fundamentals.get("reconciliation_issues", [])
             )
     news = load_news(ticker)
     if config.earnings_calendar_path:

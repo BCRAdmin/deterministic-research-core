@@ -1,4 +1,7 @@
-from research_agent.reconciliation.canonical_financials import CanonicalMetric
+from research_agent.reconciliation.canonical_financials import (
+    CanonicalFinancials,
+    CanonicalMetric,
+)
 from research_agent.reconciliation.source_reconciler import (
     build_canonical_financials_from_facts,
     canonical_financials_to_fundamentals,
@@ -128,3 +131,71 @@ def test_canonical_financials_can_be_built_from_sec_facts():
 
     assert canonical.get_metric("revenue", "Q4_FY2026_quarterly").value == 13
     assert fundamentals["quarterly"]["revenue"] == [10, 11, 12, 13]
+
+
+def test_stale_duration_metric_is_not_mixed_into_current_ttm():
+    stale = _metric(
+        value=64_333,
+        basis="gaap",
+        source_id="SEC_OLD",
+        metric_name="gross_profit",
+    ).model_copy(
+        update={
+            "period": "FY2016",
+            "fiscal_year": 2016,
+            "start_date": "2016-01-01",
+            "end_date": "2016-12-31",
+        }
+    )
+    canonical = CanonicalFinancials(
+        ticker="RIOT",
+        as_of_date="2026-07-24",
+        metrics=[stale],
+    )
+
+    fundamentals = canonical_financials_to_fundamentals(canonical)
+
+    assert "gross_profit" not in fundamentals["annual"]
+    assert any(
+        issue["code"] == "STALE_FINANCIAL_METRIC_EXCLUDED"
+        and issue["metric"] == "gross_profit"
+        for issue in fundamentals["reconciliation_issues"]
+    )
+
+
+def test_stale_balance_sheet_metric_is_not_treated_as_current():
+    stale = CanonicalMetric(
+        metric_name="short_term_investments",
+        value=2_170_000,
+        unit="USD",
+        period="FY2022",
+        fiscal_year=2022,
+        fiscal_period="FY",
+        period_bucket="instant",
+        end_date="2022-12-31",
+        basis="gaap",
+        statement_type="balance_sheet",
+        source_ids=["SEC_OLD"],
+        confidence="high",
+    )
+    current = stale.model_copy(
+        update={
+            "metric_name": "cash_and_equivalents",
+            "value": 289_176_000,
+            "period": "FY2026_Q1",
+            "fiscal_year": 2026,
+            "fiscal_period": "Q1",
+            "end_date": "2026-03-31",
+            "source_ids": ["SEC_CURRENT"],
+        }
+    )
+    canonical = CanonicalFinancials(
+        ticker="RIOT",
+        as_of_date="2026-07-24",
+        metrics=[stale, current],
+    )
+
+    fundamentals = canonical_financials_to_fundamentals(canonical)
+
+    assert fundamentals["balance_sheet"]["cash_and_equivalents"] == 289_176_000
+    assert "short_term_investments" not in fundamentals["balance_sheet"]

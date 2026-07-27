@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
+from datetime import date
 from typing import Iterable, Optional
 
 from research_agent.reconciliation.canonical_financials import CanonicalFinancials, CanonicalMetric
@@ -11,6 +12,9 @@ from research_agent.reconciliation.period_resolver import resolve_period, valida
 from research_agent.reconciliation.restatement_resolver import prefer_restatement
 from research_agent.reconciliation.unit_normalizer import normalize_value, validate_unit_for_metric
 from research_agent.sources.sec.companyfacts_parser import ParsedFact
+
+
+MAX_CURRENT_FINANCIAL_AGE_DAYS = 550
 
 
 def reconcile_metric(metric_name: str, candidate_metrics: Iterable[CanonicalMetric]):
@@ -188,24 +192,41 @@ def canonical_financials_to_fundamentals(canonical: CanonicalFinancials) -> dict
             if issue:
                 fundamentals["reconciliation_issues"].append(issue)
 
-    for metric in canonical.metrics:
-        if metric.metric_name in {
-            "cash_and_equivalents",
-            "short_term_investments",
-            "current_assets",
-            "current_liabilities",
-            "equity",
-            "total_debt",
-        } and metric.basis == "gaap":
-            fundamentals["balance_sheet"][metric.metric_name] = metric.value
-        if metric.metric_name == "shares_diluted" and metric.basis == "gaap":
-            fundamentals["share_data"]["diluted_share_count"] = metric.value
-        if metric.metric_name in {
-            "listed_share_count",
-            "treasury_share_count",
-            "economic_share_count",
-        }:
-            fundamentals["share_data"][metric.metric_name] = metric.value
+    balance_sheet_metrics = {
+        "cash_and_equivalents",
+        "short_term_investments",
+        "current_assets",
+        "current_liabilities",
+        "equity",
+        "total_debt",
+    }
+    for metric_name in balance_sheet_metrics:
+        selected = _latest_current_metric(canonical, metric_name, require_gaap=True)
+        if selected is not None:
+            fundamentals["balance_sheet"][metric_name] = selected.value
+        elif canonical.metrics_for(metric_name):
+            fundamentals["reconciliation_issues"].append(
+                _stale_metric_issue(metric_name)
+            )
+
+    share_metrics = {
+        "shares_diluted": "diluted_share_count",
+        "listed_share_count": "listed_share_count",
+        "treasury_share_count": "treasury_share_count",
+        "economic_share_count": "economic_share_count",
+    }
+    for metric_name, output_name in share_metrics.items():
+        selected = _latest_current_metric(
+            canonical,
+            metric_name,
+            require_gaap=metric_name == "shares_diluted",
+        )
+        if selected is not None:
+            fundamentals["share_data"][output_name] = selected.value
+        elif canonical.metrics_for(metric_name):
+            fundamentals["reconciliation_issues"].append(
+                _stale_metric_issue(metric_name)
+            )
     return fundamentals
 
 
@@ -214,6 +235,7 @@ def _compatible_trailing_period_values(canonical: CanonicalFinancials, metric_na
         metric for metric in canonical.metrics_for(metric_name)
         if metric.period_bucket == "quarterly"
         and metric.basis == "gaap"
+        and _is_current_metric(canonical, metric)
         and metric.start_date
         and metric.end_date
         and metric.duration_days is not None
@@ -228,6 +250,9 @@ def _compatible_trailing_period_values(canonical: CanonicalFinancials, metric_na
         if derived is not None:
             return derived, None
 
+    available = canonical.metrics_for(metric_name)
+    if available and not any(_is_current_metric(canonical, metric) for metric in available):
+        return [], _stale_metric_issue(metric_name)
     return [], {
         "severity": "warning",
         "code": "MISSING_COMPATIBLE_DENOMINATOR" if metric_name == "revenue" else "MISSING_COMPATIBLE_NUMERATOR",
@@ -260,6 +285,7 @@ def _latest_annual_metric(canonical: CanonicalFinancials, metric_name: str) -> O
         metric for metric in canonical.metrics_for(metric_name)
         if metric.period_bucket == "annual"
         and metric.basis == "gaap"
+        and _is_current_metric(canonical, metric)
         and metric.start_date
         and metric.end_date
     ]
@@ -274,6 +300,58 @@ def _latest_annual_metric(canonical: CanonicalFinancials, metric_name: str) -> O
         ),
         reverse=True,
     )[0]
+
+
+def _latest_current_metric(
+    canonical: CanonicalFinancials,
+    metric_name: str,
+    *,
+    require_gaap: bool,
+) -> Optional[CanonicalMetric]:
+    candidates = [
+        metric
+        for metric in canonical.metrics_for(metric_name)
+        if (not require_gaap or metric.basis == "gaap")
+        and _is_current_metric(canonical, metric)
+    ]
+    if not candidates:
+        return None
+    return sorted(
+        candidates,
+        key=lambda metric: (
+            metric.end_date or "",
+            _confidence_rank(metric.confidence),
+            1 if metric.frame else 0,
+        ),
+        reverse=True,
+    )[0]
+
+
+def _is_current_metric(
+    canonical: CanonicalFinancials,
+    metric: CanonicalMetric,
+) -> bool:
+    if not metric.end_date:
+        return False
+    try:
+        as_of = date.fromisoformat(canonical.as_of_date)
+        metric_end = date.fromisoformat(metric.end_date)
+    except ValueError:
+        return False
+    age_days = (as_of - metric_end).days
+    return 0 <= age_days <= MAX_CURRENT_FINANCIAL_AGE_DAYS
+
+
+def _stale_metric_issue(metric_name: str) -> dict:
+    return {
+        "severity": "warning",
+        "code": "STALE_FINANCIAL_METRIC_EXCLUDED",
+        "metric": metric_name,
+        "message": (
+            f"Excluded {metric_name} because no observation falls within "
+            f"{MAX_CURRENT_FINANCIAL_AGE_DAYS} days of the analysis date."
+        ),
+    }
 
 
 def _derive_q4_and_trailing_values(annual: CanonicalMetric, quarterly: list[CanonicalMetric]) -> Optional[list[float]]:

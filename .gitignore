@@ -6,6 +6,7 @@ __pycache__/
 research_agent/data/outputs/*
 !research_agent/data/outputs/.gitkeep
 .runtime/
+research_agent/data/cache/sec/https___www.sec.gov_files_company_tickers.json.json
 outputs/scenario_sandbox/
 outputs/openjarvis_capability_lab/**/runtime_sandbox/
 outputs/openjarvis_capability_lab/**/write_sandbox/

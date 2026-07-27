@@ -17,6 +17,7 @@ from research_agent.research_core.models.report_config import ReportConfig
 from research_agent.run_pipeline import run_research_pipeline
 from research_agent.sources.bse.bse_provider import BseIssuerProvider
 from research_agent.sources.prices.massive_price_provider import MassivePriceProvider
+from research_agent.sources.prices.nasdaq_price_provider import NasdaqPriceProvider
 from research_agent.sources.prices.price_provider_base import PriceProviderBase
 from research_agent.sources.sec.sec_client import SecClient, SecClientConfig
 
@@ -144,7 +145,10 @@ def run_current_research(
         )
         latest_filing_date = _latest_filing_date(submissions)
         provider = price_provider or _build_price_provider(request)
-        provider_name = "massive"
+        provider_name = str(
+            getattr(provider, "provider_id", None)
+            or ("massive" if isinstance(provider, MassivePriceProvider) else "market_data")
+        )
     else:
         assert bse_issuer is not None
         jurisdiction = "HU"
@@ -307,11 +311,15 @@ def request_from_environment(ticker: str, as_of_date: str) -> CurrentResearchReq
 
 
 def _build_price_provider(request: CurrentResearchRequest) -> PriceProviderBase:
-    if request.price_provider not in {"auto", "massive"}:
+    if request.price_provider not in {"auto", "massive", "nasdaq"}:
         raise CurrentResearchError(
             f"Unsupported price provider {request.price_provider!r}; "
             "configure an authority-grade provider adapter."
         )
+    if request.price_provider == "nasdaq":
+        return NasdaqPriceProvider()
+    if request.price_provider == "auto" and not request.price_api_key:
+        return NasdaqPriceProvider()
     if not request.price_api_key:
         raise CurrentResearchError(
             "Massive/Polygon API key missing. Set MASSIVE_API_KEY or POLYGON_API_KEY."

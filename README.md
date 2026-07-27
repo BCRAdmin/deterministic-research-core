@@ -72,18 +72,22 @@ The generic current-data entry point is:
 
 ```bash
 ROOM16_SEC_USER_AGENT="Room16 Name contact@example.com" \
-MASSIVE_API_KEY="<secret>" \
 python -m research_agent.current \
   --ticker <TICKER> \
   --date <YYYY-MM-DD>
 ```
 
 It resolves the issuer through the official SEC ticker map, fetches SEC
-CompanyFacts and submissions, obtains daily SIP-derived OHLCV through the
-configured authority-grade market provider, stages temporary inputs below
+CompanyFacts and submissions, obtains daily OHLCV through Nasdaq's public
+official historical-data surface by default, stages temporary inputs below
 `.runtime/current-research/`, and invokes the same deterministic pipeline.
 Outputs appear below `research_agent/data/outputs/`, which is intentionally
 Git-ignored except for `.gitkeep`.
+
+Massive/Polygon remains an optional authenticated provider. Set
+`ROOM16_PRICE_PROVIDER=massive` together with `MASSIVE_API_KEY` or
+`POLYGON_API_KEY` to select it explicitly. In `auto` mode, Room16 prefers the
+authenticated provider when a key exists and otherwise uses Nasdaq.
 
 For equities listed on the Budapest Stock Exchange, the same command uses the
 public official BSE issuer profile, issuer-submitted IFRS Excel tables and BSE
@@ -105,6 +109,8 @@ Primary references:
   https://www.sec.gov/files/company_tickers.json
 - Massive daily aggregates:
   https://massive.com/docs/rest/stocks/aggregates/custom-bars
+- Nasdaq historical market data:
+  https://www.nasdaq.com/market-activity/stocks
 - Budapest Stock Exchange company profiles and issuer-submitted financials:
   https://www.bse.hu/pages/company_profile/
 
