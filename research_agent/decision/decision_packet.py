@@ -11,6 +11,10 @@ class SignalScores(BaseModel):
     valuation_score: float
     risk_score: float
     composite_score: float
+    fundamental_status: str = "measured"
+    technical_status: str = "measured"
+    valuation_status: str = "measured"
+    risk_status: str = "measured"
 
 
 class RatingPermission(BaseModel):
@@ -18,6 +22,7 @@ class RatingPermission(BaseModel):
     blocked_ratings: List[Rating]
     preferred_rating: Rating
     reason: str
+    evidence_status: str = "complete"
 
 
 class DecisionPacket(BaseModel):

@@ -41,6 +41,12 @@ def ev_to_sales(ev: float, revenue_ttm: float):
     return ev / revenue_ttm
 
 
+def positive_multiple(numerator: float, denominator: Optional[float]):
+    if denominator is None or denominator <= 0:
+        return None
+    return numerator / denominator
+
+
 def calculate_valuation_metrics(
     close_price: float,
     fundamentals: FundamentalMetrics,
@@ -51,8 +57,20 @@ def calculate_valuation_metrics(
 ) -> ValuationMetrics:
     market_value = None
     ev = None
-    if fundamentals.diluted_share_count is not None:
-        market_value = market_cap(close_price, fundamentals.diluted_share_count)
+    share_count = (
+        fundamentals.listed_share_count
+        or fundamentals.economic_share_count
+        or fundamentals.diluted_share_count
+    )
+    share_basis = None
+    if fundamentals.listed_share_count is not None:
+        share_basis = "listed_share_count"
+    elif fundamentals.economic_share_count is not None:
+        share_basis = "economic_share_count"
+    elif fundamentals.diluted_share_count is not None:
+        share_basis = "diluted_share_count"
+    if share_count is not None:
+        market_value = market_cap(close_price, share_count)
     if market_value is not None:
         ev = enterprise_value(
             market_cap=market_value,
@@ -72,16 +90,19 @@ def calculate_valuation_metrics(
 
     forward_pe_consensus = pe_ratio(close_price, forward_eps.value) if forward_eps else None
     forward_pe_guidance = pe_ratio(close_price, guidance_midpoint)
-    trailing_pe = pe_ratio(close_price, trailing_eps)
+    trailing_pe = pe_ratio(close_price, trailing_eps or fundamentals.trailing_eps)
 
     return ValuationMetrics(
         market_cap=market_value,
         enterprise_value=ev,
         price_to_fcf=price_to_fcf(market_value, fundamentals.free_cash_flow_ttm) if market_value is not None and fundamentals.free_cash_flow_ttm is not None else None,
+        fcf_yield=(fundamentals.free_cash_flow_ttm / market_value) if market_value and fundamentals.free_cash_flow_ttm is not None else None,
         ev_to_sales=ev_to_sales(ev, fundamentals.revenue_ttm) if ev is not None and fundamentals.revenue_ttm is not None else None,
+        ev_to_ebit=positive_multiple(ev, fundamentals.operating_income_ttm) if ev is not None else None,
+        ev_to_ebitda=positive_multiple(ev, fundamentals.ebitda_ttm) if ev is not None else None,
         trailing_pe=trailing_pe,
         forward_pe_consensus=forward_pe_consensus,
         forward_pe_guidance=forward_pe_guidance,
         peg_ratio=(forward_pe_consensus / growth_rate) if forward_pe_consensus is not None and growth_rate not in (None, 0) else None,
+        market_cap_share_basis=share_basis,
     )
-

@@ -13,6 +13,7 @@ from typing import Any, Optional
 from zoneinfo import ZoneInfo
 
 import pandas as pd
+from pypdf import PdfReader
 
 from research_agent.sources.prices.price_provider_base import PriceProviderBase
 
@@ -24,6 +25,7 @@ _ANNUAL_METRICS = {
     "Profit after tax": ("net_income", "income_statement"),
     "Total assets": ("total_assets", "balance_sheet"),
     "Shareholders equity": ("equity", "balance_sheet"),
+    "Earnings per Share (EPS)": ("eps_diluted", "income_statement"),
 }
 _INTERIM_METRICS = {
     "Net sales": "revenue",
@@ -156,7 +158,12 @@ class BseIssuerProvider(PriceProviderBase):
             )
         if not rows:
             raise RuntimeError(f"BSE returned no usable OHLCV rows for {issuer.ticker}.")
-        return pd.DataFrame(rows).drop_duplicates("date").sort_values("date")
+        frame = pd.DataFrame(rows).drop_duplicates("date").sort_values("date")
+        actions = self._corporate_actions(issuer)
+        frame = _back_adjust_dividends(frame, actions)
+        frame["corporate_action_count"] = len(actions)
+        frame["series_adjustment_status"] = "corporate_action_adjusted"
+        return frame
 
     def build_financial_payload(
         self,
@@ -170,6 +177,8 @@ class BseIssuerProvider(PriceProviderBase):
         interim = self._read_excel(self._interim_url(issuer))
         metrics = self._annual_metrics(annual, issuer, as_of)
         metrics.extend(self._quarterly_metrics(interim, issuer, as_of))
+        metrics.extend(self._full_report_metrics(issuer, as_of))
+        metrics = _dedupe_metrics(metrics)
         if not any(item["metric_name"] == "revenue" for item in metrics):
             raise RuntimeError(
                 f"BSE financial tables contain no usable revenue history for {issuer.ticker}."
@@ -188,6 +197,156 @@ class BseIssuerProvider(PriceProviderBase):
             "currency": issuer.currency,
             "metrics": metrics,
         }
+
+    def _corporate_actions(self, issuer: BseIssuer) -> list[dict[str, Any]]:
+        html = self._html_by_ticker[issuer.ticker]
+        marker = '"flags":'
+        start_at = html.find(marker)
+        if start_at < 0:
+            return []
+        try:
+            payload, _ = json.JSONDecoder().raw_decode(html[start_at + len(marker) :])
+        except json.JSONDecodeError:
+            return []
+        budapest = ZoneInfo("Europe/Budapest")
+        result: list[dict[str, Any]] = []
+        for item in payload if isinstance(payload, list) else []:
+            if not isinstance(item, dict) or item.get("date") is None:
+                continue
+            action_date = datetime.fromtimestamp(
+                float(item["date"]) / 1000,
+                tz=timezone.utc,
+            ).astimezone(budapest).date()
+            title = str(item.get("title") or "").upper()
+            text = str(item.get("text") or "")
+            amount_match = re.search(r"([\d.,]+)\s*[A-Z]{3}", text)
+            result.append({
+                "date": action_date.isoformat(),
+                "type": "dividend" if title == "D" else "split" if title == "S" else "other",
+                "amount": _parse_number(amount_match.group(1)) if amount_match else None,
+                "description": text,
+            })
+        return result
+
+    def _full_report_metrics(
+        self,
+        issuer: BseIssuer,
+        as_of: date,
+    ) -> list[dict[str, Any]]:
+        html = self._html_by_ticker[issuer.ticker]
+        annual_url = _link_before_text(html, "Latest Annual Report")
+        interim_url = _link_before_text(html, "Latest interim management statement")
+        result: list[dict[str, Any]] = []
+        if annual_url:
+            result.extend(
+                _extract_report_metrics(
+                    self._download_best_pdf_text(annual_url),
+                    issuer,
+                    fiscal_year=as_of.year - 1,
+                    fiscal_period="FY",
+                    period_bucket="annual",
+                    end_date=f"{as_of.year - 1}-12-31",
+                )
+            )
+        if interim_url:
+            result.extend(
+                _extract_report_metrics(
+                    self._download_best_pdf_text(interim_url),
+                    issuer,
+                    fiscal_year=as_of.year,
+                    fiscal_period="Q1",
+                    period_bucket="quarterly",
+                    end_date=f"{as_of.year}-03-31",
+                )
+            )
+        return result
+
+    def build_earnings_calendar(
+        self,
+        issuer: BseIssuer,
+        *,
+        as_of_date: str,
+        retrieved_at: str,
+    ) -> dict[str, Any]:
+        html = self._html_by_ticker[issuer.ticker]
+        timetable_match = re.search(
+            r'<a[^>]+href=["\']([^"\']+)["\'][^>]*>[^<]*Corporate Action Timetable[^<]*</a>',
+            html,
+            re.IGNORECASE,
+        )
+        timetable = timetable_match.group(1) if timetable_match else None
+        if not timetable:
+            return {"events": []}
+        text = self._download_best_pdf_text(timetable)
+        events: list[dict[str, Any]] = []
+        months = {
+            month: index
+            for index, month in enumerate(
+                (
+                    "January", "February", "March", "April", "May", "June",
+                    "July", "August", "September", "October", "November", "December",
+                ),
+                start=1,
+            )
+        }
+        pattern = re.compile(
+            r"Publication of\s+(.+?results(?:,\s*interim report)?)\s+"
+            r"(\d{1,2})(?:st|nd|rd|th)?\s+"
+            r"(" + "|".join(months) + r"),?\s+(20\d{2})",
+            re.IGNORECASE,
+        )
+        basis = date.fromisoformat(as_of_date)
+        for match in pattern.finditer(text):
+            event_date = date(
+                int(match.group(4)),
+                months[match.group(3).title()],
+                int(match.group(2)),
+            )
+            if event_date < basis:
+                continue
+            events.append({
+                "ticker": issuer.ticker,
+                "fiscal_period": match.group(1).strip(),
+                "report_date": event_date.isoformat(),
+                "timing": None,
+                "confirmed": False,
+                "source_id": f"BSE_{issuer.ticker}_CORPORATE_ACTION_TIMETABLE",
+                "source_type": "company_ir",
+                "url": urllib.parse.urljoin("https://www.bse.hu", timetable),
+                "retrieved_at": retrieved_at,
+            })
+        return {"events": events}
+
+    def _download_best_pdf_text(self, detail_path: str) -> str:
+        detail_url = urllib.parse.urljoin("https://www.bse.hu", detail_path)
+        html = self._fetch(detail_url).decode("utf-8", "replace")
+        pdf_links = list(dict.fromkeys(re.findall(
+            r'href=["\']([^"\']+\.pdf(?:\?[^"\']*)?)["\']',
+            html,
+            re.IGNORECASE,
+        )))
+        best_text = ""
+        best_score = -1
+        for href in pdf_links:
+            try:
+                content = self._fetch(urllib.parse.urljoin(detail_url, href))
+                reader = PdfReader(io.BytesIO(content))
+                text = "\n".join(page.extract_text() or "" for page in reader.pages)
+            except Exception:
+                continue
+            lower = text.lower()
+            score = len(text) + 50_000 * sum(
+                phrase in lower
+                for phrase in (
+                    "consolidated statement of financial position",
+                    "net cash provided by operating activities",
+                    "earnings before interest, tax, depreciation",
+                )
+            )
+            if score > best_score:
+                best_score = score
+                best_text = text
+        return best_text
 
     def _annual_metrics(
         self,
@@ -386,3 +545,190 @@ def _metric_row(
         "statement": statement,
         "reconciliation_note": "Official BSE table submitted by the issuer under IFRS.",
     }
+
+
+def _link_before_text(html: str, label: str) -> Optional[str]:
+    match = re.search(
+        rf'<a[^>]+href=["\']([^"\']+)["\'][^>]*>\s*{re.escape(label)}\s*</a>',
+        html,
+        re.IGNORECASE,
+    )
+    return match.group(1) if match else None
+
+
+def _parse_number(value: str) -> float:
+    text = value.strip().replace("\xa0", "").replace(" ", "")
+    negative = text.startswith("(") and text.endswith(")")
+    text = text.strip("()")
+    if "," in text and "." not in text:
+        parts = text.split(",")
+        text = "".join(parts) if all(len(part) == 3 for part in parts[1:]) else text.replace(",", ".")
+    else:
+        text = text.replace(",", "")
+    number = float(text)
+    return -number if negative else number
+
+
+def _line_numbers(text: str, label: str) -> list[float]:
+    match = re.search(rf"{re.escape(label)}[^\n]*", text, re.IGNORECASE)
+    if not match:
+        return []
+    tokens = re.findall(r"\(?-?\d[\d,]*(?:\.\d+)?\)?", match.group(0)[len(label):])
+    return [_parse_number(token) for token in tokens]
+
+
+def _material_values(values: list[float]) -> list[float]:
+    return [value for value in values if abs(value) >= 100]
+
+
+def _extract_report_metrics(
+    text: str,
+    issuer: BseIssuer,
+    *,
+    fiscal_year: int,
+    fiscal_period: str,
+    period_bucket: str,
+    end_date: str,
+) -> list[dict[str, Any]]:
+    if not text:
+        return []
+    is_quarter = period_bucket == "quarterly"
+    start_date = f"{fiscal_year}-01-01" if is_quarter else f"{fiscal_year}-01-01"
+    period = f"FY{fiscal_year}_{fiscal_period}" if is_quarter else f"FY{fiscal_year}"
+    rows: list[dict[str, Any]] = []
+
+    def add(metric_name: str, value: Optional[float], statement_type: str) -> None:
+        if value is None:
+            return
+        rows.append(_metric_row(
+            metric_name=metric_name,
+            value=float(value) * 1000.0,
+            unit=issuer.currency,
+            period=period,
+            fiscal_year=fiscal_year,
+            fiscal_period=fiscal_period,
+            period_bucket=period_bucket,
+            start_date=start_date if statement_type != "balance_sheet" else None,
+            end_date=end_date,
+            statement_type=statement_type,
+            statement=f"{issuer.ticker} reported {metric_name} of {float(value) * 1000.0:.0f} {issuer.currency} for {period}.",
+        ))
+
+    def row_value(label: str) -> Optional[float]:
+        values = _material_values(_line_numbers(text, label))
+        if not values:
+            return None
+        return values[1] if is_quarter and len(values) >= 2 else values[0]
+
+    add("operating_cash_flow", row_value("Net cash provided by operating activities"), "cash_flow")
+    add("capex", row_value("Purchase of property, plant and equipment"), "cash_flow")
+
+    ebitda = re.search(
+        r"EBITDA(?:\s+is|\s+amounted\s+to)?\s+HUF\s+([\d,]+)\s+million",
+        text,
+        re.IGNORECASE,
+    )
+    if ebitda:
+        add("ebitda", _parse_number(ebitda.group(1)) * 1000.0, "income_statement")
+
+    if is_quarter:
+        cash = re.search(
+            r"cash and cash equivalents.*?totalled HUF\s+([\d,]+)\s+million",
+            text,
+            re.IGNORECASE | re.DOTALL,
+        )
+        if cash:
+            add("cash_and_equivalents", _parse_number(cash.group(1)) * 1000.0, "balance_sheet")
+        for metric_name, label in {
+            "current_assets": "Total current assets",
+            "current_liabilities": "Total current liabilities",
+            "total_assets": "Total assets",
+            "equity": "Total shareholders' equity",
+            "short_term_debt": "Short term debt",
+            "long_term_debt": "Long term debt",
+            "lease_liabilities_current": "Short term part of lease liabilities",
+            "lease_liabilities_long_term": "Long term part of lease liabilities",
+        }.items():
+            add(metric_name, row_value(label), "balance_sheet")
+        values = {row["metric_name"]: row["value"] for row in rows}
+        debt_components = [
+            values.get("short_term_debt"),
+            values.get("long_term_debt"),
+            values.get("lease_liabilities_current"),
+            values.get("lease_liabilities_long_term"),
+        ]
+        if all(value is not None for value in debt_components):
+            rows.append(_metric_row(
+                metric_name="total_debt",
+                value=sum(float(value) for value in debt_components),
+                unit=issuer.currency,
+                period=period,
+                fiscal_year=fiscal_year,
+                fiscal_period=fiscal_period,
+                period_bucket="instant",
+                start_date=None,
+                end_date=end_date,
+                statement_type="balance_sheet",
+                statement=f"{issuer.ticker} total debt including lease liabilities at {end_date}.",
+            ))
+        listed = re.search(r"TOTAL:.*?([\d,]{7,})\s+100\.00%", text, re.IGNORECASE | re.DOTALL)
+        treasury = re.search(r"Treasury stock[^\n]*?([\d,]{5,})", text, re.IGNORECASE)
+        listed_value = _parse_number(listed.group(1)) if listed else None
+        treasury_value = _parse_number(treasury.group(1)) if treasury else None
+        for metric_name, value in (
+            ("listed_share_count", listed_value),
+            ("treasury_share_count", treasury_value),
+            (
+                "economic_share_count",
+                listed_value - treasury_value
+                if listed_value is not None and treasury_value is not None
+                else None,
+            ),
+        ):
+            if value is not None:
+                rows.append(_metric_row(
+                    metric_name=metric_name,
+                    value=value,
+                    unit="shares",
+                    period=period,
+                    fiscal_year=fiscal_year,
+                    fiscal_period=fiscal_period,
+                    period_bucket="instant",
+                    start_date=None,
+                    end_date=end_date,
+                    statement_type="balance_sheet",
+                    statement=f"{issuer.ticker} reported {metric_name} of {value:.0f} at {end_date}.",
+                ))
+    return rows
+
+
+def _dedupe_metrics(metrics: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    by_key: dict[tuple[str, str], dict[str, Any]] = {}
+    for row in metrics:
+        key = (str(row.get("metric_name")), str(row.get("period")))
+        by_key[key] = row
+    return list(by_key.values())
+
+
+def _back_adjust_dividends(
+    frame: pd.DataFrame,
+    actions: list[dict[str, Any]],
+) -> pd.DataFrame:
+    adjusted = frame.copy().sort_values("date").reset_index(drop=True)
+    for column in ("open", "high", "low", "close"):
+        adjusted[f"adjusted_{column}"] = adjusted[column].astype(float)
+    for action in sorted(actions, key=lambda item: item["date"]):
+        if action.get("type") != "dividend" or not action.get("amount"):
+            continue
+        earlier = adjusted.index[adjusted["date"] < action["date"]]
+        if len(earlier) == 0:
+            continue
+        previous_index = int(earlier[-1])
+        previous_close = float(adjusted.at[previous_index, "close"])
+        factor = (previous_close - float(action["amount"])) / previous_close
+        if not 0 < factor <= 1:
+            continue
+        for column in ("open", "high", "low", "close"):
+            target = f"adjusted_{column}"
+            adjusted.loc[earlier, target] = adjusted.loc[earlier, target] * factor
+    return adjusted

@@ -77,8 +77,14 @@ def score_technicals(
         score = _apply_rule(score, "PRICE_BELOW_200SMA", t.close <= t.sma_200, weights, triggered_rules, calibration_mode)
 
     if t.sma_50 is not None and t.sma_200 is not None:
-        score = _apply_rule(score, "GOLDEN_CROSS", t.sma_50 > t.sma_200, weights, triggered_rules, calibration_mode)
-        score = _apply_rule(score, "DEATH_CROSS", t.sma_50 <= t.sma_200, weights, triggered_rules, calibration_mode)
+        alignment = t.signals.get("ma_50_200_state") or (
+            "bullish_alignment" if t.sma_50 > t.sma_200 else "bearish_alignment"
+        )
+        cross_event = t.signals.get("cross_event")
+        score = _apply_rule(score, "BULLISH_MA_ALIGNMENT", alignment == "bullish_alignment", weights, triggered_rules, calibration_mode)
+        score = _apply_rule(score, "BEARISH_MA_ALIGNMENT", alignment == "bearish_alignment", weights, triggered_rules, calibration_mode)
+        score = _apply_rule(score, "GOLDEN_CROSS", cross_event == "golden_cross", weights, triggered_rules, calibration_mode)
+        score = _apply_rule(score, "DEATH_CROSS", cross_event == "death_cross", weights, triggered_rules, calibration_mode)
 
     if t.ema_10 is not None:
         score = _apply_rule(score, "PRICE_ABOVE_EMA10", t.close > t.ema_10, weights, triggered_rules, calibration_mode)
@@ -218,6 +224,32 @@ def calculate_signal_scores_with_rules(
         valuation_score=valuation,
         risk_score=risk,
         composite_score=composite,
+        fundamental_status=_coverage_status([
+            metrics.fundamentals.revenue_ttm,
+            metrics.fundamentals.operating_income_ttm,
+            metrics.fundamentals.net_income_ttm,
+            metrics.fundamentals.operating_cash_flow_ttm,
+            metrics.fundamentals.total_debt,
+        ]),
+        technical_status=(
+            "measured"
+            if metrics.technical.price_series_basis == "corporate_action_adjusted"
+            else "partial"
+            if metrics.technical.close is not None
+            else "not_measured"
+        ),
+        valuation_status=_coverage_status([
+            metrics.valuation.market_cap,
+            metrics.valuation.trailing_pe,
+            metrics.valuation.ev_to_sales,
+            metrics.valuation.ev_to_ebitda,
+            metrics.valuation.price_to_fcf,
+        ]),
+        risk_status=_coverage_status([
+            metrics.technical.atr_14,
+            metrics.fundamentals.total_debt,
+            metrics.fundamentals.cash_and_investments,
+        ]),
     )
     return scores, _ordered_unique(triggered_rules), weights.version, calibration_mode
 
@@ -243,3 +275,12 @@ def _ordered_unique(values: list[str]) -> list[str]:
 
 def _clamp(score: float) -> float:
     return max(-3, min(3, score))
+
+
+def _coverage_status(values: list[object]) -> str:
+    measured = sum(value is not None for value in values)
+    if measured == len(values):
+        return "measured"
+    if measured:
+        return "partial"
+    return "not_measured"

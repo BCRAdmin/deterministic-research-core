@@ -537,6 +537,12 @@ def build_data_packet(
             date=str(latest_price["date"]),
             currency=price_currency,
             source=fundamentals.get("price_source", "ohlcv_provider"),
+            series_adjustment_status=str(
+                latest_price.get("series_adjustment_status", "unknown")
+            ),
+            corporate_action_count=int(
+                latest_price.get("corporate_action_count", 0) or 0
+            ),
         ),
         fiscal_context=FiscalContext(
             latest_fiscal_year=fundamentals.get("latest_fiscal_year"),
@@ -570,7 +576,7 @@ def _load_source_ingestion_inputs(ticker: str, as_of_date: str, config: ReportCo
     prices = CsvPriceProvider(config.price_csv_dir).get_history(ticker, price_start, as_of_date)
     fundamentals: dict[str, Any] = {
         "company_name": None,
-        "price_source": "csv_price_provider",
+        "price_source": config.price_source_id or "csv_price_provider",
         "source_registry_id": f"{ticker.upper()}_{as_of_date}",
     }
     evidence_items = _price_evidence_items(ticker, prices, config)
@@ -630,14 +636,14 @@ def _load_source_ingestion_inputs(ticker: str, as_of_date: str, config: ReportCo
             events=load_earnings_events(config.earnings_calendar_path),
             as_of_date=as_of_date,
         )
-        if earnings_event and earnings_event.confirmed:
+        if earnings_event:
             news.append({
                 "event_type": "earnings",
                 "date": earnings_event.report_date,
-                "confirmed": True,
+                "confirmed": bool(earnings_event.confirmed),
                 "source": earnings_event.source_id,
                 "source_id": earnings_event.source_id,
-                "status": "confirmed",
+                "status": "confirmed" if earnings_event.confirmed else "planned",
                 "within_10_trading_days": is_event_risk_window(earnings_event, as_of_date),
             })
             evidence_items.append(earnings_event_to_evidence(earnings_event))
@@ -854,6 +860,7 @@ def _ir_current_metric_inputs(
             "revenue",
             "gross_profit",
             "operating_income",
+            "ebitda",
             "net_income",
             "operating_cash_flow",
             "capex",
@@ -862,12 +869,26 @@ def _ir_current_metric_inputs(
             fundamentals["annual"][metric_name] = value
         elif metric_name in {"free_cash_flow", "adjusted_free_cash_flow"} and period_bucket in {"annual", "ttm"}:
             fundamentals["annual"][metric_name] = value
-        elif metric_name in {"cash_and_equivalents", "marketable_securities", "short_term_investments", "total_debt"}:
+        elif metric_name in {
+            "cash_and_equivalents",
+            "marketable_securities",
+            "short_term_investments",
+            "total_debt",
+            "current_assets",
+            "current_liabilities",
+            "equity",
+        }:
             fundamentals["balance_sheet"][metric_name] = value
         elif metric_name == "cash_and_marketable_securities":
             fundamentals["_cash_and_marketable_securities"] = value
         elif metric_name == "shares_diluted":
             fundamentals.setdefault("share_data", {})["diluted_share_count"] = value
+        elif metric_name in {
+            "listed_share_count",
+            "treasury_share_count",
+            "economic_share_count",
+        }:
+            fundamentals.setdefault("share_data", {})[metric_name] = value
     if "operating_cash_flow" in values and "free_cash_flow" in values:
         fundamentals["annual"]["operating_cash_flow"] = values["operating_cash_flow"]
         fundamentals["annual"]["capex"] = max(values["operating_cash_flow"] - values["free_cash_flow"], 0.0)
@@ -883,6 +904,7 @@ def _ir_supports_metrics(metric_name: str) -> list[str]:
             "operating_income_ttm",
             "operating_margin_ttm",
         ],
+        "ebitda": ["ebitda", "ebitda_ttm", "ev_to_ebitda"],
         "net_income": ["net_income", "net_income_ttm", "net_margin_ttm"],
         "operating_cash_flow": ["operating_cash_flow", "operating_cash_flow_ttm"],
         "capex": ["capex", "capex_ttm", "free_cash_flow_ttm"],
@@ -894,6 +916,12 @@ def _ir_supports_metrics(metric_name: str) -> list[str]:
         "marketable_securities": ["marketable_securities", "cash_and_investments"],
         "short_term_investments": ["short_term_investments", "cash_and_investments"],
         "total_debt": ["total_debt", "debt", "net_cash"],
+        "current_assets": ["current_assets", "current_ratio"],
+        "current_liabilities": ["current_liabilities", "current_ratio"],
+        "equity": ["equity", "debt_to_equity"],
+        "listed_share_count": ["listed_share_count", "market_cap"],
+        "treasury_share_count": ["treasury_share_count", "economic_share_count"],
+        "economic_share_count": ["economic_share_count", "trailing_eps"],
         "cash_and_marketable_securities": ["cash_and_marketable_securities", "cash_and_investments"],
         "shares_diluted": ["shares_diluted", "diluted_share_count"],
     }
@@ -903,7 +931,18 @@ def _ir_supports_metrics(metric_name: str) -> list[str]:
 def _ir_statement_type(metric_name: str) -> str:
     if metric_name in {"operating_cash_flow", "free_cash_flow", "adjusted_free_cash_flow", "adjusted_free_cash_flow_margin"}:
         return "cash_flow"
-    if metric_name in {"cash_and_marketable_securities", "cash_and_equivalents", "marketable_securities", "short_term_investments", "total_debt"}:
+    if metric_name in {
+        "cash_and_marketable_securities",
+        "cash_and_equivalents",
+        "marketable_securities",
+        "short_term_investments",
+        "total_debt",
+        "current_assets",
+        "current_liabilities",
+        "equity",
+    }:
+        return "balance_sheet"
+    if metric_name in {"listed_share_count", "treasury_share_count", "economic_share_count"}:
         return "balance_sheet"
     return "income_statement"
 

@@ -51,6 +51,8 @@ DEFAULT_RULE_WEIGHTS = RuleWeightConfig(
         "PRICE_BELOW_200SMA": RuleWeight(rule_id="PRICE_BELOW_200SMA", base_weight=-1.0),
         "GOLDEN_CROSS": RuleWeight(rule_id="GOLDEN_CROSS", base_weight=1.0),
         "DEATH_CROSS": RuleWeight(rule_id="DEATH_CROSS", base_weight=-1.0),
+        "BULLISH_MA_ALIGNMENT": RuleWeight(rule_id="BULLISH_MA_ALIGNMENT", base_weight=0.5),
+        "BEARISH_MA_ALIGNMENT": RuleWeight(rule_id="BEARISH_MA_ALIGNMENT", base_weight=-0.5),
         "PRICE_ABOVE_EMA10": RuleWeight(rule_id="PRICE_ABOVE_EMA10", base_weight=1.0),
         "PRICE_BELOW_EMA10": RuleWeight(rule_id="PRICE_BELOW_EMA10", base_weight=-1.0),
         "RSI_GT_75": RuleWeight(rule_id="RSI_GT_75", base_weight=-1.0),

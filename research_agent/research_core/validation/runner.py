@@ -71,6 +71,45 @@ def run_all_validations(
                     issue = validate_source_authority(metric_name, source.source_type)
                     if issue:
                         raw_issues.append(issue)
+        bse_sources = [
+            source for source in source_registry.sources
+            if source.source_id.startswith("BSE_")
+            and source.source_id.endswith("_OFFICIAL_FINANCIALS")
+        ]
+        if bse_sources:
+            required = {
+                "operating_cash_flow",
+                "capex",
+                "cash_and_equivalents",
+                "total_debt",
+                "listed_share_count",
+                "economic_share_count",
+            }
+            available = set().union(*(set(source.used_for) for source in bse_sources))
+            missing = sorted(required - available)
+            if missing:
+                raw_issues.append({
+                    "severity": "error",
+                    "code": "BSE_OFFICIAL_FINANCIAL_CORE_INCOMPLETE",
+                    "message": (
+                        "Official BSE full-report ingestion is incomplete; "
+                        f"missing: {', '.join(missing)}."
+                    ),
+                })
+
+    if (
+        data_packet.price_basis.corporate_action_count > 0
+        and data_packet.price_basis.series_adjustment_status
+        != "corporate_action_adjusted"
+    ):
+        raw_issues.append({
+            "severity": "error",
+            "code": "CORPORATE_ACTION_ADJUSTMENT_MISSING",
+            "message": (
+                "Corporate actions exist, but the technical price series is not "
+                "explicitly adjusted."
+            ),
+        })
 
     for trade_setup in trade_setups or []:
         raw_issues.extend(validate_trade_levels(**trade_setup))

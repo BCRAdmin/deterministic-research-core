@@ -118,6 +118,7 @@ def run_current_research(
         else None
     )
     financial_source: Optional[SourceRegistryEntry] = None
+    earnings_calendar_path = request.earnings_calendar_path
     jurisdiction = "US"
     isin: Optional[str] = None
     if issuer is not None:
@@ -148,6 +149,20 @@ def run_current_research(
             retrieved_at=retrieved_at,
         )
         _write_json(ir_release_dir / f"{symbol}.json", financial_payload)
+        calendar_builder = getattr(bse, "build_earnings_calendar", None)
+        bse_calendar = (
+            calendar_builder(
+                bse_issuer,
+                as_of_date=request.as_of_date,
+                retrieved_at=retrieved_at,
+            )
+            if callable(calendar_builder)
+            else {"events": []}
+        )
+        if bse_calendar.get("events"):
+            calendar_path = source_dir / "bse_earnings_calendar.json"
+            _write_json(calendar_path, bse_calendar)
+            earnings_calendar_path = str(calendar_path)
         latest_filing_date = _latest_metric_date(financial_payload)
         provider = price_provider or bse
         provider_name = "bse"
@@ -226,7 +241,7 @@ def run_current_research(
         sec_companyfacts_path=str(companyfacts_path) if companyfacts_path else None,
         sec_user_agent=request.sec_user_agent or None,
         ir_release_dir=str(ir_release_dir) if ir_release_dir else None,
-        earnings_calendar_path=request.earnings_calendar_path,
+        earnings_calendar_path=earnings_calendar_path,
         price_currency=bse_issuer.currency if bse_issuer else "USD",
     )
     run_research_pipeline(symbol, request.as_of_date, config)

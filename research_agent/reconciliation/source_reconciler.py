@@ -171,6 +171,7 @@ def canonical_financials_to_fundamentals(canonical: CanonicalFinancials) -> dict
         "revenue",
         "gross_profit",
         "operating_income",
+        "ebitda",
         "net_income",
         "operating_cash_flow",
         "capex",
@@ -188,10 +189,23 @@ def canonical_financials_to_fundamentals(canonical: CanonicalFinancials) -> dict
                 fundamentals["reconciliation_issues"].append(issue)
 
     for metric in canonical.metrics:
-        if metric.metric_name in {"cash_and_equivalents", "short_term_investments"} and metric.basis == "gaap":
+        if metric.metric_name in {
+            "cash_and_equivalents",
+            "short_term_investments",
+            "current_assets",
+            "current_liabilities",
+            "equity",
+            "total_debt",
+        } and metric.basis == "gaap":
             fundamentals["balance_sheet"][metric.metric_name] = metric.value
         if metric.metric_name == "shares_diluted" and metric.basis == "gaap":
             fundamentals["share_data"]["diluted_share_count"] = metric.value
+        if metric.metric_name in {
+            "listed_share_count",
+            "treasury_share_count",
+            "economic_share_count",
+        }:
+            fundamentals["share_data"][metric.metric_name] = metric.value
     return fundamentals
 
 

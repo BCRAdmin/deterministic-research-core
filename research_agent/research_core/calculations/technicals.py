@@ -96,7 +96,16 @@ def calculate_technical_metrics(
     if df.empty:
         raise ValueError("OHLCV data is empty.")
 
-    close = df["close"]
+    adjusted_columns = {"adjusted_high", "adjusted_low", "adjusted_close"}
+    uses_adjusted = adjusted_columns.issubset(df.columns) and not df[
+        list(adjusted_columns)
+    ].isna().any().any()
+    calculation_df = df.copy()
+    if uses_adjusted:
+        calculation_df["high"] = calculation_df["adjusted_high"]
+        calculation_df["low"] = calculation_df["adjusted_low"]
+        calculation_df["close"] = calculation_df["adjusted_close"]
+    close = calculation_df["close"]
     indicators = pd.DataFrame(index=df.index)
     indicators["sma_10"] = sma(close, 10)
     indicators["sma_20"] = sma(close, 20)
@@ -107,8 +116,8 @@ def calculate_technical_metrics(
     indicators["rsi_14"] = rsi_wilder(close, 14)
     indicators = indicators.join(macd(close))
     indicators = indicators.join(bollinger_bands(close))
-    indicators["atr_14"] = atr(df, 14)
-    indicators["avg_volume_20"] = average_volume(df["volume"], 20)
+    indicators["atr_14"] = atr(calculation_df, 14)
+    indicators["avg_volume_20"] = average_volume(calculation_df["volume"], 20)
 
     latest = indicators.iloc[-1]
     latest_close = float(close.iloc[-1])
@@ -124,7 +133,14 @@ def calculate_technical_metrics(
         "distance_to_ema_20_pct": price_distance_pct(latest_close, values["ema_20"]),
     }
 
-    signals = build_technical_signals(latest_close, values)
+    previous_alignment = _latest_previous_alignment(indicators)
+    histogram_trend = _histogram_trend(indicators["macd_histogram"])
+    signals = build_technical_signals(
+        latest_close,
+        values,
+        previous_alignment=previous_alignment,
+        histogram_trend=histogram_trend,
+    )
     signals["price_distance_pct"] = {
         key.replace("distance_to_", ""): value for key, value in distances.items()
     }
@@ -132,21 +148,39 @@ def calculate_technical_metrics(
     return TechnicalMetrics(
         indicator_date=latest_date,
         close=latest_close,
+        price_series_basis="corporate_action_adjusted" if uses_adjusted else "unadjusted_or_provider_default",
+        corporate_action_count=(
+            data_packet.price_basis.corporate_action_count if data_packet is not None else 0
+        ),
         **values,
         **distances,
         signals=signals,
     )
 
 
-def build_technical_signals(close: float, values: dict[str, Optional[float]]) -> dict[str, object]:
+def build_technical_signals(
+    close: float,
+    values: dict[str, Optional[float]],
+    *,
+    previous_alignment: Optional[float] = None,
+    histogram_trend: str = "unavailable",
+) -> dict[str, object]:
+    current_alignment = _ma_alignment(values.get("sma_50"), values.get("sma_200"))
     return {
         "price_below_ema_10": _is_below(close, values.get("ema_10")),
         "price_below_ema_20": _is_below(close, values.get("ema_20")),
         "price_below_sma_50": _is_below(close, values.get("sma_50")),
         "price_below_sma_200": _is_below(close, values.get("sma_200")),
-        "death_cross": _death_cross(values.get("sma_50"), values.get("sma_200")),
+        "ma_50_200_state": (
+            "bullish_alignment" if current_alignment and current_alignment > 0
+            else "bearish_alignment" if current_alignment is not None
+            else "unavailable"
+        ),
+        "cross_event": _cross_event(previous_alignment, current_alignment),
+        "death_cross": _cross_event(previous_alignment, current_alignment) == "death_cross",
         "rsi_zone": _rsi_zone(values.get("rsi_14")),
         "macd_momentum": _macd_momentum(values.get("macd"), values.get("macd_signal"), values.get("macd_histogram")),
+        "macd_histogram_trend": histogram_trend,
     }
 
 
@@ -160,7 +194,10 @@ def _prepare_ohlcv(ohlcv: pd.DataFrame) -> pd.DataFrame:
     if "date" in df.columns:
         df["date"] = pd.to_datetime(df["date"]).dt.strftime("%Y-%m-%d")
         df = df.sort_values("date")
-    for column in ["open", "high", "low", "close", "volume"]:
+    for column in [
+        "open", "high", "low", "close", "volume",
+        "adjusted_open", "adjusted_high", "adjusted_low", "adjusted_close",
+    ]:
         if column in df.columns:
             df[column] = pd.to_numeric(df[column], errors="coerce")
     return df.reset_index(drop=True)
@@ -191,14 +228,44 @@ def _is_below(price: float, reference: Optional[float]) -> bool:
     return reference is not None and not _is_missing(reference) and price < reference
 
 
-def _death_cross(sma_50: Optional[float], sma_200: Optional[float]) -> bool:
-    return (
+def _ma_alignment(sma_50: Optional[float], sma_200: Optional[float]) -> Optional[float]:
+    if (
         sma_50 is not None
         and sma_200 is not None
         and not _is_missing(sma_50)
         and not _is_missing(sma_200)
-        and sma_50 < sma_200
-    )
+    ):
+        return sma_50 - sma_200
+    return None
+
+
+def _cross_event(previous: Optional[float], current: Optional[float]) -> str:
+    if previous is None or current is None:
+        return "unavailable"
+    if previous <= 0 < current:
+        return "golden_cross"
+    if previous >= 0 > current:
+        return "death_cross"
+    return "none"
+
+
+def _latest_previous_alignment(indicators: pd.DataFrame) -> Optional[float]:
+    valid = (indicators["sma_50"] - indicators["sma_200"]).dropna()
+    if len(valid) < 2:
+        return None
+    return float(valid.iloc[-2])
+
+
+def _histogram_trend(histogram: pd.Series) -> str:
+    valid = histogram.dropna()
+    if len(valid) < 3:
+        return "unavailable"
+    recent = valid.iloc[-3:]
+    if recent.is_monotonic_increasing:
+        return "improving"
+    if recent.is_monotonic_decreasing:
+        return "weakening"
+    return "mixed"
 
 
 def _rsi_zone(value: Optional[float]) -> str:
@@ -225,4 +292,3 @@ def _macd_momentum(
     if macd_value < 0 and histogram <= 0:
         return "negative"
     return "weakening_but_positive"
-

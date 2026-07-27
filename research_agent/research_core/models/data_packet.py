@@ -8,6 +8,8 @@ class PriceBasis(BaseModel):
     date: str
     currency: str = "USD"
     source: str
+    series_adjustment_status: str = "unknown"
+    corporate_action_count: int = 0
 
 
 class FiscalContext(BaseModel):

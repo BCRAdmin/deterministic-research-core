@@ -22,6 +22,21 @@ def determine_rating_permission(
     technical = scores.technical_score
     valuation = scores.valuation_score
     risk = scores.risk_score
+    coverage_states = {
+        scores.fundamental_status,
+        scores.technical_status,
+        scores.valuation_status,
+        scores.risk_status,
+    }
+    evidence_status = (
+        "incomplete"
+        if "not_measured" in {
+            scores.fundamental_status,
+            scores.technical_status,
+        }
+        else "partial" if "partial" in coverage_states
+        else "complete"
+    )
 
     if fundamental >= 2 and technical >= 1 and valuation >= 0 and risk >= -1:
         allowed = [Rating.BUY, Rating.ACCUMULATE, Rating.HOLD]
@@ -71,6 +86,7 @@ def determine_rating_permission(
         blocked_ratings=blocked,
         preferred_rating=preferred,
         reason=reason,
+        evidence_status=evidence_status,
     )
 
 
@@ -138,7 +154,11 @@ def _build_key_risks(
     validation_report: Optional[ValidationReport],
     audit_report: Optional[AuditReport],
 ) -> list[str]:
-    risks = [f"Risk score: {scores.risk_score}"]
+    risks = [
+        f"Risk score: {scores.risk_score} (measurement status: {scores.risk_status})"
+    ]
+    if scores.risk_status != "measured":
+        risks.append("Missing risk evidence is not equivalent to low risk.")
     if validation_report and validation_report.issues:
         risks.append(f"Validation issues: {len(validation_report.issues)}")
     if audit_report and audit_report.issues:

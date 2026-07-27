@@ -17,6 +17,20 @@ Retired legacy path:
 `/Users/BjornRosinger/Documents/Codex/path-hygiene-compatibility-links/`.
 New work must use the canonical Room16 path above.
 
+## Current Room 16 authority contract
+
+The deterministic layer is the truth boundary. For BSE issuers it ingests the
+official full report in addition to exchange summary tables, carries explicit
+corporate-action adjustment metadata, and blocks when the official financial
+core is incomplete. Technical output distinguishes moving-average alignment
+from an actual cross event. Missing measurements have explicit coverage
+states and are never described as low risk.
+
+Instrument discovery belongs to the product intake layer. Jurisdiction
+adapters belong here and are added only when an actual requested market needs
+one; unsupported markets remain fail-closed instead of receiving vendor
+fundamental substitutes.
+
 This project keeps LLM agents out of the accounting and calculation layer.
 
 Core rule:

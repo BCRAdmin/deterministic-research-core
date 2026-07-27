@@ -21,6 +21,8 @@ class TechnicalMetrics(BaseModel):
     bollinger_lower: Optional[float] = None
     atr_14: Optional[float] = None
     avg_volume_20: Optional[float] = None
+    price_series_basis: str = "unknown"
+    corporate_action_count: int = 0
     distance_to_sma_10_pct: Optional[float] = None
     distance_to_sma_20_pct: Optional[float] = None
     distance_to_sma_50_pct: Optional[float] = None
@@ -36,6 +38,7 @@ class FundamentalMetrics(BaseModel):
     revenue_ttm: Optional[float] = None
     gross_profit_ttm: Optional[float] = None
     operating_income_ttm: Optional[float] = None
+    ebitda_ttm: Optional[float] = None
     net_income_ttm: Optional[float] = None
     operating_cash_flow_ttm: Optional[float] = None
     capex_ttm: Optional[float] = None
@@ -54,11 +57,18 @@ class FundamentalMetrics(BaseModel):
     marketable_securities: Optional[float] = None
     cash_and_investments: Optional[float] = None
     total_debt: Optional[float] = None
+    current_assets: Optional[float] = None
+    current_liabilities: Optional[float] = None
+    equity: Optional[float] = None
     net_cash: Optional[float] = None
     current_ratio: Optional[float] = None
     debt_to_equity: Optional[float] = None
     deferred_revenue: Optional[float] = None
     diluted_share_count: Optional[float] = None
+    listed_share_count: Optional[float] = None
+    treasury_share_count: Optional[float] = None
+    economic_share_count: Optional[float] = None
+    trailing_eps: Optional[float] = None
     diluted_share_count_yoy: Optional[float] = None
     buybacks: Optional[float] = None
 
@@ -67,11 +77,15 @@ class ValuationMetrics(BaseModel):
     market_cap: Optional[float] = None
     enterprise_value: Optional[float] = None
     price_to_fcf: Optional[float] = None
+    fcf_yield: Optional[float] = None
     ev_to_sales: Optional[float] = None
+    ev_to_ebit: Optional[float] = None
+    ev_to_ebitda: Optional[float] = None
     trailing_pe: Optional[float] = None
     forward_pe_consensus: Optional[float] = None
     forward_pe_guidance: Optional[float] = None
     peg_ratio: Optional[float] = None
+    market_cap_share_basis: Optional[str] = None
 
 
 class MetricsPacket(BaseModel):

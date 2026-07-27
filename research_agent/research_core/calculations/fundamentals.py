@@ -102,6 +102,7 @@ def calculate_fundamental_metrics(
     revenue_ttm = _ttm_or_annual_if_present(quarterly, annual, "revenue")
     gross_profit_ttm = _ttm_or_annual_if_present(quarterly, annual, "gross_profit")
     operating_income_ttm = _ttm_or_annual_if_present(quarterly, annual, "operating_income")
+    ebitda_ttm = _ttm_or_annual_if_present(quarterly, annual, "ebitda")
     net_income_ttm = _ttm_or_annual_if_present(quarterly, annual, "net_income")
     operating_cash_flow_ttm = _ttm_or_annual_if_present(quarterly, annual, "operating_cash_flow")
     capex_ttm = _ttm_or_annual_if_present(quarterly, annual, "capex")
@@ -151,6 +152,12 @@ def calculate_fundamental_metrics(
     equity = _optional_float(balance_sheet.get("equity"))
 
     diluted_share_count = _optional_float(share_data.get("diluted_share_count"))
+    listed_share_count = _optional_float(share_data.get("listed_share_count"))
+    treasury_share_count = _optional_float(share_data.get("treasury_share_count"))
+    economic_share_count = _optional_float(share_data.get("economic_share_count"))
+    if economic_share_count is None and listed_share_count is not None:
+        economic_share_count = listed_share_count - (treasury_share_count or 0.0)
+    trailing_eps = safe_divide(net_income_ttm, economic_share_count or diluted_share_count)
     prior_diluted_share_count = _optional_float(share_data.get("diluted_share_count_prior_year"))
     diluted_share_count_yoy = _yoy_change(diluted_share_count, prior_diluted_share_count)
 
@@ -167,6 +174,7 @@ def calculate_fundamental_metrics(
         revenue_ttm=revenue_ttm,
         gross_profit_ttm=gross_profit_ttm,
         operating_income_ttm=operating_income_ttm,
+        ebitda_ttm=ebitda_ttm,
         net_income_ttm=net_income_ttm,
         operating_cash_flow_ttm=operating_cash_flow_ttm,
         capex_ttm=capex_ttm,
@@ -185,11 +193,18 @@ def calculate_fundamental_metrics(
         marketable_securities=marketable_securities,
         cash_and_investments=cash_and_investments,
         total_debt=total_debt,
+        current_assets=current_assets,
+        current_liabilities=current_liabilities,
+        equity=equity,
         net_cash=net_cash(cash_and_equivalents, short_term_investments, marketable_securities, total_debt),
         current_ratio=current_ratio(current_assets, current_liabilities) if current_assets is not None and current_liabilities is not None else None,
         debt_to_equity=debt_to_equity(total_debt, equity) if total_debt is not None and equity is not None else None,
         deferred_revenue=_optional_float(balance_sheet.get("deferred_revenue")),
         diluted_share_count=diluted_share_count,
+        listed_share_count=listed_share_count,
+        treasury_share_count=treasury_share_count,
+        economic_share_count=economic_share_count,
+        trailing_eps=trailing_eps,
         diluted_share_count_yoy=diluted_share_count_yoy,
         buybacks=_optional_float(share_data.get("buybacks")),
     )

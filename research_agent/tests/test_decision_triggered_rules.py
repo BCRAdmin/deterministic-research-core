@@ -21,7 +21,8 @@ def test_decision_packet_records_triggered_rules():
 
     assert "SBC_TO_REVENUE_GT_20" in packet.triggered_rules
     assert "PRICE_BELOW_200SMA" in packet.triggered_rules
-    assert "DEATH_CROSS" in packet.triggered_rules
+    assert "BEARISH_MA_ALIGNMENT" in packet.triggered_rules
+    assert "DEATH_CROSS" not in packet.triggered_rules
     assert "FORWARD_EPS_GUIDANCE_MISMATCH" in packet.triggered_rules
     assert packet.score_version == "v1"
     assert packet.calibration_mode == "live"

@@ -72,10 +72,15 @@ def test_bse_provider_resolves_official_identity_and_ohlcv(monkeypatch):
             "high": 7000.0,
             "low": 6850.0,
             "close": 6950.0,
-            "volume": 8914,
-            "adjusted_close": 6950.0,
-        }
-    ]
+                "volume": 8914,
+                "adjusted_close": 6950.0,
+                "adjusted_open": 6900.0,
+                "adjusted_high": 7000.0,
+                "adjusted_low": 6850.0,
+                "corporate_action_count": 0,
+                "series_adjustment_status": "corporate_action_adjusted",
+            }
+        ]
 
 
 def test_bse_provider_builds_trailing_quarters_without_company_branch(monkeypatch):
