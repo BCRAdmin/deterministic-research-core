@@ -80,6 +80,8 @@ class FundamentalMetrics(BaseModel):
     diluted_share_count_yoy: Optional[float] = None
     buybacks: Optional[float] = None
     dividends_paid: Optional[float] = None
+    shareholder_distributions_ttm: Optional[float] = None
+    shareholder_distributions_minus_fcf_ttm: Optional[float] = None
     depreciation_and_amortization_ttm: Optional[float] = None
     interest_expense_ttm: Optional[float] = None
     operating_income_interest_coverage_ttm: Optional[float] = None

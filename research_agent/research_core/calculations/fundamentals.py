@@ -156,6 +156,28 @@ def calculate_fundamental_metrics(
     elif adjusted_fcf_ttm is not None:
         fcf_ttm = adjusted_fcf_ttm
 
+    distribution_period = _aligned_ttm_bridge_period(
+        fundamentals,
+        "buybacks",
+        "dividends_paid",
+    )
+    shareholder_distributions_ttm = (
+        buybacks_ttm + dividends_paid_ttm
+        if buybacks_ttm is not None
+        and dividends_paid_ttm is not None
+        and distribution_period is not None
+        else None
+    )
+    fcf_period = _free_cash_flow_ttm_period(
+        fundamentals,
+        company_defined_fcf_ttm=company_defined_fcf_ttm,
+        adjusted_fcf_ttm=adjusted_fcf_ttm,
+        operating_cash_flow_ttm=operating_cash_flow_ttm,
+        capex_ttm=capex_ttm,
+        finance_lease_principal_ttm=finance_lease_principal_ttm,
+        fcf_definition=fcf_definition,
+    )
+
     cash_and_equivalents = _optional_float(balance_sheet.get("cash_and_equivalents"))
     short_term_investments = _optional_float(balance_sheet.get("short_term_investments"))
     marketable_securities = _optional_float(balance_sheet.get("marketable_securities"))
@@ -265,6 +287,14 @@ def calculate_fundamental_metrics(
         if buybacks_ttm is not None
         else _optional_float(share_data.get("buybacks")),
         dividends_paid=dividends_paid_ttm,
+        shareholder_distributions_ttm=shareholder_distributions_ttm,
+        shareholder_distributions_minus_fcf_ttm=(
+            shareholder_distributions_ttm - fcf_ttm
+            if shareholder_distributions_ttm is not None
+            and fcf_ttm is not None
+            and distribution_period == fcf_period
+            else None
+        ),
         depreciation_and_amortization_ttm=depreciation_and_amortization_ttm,
         interest_expense_ttm=interest_expense_ttm,
         operating_income_interest_coverage_ttm=safe_divide(
@@ -300,6 +330,62 @@ def _ttm_or_annual_if_present(
     if key in annual and annual[key] is not None:
         return float(annual[key])
     return default
+
+
+def _aligned_ttm_bridge_period(
+    fundamentals: Mapping[str, Any],
+    *metric_names: str,
+) -> Optional[tuple[str, str]]:
+    bridges = fundamentals.get("ttm_bridges")
+    if not isinstance(bridges, Mapping):
+        return None
+    periods: set[tuple[str, str]] = set()
+    for metric_name in metric_names:
+        bridge = bridges.get(metric_name)
+        if not isinstance(bridge, Mapping):
+            return None
+        period_start = str(bridge.get("period_start") or "").strip()
+        period_end = str(bridge.get("period_end") or "").strip()
+        if not period_start or not period_end:
+            return None
+        periods.add((period_start, period_end))
+    return next(iter(periods)) if len(periods) == 1 else None
+
+
+def _free_cash_flow_ttm_period(
+    fundamentals: Mapping[str, Any],
+    *,
+    company_defined_fcf_ttm: Optional[float],
+    adjusted_fcf_ttm: Optional[float],
+    operating_cash_flow_ttm: Optional[float],
+    capex_ttm: Optional[float],
+    finance_lease_principal_ttm: Optional[float],
+    fcf_definition: FCFDefinitionConfig,
+) -> Optional[tuple[str, str]]:
+    if company_defined_fcf_ttm is not None:
+        return _aligned_ttm_bridge_period(
+            fundamentals,
+            "free_cash_flow",
+        )
+    if adjusted_fcf_ttm is not None:
+        return _aligned_ttm_bridge_period(
+            fundamentals,
+            "adjusted_free_cash_flow",
+        )
+    if operating_cash_flow_ttm is None or capex_ttm is None:
+        return None
+    if fcf_definition.company_adjustments:
+        return None
+    if (
+        fcf_definition.subtract_finance_lease_principal_payments
+        and finance_lease_principal_ttm
+    ):
+        return None
+    return _aligned_ttm_bridge_period(
+        fundamentals,
+        "operating_cash_flow",
+        "capex",
+    )
 
 
 def _optional_float(value: Any) -> Optional[float]:

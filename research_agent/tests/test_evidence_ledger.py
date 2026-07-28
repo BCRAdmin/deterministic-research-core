@@ -174,6 +174,10 @@ def test_interest_coverage_is_precomputed_with_auditable_operands():
             revenue_ttm=200.0,
             operating_income_ttm=120.0,
             free_cash_flow_ttm=80.0,
+            buybacks=30.0,
+            dividends_paid=60.0,
+            shareholder_distributions_ttm=90.0,
+            shareholder_distributions_minus_fcf_ttm=10.0,
             interest_expense_ttm=20.0,
             operating_income_interest_coverage_ttm=6.0,
             free_cash_flow_interest_coverage_ttm=4.0,
@@ -192,6 +196,57 @@ def test_interest_coverage_is_precomputed_with_auditable_operands():
         metrics_packet=metrics,
         normalized_fundamentals={"ttm_bridges": {}},
         price_source_id="GENERIC_EXCHANGE",
+        runtime_evidence=[
+            EvidenceItem(
+                evidence_id="GENERIC_BUYBACKS_TTM",
+                ticker="GENERIC",
+                claim_type="financial_metric",
+                source_id="SEC_GENERIC_DERIVED_TTM",
+                source_type="deterministic_calculation",
+                authority_rank=1,
+                statement="Buybacks TTM.",
+                value=30.0,
+                supports_metrics=["buybacks"],
+                formula_id="annual_minus_prior_interim_plus_current_interim",
+                formula_operands={"annual": 35.0, "prior": 10.0, "current": 5.0},
+                normalized_value=30.0,
+                source_lineage=["SEC_GENERIC_FILING_A", "SEC_GENERIC_FILING_B"],
+            ),
+            EvidenceItem(
+                evidence_id="GENERIC_DIVIDENDS_TTM",
+                ticker="GENERIC",
+                claim_type="financial_metric",
+                source_id="SEC_GENERIC_DERIVED_TTM",
+                source_type="deterministic_calculation",
+                authority_rank=1,
+                statement="Dividends TTM.",
+                value=60.0,
+                supports_metrics=["dividends_paid"],
+                formula_id="annual_minus_prior_interim_plus_current_interim",
+                formula_operands={"annual": 55.0, "prior": 10.0, "current": 15.0},
+                normalized_value=60.0,
+                source_lineage=["SEC_GENERIC_FILING_A", "SEC_GENERIC_FILING_C"],
+            ),
+            *[
+                EvidenceItem(
+                    evidence_id=f"RAW_{accession}",
+                    ticker="GENERIC",
+                    claim_type="financial_metric",
+                    source_id=f"SEC_GENERIC_CIK_{accession}",
+                    source_type="sec_filing",
+                    authority_rank=1,
+                    statement=f"Raw filing {accession}.",
+                    value=1.0,
+                    supports_metrics=["raw_operand"],
+                    source_lineage=[accession],
+                )
+                for accession in (
+                    "GENERIC_FILING_A",
+                    "GENERIC_FILING_B",
+                    "GENERIC_FILING_C",
+                )
+            ],
+        ],
     )
     assert evidence
     assert {item.source_type for item in evidence} == {
@@ -233,3 +288,21 @@ def test_interest_coverage_is_precomputed_with_auditable_operands():
         "SEC_GENERIC_DERIVED_TTM",
         "GENERIC_EXCHANGE",
     ]
+    assert by_metric[
+        "shareholder_distributions_ttm"
+    ].formula_operands == {
+        "buybacks": 30.0,
+        "dividends_paid": 60.0,
+    }
+    assert by_metric["shareholder_distributions_ttm"].source_lineage == [
+        "SEC_GENERIC_DERIVED_TTM",
+        "SEC_GENERIC_CIK_GENERIC_FILING_A",
+        "SEC_GENERIC_CIK_GENERIC_FILING_B",
+        "SEC_GENERIC_CIK_GENERIC_FILING_C",
+    ]
+    assert by_metric[
+        "shareholder_distributions_minus_fcf_ttm"
+    ].formula_operands == {
+        "shareholder_distributions_ttm": 90.0,
+        "free_cash_flow_ttm": 80.0,
+    }

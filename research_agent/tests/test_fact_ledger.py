@@ -41,6 +41,8 @@ def _fact_inputs():
                 "close": 100.0,
                 "revenue_ttm": 1_000.0,
                 "free_cash_flow_ttm": 100.0,
+                "shareholder_distributions_ttm": 125.0,
+                "shareholder_distributions_minus_fcf_ttm": 25.0,
                 "ev_to_sales": 2.0,
                 "sbc_to_revenue": 0.05,
             },
@@ -122,6 +124,35 @@ def _fact_inputs():
                     [],
                 ),
                 (
+                    "shareholder_distributions_ttm",
+                    125.0,
+                    "USD",
+                    "TTM",
+                    "financial_metric",
+                    sec_source,
+                    "sec_filing",
+                    1,
+                    "buybacks_ttm_plus_dividends_paid_ttm",
+                    {"buybacks": 50.0, "dividends_paid": 75.0},
+                    [],
+                ),
+                (
+                    "shareholder_distributions_minus_fcf_ttm",
+                    25.0,
+                    "USD",
+                    "TTM",
+                    "financial_metric",
+                    sec_source,
+                    "sec_filing",
+                    1,
+                    "shareholder_distributions_ttm_minus_free_cash_flow_ttm",
+                    {
+                        "shareholder_distributions_ttm": 125.0,
+                        "free_cash_flow_ttm": 100.0,
+                    },
+                    [],
+                ),
+                (
                     "ev_to_sales",
                     2.0,
                     "multiple",
@@ -192,6 +223,12 @@ def test_fact_ledger_binds_exact_values_formulas_and_sources():
         "GENERIC_EXCHANGE",
     ]
     assert facts["sbc_to_revenue"]["unit"] == "fraction (1.0 = 100%)"
+    assert facts[
+        "shareholder_distributions_minus_fcf_ttm"
+    ]["formula_operands"] == {
+        "free_cash_flow_ttm": 100.0,
+        "shareholder_distributions_ttm": 125.0,
+    }
     assert {source["source_type"] for source in payload["sources"]} == {
         "SEC",
         "PRICE_VENDOR",

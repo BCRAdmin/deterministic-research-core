@@ -5,6 +5,7 @@ from research_agent.audit.report_linter import audit_markdown_report
 from research_agent.content.claim_generator import claim_quality_metrics, generate_research_claims
 from research_agent.content.report_composer import compose_research_report
 from research_agent.decision.decision_packet import DecisionPacket
+from research_agent.evidence.evidence_item import EvidenceItem
 from research_agent.evidence.evidence_ledger import EvidenceLedger
 from research_agent.quality.quality_score import calculate_quality_score
 from research_agent.research_core.models.data_packet import DataPacket
@@ -52,6 +53,61 @@ def test_content_generator_creates_minimum_evidence_mapped_claims():
         "rsi_14",
     ]
     assert technical_claim.metric_values["sma_200"] == metrics.technical.sma_200
+
+
+def test_content_generator_uses_precomputed_distribution_comparison():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    metrics.fundamentals.shareholder_distributions_ttm = 90.0
+    metrics.fundamentals.shareholder_distributions_minus_fcf_ttm = 10.0
+    ledger.evidence_items.extend(
+        [
+            EvidenceItem(
+                evidence_id=f"SNOW_{metric.upper()}",
+                ticker="SNOW",
+                claim_type="financial_metric",
+                source_id="SEC_SNOW_DERIVED_TTM",
+                source_type="deterministic_calculation",
+                authority_rank=1,
+                statement=f"{metric} was precomputed.",
+                value=value,
+                unit="usd",
+                period="TTM",
+                date=data.as_of_date,
+                supports_metrics=[metric],
+                formula_id=formula_id,
+                formula_operands=operands,
+            )
+            for metric, value, formula_id, operands in [
+                (
+                    "shareholder_distributions_ttm",
+                    90.0,
+                    "buybacks_ttm_plus_dividends_paid_ttm",
+                    {"buybacks": 30.0, "dividends_paid": 60.0},
+                ),
+                (
+                    "shareholder_distributions_minus_fcf_ttm",
+                    10.0,
+                    "shareholder_distributions_ttm_minus_free_cash_flow_ttm",
+                    {
+                        "shareholder_distributions_ttm": 90.0,
+                        "free_cash_flow_ttm": 80.0,
+                    },
+                ),
+            ]
+        ]
+    )
+
+    claims = generate_research_claims(data, metrics, ledger, decision, validation)
+    claim = next(
+        item for item in claims
+        if "arithmetic comparison" in item.claim
+    )
+
+    assert claim.metric_values == {
+        "shareholder_distributions_ttm": 90.0,
+        "shareholder_distributions_minus_fcf_ttm": 10.0,
+    }
+    assert "does not identify a funding source" in claim.claim
 
 
 def test_composed_claim_report_can_pass_quality_when_audit_is_clean():

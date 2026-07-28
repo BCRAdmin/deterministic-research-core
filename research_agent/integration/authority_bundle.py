@@ -55,6 +55,10 @@ MATERIAL_METRIC_KEYS = {
     "operating_cash_flow_ttm",
     "capex_ttm",
     "free_cash_flow_ttm",
+    "buybacks",
+    "dividends_paid",
+    "shareholder_distributions_ttm",
+    "shareholder_distributions_minus_fcf_ttm",
     "sbc_ttm",
     "cash_and_investments",
     "total_debt",
@@ -433,6 +437,10 @@ def _assess_packets(
             "operating_cash_flow_ttm",
             "capex_ttm",
             "free_cash_flow_ttm",
+            "buybacks",
+            "dividends_paid",
+            "shareholder_distributions_ttm",
+            "shareholder_distributions_minus_fcf_ttm",
             "sbc_ttm",
         )
         if fundamentals.get(name) is not None

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Iterable, List, Optional, Union
+from typing import Iterable, List, Mapping, Optional, Union
 
 from pydantic import BaseModel, Field
 
@@ -247,6 +247,32 @@ def build_fundamental_derivation_evidence(
             )
         )
     fundamentals = metrics_packet.fundamentals
+    distribution_period = _common_bridge_period(
+        bridges,
+        "buybacks",
+        "dividends_paid",
+    )
+    distribution_period_text = (
+        f"{distribution_period[0]}..{distribution_period[1]}"
+        if distribution_period
+        else f"TTM through {as_of_date}"
+    )
+    distribution_period_end = (
+        distribution_period[1]
+        if distribution_period
+        else as_of_date
+    )
+    fcf_period = _common_bridge_period(
+        bridges,
+        "operating_cash_flow",
+        "capex",
+    )
+    fcf_period_text = (
+        f"{fcf_period[0]}..{fcf_period[1]}"
+        if fcf_period
+        else f"TTM through {as_of_date}"
+    )
+    fcf_period_end = fcf_period[1] if fcf_period else as_of_date
     debt_components = {
         metric_name: float(value)
         for metric_name, value in (
@@ -368,8 +394,8 @@ def build_fundamental_derivation_evidence(
                 ),
                 value=float(fundamentals.sbc_to_revenue),
                 unit="fraction",
-                period=f"TTM through {as_of_date}",
-                date=as_of_date,
+                period=fcf_period_text,
+                date=fcf_period_end,
                 supports_metrics=["sbc_to_revenue"],
                 confidence="high",
                 formula_id="sbc_ttm_divided_by_revenue_ttm",
@@ -413,13 +439,107 @@ def build_fundamental_derivation_evidence(
                 ),
                 value=float(fundamentals.free_cash_flow_ttm),
                 unit="usd",
-                period=f"TTM through {as_of_date}",
-                date=as_of_date,
+                period=fcf_period_text,
+                date=fcf_period_end,
                 supports_metrics=["free_cash_flow_ttm", "free_cash_flow"],
                 confidence="high",
                 formula_id=formula_id,
                 formula_operands=operands,
                 normalized_value=float(fundamentals.free_cash_flow_ttm),
+                source_lineage=_operand_source_lineage(
+                    [*runtime_items, *evidence],
+                    operands,
+                    fallback_source_id=source_id,
+                ),
+            )
+        )
+    if (
+        fundamentals.shareholder_distributions_ttm is not None
+        and fundamentals.buybacks is not None
+        and fundamentals.dividends_paid is not None
+    ):
+        operands = {
+            "buybacks": float(fundamentals.buybacks),
+            "dividends_paid": float(fundamentals.dividends_paid),
+        }
+        evidence.append(
+            EvidenceItem(
+                evidence_id=(
+                    f"{ticker.upper()}_DETERMINISTIC_"
+                    f"SHAREHOLDER_DISTRIBUTIONS_TTM_{as_of_date}"
+                ),
+                ticker=ticker.upper(),
+                claim_type="financial_metric",
+                source_id=source_id,
+                source_type="deterministic_calculation",
+                authority_rank=1,
+                statement=(
+                    "shareholder_distributions_ttm="
+                    f"{fundamentals.shareholder_distributions_ttm:g} was "
+                    "derived as buybacks plus dividends_paid."
+                ),
+                value=float(fundamentals.shareholder_distributions_ttm),
+                unit="usd",
+                period=distribution_period_text,
+                date=distribution_period_end,
+                supports_metrics=["shareholder_distributions_ttm"],
+                confidence="high",
+                formula_id="buybacks_ttm_plus_dividends_paid_ttm",
+                formula_operands=operands,
+                normalized_value=float(
+                    fundamentals.shareholder_distributions_ttm
+                ),
+                source_lineage=_operand_source_lineage(
+                    [*runtime_items, *evidence],
+                    operands,
+                    fallback_source_id=source_id,
+                ),
+            )
+        )
+    if (
+        fundamentals.shareholder_distributions_minus_fcf_ttm is not None
+        and fundamentals.shareholder_distributions_ttm is not None
+        and fundamentals.free_cash_flow_ttm is not None
+    ):
+        operands = {
+            "shareholder_distributions_ttm": float(
+                fundamentals.shareholder_distributions_ttm
+            ),
+            "free_cash_flow_ttm": float(fundamentals.free_cash_flow_ttm),
+        }
+        evidence.append(
+            EvidenceItem(
+                evidence_id=(
+                    f"{ticker.upper()}_DETERMINISTIC_"
+                    f"SHAREHOLDER_DISTRIBUTIONS_MINUS_FCF_TTM_{as_of_date}"
+                ),
+                ticker=ticker.upper(),
+                claim_type="financial_metric",
+                source_id=source_id,
+                source_type="deterministic_calculation",
+                authority_rank=1,
+                statement=(
+                    "shareholder_distributions_minus_fcf_ttm="
+                    f"{fundamentals.shareholder_distributions_minus_fcf_ttm:g} "
+                    "was derived as shareholder distributions minus FCF."
+                ),
+                value=float(
+                    fundamentals.shareholder_distributions_minus_fcf_ttm
+                ),
+                unit="usd",
+                period=distribution_period_text,
+                date=distribution_period_end,
+                supports_metrics=[
+                    "shareholder_distributions_minus_fcf_ttm"
+                ],
+                confidence="high",
+                formula_id=(
+                    "shareholder_distributions_ttm_minus_free_cash_flow_ttm"
+                ),
+                formula_operands=operands,
+                normalized_value=float(
+                    fundamentals.shareholder_distributions_minus_fcf_ttm
+                ),
                 source_lineage=_operand_source_lineage(
                     [*runtime_items, *evidence],
                     operands,
@@ -714,11 +834,12 @@ def _operand_source_lineage(
     *,
     fallback_source_id: str,
 ) -> list[str]:
+    items = list(evidence_items)
     source_ids: list[str] = []
     for metric_name, value in operands.items():
         matches = [
             item
-            for item in evidence_items
+            for item in items
             if metric_name in item.supports_metrics
             and item.value is not None
             and abs(float(item.value) - value)
@@ -730,19 +851,73 @@ def _operand_source_lineage(
                 or (item.date and item.period)
             )
         ]
+        if not matches:
+            continue
+        best_match = sorted(
+            matches,
+            key=lambda item: (
+                0 if item.formula_id and item.formula_operands else 1,
+                0 if item.source_lineage else 1,
+                0 if item.normalized_value is not None else 1,
+                item.authority_rank,
+                item.evidence_id,
+            ),
+        )[0]
         source_ids.extend(
-            item.source_id
-            for item in sorted(
-                matches,
-                key=lambda item: (
-                    item.date or "",
-                    -item.authority_rank,
-                    item.evidence_id,
-                ),
-                reverse=True,
-            )[:1]
+            _canonical_lineage_source_ids(
+                items,
+                [best_match.source_id, *best_match.source_lineage],
+            )
         )
     return list(dict.fromkeys(source_ids)) or [fallback_source_id]
+
+
+def _common_bridge_period(
+    bridges: Mapping[str, object],
+    *metric_names: str,
+) -> Optional[tuple[str, str]]:
+    periods: set[tuple[str, str]] = set()
+    for metric_name in metric_names:
+        bridge = bridges.get(metric_name)
+        if not isinstance(bridge, Mapping):
+            return None
+        period_start = str(bridge.get("period_start") or "").strip()
+        period_end = str(bridge.get("period_end") or "").strip()
+        if not period_start or not period_end:
+            return None
+        periods.add((period_start, period_end))
+    return next(iter(periods)) if len(periods) == 1 else None
+
+
+def _canonical_lineage_source_ids(
+    evidence_items: Iterable[EvidenceItem],
+    lineage: Iterable[str],
+) -> list[str]:
+    known_source_ids = {
+        item.source_id
+        for item in evidence_items
+        if item.source_id
+    }
+    resolved: list[str] = []
+    for raw_source_id in lineage:
+        source_id = str(raw_source_id or "").strip()
+        if not source_id:
+            continue
+        if source_id in known_source_ids:
+            resolved.append(source_id)
+            continue
+        suffix = source_id.removeprefix("SEC_")
+        suffix_matches = sorted(
+            candidate
+            for candidate in known_source_ids
+            if suffix and candidate.endswith(suffix)
+        )
+        resolved.append(
+            suffix_matches[0]
+            if len(suffix_matches) == 1
+            else source_id
+        )
+    return list(dict.fromkeys(resolved))
 
 
 def save_evidence_ledger(ledger: EvidenceLedger, path: Union[str, Path]) -> Path:
@@ -835,7 +1010,15 @@ def _unit_for_metric(metric_name: str) -> Optional[str]:
         return "percent"
     if "eps" in metric_name:
         return "usd_per_share"
-    if metric_name in {"revenue_ttm", "free_cash_flow_ttm", "cash_and_investments", "total_debt", "net_cash"}:
+    if metric_name in {
+        "revenue_ttm",
+        "free_cash_flow_ttm",
+        "shareholder_distributions_ttm",
+        "shareholder_distributions_minus_fcf_ttm",
+        "cash_and_investments",
+        "total_debt",
+        "net_cash",
+    }:
         return "usd"
     return None
 

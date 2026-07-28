@@ -55,6 +55,10 @@ def _packet_set(root: Path, ticker: str = "GENERIC", as_of: str = "2026-07-01") 
                 "operating_cash_flow_ttm": 120_000_000.0,
                 "capex_ttm": 20_000_000.0,
                 "free_cash_flow_formula": "cfo_minus_capex",
+                "buybacks": 50_000_000.0,
+                "dividends_paid": 75_000_000.0,
+                "shareholder_distributions_ttm": 125_000_000.0,
+                "shareholder_distributions_minus_fcf_ttm": 25_000_000.0,
             },
             "valuation": {"price_to_fcf": 20.0},
         },
@@ -91,6 +95,10 @@ def _packet_set(root: Path, ticker: str = "GENERIC", as_of: str = "2026-07-01") 
         "free_cash_flow_ttm",
         "operating_cash_flow_ttm",
         "capex_ttm",
+        "buybacks",
+        "dividends_paid",
+        "shareholder_distributions_ttm",
+        "shareholder_distributions_minus_fcf_ttm",
     ]
     _write_json(
         packet_dir / "evidence_ledger.json",

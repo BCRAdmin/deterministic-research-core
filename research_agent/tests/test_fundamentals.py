@@ -54,6 +54,8 @@ def test_calculate_fundamental_metrics_builds_ttm_margins_and_fcf():
                 "finance_lease_principal_payments": [1, 1, 1, 1],
                 "sbc": [4, 4, 5, 5],
                 "interest_expense": [1, 1, 1, 1],
+                "buybacks": [2, 3, 4, 5],
+                "dividends_paid": [6, 7, 8, 9],
             },
             "balance_sheet": {
                 "cash_and_equivalents": 40,
@@ -74,6 +76,18 @@ def test_calculate_fundamental_metrics_builds_ttm_margins_and_fcf():
             },
             "non_gaap_operating_income_ttm": 80,
             "free_cash_flow_definition_basis": "issuer_defined",
+            "ttm_bridges": {
+                metric: {
+                    "period_start": "2025-04-01",
+                    "period_end": "2026-03-31",
+                }
+                for metric in (
+                    "operating_cash_flow",
+                    "capex",
+                    "buybacks",
+                    "dividends_paid",
+                )
+            },
         },
         FCFDefinitionConfig(),
     )
@@ -84,12 +98,74 @@ def test_calculate_fundamental_metrics_builds_ttm_margins_and_fcf():
     assert metrics.free_cash_flow_definition_basis == "issuer_defined"
     assert metrics.operating_income_interest_coverage_ttm == 52 / 4
     assert metrics.free_cash_flow_interest_coverage_ttm == 76 / 4
+    assert metrics.shareholder_distributions_ttm == 44
+    assert metrics.shareholder_distributions_minus_fcf_ttm == -32
     assert metrics.gross_margin_ttm == 322 / 460
     assert metrics.net_cash == 40
     assert metrics.current_ratio == 2
     assert metrics.debt_to_equity == 0.075
     assert metrics.sbc_to_non_gaap_operating_income == 18 / 80
     assert metrics.economic_share_count == 98
+
+
+def test_shareholder_distributions_require_both_ttm_components():
+    metrics = calculate_fundamental_metrics(
+        {
+            "quarterly": {
+                "operating_cash_flow": [20, 20, 20, 20],
+                "capex": [5, 5, 5, 5],
+                "buybacks": [1, 1, 1, 1],
+            },
+            "share_data": {"buybacks": 99},
+        }
+    )
+
+    assert metrics.buybacks == 4
+    assert metrics.dividends_paid is None
+    assert metrics.shareholder_distributions_ttm is None
+    assert metrics.shareholder_distributions_minus_fcf_ttm is None
+
+
+def test_shareholder_distribution_comparison_rejects_mixed_periods():
+    shared = {
+        "quarterly": {
+            "operating_cash_flow": [20, 20, 20, 20],
+            "capex": [5, 5, 5, 5],
+            "buybacks": [1, 1, 1, 1],
+            "dividends_paid": [1, 1, 1, 1],
+        },
+        "ttm_bridges": {
+            metric: {
+                "period_start": "2025-04-01",
+                "period_end": "2026-03-31",
+            }
+            for metric in (
+                "operating_cash_flow",
+                "capex",
+                "buybacks",
+                "dividends_paid",
+            )
+        },
+    }
+    shared["ttm_bridges"]["dividends_paid"] = {
+        "period_start": "2025-01-01",
+        "period_end": "2025-12-31",
+    }
+
+    mixed_distributions = calculate_fundamental_metrics(shared)
+    assert mixed_distributions.shareholder_distributions_ttm is None
+
+    shared["ttm_bridges"]["dividends_paid"] = {
+        "period_start": "2025-04-01",
+        "period_end": "2026-03-31",
+    }
+    shared["ttm_bridges"]["capex"] = {
+        "period_start": "2025-01-01",
+        "period_end": "2025-12-31",
+    }
+    mixed_fcf = calculate_fundamental_metrics(shared)
+    assert mixed_fcf.shareholder_distributions_ttm == 8
+    assert mixed_fcf.shareholder_distributions_minus_fcf_ttm is None
 
 
 def test_debt_to_equity_is_not_reported_for_non_positive_equity():

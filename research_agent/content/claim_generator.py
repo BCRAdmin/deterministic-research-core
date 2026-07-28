@@ -160,6 +160,42 @@ class _ClaimBuilder:
             counterargument="FCF may be company-defined or period-sensitive and can require reconciliation review.",
             implication="FCF quality supports the thesis only if no sanity guard blocks the report.",
         )
+        if (
+            self.metrics.fundamentals.shareholder_distributions_ttm
+            is not None
+            and (
+                self.metrics.fundamentals
+                .shareholder_distributions_minus_fcf_ttm
+                is not None
+            )
+        ):
+            self.add(
+                "Fundamental Analysis",
+                "fundamental",
+                "financial_metric",
+                (
+                    "TTM shareholder distributions are "
+                    f"{_money(self.metrics.fundamentals.shareholder_distributions_ttm)}; "
+                    "distributions minus FCF are "
+                    f"{_money(self.metrics.fundamentals.shareholder_distributions_minus_fcf_ttm)}. "
+                    "This is an arithmetic comparison and does not identify a "
+                    "funding source."
+                ),
+                [
+                    "shareholder_distributions_ttm",
+                    "shareholder_distributions_minus_fcf_ttm",
+                ],
+                "high",
+                "high",
+                counterargument=(
+                    "A positive difference does not by itself prove debt-funded "
+                    "or cash-funded distributions."
+                ),
+                implication=(
+                    "Capital-return sustainability should be discussed without "
+                    "inventing a financing bridge."
+                ),
+            )
         self.add(
             "Fundamental Analysis",
             "fundamental",
