@@ -219,7 +219,7 @@ def build_fundamental_derivation_evidence(
                 ticker=ticker.upper(),
                 claim_type="financial_metric",
                 source_id=source_id,
-                source_type="sec_filing",
+                source_type="deterministic_calculation",
                 authority_rank=1,
                 statement=(
                     f"{metric_name}={value:g} was derived deterministically "
@@ -272,7 +272,7 @@ def build_fundamental_derivation_evidence(
                 ticker=ticker.upper(),
                 claim_type="financial_metric",
                 source_id=source_id,
-                source_type="sec_filing",
+                source_type="deterministic_calculation",
                 authority_rank=1,
                 statement=(
                     f"total_debt={fundamentals.total_debt:g} was derived from "
@@ -288,7 +288,7 @@ def build_fundamental_derivation_evidence(
                 formula_operands=debt_components,
                 normalized_value=float(fundamentals.total_debt),
                 source_lineage=_operand_source_lineage(
-                    runtime_items,
+                    [*runtime_items, *evidence],
                     debt_components,
                     fallback_source_id=source_id,
                 ),
@@ -320,7 +320,7 @@ def build_fundamental_derivation_evidence(
                 ticker=ticker.upper(),
                 claim_type="financial_metric",
                 source_id=source_id,
-                source_type="sec_filing",
+                source_type="deterministic_calculation",
                 authority_rank=1,
                 statement=(
                     f"net_cash={fundamentals.net_cash:g} was calculated from "
@@ -336,7 +336,7 @@ def build_fundamental_derivation_evidence(
                 formula_operands=operands,
                 normalized_value=float(fundamentals.net_cash),
                 source_lineage=_operand_source_lineage(
-                    runtime_items,
+                    [*runtime_items, *evidence],
                     operands,
                     fallback_source_id=source_id,
                 ),
@@ -360,7 +360,7 @@ def build_fundamental_derivation_evidence(
                 ticker=ticker.upper(),
                 claim_type="financial_metric",
                 source_id=source_id,
-                source_type="sec_filing",
+                source_type="deterministic_calculation",
                 authority_rank=1,
                 statement=(
                     f"sbc_to_revenue={fundamentals.sbc_to_revenue:g} was "
@@ -376,7 +376,7 @@ def build_fundamental_derivation_evidence(
                 formula_operands=operands,
                 normalized_value=float(fundamentals.sbc_to_revenue),
                 source_lineage=_operand_source_lineage(
-                    runtime_items,
+                    [*runtime_items, *evidence],
                     operands,
                     fallback_source_id=source_id,
                 ),
@@ -405,7 +405,7 @@ def build_fundamental_derivation_evidence(
                 ticker=ticker.upper(),
                 claim_type="financial_metric",
                 source_id=source_id,
-                source_type="sec_filing",
+                source_type="deterministic_calculation",
                 authority_rank=1,
                 statement=(
                     f"free_cash_flow_ttm={fundamentals.free_cash_flow_ttm:g} "
@@ -420,6 +420,11 @@ def build_fundamental_derivation_evidence(
                 formula_id=formula_id,
                 formula_operands=operands,
                 normalized_value=float(fundamentals.free_cash_flow_ttm),
+                source_lineage=_operand_source_lineage(
+                    [*runtime_items, *evidence],
+                    operands,
+                    fallback_source_id=source_id,
+                ),
             )
         )
     if (
@@ -440,7 +445,7 @@ def build_fundamental_derivation_evidence(
                 ticker=ticker.upper(),
                 claim_type="financial_metric",
                 source_id=source_id,
-                source_type="sec_filing",
+                source_type="deterministic_calculation",
                 authority_rank=1,
                 statement=(
                     "free_cash_flow_conversion_ttm="
@@ -457,6 +462,11 @@ def build_fundamental_derivation_evidence(
                 formula_operands=operands,
                 normalized_value=float(
                     fundamentals.free_cash_flow_conversion_ttm
+                ),
+                source_lineage=_operand_source_lineage(
+                    [*runtime_items, *evidence],
+                    operands,
+                    fallback_source_id=source_id,
                 ),
             )
         )
@@ -511,6 +521,11 @@ def build_fundamental_derivation_evidence(
                 formula_id=formula_id,
                 formula_operands=operands,
                 normalized_value=float(value),
+                source_lineage=_operand_source_lineage(
+                    [*runtime_items, *evidence],
+                    operands,
+                    fallback_source_id=source_id,
+                ),
             )
         )
     valuation = metrics_packet.valuation
@@ -546,7 +561,18 @@ def build_fundamental_derivation_evidence(
                 formula_id="close_times_point_in_time_shares",
                 formula_operands=operands,
                 normalized_value=float(valuation.market_cap),
-                source_lineage=valuation_lineage,
+                source_lineage=list(
+                    dict.fromkeys(
+                        [
+                            *valuation_lineage,
+                            *_operand_source_lineage(
+                                [*runtime_items, *evidence],
+                                operands,
+                                fallback_source_id=source_id,
+                            ),
+                        ]
+                    )
+                ),
             )
         )
     if (
@@ -592,7 +618,18 @@ def build_fundamental_derivation_evidence(
                 formula_id="market_cap_plus_debt_minus_liquid_assets",
                 formula_operands=operands,
                 normalized_value=float(valuation.enterprise_value),
-                source_lineage=valuation_lineage,
+                source_lineage=list(
+                    dict.fromkeys(
+                        [
+                            *valuation_lineage,
+                            *_operand_source_lineage(
+                                [*runtime_items, *evidence],
+                                operands,
+                                fallback_source_id=source_id,
+                            ),
+                        ]
+                    )
+                ),
             )
         )
     ratio_metrics = (
@@ -639,7 +676,7 @@ def build_fundamental_derivation_evidence(
                 ticker=ticker.upper(),
                 claim_type="valuation_metric",
                 source_id=source_id,
-                source_type="sec_filing",
+                source_type="deterministic_calculation",
                 authority_rank=1,
                 statement=(
                     f"{metric_name}={value:g} was calculated with "
@@ -654,7 +691,18 @@ def build_fundamental_derivation_evidence(
                 formula_id=formula_id,
                 formula_operands=operands,
                 normalized_value=float(value),
-                source_lineage=valuation_lineage,
+                source_lineage=list(
+                    dict.fromkeys(
+                        [
+                            *valuation_lineage,
+                            *_operand_source_lineage(
+                                [*runtime_items, *evidence],
+                                operands,
+                                fallback_source_id=source_id,
+                            ),
+                        ]
+                    )
+                ),
             )
         )
     return evidence

@@ -193,6 +193,10 @@ def test_interest_coverage_is_precomputed_with_auditable_operands():
         normalized_fundamentals={"ttm_bridges": {}},
         price_source_id="GENERIC_EXCHANGE",
     )
+    assert evidence
+    assert {item.source_type for item in evidence} == {
+        "deterministic_calculation"
+    }
     by_metric = {
         item.supports_metrics[0]: item
         for item in evidence
