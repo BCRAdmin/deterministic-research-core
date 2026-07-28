@@ -121,6 +121,17 @@ def _packet_set(root: Path, ticker: str = "GENERIC", as_of: str = "2026-07-01") 
         },
     )
     _write_json(
+        packet_dir / "fact_ledger.json",
+        {
+            "contract_id": "room16-canonical-fact-ledger",
+            "contract_version": 1,
+            "ticker": ticker,
+            "report_asof": as_of,
+            "claims": [{"claim_id": f"{ticker}_FACT_CLOSE"}],
+            "sources": [],
+        },
+    )
+    _write_json(
         registry_path,
         {
             "registry_id": f"{ticker}_{as_of}",
@@ -179,6 +190,20 @@ def test_authority_bundle_fails_when_validation_blocks(tmp_path: Path) -> None:
 
     assert manifest["analysis_allowed"] is False
     assert "deterministic_validation_clean" in manifest["blocking_failures"]
+
+
+def test_authority_bundle_blocks_when_fact_ledger_is_missing(tmp_path: Path) -> None:
+    packet_dir, registry_path = _packet_set(tmp_path)
+    (packet_dir / "fact_ledger.json").unlink()
+
+    manifest = build_authority_bundle(
+        packet_dir=packet_dir,
+        source_registry_path=registry_path,
+        output_dir=tmp_path / "bundle",
+    )
+
+    assert manifest["analysis_allowed"] is False
+    assert "canonical_fact_ledger_present" in manifest["blocking_failures"]
 
 
 def test_authority_bundle_detects_tampering(tmp_path: Path) -> None:

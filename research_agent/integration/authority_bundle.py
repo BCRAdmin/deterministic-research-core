@@ -515,6 +515,10 @@ def build_authority_bundle(
     )
     source_paths["source_registry"] = registry_path
     payloads["source_registry"] = _read_json(registry_path)
+    if fact_ledger_path is None:
+        adjacent_fact_ledger = source_dir / "fact_ledger.json"
+        if adjacent_fact_ledger.is_file():
+            fact_ledger_path = adjacent_fact_ledger
     if fact_ledger_path:
         ledger_path = Path(fact_ledger_path).expanduser().resolve()
         source_paths["fact_ledger"] = ledger_path
@@ -527,6 +531,12 @@ def build_authority_bundle(
         decision_packet=payloads["decision_packet"],
         source_registry=payloads["source_registry"],
         evidence_ledger=payloads["evidence_ledger"],
+    )
+    _check(
+        checks,
+        "canonical_fact_ledger_present",
+        "fact_ledger" in payloads,
+        detail=str(source_paths.get("fact_ledger") or ""),
     )
     if "fact_ledger" in payloads:
         fact_ledger = payloads["fact_ledger"]
@@ -612,11 +622,10 @@ def verify_authority_bundle(bundle_dir: str | Path) -> dict[str, Any]:
     artifacts = manifest.get("artifacts")
     artifacts = artifacts if isinstance(artifacts, Mapping) else {}
     payloads: dict[str, dict[str, Any]] = {}
-    optional_roles = ("fact_ledger",) if "fact_ledger" in artifacts else ()
     for role in (
         *REQUIRED_PACKET_FILES.keys(),
         "source_registry",
-        *optional_roles,
+        "fact_ledger",
         "validated_context",
     ):
         item = artifacts.get(role)
