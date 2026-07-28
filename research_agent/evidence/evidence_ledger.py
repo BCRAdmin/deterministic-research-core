@@ -89,6 +89,7 @@ def build_technical_derivation_evidence(
     metrics_packet: MetricsPacket,
     source_registry: Optional[SourceRegistry],
     runtime_evidence: Iterable[EvidenceItem] = (),
+    currency: str = "USD",
 ) -> list[EvidenceItem]:
     """Map calculated technical values back to one registered OHLCV source."""
 
@@ -124,10 +125,11 @@ def build_technical_derivation_evidence(
         key=lambda item: (item[0], item[1]),
     )[0]
     technical = metrics_packet.technical
+    currency = str(currency or "USD").strip().upper()
     metric_units = {
-        "close": "USD",
-        "sma_50": "USD",
-        "sma_200": "USD",
+        "close": currency,
+        "sma_50": currency,
+        "sma_200": currency,
         "rsi_14": "index",
         "avg_volume_20": "shares",
     }
@@ -174,6 +176,7 @@ def build_fundamental_derivation_evidence(
     normalized_fundamentals: dict,
     price_source_id: Optional[str] = None,
     runtime_evidence: Iterable[EvidenceItem] = (),
+    currency: str = "USD",
 ) -> list[EvidenceItem]:
     """Keep every material TTM transformation and its operands auditable."""
 
@@ -186,6 +189,7 @@ def build_fundamental_derivation_evidence(
         valuation_lineage.append(price_source_id)
     evidence: list[EvidenceItem] = []
     runtime_items = list(runtime_evidence)
+    currency = str(currency or "USD").strip().upper()
     for raw_metric, bridge in sorted(bridges.items()):
         if not isinstance(bridge, dict):
             continue
@@ -211,6 +215,22 @@ def build_fundamental_derivation_evidence(
             if isinstance(value, (int, float))
         }
         formula_id = str(bridge.get("formula_id") or "unknown_ttm_formula")
+        if not _bridge_value_matches(
+            value=float(value),
+            formula_id=formula_id,
+            operands=operands,
+        ) or not _bridge_operands_have_exact_evidence(
+            runtime_items,
+            metric_name=str(raw_metric),
+            formula_id=formula_id,
+            operands=operands,
+            source_ids=[
+                str(item)
+                for item in bridge.get("source_ids") or []
+                if item
+            ],
+        ):
+            continue
         evidence.append(
             EvidenceItem(
                 evidence_id=(
@@ -274,6 +294,232 @@ def build_fundamental_derivation_evidence(
         else f"TTM through {as_of_date}"
     )
     fcf_period_end = fcf_period[1] if fcf_period else as_of_date
+    growth_bridge = normalized_fundamentals.get(
+        "revenue_growth_yoy_bridge"
+    )
+    if (
+        fundamentals.revenue_growth_yoy is not None
+        and isinstance(growth_bridge, Mapping)
+    ):
+        operands = {
+            str(key): float(value)
+            for key, value in (growth_bridge.get("operands") or {}).items()
+            if isinstance(value, (int, float))
+        }
+        prior_revenue = operands.get("prior_annual_revenue")
+        current_revenue = operands.get("current_annual_revenue")
+        expected_growth = (
+            (current_revenue - prior_revenue) / prior_revenue
+            if current_revenue is not None
+            and prior_revenue not in (None, 0)
+            else None
+        )
+        if (
+            expected_growth is not None
+            and math.isclose(
+                expected_growth,
+                float(fundamentals.revenue_growth_yoy),
+                rel_tol=1e-9,
+                abs_tol=1e-9,
+            )
+            and _bridge_operands_have_exact_evidence(
+                runtime_items,
+                metric_name="revenue",
+                formula_id="annual_revenue_yoy_growth",
+                operands=operands,
+                source_ids=[
+                    str(item)
+                    for item in growth_bridge.get("source_ids") or []
+                    if item
+                ],
+            )
+        ):
+            evidence.append(
+                _calculation_evidence(
+                    ticker=ticker,
+                    as_of_date=as_of_date,
+                    source_id=source_id,
+                    metric_name="revenue_growth_yoy",
+                    value=float(fundamentals.revenue_growth_yoy),
+                    formula_id=str(
+                        growth_bridge.get("formula_id")
+                        or "annual_revenue_yoy_growth"
+                    ),
+                    operands=operands,
+                    unit="fraction",
+                    period=(
+                        f"{growth_bridge.get('period_start') or 'unknown'}"
+                        f"..{growth_bridge.get('period_end') or as_of_date}"
+                    ),
+                    date=str(
+                        growth_bridge.get("period_end") or as_of_date
+                    ),
+                    evidence_items=[*runtime_items, *evidence],
+                    source_lineage=_canonical_lineage_source_ids(
+                        [*runtime_items, *evidence],
+                        [
+                            str(item)
+                            for item in growth_bridge.get("source_ids") or []
+                        ],
+                    ),
+                )
+            )
+    if (
+        fundamentals.ebitda_ttm is not None
+        and fundamentals.operating_income_ttm is not None
+        and fundamentals.depreciation_and_amortization_ttm is not None
+        and math.isclose(
+            float(fundamentals.ebitda_ttm),
+            float(fundamentals.operating_income_ttm)
+            + float(fundamentals.depreciation_and_amortization_ttm),
+            rel_tol=1e-9,
+            abs_tol=1e-9,
+        )
+        and _operands_have_exact_evidence(
+            [*runtime_items, *evidence],
+            {
+                "operating_income_ttm": float(
+                    fundamentals.operating_income_ttm
+                ),
+                "depreciation_and_amortization_ttm": float(
+                    fundamentals.depreciation_and_amortization_ttm
+                ),
+            },
+        )
+    ):
+        operands = {
+            "operating_income_ttm": float(
+                fundamentals.operating_income_ttm
+            ),
+            "depreciation_and_amortization_ttm": float(
+                fundamentals.depreciation_and_amortization_ttm
+            ),
+        }
+        evidence.append(
+            _calculation_evidence(
+                ticker=ticker,
+                as_of_date=as_of_date,
+                source_id=source_id,
+                metric_name="ebitda_ttm",
+                value=float(fundamentals.ebitda_ttm),
+                formula_id="operating_income_plus_depreciation_and_amortization",
+                operands=operands,
+                unit=currency,
+                period=f"TTM through {as_of_date}",
+                date=as_of_date,
+                evidence_items=[*runtime_items, *evidence],
+            )
+        )
+    lease_components = {
+        metric_name: float(value)
+        for metric_name, value in (
+            (
+                "lease_liability_current",
+                fundamentals.lease_liability_current,
+            ),
+            (
+                "lease_liability_noncurrent",
+                fundamentals.lease_liability_noncurrent,
+            ),
+        )
+        if value is not None
+    }
+    if (
+        fundamentals.total_lease_liabilities is not None
+        and lease_components
+        and math.isclose(
+            sum(lease_components.values()),
+            float(fundamentals.total_lease_liabilities),
+            rel_tol=1e-9,
+            abs_tol=1e-9,
+        )
+        and _operands_have_exact_evidence(
+            [*runtime_items, *evidence],
+            lease_components,
+        )
+    ):
+        evidence.append(
+            _calculation_evidence(
+                ticker=ticker,
+                as_of_date=as_of_date,
+                source_id=source_id,
+                metric_name="total_lease_liabilities",
+                value=float(fundamentals.total_lease_liabilities),
+                formula_id="sum_available_lease_liability_components",
+                operands=lease_components,
+                unit=currency,
+                period=f"as of {as_of_date}",
+                date=as_of_date,
+                evidence_items=[*runtime_items, *evidence],
+            )
+        )
+    if (
+        fundamentals.economic_share_count is not None
+        and fundamentals.listed_share_count is not None
+        and math.isclose(
+            float(fundamentals.economic_share_count),
+            float(fundamentals.listed_share_count),
+            rel_tol=1e-9,
+            abs_tol=1e-9,
+        )
+        and _operands_have_exact_evidence(
+            [*runtime_items, *evidence],
+            {
+                "listed_share_count": float(
+                    fundamentals.listed_share_count
+                )
+            },
+        )
+    ):
+        operands = {
+            "listed_share_count": float(
+                fundamentals.listed_share_count
+            )
+        }
+        evidence.append(
+            _calculation_evidence(
+                ticker=ticker,
+                as_of_date=as_of_date,
+                source_id=source_id,
+                metric_name="economic_share_count",
+                value=float(fundamentals.economic_share_count),
+                formula_id="point_in_time_listed_shares_alias",
+                operands=operands,
+                unit="shares",
+                period=f"as of {as_of_date}",
+                date=as_of_date,
+                evidence_items=[*runtime_items, *evidence],
+            )
+        )
+    if (
+        fundamentals.diluted_share_count is not None
+        and _operands_have_exact_evidence(
+            [*runtime_items, *evidence],
+            {
+                "shares_diluted": float(
+                    fundamentals.diluted_share_count
+                )
+            },
+        )
+    ):
+        operands = {
+            "shares_diluted": float(fundamentals.diluted_share_count)
+        }
+        evidence.append(
+            _calculation_evidence(
+                ticker=ticker,
+                as_of_date=as_of_date,
+                source_id=source_id,
+                metric_name="diluted_share_count",
+                value=float(fundamentals.diluted_share_count),
+                formula_id="latest_reported_diluted_share_count",
+                operands=operands,
+                unit="shares",
+                period=f"latest reported period through {as_of_date}",
+                date=as_of_date,
+                evidence_items=[*runtime_items, *evidence],
+            )
+        )
     debt_components = {
         metric_name: float(value)
         for metric_name, value in (
@@ -289,6 +535,10 @@ def build_fundamental_derivation_evidence(
             sum(debt_components.values()) - float(fundamentals.total_debt)
         )
         <= max(1e-9, abs(float(fundamentals.total_debt)) * 1e-9)
+        and _operands_have_exact_evidence(
+            [*runtime_items, *evidence],
+            debt_components,
+        )
     ):
         evidence.append(
             EvidenceItem(
@@ -306,7 +556,7 @@ def build_fundamental_derivation_evidence(
                     f"the available debt components; operands={debt_components}."
                 ),
                 value=float(fundamentals.total_debt),
-                unit="usd",
+                unit=currency,
                 period=f"as of {as_of_date}",
                 date=as_of_date,
                 supports_metrics=["total_debt"],
@@ -339,6 +589,10 @@ def build_fundamental_derivation_evidence(
             rel_tol=1e-9,
             abs_tol=1e-9,
         )
+        and _operands_have_exact_evidence(
+            [*runtime_items, *evidence],
+            liquid_assets,
+        )
     ):
         evidence.append(
             EvidenceItem(
@@ -357,7 +611,7 @@ def build_fundamental_derivation_evidence(
                     f"the available liquid assets; operands={liquid_assets}."
                 ),
                 value=float(fundamentals.cash_and_investments),
-                unit="usd",
+                unit=currency,
                 period=f"as of {as_of_date}",
                 date=as_of_date,
                 supports_metrics=["cash_and_investments"],
@@ -372,6 +626,7 @@ def build_fundamental_derivation_evidence(
                 ),
             )
         )
+    operands: dict[str, float] = {}
     if (
         fundamentals.net_cash is not None
         and fundamentals.total_debt is not None
@@ -381,6 +636,23 @@ def build_fundamental_derivation_evidence(
             **liquid_assets,
             "total_debt": float(fundamentals.total_debt),
         }
+        expected_net_cash = (
+            sum(liquid_assets.values()) - float(fundamentals.total_debt)
+        )
+        if not (
+            math.isclose(
+                float(fundamentals.net_cash),
+                expected_net_cash,
+                rel_tol=1e-9,
+                abs_tol=1e-9,
+            )
+            and _operands_have_exact_evidence(
+                [*runtime_items, *evidence],
+                operands,
+            )
+        ):
+            operands = {}
+    if operands:
         evidence.append(
             EvidenceItem(
                 evidence_id=(
@@ -396,7 +668,7 @@ def build_fundamental_derivation_evidence(
                     f"liquid assets less debt; operands={operands}."
                 ),
                 value=float(fundamentals.net_cash),
-                unit="usd",
+                unit=currency,
                 period=f"as of {as_of_date}",
                 date=as_of_date,
                 supports_metrics=["net_cash"],
@@ -411,15 +683,22 @@ def build_fundamental_derivation_evidence(
                 ),
             )
         )
-    if (
-        fundamentals.sbc_to_revenue is not None
-        and fundamentals.sbc_ttm is not None
-        and fundamentals.revenue_ttm is not None
+    operands = {}
+    if _division_matches(
+        value=fundamentals.sbc_to_revenue,
+        numerator=fundamentals.sbc_ttm,
+        denominator=fundamentals.revenue_ttm,
     ):
         operands = {
             "sbc_ttm": float(fundamentals.sbc_ttm),
             "revenue_ttm": float(fundamentals.revenue_ttm),
         }
+        if not _operands_have_exact_evidence(
+            [*runtime_items, *evidence],
+            operands,
+        ):
+            operands = {}
+    if operands:
         evidence.append(
             EvidenceItem(
                 evidence_id=(
@@ -451,6 +730,7 @@ def build_fundamental_derivation_evidence(
                 ),
             )
         )
+    operands = {}
     if (
         fundamentals.free_cash_flow_ttm is not None
         and fundamentals.operating_cash_flow_ttm is not None
@@ -465,6 +745,23 @@ def build_fundamental_derivation_evidence(
             ),
             "capex_ttm": float(fundamentals.capex_ttm),
         }
+        fcf_matches = (
+            formula_id == "cfo_minus_capex"
+            and math.isclose(
+                float(fundamentals.free_cash_flow_ttm),
+                float(fundamentals.operating_cash_flow_ttm)
+                - abs(float(fundamentals.capex_ttm)),
+                rel_tol=1e-9,
+                abs_tol=1e-9,
+            )
+            and _operands_have_exact_evidence(
+                [*runtime_items, *evidence],
+                operands,
+            )
+        )
+        if not fcf_matches:
+            operands = {}
+    if operands:
         evidence.append(
             EvidenceItem(
                 evidence_id=(
@@ -481,7 +778,7 @@ def build_fundamental_derivation_evidence(
                     f"was derived with {formula_id}; operands={operands}."
                 ),
                 value=float(fundamentals.free_cash_flow_ttm),
-                unit="usd",
+                unit=currency,
                 period=fcf_period_text,
                 date=fcf_period_end,
                 supports_metrics=["free_cash_flow_ttm", "free_cash_flow"],
@@ -496,15 +793,31 @@ def build_fundamental_derivation_evidence(
                 ),
             )
         )
+    operands = {}
     if (
         fundamentals.shareholder_distributions_ttm is not None
         and fundamentals.buybacks is not None
         and fundamentals.dividends_paid is not None
+        and distribution_period is not None
     ):
         operands = {
             "buybacks": float(fundamentals.buybacks),
             "dividends_paid": float(fundamentals.dividends_paid),
         }
+        if not (
+            math.isclose(
+                float(fundamentals.shareholder_distributions_ttm),
+                sum(operands.values()),
+                rel_tol=1e-9,
+                abs_tol=1e-9,
+            )
+            and _operands_have_exact_evidence(
+                [*runtime_items, *evidence],
+                operands,
+            )
+        ):
+            operands = {}
+    if operands:
         evidence.append(
             EvidenceItem(
                 evidence_id=(
@@ -522,7 +835,7 @@ def build_fundamental_derivation_evidence(
                     "derived as buybacks plus dividends_paid."
                 ),
                 value=float(fundamentals.shareholder_distributions_ttm),
-                unit="usd",
+                unit=currency,
                 period=distribution_period_text,
                 date=distribution_period_end,
                 supports_metrics=["shareholder_distributions_ttm"],
@@ -539,10 +852,13 @@ def build_fundamental_derivation_evidence(
                 ),
             )
         )
+    operands = {}
     if (
         fundamentals.shareholder_distributions_minus_fcf_ttm is not None
         and fundamentals.shareholder_distributions_ttm is not None
         and fundamentals.free_cash_flow_ttm is not None
+        and distribution_period is not None
+        and distribution_period == fcf_period
     ):
         operands = {
             "shareholder_distributions_ttm": float(
@@ -550,6 +866,23 @@ def build_fundamental_derivation_evidence(
             ),
             "free_cash_flow_ttm": float(fundamentals.free_cash_flow_ttm),
         }
+        if not (
+            math.isclose(
+                float(
+                    fundamentals.shareholder_distributions_minus_fcf_ttm
+                ),
+                operands["shareholder_distributions_ttm"]
+                - operands["free_cash_flow_ttm"],
+                rel_tol=1e-9,
+                abs_tol=1e-9,
+            )
+            and _operands_have_exact_evidence(
+                [*runtime_items, *evidence],
+                operands,
+            )
+        ):
+            operands = {}
+    if operands:
         evidence.append(
             EvidenceItem(
                 evidence_id=(
@@ -569,7 +902,7 @@ def build_fundamental_derivation_evidence(
                 value=float(
                     fundamentals.shareholder_distributions_minus_fcf_ttm
                 ),
-                unit="usd",
+                unit=currency,
                 period=distribution_period_text,
                 date=distribution_period_end,
                 supports_metrics=[
@@ -590,15 +923,120 @@ def build_fundamental_derivation_evidence(
                 ),
             )
         )
-    if (
-        fundamentals.free_cash_flow_ttm is not None
-        and fundamentals.net_income_ttm is not None
-        and fundamentals.free_cash_flow_conversion_ttm is not None
+    derived_ratios = (
+        (
+            "operating_margin_ttm",
+            fundamentals.operating_margin_ttm,
+            fundamentals.operating_income_ttm,
+            "operating_income_ttm",
+            fundamentals.revenue_ttm,
+            "revenue_ttm",
+            "operating_income_ttm_divided_by_revenue_ttm",
+            "fraction",
+            f"TTM through {as_of_date}",
+        ),
+        (
+            "net_margin_ttm",
+            fundamentals.net_margin_ttm,
+            fundamentals.net_income_ttm,
+            "net_income_ttm",
+            fundamentals.revenue_ttm,
+            "revenue_ttm",
+            "net_income_ttm_divided_by_revenue_ttm",
+            "fraction",
+            f"TTM through {as_of_date}",
+        ),
+        (
+            "fcf_margin_ttm",
+            fundamentals.fcf_margin_ttm,
+            fundamentals.free_cash_flow_ttm,
+            "free_cash_flow_ttm",
+            fundamentals.revenue_ttm,
+            "revenue_ttm",
+            "free_cash_flow_ttm_divided_by_revenue_ttm",
+            "fraction",
+            f"TTM through {as_of_date}",
+        ),
+        (
+            "sbc_to_fcf",
+            fundamentals.sbc_to_fcf,
+            fundamentals.sbc_ttm,
+            "sbc_ttm",
+            fundamentals.free_cash_flow_ttm,
+            "free_cash_flow_ttm",
+            "sbc_ttm_divided_by_free_cash_flow_ttm",
+            "fraction",
+            f"TTM through {as_of_date}",
+        ),
+        (
+            "current_ratio",
+            fundamentals.current_ratio,
+            fundamentals.current_assets,
+            "current_assets",
+            fundamentals.current_liabilities,
+            "current_liabilities",
+            "current_assets_divided_by_current_liabilities",
+            "multiple",
+            f"as of {as_of_date}",
+        ),
+    )
+    for (
+        metric_name,
+        value,
+        numerator,
+        numerator_name,
+        denominator,
+        denominator_name,
+        formula_id,
+        unit,
+        period,
+    ) in derived_ratios:
+        if not _division_matches(
+            value=value,
+            numerator=numerator,
+            denominator=denominator,
+        ):
+            continue
+        operands = {
+            numerator_name: float(numerator),
+            denominator_name: float(denominator),
+        }
+        if not _operands_have_exact_evidence(
+            [*runtime_items, *evidence],
+            operands,
+        ):
+            continue
+        evidence.append(
+            _calculation_evidence(
+                ticker=ticker,
+                as_of_date=as_of_date,
+                source_id=source_id,
+                metric_name=metric_name,
+                value=float(value),
+                formula_id=formula_id,
+                operands=operands,
+                unit=unit,
+                period=period,
+                date=as_of_date,
+                evidence_items=[*runtime_items, *evidence],
+            )
+        )
+    operands = {}
+    if _division_matches(
+        value=fundamentals.free_cash_flow_conversion_ttm,
+        numerator=fundamentals.free_cash_flow_ttm,
+        denominator=fundamentals.net_income_ttm,
     ):
         operands = {
             "free_cash_flow_ttm": float(fundamentals.free_cash_flow_ttm),
             "net_income_ttm": float(fundamentals.net_income_ttm),
         }
+        if not _operands_have_exact_evidence(
+            [*runtime_items, *evidence],
+            operands,
+        ):
+            operands = {}
+    if operands:
         evidence.append(
             EvidenceItem(
                 evidence_id=(
@@ -650,16 +1088,21 @@ def build_fundamental_derivation_evidence(
         ),
     )
     for metric_name, value, numerator, numerator_name, formula_id in coverage_metrics:
-        if (
-            value is None
-            or numerator is None
-            or fundamentals.interest_expense_ttm is None
+        if not _division_matches(
+            value=value,
+            numerator=numerator,
+            denominator=fundamentals.interest_expense_ttm,
         ):
             continue
         operands = {
             numerator_name: float(numerator),
             "interest_expense_ttm": float(fundamentals.interest_expense_ttm),
         }
+        if not _operands_have_exact_evidence(
+            [*runtime_items, *evidence],
+            operands,
+        ):
+            continue
         evidence.append(
             EvidenceItem(
                 evidence_id=(
@@ -693,6 +1136,7 @@ def build_fundamental_derivation_evidence(
         )
     valuation = metrics_packet.valuation
     technical = metrics_packet.technical
+    operands = {}
     if (
         valuation.market_cap is not None
         and fundamentals.listed_share_count is not None
@@ -701,6 +1145,21 @@ def build_fundamental_derivation_evidence(
             "close": float(technical.close),
             "listed_share_count": float(fundamentals.listed_share_count),
         }
+        market_cap_matches = (
+            math.isclose(
+                float(valuation.market_cap),
+                operands["close"] * operands["listed_share_count"],
+                rel_tol=1e-9,
+                abs_tol=1e-9,
+            )
+            and _operands_have_exact_evidence(
+                [*runtime_items, *evidence],
+                operands,
+            )
+        )
+        if not market_cap_matches:
+            operands = {}
+    if operands:
         evidence.append(
             EvidenceItem(
                 evidence_id=(
@@ -716,7 +1175,7 @@ def build_fundamental_derivation_evidence(
                     f"the as-of close and point-in-time outstanding shares."
                 ),
                 value=float(valuation.market_cap),
-                unit="usd",
+                unit=currency,
                 period=f"as of {as_of_date}",
                 date=as_of_date,
                 supports_metrics=["market_cap", "listed_share_count"],
@@ -738,6 +1197,7 @@ def build_fundamental_derivation_evidence(
                 ),
             )
         )
+    operands = {}
     if (
         valuation.enterprise_value is not None
         and valuation.market_cap is not None
@@ -750,13 +1210,36 @@ def build_fundamental_derivation_evidence(
             "cash_and_equivalents": float(
                 fundamentals.cash_and_equivalents
             ),
-            "short_term_investments": float(
-                fundamentals.short_term_investments or 0.0
-            ),
-            "marketable_securities": float(
-                fundamentals.marketable_securities or 0.0
-            ),
         }
+        if fundamentals.short_term_investments is not None:
+            operands["short_term_investments"] = float(
+                fundamentals.short_term_investments
+            )
+        if fundamentals.marketable_securities is not None:
+            operands["marketable_securities"] = float(
+                fundamentals.marketable_securities
+            )
+        expected_enterprise_value = (
+            operands["market_cap"]
+            + operands["total_debt"]
+            - operands["cash_and_equivalents"]
+            - operands.get("short_term_investments", 0.0)
+            - operands.get("marketable_securities", 0.0)
+        )
+        if not (
+            math.isclose(
+                float(valuation.enterprise_value),
+                expected_enterprise_value,
+                rel_tol=1e-9,
+                abs_tol=1e-9,
+            )
+            and _operands_have_exact_evidence(
+                [*runtime_items, *evidence],
+                operands,
+            )
+        ):
+            operands = {}
+    if operands:
         evidence.append(
             EvidenceItem(
                 evidence_id=(
@@ -773,7 +1256,7 @@ def build_fundamental_derivation_evidence(
                     "calculated from market cap, debt and liquid assets."
                 ),
                 value=float(valuation.enterprise_value),
-                unit="usd",
+                unit=currency,
                 period=f"as of {as_of_date}",
                 date=as_of_date,
                 supports_metrics=["enterprise_value"],
@@ -804,6 +1287,7 @@ def build_fundamental_derivation_evidence(
             fundamentals.revenue_ttm,
             "revenue_ttm",
             "enterprise_value_divided_by_revenue_ttm",
+            "multiple",
         ),
         (
             "price_to_fcf",
@@ -813,6 +1297,47 @@ def build_fundamental_derivation_evidence(
             fundamentals.free_cash_flow_ttm,
             "free_cash_flow_ttm",
             "market_cap_divided_by_free_cash_flow_ttm",
+            "multiple",
+        ),
+        (
+            "ev_to_ebit",
+            valuation.ev_to_ebit,
+            valuation.enterprise_value,
+            "enterprise_value",
+            fundamentals.operating_income_ttm,
+            "operating_income_ttm",
+            "enterprise_value_divided_by_operating_income_ttm",
+            "multiple",
+        ),
+        (
+            "ev_to_ebitda",
+            valuation.ev_to_ebitda,
+            valuation.enterprise_value,
+            "enterprise_value",
+            fundamentals.ebitda_ttm,
+            "ebitda_ttm",
+            "enterprise_value_divided_by_ebitda_ttm",
+            "multiple",
+        ),
+        (
+            "fcf_yield",
+            valuation.fcf_yield,
+            fundamentals.free_cash_flow_ttm,
+            "free_cash_flow_ttm",
+            valuation.market_cap,
+            "market_cap",
+            "free_cash_flow_ttm_divided_by_market_cap",
+            "fraction",
+        ),
+        (
+            "trailing_pe",
+            valuation.trailing_pe,
+            technical.close,
+            "close",
+            fundamentals.trailing_eps,
+            "trailing_eps",
+            "close_divided_by_trailing_eps",
+            "multiple",
         ),
     )
     for (
@@ -823,13 +1348,23 @@ def build_fundamental_derivation_evidence(
         denominator,
         denominator_name,
         formula_id,
+        unit,
     ) in ratio_metrics:
-        if value is None or numerator is None or denominator is None:
+        if not _division_matches(
+            value=value,
+            numerator=numerator,
+            denominator=denominator,
+        ):
             continue
         operands = {
             numerator_name: float(numerator),
             denominator_name: float(denominator),
         }
+        if not _operands_have_exact_evidence(
+            [*runtime_items, *evidence],
+            operands,
+        ):
+            continue
         evidence.append(
             EvidenceItem(
                 evidence_id=(
@@ -846,7 +1381,7 @@ def build_fundamental_derivation_evidence(
                     f"{formula_id}; operands={operands}."
                 ),
                 value=float(value),
-                unit="multiple",
+                unit=unit,
                 period=f"as of {as_of_date}",
                 date=as_of_date,
                 supports_metrics=[metric_name],
@@ -871,6 +1406,202 @@ def build_fundamental_derivation_evidence(
     return evidence
 
 
+def _calculation_evidence(
+    *,
+    ticker: str,
+    as_of_date: str,
+    source_id: str,
+    metric_name: str,
+    value: float,
+    formula_id: str,
+    operands: dict[str, float],
+    unit: str,
+    period: str,
+    date: str,
+    evidence_items: Iterable[EvidenceItem],
+    claim_type: str = "financial_metric",
+    source_lineage: Optional[list[str]] = None,
+) -> EvidenceItem:
+    return EvidenceItem(
+        evidence_id=(
+            f"{ticker.upper()}_DETERMINISTIC_"
+            f"{_safe_metric_id(metric_name)}_{as_of_date}"
+        ),
+        ticker=ticker.upper(),
+        claim_type=claim_type,
+        source_id=source_id,
+        source_type="deterministic_calculation",
+        authority_rank=1,
+        statement=(
+            f"{metric_name}={value:g} was derived with {formula_id}; "
+            f"operands={operands}."
+        ),
+        value=float(value),
+        unit=unit,
+        period=period,
+        date=date,
+        supports_metrics=[metric_name],
+        confidence="high",
+        formula_id=formula_id,
+        formula_operands=operands,
+        normalized_value=float(value),
+        source_lineage=(
+            list(dict.fromkeys(source_lineage))
+            if source_lineage is not None
+            else _operand_source_lineage(
+                evidence_items,
+                operands,
+                fallback_source_id=source_id,
+            )
+        ),
+    )
+
+
+def _division_matches(
+    *,
+    value: Optional[float],
+    numerator: Optional[float],
+    denominator: Optional[float],
+) -> bool:
+    if value is None or numerator is None or denominator in (None, 0):
+        return False
+    return math.isclose(
+        float(value),
+        float(numerator) / float(denominator),
+        rel_tol=1e-9,
+        abs_tol=1e-9,
+    )
+
+
+def _bridge_value_matches(
+    *,
+    value: float,
+    formula_id: str,
+    operands: Mapping[str, float],
+) -> bool:
+    expected: Optional[float] = None
+    if formula_id == "sum_four_contiguous_quarters" and operands:
+        expected = sum(float(item) for item in operands.values())
+    elif formula_id == "annual_minus_prior_interim_plus_current_interim":
+        if {
+            "annual",
+            "prior_interim",
+            "current_interim",
+        }.issubset(operands):
+            expected = (
+                float(operands["annual"])
+                - float(operands["prior_interim"])
+                + float(operands["current_interim"])
+            )
+    elif formula_id == "annual_minus_q1_q2_q3_plus_post_annual_quarters":
+        quarter_values = [
+            float(item)
+            for key, item in operands.items()
+            if key not in {"annual", "derived_q4"}
+        ]
+        if "annual" in operands and "derived_q4" in operands:
+            annual = float(operands["annual"])
+            derived_q4 = float(operands["derived_q4"])
+            if math.isclose(
+                derived_q4,
+                annual - sum(quarter_values),
+                rel_tol=1e-9,
+                abs_tol=1e-9,
+            ):
+                expected = annual
+    return (
+        expected is not None
+        and math.isclose(
+            float(value),
+            expected,
+            rel_tol=1e-9,
+            abs_tol=1e-9,
+        )
+    )
+
+
+def _bridge_operands_have_exact_evidence(
+    evidence_items: Iterable[EvidenceItem],
+    *,
+    metric_name: str,
+    formula_id: str,
+    operands: Mapping[str, float],
+    source_ids: Iterable[str],
+) -> bool:
+    items = list(evidence_items)
+    resolved_source_ids = set(
+        _canonical_lineage_source_ids(items, source_ids)
+    )
+    required_values = [
+        float(value)
+        for key, value in operands.items()
+        if not (
+            formula_id
+            == "annual_minus_q1_q2_q3_plus_post_annual_quarters"
+            and key == "derived_q4"
+        )
+    ]
+    if not resolved_source_ids or not required_values:
+        return False
+    return all(
+        any(
+            (
+                item.source_id in resolved_source_ids
+                or bool(
+                    resolved_source_ids.intersection(
+                        _canonical_lineage_source_ids(
+                            items,
+                            item.source_lineage,
+                        )
+                    )
+                )
+            )
+            and metric_name in item.supports_metrics
+            and item.value is not None
+            and math.isclose(
+                float(item.value),
+                operand_value,
+                rel_tol=1e-9,
+                abs_tol=1e-9,
+            )
+            and (
+                item.raw_value is not None
+                or item.normalized_value is not None
+                or (item.date and item.period)
+            )
+            for item in items
+        )
+        for operand_value in required_values
+    )
+
+
+def _operands_have_exact_evidence(
+    evidence_items: Iterable[EvidenceItem],
+    operands: Mapping[str, float],
+) -> bool:
+    items = list(evidence_items)
+    return all(
+        any(
+            metric_name in item.supports_metrics
+            and item.value is not None
+            and math.isclose(
+                float(item.value),
+                float(value),
+                rel_tol=1e-9,
+                abs_tol=1e-9,
+            )
+            and (
+                (item.formula_id and item.formula_operands)
+                or item.raw_value is not None
+                or item.normalized_value is not None
+                or (item.date and item.period)
+            )
+            for item in items
+        )
+        for metric_name, value in operands.items()
+    )
+
+
 def _operand_source_lineage(
     evidence_items: Iterable[EvidenceItem],
     operands: dict[str, float],
@@ -888,7 +1619,7 @@ def _operand_source_lineage(
             and abs(float(item.value) - value)
             <= max(1e-9, abs(value) * 1e-9)
             and (
-                item.formula_id
+                (item.formula_id and item.formula_operands)
                 or item.raw_value is not None
                 or item.normalized_value is not None
                 or (item.date and item.period)

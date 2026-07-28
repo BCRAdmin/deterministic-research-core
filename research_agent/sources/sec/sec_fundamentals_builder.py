@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any, Iterable, Optional
 
 from research_agent.evidence.evidence_item import EvidenceItem
 from research_agent.evidence.source_ranker import rank_source
@@ -82,6 +82,40 @@ def build_sec_fundamentals_from_companyfacts(
             )
 
     return metrics, evidence_items
+
+
+def build_sec_evidence_for_source_ids(
+    ticker: str,
+    cik: str,
+    companyfacts_json: dict[str, Any],
+    source_ids: Iterable[str],
+) -> list[EvidenceItem]:
+    """Materialize only the raw SEC facts used by canonical calculations."""
+
+    accessions = {
+        str(source_id).removeprefix("SEC_")
+        for source_id in source_ids
+        if source_id
+    }
+    if not accessions:
+        return []
+    parser = CompanyFactsParser(
+        ticker=ticker,
+        cik=cik,
+        companyfacts_json=companyfacts_json,
+    )
+    evidence: list[EvidenceItem] = []
+    seen: set[str] = set()
+    for metric_name in SEC_FUNDAMENTAL_METRICS:
+        for fact in parser.get_facts_for_metric(metric_name):
+            if fact.accession not in accessions:
+                continue
+            item = parser.to_evidence_item(fact)
+            if item.evidence_id in seen:
+                continue
+            seen.add(item.evidence_id)
+            evidence.append(item)
+    return evidence
 
 
 def _assign_normalized_metric(

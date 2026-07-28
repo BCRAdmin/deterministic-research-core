@@ -1,5 +1,6 @@
 from research_agent.sources.sec.companyfacts_parser import CompanyFactsParser
 from research_agent.sources.sec.sec_fundamentals_builder import (
+    build_sec_evidence_for_source_ids,
     build_sec_fundamentals_from_companyfacts,
 )
 from research_agent.reconciliation.source_reconciler import (
@@ -123,12 +124,63 @@ def test_sec_fact_generates_high_authority_evidence():
     assert "revenue_ttm" in item.supports_metrics
 
 
+def test_comparative_facts_in_one_filing_keep_distinct_evidence_ids():
+    fixture = {
+        "facts": {
+            "us-gaap": {
+                "RevenueFromContractWithCustomerExcludingAssessedTax": {
+                    "units": {
+                        "USD": [
+                            {
+                                "val": 100,
+                                "fy": 2026,
+                                "fp": "Q1",
+                                "form": "10-Q",
+                                "filed": "2026-05-01",
+                                "start": "2025-01-01",
+                                "end": "2025-03-31",
+                                "accn": "same-filing",
+                            },
+                            {
+                                "val": 120,
+                                "fy": 2026,
+                                "fp": "Q1",
+                                "form": "10-Q",
+                                "filed": "2026-05-01",
+                                "start": "2026-01-01",
+                                "end": "2026-03-31",
+                                "accn": "same-filing",
+                            },
+                        ]
+                    }
+                }
+            }
+        }
+    }
+    parser = CompanyFactsParser("TEST", "1", fixture)
+    evidence_ids = {
+        parser.to_evidence_item(fact).evidence_id
+        for fact in parser.get_facts_for_metric("revenue")
+    }
+
+    assert len(evidence_ids) == 2
+
+
 def test_sec_fundamentals_builder_returns_metrics_and_evidence():
     metrics, evidence = build_sec_fundamentals_from_companyfacts("TEST", "1", FIXTURE_COMPANYFACTS)
 
     assert metrics["revenue_latest_annual"] == 2_460_000_000
     assert metrics["quarterly"]["revenue"][-1] == 630_000_000
     assert any(item.source_type == "sec_filing" for item in evidence)
+    exact = build_sec_evidence_for_source_ids(
+        "TEST",
+        "1",
+        FIXTURE_COMPANYFACTS,
+        {"SEC_q1"},
+    )
+    assert [(item.value, item.source_lineage) for item in exact] == [
+        (600_000_000.0, ["q1"])
+    ]
 
 
 def test_diluted_shares_are_scaled_from_same_period_income_and_eps():

@@ -50,22 +50,55 @@ FINANCIAL_SOURCE_USES = {
 }
 PRICE_SOURCE_USES = {"price", "volume", "technical_indicators"}
 MATERIAL_METRIC_KEYS = {
+    # Values rendered by Room16's deterministic fundamental section.
     "revenue_ttm",
+    "revenue_growth_yoy",
     "operating_income_ttm",
+    "operating_margin_ttm",
     "net_income_ttm",
+    "net_margin_ttm",
+    "trailing_eps",
+    "ebitda_ttm",
     "operating_cash_flow_ttm",
     "capex_ttm",
     "free_cash_flow_ttm",
+    "fcf_margin_ttm",
+    "free_cash_flow_conversion_ttm",
+    "depreciation_and_amortization_ttm",
+    "interest_expense_ttm",
+    "operating_income_interest_coverage_ttm",
+    "free_cash_flow_interest_coverage_ttm",
+    "cash_and_equivalents",
     "buybacks",
     "dividends_paid",
     "shareholder_distributions_ttm",
     "shareholder_distributions_minus_fcf_ttm",
     "sbc_ttm",
+    "sbc_to_revenue",
+    "sbc_to_fcf",
     "cash_and_investments",
+    "current_assets",
+    "current_liabilities",
+    "current_ratio",
     "total_debt",
+    "total_lease_liabilities",
+    "equity",
+    "net_cash",
+    "economic_share_count",
     "listed_share_count",
+    "diluted_share_count",
+    "treasury_share_count",
+    "treasury_stock_value",
+    # Values rendered by Room16's deterministic valuation section.
     "market_cap",
     "enterprise_value",
+    "trailing_pe",
+    "price_to_fcf",
+    "ev_to_sales",
+    "ev_to_ebit",
+    "ev_to_ebitda",
+    "fcf_yield",
+    # Values rendered by the deterministic market section.
     "close",
     "sma_50",
     "sma_200",
@@ -161,7 +194,11 @@ def _has_exact_numeric_evidence(
         ):
             continue
         if (
-            item.get("formula_id")
+            (
+                item.get("formula_id")
+                and isinstance(item.get("formula_operands"), Mapping)
+                and item.get("formula_operands")
+            )
             or item.get("raw_value") is not None
             or item.get("normalized_value") is not None
             or (item.get("date") and item.get("period"))

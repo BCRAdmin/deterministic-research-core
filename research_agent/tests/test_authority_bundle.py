@@ -99,6 +99,7 @@ def _packet_set(root: Path, ticker: str = "GENERIC", as_of: str = "2026-07-01") 
         "dividends_paid",
         "shareholder_distributions_ttm",
         "shareholder_distributions_minus_fcf_ttm",
+        "price_to_fcf",
     ]
     metric_values = {
         "close": 100.0,
@@ -114,6 +115,7 @@ def _packet_set(root: Path, ticker: str = "GENERIC", as_of: str = "2026-07-01") 
         "dividends_paid": 75_000_000.0,
         "shareholder_distributions_ttm": 125_000_000.0,
         "shareholder_distributions_minus_fcf_ttm": 25_000_000.0,
+        "price_to_fcf": 20.0,
     }
     _write_json(
         packet_dir / "evidence_ledger.json",
@@ -339,3 +341,16 @@ def test_authority_bundle_blocks_material_metric_value_mismatch(
         if item["check_id"] == "material_metrics_evidence_mapped"
     )
     assert check["detail"] == "revenue_ttm"
+
+    revenue["value"] = 1_000_000_000.0
+    revenue["normalized_value"] = None
+    revenue["formula_operands"] = {}
+    revenue["date"] = None
+    revenue["period"] = None
+    _write_json(ledger_path, ledger)
+    manifest = build_authority_bundle(
+        packet_dir=packet_dir,
+        source_registry_path=registry_path,
+        output_dir=tmp_path / "formula_only_bundle",
+    )
+    assert "material_metrics_evidence_mapped" in manifest["blocking_failures"]

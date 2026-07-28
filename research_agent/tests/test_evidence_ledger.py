@@ -151,6 +151,7 @@ def test_technical_metrics_are_derived_from_registered_ohlcv():
         as_of_date="2026-07-01",
         metrics_packet=metrics,
         source_registry=registry,
+        currency="HUF",
     )
 
     assert {item.supports_metrics[0] for item in evidence} == {
@@ -162,18 +163,62 @@ def test_technical_metrics_are_derived_from_registered_ohlcv():
     }
     assert {item.source_id for item in evidence} == {"GENERIC_EXCHANGE"}
     assert all(item.claim_type in {"price_data", "technical_metric"} for item in evidence)
+    assert {
+        item.unit
+        for item in evidence
+        if item.supports_metrics[0] in {"close", "sma_50", "sma_200"}
+    } == {"HUF"}
 
 
-def test_interest_coverage_is_precomputed_with_auditable_operands():
+def test_material_calculations_require_exact_auditable_operands():
+    ttm_values = {
+        "revenue": 200.0,
+        "operating_income": 120.0,
+        "net_income": 100.0,
+        "operating_cash_flow": 100.0,
+        "capex": 20.0,
+        "sbc": 8.0,
+        "buybacks": 30.0,
+        "dividends_paid": 60.0,
+        "depreciation_and_amortization": 30.0,
+        "interest_expense": 20.0,
+        "eps_diluted": 10.0,
+    }
+    ttm_bridges = {
+        metric_name: {
+            "formula_id": "sum_four_contiguous_quarters",
+            "operands": {
+                f"2025_Q{quarter}": value / 4
+                for quarter in range(1, 5)
+            },
+            "period_start": "2025-07-01",
+            "period_end": "2026-06-30",
+            "source_ids": ["SEC_GENERIC_FILING_A"],
+        }
+        for metric_name, value in ttm_values.items()
+    }
     metrics = MetricsPacket(
         ticker="GENERIC",
         as_of_date="2026-07-01",
         technical=TechnicalMetrics(indicator_date="2026-07-01", close=100.0),
         fundamentals=FundamentalMetrics(
             fiscal_period="TTM",
+            revenue_growth_yoy=0.25,
             revenue_ttm=200.0,
             operating_income_ttm=120.0,
+            operating_margin_ttm=0.6,
+            ebitda_ttm=150.0,
+            net_income_ttm=100.0,
+            net_margin_ttm=0.5,
+            operating_cash_flow_ttm=100.0,
+            capex_ttm=20.0,
             free_cash_flow_ttm=80.0,
+            free_cash_flow_formula="cfo_minus_capex",
+            fcf_margin_ttm=0.4,
+            free_cash_flow_conversion_ttm=0.8,
+            sbc_ttm=8.0,
+            sbc_to_revenue=0.04,
+            sbc_to_fcf=0.1,
             buybacks=30.0,
             dividends_paid=60.0,
             shareholder_distributions_ttm=90.0,
@@ -181,6 +226,24 @@ def test_interest_coverage_is_precomputed_with_auditable_operands():
             cash_and_equivalents=50.0,
             short_term_investments=20.0,
             cash_and_investments=70.0,
+            debt_current=70.0,
+            debt_noncurrent=200.0,
+            total_debt=270.0,
+            lease_liability_current=5.0,
+            lease_liability_noncurrent=25.0,
+            total_lease_liabilities=30.0,
+            current_assets=300.0,
+            current_liabilities=150.0,
+            current_ratio=2.0,
+            equity=400.0,
+            net_cash=-200.0,
+            listed_share_count=10.0,
+            economic_share_count=10.0,
+            diluted_share_count=11.0,
+            treasury_share_count=1.0,
+            treasury_stock_value=100.0,
+            trailing_eps=10.0,
+            depreciation_and_amortization_ttm=30.0,
             interest_expense_ttm=20.0,
             operating_income_interest_coverage_ttm=6.0,
             free_cash_flow_interest_coverage_ttm=4.0,
@@ -190,66 +253,126 @@ def test_interest_coverage_is_precomputed_with_auditable_operands():
             enterprise_value=1_200.0,
             price_to_fcf=12.5,
             ev_to_sales=6.0,
+            ev_to_ebit=10.0,
+            ev_to_ebitda=8.0,
+            fcf_yield=0.08,
+            trailing_pe=10.0,
         ),
+    )
+    direct_values = {
+        "close": 100.0,
+        "cash_and_equivalents": 50.0,
+        "short_term_investments": 20.0,
+        "debt_current": 70.0,
+        "debt_noncurrent": 200.0,
+        "lease_liability_current": 5.0,
+        "lease_liability_noncurrent": 25.0,
+        "current_assets": 300.0,
+        "current_liabilities": 150.0,
+        "equity": 400.0,
+        "listed_share_count": 10.0,
+        "shares_diluted": 11.0,
+        "treasury_share_count": 1.0,
+        "treasury_stock_value": 100.0,
+    }
+    runtime_evidence = [
+        EvidenceItem(
+            evidence_id=f"GENERIC_RAW_{metric_name.upper()}",
+            ticker="GENERIC",
+            claim_type=(
+                "price_data"
+                if metric_name == "close"
+                else "financial_metric"
+            ),
+            source_id=(
+                "GENERIC_EXCHANGE"
+                if metric_name == "close"
+                else "SEC_GENERIC_FILING_A"
+            ),
+            source_type=(
+                "exchange_ohlcv"
+                if metric_name == "close"
+                else "sec_filing"
+            ),
+            authority_rank=1,
+            statement=f"Exact source value for {metric_name}.",
+            value=value,
+            unit="HUF",
+            period="current",
+            date="2026-06-30",
+            supports_metrics=[metric_name],
+            raw_value=value,
+            normalized_value=value,
+            confidence="high",
+        )
+        for metric_name, value in direct_values.items()
+    ]
+    runtime_evidence.extend(
+        EvidenceItem(
+            evidence_id=(
+                f"GENERIC_RAW_{metric_name.upper()}_{quarter}"
+            ),
+            ticker="GENERIC",
+            claim_type="financial_metric",
+            source_id="SEC_GENERIC_FILING_A",
+            source_type="sec_filing",
+            authority_rank=1,
+            statement=f"Exact source operand for {metric_name}.",
+            value=value / 4,
+            unit="HUF",
+            period=f"2025_Q{quarter}",
+            date="2026-06-30",
+            supports_metrics=[metric_name],
+            raw_value=value / 4,
+            normalized_value=value / 4,
+            confidence="high",
+        )
+        for metric_name, value in ttm_values.items()
+        for quarter in range(1, 5)
+    )
+    runtime_evidence.extend(
+        [
+            EvidenceItem(
+                evidence_id=f"GENERIC_RAW_REVENUE_FY_{year}",
+                ticker="GENERIC",
+                claim_type="financial_metric",
+                source_id="SEC_GENERIC_FILING_A",
+                source_type="sec_filing",
+                authority_rank=1,
+                statement=f"Annual revenue for {year}.",
+                value=value,
+                unit="HUF",
+                period=f"FY{year}",
+                date=f"{year}-12-31",
+                supports_metrics=["revenue"],
+                raw_value=value,
+                normalized_value=value,
+                confidence="high",
+            )
+            for year, value in ((2024, 160.0), (2025, 200.0))
+        ]
     )
 
     evidence = build_fundamental_derivation_evidence(
         ticker="GENERIC",
         as_of_date="2026-07-01",
         metrics_packet=metrics,
-        normalized_fundamentals={"ttm_bridges": {}},
+        normalized_fundamentals={
+            "ttm_bridges": ttm_bridges,
+            "revenue_growth_yoy_bridge": {
+                "formula_id": "annual_revenue_yoy_growth",
+                "operands": {
+                    "current_annual_revenue": 200.0,
+                    "prior_annual_revenue": 160.0,
+                },
+                "period_start": "2024-01-01",
+                "period_end": "2025-12-31",
+                "source_ids": ["SEC_GENERIC_FILING_A"],
+            },
+        },
         price_source_id="GENERIC_EXCHANGE",
-        runtime_evidence=[
-            EvidenceItem(
-                evidence_id="GENERIC_BUYBACKS_TTM",
-                ticker="GENERIC",
-                claim_type="financial_metric",
-                source_id="SEC_GENERIC_DERIVED_TTM",
-                source_type="deterministic_calculation",
-                authority_rank=1,
-                statement="Buybacks TTM.",
-                value=30.0,
-                supports_metrics=["buybacks"],
-                formula_id="annual_minus_prior_interim_plus_current_interim",
-                formula_operands={"annual": 35.0, "prior": 10.0, "current": 5.0},
-                normalized_value=30.0,
-                source_lineage=["SEC_GENERIC_FILING_A", "SEC_GENERIC_FILING_B"],
-            ),
-            EvidenceItem(
-                evidence_id="GENERIC_DIVIDENDS_TTM",
-                ticker="GENERIC",
-                claim_type="financial_metric",
-                source_id="SEC_GENERIC_DERIVED_TTM",
-                source_type="deterministic_calculation",
-                authority_rank=1,
-                statement="Dividends TTM.",
-                value=60.0,
-                supports_metrics=["dividends_paid"],
-                formula_id="annual_minus_prior_interim_plus_current_interim",
-                formula_operands={"annual": 55.0, "prior": 10.0, "current": 15.0},
-                normalized_value=60.0,
-                source_lineage=["SEC_GENERIC_FILING_A", "SEC_GENERIC_FILING_C"],
-            ),
-            *[
-                EvidenceItem(
-                    evidence_id=f"RAW_{accession}",
-                    ticker="GENERIC",
-                    claim_type="financial_metric",
-                    source_id=f"SEC_GENERIC_CIK_{accession}",
-                    source_type="sec_filing",
-                    authority_rank=1,
-                    statement=f"Raw filing {accession}.",
-                    value=1.0,
-                    supports_metrics=["raw_operand"],
-                    source_lineage=[accession],
-                )
-                for accession in (
-                    "GENERIC_FILING_A",
-                    "GENERIC_FILING_B",
-                    "GENERIC_FILING_C",
-                )
-            ],
-        ],
+        runtime_evidence=runtime_evidence,
+        currency="HUF",
     )
     assert evidence
     assert {item.source_type for item in evidence} == {
@@ -259,9 +382,24 @@ def test_interest_coverage_is_precomputed_with_auditable_operands():
         item.supports_metrics[0]: item
         for item in evidence
         if item.supports_metrics
-        and item.supports_metrics[0].endswith("interest_coverage_ttm")
     }
-
+    newly_bound_metrics = {
+        "revenue_growth_yoy",
+        "operating_margin_ttm",
+        "net_margin_ttm",
+        "fcf_margin_ttm",
+        "sbc_to_fcf",
+        "current_ratio",
+        "ebitda_ttm",
+        "total_lease_liabilities",
+        "economic_share_count",
+        "diluted_share_count",
+        "ev_to_ebit",
+        "ev_to_ebitda",
+        "fcf_yield",
+        "trailing_pe",
+    }
+    assert newly_bound_metrics <= by_metric.keys()
     assert by_metric[
         "operating_income_interest_coverage_ttm"
     ].formula_id == "operating_income_divided_by_interest_expense"
@@ -274,11 +412,6 @@ def test_interest_coverage_is_precomputed_with_auditable_operands():
         "operating_income_ttm": 120.0,
         "interest_expense_ttm": 20.0,
     }
-    by_metric = {
-        item.supports_metrics[0]: item
-        for item in evidence
-        if item.supports_metrics
-    }
     assert by_metric["price_to_fcf"].formula_operands == {
         "market_cap": 1_000.0,
         "free_cash_flow_ttm": 80.0,
@@ -290,6 +423,7 @@ def test_interest_coverage_is_precomputed_with_auditable_operands():
     assert by_metric["ev_to_sales"].source_lineage == [
         "SEC_GENERIC_DERIVED_TTM",
         "GENERIC_EXCHANGE",
+        "SEC_GENERIC_FILING_A",
     ]
     assert by_metric[
         "shareholder_distributions_ttm"
@@ -299,9 +433,7 @@ def test_interest_coverage_is_precomputed_with_auditable_operands():
     }
     assert by_metric["shareholder_distributions_ttm"].source_lineage == [
         "SEC_GENERIC_DERIVED_TTM",
-        "SEC_GENERIC_CIK_GENERIC_FILING_A",
-        "SEC_GENERIC_CIK_GENERIC_FILING_B",
-        "SEC_GENERIC_CIK_GENERIC_FILING_C",
+        "SEC_GENERIC_FILING_A",
     ]
     assert by_metric[
         "shareholder_distributions_minus_fcf_ttm"
@@ -312,4 +444,22 @@ def test_interest_coverage_is_precomputed_with_auditable_operands():
     assert by_metric["cash_and_investments"].formula_operands == {
         "cash_and_equivalents": 50.0,
         "short_term_investments": 20.0,
+    }
+    assert by_metric["market_cap"].unit == "HUF"
+
+    inconsistent = MetricsPacket(**metrics.model_dump(mode="python"))
+    inconsistent.valuation.ev_to_ebit = 9.0
+    invalid_evidence = build_fundamental_derivation_evidence(
+        ticker="GENERIC",
+        as_of_date="2026-07-01",
+        metrics_packet=inconsistent,
+        normalized_fundamentals={"ttm_bridges": ttm_bridges},
+        price_source_id="GENERIC_EXCHANGE",
+        runtime_evidence=runtime_evidence,
+        currency="HUF",
+    )
+    assert "ev_to_ebit" not in {
+        item.supports_metrics[0]
+        for item in invalid_evidence
+        if item.supports_metrics
     }

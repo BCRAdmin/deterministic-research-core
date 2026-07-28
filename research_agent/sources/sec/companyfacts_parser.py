@@ -172,8 +172,14 @@ class CompanyFactsParser:
 
     def to_evidence_item(self, fact: ParsedFact) -> EvidenceItem:
         normalization_suffix = f" {fact.normalization_note}" if fact.normalization_note else ""
+        period_identity = (
+            f"{fact.start or 'instant'}_{fact.end or fact.filed or 'unknown'}"
+        )
         return EvidenceItem(
-            evidence_id=f"{self.ticker}_SEC_{fact.metric_name}_{fact.period}_{fact.accession or fact.filed}",
+            evidence_id=(
+                f"{self.ticker}_SEC_{fact.metric_name}_{fact.period}_"
+                f"{period_identity}_{fact.accession or fact.filed}"
+            ),
             ticker=self.ticker,
             claim_type="financial_metric",
             source_id=f"SEC_{self.cik}_{fact.accession or fact.filed}",

@@ -104,6 +104,7 @@ from research_agent.sources.sec.companyfacts_parser import CompanyFactsParser
 from research_agent.sources.sec.sec_client import SecClient, SecClientConfig
 from research_agent.sources.sec.sec_fundamentals_builder import (
     SEC_FUNDAMENTAL_METRICS,
+    build_sec_evidence_for_source_ids,
     build_sec_fundamentals,
     build_sec_fundamentals_from_companyfacts,
 )
@@ -190,6 +191,7 @@ def run_research_pipeline(
         metrics_packet=metrics_packet,
         source_registry=source_registry,
         runtime_evidence=source_evidence_items,
+        currency=config.price_currency,
     )
     source_evidence_items.extend(technical_derivation_evidence)
     price_source_id = next(
@@ -208,6 +210,7 @@ def run_research_pipeline(
             normalized_fundamentals=normalized_fundamentals,
             price_source_id=price_source_id,
             runtime_evidence=source_evidence_items,
+            currency=config.price_currency,
         )
     )
     source_registry = merge_evidence_sources(
@@ -685,6 +688,34 @@ def _load_source_ingestion_inputs(ticker: str, as_of_date: str, config: ReportCo
             canonical_financials
         )
         fundamentals.update(canonical_fundamentals)
+        bridge_source_ids = {
+            str(source_id)
+            for bridge in [
+                *(
+                    canonical_fundamentals.get("ttm_bridges") or {}
+                ).values(),
+                canonical_fundamentals.get(
+                    "revenue_growth_yoy_bridge"
+                ),
+            ]
+            if isinstance(bridge, dict)
+            for source_id in bridge.get("source_ids") or []
+            if source_id
+        }
+        exact_bridge_evidence = build_sec_evidence_for_source_ids(
+            ticker=ticker,
+            cik=cik_mapper.get_cik(ticker),
+            companyfacts_json=raw,
+            source_ids=bridge_source_ids,
+        )
+        known_evidence_ids = {
+            item.evidence_id for item in evidence_items
+        }
+        evidence_items.extend(
+            item
+            for item in exact_bridge_evidence
+            if item.evidence_id not in known_evidence_ids
+        )
         reconciliation_warnings.extend(
             canonical_fundamentals.get("reconciliation_issues", [])
         )

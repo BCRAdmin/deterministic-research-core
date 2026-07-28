@@ -613,9 +613,26 @@ def _derive_revenue_growth(
     )
     if len(annual) < 2 or annual[-2].value == 0:
         return
+    current = annual[-1]
+    prior = annual[-2]
     fundamentals["revenue_growth_yoy"] = (
-        annual[-1].value - annual[-2].value
-    ) / annual[-2].value
+        current.value - prior.value
+    ) / prior.value
+    fundamentals["revenue_growth_yoy_bridge"] = {
+        "formula_id": "annual_revenue_yoy_growth",
+        "operands": {
+            "current_annual_revenue": current.value,
+            "prior_annual_revenue": prior.value,
+        },
+        "period_start": prior.start_date,
+        "period_end": current.end_date,
+        "source_ids": sorted(
+            {
+                *current.source_ids,
+                *prior.source_ids,
+            }
+        ),
+    }
 
 
 def _derive_fiscal_context(

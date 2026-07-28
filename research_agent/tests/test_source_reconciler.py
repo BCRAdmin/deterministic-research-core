@@ -203,6 +203,7 @@ def test_stale_balance_sheet_metric_is_not_treated_as_current():
 
 def test_ttm_bridge_does_not_skip_q4_when_current_q1_arrives():
     facts = [
+        _fact("revenue", 25_920, "FY", "2024-01-01", "2024-12-31", "fy-2024"),
         _fact("revenue", 5_956, "Q1", "2025-01-01", "2025-03-31", "q1-2025"),
         _fact("revenue", 6_843, "Q2", "2025-04-01", "2025-06-30", "q2-2025"),
         _fact("revenue", 7_078, "Q3", "2025-07-01", "2025-09-30", "q3-2025"),
@@ -230,6 +231,11 @@ def test_ttm_bridge_does_not_skip_q4_when_current_q1_arrives():
         "annual": 26_885,
         "prior_interim": 5_956,
         "current_interim": 6_517,
+    }
+    assert fundamentals["revenue_growth_yoy"] == (26_885 - 25_920) / 25_920
+    assert fundamentals["revenue_growth_yoy_bridge"]["operands"] == {
+        "current_annual_revenue": 26_885,
+        "prior_annual_revenue": 25_920,
     }
 
 
