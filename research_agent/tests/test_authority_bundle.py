@@ -192,6 +192,26 @@ def test_authority_bundle_fails_when_validation_blocks(tmp_path: Path) -> None:
     assert "deterministic_validation_clean" in manifest["blocking_failures"]
 
 
+def test_authority_bundle_blocks_stale_price_basis(tmp_path: Path) -> None:
+    packet_dir, registry_path = _packet_set(
+        tmp_path,
+        as_of="2026-07-27",
+    )
+    data_path = packet_dir / "data_packet.json"
+    data_packet = json.loads(data_path.read_text(encoding="utf-8"))
+    data_packet["price_basis"]["date"] = "2026-01-02"
+    _write_json(data_path, data_packet)
+
+    manifest = build_authority_bundle(
+        packet_dir=packet_dir,
+        source_registry_path=registry_path,
+        output_dir=tmp_path / "bundle",
+    )
+
+    assert manifest["analysis_allowed"] is False
+    assert "price_basis_current_for_analysis" in manifest["blocking_failures"]
+
+
 def test_authority_bundle_blocks_when_fact_ledger_is_missing(tmp_path: Path) -> None:
     packet_dir, registry_path = _packet_set(tmp_path)
     (packet_dir / "fact_ledger.json").unlink()

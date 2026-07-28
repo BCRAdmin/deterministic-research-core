@@ -15,6 +15,8 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable, Mapping
 
+from research_agent.batch.freshness import evaluate_price_freshness
+
 
 AUTHORITY_CONTRACT_ID = "room16.research_authority_bundle"
 AUTHORITY_CONTRACT_VERSION = 1
@@ -263,6 +265,17 @@ def _assess_packets(
     except ValueError:
         price_not_future = False
     _check(checks, "price_basis_not_after_as_of", price_not_future, detail=price_date)
+    price_freshness = evaluate_price_freshness(
+        price_date,
+        reference_date=as_of_date,
+        max_trading_day_age=2,
+    )
+    _check(
+        checks,
+        "price_basis_current_for_analysis",
+        price_not_future and price_freshness.current_report_allowed,
+        detail=json.dumps(price_freshness.to_dict(), sort_keys=True),
+    )
 
     validation_issues = validation_report.get("issues")
     validation_issues = validation_issues if isinstance(validation_issues, list) else []
