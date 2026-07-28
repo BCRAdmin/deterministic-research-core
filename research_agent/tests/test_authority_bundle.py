@@ -100,6 +100,21 @@ def _packet_set(root: Path, ticker: str = "GENERIC", as_of: str = "2026-07-01") 
         "shareholder_distributions_ttm",
         "shareholder_distributions_minus_fcf_ttm",
     ]
+    metric_values = {
+        "close": 100.0,
+        "sma_50": 95.0,
+        "sma_200": 90.0,
+        "rsi_14": 55.0,
+        "avg_volume_20": 1_000_000.0,
+        "revenue_ttm": 1_000_000_000.0,
+        "free_cash_flow_ttm": 100_000_000.0,
+        "operating_cash_flow_ttm": 120_000_000.0,
+        "capex_ttm": 20_000_000.0,
+        "buybacks": 50_000_000.0,
+        "dividends_paid": 75_000_000.0,
+        "shareholder_distributions_ttm": 125_000_000.0,
+        "shareholder_distributions_minus_fcf_ttm": 25_000_000.0,
+    }
     _write_json(
         packet_dir / "evidence_ledger.json",
         {
@@ -107,24 +122,26 @@ def _packet_set(root: Path, ticker: str = "GENERIC", as_of: str = "2026-07-01") 
             "as_of_date": as_of,
             "evidence_items": [
                 {
-                    "evidence_id": f"{ticker}_PRIMARY",
+                    "evidence_id": f"{ticker}_{metric.upper()}",
                     "ticker": ticker,
-                    "source_id": f"{ticker}_SEC",
-                    "supports_metrics": supported_metrics[5:],
-                    "formula_id": "sum_four_contiguous_quarters",
-                    "formula_operands": {
-                        "q1": 1.0,
-                        "q2": 1.0,
-                        "q3": 1.0,
-                        "q4": 1.0,
-                    },
-                },
-                {
-                    "evidence_id": f"{ticker}_PRICE",
-                    "ticker": ticker,
-                    "source_id": f"{ticker}_PRICE",
-                    "supports_metrics": supported_metrics[:5],
-                },
+                    "source_id": (
+                        f"{ticker}_PRICE"
+                        if metric in supported_metrics[:5]
+                        else f"{ticker}_SEC"
+                    ),
+                    "supports_metrics": [metric],
+                    "value": metric_values[metric],
+                    "normalized_value": metric_values[metric],
+                    "formula_id": "deterministic_test_fixture",
+                    "formula_operands": {"input": metric_values[metric]},
+                    "date": as_of,
+                    "period": (
+                        "daily_history"
+                        if metric in supported_metrics[:5]
+                        else "TTM"
+                    ),
+                }
+                for metric in supported_metrics
             ],
         },
     )
@@ -291,3 +308,34 @@ def test_authority_bundle_blocks_unregistered_evidence(tmp_path: Path) -> None:
 
     assert manifest["analysis_allowed"] is False
     assert "evidence_sources_registered" in manifest["blocking_failures"]
+
+
+def test_authority_bundle_blocks_material_metric_value_mismatch(
+    tmp_path: Path,
+) -> None:
+    packet_dir, registry_path = _packet_set(tmp_path)
+    ledger_path = packet_dir / "evidence_ledger.json"
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    revenue = next(
+        item
+        for item in ledger["evidence_items"]
+        if item["supports_metrics"] == ["revenue_ttm"]
+    )
+    revenue["value"] = 999_000_000.0
+    revenue["normalized_value"] = 999_000_000.0
+    _write_json(ledger_path, ledger)
+
+    manifest = build_authority_bundle(
+        packet_dir=packet_dir,
+        source_registry_path=registry_path,
+        output_dir=tmp_path / "bundle",
+    )
+
+    assert manifest["analysis_allowed"] is False
+    assert "material_metrics_evidence_mapped" in manifest["blocking_failures"]
+    check = next(
+        item
+        for item in manifest["checks"]
+        if item["check_id"] == "material_metrics_evidence_mapped"
+    )
+    assert check["detail"] == "revenue_ttm"

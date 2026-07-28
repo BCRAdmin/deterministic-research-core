@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import re
 import shutil
 from datetime import date, datetime, timezone
@@ -135,6 +136,38 @@ def _metric_items(metrics_packet: Mapping[str, Any]) -> Iterable[tuple[str, Any]
         for key, value in values.items():
             if key in MATERIAL_METRIC_KEYS and value is not None:
                 yield key, value
+
+
+def _has_exact_numeric_evidence(
+    evidence_items: Iterable[Mapping[str, Any]],
+    metric_name: str,
+    value: Any,
+) -> bool:
+    if not isinstance(value, (int, float)) or isinstance(value, bool):
+        return False
+    expected = float(value)
+    for item in evidence_items:
+        evidence_value = item.get("value")
+        if (
+            metric_name not in (item.get("supports_metrics") or [])
+            or not isinstance(evidence_value, (int, float))
+            or isinstance(evidence_value, bool)
+            or not math.isclose(
+                float(evidence_value),
+                expected,
+                rel_tol=1e-9,
+                abs_tol=1e-9,
+            )
+        ):
+            continue
+        if (
+            item.get("formula_id")
+            or item.get("raw_value") is not None
+            or item.get("normalized_value") is not None
+            or (item.get("date") and item.get("period"))
+        ):
+            return True
+    return False
 
 
 def _resolve_source_registry_path(
@@ -395,14 +428,20 @@ def _assess_packets(
         detail=",".join(sorted(evidence_tickers)),
     )
 
-    supported_metrics = {
-        str(metric)
-        for item in evidence_items
-        if isinstance(item, Mapping)
-        for metric in item.get("supports_metrics") or []
-    }
-    material_metrics = {name for name, _ in _metric_items(metrics_packet)}
-    missing_metric_evidence = sorted(material_metrics - supported_metrics)
+    material_metrics = dict(_metric_items(metrics_packet))
+    missing_metric_evidence = sorted(
+        metric_name
+        for metric_name, value in material_metrics.items()
+        if not _has_exact_numeric_evidence(
+            (
+                item
+                for item in evidence_items
+                if isinstance(item, Mapping)
+            ),
+            metric_name,
+            value,
+        )
+    )
     _check(
         checks,
         "material_metrics_evidence_mapped",

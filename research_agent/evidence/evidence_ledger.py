@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import math
 from pathlib import Path
 from typing import Iterable, List, Mapping, Optional, Union
 
@@ -329,6 +330,48 @@ def build_fundamental_derivation_evidence(
         )
         if value is not None
     }
+    if (
+        fundamentals.cash_and_investments is not None
+        and liquid_assets
+        and math.isclose(
+            sum(liquid_assets.values()),
+            float(fundamentals.cash_and_investments),
+            rel_tol=1e-9,
+            abs_tol=1e-9,
+        )
+    ):
+        evidence.append(
+            EvidenceItem(
+                evidence_id=(
+                    f"{ticker.upper()}_DETERMINISTIC_"
+                    f"CASH_AND_INVESTMENTS_{as_of_date}"
+                ),
+                ticker=ticker.upper(),
+                claim_type="financial_metric",
+                source_id=source_id,
+                source_type="deterministic_calculation",
+                authority_rank=1,
+                statement=(
+                    "cash_and_investments="
+                    f"{fundamentals.cash_and_investments:g} was derived from "
+                    f"the available liquid assets; operands={liquid_assets}."
+                ),
+                value=float(fundamentals.cash_and_investments),
+                unit="usd",
+                period=f"as of {as_of_date}",
+                date=as_of_date,
+                supports_metrics=["cash_and_investments"],
+                confidence="high",
+                formula_id="sum_available_liquid_assets",
+                formula_operands=liquid_assets,
+                normalized_value=float(fundamentals.cash_and_investments),
+                source_lineage=_operand_source_lineage(
+                    [*runtime_items, *evidence],
+                    liquid_assets,
+                    fallback_source_id=source_id,
+                ),
+            )
+        )
     if (
         fundamentals.net_cash is not None
         and fundamentals.total_debt is not None

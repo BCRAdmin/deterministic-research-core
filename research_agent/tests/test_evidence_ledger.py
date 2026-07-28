@@ -178,6 +178,9 @@ def test_interest_coverage_is_precomputed_with_auditable_operands():
             dividends_paid=60.0,
             shareholder_distributions_ttm=90.0,
             shareholder_distributions_minus_fcf_ttm=10.0,
+            cash_and_equivalents=50.0,
+            short_term_investments=20.0,
+            cash_and_investments=70.0,
             interest_expense_ttm=20.0,
             operating_income_interest_coverage_ttm=6.0,
             free_cash_flow_interest_coverage_ttm=4.0,
@@ -305,4 +308,8 @@ def test_interest_coverage_is_precomputed_with_auditable_operands():
     ].formula_operands == {
         "shareholder_distributions_ttm": 90.0,
         "free_cash_flow_ttm": 80.0,
+    }
+    assert by_metric["cash_and_investments"].formula_operands == {
+        "cash_and_equivalents": 50.0,
+        "short_term_investments": 20.0,
     }
