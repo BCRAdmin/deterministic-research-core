@@ -15,6 +15,10 @@ from research_agent.sources.sec.companyfacts_parser import ParsedFact
 
 
 MAX_CURRENT_FINANCIAL_AGE_DAYS = 550
+INFORMATIONAL_RECONCILIATION_CODES = {
+    "SOURCE_FRAME_VARIANT_IGNORED",
+    "PERIOD_TYPE_MISMATCH_IGNORED",
+}
 
 
 def reconcile_metric(metric_name: str, candidate_metrics: Iterable[CanonicalMetric]):
@@ -90,6 +94,19 @@ def reconcile_metric(metric_name: str, candidate_metrics: Iterable[CanonicalMetr
                         "metric": metric_name,
                         "basis": top.basis,
                         "period_type": top.period_bucket,
+                        "period": top.period,
+                        "fiscal_year": top.fiscal_year,
+                        "fiscal_period": top.fiscal_period,
+                        "start_date": top.start_date,
+                        "end_date": top.end_date,
+                        "source_ids": sorted(
+                            {
+                                source_id
+                                for metric in metrics
+                                for source_id in metric.source_ids
+                            }
+                        ),
+                        "candidate_values": sorted(values),
                         "message": f"Comparable sources disagree for {metric_name} ({top.basis}, {top.period_bucket}, {top.period}).",
                     }
                 )
@@ -101,6 +118,58 @@ def reconcile_metric(metric_name: str, candidate_metrics: Iterable[CanonicalMetr
     warnings.extend(_guidance_consensus_warnings(metric_name, canonical))
     warnings.extend(_low_confidence_warnings(canonical))
     return canonical, warnings
+
+
+def quality_relevant_reconciliation_warnings(
+    warnings: Iterable[dict],
+    normalized_fundamentals: dict,
+) -> list[dict]:
+    """Keep only warnings that can affect the current analysis quality.
+
+    Informational period/frame separation remains in the reconciliation
+    artifacts but is not a manual-review reason.  Dated value conflicts before
+    the earliest period used by the current TTM or growth bridges are likewise
+    historical context.  Undated conflicts stay fail-closed.
+    """
+
+    review_start = _material_reconciliation_start_date(normalized_fundamentals)
+    relevant: list[dict] = []
+    for warning in warnings:
+        code = str(warning.get("code") or "")
+        if code in INFORMATIONAL_RECONCILIATION_CODES:
+            continue
+        if code != "TRUE_SOURCE_VALUE_DISAGREEMENT" or review_start is None:
+            relevant.append(warning)
+            continue
+        end_date = _valid_iso_date(warning.get("end_date"))
+        if end_date is None or end_date >= review_start:
+            relevant.append(warning)
+    return relevant
+
+
+def _material_reconciliation_start_date(
+    normalized_fundamentals: dict,
+) -> Optional[date]:
+    bridges = normalized_fundamentals.get("ttm_bridges")
+    candidates = list(bridges.values()) if isinstance(bridges, dict) else []
+    growth_bridge = normalized_fundamentals.get("revenue_growth_yoy_bridge")
+    if isinstance(growth_bridge, dict):
+        candidates.append(growth_bridge)
+    starts = [
+        parsed
+        for bridge in candidates
+        if isinstance(bridge, dict)
+        for parsed in [_valid_iso_date(bridge.get("period_start"))]
+        if parsed is not None
+    ]
+    return min(starts) if starts else None
+
+
+def _valid_iso_date(value: object) -> Optional[date]:
+    try:
+        return date.fromisoformat(str(value or ""))
+    except ValueError:
+        return None
 
 
 def canonical_metric_from_parsed_fact(

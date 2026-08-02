@@ -54,6 +54,7 @@ from research_agent.reconciliation.reconciliation_report import (
 from research_agent.reconciliation.source_reconciler import (
     build_canonical_financials_from_facts,
     canonical_financials_to_fundamentals,
+    quality_relevant_reconciliation_warnings,
 )
 from research_agent.research_core.calculations.fundamentals import calculate_fundamental_metrics
 from research_agent.research_core.calculations.technicals import calculate_technical_metrics
@@ -390,7 +391,10 @@ def run_research_pipeline(
         audit_report=audit_report,
         decision_packet=decision_packet,
         final_markdown=report,
-        reconciliation_warnings=reconciliation_warnings,
+        reconciliation_warnings=quality_relevant_reconciliation_warnings(
+            reconciliation_warnings,
+            normalized_fundamentals,
+        ),
         analyst_claim_count=int(claim_metrics["analyst_claim_count"]),
         evidence_mapped_claim_ratio=float(claim_metrics["evidence_mapped_claim_ratio"]),
         hard_claim_evidence_ratio=float(claim_metrics["hard_claim_evidence_ratio"]),

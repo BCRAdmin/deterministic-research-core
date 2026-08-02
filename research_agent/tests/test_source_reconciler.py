@@ -5,6 +5,7 @@ from research_agent.reconciliation.canonical_financials import (
 from research_agent.reconciliation.source_reconciler import (
     build_canonical_financials_from_facts,
     canonical_financials_to_fundamentals,
+    quality_relevant_reconciliation_warnings,
     reconcile_metric,
 )
 from research_agent.sources.sec.companyfacts_parser import ParsedFact
@@ -75,8 +76,58 @@ def test_source_value_disagreement_warns_within_same_basis():
         _metric(value=105, basis="gaap", source_id="VENDOR", metric_name="revenue"),
     ])
 
-    assert any(warning["code"] == "TRUE_SOURCE_VALUE_DISAGREEMENT" for warning in warnings)
+    disagreement = next(
+        warning
+        for warning in warnings
+        if warning["code"] == "TRUE_SOURCE_VALUE_DISAGREEMENT"
+    )
+    assert disagreement["period"] == "FY2027"
+    assert disagreement["end_date"] == "2027-01-31"
+    assert disagreement["source_ids"] == ["SEC", "VENDOR"]
+    assert disagreement["candidate_values"] == [100.0, 105.0]
     assert canonical[0].value == 100
+
+
+def test_quality_scope_keeps_current_and_undated_conflicts_only():
+    warnings = [
+        {
+            "code": "PERIOD_TYPE_MISMATCH_IGNORED",
+            "severity": "info",
+        },
+        {
+            "code": "TRUE_SOURCE_VALUE_DISAGREEMENT",
+            "end_date": "2023-12-31",
+        },
+        {
+            "code": "TRUE_SOURCE_VALUE_DISAGREEMENT",
+            "end_date": "2025-12-31",
+        },
+        {"code": "TRUE_SOURCE_VALUE_DISAGREEMENT"},
+        {"code": "STALE_FINANCIAL_METRIC_EXCLUDED"},
+    ]
+    fundamentals = {
+        "ttm_bridges": {
+            "revenue": {
+                "period_start": "2025-01-01",
+            }
+        }
+    }
+
+    relevant = quality_relevant_reconciliation_warnings(
+        warnings,
+        fundamentals,
+    )
+
+    assert relevant == warnings[2:]
+
+
+def test_quality_scope_keeps_dated_conflicts_without_material_period():
+    warning = {
+        "code": "TRUE_SOURCE_VALUE_DISAGREEMENT",
+        "end_date": "2023-12-31",
+    }
+
+    assert quality_relevant_reconciliation_warnings([warning], {}) == [warning]
 
 
 def test_period_type_variants_are_ignored_not_warned():
