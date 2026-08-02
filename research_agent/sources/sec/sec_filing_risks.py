@@ -25,6 +25,20 @@ _GENERIC_PREFIXES = (
     "risk factors should be read",
     "for a discussion of risk factors",
 )
+_BUSINESS_LANGUAGE = re.compile(
+    r"\b(business|customer|customers|develop|develops|offer|offers|operate|"
+    r"product|products|service|services|solution|solutions|platform|platforms|"
+    r"segment|segments|software|subscription|subscriptions|device|devices|"
+    r"manufacture|manufactures|distribute|distributes|market|markets)\b",
+    re.IGNORECASE,
+)
+_BUSINESS_CONTEXT_SKIP_PREFIXES = (
+    "this report includes",
+    "the following discussion",
+    "information contained",
+    "see part",
+    "additional information",
+)
 
 
 @dataclass(frozen=True)
@@ -189,6 +203,96 @@ def extract_sec_risk_headings(html: str) -> list[str]:
     return best[:30]
 
 
+def extract_sec_business_context(html: str) -> list[str]:
+    """Extract concise issuer-written business and segment context from Item 1."""
+
+    parser = _SecTextBlocks()
+    parser.feed(html)
+    blocks = parser.finish()
+    starts = [
+        index
+        for index, (block, _) in enumerate(blocks)
+        if _compact_heading(block) == "item1business"
+    ]
+    best: list[str] = []
+    for start in starts:
+        end = next(
+            (
+                index
+                for index in range(start + 1, len(blocks))
+                if _compact_heading(blocks[index][0]).startswith("item1a")
+            ),
+            len(blocks),
+        )
+        section = blocks[start + 1 : end]
+        candidates = [
+            (index, text)
+            for index, (text, emphasized) in enumerate(section)
+            if not emphasized and _is_business_context_paragraph(text)
+        ]
+        if not candidates:
+            continue
+        activity = max(
+            candidates,
+            key=lambda item: (_business_context_score(item[1]), -item[0]),
+        )[1]
+        selected = [activity]
+        segment = next(
+            (
+                text
+                for _, text in candidates
+                if text != activity
+                and "segment" in text.lower()
+                and _business_context_score(text) >= 3
+            ),
+            None,
+        )
+        if segment:
+            selected.append(segment)
+        if len(selected) > len(best):
+            best = selected
+    return best[:2]
+
+
+def build_sec_business_context_payload(
+    *,
+    ticker: str,
+    filing: SecFilingReference,
+    html: str,
+    retrieved_at: str,
+) -> dict[str, Any]:
+    """Build the existing official-news contract from a filed annual Item 1."""
+
+    statements = (
+        extract_sec_business_context(html) if filing.form == "10-K" else []
+    )
+    accession = filing.accession_number.replace("-", "")
+    symbol = ticker.strip().upper()
+    return {
+        "coverage_status": "partial" if statements else "unavailable",
+        "checked_at": retrieved_at,
+        "window_start": filing.report_date or filing.filing_date,
+        "window_end": filing.filing_date,
+        "sources_checked": [filing.url],
+        "events": [
+            {
+                "date": filing.filing_date,
+                "headline": f"SEC Item 1 describes {symbol}'s business",
+                "event_type": "business_context",
+                "material": True,
+                "source_id": filing.source_id,
+                "source_type": "sec_filing",
+                "authority_rank": rank_source("sec_filing"),
+                "url": filing.url,
+                "retrieved_at": retrieved_at,
+                "evidence_id": f"{symbol}_SEC_BUSINESS_{accession}_{index:02d}",
+                "summary": statement,
+            }
+            for index, statement in enumerate(statements, start=1)
+        ],
+    }
+
+
 def build_sec_risk_evidence(
     *,
     ticker: str,
@@ -290,3 +394,21 @@ def _is_risk_heading(text: str) -> bool:
     if stripped.count(". ") > 1:
         return False
     return bool(_RISK_LANGUAGE.search(stripped))
+
+
+def _is_business_context_paragraph(text: str) -> bool:
+    stripped = text.strip()
+    lowered = stripped.lower()
+    if not 80 <= len(stripped) <= 700:
+        return False
+    if any(character.isdigit() for character in stripped):
+        return False
+    if lowered.startswith(_BUSINESS_CONTEXT_SKIP_PREFIXES):
+        return False
+    if stripped.isupper() or stripped.count(". ") > 3:
+        return False
+    return _business_context_score(stripped) >= 3
+
+
+def _business_context_score(text: str) -> int:
+    return len({match.group(0).lower() for match in _BUSINESS_LANGUAGE.finditer(text)})

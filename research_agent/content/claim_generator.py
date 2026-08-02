@@ -590,6 +590,11 @@ class _ClaimBuilder:
         ]
         if not evidence:
             return
+        claim_statement = (
+            f"Issuer-filed business context: {statement}"
+            if event.event_type in _BUSINESS_CONTEXT_EVENT_TYPES
+            else statement
+        )
         self.counter += 1
         claim_id = f"{self.data_packet.ticker}_CLAIM_{self.counter:03d}"
         counterargument = None
@@ -609,8 +614,8 @@ class _ClaimBuilder:
                 section=section,
                 claim_type="news",
                 agent="deterministic_content_generator",
-                claim=statement,
-                claim_text=statement,
+                claim=claim_statement,
+                claim_text=claim_statement,
                 evidence_metrics=[],
                 metric_refs=[],
                 metric_values={},

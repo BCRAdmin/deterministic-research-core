@@ -1,4 +1,6 @@
 from research_agent.sources.sec.sec_filing_risks import (
+    SecFilingReference,
+    build_sec_business_context_payload,
     build_sec_risk_evidence,
     extract_sec_risk_headings,
     select_sec_risk_filing_candidates,
@@ -73,6 +75,46 @@ def test_extracts_split_risk_heading_across_repeated_item_1a_page_headers():
         "Competition could adversely affect our operating results.",
         "Cyberattacks may harm our reputation or competitive position.",
     ]
+
+
+def test_extracts_business_context_only_from_annual_item_1():
+    html = """
+    <html><body>
+      <div>Item 1.</div><div>Business</div><div>3</div>
+      <div><strong>ITEM 1. B USINESS</strong></div>
+      <p>GENERAL</p>
+      <p>The issuer develops secure software platforms and cloud services for business customers across several markets.</p>
+      <p><strong>OPERATING SEGMENTS</strong></p>
+      <p>The business operates through Enterprise Platforms, Cloud Services, and Consumer Products segments.</p>
+      <div><strong>ITEM 1A. RIS K FACTORS</strong></div>
+      <p>Competition could adversely affect operating results.</p>
+    </body></html>
+    """
+    filing = SecFilingReference(
+        cik="1234",
+        form="10-K",
+        filing_date="2026-07-20",
+        report_date="2026-06-30",
+        accession_number="0000001234-26-000001",
+        primary_document="issuer-20260630.htm",
+        url="https://www.sec.gov/Archives/example",
+    )
+
+    payload = build_sec_business_context_payload(
+        ticker="TEST",
+        filing=filing,
+        html=html,
+        retrieved_at="2026-07-21T00:00:00+00:00",
+    )
+
+    assert [event["summary"] for event in payload["events"]] == [
+        "The issuer develops secure software platforms and cloud services for business customers across several markets.",
+        "The business operates through Enterprise Platforms, Cloud Services, and Consumer Products segments.",
+    ]
+    assert {event["source_type"] for event in payload["events"]} == {
+        "sec_filing"
+    }
+    assert len({event["evidence_id"] for event in payload["events"]}) == 2
 
 
 def test_builds_primary_risk_evidence_without_inventing_numeric_metrics():

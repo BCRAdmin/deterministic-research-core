@@ -503,6 +503,7 @@ def test_material_company_events_create_real_context_not_generic_finance_padding
     strategy = next(claim for claim in claims if claim.source_ids == ["SNOW_IR_STRATEGY"])
 
     assert context.section == "Business & Segment Context"
+    assert context.claim.startswith("Issuer-filed business context:")
     assert strategy.section == "Catalysts & Triggers"
     assert "execution and financial contribution remain unproven" in strategy.counterargument
     assert claim_quality_metrics(claims)["company_specific_claim_count"] >= 2

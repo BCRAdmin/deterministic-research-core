@@ -21,6 +21,7 @@ from research_agent.sources.prices.nasdaq_price_provider import NasdaqPriceProvi
 from research_agent.sources.prices.price_provider_base import PriceProviderBase
 from research_agent.sources.sec.sec_client import SecClient, SecClientConfig
 from research_agent.sources.sec.sec_filing_risks import (
+    build_sec_business_context_payload,
     build_sec_risk_evidence,
     save_sec_risk_evidence,
     select_sec_risk_filing_candidates,
@@ -133,6 +134,7 @@ def run_current_research(
     price_dir = source_dir / "prices"
     companyfacts_dir = source_dir / "sec_companyfacts"
     risk_factors_dir = source_dir / "sec_risk_factors"
+    business_context_dir = source_dir / "sec_business_context"
     packet_root = staging_dir / "packets"
     output_root = Path(request.output_root).expanduser().resolve()
 
@@ -199,6 +201,10 @@ def run_current_research(
     risk_factor_count = 0
     risk_filing_to_save = None
     risk_evidence_to_save = []
+    business_context_status = "not_available"
+    business_context_filing_date: Optional[str] = None
+    business_context_count = 0
+    business_context_payload: Optional[dict[str, Any]] = None
     cik_records_path: Optional[Path] = None
     ir_release_dir: Optional[Path] = (
         Path(request.ir_release_dir).expanduser().resolve()
@@ -233,11 +239,13 @@ def run_current_research(
         companyfacts_path = companyfacts_dir / f"{symbol}.json"
         cik_records_path = source_dir / "cik_records.json"
         risk_source_status = "no_extractable_risk_factors"
-        for filing in select_sec_risk_filing_candidates(
+        filing_candidates = select_sec_risk_filing_candidates(
             submissions,
             cik=cik,
             as_of_date=request.as_of_date,
-        ):
+        )
+        filing_html_by_accession: dict[str, str] = {}
+        for filing in filing_candidates:
             try:
                 filing_html = sec.get_filing_html(
                     cik=filing.cik,
@@ -247,6 +255,7 @@ def run_current_research(
             except RuntimeError:
                 risk_source_status = "filing_fetch_failed"
                 continue
+            filing_html_by_accession[filing.accession_number] = filing_html
             risk_evidence = build_sec_risk_evidence(
                 ticker=symbol,
                 filing=filing,
@@ -262,6 +271,40 @@ def run_current_research(
             risk_filing_date = filing.filing_date
             risk_factor_count = len(risk_evidence)
             break
+        if official_news_dir is None:
+            annual_filing = next(
+                (filing for filing in filing_candidates if filing.form == "10-K"),
+                None,
+            )
+            if annual_filing is not None:
+                annual_html = filing_html_by_accession.get(
+                    annual_filing.accession_number
+                )
+                if annual_html is None:
+                    try:
+                        annual_html = sec.get_filing_html(
+                            cik=annual_filing.cik,
+                            accession_number=annual_filing.accession_number,
+                            primary_document=annual_filing.primary_document,
+                        )
+                    except RuntimeError:
+                        business_context_status = "filing_fetch_failed"
+                if annual_html is not None:
+                    business_context_payload = build_sec_business_context_payload(
+                        ticker=symbol,
+                        filing=annual_filing,
+                        html=annual_html,
+                        retrieved_at=retrieved_at,
+                    )
+                    business_context_count = len(
+                        business_context_payload.get("events") or []
+                    )
+                    if business_context_count:
+                        business_context_status = "available"
+                        business_context_filing_date = annual_filing.filing_date
+                        official_news_dir = str(business_context_dir)
+                    else:
+                        business_context_status = "no_extractable_business_context"
         latest_filing_date = _latest_filing_date(
             submissions, as_of_date=request.as_of_date
         )
@@ -359,6 +402,11 @@ def run_current_research(
                 risk_factors_path,
                 filing=risk_filing_to_save,
                 evidence=risk_evidence_to_save,
+            )
+        if business_context_count and business_context_payload is not None:
+            _write_json(
+                business_context_dir / f"{symbol}_news.json",
+                business_context_payload,
             )
     else:
         assert ir_release_dir is not None
@@ -458,6 +506,9 @@ def run_current_research(
         "risk_source_status": risk_source_status,
         "risk_filing_date": risk_filing_date,
         "risk_factor_count": risk_factor_count,
+        "business_context_status": business_context_status,
+        "business_context_filing_date": business_context_filing_date,
+        "business_context_count": business_context_count,
         "price_provider": provider_name,
         "price_source_type": source_type,
         "price_row_count": int(len(prices)),

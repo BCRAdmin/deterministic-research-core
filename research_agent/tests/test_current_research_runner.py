@@ -62,7 +62,7 @@ class _FakeSecWithRisks(_FakeSec):
                             "USD": [
                                 {
                                     "val": 1_000_000,
-                                    "form": "10-Q",
+                                    "form": "10-K",
                                     "filed": "2026-07-20",
                                     "start": "2026-04-01",
                                     "end": "2026-06-30",
@@ -79,7 +79,7 @@ class _FakeSecWithRisks(_FakeSec):
         return {
             "filings": {
                 "recent": {
-                    "form": ["10-Q"],
+                    "form": ["10-K"],
                     "filingDate": ["2026-07-20"],
                     "reportDate": ["2026-06-30"],
                     "accessionNumber": ["0000123456-26-000001"],
@@ -90,7 +90,9 @@ class _FakeSecWithRisks(_FakeSec):
 
     def get_filing_html(self, **kwargs):
         return """
-        <div>Risk Factors</div>
+        <div><strong>ITEM 1. B USINESS</strong></div>
+        <p>The issuer develops secure software platforms and cloud services for business customers worldwide.</p>
+        <div><strong>ITEM 1A. RIS K FACTORS</strong></div>
         <p><strong>Failure to execute our strategy could adversely affect business growth.</strong></p>
         <p>Supporting explanation for the disclosed issuer risk.</p>
         <div>Item 3. Market Risk</div>
@@ -330,6 +332,10 @@ def test_current_runner_stages_sec_risks_for_the_existing_pipeline(monkeypatch, 
         risk_path = Path(config.sec_risk_factors_path)
         payload = json.loads(risk_path.read_text(encoding="utf-8"))
         assert payload["evidence_items"][0]["claim_type"] == "risk"
+        context_path = Path(config.official_news_dir, "GENR_news.json")
+        context = json.loads(context_path.read_text(encoding="utf-8"))
+        assert context["events"][0]["event_type"] == "business_context"
+        assert context["events"][0]["source_type"] == "sec_filing"
         authority = tmp_path / "outputs" / ticker / as_of_date / "authority_bundle"
         authority.mkdir(parents=True)
         (authority / "authority_manifest.json").write_text(
@@ -352,6 +358,9 @@ def test_current_runner_stages_sec_risks_for_the_existing_pipeline(monkeypatch, 
     assert result["risk_source_status"] == "available"
     assert result["risk_filing_date"] == "2026-07-20"
     assert result["risk_factor_count"] == 1
+    assert result["business_context_status"] == "available"
+    assert result["business_context_filing_date"] == "2026-07-20"
+    assert result["business_context_count"] == 1
 
 
 def test_current_runner_blocks_when_latest_sec_financials_are_not_in_companyfacts(

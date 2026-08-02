@@ -305,6 +305,10 @@ def run_research_pipeline(
             f"{failures or 'unknown authority failure'}"
         )
 
+    current_reconciliation_warnings = quality_relevant_reconciliation_warnings(
+        reconciliation_warnings,
+        normalized_fundamentals,
+    )
     if claim_coverage_complete:
         report = compose_research_report(
             data_packet=data_packet,
@@ -313,7 +317,7 @@ def run_research_pipeline(
             decision_packet=decision_packet,
             evidence_ledger=evidence_ledger,
             claims=claims,
-            reconciliation_warnings=reconciliation_warnings,
+            reconciliation_warnings=current_reconciliation_warnings,
         )
     else:
         report = render_markdown_report(
@@ -393,10 +397,7 @@ def run_research_pipeline(
         audit_report=audit_report,
         decision_packet=decision_packet,
         final_markdown=report,
-        reconciliation_warnings=quality_relevant_reconciliation_warnings(
-            reconciliation_warnings,
-            normalized_fundamentals,
-        ),
+        reconciliation_warnings=current_reconciliation_warnings,
         analyst_claim_count=int(claim_metrics["analyst_claim_count"]),
         evidence_mapped_claim_ratio=float(claim_metrics["evidence_mapped_claim_ratio"]),
         hard_claim_evidence_ratio=float(claim_metrics["hard_claim_evidence_ratio"]),
