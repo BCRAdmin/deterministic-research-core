@@ -163,17 +163,6 @@ class _ClaimBuilder:
             "Fundamental Analysis",
             "fundamental",
             "financial_metric",
-            f"{ticker} has revenue TTM of {self._money(self.metrics.fundamentals.revenue_ttm)}, so the business discussion should focus on {profile['business_driver']} rather than generic scale language.",
-            ["revenue_ttm"],
-            "high",
-            "high",
-            counterargument="Revenue scale alone does not prove attractive returns or valuation discipline.",
-            implication="Use revenue evidence as context, not as a standalone buy signal.",
-        )
-        self.add(
-            "Fundamental Analysis",
-            "fundamental",
-            "financial_metric",
             f"FCF TTM is {self._money(self.metrics.fundamentals.free_cash_flow_ttm)}, making cash conversion a direct rating input for {ticker}.",
             ["free_cash_flow_ttm"],
             "high",
@@ -299,11 +288,20 @@ class _ClaimBuilder:
             "Valuation / Multiples",
             "valuation",
             "valuation_metric",
-            f"For {ticker}, P/FCF is {_multiple(self.metrics.valuation.price_to_fcf)} and should be read against {profile['valuation_lens']}; missing or extreme cash-flow multiples should reduce conviction rather than invite a stronger rating.",
+            (
+                f"For {ticker}, P/FCF is "
+                f"{_multiple(self.metrics.valuation.price_to_fcf)}, derived "
+                "from market capitalization and TTM FCF. This records the "
+                "cash-flow valuation level without labeling it cheap or "
+                "expensive."
+            ),
             ["price_to_fcf", "market_cap", "free_cash_flow_ttm"],
             "medium",
             "medium",
-            implication="The rating should stay conservative when multiples are expensive, missing or flagged.",
+            implication=(
+                "A valuation conclusion requires sector comparison and "
+                "cash-flow durability evidence."
+            ),
         )
 
         self.add(
@@ -400,67 +398,22 @@ class _ClaimBuilder:
                 ),
             )
         self.add(
-            "Bear Case",
-            "bear",
-            "valuation_metric",
-            f"Valuation risk for {ticker} is a discipline constraint; expensive or missing EV/Sales and P/FCF context should not be translated into a blocked rating.",
-            ["revenue_ttm", "free_cash_flow_ttm"],
-            "medium",
-            "medium",
-            implication="Avoid a more bearish research label when the evidence supports only a Hold or tactical-risk stance.",
-        )
-
-        self.add(
-            "Key Risks",
-            "risk",
-            "risk",
-            f"Validation and audit issues are part of the {ticker} research view; any blocking data issue should override a superficially complete report.",
-            ["close"],
-            "high",
-            "high",
-            implication="Blocking audit errors should keep the report in manual review.",
-        )
-        self.add(
-            "Key Risks",
-            "risk",
-            "financial_metric",
-            f"Source disagreement or current-period mismatch can reduce conviction for {ticker}, especially where revenue {self._money(self.metrics.fundamentals.revenue_ttm)} is a key valuation denominator.",
-            ["revenue_ttm", "free_cash_flow_ttm"],
-            "medium",
-            "medium",
-            implication="Source-quality limitations belong in the final action plan.",
-        )
-
-        self.add(
-            "Catalysts & Triggers",
-            "catalyst",
-            "price_data",
-            (
-                f"Catalysts for {ticker} at the validated close of "
-                f"{self._money(self.metrics.technical.close)} should be limited "
-                "to confirmed packet inputs; missing earnings or forward "
-                "company data should be stated as unavailable rather than "
-                "converted into event-risk claims."
-            ),
-            ["close"],
-            "high",
-            "medium",
-            implication="If earnings are unavailable, the report should state that limitation rather than inventing timing.",
-        )
-        self.add(
             "Catalysts & Triggers",
             "catalyst",
             "technical_metric",
             (
-                "Trigger language should use evidence-backed levels such as "
-                f"50-SMA {self._money(self.metrics.technical.sma_50)} and "
-                f"200-SMA {self._money(self.metrics.technical.sma_200)}, not "
-                "unvalidated price targets."
+                "The validated technical reference levels are 50-SMA "
+                f"{self._money(self.metrics.technical.sma_50)} and 200-SMA "
+                f"{self._money(self.metrics.technical.sma_200)}. No separate "
+                "evidence-backed price target is present in the packet."
             ),
             ["sma_50", "sma_200"],
             "medium",
             "medium",
-            implication="Use confirmation language instead of hard price targets unless risk/reward levels are validated.",
+            implication=(
+                "Treat these moving averages as reference levels, not as "
+                "standalone price targets."
+            ),
         )
 
         self.add(

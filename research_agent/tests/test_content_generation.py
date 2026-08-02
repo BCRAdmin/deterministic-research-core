@@ -29,15 +29,17 @@ def _load_packet(ticker: str):
     )
 
 
-def test_content_generator_creates_minimum_evidence_mapped_claims():
+def test_content_generator_keeps_only_evidence_mapped_substantive_claims():
     data, metrics, validation, ledger, decision = _load_packet("SNOW")
 
     claims = generate_research_claims(data, metrics, ledger, decision, validation)
     quality = claim_quality_metrics(claims)
 
-    assert quality["analyst_claim_count"] >= 15
+    assert quality["analyst_claim_count"] < 15
     assert quality["evidence_mapped_claim_ratio"] >= 0.90
     assert quality["hard_claim_evidence_ratio"] == 1.0
+    assert quality["generic_claim_count"] == 0
+    assert quality["substantive_analyst_claim_count"] == 11
     assert all(claim.evidence_ids for claim in claims)
     valuation_claim = next(
         claim
@@ -167,7 +169,7 @@ def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():
         )
     ]
 
-    assert len(monetary_claims) == 7
+    assert monetary_claims
     assert all("$" not in claim.claim for claim in monetary_claims)
     assert all("HUF" in claim.claim for claim in monetary_claims)
     balance_sheet_claim = next(
@@ -185,7 +187,7 @@ def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():
     assert "close 141.71 HUF" in technical_text
     assert f"50-SMA {metrics.technical.sma_50:.2f} HUF" in technical_text
     assert f"200-SMA {metrics.technical.sma_200:.2f} HUF" in technical_text
-    assert "validated close of 141.71 HUF" in catalyst_text
+    assert "validated technical reference levels" in catalyst_text
     assert "$" not in research_report
     assert "$" not in internal_report
     assert "4.34B HUF" in research_report
@@ -199,12 +201,20 @@ def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():
         "fcf quality",
         "cash conversion quality",
         "not available in evidence set",
+        "business discussion should focus",
+        "should be read against",
+        "should not be translated into a blocked rating",
+        "validation and audit issues are part of",
+        "source disagreement or current-period mismatch",
+        "should be limited to confirmed packet inputs",
+        "trigger language should use",
     )
     assert not any(
         phrase in claim.claim.lower()
         for claim in claims
         for phrase in unsupported_language
     )
+    assert claim_quality_metrics(claims)["generic_claim_count"] == 0
     rating_claim = next(
         claim
         for claim in claims
@@ -303,7 +313,7 @@ def test_generic_company_gets_latest_reported_period_claim():
     ]
 
 
-def test_generic_claim_report_stays_internal_when_substance_gate_fails():
+def test_unpadded_claim_report_stays_internal_when_substance_gate_fails():
     data, metrics, validation, ledger, decision = _load_packet("SNOW")
     claims = generate_research_claims(data, metrics, ledger, decision, validation)
     report = compose_research_report(data, metrics, validation, decision, ledger, claims)
@@ -345,9 +355,9 @@ def test_generic_claim_report_stays_internal_when_substance_gate_fails():
     assert quality.content_score == 60
     assert "No LLM claims attached" not in report
     assert "## Evidence Appendix" in report
-    assert claim_quality["analyst_claim_count"] >= 15
+    assert claim_quality["analyst_claim_count"] < 15
     assert claim_quality["substantive_analyst_claim_count"] < 12
-    assert claim_quality["generic_claim_count"] >= 5
+    assert claim_quality["generic_claim_count"] == 0
 
 
 def test_financial_sanity_errors_still_block_claim_rich_reports():
