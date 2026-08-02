@@ -1262,6 +1262,7 @@ def _canonical_value(
         candidates,
         key=lambda metric: (
             metric.end_date or "",
+            _reported_period_priority(metric),
             {"high": 3, "medium": 2, "low": 1}.get(metric.confidence, 0),
         ),
         reverse=True,
@@ -1284,6 +1285,7 @@ def _latest_current_period_metric(
         candidates,
         key=lambda metric: (
             metric.end_date or "",
+            _reported_period_priority(metric),
             {"high": 3, "medium": 2, "low": 1}.get(metric.confidence, 0),
         ),
     )
@@ -1297,6 +1299,14 @@ def _display_period(metric: object) -> str:
     if fiscal_year is not None and fiscal_period == "FY":
         return f"FY{fiscal_year}"
     return str(getattr(metric, "period", "") or "current period")
+
+
+def _reported_period_priority(metric: object) -> int:
+    return {
+        "quarterly": 3,
+        "ytd": 2,
+        "annual": 1,
+    }.get(str(getattr(metric, "period_bucket", "") or "").lower(), 0)
 
 
 def _is_current_period_metric(period: str, source_ids: list[str]) -> bool:

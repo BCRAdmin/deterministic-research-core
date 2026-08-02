@@ -603,6 +603,28 @@ def test_generic_current_period_claim_uses_evidenced_yoy_comparison():
                 metric_name=metric_name,
                 value=value,
                 unit="USD",
+                period="Q3_FY2026_ytd",
+                fiscal_year=2026,
+                fiscal_period="Q3",
+                period_bucket="ytd",
+                start_date="2025-09-01",
+                end_date="2026-05-10",
+                duration_days=251,
+                basis="gaap",
+                statement_type="income_statement",
+                source_ids=["GENERIC_SEC_Q3_2026"],
+                confidence="high",
+            )
+            for metric_name, value in (
+                ("revenue", 330.0),
+                ("operating_income", 72.0),
+                ("net_income", 45.0),
+            )
+        ] + [
+            CanonicalMetric(
+                metric_name=metric_name,
+                value=value,
+                unit="USD",
                 period="CY2026Q1",
                 fiscal_year=2026,
                 fiscal_period="Q3",
@@ -619,36 +641,48 @@ def test_generic_current_period_claim_uses_evidenced_yoy_comparison():
         ],
     )
     _add_exact_metric_evidence(data, metrics, ledger)
-    for metric_name, value in {**current_values, **growth_values}.items():
+    for metric in canonical.metrics:
+        ledger.evidence_items.append(
+            EvidenceItem(
+                evidence_id=(
+                    f"GENERIC_{metric.metric_name.upper()}_"
+                    f"{metric.period_bucket.upper()}"
+                ),
+                ticker=data.ticker,
+                claim_type="financial_metric",
+                source_id="GENERIC_SEC_Q1_2026",
+                source_type="sec_filing",
+                authority_rank=1,
+                statement=f"Exact evidence for {metric.metric_name}.",
+                value=metric.value,
+                normalized_value=metric.value,
+                raw_value=metric.value,
+                unit="USD",
+                period=metric.period,
+                date=metric.end_date,
+                duration_days=metric.duration_days,
+                supports_metrics=[metric.metric_name],
+                confidence="high",
+            )
+        )
+    for metric_name, value in growth_values.items():
         ledger.evidence_items.append(
             EvidenceItem(
                 evidence_id=f"GENERIC_{metric_name.upper()}",
                 ticker=data.ticker,
                 claim_type="financial_metric",
-                source_id="GENERIC_SEC_Q1_2026",
-                source_type=(
-                    "deterministic_calculation"
-                    if metric_name in growth_values
-                    else "sec_filing"
-                ),
+                source_id="GENERIC_DETERMINISTIC_CALCULATIONS",
+                source_type="deterministic_calculation",
                 authority_rank=1,
                 statement=f"Exact evidence for {metric_name}.",
                 value=value,
                 normalized_value=value,
-                unit=("percent" if metric_name in growth_values else "USD"),
+                unit="percent",
                 period="CY2025Q1..CY2026Q1",
-                date="2026-03-31",
+                date="2026-05-10",
                 supports_metrics=[metric_name],
-                formula_id=(
-                    "matching_quarter_yoy_growth"
-                    if metric_name in growth_values
-                    else None
-                ),
-                formula_operands=(
-                    {"current": 1.0, "prior": 1.0}
-                    if metric_name in growth_values
-                    else {}
-                ),
+                formula_id="matching_quarter_yoy_growth",
+                formula_operands={"current": 1.0, "prior": 1.0},
                 confidence="high",
             )
         )
@@ -671,6 +705,11 @@ def test_generic_current_period_claim_uses_evidenced_yoy_comparison():
     assert "operating income by 20.0%" in current.claim
     assert "net income by 25.0%" in current.claim
     assert set(growth_values) <= set(current.metric_refs)
+    assert current.metric_values["revenue"] == 110.0
+    assert current.metric_values["operating_income"] == 24.0
+    assert current.metric_values["net_income"] == 15.0
+    assert "GENERIC_REVENUE_QUARTERLY" in current.evidence_ids
+    assert "GENERIC_REVENUE_YTD" not in current.evidence_ids
 
 
 def test_claim_evidence_selection_excludes_conflicting_units_and_values():
