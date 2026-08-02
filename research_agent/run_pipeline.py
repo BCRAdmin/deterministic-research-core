@@ -228,6 +228,7 @@ def run_research_pipeline(
         as_of_date=data_packet.as_of_date,
         source_registry=source_registry,
         metrics_packet=metrics_packet,
+        currency=config.price_currency,
     )
     evidence_ledger.evidence_items.extend(source_evidence_items)
     evidence_ledger_path = save_json_packet(

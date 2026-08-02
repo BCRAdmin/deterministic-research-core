@@ -261,3 +261,25 @@ def test_ttm_bridge_subtracts_matching_prior_interim_for_current_q2():
         "prior_interim": 30,
         "current_interim": 33,
     }
+
+
+def test_ttm_uses_four_reported_contiguous_quarters_before_annual_bridge():
+    facts = [
+        _fact("revenue", 100, "FY", "2025-01-01", "2025-12-31", "fy-2025"),
+        _fact("revenue", 20, "Q2", "2025-04-01", "2025-06-30", "q2-2025"),
+        _fact("revenue", 30, "Q3", "2025-07-01", "2025-09-30", "q3-2025"),
+        _fact("revenue", 40, "Q4", "2025-10-01", "2025-12-31", "q4-2025"),
+        _fact("revenue", 25, "Q1", "2026-01-01", "2026-03-31", "q1-2026"),
+    ]
+
+    canonical, _ = build_canonical_financials_from_facts(
+        "GENERIC", "2026-07-24", facts
+    )
+    fundamentals = canonical_financials_to_fundamentals(canonical)
+
+    assert fundamentals["quarterly"]["revenue"] == [20, 30, 40, 25]
+    bridge = fundamentals["ttm_bridges"]["revenue"]
+    assert bridge["formula_id"] == "sum_four_contiguous_quarters"
+    assert list(bridge["operands"].values()) == [20, 30, 40, 25]
+    assert bridge["period_start"] == "2025-04-01"
+    assert bridge["period_end"] == "2026-03-31"

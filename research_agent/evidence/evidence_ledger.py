@@ -47,6 +47,7 @@ def build_evidence_ledger_from_source_registry(
     as_of_date: str,
     source_registry: Optional[SourceRegistry],
     metrics_packet: Optional[MetricsPacket] = None,
+    currency: str = "USD",
 ) -> EvidenceLedger:
     if source_registry is None:
         return EvidenceLedger(ticker=ticker.upper(), as_of_date=as_of_date, evidence_items=[])
@@ -70,7 +71,7 @@ def build_evidence_ledger_from_source_registry(
                     else rank_source(source.source_type),
                     statement=f"{source.source_id} supports {metric}.",
                     value=value,
-                    unit=_unit_for_metric(metric),
+                    unit=_unit_for_metric(metric, currency=currency),
                     period=None,
                     date=None,
                     url=source.url,
@@ -183,7 +184,7 @@ def build_fundamental_derivation_evidence(
     bridges = normalized_fundamentals.get("ttm_bridges")
     if not isinstance(bridges, dict):
         bridges = {}
-    source_id = f"SEC_{ticker.upper()}_DERIVED_TTM"
+    source_id = f"ROOM16_{ticker.upper()}_DETERMINISTIC_CALCULATIONS"
     valuation_lineage = [source_id]
     if price_source_id:
         valuation_lineage.append(price_source_id)
@@ -247,7 +248,7 @@ def build_fundamental_derivation_evidence(
                     f"with {formula_id}; operands={operands}."
                 ),
                 value=value,
-                unit=_unit_for_metric(metric_name),
+                unit=_unit_for_metric(metric_name, currency=currency),
                 period=(
                     f"{bridge.get('period_start') or 'unknown'}"
                     f"..{bridge.get('period_end') or as_of_date}"
@@ -683,6 +684,53 @@ def build_fundamental_derivation_evidence(
                 ),
             )
         )
+    share_basis_name = None
+    share_basis_value = None
+    if fundamentals.economic_share_count not in (None, 0):
+        share_basis_name = "economic_share_count"
+        share_basis_value = fundamentals.economic_share_count
+    elif fundamentals.diluted_share_count not in (None, 0):
+        share_basis_name = "diluted_share_count"
+        share_basis_value = fundamentals.diluted_share_count
+    if (
+        fundamentals.trailing_eps is not None
+        and fundamentals.net_income_ttm is not None
+        and share_basis_name is not None
+        and not _operands_have_exact_evidence(
+            [*runtime_items, *evidence],
+            {"trailing_eps": float(fundamentals.trailing_eps)},
+        )
+        and _division_matches(
+            value=fundamentals.trailing_eps,
+            numerator=fundamentals.net_income_ttm,
+            denominator=share_basis_value,
+        )
+    ):
+        operands = {
+            "net_income_ttm": float(fundamentals.net_income_ttm),
+            share_basis_name: float(share_basis_value),
+        }
+        if _operands_have_exact_evidence(
+            [*runtime_items, *evidence],
+            operands,
+        ):
+            evidence.append(
+                _calculation_evidence(
+                    ticker=ticker,
+                    as_of_date=as_of_date,
+                    source_id=source_id,
+                    metric_name="trailing_eps",
+                    value=float(fundamentals.trailing_eps),
+                    formula_id=(
+                        f"net_income_ttm_divided_by_{share_basis_name}"
+                    ),
+                    operands=operands,
+                    unit=f"{currency}_per_share",
+                    period=f"TTM through {as_of_date}",
+                    date=as_of_date,
+                    evidence_items=[*runtime_items, *evidence],
+                )
+            )
     operands = {}
     if _division_matches(
         value=fundamentals.sbc_to_revenue,
@@ -1779,21 +1827,49 @@ def _claim_type_for_metric(metric_name: str, source_type: str):
     return "financial_metric"
 
 
-def _unit_for_metric(metric_name: str) -> Optional[str]:
+def _unit_for_metric(
+    metric_name: str,
+    *,
+    currency: str = "USD",
+) -> Optional[str]:
+    currency = str(currency or "USD").strip().upper()
     if "margin" in metric_name or metric_name.startswith("sbc_to"):
         return "percent"
     if "eps" in metric_name:
-        return "usd_per_share"
+        return f"{currency}_per_share"
     if metric_name in {
+        "revenue",
         "revenue_ttm",
+        "gross_profit",
+        "gross_profit_ttm",
+        "operating_income",
+        "operating_income_ttm",
+        "ebitda",
+        "ebitda_ttm",
+        "net_income",
+        "net_income_ttm",
+        "operating_cash_flow",
+        "operating_cash_flow_ttm",
+        "capex",
+        "capex_ttm",
+        "free_cash_flow",
         "free_cash_flow_ttm",
+        "sbc",
+        "sbc_ttm",
+        "buybacks",
+        "dividends_paid",
+        "depreciation_and_amortization",
+        "depreciation_and_amortization_ttm",
+        "interest_expense",
+        "interest_expense_ttm",
         "shareholder_distributions_ttm",
         "shareholder_distributions_minus_fcf_ttm",
+        "cash_and_equivalents",
         "cash_and_investments",
         "total_debt",
         "net_cash",
     }:
-        return "usd"
+        return currency
     return None
 
 

@@ -421,7 +421,7 @@ def test_material_calculations_require_exact_auditable_operands():
         "revenue_ttm": 200.0,
     }
     assert by_metric["ev_to_sales"].source_lineage == [
-        "SEC_GENERIC_DERIVED_TTM",
+        "ROOM16_GENERIC_DETERMINISTIC_CALCULATIONS",
         "GENERIC_EXCHANGE",
         "SEC_GENERIC_FILING_A",
     ]
@@ -432,7 +432,7 @@ def test_material_calculations_require_exact_auditable_operands():
         "dividends_paid": 60.0,
     }
     assert by_metric["shareholder_distributions_ttm"].source_lineage == [
-        "SEC_GENERIC_DERIVED_TTM",
+        "ROOM16_GENERIC_DETERMINISTIC_CALCULATIONS",
         "SEC_GENERIC_FILING_A",
     ]
     assert by_metric[
@@ -446,6 +446,9 @@ def test_material_calculations_require_exact_auditable_operands():
         "short_term_investments": 20.0,
     }
     assert by_metric["market_cap"].unit == "HUF"
+    assert by_metric["revenue_ttm"].unit == "HUF"
+    assert by_metric["operating_income_ttm"].unit == "HUF"
+    assert by_metric["trailing_eps"].unit == "HUF_per_share"
 
     inconsistent = MetricsPacket(**metrics.model_dump(mode="python"))
     inconsistent.valuation.ev_to_ebit = 9.0
@@ -462,4 +465,84 @@ def test_material_calculations_require_exact_auditable_operands():
         item.supports_metrics[0]
         for item in invalid_evidence
         if item.supports_metrics
+    }
+
+
+def test_trailing_eps_fallback_is_evidenced_from_income_and_share_basis():
+    metrics = MetricsPacket(
+        ticker="GENERIC",
+        as_of_date="2026-07-01",
+        technical=TechnicalMetrics(indicator_date="2026-07-01", close=100.0),
+        fundamentals=FundamentalMetrics(
+            fiscal_period="TTM",
+            net_income_ttm=100.0,
+            economic_share_count=10.0,
+            trailing_eps=10.0,
+        ),
+        valuation=ValuationMetrics(trailing_pe=10.0),
+    )
+    runtime_evidence = [
+        EvidenceItem(
+            evidence_id=f"GENERIC_RAW_{metric_name.upper()}",
+            ticker="GENERIC",
+            claim_type="financial_metric",
+            source_id="GENERIC_OFFICIAL_FILING",
+            source_type="company_ir",
+            authority_rank=1,
+            statement=f"Exact source value for {metric_name}.",
+            value=value,
+            unit="HUF" if metric_name == "net_income_ttm" else "shares",
+            period="TTM" if metric_name == "net_income_ttm" else "current",
+            date="2026-06-30",
+            supports_metrics=[metric_name],
+            normalized_value=value,
+            confidence="high",
+        )
+        for metric_name, value in (
+            ("net_income_ttm", 100.0),
+            ("economic_share_count", 10.0),
+        )
+    ]
+    runtime_evidence.append(
+        EvidenceItem(
+            evidence_id="GENERIC_EXCHANGE_CLOSE",
+            ticker="GENERIC",
+            claim_type="price_data",
+            source_id="GENERIC_EXCHANGE",
+            source_type="exchange_ohlcv",
+            authority_rank=1,
+            statement="Exact closing price.",
+            value=100.0,
+            unit="HUF",
+            period="daily_history",
+            date="2026-07-01",
+            supports_metrics=["close"],
+            normalized_value=100.0,
+            confidence="high",
+        )
+    )
+
+    evidence = build_fundamental_derivation_evidence(
+        ticker="GENERIC",
+        as_of_date="2026-07-01",
+        metrics_packet=metrics,
+        normalized_fundamentals={},
+        price_source_id="GENERIC_EXCHANGE",
+        runtime_evidence=runtime_evidence,
+        currency="HUF",
+    )
+    by_metric = {
+        item.supports_metrics[0]: item
+        for item in evidence
+        if item.supports_metrics
+    }
+
+    assert by_metric["trailing_eps"].formula_operands == {
+        "net_income_ttm": 100.0,
+        "economic_share_count": 10.0,
+    }
+    assert by_metric["trailing_eps"].unit == "HUF_per_share"
+    assert by_metric["trailing_pe"].formula_operands == {
+        "close": 100.0,
+        "trailing_eps": 10.0,
     }

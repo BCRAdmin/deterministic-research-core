@@ -319,13 +319,6 @@ def _compatible_trailing_period_values(
             and 70 <= metric.duration_days <= 110
         ]
     )
-    annual = _latest_annual_metric(canonical, metric_name)
-    if annual is not None:
-        derived = _derive_q4_and_trailing_values(annual, quarterly)
-        if derived is not None:
-            values, bridge = derived
-            return values, None, bridge
-
     if len(quarterly) >= 4 and _quarters_are_contiguous(quarterly[-4:]):
         selected = quarterly[-4:]
         return (
@@ -348,6 +341,13 @@ def _compatible_trailing_period_values(
                 ),
             },
         )
+
+    annual = _latest_annual_metric(canonical, metric_name)
+    if annual is not None:
+        derived = _derive_q4_and_trailing_values(annual, quarterly)
+        if derived is not None:
+            values, bridge = derived
+            return values, None, bridge
 
     available = canonical.metrics_for(metric_name)
     if available and not any(_is_current_metric(canonical, metric) for metric in available):
