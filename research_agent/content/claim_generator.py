@@ -165,7 +165,10 @@ class _ClaimBuilder:
             "high",
             "high",
             counterargument="FCF may be company-defined or period-sensitive and can require reconciliation review.",
-            implication="FCF quality supports the thesis only if no sanity guard blocks the report.",
+            implication=(
+                "Treat FCF as a rating input only after its source, period and "
+                "formula have passed validation."
+            ),
         )
         if (
             self.metrics.fundamentals.shareholder_distributions_ttm
@@ -216,23 +219,41 @@ class _ClaimBuilder:
         )
         net_cash = self.metrics.fundamentals.net_cash
         total_debt = self.metrics.fundamentals.total_debt
+        balance_sheet_metrics = [
+            metric
+            for metric, value in (
+                ("net_cash", net_cash),
+                ("total_debt", total_debt),
+            )
+            if value is not None
+        ]
         if net_cash is None:
             balance_sheet_claim = (
-                f"Total debt is {self._money(total_debt)}, while a signed net cash "
-                "or net debt position is not available in the evidence set."
+                f"Total debt is {self._money(total_debt)}, while the signed net "
+                "cash or net debt position is unavailable."
             )
         elif net_cash < 0:
+            debt_context = (
+                f"total debt of {self._money(total_debt)}"
+                if total_debt is not None
+                else "an unavailable total-debt figure"
+            )
             balance_sheet_claim = (
                 "The balance-sheet position includes net debt of "
-                f"{self._money(abs(net_cash))} and total debt of "
-                f"{self._money(total_debt)}. This is a leverage input, not "
+                f"{self._money(abs(net_cash))} and {debt_context}. "
+                "This is a leverage input, not "
                 "evidence of financial flexibility."
             )
         else:
+            debt_context = (
+                f"total debt of {self._money(total_debt)}"
+                if total_debt is not None
+                else "an unavailable total-debt figure"
+            )
             balance_sheet_claim = (
                 "The balance-sheet position includes net cash of "
-                f"{self._money(net_cash)} and total debt of "
-                f"{self._money(total_debt)}. This is a liquidity input, not a "
+                f"{self._money(net_cash)} and {debt_context}. "
+                "This is a liquidity input, not a "
                 "standalone rating signal."
             )
         self.add(
@@ -240,7 +261,7 @@ class _ClaimBuilder:
             "fundamental",
             "financial_metric",
             balance_sheet_claim,
-            ["net_cash", "total_debt"],
+            balance_sheet_metrics,
             "medium",
             "medium",
             implication=(
@@ -297,12 +318,18 @@ class _ClaimBuilder:
             "Bull Case",
             "bull",
             "financial_metric",
-            f"The bull case is that {profile['bull_driver']} combines with revenue of {self._money(self.metrics.fundamentals.revenue_ttm)} to support the allowed upside rating path when cash conversion quality also holds.",
+            (
+                "The bull case combines revenue of "
+                f"{self._money(self.metrics.fundamentals.revenue_ttm)} with "
+                "available FCF evidence. A more constructive rating requires "
+                "both inputs to remain validated and valuation or technical "
+                "constraints to improve."
+            ),
             ["revenue_ttm", "free_cash_flow_ttm"],
             "medium",
             "medium",
             counterargument="Strong scale does not resolve valuation or reconciliation anomalies.",
-            implication="Bullish language should remain bounded by the evidence-backed action plan.",
+            implication="The bull case remains a research scenario, not an action plan.",
         )
         self.add(
             "Bull Case",
@@ -315,16 +342,36 @@ class _ClaimBuilder:
             implication="A more constructive research stance should require confirmation when the preferred rating is not Buy.",
         )
 
-        self.add(
-            "Bear Case",
-            "bear",
-            "financial_metric",
-            f"The bear case is that {profile['bear_driver']} outweighs the available FCF evidence and leaves the stock vulnerable if SBC/Revenue at {_pct(self.metrics.fundamentals.sbc_to_revenue)} or source-quality issues persist.",
-            ["free_cash_flow_ttm", "sbc_to_revenue"],
-            "medium",
-            "high",
-            implication="Manual review remains appropriate when financial-sanity guards fire.",
-        )
+        if self.metrics.fundamentals.free_cash_flow_ttm is not None:
+            sbc_to_revenue = self.metrics.fundamentals.sbc_to_revenue
+            if sbc_to_revenue is None:
+                sbc_context = (
+                    "SBC/Revenue is unavailable and therefore cannot support "
+                    "the risk case."
+                )
+                bear_metrics = ["free_cash_flow_ttm"]
+            else:
+                sbc_context = (
+                    f"SBC/Revenue of {_pct(sbc_to_revenue)} is a separate "
+                    "dilution input, not proof of deterioration."
+                )
+                bear_metrics = ["free_cash_flow_ttm", "sbc_to_revenue"]
+            self.add(
+                "Bear Case",
+                "bear",
+                "financial_metric",
+                (
+                    f"The bear case is that {profile['bear_driver']} could "
+                    f"outweigh the available FCF evidence. {sbc_context}"
+                ),
+                bear_metrics,
+                "medium",
+                "high",
+                implication=(
+                    "Manual review remains appropriate when financial-sanity "
+                    "guards fire."
+                ),
+            )
         self.add(
             "Bear Case",
             "bear",
@@ -408,6 +455,8 @@ class _ClaimBuilder:
         counterargument: Optional[str] = None,
         implication: Optional[str] = None,
     ) -> None:
+        if any(self._metric_value(metric) is None for metric in metrics):
+            return
         evidence = self._evidence_for(metrics)
         if not evidence:
             return

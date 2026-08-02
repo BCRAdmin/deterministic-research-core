@@ -119,6 +119,7 @@ def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():
     data.ticker = "GENERIC"
     data.price_basis.currency = "HUF"
     metrics.fundamentals.revenue_growth_yoy = None
+    metrics.fundamentals.sbc_to_revenue = None
     metrics.fundamentals.net_cash = -4_610_000_000
     metrics.fundamentals.total_debt = 13_460_000_000
 
@@ -156,7 +157,7 @@ def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():
                 "FCF TTM is",
                 "net cash of",
                 "net debt of",
-                "combines with revenue of",
+                "bull case combines revenue of",
                 "where revenue ",
             )
         )
@@ -181,6 +182,9 @@ def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():
         "company-specific growth",
         "margin quality",
         "validated growth",
+        "fcf quality",
+        "cash conversion quality",
+        "not available in evidence set",
     )
     assert not any(
         phrase in claim.claim.lower()
@@ -219,6 +223,16 @@ def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():
         ]
     ).lower()
     assert not any(phrase in rendered_text for phrase in personal_action_language)
+
+
+def test_content_generator_does_not_render_missing_values_as_claims():
+    data, metrics, validation, ledger, decision = _load_packet("CRWD")
+
+    claims = generate_research_claims(data, metrics, ledger, decision, validation)
+
+    assert claims
+    assert all("not available in evidence set" not in claim.claim for claim in claims)
+    assert not any("revenue TTM of" in claim.claim for claim in claims)
 
 
 def test_composed_claim_report_can_pass_quality_when_audit_is_clean():
