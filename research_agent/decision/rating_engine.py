@@ -139,14 +139,7 @@ def _build_key_risks(
     validation_report: Optional[ValidationReport],
     audit_report: Optional[AuditReport],
 ) -> list[str]:
-    risks = [
-        "Evidence-control score: "
-        f"{scores.risk_score} (measurement status: {scores.risk_status})"
-    ]
-    if scores.risk_status != "measured":
-        risks.append(
-            "Incomplete validation or audit coverage is not evidence of low company risk."
-        )
+    risks = ["Company risk score: not measured by the current decision model."]
     if validation_report and validation_report.issues:
         risks.append(f"Validation issues: {len(validation_report.issues)}")
     if audit_report and audit_report.issues:

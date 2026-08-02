@@ -99,31 +99,14 @@ def score_risk(
     triggered_rules: Optional[list[str]] = None,
     calibration_mode: str = "live",
 ) -> float:
-    weights = weights or DEFAULT_RULE_WEIGHTS
-    score = 0.0
+    """Return no company-risk score until a real risk model exists.
 
-    if validation_report:
-        errors = [issue for issue in validation_report.issues if issue.severity == "error"]
-        warnings = [issue for issue in validation_report.issues if issue.severity == "warning"]
+    Validation and audit findings remain hard quality and publication gates.
+    They describe evidence integrity, not the issuer's economic risk, so they
+    must not be converted into a market or company score.
+    """
 
-        score = _apply_rule(score, "VALIDATION_ERROR", bool(errors), weights, triggered_rules, calibration_mode)
-        score = _apply_rule(score, "VALIDATION_WARNINGS_GE_3", not errors and len(warnings) >= 3, weights, triggered_rules, calibration_mode)
-        score = _apply_rule(
-            score,
-            "FORWARD_EPS_GUIDANCE_MISMATCH",
-            any(issue.code == "FORWARD_EPS_GUIDANCE_MISMATCH" for issue in validation_report.issues),
-            weights,
-            triggered_rules,
-            calibration_mode,
-        )
-
-    if audit_report:
-        blocking = [issue for issue in audit_report.issues if issue.severity == "error"]
-        warnings = [issue for issue in audit_report.issues if issue.severity == "warning"]
-        score = _apply_rule(score, "AUDIT_ERROR", bool(blocking), weights, triggered_rules, calibration_mode)
-        score = _apply_rule(score, "AUDIT_WARNINGS_GE_2", not blocking and len(warnings) >= 2, weights, triggered_rules, calibration_mode)
-
-    return _clamp(score)
+    return 0.0
 
 
 def calculate_signal_scores(
@@ -156,7 +139,7 @@ def calculate_signal_scores_with_rules(
     technical = score_technicals(metrics, weights, triggered_rules, calibration_mode)
     valuation = score_valuation(metrics, weights, triggered_rules, calibration_mode)
     risk = score_risk(metrics, validation_report, audit_report, weights, triggered_rules, calibration_mode)
-    composite = _clamp(fundamental + technical + valuation + risk)
+    composite = _clamp(fundamental + technical + valuation)
     scores = SignalScores(
         fundamental_score=fundamental,
         technical_score=technical,
@@ -178,11 +161,7 @@ def calculate_signal_scores_with_rules(
             else "not_measured"
         ),
         valuation_status=_valuation_status(metrics),
-        risk_status=(
-            "partial"
-            if validation_report is not None or audit_report is not None
-            else "not_measured"
-        ),
+        risk_status="not_measured",
     )
     return scores, _ordered_unique(triggered_rules), weights.version, calibration_mode
 

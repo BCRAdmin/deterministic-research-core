@@ -161,5 +161,8 @@ def test_validation_quality_cannot_change_the_company_rating():
 
     assert permission.preferred_rating == Rating.HOLD
     assert permission.allowed_ratings == [Rating.HOLD]
+    assert scores.risk_score == 0
+    assert scores.risk_status == "not_measured"
+    assert scores.composite_score == 2
     assert Rating.STRONG_BUY in permission.blocked_ratings
     assert Rating.ACCUMULATE in permission.blocked_ratings

@@ -41,11 +41,6 @@ DEFAULT_RULE_WEIGHTS = RuleWeightConfig(
         "OPERATING_MARGIN_NEGATIVE": RuleWeight(rule_id="OPERATING_MARGIN_NEGATIVE", base_weight=-1.0),
         "TREND_STATE_BULLISH": RuleWeight(rule_id="TREND_STATE_BULLISH", base_weight=1.0),
         "TREND_STATE_BEARISH": RuleWeight(rule_id="TREND_STATE_BEARISH", base_weight=-1.0),
-        "VALIDATION_ERROR": RuleWeight(rule_id="VALIDATION_ERROR", base_weight=-3.0),
-        "VALIDATION_WARNINGS_GE_3": RuleWeight(rule_id="VALIDATION_WARNINGS_GE_3", base_weight=-1.0),
-        "AUDIT_ERROR": RuleWeight(rule_id="AUDIT_ERROR", base_weight=-3.0),
-        "AUDIT_WARNINGS_GE_2": RuleWeight(rule_id="AUDIT_WARNINGS_GE_2", base_weight=-1.0),
-        "FORWARD_EPS_GUIDANCE_MISMATCH": RuleWeight(rule_id="FORWARD_EPS_GUIDANCE_MISMATCH", base_weight=-1.0),
     },
 )
 

@@ -30,7 +30,10 @@ def test_decision_packet_records_triggered_rules():
     assert "PRICE_BELOW_200SMA" not in packet.triggered_rules
     assert "BEARISH_MA_ALIGNMENT" not in packet.triggered_rules
     assert "DEATH_CROSS" not in packet.triggered_rules
-    assert "FORWARD_EPS_GUIDANCE_MISMATCH" in packet.triggered_rules
+    assert "FORWARD_EPS_GUIDANCE_MISMATCH" not in packet.triggered_rules
+    assert packet.signal_scores.risk_score == 0
+    assert packet.signal_scores.risk_status == "not_measured"
+    assert "Validation issues: 2" in packet.key_risks
     assert packet.signal_scores.valuation_score == 0
     assert packet.signal_scores.valuation_status == "unbenchmarked"
     assert packet.score_version == "v1"
