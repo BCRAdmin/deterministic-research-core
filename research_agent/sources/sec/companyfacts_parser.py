@@ -29,6 +29,7 @@ class ParsedFact:
     concept: Optional[str] = None
     raw_value: Optional[float] = None
     normalization_note: Optional[str] = None
+    evidence_id: Optional[str] = None
 
 
 class CompanyFactsParser:
@@ -89,6 +90,7 @@ class CompanyFactsParser:
                     raw_value=raw_value,
                     normalization_note=normalization_note,
                 )
+                fact.evidence_id = self._evidence_id(fact)
                 identity = (
                     fact.metric_name,
                     fact.raw_value,
@@ -197,18 +199,11 @@ class CompanyFactsParser:
 
     def to_evidence_item(self, fact: ParsedFact) -> EvidenceItem:
         normalization_suffix = f" {fact.normalization_note}" if fact.normalization_note else ""
-        period_identity = (
-            f"{fact.start or 'instant'}_{fact.end or fact.filed or 'unknown'}"
-        )
-        concept_identity = (fact.concept or "unknown_concept").replace(":", "_")
         supports_metrics = [fact.metric_name, _metrics_packet_name(fact.metric_name)]
         if fact.metric_name == "eps_diluted":
             supports_metrics.append("trailing_eps")
         return EvidenceItem(
-            evidence_id=(
-                f"{self.ticker}_SEC_{fact.metric_name}_{fact.period}_"
-                f"{period_identity}_{concept_identity}_{fact.accession or fact.filed}"
-            ),
+            evidence_id=fact.evidence_id or self._evidence_id(fact),
             ticker=self.ticker,
             claim_type="financial_metric",
             source_id=f"SEC_{self.cik}_{fact.accession or fact.filed}",
@@ -231,6 +226,16 @@ class CompanyFactsParser:
             duration_days=_duration_days(fact.start, fact.end),
             audited=fact.form == "10-K",
             amendment_status="amended" if fact.form in {"10-K/A", "10-Q/A"} else "original",
+        )
+
+    def _evidence_id(self, fact: ParsedFact) -> str:
+        period_identity = (
+            f"{fact.start or 'instant'}_{fact.end or fact.filed or 'unknown'}"
+        )
+        concept_identity = (fact.concept or "unknown_concept").replace(":", "_")
+        return (
+            f"{self.ticker}_SEC_{fact.metric_name}_{fact.period}_"
+            f"{period_identity}_{concept_identity}_{fact.accession or fact.filed}"
         )
 
 

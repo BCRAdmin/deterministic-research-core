@@ -200,6 +200,7 @@ def canonical_metric_from_parsed_fact(
         has_unit=bool(unit),
         is_reconciled=True,
     )
+    resolved_evidence_id = evidence_id or getattr(fact, "evidence_id", None)
     canonical = CanonicalMetric(
         metric_name=fact.metric_name,
         value=value,
@@ -216,7 +217,7 @@ def canonical_metric_from_parsed_fact(
         basis=basis,
         statement_type=_statement_type(fact.metric_name),
         source_ids=[source_id],
-        evidence_ids=[evidence_id] if evidence_id else [],
+        evidence_ids=[resolved_evidence_id] if resolved_evidence_id else [],
         confidence=confidence,
         reconciliation_notes=[
             f"Resolved as {resolved.period_type}/{resolved.period_bucket} period {resolved.period_label}.",
@@ -885,30 +886,41 @@ def _derive_current_period_growth(
 ) -> None:
     bridges: dict[str, dict] = {}
     for metric_name in ("revenue", "operating_income", "net_income"):
-        quarterly = _dedupe_period_metrics(
+        reported = _dedupe_period_metrics(
             [
                 metric
                 for metric in canonical.metrics_for(metric_name)
-                if metric.period_bucket == "quarterly"
+                if metric.period_bucket in {"annual", "quarterly"}
                 and metric.basis == "gaap"
                 and metric.fiscal_year is not None
                 and metric.fiscal_period
                 and metric.start_date
                 and metric.end_date
                 and metric.duration_days is not None
-                and 70 <= metric.duration_days <= 110
+                and (
+                    70 <= metric.duration_days <= 110
+                    if metric.period_bucket == "quarterly"
+                    else 330 <= metric.duration_days <= 400
+                )
                 and _is_current_metric(canonical, metric)
             ]
         )
-        if not quarterly:
+        if not reported:
             continue
-        current = quarterly[-1]
+        current = max(
+            reported,
+            key=lambda metric: (
+                metric.end_date or "",
+                1 if metric.period_bucket == "annual" else 0,
+            ),
+        )
         current_end = _valid_iso_date(current.end_date)
         if current_end is None:
             continue
         prior_candidates = [
             metric
-            for metric in quarterly
+            for metric in reported
+            if metric.period_bucket == current.period_bucket
             if metric.fiscal_period == current.fiscal_period
             and metric.end_date < current.end_date
             and abs((metric.duration_days or 0) - (current.duration_days or 0)) <= 7
@@ -926,11 +938,16 @@ def _derive_current_period_growth(
         output_name = f"current_period_{metric_name}_growth_yoy"
         fundamentals[output_name] = growth
         bridges[metric_name] = {
-            "formula_id": "matching_quarter_yoy_growth",
+            "formula_id": (
+                "matching_fiscal_year_yoy_growth"
+                if current.period_bucket == "annual"
+                else "matching_quarter_yoy_growth"
+            ),
             "operands": {
                 f"current_{metric_name}": current.value,
                 f"prior_{metric_name}": prior.value,
             },
+            "period_type": current.period_bucket,
             "current_period": current.period,
             "prior_period": prior.period,
             "period_start": prior.start_date,
@@ -972,18 +989,30 @@ def _derive_fiscal_context(
         ],
         key=lambda metric: metric.end_date or "",
     )
-    if not quarterly:
+    if not quarterly and not annual:
         return
-    latest = quarterly[-1]
-    if latest.fiscal_year and latest.fiscal_period:
-        fundamentals["latest_quarter"] = (
-            f"FY{latest.fiscal_year}_{latest.fiscal_period}"
-        )
-    fundamentals["fiscal_period"] = (
-        f"TTM through FY{latest.fiscal_year}_{latest.fiscal_period}"
-        if latest.fiscal_year and latest.fiscal_period
-        else f"TTM through {latest.end_date}"
+    if quarterly:
+        latest_quarter = quarterly[-1]
+        if latest_quarter.fiscal_year and latest_quarter.fiscal_period:
+            fundamentals["latest_quarter"] = (
+                f"FY{latest_quarter.fiscal_year}_{latest_quarter.fiscal_period}"
+            )
+    latest = max(
+        [*annual, *quarterly],
+        key=lambda metric: (
+            metric.end_date or "",
+            1 if metric.period_bucket == "annual" else 0,
+        ),
     )
+    if latest.fiscal_year and latest.fiscal_period:
+        period_label = (
+            f"FY{latest.fiscal_year}"
+            if latest.fiscal_period == "FY"
+            else f"FY{latest.fiscal_year}_{latest.fiscal_period}"
+        )
+        fundamentals["fiscal_period"] = f"TTM through {period_label}"
+    else:
+        fundamentals["fiscal_period"] = f"TTM through {latest.end_date}"
 
 
 def _guidance_consensus_warnings(metric_name: str, metrics: list[CanonicalMetric]) -> list[dict]:

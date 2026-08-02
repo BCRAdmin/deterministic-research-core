@@ -3,7 +3,9 @@ from pathlib import Path
 
 from research_agent.audit.report_linter import audit_markdown_report
 from research_agent.content.claim_generator import (
+    _ClaimBuilder,
     _bear_case_claim_text,
+    _current_period_claim_specs,
     claim_coverage_gaps,
     claim_quality_metrics,
     generate_research_claims,
@@ -711,6 +713,141 @@ def test_generic_current_period_claim_uses_evidenced_yoy_comparison():
     assert current.metric_values["net_income"] == 15.0
     assert "GENERIC_REVENUE_QUARTERLY" in current.evidence_ids
     assert "GENERIC_REVENUE_YTD" not in current.evidence_ids
+
+
+def test_missing_ticker_specific_metrics_fall_back_to_latest_fiscal_year():
+    _, metrics, _, _, _ = _load_packet("SNOW")
+    metrics.fundamentals.current_period_revenue_growth_yoy = 0.18
+    metrics.fundamentals.current_period_operating_income_growth_yoy = 0.21
+    metrics.fundamentals.current_period_net_income_growth_yoy = 0.31
+    canonical = CanonicalFinancials(
+        ticker="MSFT",
+        as_of_date="2026-07-31",
+        metrics=[
+            CanonicalMetric(
+                metric_name=metric_name,
+                value=value,
+                unit="USD",
+                period="FY2026",
+                fiscal_year=2026,
+                fiscal_period="FY",
+                period_bucket="annual",
+                start_date="2025-07-01",
+                end_date="2026-06-30",
+                duration_days=364,
+                basis="gaap",
+                statement_type="income_statement",
+                source_ids=["GENERIC_SEC_FY2026"],
+                confidence="high",
+            )
+            for metric_name, value in (
+                ("revenue", 331_839.0),
+                ("operating_income", 155_237.0),
+                ("net_income", 133_749.0),
+            )
+        ],
+    )
+
+    specs = _current_period_claim_specs(
+        "MSFT",
+        metrics,
+        canonical,
+        currency="USD",
+    )
+    current = next(
+        spec for spec in specs if "latest reported period" in spec["text"]
+    )
+
+    assert "FY2026" in current["text"]
+    assert "matching prior-year fiscal year" in current["text"]
+    assert current["comparison_period"] == "fiscal_year"
+    assert current["metrics"] == [
+        "revenue",
+        "operating_income",
+        "net_income",
+        "current_period_revenue_growth_yoy",
+        "current_period_operating_income_growth_yoy",
+        "current_period_net_income_growth_yoy",
+    ]
+
+
+def test_direct_annual_claim_prefers_canonical_sec_fact_over_equal_ttm_formula():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    data.ticker = "DIRECT"
+    annual = CanonicalMetric(
+        metric_name="revenue",
+        value=331_839.0,
+        unit="USD",
+        period="FY2026",
+        fiscal_year=2026,
+        fiscal_period="FY",
+        period_bucket="annual",
+        start_date="2025-07-01",
+        end_date="2026-06-30",
+        duration_days=364,
+        basis="gaap",
+        statement_type="income_statement",
+        source_ids=["SEC_DIRECT_FY2026"],
+        evidence_ids=["DIRECT_SEC_REVENUE_FY2026"],
+        confidence="high",
+    )
+    canonical = CanonicalFinancials(
+        ticker="DIRECT",
+        as_of_date="2026-07-31",
+        metrics=[annual],
+    )
+    ledger.evidence_items = [
+        EvidenceItem(
+            evidence_id="DIRECT_SEC_REVENUE_FY2026",
+            ticker="DIRECT",
+            claim_type="financial_metric",
+            source_id="SEC_DIRECT_FY2026",
+            source_type="sec_filing",
+            authority_rank=1,
+            statement="Fiscal 2026 revenue.",
+            raw_value=annual.value,
+            normalized_value=annual.value,
+            value=annual.value,
+            unit="USD",
+            period="FY2026",
+            date="2026-06-30",
+            duration_days=364,
+            supports_metrics=["revenue"],
+            confidence="high",
+        ),
+        EvidenceItem(
+            evidence_id="DIRECT_DETERMINISTIC_REVENUE_TTM",
+            ticker="DIRECT",
+            claim_type="financial_metric",
+            source_id="DIRECT_DETERMINISTIC_CALCULATIONS",
+            source_type="deterministic_calculation",
+            authority_rank=1,
+            statement="TTM revenue equals fiscal-year revenue.",
+            normalized_value=annual.value,
+            value=annual.value,
+            unit="USD",
+            period="TTM through FY2026",
+            date="2026-07-31",
+            supports_metrics=["revenue"],
+            formula_id="annual_fallback",
+            formula_operands={"annual": annual.value},
+            confidence="high",
+        ),
+    ]
+    builder = _ClaimBuilder(
+        data,
+        metrics,
+        ledger,
+        decision,
+        validation,
+        canonical,
+    )
+
+    selected = builder._compatible_evidence_for_metric("revenue")
+
+    assert [item.evidence_id for item in selected] == [
+        "DIRECT_SEC_REVENUE_FY2026"
+    ]
 
 
 def test_claim_evidence_selection_excludes_conflicting_units_and_values():

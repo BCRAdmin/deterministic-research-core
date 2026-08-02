@@ -393,6 +393,9 @@ def build_fundamental_derivation_evidence(
                 if current_value is not None and prior_value not in (None, 0)
                 else None
             )
+            formula_id = str(
+                bridge.get("formula_id") or "matching_quarter_yoy_growth"
+            )
             if (
                 expected_growth is None
                 or not math.isclose(
@@ -404,7 +407,7 @@ def build_fundamental_derivation_evidence(
                 or not _bridge_operands_have_exact_evidence(
                     runtime_items,
                     metric_name=raw_metric,
-                    formula_id="matching_quarter_yoy_growth",
+                    formula_id=formula_id,
                     operands=operands,
                     source_ids=[
                         str(item)
@@ -421,7 +424,7 @@ def build_fundamental_derivation_evidence(
                     source_id=source_id,
                     metric_name=output_metric,
                     value=float(value),
-                    formula_id="matching_quarter_yoy_growth",
+                    formula_id=formula_id,
                     operands=operands,
                     unit="percent",
                     period=(

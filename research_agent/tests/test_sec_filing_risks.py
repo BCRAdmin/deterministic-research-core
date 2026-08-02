@@ -57,6 +57,24 @@ def test_extracts_only_substantive_risk_headings():
     ]
 
 
+def test_extracts_split_risk_heading_across_repeated_item_1a_page_headers():
+    html = """
+    <html><body>
+      <div><strong>ITEM 1A. RIS K FACTORS</strong></div>
+      <p><strong>Competition could adversely affect our operating results.</strong></p>
+      <div>Item 1A</div>
+      <p><strong>Cyberattacks may harm our reputation or competitive position.</strong></p>
+      <div>Item 1B. Unresolved Staff Comments</div>
+      <p><strong>Later disclosures may adversely affect our business.</strong></p>
+    </body></html>
+    """
+
+    assert extract_sec_risk_headings(html) == [
+        "Competition could adversely affect our operating results.",
+        "Cyberattacks may harm our reputation or competitive position.",
+    ]
+
+
 def test_builds_primary_risk_evidence_without_inventing_numeric_metrics():
     filing = select_sec_risk_filing_candidates(
         _submissions(), cik="1234", as_of_date="2026-07-24"

@@ -609,6 +609,73 @@ def test_material_calculations_require_exact_auditable_operands():
     }
 
 
+def test_current_growth_evidence_preserves_fiscal_year_formula():
+    metrics = MetricsPacket(
+        ticker="GENERIC",
+        as_of_date="2026-07-31",
+        technical=TechnicalMetrics(indicator_date="2026-07-31", close=100.0),
+        fundamentals=FundamentalMetrics(
+            fiscal_period="TTM through FY2026",
+            current_period_revenue_growth_yoy=0.20,
+        ),
+        valuation=ValuationMetrics(),
+    )
+    raw_evidence = [
+        EvidenceItem(
+            evidence_id=f"GENERIC_SEC_REVENUE_FY{year}",
+            ticker="GENERIC",
+            claim_type="financial_metric",
+            source_id=f"SEC_GENERIC_FY{year}",
+            source_type="sec_filing",
+            authority_rank=1,
+            statement=f"Fiscal-year {year} revenue.",
+            value=value,
+            unit="USD",
+            period=f"FY{year}",
+            date=f"{year}-06-30",
+            supports_metrics=["revenue"],
+            raw_value=value,
+            normalized_value=value,
+            confidence="high",
+        )
+        for year, value in ((2025, 100.0), (2026, 120.0))
+    ]
+
+    evidence = build_fundamental_derivation_evidence(
+        ticker="GENERIC",
+        as_of_date="2026-07-31",
+        metrics_packet=metrics,
+        normalized_fundamentals={
+            "current_period_growth_bridges": {
+                "revenue": {
+                    "formula_id": "matching_fiscal_year_yoy_growth",
+                    "operands": {
+                        "current_revenue": 120.0,
+                        "prior_revenue": 100.0,
+                    },
+                    "current_period": "FY2026",
+                    "prior_period": "FY2025",
+                    "period_start": "2024-07-01",
+                    "period_end": "2026-06-30",
+                    "source_ids": ["SEC_GENERIC_FY2025", "SEC_GENERIC_FY2026"],
+                }
+            }
+        },
+        runtime_evidence=raw_evidence,
+    )
+
+    growth = next(
+        item
+        for item in evidence
+        if "current_period_revenue_growth_yoy" in item.supports_metrics
+    )
+    assert growth.formula_id == "matching_fiscal_year_yoy_growth"
+    assert growth.formula_operands == {
+        "current_revenue": 120.0,
+        "prior_revenue": 100.0,
+    }
+
+
 def test_trailing_eps_fallback_is_evidenced_from_income_and_share_basis():
     metrics = MetricsPacket(
         ticker="GENERIC",

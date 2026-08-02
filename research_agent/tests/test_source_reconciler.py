@@ -441,6 +441,76 @@ def test_current_period_growth_pairs_same_fiscal_quarter():
     }
 
 
+def test_latest_annual_report_supersedes_prior_quarter_context():
+    metrics = []
+    for metric_name, prior_value, current_value in (
+        ("revenue", 281_724, 331_839),
+        ("operating_income", 128_528, 155_237),
+        ("net_income", 101_832, 133_749),
+    ):
+        metrics.extend(
+            [
+                CanonicalMetric(
+                    metric_name=metric_name,
+                    value=value,
+                    unit="USD",
+                    period=f"FY{fiscal_year}",
+                    fiscal_year=fiscal_year,
+                    fiscal_period="FY",
+                    period_bucket="annual",
+                    start_date=f"{fiscal_year - 1}-07-01",
+                    end_date=f"{fiscal_year}-06-30",
+                    duration_days=364,
+                    basis="gaap",
+                    statement_type="income_statement",
+                    source_ids=[f"SEC_MSFT_FY{fiscal_year}"],
+                    confidence="high",
+                )
+                for fiscal_year, value in (
+                    (2025, prior_value),
+                    (2026, current_value),
+                )
+            ]
+        )
+    metrics.append(
+        CanonicalMetric(
+            metric_name="revenue",
+            value=82_886,
+            unit="USD",
+            period="FY2026_Q3",
+            fiscal_year=2026,
+            fiscal_period="Q3",
+            period_bucket="quarterly",
+            start_date="2026-01-01",
+            end_date="2026-03-31",
+            duration_days=89,
+            basis="gaap",
+            statement_type="income_statement",
+            source_ids=["SEC_MSFT_Q3_2026"],
+            confidence="high",
+        )
+    )
+    canonical = CanonicalFinancials(
+        ticker="MSFT",
+        as_of_date="2026-07-31",
+        metrics=metrics,
+    )
+
+    fundamentals = canonical_financials_to_fundamentals(canonical)
+
+    assert fundamentals["latest_quarter"] == "FY2026_Q3"
+    assert fundamentals["fiscal_period"] == "TTM through FY2026"
+    assert fundamentals["current_period_revenue_growth_yoy"] == (
+        331_839 - 281_724
+    ) / 281_724
+    assert fundamentals["current_period_growth_bridges"]["revenue"][
+        "formula_id"
+    ] == "matching_fiscal_year_yoy_growth"
+    assert fundamentals["current_period_growth_bridges"]["revenue"][
+        "period_type"
+    ] == "annual"
+
+
 def test_ttm_bridge_subtracts_matching_prior_interim_for_current_q2():
     facts = [
         _fact("revenue", 10, "Q1", "2025-01-01", "2025-03-31", "q1-2025"),

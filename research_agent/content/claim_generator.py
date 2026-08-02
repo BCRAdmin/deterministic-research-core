@@ -458,8 +458,19 @@ class _ClaimBuilder:
                 f"{_growth_metric_label(metric)} {_pct(self._metric_value(metric))}"
                 for metric in growth_metrics
             )
+            comparison_periods = {
+                str(claim.get("comparison_period") or "")
+                for claim in current_claim_specs
+                if any(metric in claim["metrics"] for metric in growth_metrics)
+            }
+            if comparison_periods == {"fiscal_year"}:
+                comparison_label = "Matching-fiscal-year"
+            elif comparison_periods == {"quarter"}:
+                comparison_label = "Matching-quarter"
+            else:
+                comparison_label = "Matching-period"
             bull_text = (
-                f"Matching-quarter evidence shows {growth_text}. Together with "
+                f"{comparison_label} evidence shows {growth_text}. Together with "
                 f"revenue TTM of {self._money(self.metrics.fundamentals.revenue_ttm)} "
                 f"and FCF TTM of {self._money(self.metrics.fundamentals.free_cash_flow_ttm)}, "
                 "this establishes current business direction, scale and cash generation. "
@@ -761,6 +772,13 @@ class _ClaimBuilder:
         if not candidates:
             return []
 
+        canonical_ids = self._canonical_evidence_ids(metric_name, expected_value)
+        canonical_matches = [
+            item for item in candidates if item.evidence_id in canonical_ids
+        ]
+        if canonical_matches and not metric_name.endswith("_ttm"):
+            return _latest_evidence(canonical_matches)
+
         formula_backed = [
             item
             for item in candidates
@@ -768,11 +786,6 @@ class _ClaimBuilder:
         ]
         if formula_backed:
             return _latest_evidence(formula_backed)
-
-        canonical_ids = self._canonical_evidence_ids(metric_name, expected_value)
-        canonical_matches = [
-            item for item in candidates if item.evidence_id in canonical_ids
-        ]
         if canonical_matches:
             return _latest_evidence(canonical_matches)
 
@@ -1277,7 +1290,10 @@ def _latest_current_period_metric(
     candidates = [
         metric
         for metric in canonical_financials.metrics_for(metric_name)
-        if _is_current_period_metric(metric.period, metric.source_ids)
+        if metric.basis == "gaap"
+        and metric.period_bucket in {"annual", "quarterly"}
+        and metric.start_date
+        and metric.end_date
     ]
     if not candidates:
         return None
@@ -1285,7 +1301,7 @@ def _latest_current_period_metric(
         candidates,
         key=lambda metric: (
             metric.end_date or "",
-            _reported_period_priority(metric),
+            1 if metric.period_bucket == "annual" else 0,
             {"high": 3, "medium": 2, "low": 1}.get(metric.confidence, 0),
         ),
     )
@@ -1405,6 +1421,20 @@ def _final_rating_implication(ticker: str, preferred: str, metrics: MetricsPacke
     if preferred in {"Tactical Trim", "Tactical Underweight"}:
         return f"The tactical-risk stance for {ticker} remains until trend or current-period KPI evidence changes."
     return f"The Hold research stance for {ticker} remains until technical or current-period KPI evidence changes."
+
+
+def _claim_metric_available(
+    metrics: MetricsPacket,
+    canonical_financials: CanonicalFinancials,
+    metric_name: str,
+) -> bool:
+    for section_name in ("fundamentals", "technical", "valuation"):
+        section = getattr(metrics, section_name)
+        if hasattr(section, metric_name) and isinstance(
+            getattr(section, metric_name), (int, float)
+        ):
+            return True
+    return _canonical_value(canonical_financials, metric_name) is not None
 
 
 def _current_period_claim_specs(
@@ -1811,6 +1841,14 @@ def _current_period_claim_specs(
                 "implication": "Hold remains appropriate until FCF durability and ad-tier execution are clearer.",
             },
         ])
+    specs = [
+        spec
+        for spec in specs
+        if all(
+            _claim_metric_available(metrics, canonical_financials, metric_name)
+            for metric_name in spec.get("metrics", [])
+        )
+    ]
     if not specs:
         current_revenue = _latest_current_period_metric(
             canonical_financials,
@@ -1879,8 +1917,13 @@ def _current_period_claim_specs(
                     value is not None for value in growth_values
                 )
                 if has_matching_comparison:
+                    comparison_period = (
+                        "fiscal year"
+                        if current_revenue.period_bucket == "annual"
+                        else "quarter"
+                    )
                     comparison_text = (
-                        " Against the matching prior-year quarter, revenue "
+                        f" Against the matching prior-year {comparison_period}, revenue "
                         f"changed by {_pct(growth_values[0])}, operating income "
                         f"by {_pct(growth_values[1])} and net income by "
                         f"{_pct(growth_values[2])}. These are arithmetic "
@@ -1921,6 +1964,11 @@ def _current_period_claim_specs(
                             f"{comparison_text}"
                         ),
                         "metrics": claim_metrics,
+                        "comparison_period": (
+                            "fiscal_year"
+                            if current_revenue.period_bucket == "annual"
+                            else "quarter"
+                        ),
                         "counterargument": comparison_counterargument,
                         "implication": (
                             "Use the latest period as current context, not as "

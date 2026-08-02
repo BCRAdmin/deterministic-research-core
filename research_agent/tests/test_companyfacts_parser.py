@@ -360,6 +360,11 @@ def test_conflicting_xbrl_alias_facts_remain_visible():
     assert [fact.value for fact in facts] == [1_170_000_000, 1_180_000_000]
     assert len(set(evidence_ids)) == 2
     assert len(canonical.metrics_for("cash_and_equivalents")) == 2
+    assert {
+        evidence_id
+        for metric in canonical.metrics_for("cash_and_equivalents")
+        for evidence_id in metric.evidence_ids
+    } == set(evidence_ids)
     assert fundamentals["balance_sheet"]["cash_and_equivalents"] == 1_170_000_000
 
 

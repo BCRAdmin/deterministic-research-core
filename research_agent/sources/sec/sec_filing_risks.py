@@ -160,7 +160,7 @@ def extract_sec_risk_headings(html: str) -> list[str]:
     starts = [
         index
         for index, (block, _) in enumerate(blocks)
-        if _normalized_heading(block) in {"risk factors", "item 1a risk factors"}
+        if _compact_heading(block) in {"riskfactors", "item1ariskfactors"}
     ]
     best: list[str] = []
     for start in starts:
@@ -168,7 +168,7 @@ def extract_sec_risk_headings(html: str) -> list[str]:
             (
                 index
                 for index in range(start + 1, len(blocks))
-                if _ITEM_HEADING.match(blocks[index][0])
+                if _is_later_item_heading(blocks[index][0])
             ),
             len(blocks),
         )
@@ -265,6 +265,17 @@ def _array_value(payload: dict[str, Any], key: str, index: int) -> str:
 
 def _normalized_heading(text: str) -> str:
     return " ".join(re.sub(r"[^a-z0-9]+", " ", text.lower()).split())
+
+
+def _compact_heading(text: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "", text.lower())
+
+
+def _is_later_item_heading(text: str) -> bool:
+    normalized = _normalized_heading(text)
+    return bool(_ITEM_HEADING.match(normalized)) and not normalized.startswith(
+        "item 1a"
+    )
 
 
 def _is_risk_heading(text: str) -> bool:
