@@ -29,4 +29,43 @@ def test_evidence_report_markdown_summarizes_sources_and_warnings(tmp_path):
     assert path.exists()
     assert "# Evidence Report - MDB" in markdown
     assert "MDB_IR_Q4_FY2026" in markdown
+    assert "2,460,000,000.00 USD" in markdown
     assert "MISSING_EVIDENCE_FOR_METRIC" in markdown
+
+
+def test_evidence_report_displays_non_us_currency_units():
+    ledger = EvidenceLedger(
+        ticker="ANY",
+        as_of_date="2026-07-27",
+        evidence_items=[
+            EvidenceItem(
+                evidence_id="ANY_REVENUE",
+                ticker="ANY",
+                claim_type="financial_metric",
+                source_id="BSE_ANY_OFFICIAL_FINANCIALS",
+                source_type="company_ir",
+                authority_rank=1,
+                statement="Revenue was reported in HUF.",
+                value=65_509_130_000,
+                unit="HUF",
+                supports_metrics=["revenue_ttm"],
+            ),
+            EvidenceItem(
+                evidence_id="ANY_EPS",
+                ticker="ANY",
+                claim_type="financial_metric",
+                source_id="BSE_ANY_OFFICIAL_FINANCIALS",
+                source_type="company_ir",
+                authority_rank=1,
+                statement="EPS was reported in HUF per share.",
+                value=505.32,
+                unit="HUF_per_share",
+                supports_metrics=["trailing_eps"],
+            ),
+        ],
+    )
+
+    markdown = render_evidence_report(ledger)
+
+    assert "65,509,130,000.00 HUF" in markdown
+    assert "505.32 HUF/share" in markdown

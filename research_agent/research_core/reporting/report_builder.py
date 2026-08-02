@@ -19,15 +19,15 @@ from research_agent.research_core.models.metrics_packet import MetricsPacket
 from research_agent.research_core.models.validation_report import ValidationReport
 
 
-def render_metric_table(metrics: MetricsPacket) -> str:
+def render_metric_table(metrics: MetricsPacket, currency: str = "USD") -> str:
     return f"""
 | Metric | Value |
 |---|---:|
-| Close | {_fmt_number(metrics.technical.close, 2)} |
+| Close | {_fmt_currency(metrics.technical.close, 2, currency)} |
 | 50 SMA | {_fmt_number(metrics.technical.sma_50, 2)} |
 | 200 SMA | {_fmt_number(metrics.technical.sma_200, 2)} |
 | RSI 14 | {_fmt_number(metrics.technical.rsi_14, 2)} |
-| FCF TTM | {_fmt_number(metrics.fundamentals.free_cash_flow_ttm, 0)} |
+| FCF TTM | {_fmt_currency(metrics.fundamentals.free_cash_flow_ttm, 0, currency)} |
 | SBC / Revenue | {_fmt_pct(metrics.fundamentals.sbc_to_revenue)} |
 | EV / Sales | {_fmt_number(metrics.valuation.ev_to_sales, 2)} |
 | P / FCF | {_fmt_number(metrics.valuation.price_to_fcf, 2)} |
@@ -59,7 +59,7 @@ def render_markdown_report(
         f"# {data_packet.ticker} Research Report",
         _render_data_basis(data_packet),
         "## Validated Metric Table",
-        render_metric_table(metrics_packet),
+        render_metric_table(metrics_packet, data_packet.price_basis.currency),
         "## Validation Status",
         _render_validation_summary(validation_report),
         "## Analyst Interpretation",
@@ -209,6 +209,13 @@ def _fmt_number(value: Optional[float], digits: int) -> str:
     if value is None:
         return "Metric unavailable in validated packet."
     return f"{value:,.{digits}f}"
+
+
+def _fmt_currency(value: Optional[float], digits: int, currency: str) -> str:
+    if value is None:
+        return "Metric unavailable in validated packet."
+    normalized_currency = str(currency or "USD").strip().upper()
+    return f"{value:,.{digits}f} {normalized_currency}"
 
 
 def _fmt_pct(value: Optional[float]) -> str:

@@ -1832,12 +1832,44 @@ def _unit_for_metric(
     *,
     currency: str = "USD",
 ) -> Optional[str]:
+    metric_name = str(metric_name or "").strip().lower()
     currency = str(currency or "USD").strip().upper()
     if "margin" in metric_name or metric_name.startswith("sbc_to"):
         return "percent"
     if "eps" in metric_name:
         return f"{currency}_per_share"
+    if metric_name in {"close", "price", "price_basis", "price_data"} or metric_name.startswith(
+        ("sma_", "ema_", "bollinger_")
+    ) or metric_name == "atr_14":
+        return currency
     if metric_name in {
+        "avg_volume_20",
+        "volume",
+        "listed_share_count",
+        "treasury_share_count",
+        "economic_share_count",
+        "diluted_share_count",
+    }:
+        return "shares"
+    if metric_name == "rsi_14":
+        return "index"
+    if metric_name in {
+        "current_ratio",
+        "debt_to_equity",
+        "ev_to_ebit",
+        "ev_to_ebitda",
+        "ev_to_sales",
+        "free_cash_flow_conversion_ttm",
+        "free_cash_flow_interest_coverage_ttm",
+        "forward_pe_consensus",
+        "operating_income_interest_coverage_ttm",
+        "peg_ratio",
+        "price_to_fcf",
+        "trailing_pe",
+    }:
+        return "multiple"
+    if metric_name in {
+        "cash",
         "revenue",
         "revenue_ttm",
         "gross_profit",
@@ -1866,7 +1898,26 @@ def _unit_for_metric(
         "shareholder_distributions_minus_fcf_ttm",
         "cash_and_equivalents",
         "cash_and_investments",
+        "current_assets",
+        "current_liabilities",
+        "debt",
+        "debt_current",
+        "debt_noncurrent",
+        "enterprise_value",
+        "equity",
+        "lease_liability_current",
+        "lease_liability_noncurrent",
+        "lease_liabilities_current",
+        "lease_liabilities_long_term",
+        "long_term_debt",
+        "market_cap",
+        "marketable_securities",
+        "short_term_debt",
+        "short_term_investments",
+        "total_lease_liabilities",
         "total_debt",
+        "total_assets",
+        "treasury_stock_value",
         "net_cash",
     }:
         return currency

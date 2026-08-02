@@ -63,11 +63,24 @@ def _metrics_from_ledger(ledger: EvidenceLedger) -> list[str]:
 def _fmt_value(value: Optional[float], unit: Optional[str]) -> str:
     if value is None:
         return "n/a"
-    if unit == "percent":
+    normalized_unit = str(unit or "").strip()
+    unit_key = normalized_unit.lower()
+    if unit_key == "percent":
         return f"{value:.1%}"
-    if unit in {"usd", "usd_per_share"}:
-        return f"{value:,.2f}"
-    return f"{value:,.2f}"
+    if unit_key == "multiple":
+        return f"{value:,.2f}x"
+    if unit_key == "count":
+        return f"{value:,.0f}"
+    amount = f"{value:,.2f}"
+    if unit_key.endswith("_per_share"):
+        return f"{amount} {normalized_unit[:-10].upper()}/share"
+    if len(normalized_unit) == 3 and normalized_unit.isalpha():
+        return f"{amount} {normalized_unit.upper()}"
+    if unit_key == "shares":
+        return f"{amount} shares"
+    if unit_key in {"", "fraction", "index", "ratio"}:
+        return amount
+    return f"{amount} {normalized_unit}"
 
 
 def _basis_for_item(item) -> str:

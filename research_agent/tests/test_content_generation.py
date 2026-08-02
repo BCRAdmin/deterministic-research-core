@@ -162,6 +162,8 @@ def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():
     assert "$" not in internal_report
     assert "4.34B HUF" in research_report
     assert "4.34B HUF" in internal_report
+    assert "| Close | 141.71 HUF |" in research_report
+    assert "| FCF TTM | 1,120,000,000 HUF |" in research_report
 
 
 def test_composed_claim_report_can_pass_quality_when_audit_is_clean():

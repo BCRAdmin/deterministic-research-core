@@ -93,6 +93,72 @@ def test_eps_source_registry_does_not_create_pseudo_guidance_or_consensus():
     assert not ledger.find_by_metric("consensus_forward_eps")
 
 
+def test_source_registry_evidence_uses_cross_market_units():
+    registry = SourceRegistry(
+        registry_id="ANY_TEST",
+        sources=[
+            SourceRegistryEntry(
+                source_id="ANY_BSE_OHLCV",
+                ticker="ANY",
+                source_type="exchange_ohlcv",
+                authority_rank=1,
+                used_for=["close", "sma_50", "rsi_14", "avg_volume_20"],
+            ),
+            SourceRegistryEntry(
+                source_id="ANY_BSE_FINANCIALS",
+                ticker="ANY",
+                source_type="company_ir",
+                authority_rank=1,
+                used_for=[
+                    "current_assets",
+                    "debt_noncurrent",
+                    "economic_share_count",
+                    "free_cash_flow_conversion_ttm",
+                    "current_ratio",
+                    "market_cap",
+                ],
+            ),
+        ],
+    )
+    ledger = build_evidence_ledger_from_source_registry(
+        ticker="ANY",
+        as_of_date="2026-07-27",
+        source_registry=registry,
+        currency="HUF",
+    )
+    units = {
+        item.supports_metrics[0]: item.unit
+        for item in ledger.evidence_items
+    }
+
+    assert {
+        metric: units[metric]
+        for metric in (
+            "close",
+            "sma_50",
+            "rsi_14",
+            "avg_volume_20",
+            "current_assets",
+            "debt_noncurrent",
+            "economic_share_count",
+            "free_cash_flow_conversion_ttm",
+            "current_ratio",
+            "market_cap",
+        )
+    } == {
+        "close": "HUF",
+        "sma_50": "HUF",
+        "rsi_14": "index",
+        "avg_volume_20": "shares",
+        "current_assets": "HUF",
+        "debt_noncurrent": "HUF",
+        "economic_share_count": "shares",
+        "free_cash_flow_conversion_ttm": "multiple",
+        "current_ratio": "multiple",
+        "market_cap": "HUF",
+    }
+
+
 def test_runtime_evidence_sources_are_merged_without_company_rules():
     evidence = EvidenceItem(
         evidence_id="GENERIC_FILING_REVENUE",

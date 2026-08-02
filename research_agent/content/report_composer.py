@@ -57,7 +57,7 @@ def compose_research_report(
         _render_data_note(data_packet, validation_report, reconciliation_warnings),
         "",
         "## Validated Metric Table",
-        render_metric_table(metrics_packet),
+        render_metric_table(metrics_packet, data_packet.price_basis.currency),
         "",
         "## Business & Segment Context",
         _render_claim_section(grouped, "Business & Segment Context"),
