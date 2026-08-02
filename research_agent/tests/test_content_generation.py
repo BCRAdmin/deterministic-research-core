@@ -811,6 +811,74 @@ def test_missing_ticker_specific_metrics_fall_back_to_latest_fiscal_year():
     ]
 
 
+def test_annual_claim_matches_same_dates_across_sec_period_labels():
+    _, metrics, _, _, _ = _load_packet("SNOW")
+    metrics.fundamentals.current_period_revenue_growth_yoy = 0.002
+    metrics.fundamentals.current_period_operating_income_growth_yoy = None
+    metrics.fundamentals.current_period_net_income_growth_yoy = -0.034
+    common = {
+        "unit": "USD",
+        "fiscal_year": 2026,
+        "fiscal_period": "FY",
+        "period_bucket": "annual",
+        "start_date": "2025-06-01",
+        "end_date": "2026-05-31",
+        "duration_days": 364,
+        "basis": "gaap",
+        "statement_type": "income_statement",
+        "source_ids": ["GENERIC_SEC_FY2026"],
+        "confidence": "high",
+    }
+    canonical = CanonicalFinancials(
+        ticker="GENERIC",
+        as_of_date="2026-07-31",
+        metrics=[
+            CanonicalMetric(
+                metric_name="revenue",
+                value=46_398.0,
+                period="CY2025",
+                **common,
+            ),
+            CanonicalMetric(
+                metric_name="gross_profit",
+                value=19_911.0,
+                period="CY2025",
+                **common,
+            ),
+            CanonicalMetric(
+                metric_name="net_income",
+                value=3_108.0,
+                period="FY2026",
+                **common,
+            ),
+        ],
+    )
+
+    current = next(
+        spec
+        for spec in _current_period_claim_specs(
+            "GENERIC",
+            metrics,
+            canonical,
+            currency="USD",
+        )
+        if "latest reported period" in spec["text"]
+    )
+
+    assert "FY2026" in current["text"]
+    assert "matching prior-year fiscal year" in current["text"]
+    assert "revenue changed by 0.2%" in current["text"]
+    assert "net income by -3.4%" in current["text"]
+    assert "prior-year quarter" not in current["text"]
+    assert current["metrics"] == [
+        "revenue",
+        "gross_profit",
+        "net_income",
+        "current_period_revenue_growth_yoy",
+        "current_period_net_income_growth_yoy",
+    ]
+
+
 def test_direct_annual_claim_prefers_canonical_sec_fact_over_equal_ttm_formula():
     data, metrics, validation, ledger, decision = _load_packet("SNOW")
     data.ticker = "DIRECT"

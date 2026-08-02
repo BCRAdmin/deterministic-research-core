@@ -1337,6 +1337,45 @@ def _latest_current_period_metric(
     )
 
 
+def _metric_for_same_reported_period(
+    canonical_financials: CanonicalFinancials,
+    metric_name: str,
+    anchor_metric: object,
+):
+    start_date = getattr(anchor_metric, "start_date", None)
+    end_date = getattr(anchor_metric, "end_date", None)
+    if not start_date or not end_date:
+        return canonical_financials.get_metric(
+            metric_name,
+            period=getattr(anchor_metric, "period", None),
+        )
+    candidates = [
+        metric
+        for metric in canonical_financials.metrics_for(metric_name)
+        if metric.start_date == start_date
+        and metric.end_date == end_date
+        and metric.period_bucket == getattr(anchor_metric, "period_bucket", None)
+        and (
+            getattr(anchor_metric, "fiscal_year", None) is None
+            or metric.fiscal_year == getattr(anchor_metric, "fiscal_year", None)
+        )
+        and (
+            getattr(anchor_metric, "fiscal_period", None) is None
+            or metric.fiscal_period == getattr(anchor_metric, "fiscal_period", None)
+        )
+    ]
+    if not candidates:
+        return None
+    return max(
+        candidates,
+        key=lambda metric: {
+            "high": 3,
+            "medium": 2,
+            "low": 1,
+        }.get(metric.confidence, 0),
+    )
+
+
 def _display_period(metric: object) -> str:
     fiscal_year = getattr(metric, "fiscal_year", None)
     fiscal_period = str(getattr(metric, "fiscal_period", "") or "").upper()
@@ -1893,9 +1932,10 @@ def _current_period_claim_specs(
         )
         if current_revenue is not None:
             available_metrics = {
-                metric_name: canonical_financials.get_metric(
+                metric_name: _metric_for_same_reported_period(
+                    canonical_financials,
                     metric_name,
-                    period=current_revenue.period,
+                    current_revenue,
                 )
                 for metric_name in (
                     "operating_income",
@@ -1941,48 +1981,76 @@ def _current_period_claim_specs(
                     ", ".join(metric_phrases[:-1])
                     + f" and {metric_phrases[-1]}"
                 )
-                growth_values = (
-                    metrics.fundamentals.current_period_revenue_growth_yoy,
-                    metrics.fundamentals.current_period_operating_income_growth_yoy,
-                    metrics.fundamentals.current_period_net_income_growth_yoy,
-                )
-                has_matching_comparison = metric_names == [
-                    "revenue",
-                    "operating_income",
-                    "net_income",
-                ] and all(
-                    value is not None for value in growth_values
-                )
-                if has_matching_comparison:
+                growth_candidates = [
+                    (
+                        "revenue",
+                        "current_period_revenue_growth_yoy",
+                        "revenue",
+                        metrics.fundamentals.current_period_revenue_growth_yoy,
+                    ),
+                    (
+                        "operating_income",
+                        "current_period_operating_income_growth_yoy",
+                        "operating income",
+                        metrics.fundamentals.current_period_operating_income_growth_yoy,
+                    ),
+                    (
+                        "net_income",
+                        "current_period_net_income_growth_yoy",
+                        "net income",
+                        metrics.fundamentals.current_period_net_income_growth_yoy,
+                    ),
+                ]
+                available_growth = [
+                    (growth_metric, label, value)
+                    for source_metric, growth_metric, label, value in growth_candidates
+                    if source_metric in metric_names and value is not None
+                ]
+                if available_growth:
                     comparison_period = (
                         "fiscal year"
                         if current_revenue.period_bucket == "annual"
                         else "quarter"
                     )
+                    growth_phrases = [
+                        f"{label} by {_pct(value)}"
+                        for _, label, value in available_growth
+                    ]
+                    growth_phrases[0] = growth_phrases[0].replace(
+                        " by ",
+                        " changed by ",
+                        1,
+                    )
+                    if len(growth_phrases) == 1:
+                        growth_text = growth_phrases[0]
+                    else:
+                        growth_text = (
+                            ", ".join(growth_phrases[:-1])
+                            + f" and {growth_phrases[-1]}"
+                        )
                     comparison_text = (
-                        f" Against the matching prior-year {comparison_period}, revenue "
-                        f"changed by {_pct(growth_values[0])}, operating income "
-                        f"by {_pct(growth_values[1])} and net income by "
-                        f"{_pct(growth_values[2])}. These are arithmetic "
+                        f" Against the matching prior-year {comparison_period}, "
+                        f"{growth_text}. These are arithmetic "
                         "year-over-year comparisons, not causal conclusions."
                     )
                     claim_metrics = [
-                        "revenue",
-                        "operating_income",
-                        "net_income",
-                        "current_period_revenue_growth_yoy",
-                        "current_period_operating_income_growth_yoy",
-                        "current_period_net_income_growth_yoy",
+                        *metric_names,
+                        *(growth_metric for growth_metric, _, _ in available_growth),
                     ]
                     comparison_counterargument = (
                         "One year-over-year comparison does not establish a "
                         "durable multi-period trend."
                     )
                 else:
+                    comparison_period = (
+                        "fiscal year"
+                        if current_revenue.period_bucket == "annual"
+                        else "quarter"
+                    )
                     comparison_text = (
                         " These are current-period results; they do not by "
                         "themselves establish growth without a matching "
-                        "prior-year quarter."
+                        f"prior-year {comparison_period}."
                     )
                     claim_metrics = metric_names
                     comparison_counterargument = (
