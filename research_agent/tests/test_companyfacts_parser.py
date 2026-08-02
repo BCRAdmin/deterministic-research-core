@@ -3,6 +3,9 @@ from research_agent.sources.sec.sec_fundamentals_builder import (
     build_sec_evidence_for_source_ids,
     build_sec_fundamentals_from_companyfacts,
 )
+from research_agent.research_core.calculations.fundamentals import (
+    calculate_fundamental_metrics,
+)
 from research_agent.reconciliation.source_reconciler import (
     build_canonical_financials_from_facts,
     canonical_financials_to_fundamentals,
@@ -199,6 +202,128 @@ def test_identical_xbrl_alias_facts_are_materialized_once():
 
     assert len(facts) == 1
     assert evidence.supports_metrics == ["cash_and_equivalents"]
+
+
+def test_productive_asset_capex_and_split_debt_build_complete_current_metrics():
+    def duration_fact(value, fy, fp, start, end, accession, form="10-Q"):
+        return {
+            "val": value,
+            "fy": fy,
+            "fp": fp,
+            "form": form,
+            "filed": "2026-05-27" if form == "10-Q" else "2026-03-18",
+            "start": start,
+            "end": end,
+            "accn": accession,
+            "frame": f"CY{end[:4]}Q1" if fp == "Q1" else "CY2025",
+        }
+
+    def instant_fact(value):
+        return {
+            "val": value,
+            "fy": 2026,
+            "fp": "Q1",
+            "form": "10-Q",
+            "filed": "2026-05-27",
+            "end": "2026-05-03",
+            "accn": "quarter",
+            "frame": "CY2026Q1I",
+        }
+
+    fixture = {
+        "facts": {
+            "us-gaap": {
+                "NetCashProvidedByUsedInOperatingActivities": {
+                    "units": {
+                        "USD": [
+                            duration_fact(
+                                16_325, 2025, "FY", "2025-02-03",
+                                "2026-02-01", "annual", "10-K",
+                            ),
+                            duration_fact(
+                                4_325, 2025, "Q1", "2025-02-03",
+                                "2025-05-04", "prior-quarter",
+                            ),
+                            duration_fact(
+                                6_032, 2026, "Q1", "2026-02-02",
+                                "2026-05-03", "current-quarter",
+                            ),
+                        ]
+                    }
+                },
+                "PaymentsToAcquireProductiveAssets": {
+                    "units": {
+                        "USD": [
+                            duration_fact(
+                                3_679, 2025, "FY", "2025-02-03",
+                                "2026-02-01", "annual", "10-K",
+                            ),
+                            duration_fact(
+                                806, 2025, "Q1", "2025-02-03",
+                                "2025-05-04", "prior-quarter",
+                            ),
+                            duration_fact(
+                                844, 2026, "Q1", "2026-02-02",
+                                "2026-05-03", "current-quarter",
+                            ),
+                        ]
+                    }
+                },
+                "LongTermDebt": {
+                    "units": {
+                        "USD": [
+                            {
+                                "val": 49_397,
+                                "fy": 2025,
+                                "fp": "FY",
+                                "form": "10-K",
+                                "filed": "2026-03-18",
+                                "end": "2026-02-01",
+                                "accn": "annual",
+                                "frame": "CY2025Q4I",
+                            }
+                        ]
+                    }
+                },
+                "CommercialPaper": {
+                    "units": {"USD": [instant_fact(3_503)]}
+                },
+                "LongTermDebtAndCapitalLeaseObligationsCurrent": {
+                    "units": {"USD": [instant_fact(5_178)]}
+                },
+                "LongTermDebtAndCapitalLeaseObligations": {
+                    "units": {"USD": [instant_fact(44_828)]}
+                },
+            }
+        }
+    }
+    parser = CompanyFactsParser("BASE", "1", fixture)
+    facts = [
+        fact
+        for metric_name in (
+            "operating_cash_flow",
+            "capex",
+            "total_debt",
+            "short_term_debt",
+            "debt_current",
+            "debt_noncurrent",
+        )
+        for fact in parser.get_facts_for_metric(metric_name)
+    ]
+    canonical, _ = build_canonical_financials_from_facts(
+        "BASE", "2026-07-31", facts
+    )
+    normalized = canonical_financials_to_fundamentals(canonical)
+    metrics = calculate_fundamental_metrics(normalized)
+
+    assert normalized["ttm"]["capex"] == 3_717
+    assert metrics.operating_cash_flow_ttm == 18_032
+    assert metrics.capex_ttm == 3_717
+    assert metrics.free_cash_flow_ttm == 14_315
+    assert metrics.short_term_debt == 3_503
+    assert metrics.debt_current == 5_178
+    assert metrics.debt_noncurrent == 44_828
+    assert metrics.total_debt == 53_509
 
 
 def test_conflicting_xbrl_alias_facts_remain_visible():

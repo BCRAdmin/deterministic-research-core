@@ -598,6 +598,7 @@ def build_fundamental_derivation_evidence(
     debt_components = {
         metric_name: float(value)
         for metric_name, value in (
+            ("short_term_debt", fundamentals.short_term_debt),
             ("debt_current", fundamentals.debt_current),
             ("debt_noncurrent", fundamentals.debt_noncurrent),
         )

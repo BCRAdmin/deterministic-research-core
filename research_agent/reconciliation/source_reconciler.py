@@ -346,6 +346,7 @@ def canonical_financials_to_fundamentals(canonical: CanonicalFinancials) -> dict
         "current_liabilities",
         "equity",
         "total_debt",
+        "short_term_debt",
         "debt_current",
         "debt_noncurrent",
         "lease_liability_current",
@@ -728,6 +729,9 @@ def _derive_debt_and_lease_totals(
     aggregate = _latest_current_metric(
         canonical, "total_debt", require_gaap=True
     )
+    short_term = _latest_current_metric(
+        canonical, "short_term_debt", require_gaap=True
+    )
     current = _latest_current_metric(
         canonical, "debt_current", require_gaap=True
     )
@@ -735,24 +739,44 @@ def _derive_debt_and_lease_totals(
         canonical, "debt_noncurrent", require_gaap=True
     )
     component_end_dates = [
-        metric.end_date for metric in (current, noncurrent) if metric is not None
+        metric.end_date
+        for metric in (short_term, current, noncurrent)
+        if metric is not None
     ]
     latest_component_date = max(component_end_dates) if component_end_dates else None
-    if noncurrent is not None and (
-        aggregate is None
-        or (
-            latest_component_date is not None
-            and (aggregate.end_date or "") < latest_component_date
+    if noncurrent is not None:
+        component_values = {"debt_noncurrent": noncurrent.value}
+        if current is not None and current.end_date == noncurrent.end_date:
+            component_values["debt_current"] = current.value
+        current_is_aggregate = (
+            current is not None
+            and current.source_concept == "us-gaap:DebtCurrent"
         )
-    ):
-        current_value = (
-            current.value
-            if current is not None and current.end_date == noncurrent.end_date
-            else 0.0
+        if (
+            short_term is not None
+            and short_term.end_date == noncurrent.end_date
+            and not current_is_aggregate
+        ):
+            component_values["short_term_debt"] = short_term.value
+        use_components = (
+            aggregate is None
+            or (
+                latest_component_date is not None
+                and (aggregate.end_date or "") < latest_component_date
+            )
+            or (
+                len(component_values) > 1
+                and latest_component_date is not None
+                and (aggregate.end_date or "") == latest_component_date
+            )
         )
-        balance["total_debt"] = current_value + noncurrent.value
-        balance["debt_current"] = current_value
-        balance["debt_noncurrent"] = noncurrent.value
+        if use_components:
+            balance["total_debt"] = sum(component_values.values())
+            balance["debt_noncurrent"] = noncurrent.value
+            if "debt_current" in component_values:
+                balance["debt_current"] = component_values["debt_current"]
+            if "short_term_debt" in component_values:
+                balance["short_term_debt"] = component_values["short_term_debt"]
     if (
         noncurrent is not None
         and current is not None
@@ -972,6 +996,7 @@ def _statement_type(metric_name: str):
         "total_liabilities",
         "stockholders_equity",
         "total_debt",
+        "short_term_debt",
         "debt_current",
         "debt_noncurrent",
         "lease_liability_current",

@@ -8,7 +8,10 @@ US_GAAP_CONCEPTS = {
     "operating_income": ["OperatingIncomeLoss"],
     "net_income": ["NetIncomeLoss"],
     "operating_cash_flow": ["NetCashProvidedByUsedInOperatingActivities"],
-    "capex": ["PaymentsToAcquirePropertyPlantAndEquipment"],
+    "capex": [
+        "PaymentsToAcquirePropertyPlantAndEquipment",
+        "PaymentsToAcquireProductiveAssets",
+    ],
     "cash_and_equivalents": [
         "CashAndCashEquivalentsAtCarryingValue",
         "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents",
@@ -16,13 +19,21 @@ US_GAAP_CONCEPTS = {
     "short_term_investments": ["ShortTermInvestments", "MarketableSecuritiesCurrent"],
     "current_assets": ["AssetsCurrent"],
     "current_liabilities": ["LiabilitiesCurrent"],
-    "total_debt": ["LongTermDebt"],
-    "debt_current": [
-        "LongTermDebtCurrent",
-        "DebtCurrent",
-        "ShortTermBorrowings",
+    "total_debt": [
+        "DebtAndFinanceLeaseObligations",
+        "DebtAndCapitalLeaseObligations",
+        "LongTermDebt",
     ],
-    "debt_noncurrent": ["LongTermDebtNoncurrent"],
+    "short_term_debt": ["ShortTermBorrowings", "CommercialPaper"],
+    "debt_current": [
+        "DebtCurrent",
+        "LongTermDebtCurrent",
+        "LongTermDebtAndCapitalLeaseObligationsCurrent",
+    ],
+    "debt_noncurrent": [
+        "LongTermDebtNoncurrent",
+        "LongTermDebtAndCapitalLeaseObligations",
+    ],
     "lease_liability_current": [
         "OperatingLeaseLiabilityCurrent",
         "FinanceLeaseLiabilityCurrent",

@@ -62,6 +62,7 @@ class FundamentalMetrics(BaseModel):
     marketable_securities: Optional[float] = None
     cash_and_investments: Optional[float] = None
     total_debt: Optional[float] = None
+    short_term_debt: Optional[float] = None
     debt_current: Optional[float] = None
     debt_noncurrent: Optional[float] = None
     lease_liability_current: Optional[float] = None

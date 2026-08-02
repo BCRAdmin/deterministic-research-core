@@ -183,6 +183,7 @@ def calculate_fundamental_metrics(
     short_term_investments = _optional_float(balance_sheet.get("short_term_investments"))
     marketable_securities = _optional_float(balance_sheet.get("marketable_securities"))
     total_debt = _optional_float(balance_sheet.get("total_debt"))
+    short_term_debt = _optional_float(balance_sheet.get("short_term_debt"))
     debt_current = _optional_float(balance_sheet.get("debt_current"))
     debt_noncurrent = _optional_float(balance_sheet.get("debt_noncurrent"))
     lease_liability_current = _optional_float(
@@ -274,6 +275,7 @@ def calculate_fundamental_metrics(
         marketable_securities=marketable_securities,
         cash_and_investments=cash_and_investments,
         total_debt=total_debt,
+        short_term_debt=short_term_debt,
         debt_current=debt_current,
         debt_noncurrent=debt_noncurrent,
         lease_liability_current=lease_liability_current,
