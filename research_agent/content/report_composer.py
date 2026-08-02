@@ -271,11 +271,33 @@ def _render_final_rating_logic(
         or decision_packet.rating_permission.reason
     )
     if scores.valuation_status == "unbenchmarked":
-        valuation_line = (
-            f"- Valuation status: EV/Sales `{_fmt_multiple(v.ev_to_sales)}` and "
-            f"P/FCF `{_fmt_multiple(v.price_to_fcf)}` are unbenchmarked "
-            "observations and add neither a positive nor a negative rating signal."
-        )
+        valuation_observations = [
+            ("EV/Sales", v.ev_to_sales),
+            ("P/FCF", v.price_to_fcf),
+            ("trailing P/E", v.trailing_pe),
+        ]
+        available_observations = [
+            f"{label} `{_fmt_multiple(value)}`"
+            for label, value in valuation_observations
+            if value is not None
+        ]
+        if available_observations:
+            observation_text = " and ".join(available_observations)
+            grammar = (
+                "is an unbenchmarked observation"
+                if len(available_observations) == 1
+                else "are unbenchmarked observations"
+            )
+            effect_verb = "adds" if len(available_observations) == 1 else "add"
+            valuation_line = (
+                f"- Valuation status: {observation_text} {grammar} and {effect_verb} "
+                "neither a positive nor a negative rating signal."
+            )
+        else:
+            valuation_line = (
+                "- Valuation status: no measured multiple is available; "
+                "valuation cannot move the rating."
+            )
     elif scores.valuation_status != "measured":
         valuation_line = (
             "- Valuation status: insufficiently measured; valuation cannot move "

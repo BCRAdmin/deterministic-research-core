@@ -117,6 +117,45 @@ def test_content_generator_keeps_only_evidence_mapped_substantive_claims():
     assert technical_claim.metric_values["sma_200"] == metrics.technical.sma_200
 
 
+def test_content_generator_uses_trailing_pe_without_point_in_time_share_count():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    metrics.valuation.market_cap = None
+    metrics.valuation.enterprise_value = None
+    metrics.valuation.ev_to_sales = None
+    metrics.valuation.price_to_fcf = None
+    metrics.valuation.trailing_pe = 19.86
+    metrics.fundamentals.trailing_eps = metrics.technical.close / 19.86
+    decision.signal_scores.valuation_status = "unbenchmarked"
+    decision.signal_scores.valuation_score = 0
+    _add_exact_metric_evidence(data, metrics, ledger)
+
+    claims = generate_research_claims(data, metrics, ledger, decision, validation)
+    quality = claim_quality_metrics(claims)
+    report = compose_research_report(
+        data,
+        metrics,
+        validation,
+        decision,
+        ledger,
+        claims,
+    )
+    valuation_claim = next(
+        claim
+        for claim in claims
+        if claim.section == "Valuation / Multiples"
+    )
+
+    assert valuation_claim.claim.startswith("For SNOW, trailing P/E is 19.86x")
+    assert valuation_claim.metric_refs == ["trailing_pe", "close", "trailing_eps"]
+    assert valuation_claim.metric_values["trailing_pe"] == 19.86
+    assert "missing_valuation_analysis" not in claim_coverage_gaps(quality)
+    assert (
+        "Valuation status: trailing P/E `19.86x` is an unbenchmarked observation"
+        in report
+    )
+    assert "EV/Sales `unavailable`" not in report
+
+
 def test_compact_claim_set_can_cover_every_required_dimension():
     metrics = {
         "analyst_claim_count": 9,

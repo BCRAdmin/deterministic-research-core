@@ -13,6 +13,7 @@ def _fundamentals(**updates):
         "free_cash_flow_ttm": 7_200_000_000,
         "cash_and_equivalents": 1_000_000_000,
         "diluted_share_count": 713_500_000,
+        "listed_share_count": 713_500_000,
         "trailing_eps": 8_400_000_000 / 713_500_000,
     }
     payload.update(updates)
@@ -48,3 +49,18 @@ def test_ev_is_calculated_only_with_debt_and_cash_present():
 
     assert complete.enterprise_value == 227_906_260_000
     assert missing_cash.enterprise_value is None
+
+
+def test_market_cap_does_not_use_period_average_diluted_shares():
+    valuation = calculate_valuation_metrics(
+        264.76,
+        _fundamentals(listed_share_count=None),
+    )
+
+    assert valuation.market_cap is None
+    assert valuation.market_cap_share_basis is None
+    assert valuation.enterprise_value is None
+    assert valuation.ev_to_sales is None
+    assert valuation.price_to_fcf is None
+    assert valuation.fcf_yield is None
+    assert valuation.trailing_pe is not None

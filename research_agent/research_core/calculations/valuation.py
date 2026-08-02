@@ -60,15 +60,12 @@ def calculate_valuation_metrics(
     share_count = (
         fundamentals.listed_share_count
         or fundamentals.economic_share_count
-        or fundamentals.diluted_share_count
     )
     share_basis = None
     if fundamentals.listed_share_count is not None:
         share_basis = "listed_share_count"
     elif fundamentals.economic_share_count is not None:
         share_basis = "economic_share_count"
-    elif fundamentals.diluted_share_count is not None:
-        share_basis = "diluted_share_count"
     if share_count is not None:
         market_value = market_cap(close_price, share_count)
     if (

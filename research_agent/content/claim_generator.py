@@ -408,6 +408,31 @@ class _ClaimBuilder:
                 "cash-flow durability evidence."
             ),
         )
+        if (
+            self.metrics.valuation.ev_to_sales is None
+            and self.metrics.valuation.price_to_fcf is None
+            and self.metrics.valuation.trailing_pe is not None
+        ):
+            self.add(
+                "Valuation / Multiples",
+                "valuation",
+                "valuation_metric",
+                (
+                    f"For {ticker}, trailing P/E is "
+                    f"{_multiple(self.metrics.valuation.trailing_pe)}, derived "
+                    "from the frozen close and trailing diluted EPS. Without a "
+                    "validated peer, history or cycle benchmark, this records "
+                    "a multiple level but does not label the company cheap or "
+                    "expensive."
+                ),
+                ["trailing_pe", "close", "trailing_eps"],
+                "medium",
+                "high",
+                implication=(
+                    "Treat trailing P/E as an observation until comparison "
+                    "evidence exists."
+                ),
+            )
 
         self.add(
             "Technical Setup",
@@ -1394,6 +1419,11 @@ def _core_rating_metric_refs(metrics: MetricsPacket) -> list[str]:
     ):
         if value is not None:
             metric_refs.append(metric_name)
+    if (
+        metrics.valuation.ev_to_sales is None
+        and metrics.valuation.trailing_pe is not None
+    ):
+        metric_refs.append("trailing_pe")
     return metric_refs
 
 
@@ -1409,6 +1439,8 @@ def _core_rating_evidence_text(metrics: MetricsPacket, currency: str) -> str:
         )
     if metrics.valuation.ev_to_sales is not None:
         anchors.append(f"EV/Sales of {_multiple(metrics.valuation.ev_to_sales)}")
+    elif metrics.valuation.trailing_pe is not None:
+        anchors.append(f"trailing P/E of {_multiple(metrics.valuation.trailing_pe)}")
     return ", ".join(anchors) if anchors else "the available validated metrics"
 
 
