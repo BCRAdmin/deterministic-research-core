@@ -39,3 +39,23 @@ def test_official_news_manifest_becomes_coverage_and_evidence(tmp_path: Path):
 
 def test_missing_official_news_manifest_is_explicitly_empty(tmp_path: Path):
     assert load_news("MISSING", tmp_path) == []
+
+
+def test_official_risk_event_becomes_risk_evidence():
+    evidence = news_evidence_items(
+        "ANY",
+        [
+            {
+                "event_type": "risk",
+                "date": "2026-04-30",
+                "headline": "ANY annual report discloses liquidity risk",
+                "summary": "Liquidity risk: The Group monitors cash flows.",
+                "source_id": "BSE_ANY_ANNUAL_REPORT_RISK_LIQUIDITY",
+                "source_type": "company_ir",
+                "authority_rank": 1,
+            }
+        ],
+    )
+
+    assert evidence[0].claim_type == "risk"
+    assert "issuer_risk_disclosure" in evidence[0].supports_claims

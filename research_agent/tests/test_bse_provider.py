@@ -25,6 +25,7 @@ def _profile_html() -> str:
           <tr><td><span>31 Jul 2026 08:15</span></td><td><a href="/future">Future publication</a></td></tr>
           <tr><td><span>03 Jul 2026 12:13</span></td><td><a href="/dividend">Final dividend announcement</a></td></tr>
           <tr><td><span>18 May 2026 18:31</span></td><td><a href="/quarter">Stable first quarter</a></td></tr>
+          <tr><td><span>30 Apr 2026 08:00</span></td><td><a href="/annual">Annual Report for the year 2025</a></td></tr>
         </tbody></table>
       </div>
       <div class="tab_content" id="cp_tab_content_6"></div>
@@ -126,6 +127,26 @@ def test_bse_provider_builds_honest_profile_context_and_publication_snapshot(
 ):
     provider = BseIssuerProvider()
     monkeypatch.setattr(provider, "_fetch", lambda _url: _profile_html().encode())
+    monkeypatch.setattr(
+        provider,
+        "_download_best_pdf_text",
+        lambda _url: """
+        27 Risk management
+        Foreign currency risk
+        Foreign currency liabilities mainly occur from raw material purchases,
+        which are hedged by receivables from export sales as a natural hedge.
+        Interest rate risk
+        The Group reports that potential interest rate changes could affect its
+        interest expense.
+        Liquidity risk
+        The Group manages liquidity risk by monitoring cash flows and matching
+        the maturity profiles of financial assets and liabilities.
+        Credit risk
+        The Group limits credit risk by dealing with creditworthy counterparties
+        and obtaining collateral where appropriate.
+        28 Significant events after the reporting period
+        """,
+    )
     issuer = provider.resolve("ANY")
     assert issuer is not None
 
@@ -136,11 +157,16 @@ def test_bse_provider_builds_honest_profile_context_and_publication_snapshot(
     )
 
     assert payload["coverage_status"] == "partial"
-    assert payload["window_start"] == "2026-05-18"
+    assert payload["window_start"] == "2026-04-30"
     assert [event["event_type"] for event in payload["events"]] == [
         "business_context",
+        "risk",
+        "risk",
+        "risk",
+        "risk",
         "dividend",
         "earnings_results",
+        "filing",
     ]
     assert not any(
         character.isdigit() for character in payload["events"][0]["summary"]
@@ -149,5 +175,10 @@ def test_bse_provider_builds_honest_profile_context_and_publication_snapshot(
         "The BSE issuer profile describes the business as follows:"
     )
     assert "highest level" not in payload["events"][0]["summary"]
-    assert all(not event["material"] for event in payload["events"][1:])
+    assert all(event["material"] for event in payload["events"][1:5])
+    assert all(not event["material"] for event in payload["events"][5:])
+    assert all(
+        not any(character.isdigit() for character in event["summary"])
+        for event in payload["events"][1:5]
+    )
     assert all(event["date"] <= "2026-07-24" for event in payload["events"])

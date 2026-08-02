@@ -32,6 +32,12 @@ _INTERIM_METRICS = {
     "Operating profit (EBIT)": "operating_income",
     "Profit after tax": "net_income",
 }
+_BSE_FINANCIAL_RISK_HEADINGS = (
+    "Foreign currency risk",
+    "Interest rate risk",
+    "Liquidity risk",
+    "Credit risk",
+)
 
 
 @dataclass(frozen=True)
@@ -173,6 +179,50 @@ def _bse_publication_type(headline: str) -> str:
     return "issuer_publication"
 
 
+def _bse_financial_risk_disclosures(text: str) -> list[dict[str, str]]:
+    normalized = " ".join(text.split())
+    section = None
+    for match in re.finditer(r"(?:\d+\s+)?Risk management", normalized, re.IGNORECASE):
+        candidate = normalized[match.end() : match.end() + 20_000]
+        if re.search(
+            re.escape(_BSE_FINANCIAL_RISK_HEADINGS[0]),
+            candidate[:700],
+            re.IGNORECASE,
+        ):
+            section = candidate
+            break
+    if section is None:
+        return []
+
+    headings: list[tuple[int, int, str]] = []
+    for heading in _BSE_FINANCIAL_RISK_HEADINGS:
+        match = re.search(re.escape(heading), section, re.IGNORECASE)
+        if match:
+            headings.append((match.start(), match.end(), heading))
+    headings.sort()
+
+    disclosures: list[dict[str, str]] = []
+    for index, (_start, body_start, heading) in enumerate(headings):
+        body_end = headings[index + 1][0] if index + 1 < len(headings) else len(section)
+        body = section[body_start:body_end]
+        sentences = [
+            sentence.strip()
+            for sentence in re.split(r"(?<=[.!?])\s+", body)
+            if 50 <= len(sentence.strip()) <= 600
+            and not any(character.isdigit() for character in sentence)
+            and sum(character.isalpha() for character in sentence) >= 30
+        ]
+        if not sentences:
+            continue
+        disclosures.append(
+            {
+                "risk_type": heading,
+                "statement": f"{heading}: {' '.join(sentences[:2])}"[:1_200],
+            }
+        )
+    return disclosures
+
+
 class BseIssuerProvider(PriceProviderBase):
     """Official issuer, financial and OHLCV data from Budapest Stock Exchange."""
 
@@ -183,6 +233,7 @@ class BseIssuerProvider(PriceProviderBase):
         self.timeout_seconds = timeout_seconds
         self._html_by_ticker: dict[str, str] = {}
         self._issuer_by_ticker: dict[str, Optional[BseIssuer]] = {}
+        self._pdf_text_by_detail_url: dict[str, str] = {}
 
     def resolve(self, ticker: str) -> Optional[BseIssuer]:
         symbol = ticker.strip().upper()
@@ -344,6 +395,44 @@ class BseIssuerProvider(PriceProviderBase):
                 }
             )
         publications = _bse_publications(html, as_of_date=as_of_date)
+        annual_publication = next(
+            (
+                publication
+                for publication in publications
+                if _bse_publication_type(publication["headline"]) == "filing"
+            ),
+            None,
+        )
+        if annual_publication:
+            risk_disclosures = _bse_financial_risk_disclosures(
+                self._download_best_pdf_text(annual_publication["url"])
+            )
+            for index, disclosure in enumerate(risk_disclosures, start=1):
+                risk_id = re.sub(
+                    r"[^A-Z0-9]+",
+                    "_",
+                    disclosure["risk_type"].upper(),
+                ).strip("_")
+                events.append(
+                    {
+                        "date": annual_publication["date"],
+                        "headline": (
+                            f"{issuer.ticker} annual report discloses "
+                            f"{disclosure['risk_type'].lower()}"
+                        ),
+                        "event_type": "risk",
+                        "material": True,
+                        "source_id": (
+                            f"BSE_{issuer.ticker}_ANNUAL_REPORT_RISK_"
+                            f"{risk_id}_{index:02d}"
+                        ),
+                        "source_type": "company_ir",
+                        "authority_rank": 1,
+                        "url": annual_publication["url"],
+                        "retrieved_at": retrieved_at,
+                        "summary": disclosure["statement"],
+                    }
+                )
         for index, publication in enumerate(publications, start=1):
             event_type = _bse_publication_type(publication["headline"])
             events.append(
@@ -492,6 +581,8 @@ class BseIssuerProvider(PriceProviderBase):
 
     def _download_best_pdf_text(self, detail_path: str) -> str:
         detail_url = urllib.parse.urljoin("https://www.bse.hu", detail_path)
+        if detail_url in self._pdf_text_by_detail_url:
+            return self._pdf_text_by_detail_url[detail_url]
         html = self._fetch(detail_url).decode("utf-8", "replace")
         pdf_links = list(dict.fromkeys(re.findall(
             r'href=["\']([^"\']+\.pdf(?:\?[^"\']*)?)["\']',
@@ -519,6 +610,7 @@ class BseIssuerProvider(PriceProviderBase):
             if score > best_score:
                 best_score = score
                 best_text = text
+        self._pdf_text_by_detail_url[detail_url] = best_text
         return best_text
 
     def _annual_metrics(
