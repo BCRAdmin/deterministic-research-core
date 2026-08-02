@@ -79,6 +79,15 @@ def claim_quality_metrics(claims: Iterable[ResearchClaim]) -> dict[str, float | 
         claim for claim in claim_list
         if (claim.section or "") == "Final Rating & Action Plan" and _has_rating_implication(claim)
     ]
+    risk_specific = [
+        claim
+        for claim in claim_list
+        if (claim.section or "") == "Key Risks"
+        and bool(claim.evidence_ids)
+        and bool(claim.metric_refs or claim.evidence_metrics)
+        and not _is_generic_meta_claim(claim)
+        and not _is_data_limitation_claim(claim)
+    ]
     generic_count = len(generic)
     ticker_kpi_count = sum(1 for claim in claim_list if _has_ticker_specific_kpi(claim))
     substantive_ratio = (len(substantive) / total) if total else 0.0
@@ -101,6 +110,7 @@ def claim_quality_metrics(claims: Iterable[ResearchClaim]) -> dict[str, float | 
         "valuation_specific_claim_count": len(valuation_specific),
         "technical_specific_claim_count": len(technical_specific),
         "rating_rationale_claim_count": len(rating_rationale),
+        "risk_specific_claim_count": len(risk_specific),
     }
 
 
@@ -125,6 +135,11 @@ def claim_coverage_gaps(metrics: Mapping[str, object]) -> list[str]:
         gaps.append("missing_technical_analysis")
     if int(metrics.get("rating_rationale_claim_count") or 0) < 1:
         gaps.append("missing_rating_rationale")
+    if (
+        "risk_specific_claim_count" in metrics
+        and int(metrics.get("risk_specific_claim_count") or 0) < 1
+    ):
+        gaps.append("missing_risk_analysis")
     if int(metrics.get("final_rating_rationale_quality") or 0) < 50:
         gaps.append("weak_rating_rationale")
     if float(metrics.get("generic_claim_ratio") or 0.0) > 0.50:

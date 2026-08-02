@@ -54,6 +54,7 @@ class QualityReport(BaseModel):
     valuation_specific_claim_count: int = 0
     technical_specific_claim_count: int = 0
     rating_rationale_claim_count: int = 0
+    risk_specific_claim_count: int = 0
     speculative_deep_tech_profile_count: int = 0
     accounting_gain_not_operating_turnaround_count: int = 0
     vendor_only_hard_metrics_count: int = 0

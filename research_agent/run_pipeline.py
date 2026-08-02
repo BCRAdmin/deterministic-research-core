@@ -325,9 +325,8 @@ def run_research_pipeline(
             decision_packet=decision_packet,
         )
         report += (
-            "\n\n## Content Generation Status\n\n"
-            "Research incomplete: missing evidence-backed coverage for "
-            f"{', '.join(coverage_gaps)}.\n"
+            "\n\n## Research Coverage Status\n\n"
+            f"{_coverage_status_message(coverage_gaps)}\n"
         )
     report_path = manifest_output_dir / "final_report.md"
     report_path.parent.mkdir(parents=True, exist_ok=True)
@@ -439,6 +438,7 @@ def run_research_pipeline(
         valuation_specific_claim_count=int(claim_metrics["valuation_specific_claim_count"]),
         technical_specific_claim_count=int(claim_metrics["technical_specific_claim_count"]),
         rating_rationale_claim_count=int(claim_metrics["rating_rationale_claim_count"]),
+        risk_specific_claim_count=int(claim_metrics["risk_specific_claim_count"]),
         data_freshness_status=freshness.data_freshness_status,
         stale_price_basis=int(freshness.stale_price_basis),
         current_report_allowed=freshness.current_report_allowed,
@@ -568,6 +568,16 @@ def run_research_pipeline(
     )
     save_report_manifest(manifest, config.output_dir)
     return report
+
+
+def _coverage_status_message(coverage_gaps: list[str]) -> str:
+    if coverage_gaps == ["missing_risk_analysis"]:
+        return (
+            "Research coverage is incomplete: no evidence-backed risk "
+            "analysis is available."
+        )
+    readable = ", ".join(gap.replace("_", " ") for gap in coverage_gaps)
+    return f"Research coverage is incomplete: {readable}."
 
 
 def build_data_packet(

@@ -118,6 +118,7 @@ def _dashboard_item(item) -> dict:
         "current_period_kpi_metric_count": counts.get("current_period_kpi_metric_count", 0),
         "claim_coverage_complete": bool(counts.get("claim_coverage_complete", 0)),
         "ticker_specific_kpi_claim_count": counts.get("ticker_specific_kpi_claim_count", 0),
+        "risk_specific_claim_count": counts.get("risk_specific_claim_count", 0),
         "substantive_claim_count": counts.get("substantive_claim_count", 0),
         "mechanical_rating_language_count": counts.get("mechanical_rating_language_count", 0),
         "valuation_sensitivity_present": bool(counts.get("publish_valuation_sensitivity_present", 0)),

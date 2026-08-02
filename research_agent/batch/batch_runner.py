@@ -501,6 +501,7 @@ def _counts_from_artifacts(artifacts: dict[str, str]) -> dict[str, int]:
         "valuation_specific_claim_count": 0,
         "technical_specific_claim_count": 0,
         "rating_rationale_claim_count": 0,
+        "risk_specific_claim_count": 0,
         "content_completeness_score": 0,
         "financial_sanity_errors": 0,
         "period_bug": 0,
@@ -689,6 +690,7 @@ def _count_quality_content(path: Optional[str], counts: dict[str, int]) -> None:
     counts["valuation_specific_claim_count"] = int(payload.get("valuation_specific_claim_count") or 0)
     counts["technical_specific_claim_count"] = int(payload.get("technical_specific_claim_count") or 0)
     counts["rating_rationale_claim_count"] = int(payload.get("rating_rationale_claim_count") or 0)
+    counts["risk_specific_claim_count"] = int(payload.get("risk_specific_claim_count") or 0)
     counts["speculative_deep_tech_profile_count"] = int(payload.get("speculative_deep_tech_profile_count") or counts.get("speculative_deep_tech_profile_count", 0))
     counts["early_commercial_capital_intensive_tech_count"] = int(payload.get("early_commercial_capital_intensive_tech_count") or counts.get("early_commercial_capital_intensive_tech_count", 0))
     counts["accounting_gain_not_operating_turnaround_count"] = int(payload.get("accounting_gain_not_operating_turnaround_count") or counts.get("accounting_gain_not_operating_turnaround_count", 0))

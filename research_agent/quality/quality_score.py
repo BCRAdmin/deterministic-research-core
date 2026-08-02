@@ -57,6 +57,7 @@ def calculate_quality_score(
     valuation_specific_claim_count: Optional[int] = None,
     technical_specific_claim_count: Optional[int] = None,
     rating_rationale_claim_count: Optional[int] = None,
+    risk_specific_claim_count: Optional[int] = None,
     publish_report_exists: Optional[int] = None,
     publish_mechanical_language_count: Optional[int] = None,
     publish_current_kpi_count: Optional[int] = None,
@@ -136,6 +137,8 @@ def calculate_quality_score(
         "technical_specific_claim_count": technical_specific_claim_count,
         "rating_rationale_claim_count": rating_rationale_claim_count,
     }
+    if risk_specific_claim_count is not None:
+        coverage_fields["risk_specific_claim_count"] = risk_specific_claim_count
     coverage_gaps: Optional[list[str]] = None
     claim_coverage_complete: Optional[bool] = None
     if all(value is not None for value in coverage_fields.values()):
@@ -388,6 +391,7 @@ def calculate_quality_score(
         valuation_specific_claim_count=valuation_specific_claim_count,
         technical_specific_claim_count=technical_specific_claim_count,
         rating_rationale_claim_count=rating_rationale_claim_count,
+        risk_specific_claim_count=risk_specific_claim_count,
         publish_report_exists=publish_report_exists,
         publish_mechanical_language_count=publish_mechanical_language_count,
         publish_current_kpi_count=publish_current_kpi_count,
@@ -535,6 +539,7 @@ def calculate_quality_score(
         valuation_specific_claim_count=int(valuation_specific_claim_count or 0),
         technical_specific_claim_count=int(technical_specific_claim_count or 0),
         rating_rationale_claim_count=int(rating_rationale_claim_count or 0),
+        risk_specific_claim_count=int(risk_specific_claim_count or 0),
         speculative_deep_tech_profile_count=int(speculative_deep_tech_profile_count or 0),
         accounting_gain_not_operating_turnaround_count=int(accounting_gain_not_operating_turnaround_count or 0),
         vendor_only_hard_metrics_count=int(vendor_only_hard_metrics_count or 0),
@@ -604,6 +609,7 @@ def is_publishable(
     valuation_specific_claim_count: Optional[int] = None,
     technical_specific_claim_count: Optional[int] = None,
     rating_rationale_claim_count: Optional[int] = None,
+    risk_specific_claim_count: Optional[int] = None,
     publish_report_exists: Optional[int] = None,
     publish_mechanical_language_count: Optional[int] = None,
     publish_current_kpi_count: Optional[int] = None,
@@ -684,6 +690,8 @@ def is_publishable(
     if technical_specific_claim_count is not None and technical_specific_claim_count < 1:
         return False
     if rating_rationale_claim_count is not None and rating_rationale_claim_count < 1:
+        return False
+    if risk_specific_claim_count is not None and risk_specific_claim_count < 1:
         return False
     if speculative_deep_tech_profile_count and not deeptech_sec_ir_current_period_evidence_complete:
         return False

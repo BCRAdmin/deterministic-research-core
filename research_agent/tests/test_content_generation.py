@@ -131,6 +131,7 @@ def test_compact_claim_set_can_cover_every_required_dimension():
         "valuation_specific_claim_count": 1,
         "technical_specific_claim_count": 1,
         "rating_rationale_claim_count": 1,
+        "risk_specific_claim_count": 1,
     }
 
     assert claim_coverage_gaps(metrics) == []
@@ -152,9 +153,30 @@ def test_claim_coverage_names_missing_topics_instead_of_padding_count():
         "valuation_specific_claim_count": 0,
         "technical_specific_claim_count": 2,
         "rating_rationale_claim_count": 1,
+        "risk_specific_claim_count": 1,
     }
 
     assert claim_coverage_gaps(metrics) == ["missing_valuation_analysis"]
+
+
+def test_claim_coverage_names_missing_risk_analysis_without_padding():
+    metrics = {
+        "analyst_claim_count": 12,
+        "evidence_mapped_claim_ratio": 1.0,
+        "hard_claim_evidence_ratio": 1.0,
+        "substantive_claim_ratio": 0.75,
+        "generic_claim_ratio": 0.0,
+        "data_limitation_claim_count": 0,
+        "current_period_kpi_metric_count": 4,
+        "final_rating_rationale_quality": 80,
+        "company_specific_claim_count": 5,
+        "valuation_specific_claim_count": 2,
+        "technical_specific_claim_count": 2,
+        "rating_rationale_claim_count": 1,
+        "risk_specific_claim_count": 0,
+    }
+
+    assert claim_coverage_gaps(metrics) == ["missing_risk_analysis"]
 
 
 def test_bear_case_distinguishes_bullish_bearish_and_mixed_trends():
@@ -342,7 +364,10 @@ def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():
         for claim in claims
         for phrase in unsupported_language
     )
-    assert claim_quality_metrics(claims)["generic_claim_count"] == 0
+    quality_metrics = claim_quality_metrics(claims)
+    assert quality_metrics["generic_claim_count"] == 0
+    assert quality_metrics["risk_specific_claim_count"] == 0
+    assert "missing_risk_analysis" in claim_coverage_gaps(quality_metrics)
     rating_claim = next(
         claim
         for claim in claims
