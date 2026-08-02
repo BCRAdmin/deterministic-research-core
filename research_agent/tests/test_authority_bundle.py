@@ -7,9 +7,26 @@ import pytest
 
 from research_agent.integration.authority_bundle import (
     AUTHORITY_CONTRACT_ID,
+    AUTHORITY_CONTRACT_VERSION,
     build_authority_bundle,
     verify_authority_bundle,
 )
+
+
+REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
+
+
+def test_authority_documentation_matches_runtime_contract() -> None:
+    contract_marker = f"{AUTHORITY_CONTRACT_ID}@{AUTHORITY_CONTRACT_VERSION}"
+    readme = (REPOSITORY_ROOT / "README.md").read_text(encoding="utf-8")
+    contract_doc = (
+        REPOSITORY_ROOT / "docs" / "RESEARCH_AUTHORITY_CONTRACT.md"
+    ).read_text(encoding="utf-8")
+
+    assert contract_marker in readme
+    assert f"Contract version: `{AUTHORITY_CONTRACT_VERSION}`" in contract_doc
+    assert "`fact_ledger.json`" in contract_doc
+    assert f"{AUTHORITY_CONTRACT_ID}@1" not in readme
 
 
 def _write_json(path: Path, payload: dict) -> None:

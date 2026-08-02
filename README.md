@@ -40,7 +40,7 @@ Core rule:
 - LLM agents may only interpret validated packets.
 - Final reports may use numbers only from `data_packet.json`, `metrics_packet.json`, `validation_report.json`, or explicitly registered sources in `source_registry.json`.
 - Every report-capable run must export and pass a
-  `room16.research_authority_bundle@1`; there is no configuration switch that
+  `room16.research_authority_bundle@2`; there is no configuration switch that
   bypasses this hand-off.
 - Runtime-discovered sources are merged into the registry before validation,
   and calculated technical values retain their OHLCV provenance.

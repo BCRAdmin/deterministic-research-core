@@ -1,7 +1,11 @@
 # Room16 Research Authority Contract
 
 Contract ID: `room16.research_authority_bundle`  
-Contract version: `1`
+Contract version: `2`
+
+Version 2 is the only contract accepted for a new analysis. Historical
+version-1 bundles remain readable evidence, but they cannot authorize a new
+research or report run.
 
 ## Purpose
 
@@ -28,6 +32,7 @@ rules.
 - `decision_packet.json`
 - `source_registry.json` or its registered source filename
 - `evidence_ledger.json`
+- `fact_ledger.json`
 - `validated_context.md`
 - `authority_manifest.json`
 
@@ -49,6 +54,10 @@ mismatches, unsupported contract versions, and blocked analysis permission.
 - evidence ticker agrees with the requested instrument
 - material metrics have evidence mappings
 - preferred, allowed, and blocked ratings are internally consistent
+- manifest check IDs are unique and every check has a valid status and
+  blocking flag
+- `blocking_failures` exactly lists the failed blocking checks and
+  `analysis_allowed` is true only when that derived list is empty
 
 Runtime-discovered SEC, IR, event, and price sources must be merged into the
 registry before these checks run. Calculated technical metrics must point back
@@ -107,7 +116,9 @@ BSE issuer profile, issuer-submitted IFRS financial tables and exchange OHLCV.
 Other jurisdictions require their own official-registry adapter; they must not
 be handled through ticker-specific exceptions.
 
-The first enabled market adapter is Massive/Polygon daily aggregates. It is
-classified as `trusted_market_data_vendor` because the provider documents
-SIP/exchange-derived coverage. Yahoo Finance remains a low-authority source and
+For SEC issuers, Nasdaq's public official historical-data surface is the
+default price path. Massive/Polygon daily aggregates remain an optional
+authenticated adapter and are classified as `trusted_market_data_vendor`
+because the provider documents SIP/exchange-derived coverage. BSE issuers use
+official exchange OHLCV. Yahoo Finance remains a low-authority source and
 cannot satisfy the Authority Bundle price gate.
