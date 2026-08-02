@@ -120,7 +120,6 @@ class _ClaimBuilder:
 
     def build_candidates(self) -> list[ResearchClaim]:
         ticker = self.data_packet.ticker.upper()
-        profile = _company_profile(ticker)
         preferred = self.decision.rating_permission.preferred_rating.value
         core_rating_metrics = _core_rating_metric_refs(self.metrics)
 
@@ -133,7 +132,8 @@ class _ClaimBuilder:
                 f"{_money(self.metrics.technical.close, self.data_packet.price_basis.currency)} "
                 f"with a {preferred} stance. The available evidence anchors are "
                 f"{_core_rating_evidence_text(self.metrics, self.data_packet.price_basis.currency)}; "
-                "source quality and the technical setup remain separate constraints."
+                f"the technical evidence indicates {_technical_interpretation(self.metrics)}. "
+                f"Valuation status is {self.decision.signal_scores.valuation_status}."
             ),
             core_rating_metrics,
             "high",
@@ -213,7 +213,12 @@ class _ClaimBuilder:
             "Fundamental Analysis",
             "fundamental",
             "financial_metric",
-            f"SBC/Revenue is {_pct(self.metrics.fundamentals.sbc_to_revenue)}, which should be interpreted through {profile['sector_lens']} rather than a one-size-fits-all compensation lens.",
+            (
+                "SBC/Revenue is "
+                f"{_pct(self.metrics.fundamentals.sbc_to_revenue)}. Without a "
+                "share-count trend and a sector or lifecycle benchmark, this "
+                "is a dilution input rather than evidence that SBC is high or low."
+            ),
             ["sbc_to_revenue"],
             "medium",
             "medium",
@@ -277,12 +282,21 @@ class _ClaimBuilder:
             "Valuation / Multiples",
             "valuation",
             "valuation_metric",
-            f"Valuation is framed by EV/Sales of {_multiple(self.metrics.valuation.ev_to_sales)}; this directly limits how aggressive the {preferred} stance should be.",
+            (
+                "EV/Sales is "
+                f"{_multiple(self.metrics.valuation.ev_to_sales)}, derived from "
+                "enterprise value and TTM revenue. Without a validated peer, "
+                "history or cycle benchmark, this records a multiple level but "
+                "does not label the company cheap or expensive."
+            ),
             ["ev_to_sales", "enterprise_value", "revenue_ttm"],
             "medium",
             "high",
-            counterargument="Packet-derived valuation can still be blocked by sanity guards when source reconciliation is suspect.",
-            implication="Do not upgrade rating solely from valuation language if audit has financial-sanity errors.",
+            counterargument=(
+                "A benchmark can change the interpretation, but must be present "
+                "in the authority packet before it affects the rating."
+            ),
+            implication="Treat EV/Sales as an observation until comparison evidence exists.",
         )
         self.add(
             "Valuation / Multiples",
@@ -346,9 +360,9 @@ class _ClaimBuilder:
             (
                 "The bull case combines revenue of "
                 f"{self._money(self.metrics.fundamentals.revenue_ttm)} with "
-                "available FCF evidence. A more constructive rating requires "
-                "both inputs to remain validated and valuation or technical "
-                "constraints to improve."
+                "available FCF evidence. These totals establish scale and cash "
+                "generation, not growth; a more constructive rating requires "
+                "comparable current-period evidence or technical confirmation."
             ),
             ["revenue_ttm", "free_cash_flow_ttm"],
             "medium",
@@ -368,26 +382,27 @@ class _ClaimBuilder:
         )
 
         if self.metrics.fundamentals.free_cash_flow_ttm is not None:
-            sbc_to_revenue = self.metrics.fundamentals.sbc_to_revenue
-            if sbc_to_revenue is None:
-                sbc_context = (
-                    "SBC/Revenue is unavailable and therefore cannot support "
-                    "the risk case."
+            bear_metrics = ["free_cash_flow_ttm"]
+            bear_metrics.extend(
+                metric
+                for metric, value in (
+                    ("close", self.metrics.technical.close),
+                    ("sma_50", self.metrics.technical.sma_50),
+                    ("sma_200", self.metrics.technical.sma_200),
+                    ("rsi_14", self.metrics.technical.rsi_14),
                 )
-                bear_metrics = ["free_cash_flow_ttm"]
-            else:
-                sbc_context = (
-                    f"SBC/Revenue of {_pct(sbc_to_revenue)} is a separate "
-                    "dilution input, not proof of deterioration."
-                )
-                bear_metrics = ["free_cash_flow_ttm", "sbc_to_revenue"]
+                if value is not None
+            )
             self.add(
                 "Bear Case",
                 "bear",
                 "financial_metric",
                 (
-                    f"The bear case is that {profile['bear_driver']} could "
-                    f"outweigh the available FCF evidence. {sbc_context}"
+                    "The current downside evidence is "
+                    f"{_technical_interpretation(self.metrics)}. FCF TTM of "
+                    f"{self._money(self.metrics.fundamentals.free_cash_flow_ttm)} "
+                    "is the counterweight; without comparative business data, "
+                    "this does not establish company-specific deterioration."
                 ),
                 bear_metrics,
                 "medium",
@@ -425,6 +440,7 @@ class _ClaimBuilder:
                 preferred,
                 self.metrics,
                 self.data_packet.price_basis.currency,
+                self.decision,
             ),
             core_rating_metrics,
             "high",
@@ -499,78 +515,6 @@ class _ClaimBuilder:
         return list(deduped.values())
 
 
-def _company_profile(ticker: str) -> dict[str, str]:
-    profiles = {
-        "QCOM": {
-            "business_driver": "QCT/QTL mix, handset cyclicality, automotive/IoT diversification and management forecast quality",
-            "sector_lens": "semiconductor-cycle, segment-mix and buyback context",
-            "valuation_lens": "semiconductor cyclicality and earnings/FCF support",
-            "bull_driver": "QCT recovery, QTL resilience, automotive/IoT diversification and disciplined capital returns",
-            "bear_driver": "handset cyclicality, margin pressure, inventory risk or weak management forecast",
-        },
-        "NVDA": {
-            "business_driver": "accelerated-computing demand, datacenter mix, supply constraints and AI capex durability",
-            "sector_lens": "semiconductor margin, supply-chain and AI infrastructure context",
-            "valuation_lens": "AI-infrastructure growth durability and cycle risk",
-            "bull_driver": "datacenter AI demand and operating leverage",
-            "bear_driver": "AI capex digestion, export limits, supply risk or multiple compression",
-        },
-        "GOOGL": {
-            "business_driver": "Search, YouTube, Google Cloud growth, AI monetization and capex intensity",
-            "sector_lens": "mega-cap ads/cloud margin and regulatory context",
-            "valuation_lens": "ads/cloud growth, AI capex burden and cash-flow durability",
-            "bull_driver": "Search monetization, Cloud growth and AI product integration",
-            "bear_driver": "AI capex intensity, regulatory pressure or ad-growth slowdown",
-        },
-        "SNOW": {
-            "business_driver": "product revenue, NRR, RPO, AI Data Cloud adoption and consumption growth",
-            "sector_lens": "SaaS consumption, RPO/NRR, SBC and GAAP-vs-non-GAAP context",
-            "valuation_lens": "consumption growth, FCF quality and SBC dilution",
-            "bull_driver": "AI Data Cloud adoption, product revenue growth and RPO conversion",
-            "bear_driver": "consumption slowdown, GAAP losses, SBC dilution or weak FY plan",
-        },
-        "DDOG": {
-            "business_driver": "observability platform expansion, large-customer growth, AI monitoring and usage-based demand",
-            "sector_lens": "SaaS usage growth, ARR/customer expansion, SBC and cash-conversion context",
-            "valuation_lens": "growth durability versus high FCF multiple",
-            "bull_driver": "observability consolidation, AI monitoring demand and large-customer expansion",
-            "bear_driver": "usage slowdown, valuation compression, SBC dilution or weaker company forecast",
-        },
-        "CRM": {
-            "business_driver": "Agentforce, Data Cloud, RPO/cRPO, margin discipline, buybacks and FY plan",
-            "sector_lens": "enterprise SaaS margin, RPO, AI product adoption and capital-return context",
-            "valuation_lens": "enterprise SaaS FCF durability, growth reacceleration and capital returns",
-            "bull_driver": "Agentforce/Data Cloud adoption, RPO conversion and operating-margin discipline",
-            "bear_driver": "AI adoption disappointment, integration risk, weak cRPO or FCF reconciliation gaps",
-        },
-    }
-    if ticker in profiles:
-        return profiles[ticker]
-    if ticker in {"AAPL", "MSFT", "AMZN", "META", "NFLX"}:
-        return {
-            "business_driver": "mega-cap platform growth, AI/cloud investment, margin durability and regulatory risk",
-            "sector_lens": "mega-cap platform, capex and capital-return context",
-            "valuation_lens": "platform growth, FCF durability and capex intensity",
-            "bull_driver": "platform scale, ecosystem monetization and operating leverage",
-            "bear_driver": "regulatory pressure, capex intensity, growth deceleration or multiple compression",
-        }
-    if ticker in {"AMD", "AVGO", "INTC", "MU", "MRVL"}:
-        return {
-            "business_driver": "semiconductor cycle, product mix, inventory, gross margin and management forecast quality",
-            "sector_lens": "semiconductor-cycle, segment-mix and balance-sheet context",
-            "valuation_lens": "cycle-adjusted earnings and FCF support",
-            "bull_driver": "cycle recovery, AI/datacenter mix and margin leverage",
-            "bear_driver": "inventory correction, gross-margin pressure or weak management forecast",
-        }
-    return {
-        "business_driver": "available revenue, cash-flow and source-quality evidence",
-        "sector_lens": "sector-specific quality and valuation context",
-        "valuation_lens": "revenue scale, cash-flow evidence and risk context",
-        "bull_driver": "revenue scale and available cash-flow evidence",
-        "bear_driver": "source-quality issues, valuation risk or technical weakness",
-    }
-
-
 def _money(value: Optional[float], currency: str = "USD") -> str:
     if value is None:
         return "not available in evidence set"
@@ -615,7 +559,7 @@ def _technical_interpretation(metrics: MetricsPacket) -> str:
     if technical.close and technical.sma_200 and technical.close < technical.sma_200:
         return "a damaged trend that lacks confirmation of recovery"
     if technical.close and technical.sma_50 and technical.close > technical.sma_50:
-        return "constructive momentum but still requires valuation and risk discipline"
+        return "constructive momentum that still requires fundamental and risk confirmation"
     return "a mixed setup that should not override validated fundamentals"
 
 
@@ -908,13 +852,25 @@ def _final_rating_claim_text(
     preferred: str,
     metrics: MetricsPacket,
     currency: str,
+    decision: DecisionPacket,
 ) -> str:
     evidence_anchor = _core_rating_evidence_text(metrics, currency)
+    reason = (
+        decision.analytical_rating_reason
+        or decision.rating_permission.reason
+    )
+    valuation_status = decision.signal_scores.valuation_status
+    valuation_note = (
+        "Valuation multiples are unbenchmarked and therefore add neither a "
+        "positive nor a negative rating signal."
+        if valuation_status == "unbenchmarked"
+        else "No benchmarked valuation signal is present."
+    )
     return (
         f"We rate {ticker} {preferred} at the validated close of "
-        f"{_money(metrics.technical.close, currency)}. The evidence anchors are "
-        f"{evidence_anchor}; source quality, valuation and technical risk limit "
-        "the case for a more bullish rating."
+        f"{_money(metrics.technical.close, currency)}. {reason} The factual "
+        f"anchors are {evidence_anchor}; the technical evidence indicates "
+        f"{_technical_interpretation(metrics)}. {valuation_note}"
     )
 
 
@@ -924,6 +880,9 @@ def _core_rating_metric_refs(metrics: MetricsPacket) -> list[str]:
         ("revenue_ttm", metrics.fundamentals.revenue_ttm),
         ("free_cash_flow_ttm", metrics.fundamentals.free_cash_flow_ttm),
         ("ev_to_sales", metrics.valuation.ev_to_sales),
+        ("sma_50", metrics.technical.sma_50),
+        ("sma_200", metrics.technical.sma_200),
+        ("rsi_14", metrics.technical.rsi_14),
     ):
         if value is not None:
             metric_refs.append(metric_name)
@@ -947,18 +906,18 @@ def _core_rating_evidence_text(metrics: MetricsPacket, currency: str) -> str:
 
 def _final_rating_counterargument(preferred: str, metrics: MetricsPacket) -> str:
     if preferred in {"Accumulate", "Buy"}:
-        return "A more bearish rating would require evidence that cash generation, technical confirmation or source quality has broken down."
+        return "A more bearish rating would require evidence that cash generation or technical confirmation has deteriorated."
     if preferred in {"Tactical Trim", "Tactical Underweight", "Underweight"}:
-        return "A more bullish rating would require current-period KPI acceleration plus valuation or technical confirmation."
-    return "A more bullish rating needs cleaner valuation and technical confirmation; a more bearish rating needs evidence of deteriorating fundamentals or unresolved data errors."
+        return "A more bullish rating would require current-period KPI acceleration, technical confirmation and benchmarked valuation evidence."
+    return "A more bullish rating needs current-period or technical confirmation and benchmarked valuation evidence; a more bearish rating needs deteriorating fundamentals or unresolved data errors."
 
 
 def _final_rating_implication(ticker: str, preferred: str, metrics: MetricsPacket) -> str:
     if preferred == "Accumulate":
-        return f"An Accumulate research stance for {ticker} requires confirmed KPI acceleration and valuation discipline."
+        return f"An Accumulate research stance for {ticker} requires confirmed KPI and technical evidence."
     if preferred in {"Tactical Trim", "Tactical Underweight"}:
-        return f"The tactical-risk stance for {ticker} remains until valuation, trend or current-period KPIs improve."
-    return f"The Hold research stance for {ticker} remains until valuation, technical setup or current-period KPI evidence changes."
+        return f"The tactical-risk stance for {ticker} remains until trend or current-period KPI evidence changes."
+    return f"The Hold research stance for {ticker} remains until technical or current-period KPI evidence changes."
 
 
 def _current_period_claim_specs(

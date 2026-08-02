@@ -39,13 +39,13 @@ def test_content_generator_keeps_only_evidence_mapped_substantive_claims():
     assert quality["evidence_mapped_claim_ratio"] >= 0.90
     assert quality["hard_claim_evidence_ratio"] == 1.0
     assert quality["generic_claim_count"] == 0
-    assert quality["substantive_analyst_claim_count"] == 11
+    assert quality["substantive_analyst_claim_count"] == 10
     assert all(claim.evidence_ids for claim in claims)
     valuation_claim = next(
         claim
         for claim in claims
         if claim.section == "Valuation / Multiples"
-        and claim.claim.startswith("Valuation is framed by EV/Sales")
+        and claim.claim.startswith("EV/Sales is")
     )
     technical_claim = next(
         claim for claim in claims if "50-SMA" in claim.claim
@@ -225,9 +225,13 @@ def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():
         "revenue_ttm",
         "free_cash_flow_ttm",
         "ev_to_sales",
+        "sma_50",
+        "sma_200",
+        "rsi_14",
     ]
     assert "revenue TTM of 4.34B HUF" in rating_claim.claim
     assert "FCF TTM of 1.12B HUF" in rating_claim.claim
+    assert "No benchmarked valuation signal is present" in rating_claim.claim
     personal_action_language = (
         "entries should be",
         "staged entries",

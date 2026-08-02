@@ -43,15 +43,6 @@ def score_fundamentals(
 
     score = _apply_rule(
         score,
-        "SBC_TO_REVENUE_GT_20",
-        f.sbc_to_revenue is not None and f.sbc_to_revenue > 0.20,
-        weights,
-        triggered_rules,
-        calibration_mode,
-    )
-
-    score = _apply_rule(
-        score,
         "NET_CASH_POSITIVE",
         f.net_cash is not None and f.net_cash > 0,
         weights,
@@ -107,33 +98,10 @@ def score_valuation(
     triggered_rules: Optional[list[str]] = None,
     calibration_mode: str = "live",
 ) -> float:
-    weights = weights or DEFAULT_RULE_WEIGHTS
-    score = 0.0
-    v = metrics.valuation
-    f = metrics.fundamentals
-
-    if v.forward_pe_consensus is not None:
-        score = _apply_rule(score, "FORWARD_PE_LT_25", v.forward_pe_consensus < 25, weights, triggered_rules, calibration_mode)
-        score = _apply_rule(score, "FORWARD_PE_GT_60", v.forward_pe_consensus > 60, weights, triggered_rules, calibration_mode)
-
-    if v.price_to_fcf is not None:
-        score = _apply_rule(score, "PRICE_TO_FCF_LT_30", v.price_to_fcf < 30, weights, triggered_rules, calibration_mode)
-        score = _apply_rule(score, "PRICE_TO_FCF_GT_60", v.price_to_fcf > 60, weights, triggered_rules, calibration_mode)
-
-    if v.peg_ratio is not None:
-        score = _apply_rule(score, "PEG_LT_1", v.peg_ratio < 1, weights, triggered_rules, calibration_mode)
-        score = _apply_rule(score, "PEG_GT_2", v.peg_ratio > 2, weights, triggered_rules, calibration_mode)
-
-    score = _apply_rule(
-        score,
-        "SBC_TO_FCF_GT_100",
-        f.sbc_to_fcf is not None and f.sbc_to_fcf > 1,
-        weights,
-        triggered_rules,
-        calibration_mode,
-    )
-
-    return _clamp(score)
+    # Absolute multiples are observations, not relative valuation evidence.
+    # Until a peer, history or cycle benchmark is present in the authority
+    # packet, valuation must not add a rating bonus or penalty.
+    return 0.0
 
 
 def score_risk(
@@ -146,22 +114,12 @@ def score_risk(
 ) -> float:
     weights = weights or DEFAULT_RULE_WEIGHTS
     score = 0.0
-    f = metrics.fundamentals
     t = metrics.technical
 
     if t.atr_14 and t.close:
         atr_pct = t.atr_14 / t.close
         score = _apply_rule(score, "ATR_PCT_GT_8", atr_pct > 0.08, weights, triggered_rules, calibration_mode)
         score = _apply_rule(score, "ATR_PCT_GT_5", 0.05 < atr_pct <= 0.08, weights, triggered_rules, calibration_mode)
-
-    score = _apply_rule(
-        score,
-        "SBC_TO_REVENUE_GT_20",
-        f.sbc_to_revenue is not None and f.sbc_to_revenue > 0.20,
-        weights,
-        triggered_rules,
-        calibration_mode,
-    )
 
     if validation_report:
         errors = [issue for issue in validation_report.issues if issue.severity == "error"]
@@ -238,13 +196,7 @@ def calculate_signal_scores_with_rules(
             if metrics.technical.close is not None
             else "not_measured"
         ),
-        valuation_status=_coverage_status([
-            metrics.valuation.market_cap,
-            metrics.valuation.trailing_pe,
-            metrics.valuation.ev_to_sales,
-            metrics.valuation.ev_to_ebitda,
-            metrics.valuation.price_to_fcf,
-        ]),
+        valuation_status=_valuation_status(metrics),
         risk_status=_coverage_status([
             metrics.technical.atr_14,
             metrics.fundamentals.total_debt,
@@ -284,3 +236,16 @@ def _coverage_status(values: list[object]) -> str:
     if measured:
         return "partial"
     return "not_measured"
+
+
+def _valuation_status(metrics: MetricsPacket) -> str:
+    values = [
+        metrics.valuation.market_cap,
+        metrics.valuation.trailing_pe,
+        metrics.valuation.forward_pe_consensus,
+        metrics.valuation.ev_to_sales,
+        metrics.valuation.ev_to_ebitda,
+        metrics.valuation.price_to_fcf,
+        metrics.valuation.peg_ratio,
+    ]
+    return "unbenchmarked" if any(value is not None for value in values) else "not_measured"

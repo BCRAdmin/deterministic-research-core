@@ -58,7 +58,7 @@ def test_amzn_decision_prefers_hold_and_blocks_sell_strong_buy():
     assert Rating.STRONG_BUY in packet.rating_permission.blocked_ratings
 
 
-def test_nvda_decision_prefers_accumulate_not_sell():
+def test_nvda_decision_stays_hold_without_valuation_benchmark():
     packet = build_decision_packet(
         metrics_packet=_metrics("nvda_2026_05_01"),
         validation_report=_validation("nvda_2026_05_01"),
@@ -66,7 +66,8 @@ def test_nvda_decision_prefers_accumulate_not_sell():
 
     assert Rating.SELL in packet.rating_permission.blocked_ratings
     assert Rating.UNDERWEIGHT in packet.rating_permission.blocked_ratings
-    assert packet.rating_permission.preferred_rating == Rating.ACCUMULATE
+    assert packet.rating_permission.preferred_rating == Rating.HOLD
+    assert Rating.ACCUMULATE in packet.rating_permission.blocked_ratings
 
 
 def test_ddog_trim_not_sell():
@@ -95,4 +96,3 @@ def test_mdb_blocks_strong_buy_and_sell():
         Rating.TACTICAL_TRIM,
         Rating.HOLD,
     }
-

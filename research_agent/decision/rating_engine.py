@@ -34,22 +34,22 @@ def determine_rating_permission(
             scores.fundamental_status,
             scores.technical_status,
         }
-        else "partial" if "partial" in coverage_states
+        else "partial" if coverage_states & {"partial", "unbenchmarked"}
         else "complete"
     )
 
     if fundamental >= 2 and technical >= 1 and valuation >= 0 and risk >= -1:
         allowed = [Rating.BUY, Rating.ACCUMULATE, Rating.HOLD]
         preferred = Rating.ACCUMULATE
-        reason = "Strong business quality and constructive technical setup support staged accumulation."
+        reason = "Positive fundamental and constructive technical scores support staged accumulation."
     elif fundamental >= 1 and technical <= -1:
         allowed = [Rating.HOLD, Rating.TACTICAL_TRIM, Rating.TACTICAL_UNDERWEIGHT]
         preferred = Rating.TACTICAL_UNDERWEIGHT if risk <= -2 else Rating.HOLD
-        reason = "Business quality is positive, but technical trend is weak and risk controls matter."
+        reason = "The fundamental score is positive, but the technical score is weak and risk controls matter."
     elif fundamental <= -1 and technical <= -1:
         allowed = [Rating.TACTICAL_UNDERWEIGHT, Rating.UNDERWEIGHT, Rating.SELL]
         preferred = Rating.UNDERWEIGHT
-        reason = "Weak business score and weak technicals restrict the rating to underweight or sell territory."
+        reason = "Negative fundamental and technical scores restrict the rating to underweight or sell territory."
     elif fundamental >= 1 and technical >= 1 and risk <= -2:
         allowed = [Rating.HOLD, Rating.ACCUMULATE, Rating.TACTICAL_TRIM]
         preferred = Rating.HOLD
@@ -72,6 +72,19 @@ def determine_rating_permission(
     elif action_class == "sell":
         allowed = _ordered_unique(allowed + [Rating.SELL, Rating.UNDERWEIGHT])
         preferred = Rating.SELL if fundamental <= -1 and technical <= -1 else preferred
+
+    if scores.valuation_status == "unbenchmarked":
+        allowed = [
+            rating
+            for rating in allowed
+            if rating not in {Rating.STRONG_BUY, Rating.BUY, Rating.ACCUMULATE}
+        ]
+        if preferred in {Rating.STRONG_BUY, Rating.BUY, Rating.ACCUMULATE}:
+            preferred = Rating.HOLD
+            reason = (
+                "Constructive signals are not enough for an overweight rating "
+                "without validated peer, history or cycle valuation evidence."
+            )
 
     if _has_material_warnings(validation_report, audit_report) and Rating.STRONG_BUY in allowed:
         allowed.remove(Rating.STRONG_BUY)
@@ -100,15 +113,22 @@ def determine_unconstrained_analytical_rating(
     valuation = scores.valuation_score
     risk = scores.risk_score
     if fundamental >= 2 and technical >= 1 and valuation >= 0 and risk >= -1:
+        if scores.valuation_status == "unbenchmarked":
+            return (
+                Rating.HOLD,
+                "Constructive fundamental and technical evidence is not enough "
+                "for an overweight analytical rating without benchmarked "
+                "valuation evidence.",
+            )
         return (
             Rating.ACCUMULATE,
-            "Strong business quality and constructive technical evidence support an overweight analytical stance.",
+            "Positive fundamental and constructive technical evidence support an overweight analytical stance.",
         )
     if fundamental >= 1 and technical <= -1:
         rating = Rating.TACTICAL_UNDERWEIGHT if risk <= -2 else Rating.HOLD
         return (
             rating,
-            "Positive business quality is offset by weak technical evidence and measured risk.",
+            "Positive fundamental evidence is offset by weak technical evidence and measured risk.",
         )
     if fundamental <= -1 and technical <= -1:
         return (
@@ -183,7 +203,10 @@ def _build_key_reasons(scores: SignalScores, action_class: Optional[str]) -> lis
     reasons = [
         f"Fundamental score: {scores.fundamental_score}",
         f"Technical score: {scores.technical_score}",
-        f"Valuation score: {scores.valuation_score}",
+        (
+            f"Valuation score: {scores.valuation_score} "
+            f"(measurement status: {scores.valuation_status})"
+        ),
     ]
     if action_class:
         reasons.append(f"Operative action class: {action_class}")
