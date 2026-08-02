@@ -133,6 +133,15 @@ class _FakeIfrsSec(_FakeSec):
         }
 
 
+class _FakeFinancialSec(_FakeSec):
+    def get_submissions(self, cik):
+        return {
+            "sic": "6021",
+            "sicDescription": "National Commercial Banks",
+            "filings": {"recent": {"filingDate": ["2026-07-20"]}},
+        }
+
+
 class _FakePrices(PriceProviderBase):
     source_type = "trusted_market_data_vendor"
     source_url = "https://prices.example/docs"
@@ -395,6 +404,20 @@ def test_current_runner_names_unsupported_sec_ifrs_profile_before_pipeline(tmp_p
             _request(tmp_path),
             price_provider=_FakePrices(),
             sec_client=_FakeIfrsSec(),
+        )
+
+    _assert_no_run_dirs(tmp_path)
+
+
+def test_current_runner_names_unsupported_financial_profile_before_pipeline(tmp_path):
+    with pytest.raises(
+        CurrentResearchError,
+        match="National Commercial Banks.*SIC 6021.*Finanzbranchenprofil",
+    ):
+        run_current_research(
+            _request(tmp_path),
+            price_provider=_FakePrices(),
+            sec_client=_FakeFinancialSec(),
         )
 
     _assert_no_run_dirs(tmp_path)

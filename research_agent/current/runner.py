@@ -30,6 +30,7 @@ from research_agent.sources.sec.xbrl_concepts import US_GAAP_CONCEPTS
 
 
 SEC_FINANCIAL_FORMS = {"10-K", "10-Q"}
+SEC_FINANCIAL_INDUSTRY_SIC_RANGE = range(6000, 6800)
 SEC_COMPANYFACTS_COVERAGE_METRICS = {
     "revenue",
     "operating_income",
@@ -229,6 +230,7 @@ def run_current_research(
         company_name = str(issuer["company_name"])
         companyfacts = sec.get_companyfacts(cik)
         submissions = sec.get_submissions(cik)
+        _require_supported_sec_industry_profile(symbol, submissions)
         _require_supported_sec_reporting_profile(symbol, companyfacts)
         latest_financial_filing = _require_current_sec_financial_filing_coverage(
             symbol,
@@ -576,6 +578,29 @@ def _require_supported_sec_reporting_profile(
         "10-Q. Room16 deutet IFRS-Konzepte nicht über US-GAAP-Zuordnungen um und "
         "setzt keine schwächeren Ersatzdaten ein. Vor einer Analyse dieses "
         "Wertpapiers wird ein allgemeiner SEC-IFRS-Adapter benötigt."
+    )
+
+
+def _require_supported_sec_industry_profile(
+    ticker: str,
+    submissions: dict[str, Any],
+) -> None:
+    sic_text = str(submissions.get("sic") or "").strip()
+    try:
+        sic = int(sic_text)
+    except ValueError:
+        return
+    if sic not in SEC_FINANCIAL_INDUSTRY_SIC_RANGE:
+        return
+    description = str(submissions.get("sicDescription") or "Finanzunternehmen").strip()
+    raise CurrentResearchError(
+        f"{ticker} wurde als SEC-Emittent und als {description} (SIC {sic}) "
+        "eindeutig erkannt. Das vorhandene Analyseprofil ist für operative "
+        "Unternehmen ausgelegt; bei Finanzunternehmen wären klassischer Free "
+        "Cashflow, Enterprise Value und industrielle Verschuldungskennzahlen "
+        "fachlich irreführend. Room16 startet deshalb keine allgemeine Analyse. "
+        "Vor einem neuen Lauf wird ein generisches Finanzbranchenprofil mit "
+        "bank-, versicherungs- oder investmentgerechten Kennzahlen benötigt."
     )
 
 
