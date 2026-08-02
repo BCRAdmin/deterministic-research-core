@@ -290,6 +290,48 @@ def test_ttm_bridge_does_not_skip_q4_when_current_q1_arrives():
     }
 
 
+def test_current_period_growth_pairs_same_fiscal_quarter():
+    canonical = CanonicalFinancials(
+        ticker="MCD",
+        as_of_date="2026-07-24",
+        metrics=[
+            CanonicalMetric(
+                metric_name="revenue",
+                value=value,
+                unit="USD",
+                period=f"CY{date_year}Q{quarter}",
+                fiscal_year=fiscal_year,
+                fiscal_period=f"Q{quarter}",
+                period_bucket="quarterly",
+                start_date=f"{date_year}-0{1 if quarter == 1 else 4}-01",
+                end_date=f"{date_year}-0{3 if quarter == 1 else 6}-30",
+                duration_days=89,
+                basis="gaap",
+                statement_type="income_statement",
+                source_ids=[f"SEC_MCD_{date_year}_Q{quarter}"],
+                confidence="high",
+            )
+            for date_year, fiscal_year, quarter, value in (
+                (2025, 2026, 1, 5_956),
+                (2025, 2025, 2, 6_843),
+                (2026, 2026, 1, 6_517),
+            )
+        ],
+    )
+
+    fundamentals = canonical_financials_to_fundamentals(canonical)
+
+    assert fundamentals["current_period_revenue_growth_yoy"] == (
+        6_517 - 5_956
+    ) / 5_956
+    assert fundamentals["current_period_growth_bridges"]["revenue"][
+        "operands"
+    ] == {
+        "current_revenue": 6_517,
+        "prior_revenue": 5_956,
+    }
+
+
 def test_ttm_bridge_subtracts_matching_prior_interim_for_current_q2():
     facts = [
         _fact("revenue", 10, "Q1", "2025-01-01", "2025-03-31", "q1-2025"),

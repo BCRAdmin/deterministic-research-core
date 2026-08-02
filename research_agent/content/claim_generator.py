@@ -1547,6 +1547,45 @@ def _current_period_claim_specs(
                 period=current_revenue.period,
             )
             if operating_income is not None and net_income is not None:
+                growth_values = (
+                    metrics.fundamentals.current_period_revenue_growth_yoy,
+                    metrics.fundamentals.current_period_operating_income_growth_yoy,
+                    metrics.fundamentals.current_period_net_income_growth_yoy,
+                )
+                has_matching_comparison = all(
+                    value is not None for value in growth_values
+                )
+                if has_matching_comparison:
+                    comparison_text = (
+                        " Against the matching prior-year quarter, revenue "
+                        f"changed by {_pct(growth_values[0])}, operating income "
+                        f"by {_pct(growth_values[1])} and net income by "
+                        f"{_pct(growth_values[2])}. These are arithmetic "
+                        "year-over-year comparisons, not causal conclusions."
+                    )
+                    claim_metrics = [
+                        "revenue",
+                        "operating_income",
+                        "net_income",
+                        "current_period_revenue_growth_yoy",
+                        "current_period_operating_income_growth_yoy",
+                        "current_period_net_income_growth_yoy",
+                    ]
+                    comparison_counterargument = (
+                        "One year-over-year comparison does not establish a "
+                        "durable multi-period trend."
+                    )
+                else:
+                    comparison_text = (
+                        " These are current-period results; they do not by "
+                        "themselves establish growth without a matching "
+                        "prior-year quarter."
+                    )
+                    claim_metrics = ["revenue", "operating_income", "net_income"]
+                    comparison_counterargument = (
+                        "A single reported period does not establish a durable "
+                        "trend."
+                    )
                 specs.append(
                     {
                         "section": "Fundamental Analysis",
@@ -1558,16 +1597,11 @@ def _current_period_claim_specs(
                             f"{_money(current_revenue.value, currency)}, "
                             "operating income of "
                             f"{_money(operating_income.value, currency)} and "
-                            f"net income of {_money(net_income.value, currency)}. "
-                            "These are current-period results; they do not by "
-                            "themselves establish growth without a comparable "
-                            "prior period."
+                            f"net income of {_money(net_income.value, currency)}."
+                            f"{comparison_text}"
                         ),
-                        "metrics": ["revenue", "operating_income", "net_income"],
-                        "counterargument": (
-                            "A single reported period does not establish a "
-                            "durable trend."
-                        ),
+                        "metrics": claim_metrics,
+                        "counterargument": comparison_counterargument,
                         "implication": (
                             "Use the latest period as current context, not as "
                             "standalone evidence for an upgrade or downgrade."

@@ -424,7 +424,12 @@ def _has_direct_evidence_for_numeric_claim(
     for item in evidence_ledger.evidence_items:
         if item.value is None:
             continue
-        if not _numbers_close_for_evidence(float(claim.normalized_value), float(item.value)):
+        if not _numbers_close_for_evidence(
+            float(claim.normalized_value),
+            float(item.value),
+            reported_unit=claim.unit,
+            evidence_unit=item.unit,
+        ):
             continue
         haystack = " ".join(
             [
@@ -443,10 +448,19 @@ def _has_direct_evidence_for_numeric_claim(
     return False
 
 
-def _numbers_close_for_evidence(reported: float, evidence_value: float) -> bool:
+def _numbers_close_for_evidence(
+    reported: float,
+    evidence_value: float,
+    *,
+    reported_unit: Optional[str] = None,
+    evidence_unit: Optional[str] = None,
+) -> bool:
     if evidence_value == 0:
         return abs(reported) < 1e-9
-    if 0 < abs(evidence_value) <= 2 and abs(reported) > 10:
+    if (
+        str(reported_unit or "").lower() == "percent"
+        and str(evidence_unit or "").lower() == "percent"
+    ):
         reported = reported / 100
     return abs(reported - evidence_value) / abs(evidence_value) <= 0.015
 

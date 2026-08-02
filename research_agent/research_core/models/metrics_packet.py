@@ -35,6 +35,9 @@ class TechnicalMetrics(BaseModel):
 class FundamentalMetrics(BaseModel):
     fiscal_period: str
     revenue_growth_yoy: Optional[float] = None
+    current_period_revenue_growth_yoy: Optional[float] = None
+    current_period_operating_income_growth_yoy: Optional[float] = None
+    current_period_net_income_growth_yoy: Optional[float] = None
     revenue_ttm: Optional[float] = None
     gross_profit_ttm: Optional[float] = None
     operating_income_ttm: Optional[float] = None

@@ -236,6 +236,15 @@ def calculate_fundamental_metrics(
     return FundamentalMetrics(
         fiscal_period=str(fundamentals.get("fiscal_period", "unknown")),
         revenue_growth_yoy=_optional_float(fundamentals.get("revenue_growth_yoy")),
+        current_period_revenue_growth_yoy=_optional_float(
+            fundamentals.get("current_period_revenue_growth_yoy")
+        ),
+        current_period_operating_income_growth_yoy=_optional_float(
+            fundamentals.get("current_period_operating_income_growth_yoy")
+        ),
+        current_period_net_income_growth_yoy=_optional_float(
+            fundamentals.get("current_period_net_income_growth_yoy")
+        ),
         revenue_ttm=revenue_ttm,
         gross_profit_ttm=gross_profit_ttm,
         operating_income_ttm=operating_income_ttm,

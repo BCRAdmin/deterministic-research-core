@@ -155,6 +155,11 @@ def _material_reconciliation_start_date(
     growth_bridge = normalized_fundamentals.get("revenue_growth_yoy_bridge")
     if isinstance(growth_bridge, dict):
         candidates.append(growth_bridge)
+    current_growth_bridges = normalized_fundamentals.get(
+        "current_period_growth_bridges"
+    )
+    if isinstance(current_growth_bridges, dict):
+        candidates.extend(current_growth_bridges.values())
     starts = [
         parsed
         for bridge in candidates
@@ -351,6 +356,7 @@ def canonical_financials_to_fundamentals(canonical: CanonicalFinancials) -> dict
 
     _derive_debt_and_lease_totals(canonical, fundamentals)
     _derive_revenue_growth(canonical, fundamentals)
+    _derive_current_period_growth(canonical, fundamentals)
     _derive_fiscal_context(canonical, fundamentals)
 
     share_metrics = {
@@ -702,6 +708,68 @@ def _derive_revenue_growth(
             }
         ),
     }
+
+
+def _derive_current_period_growth(
+    canonical: CanonicalFinancials,
+    fundamentals: dict,
+) -> None:
+    bridges: dict[str, dict] = {}
+    for metric_name in ("revenue", "operating_income", "net_income"):
+        quarterly = _dedupe_period_metrics(
+            [
+                metric
+                for metric in canonical.metrics_for(metric_name)
+                if metric.period_bucket == "quarterly"
+                and metric.basis == "gaap"
+                and metric.fiscal_year is not None
+                and metric.fiscal_period
+                and metric.start_date
+                and metric.end_date
+                and metric.duration_days is not None
+                and 70 <= metric.duration_days <= 110
+                and _is_current_metric(canonical, metric)
+            ]
+        )
+        if not quarterly:
+            continue
+        current = quarterly[-1]
+        current_end = _valid_iso_date(current.end_date)
+        if current_end is None:
+            continue
+        prior_candidates = [
+            metric
+            for metric in quarterly
+            if metric.fiscal_period == current.fiscal_period
+            and metric.end_date < current.end_date
+            and abs((metric.duration_days or 0) - (current.duration_days or 0)) <= 7
+            and (
+                (prior_end := _valid_iso_date(metric.end_date)) is not None
+                and 330 <= (current_end - prior_end).days <= 400
+            )
+        ]
+        if not prior_candidates:
+            continue
+        prior = prior_candidates[-1]
+        if prior.value <= 0:
+            continue
+        growth = (current.value - prior.value) / prior.value
+        output_name = f"current_period_{metric_name}_growth_yoy"
+        fundamentals[output_name] = growth
+        bridges[metric_name] = {
+            "formula_id": "matching_quarter_yoy_growth",
+            "operands": {
+                f"current_{metric_name}": current.value,
+                f"prior_{metric_name}": prior.value,
+            },
+            "current_period": current.period,
+            "prior_period": prior.period,
+            "period_start": prior.start_date,
+            "period_end": current.end_date,
+            "source_ids": sorted({*current.source_ids, *prior.source_ids}),
+        }
+    if bridges:
+        fundamentals["current_period_growth_bridges"] = bridges
 
 
 def _derive_fiscal_context(

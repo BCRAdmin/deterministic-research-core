@@ -129,6 +129,43 @@ def test_numeric_extractor_ignores_period_tokens_inside_evidence_metadata():
     assert "Q4" not in claim.nearby_text
 
 
+def test_direct_percent_evidence_normalizes_single_digit_percentage():
+    metrics = simple_metrics(ticker="MCD")
+    ledger = EvidenceLedger(
+        ticker="MCD",
+        as_of_date="2026-05-15",
+        evidence_items=[
+            EvidenceItem(
+                evidence_id="MCD_CURRENT_REVENUE_GROWTH",
+                ticker="MCD",
+                claim_type="financial_metric",
+                source_id="ROOM16_MCD_DETERMINISTIC_CALCULATIONS",
+                source_type="deterministic_calculation",
+                authority_rank=1,
+                statement="Current-period revenue growth was 9.4%.",
+                value=0.094,
+                normalized_value=0.094,
+                unit="percent",
+                period="CY2025Q1..CY2026Q1",
+                date="2026-03-31",
+                supports_metrics=["current_period_revenue_growth_yoy"],
+                formula_id="matching_quarter_yoy_growth",
+                formula_operands={"current_revenue": 110.0, "prior_revenue": 100.0},
+                confidence="high",
+            )
+        ],
+    )
+
+    audit = audit_markdown_report(
+        markdown="Revenue changed by 9.4% against the matching prior-year quarter.",
+        metrics_packet=metrics,
+        evidence_ledger=ledger,
+        ticker="MCD",
+    )
+
+    assert not audit.has_issue("NUMERIC_MISMATCH")
+
+
 def test_auditor_blocks_currency_that_conflicts_with_evidence_ledger():
     metrics = simple_metrics(ticker="ANY", revenue_ttm=65_510_000_000)
     ledger = EvidenceLedger(

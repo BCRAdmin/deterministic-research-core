@@ -365,6 +365,80 @@ def build_fundamental_derivation_evidence(
                     ),
                 )
             )
+    current_growth_bridges = normalized_fundamentals.get(
+        "current_period_growth_bridges"
+    )
+    if isinstance(current_growth_bridges, Mapping):
+        for raw_metric, output_metric in (
+            ("revenue", "current_period_revenue_growth_yoy"),
+            (
+                "operating_income",
+                "current_period_operating_income_growth_yoy",
+            ),
+            ("net_income", "current_period_net_income_growth_yoy"),
+        ):
+            bridge = current_growth_bridges.get(raw_metric)
+            value = getattr(fundamentals, output_metric, None)
+            if value is None or not isinstance(bridge, Mapping):
+                continue
+            operands = {
+                str(key): float(operand)
+                for key, operand in (bridge.get("operands") or {}).items()
+                if isinstance(operand, (int, float))
+            }
+            current_value = operands.get(f"current_{raw_metric}")
+            prior_value = operands.get(f"prior_{raw_metric}")
+            expected_growth = (
+                (current_value - prior_value) / prior_value
+                if current_value is not None and prior_value not in (None, 0)
+                else None
+            )
+            if (
+                expected_growth is None
+                or not math.isclose(
+                    expected_growth,
+                    float(value),
+                    rel_tol=1e-9,
+                    abs_tol=1e-9,
+                )
+                or not _bridge_operands_have_exact_evidence(
+                    runtime_items,
+                    metric_name=raw_metric,
+                    formula_id="matching_quarter_yoy_growth",
+                    operands=operands,
+                    source_ids=[
+                        str(item)
+                        for item in bridge.get("source_ids") or []
+                        if item
+                    ],
+                )
+            ):
+                continue
+            evidence.append(
+                _calculation_evidence(
+                    ticker=ticker,
+                    as_of_date=as_of_date,
+                    source_id=source_id,
+                    metric_name=output_metric,
+                    value=float(value),
+                    formula_id="matching_quarter_yoy_growth",
+                    operands=operands,
+                    unit="percent",
+                    period=(
+                        f"{bridge.get('prior_period') or 'unknown'}"
+                        f"..{bridge.get('current_period') or 'unknown'}"
+                    ),
+                    date=str(bridge.get("period_end") or as_of_date),
+                    evidence_items=[*runtime_items, *evidence],
+                    source_lineage=_canonical_lineage_source_ids(
+                        [*runtime_items, *evidence],
+                        [
+                            str(item)
+                            for item in bridge.get("source_ids") or []
+                        ],
+                    ),
+                )
+            )
     if (
         fundamentals.ebitda_ttm is not None
         and fundamentals.operating_income_ttm is not None

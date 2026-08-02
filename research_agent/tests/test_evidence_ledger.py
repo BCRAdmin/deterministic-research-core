@@ -284,6 +284,9 @@ def test_material_calculations_require_exact_auditable_operands():
         fundamentals=FundamentalMetrics(
             fiscal_period="TTM",
             revenue_growth_yoy=0.25,
+            current_period_revenue_growth_yoy=0.10,
+            current_period_operating_income_growth_yoy=0.20,
+            current_period_net_income_growth_yoy=0.25,
             revenue_ttm=200.0,
             operating_income_ttm=120.0,
             operating_margin_ttm=0.6,
@@ -432,6 +435,35 @@ def test_material_calculations_require_exact_auditable_operands():
             for year, value in ((2024, 160.0), (2025, 200.0))
         ]
     )
+    current_growth_inputs = {
+        "revenue": (110.0, 100.0),
+        "operating_income": (24.0, 20.0),
+        "net_income": (15.0, 12.0),
+    }
+    runtime_evidence.extend(
+        EvidenceItem(
+            evidence_id=f"GENERIC_RAW_{metric_name.upper()}_{period}",
+            ticker="GENERIC",
+            claim_type="financial_metric",
+            source_id="SEC_GENERIC_FILING_A",
+            source_type="sec_filing",
+            authority_rank=1,
+            statement=f"Exact {period} value for {metric_name}.",
+            value=value,
+            unit="HUF",
+            period=f"CY{year}Q1",
+            date=f"{year}-03-31",
+            supports_metrics=[metric_name],
+            raw_value=value,
+            normalized_value=value,
+            confidence="high",
+        )
+        for metric_name, (current, prior) in current_growth_inputs.items()
+        for period, year, value in (
+            ("CURRENT", 2026, current),
+            ("PRIOR", 2025, prior),
+        )
+    )
 
     evidence = build_fundamental_derivation_evidence(
         ticker="GENERIC",
@@ -449,6 +481,21 @@ def test_material_calculations_require_exact_auditable_operands():
                 "period_end": "2025-12-31",
                 "source_ids": ["SEC_GENERIC_FILING_A"],
             },
+            "current_period_growth_bridges": {
+                metric_name: {
+                    "formula_id": "matching_quarter_yoy_growth",
+                    "operands": {
+                        f"current_{metric_name}": current,
+                        f"prior_{metric_name}": prior,
+                    },
+                    "current_period": "CY2026Q1",
+                    "prior_period": "CY2025Q1",
+                    "period_start": "2025-01-01",
+                    "period_end": "2026-03-31",
+                    "source_ids": ["SEC_GENERIC_FILING_A"],
+                }
+                for metric_name, (current, prior) in current_growth_inputs.items()
+            },
         },
         price_source_id="GENERIC_EXCHANGE",
         runtime_evidence=runtime_evidence,
@@ -465,6 +512,9 @@ def test_material_calculations_require_exact_auditable_operands():
     }
     newly_bound_metrics = {
         "revenue_growth_yoy",
+        "current_period_revenue_growth_yoy",
+        "current_period_operating_income_growth_yoy",
+        "current_period_net_income_growth_yoy",
         "operating_margin_ttm",
         "net_margin_ttm",
         "fcf_margin_ttm",
@@ -484,6 +534,11 @@ def test_material_calculations_require_exact_auditable_operands():
     assert by_metric["net_margin_ttm"].unit == "percent"
     assert by_metric["fcf_margin_ttm"].unit == "percent"
     assert by_metric["revenue_growth_yoy"].unit == "percent"
+    assert by_metric["current_period_revenue_growth_yoy"].formula_operands == {
+        "current_revenue": 110.0,
+        "prior_revenue": 100.0,
+    }
+    assert by_metric["current_period_operating_income_growth_yoy"].unit == "percent"
     assert by_metric["sbc_to_fcf"].unit == "percent"
     assert by_metric["free_cash_flow_conversion_ttm"].unit == "multiple"
     assert by_metric[

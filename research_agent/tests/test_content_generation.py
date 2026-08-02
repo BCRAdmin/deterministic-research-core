@@ -409,11 +409,6 @@ def test_generic_company_gets_latest_reported_period_claim():
     )
     _add_exact_metric_evidence(data, metrics, ledger)
     for metric in canonical.metrics:
-        metric_ref = (
-            "current_q_revenue"
-            if metric.metric_name == "revenue"
-            else metric.metric_name
-        )
         ledger.evidence_items.append(
             EvidenceItem(
                 evidence_id=metric.evidence_ids[0],
@@ -422,12 +417,12 @@ def test_generic_company_gets_latest_reported_period_claim():
                 source_id=metric.source_ids[0],
                 source_type="company_ir",
                 authority_rank=1,
-                statement=f"{metric_ref} exact current-period evidence.",
+                statement=f"{metric.metric_name} exact current-period evidence.",
                 value=metric.value,
                 unit=metric.unit,
                 period=metric.period,
                 date=metric.end_date,
-                supports_metrics=[metric_ref],
+                supports_metrics=[metric.metric_name],
                 confidence="high",
             )
         )
@@ -445,12 +440,104 @@ def test_generic_company_gets_latest_reported_period_claim():
     )
 
     assert " HUF" in current.claim
-    assert "do not by themselves establish growth" in current.claim
+    assert "without a matching prior-year quarter" in current.claim
     assert current.metric_refs == [
-        "current_q_revenue",
+        "revenue",
         "operating_income",
         "net_income",
     ]
+
+
+def test_generic_current_period_claim_uses_evidenced_yoy_comparison():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    data.ticker = "GENERIC"
+    data.price_basis.currency = "USD"
+    current_values = {
+        "revenue": 110.0,
+        "operating_income": 24.0,
+        "net_income": 15.0,
+    }
+    growth_values = {
+        "current_period_revenue_growth_yoy": 0.10,
+        "current_period_operating_income_growth_yoy": 0.20,
+        "current_period_net_income_growth_yoy": 0.25,
+    }
+    for metric_name, value in growth_values.items():
+        setattr(metrics.fundamentals, metric_name, value)
+    canonical = CanonicalFinancials(
+        ticker="GENERIC",
+        as_of_date=data.as_of_date,
+        metrics=[
+            CanonicalMetric(
+                metric_name=metric_name,
+                value=value,
+                unit="USD",
+                period="CY2026Q1",
+                fiscal_year=2026,
+                fiscal_period="Q1",
+                period_bucket="quarterly",
+                start_date="2026-01-01",
+                end_date="2026-03-31",
+                duration_days=89,
+                basis="gaap",
+                statement_type="income_statement",
+                source_ids=["GENERIC_SEC_Q1_2026"],
+                confidence="high",
+            )
+            for metric_name, value in current_values.items()
+        ],
+    )
+    _add_exact_metric_evidence(data, metrics, ledger)
+    for metric_name, value in {**current_values, **growth_values}.items():
+        ledger.evidence_items.append(
+            EvidenceItem(
+                evidence_id=f"GENERIC_{metric_name.upper()}",
+                ticker=data.ticker,
+                claim_type="financial_metric",
+                source_id="GENERIC_SEC_Q1_2026",
+                source_type=(
+                    "deterministic_calculation"
+                    if metric_name in growth_values
+                    else "sec_filing"
+                ),
+                authority_rank=1,
+                statement=f"Exact evidence for {metric_name}.",
+                value=value,
+                normalized_value=value,
+                unit=("percent" if metric_name in growth_values else "USD"),
+                period="CY2025Q1..CY2026Q1",
+                date="2026-03-31",
+                supports_metrics=[metric_name],
+                formula_id=(
+                    "matching_quarter_yoy_growth"
+                    if metric_name in growth_values
+                    else None
+                ),
+                formula_operands=(
+                    {"current": 1.0, "prior": 1.0}
+                    if metric_name in growth_values
+                    else {}
+                ),
+                confidence="high",
+            )
+        )
+
+    claims = generate_research_claims(
+        data,
+        metrics,
+        ledger,
+        decision,
+        validation,
+        canonical,
+    )
+    current = next(
+        claim for claim in claims if "latest reported period" in claim.claim
+    )
+
+    assert "revenue changed by 10.0%" in current.claim
+    assert "operating income by 20.0%" in current.claim
+    assert "net income by 25.0%" in current.claim
+    assert set(growth_values) <= set(current.metric_refs)
 
 
 def test_claim_evidence_selection_excludes_conflicting_units_and_values():
