@@ -44,7 +44,11 @@ class _FakeSec:
         }
 
     def get_companyfacts(self, cik):
-        return {"cik": int(cik), "entityName": "Generic Research Corp.", "facts": {}}
+        return {
+            "cik": int(cik),
+            "entityName": "Generic Research Corp.",
+            "facts": {"us-gaap": {"Revenues": {"units": {}}}},
+        }
 
     def get_submissions(self, cik):
         return {"filings": {"recent": {"filingDate": ["2026-07-20"]}}}
@@ -124,6 +128,30 @@ class _FakeIfrsSec(_FakeSec):
                                     "filed": "2026-04-30",
                                     "start": "2025-01-01",
                                     "end": "2025-12-31",
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+        }
+
+
+class _FakeSuccessorWithoutStandardFacts(_FakeSec):
+    def get_companyfacts(self, cik):
+        return {
+            "cik": int(cik),
+            "entityName": "Generic Successor Holdings Corp.",
+            "facts": {
+                "ffd": {
+                    "TtlFeeAmt": {
+                        "units": {
+                            "USD": [
+                                {
+                                    "val": 0,
+                                    "form": "POSASR",
+                                    "filed": "2026-07-01",
+                                    "end": "2026-06-23",
                                 }
                             ]
                         }
@@ -404,6 +432,22 @@ def test_current_runner_names_unsupported_sec_ifrs_profile_before_pipeline(tmp_p
             _request(tmp_path),
             price_provider=_FakePrices(),
             sec_client=_FakeIfrsSec(),
+        )
+
+    _assert_no_run_dirs(tmp_path)
+
+
+def test_current_runner_names_successor_without_standard_facts_before_pipeline(
+    tmp_path,
+):
+    with pytest.raises(
+        CurrentResearchError,
+        match="nicht unterstützten Taxonomien ffd.*Vorgänger-/Nachfolger-Kette",
+    ):
+        run_current_research(
+            _request(tmp_path),
+            price_provider=_FakePrices(),
+            sec_client=_FakeSuccessorWithoutStandardFacts(),
         )
 
     _assert_no_run_dirs(tmp_path)

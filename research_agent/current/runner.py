@@ -556,28 +556,45 @@ def _require_supported_sec_reporting_profile(
     companyfacts: dict[str, Any],
 ) -> None:
     facts = companyfacts.get("facts")
-    if not isinstance(facts, dict):
+    if not isinstance(facts, dict) or not facts:
+        raise CurrentResearchError(
+            f"{ticker} wurde als SEC-Emittent erkannt, aber die offiziellen "
+            "CompanyFacts enthalten noch keine standardisierte Finanzhistorie. "
+            "Room16 startet keine leere oder aus einem anderen Rechtsträger "
+            "zusammengesetzte Analyse. Nach einer Umstrukturierung muss zuerst "
+            "eine allgemeine, offiziell belegte Vorgänger-/Nachfolger-Kette "
+            "integriert werden."
+        )
+    if facts.get("us-gaap"):
         return
-    if facts.get("us-gaap") or not facts.get("ifrs-full"):
-        return
-    forms = sorted(
-        {
-            str(row.get("form"))
-            for record in facts["ifrs-full"].values()
-            if isinstance(record, dict)
-            for unit_rows in (record.get("units") or {}).values()
-            for row in unit_rows
-            if isinstance(row, dict) and row.get("form")
-        }
-    )
-    form_label = "/".join(forms) if forms else "20-F/6-K"
+    if facts.get("ifrs-full"):
+        forms = sorted(
+            {
+                str(row.get("form"))
+                for record in facts["ifrs-full"].values()
+                if isinstance(record, dict)
+                for unit_rows in (record.get("units") or {}).values()
+                for row in unit_rows
+                if isinstance(row, dict) and row.get("form")
+            }
+        )
+        form_label = "/".join(forms) if forms else "20-F/6-K"
+        raise CurrentResearchError(
+            f"{ticker} wurde als SEC-Emittent erkannt, verwendet in den offiziellen "
+            f"CompanyFacts aber die IFRS-Taxonomie mit {form_label}-Filings. Der "
+            "vorhandene SEC-Finanzadapter unterstützt US-GAAP-Daten aus 10-K und "
+            "10-Q. Room16 deutet IFRS-Konzepte nicht über US-GAAP-Zuordnungen um und "
+            "setzt keine schwächeren Ersatzdaten ein. Vor einer Analyse dieses "
+            "Wertpapiers wird ein allgemeiner SEC-IFRS-Adapter benötigt."
+        )
+    namespaces = ", ".join(sorted(str(namespace) for namespace in facts))
     raise CurrentResearchError(
-        f"{ticker} wurde als SEC-Emittent erkannt, verwendet in den offiziellen "
-        f"CompanyFacts aber die IFRS-Taxonomie mit {form_label}-Filings. Der "
-        "vorhandene SEC-Finanzadapter unterstützt US-GAAP-Daten aus 10-K und "
-        "10-Q. Room16 deutet IFRS-Konzepte nicht über US-GAAP-Zuordnungen um und "
-        "setzt keine schwächeren Ersatzdaten ein. Vor einer Analyse dieses "
-        "Wertpapiers wird ein allgemeiner SEC-IFRS-Adapter benötigt."
+        f"{ticker} wurde als SEC-Emittent erkannt, aber die offiziellen "
+        f"CompanyFacts enthalten nur die nicht unterstützten Taxonomien "
+        f"{namespaces}. Eine US-GAAP- oder IFRS-Finanzhistorie fehlt. Room16 "
+        "startet keine leere oder aus einem anderen Rechtsträger zusammengesetzte "
+        "Analyse. Nach einer Umstrukturierung muss zuerst eine allgemeine, "
+        "offiziell belegte Vorgänger-/Nachfolger-Kette integriert werden."
     )
 
 
