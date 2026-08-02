@@ -511,6 +511,32 @@ def test_claim_is_dropped_when_its_only_evidence_id_is_ambiguous():
     )
 
 
+def test_claim_evidence_excludes_value_injected_source_placeholders():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    _add_exact_metric_evidence(data, metrics, ledger)
+    ledger.evidence_items.append(
+        EvidenceItem(
+            evidence_id="VALUE_INJECTED_FCF_PLACEHOLDER",
+            ticker=data.ticker,
+            claim_type="financial_metric",
+            source_id="REGISTERED_SOURCE_WITHOUT_PROVENANCE",
+            source_type="sec_filing",
+            authority_rank=1,
+            statement="Registered source placeholder with a copied metric value.",
+            value=metrics.fundamentals.free_cash_flow_ttm,
+            unit=data.price_basis.currency,
+            supports_metrics=["free_cash_flow_ttm"],
+        )
+    )
+
+    claims = generate_research_claims(data, metrics, ledger, decision, validation)
+    fcf_claim = next(
+        claim for claim in claims if claim.metric_refs == ["free_cash_flow_ttm"]
+    )
+
+    assert "VALUE_INJECTED_FCF_PLACEHOLDER" not in fcf_claim.evidence_ids
+
+
 def test_unpadded_claim_report_stays_internal_when_substance_gate_fails():
     data, metrics, validation, ledger, decision = _load_packet("SNOW")
     claims = generate_research_claims(data, metrics, ledger, decision, validation)

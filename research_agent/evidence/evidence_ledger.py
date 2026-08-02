@@ -763,7 +763,7 @@ def build_fundamental_derivation_evidence(
                     f"calculated from TTM values; operands={operands}."
                 ),
                 value=float(fundamentals.sbc_to_revenue),
-                unit="fraction",
+                unit="percent",
                 period=fcf_period_text,
                 date=fcf_period_end,
                 supports_metrics=["sbc_to_revenue"],
@@ -980,7 +980,7 @@ def build_fundamental_derivation_evidence(
             fundamentals.revenue_ttm,
             "revenue_ttm",
             "operating_income_ttm_divided_by_revenue_ttm",
-            "fraction",
+            "percent",
             f"TTM through {as_of_date}",
         ),
         (
@@ -991,7 +991,7 @@ def build_fundamental_derivation_evidence(
             fundamentals.revenue_ttm,
             "revenue_ttm",
             "net_income_ttm_divided_by_revenue_ttm",
-            "fraction",
+            "percent",
             f"TTM through {as_of_date}",
         ),
         (
@@ -1002,7 +1002,7 @@ def build_fundamental_derivation_evidence(
             fundamentals.revenue_ttm,
             "revenue_ttm",
             "free_cash_flow_ttm_divided_by_revenue_ttm",
-            "fraction",
+            "percent",
             f"TTM through {as_of_date}",
         ),
         (
@@ -1013,7 +1013,7 @@ def build_fundamental_derivation_evidence(
             fundamentals.free_cash_flow_ttm,
             "free_cash_flow_ttm",
             "sbc_ttm_divided_by_free_cash_flow_ttm",
-            "fraction",
+            "percent",
             f"TTM through {as_of_date}",
         ),
         (
@@ -1102,7 +1102,7 @@ def build_fundamental_derivation_evidence(
                     "derived as free_cash_flow_ttm / net_income_ttm."
                 ),
                 value=float(fundamentals.free_cash_flow_conversion_ttm),
-                unit="percent",
+                unit="multiple",
                 period=f"TTM through {as_of_date}",
                 date=as_of_date,
                 supports_metrics=["free_cash_flow_conversion_ttm"],

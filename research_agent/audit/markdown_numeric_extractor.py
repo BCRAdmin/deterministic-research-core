@@ -34,6 +34,7 @@ def extract_numeric_claims(markdown: str) -> list[ExtractedNumericClaim]:
 
 
 def _extract_line_claims(line: str, line_number: int) -> list[ExtractedNumericClaim]:
+    line = _claim_text_without_metadata(line)
     nearby = line.strip()
     claims: list[ExtractedNumericClaim] = []
 
@@ -85,6 +86,15 @@ def _extract_line_claims(line: str, line_number: int) -> list[ExtractedNumericCl
         )
 
     return claims
+
+
+def _claim_text_without_metadata(line: str) -> str:
+    metadata = re.search(
+        r"\s+(?:Evidence metrics|Evidence IDs|Confidence):",
+        line,
+        re.IGNORECASE,
+    )
+    return line[: metadata.start()] if metadata else line
 
 
 def _iter_currency_matches(line: str) -> Iterable[tuple[re.Match[str], str]]:

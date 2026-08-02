@@ -113,6 +113,9 @@ def test_source_registry_evidence_uses_cross_market_units():
                     "current_assets",
                     "debt_noncurrent",
                     "economic_share_count",
+                    "operating_margin_ttm",
+                    "fcf_margin_ttm",
+                    "sbc_to_revenue",
                     "free_cash_flow_conversion_ttm",
                     "current_ratio",
                     "market_cap",
@@ -141,6 +144,9 @@ def test_source_registry_evidence_uses_cross_market_units():
             "current_assets",
             "debt_noncurrent",
             "economic_share_count",
+            "operating_margin_ttm",
+            "fcf_margin_ttm",
+            "sbc_to_revenue",
             "free_cash_flow_conversion_ttm",
             "current_ratio",
             "market_cap",
@@ -153,6 +159,9 @@ def test_source_registry_evidence_uses_cross_market_units():
         "current_assets": "HUF",
         "debt_noncurrent": "HUF",
         "economic_share_count": "shares",
+        "operating_margin_ttm": "percent",
+        "fcf_margin_ttm": "percent",
+        "sbc_to_revenue": "percent",
         "free_cash_flow_conversion_ttm": "multiple",
         "current_ratio": "multiple",
         "market_cap": "HUF",
@@ -466,6 +475,11 @@ def test_material_calculations_require_exact_auditable_operands():
         "trailing_pe",
     }
     assert newly_bound_metrics <= by_metric.keys()
+    assert by_metric["operating_margin_ttm"].unit == "percent"
+    assert by_metric["net_margin_ttm"].unit == "percent"
+    assert by_metric["fcf_margin_ttm"].unit == "percent"
+    assert by_metric["sbc_to_fcf"].unit == "percent"
+    assert by_metric["free_cash_flow_conversion_ttm"].unit == "multiple"
     assert by_metric[
         "operating_income_interest_coverage_ttm"
     ].formula_id == "operating_income_divided_by_interest_expense"

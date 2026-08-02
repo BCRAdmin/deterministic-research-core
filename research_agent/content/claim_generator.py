@@ -541,6 +541,7 @@ class _ClaimBuilder:
             for item in self.ledger.find_by_metric(metric_name)
             if self.evidence_id_counts.get(item.evidence_id) == 1
             and _evidence_value_is_compatible(item, expected_value)
+            and _evidence_provenance_is_compatible(item)
             and _evidence_date_is_compatible(
                 item,
                 metric_name,
@@ -585,6 +586,18 @@ def _evidence_unit_is_compatible(
     if expected_unit is None or not actual_unit:
         return True
     return _normalize_unit(actual_unit) == _normalize_unit(expected_unit)
+
+
+def _evidence_provenance_is_compatible(item: EvidenceItem) -> bool:
+    return bool(
+        (
+            item.formula_id
+            and item.formula_operands
+        )
+        or item.raw_value is not None
+        or item.normalized_value is not None
+        or (item.date and item.period)
+    )
 
 
 def _normalize_unit(unit: str) -> str:

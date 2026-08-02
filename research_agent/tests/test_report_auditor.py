@@ -118,6 +118,17 @@ def test_markdown_numeric_extractor_normalizes_german_cash_claim():
     assert huf_claim.unit == "huf"
 
 
+def test_numeric_extractor_ignores_period_tokens_inside_evidence_metadata():
+    claims = extract_numeric_claims(
+        "Revenue TTM is 65.51B HUF. Evidence metrics: `revenue_ttm`. "
+        "Evidence IDs: `ANY_REVENUE_FY2025_Q4`. Confidence: `high`."
+    )
+    claim = next(item for item in claims if item.unit == "huf")
+
+    assert claim.period_hint == "ttm"
+    assert "Q4" not in claim.nearby_text
+
+
 def test_auditor_blocks_currency_that_conflicts_with_evidence_ledger():
     metrics = simple_metrics(ticker="ANY", revenue_ttm=65_510_000_000)
     ledger = EvidenceLedger(

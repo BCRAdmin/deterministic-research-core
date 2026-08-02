@@ -129,7 +129,7 @@ def assess_speculative_deep_tech_manual_review(
     else:
         archetype = _infer_non_deeptech_archetype(text, metrics_packet)
         triggered_rules = [name for name, value in speculative_triggers.items() if value]
-        confidence = 0.2
+        confidence = 0.0 if archetype == CompanyArchetype.UNKNOWN else 0.2
     active = speculative_active
     issues: list[AuditIssue] = []
     if speculative_active:
@@ -548,21 +548,47 @@ def _has_clean_hold(text: str) -> bool:
 def _infer_non_deeptech_archetype(text: str, metrics_packet: Any) -> CompanyArchetype:
     lowered = text.lower()
     ticker = str(getattr(metrics_packet, "ticker", "") or "").upper()
-    revenue = _metric(metrics_packet, "fundamentals", "revenue_ttm")
     if ticker in {"GOOGL", "GOOG", "MSFT", "AMZN", "META"}:
         return CompanyArchetype.MEGA_CAP_PLATFORM
     if ticker in {"SNOW", "DDOG", "MDB", "CRM"}:
         return CompanyArchetype.SAAS_CONSUMPTION
     if ticker in {"NVDA", "AVGO", "QCOM", "MU", "AMD", "MRVL", "INTC"}:
         return CompanyArchetype.SEMICONDUCTOR_AI_INFRA
-    if any(term in lowered for term in ["alphabet", "google", "microsoft", "amazon", "meta", "mega-cap", "mega cap"]):
+    if _contains_archetype_term(
+        lowered,
+        ["alphabet", "google", "microsoft", "amazon", "meta", "mega-cap", "mega cap"],
+    ):
         return CompanyArchetype.MEGA_CAP_PLATFORM
-    if any(term in lowered for term in ["snowflake", "datadog", "mongodb", "saas", "consumption"]):
+    if _contains_archetype_term(
+        lowered,
+        ["snowflake", "datadog", "mongodb", "saas", "consumption"],
+    ):
         return CompanyArchetype.SAAS_CONSUMPTION
-    if any(term in lowered for term in ["semiconductor", "nvidia", "broadcom", "qcom", "micron", "ai infra", "gpu"]):
+    if _contains_archetype_term(
+        lowered,
+        ["semiconductor", "nvidia", "broadcom", "qcom", "micron", "ai infra", "gpu"],
+    ):
         return CompanyArchetype.SEMICONDUCTOR_AI_INFRA
-    if revenue is not None and revenue >= 50_000_000:
-        return CompanyArchetype.STANDARD_GROWTH
-    if any(term in lowered for term in ["growth", "revenue growth", "expansion"]):
+    if _contains_archetype_term(
+        lowered,
+        [
+            "high-growth",
+            "high growth",
+            "revenue growth",
+            "growth company",
+            "commercial expansion",
+        ],
+    ):
         return CompanyArchetype.STANDARD_GROWTH
     return CompanyArchetype.UNKNOWN
+
+
+def _contains_archetype_term(text: str, terms: list[str]) -> bool:
+    return any(
+        re.search(
+            rf"(?<![\w]){re.escape(term)}(?![\w])",
+            text,
+            re.IGNORECASE,
+        )
+        for term in terms
+    )

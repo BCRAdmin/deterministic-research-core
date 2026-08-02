@@ -44,6 +44,43 @@ def test_vendor_source_for_hard_metric_warns():
     assert vendor_issue["code"] == "VENDOR_SOURCE_USED_AS_PRIMARY"
 
 
+def test_vendor_source_does_not_warn_when_primary_evidence_exists():
+    ledger = EvidenceLedger(
+        ticker="MDB",
+        as_of_date="2026-05-01",
+        evidence_items=[
+            EvidenceItem(
+                evidence_id="MDB_IR_FCF",
+                ticker="MDB",
+                claim_type="financial_metric",
+                source_id="MDB_IR",
+                source_type="company_ir",
+                authority_rank=1,
+                statement="Company-reported FCF.",
+                value=492_600_000,
+                unit="USD",
+                period="FY2026",
+                supports_metrics=["free_cash_flow"],
+            ),
+            EvidenceItem(
+                evidence_id="MDB_VENDOR_FCF",
+                ticker="MDB",
+                claim_type="financial_metric",
+                source_id="zacks_mdb",
+                source_type="zacks",
+                authority_rank=5,
+                statement="Vendor copy of FCF.",
+                value=492_600_000,
+                unit="USD",
+                period="FY2026",
+                supports_metrics=["free_cash_flow"],
+            ),
+        ],
+    )
+
+    assert validate_vendor_not_primary("free_cash_flow", ledger) is None
+
+
 def test_news_event_without_date_warns():
     item = EvidenceItem(
         evidence_id="MDB_NEWS_ITEM",

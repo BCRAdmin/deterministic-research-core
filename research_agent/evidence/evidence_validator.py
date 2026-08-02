@@ -49,8 +49,16 @@ def validate_vendor_not_primary(metric_name: str, ledger: EvidenceLedger):
     items = ledger.find_by_metric(metric_name)
     if not items:
         return None
-    primary_claimed = [item for item in items if is_vendor_source(item.source_type)]
-    if primary_claimed and requires_primary_source(metric_name, "financial_metric"):
+    vendor_items = [item for item in items if is_vendor_source(item.source_type)]
+    authoritative_non_vendor = any(
+        item.authority_rank <= 2 and not is_vendor_source(item.source_type)
+        for item in items
+    )
+    if (
+        vendor_items
+        and not authoritative_non_vendor
+        and requires_primary_source(metric_name, "financial_metric")
+    ):
         return {
             "severity": "warning",
             "code": "VENDOR_SOURCE_USED_AS_PRIMARY",

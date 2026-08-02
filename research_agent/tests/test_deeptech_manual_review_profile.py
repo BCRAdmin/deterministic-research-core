@@ -353,6 +353,43 @@ def test_saas_and_real_revenue_high_growth_do_not_trigger_archetype():
     assert real_assessment.company_archetype == CompanyArchetype.STANDARD_GROWTH
 
 
+def test_unknown_company_is_not_classified_from_metadata_or_revenue_scale():
+    metrics = MetricsPacket(
+        ticker="ANY",
+        as_of_date="2026-07-27",
+        technical=TechnicalMetrics(indicator_date="2026-07-23", close=6_950),
+        fundamentals=FundamentalMetrics(
+            fiscal_period="TTM",
+            revenue_ttm=65_510_000_000,
+            operating_income_ttm=10_162_000_000,
+            free_cash_flow_ttm=8_561_476_000,
+        ),
+        valuation=ValuationMetrics(market_cap=102_800_000_000),
+    )
+
+    assessment = assess_speculative_deep_tech_manual_review(
+        markdown=(
+            "Corporate action timetable and deterministic calculations are "
+            "available. The evidence does not establish growth."
+        ),
+        metrics_packet=metrics,
+        source_registry=SourceRegistry(
+            registry_id="any_primary",
+            sources=[
+                SourceRegistryEntry(
+                    source_id="BSE_ANY_OFFICIAL_FINANCIALS",
+                    ticker="ANY",
+                    source_type="company_ir",
+                    used_for=["revenue_ttm", "free_cash_flow_ttm"],
+                )
+            ],
+        ),
+    )
+
+    assert assessment.company_archetype == CompanyArchetype.UNKNOWN
+    assert assessment.archetype_confidence == 0.0
+
+
 def test_saas_ticker_outweighs_generic_platform_language():
     ddog = MetricsPacket(
         ticker="DDOG",
