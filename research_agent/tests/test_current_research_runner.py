@@ -195,6 +195,7 @@ def _request(tmp_path, ticker="GENR"):
     return CurrentResearchRequest(
         ticker=ticker,
         as_of_date="2026-07-26",
+        jurisdiction="US",
         sec_user_agent="Room16 operator@example.com",
         staging_root=str(tmp_path / "staging"),
         output_root=str(tmp_path / "outputs"),
@@ -264,7 +265,9 @@ def test_current_runner_stages_sec_risks_for_the_existing_pipeline(monkeypatch, 
 def test_current_runner_rejects_unsupported_official_issuer(tmp_path):
     with pytest.raises(CurrentResearchError, match="official issuer adapters"):
         run_current_research(
-            _request(tmp_path, ticker="OTHER"),
+            _request(tmp_path, ticker="OTHER").model_copy(
+                update={"jurisdiction": None}
+            ),
             price_provider=_FakePrices(),
             sec_client=_FakeSec(ticker="GENR"),
             bse_provider=_NoBse(),
@@ -396,6 +399,8 @@ def test_current_runner_routes_public_bse_issuer_without_sec_or_api_key(
     request = CurrentResearchRequest(
         ticker="GENR",
         as_of_date="2026-07-26",
+        jurisdiction="HU",
+        isin="HU0000000001",
         staging_root=str(tmp_path / "staging"),
         output_root=str(tmp_path / "outputs"),
     )
@@ -405,6 +410,77 @@ def test_current_runner_routes_public_bse_issuer_without_sec_or_api_key(
     assert result["jurisdiction"] == "HU"
     assert result["isin"] == "HU0000000001"
     assert result["price_provider"] == "bse"
+
+
+def test_current_runner_uses_resolved_jurisdiction_for_colliding_ticker(
+    monkeypatch,
+    tmp_path,
+):
+    def fake_pipeline(ticker, as_of_date, config):
+        assert config.cik_records_path is None
+        assert config.price_currency == "HUF"
+        authority = tmp_path / "outputs" / ticker / as_of_date / "authority_bundle"
+        authority.mkdir(parents=True)
+        (authority / "authority_manifest.json").write_text(
+            json.dumps(
+                {
+                    "contract_id": "room16.research_authority_bundle",
+                    "analysis_allowed": True,
+                }
+            ),
+            encoding="utf-8",
+        )
+
+    monkeypatch.setattr(runner, "run_research_pipeline", fake_pipeline)
+    request = CurrentResearchRequest(
+        ticker="GENR",
+        as_of_date="2026-07-26",
+        jurisdiction="HU",
+        isin="HU0000000001",
+        sec_user_agent="Room16 operator@example.com",
+        staging_root=str(tmp_path / "staging"),
+        output_root=str(tmp_path / "outputs"),
+    )
+
+    result = run_current_research(
+        request,
+        sec_client=_FakeSec(ticker="GENR"),
+        bse_provider=_FakeBse(),
+    )
+
+    assert result["jurisdiction"] == "HU"
+    assert result["isin"] == "HU0000000001"
+
+
+def test_current_runner_blocks_cross_market_ticker_ambiguity(tmp_path):
+    request = CurrentResearchRequest(
+        ticker="GENR",
+        as_of_date="2026-07-26",
+        sec_user_agent="Room16 operator@example.com",
+        staging_root=str(tmp_path / "staging"),
+        output_root=str(tmp_path / "outputs"),
+    )
+
+    with pytest.raises(CurrentResearchError, match="ambiguous across"):
+        run_current_research(
+            request,
+            sec_client=_FakeSec(ticker="GENR"),
+            bse_provider=_FakeBse(),
+        )
+
+
+def test_current_runner_blocks_resolver_isin_mismatch(tmp_path):
+    request = CurrentResearchRequest(
+        ticker="GENR",
+        as_of_date="2026-07-26",
+        jurisdiction="HU",
+        isin="HU9999999999",
+        staging_root=str(tmp_path / "staging"),
+        output_root=str(tmp_path / "outputs"),
+    )
+
+    with pytest.raises(CurrentResearchError, match="mismatched instrument identity"):
+        run_current_research(request, bse_provider=_FakeBse())
 
 
 def test_data_packet_uses_explicit_exchange_price_currency():

@@ -34,6 +34,8 @@ class CurrentResearchError(RuntimeError):
 class CurrentResearchRequest(BaseModel):
     ticker: str
     as_of_date: str
+    jurisdiction: Optional[str] = None
+    isin: Optional[str] = None
     sec_user_agent: str = ""
     price_provider: str = "auto"
     price_api_key: Optional[str] = Field(default=None, repr=False)
@@ -56,6 +58,26 @@ class CurrentResearchRequest(BaseModel):
     @classmethod
     def validate_date(cls, value: str) -> str:
         return date.fromisoformat(value).isoformat()
+
+    @field_validator("jurisdiction")
+    @classmethod
+    def normalize_jurisdiction(cls, value: Optional[str]) -> Optional[str]:
+        if value is None or not value.strip():
+            return None
+        jurisdiction = value.strip().upper()
+        if jurisdiction not in {"US", "HU"}:
+            raise ValueError(f"unsupported jurisdiction hint: {jurisdiction}")
+        return jurisdiction
+
+    @field_validator("isin")
+    @classmethod
+    def normalize_isin(cls, value: Optional[str]) -> Optional[str]:
+        if value is None or not value.strip():
+            return None
+        isin = value.strip().upper()
+        if len(isin) != 12 or not isin[:2].isalpha() or not isin.isalnum():
+            raise ValueError("ISIN hint is invalid")
+        return isin
 
     @field_validator("sec_user_agent")
     @classmethod
@@ -102,15 +124,44 @@ def run_current_research(
     for path in (price_dir, companyfacts_dir, packet_root, Path(request.output_root)):
         path.mkdir(parents=True, exist_ok=True)
 
+    requested_jurisdiction = request.jurisdiction
     sec = sec_client
-    if sec is None and request.sec_user_agent:
+    if (
+        sec is None
+        and request.sec_user_agent
+        and requested_jurisdiction != "HU"
+    ):
         sec = SecClient(
             SecClientConfig(user_agent=request.sec_user_agent, cache_ttl_hours=24)
         )
-    issuer = _resolve_sec_issuer(sec.get_company_tickers(), symbol) if sec else None
     bse = bse_provider or BseIssuerProvider()
-    bse_issuer = bse.resolve(symbol) if issuer is None else None
+    issuer = None
+    bse_issuer = None
+    if requested_jurisdiction == "US":
+        if sec is None:
+            raise CurrentResearchError(
+                f"{symbol} was resolved as a US issuer, but "
+                "ROOM16_SEC_USER_AGENT is missing or invalid."
+            )
+        issuer = _resolve_sec_issuer(sec.get_company_tickers(), symbol)
+    elif requested_jurisdiction == "HU":
+        bse_issuer = bse.resolve(symbol)
+    else:
+        issuer = _resolve_sec_issuer(sec.get_company_tickers(), symbol) if sec else None
+        bse_issuer = bse.resolve(symbol)
+        if issuer is not None and bse_issuer is not None:
+            raise CurrentResearchError(
+                f"{symbol} is ambiguous across the US and Hungarian issuer "
+                "registers. Provide the resolved jurisdiction or ISIN; Room16 "
+                "will not guess the listed instrument."
+            )
     if issuer is None and bse_issuer is None:
+        if requested_jurisdiction:
+            raise CurrentResearchError(
+                f"{symbol} was resolved for jurisdiction {requested_jurisdiction}, "
+                "but the corresponding official issuer adapter did not confirm "
+                "that identity. Room16 will not substitute another market."
+            )
         if sec is None:
             raise CurrentResearchError(
                 f"{symbol} was not checked against the SEC issuer registry because "
@@ -195,6 +246,12 @@ def run_current_research(
         )
     else:
         assert bse_issuer is not None
+        if request.isin and request.isin != bse_issuer.isin:
+            raise CurrentResearchError(
+                f"{symbol} resolved to ISIN {bse_issuer.isin}, not "
+                f"{request.isin}. Room16 will not continue with a mismatched "
+                "instrument identity."
+            )
         jurisdiction = "HU"
         isin = bse_issuer.isin
         company_name = bse_issuer.company_name
@@ -345,10 +402,18 @@ def run_current_research(
     return result
 
 
-def request_from_environment(ticker: str, as_of_date: str) -> CurrentResearchRequest:
+def request_from_environment(
+    ticker: str,
+    as_of_date: str,
+    *,
+    jurisdiction: Optional[str] = None,
+    isin: Optional[str] = None,
+) -> CurrentResearchRequest:
     return CurrentResearchRequest(
         ticker=ticker,
         as_of_date=as_of_date,
+        jurisdiction=jurisdiction,
+        isin=isin,
         sec_user_agent=os.environ.get("ROOM16_SEC_USER_AGENT", ""),
         price_provider=os.environ.get("ROOM16_PRICE_PROVIDER", "auto"),
         price_api_key=(

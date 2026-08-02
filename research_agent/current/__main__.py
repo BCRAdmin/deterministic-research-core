@@ -19,9 +19,16 @@ def main() -> int:
     )
     parser.add_argument("--ticker", required=True)
     parser.add_argument("--date", required=True, dest="as_of_date")
+    parser.add_argument("--jurisdiction", default=None)
+    parser.add_argument("--isin", default=None)
     args = parser.parse_args()
     try:
-        request = request_from_environment(args.ticker, args.as_of_date)
+        request = request_from_environment(
+            args.ticker,
+            args.as_of_date,
+            jurisdiction=args.jurisdiction,
+            isin=args.isin,
+        )
         result = run_current_research(request)
     except (ValidationError, CurrentResearchError, RuntimeError, ValueError) as exc:
         print(
