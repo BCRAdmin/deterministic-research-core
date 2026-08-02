@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+import math
 from typing import Iterable, Optional
 
 from research_agent.decision.decision_packet import DecisionPacket
 from research_agent.decision.signal_scores import classify_technical_trend
 from research_agent.evidence.evidence_item import EvidenceItem
-from research_agent.evidence.evidence_ledger import EvidenceLedger
+from research_agent.evidence.evidence_ledger import EvidenceLedger, unit_for_metric
 from research_agent.reconciliation.canonical_financials import CanonicalFinancials
 from research_agent.research_core.models.claims import ResearchClaim
 from research_agent.research_core.models.data_packet import DataPacket
@@ -118,6 +119,11 @@ class _ClaimBuilder:
         self.canonical = canonical_financials
         self.claims: list[ResearchClaim] = []
         self.counter = 0
+        self.evidence_id_counts: dict[str, int] = {}
+        for item in evidence_ledger.evidence_items:
+            self.evidence_id_counts[item.evidence_id] = (
+                self.evidence_id_counts.get(item.evidence_id, 0) + 1
+            )
 
     def build_candidates(self) -> list[ResearchClaim]:
         ticker = self.data_packet.ticker.upper()
@@ -510,11 +516,128 @@ class _ClaimBuilder:
     def _evidence_for(self, metrics: list[str]) -> list[EvidenceItem]:
         matched: list[EvidenceItem] = []
         for metric in metrics:
-            matched.extend(self.ledger.find_by_metric(metric))
+            metric_evidence = self._compatible_evidence_for_metric(metric)
+            if not metric_evidence:
+                return []
+            matched.extend(metric_evidence)
         deduped: dict[str, EvidenceItem] = {}
         for item in matched:
             deduped.setdefault(item.evidence_id, item)
         return list(deduped.values())
+
+    def _compatible_evidence_for_metric(
+        self,
+        metric_name: str,
+    ) -> list[EvidenceItem]:
+        expected_value = self._metric_value(metric_name)
+        if expected_value is None:
+            return []
+        expected_unit = unit_for_metric(
+            metric_name,
+            currency=self.data_packet.price_basis.currency,
+        )
+        candidates = [
+            item
+            for item in self.ledger.find_by_metric(metric_name)
+            if self.evidence_id_counts.get(item.evidence_id) == 1
+            and _evidence_value_is_compatible(item, expected_value)
+            and _evidence_date_is_compatible(
+                item,
+                metric_name,
+                self.data_packet,
+                self.metrics,
+            )
+            and _evidence_period_is_compatible(item, metric_name)
+            and _evidence_unit_is_compatible(item.unit, expected_unit)
+        ]
+        with_explicit_unit = [item for item in candidates if item.unit]
+        return with_explicit_unit or candidates
+
+
+def _evidence_value(item: EvidenceItem) -> Optional[float]:
+    value = (
+        item.normalized_value
+        if item.normalized_value is not None
+        else item.value
+    )
+    return float(value) if isinstance(value, (int, float)) else None
+
+
+def _evidence_value_is_compatible(
+    item: EvidenceItem,
+    expected_value: float,
+) -> bool:
+    actual_value = _evidence_value(item)
+    if actual_value is None:
+        return False
+    return math.isclose(
+        actual_value,
+        expected_value,
+        rel_tol=0.0,
+        abs_tol=1e-9,
+    )
+
+
+def _evidence_unit_is_compatible(
+    actual_unit: Optional[str],
+    expected_unit: Optional[str],
+) -> bool:
+    if expected_unit is None or not actual_unit:
+        return True
+    return _normalize_unit(actual_unit) == _normalize_unit(expected_unit)
+
+
+def _normalize_unit(unit: str) -> str:
+    normalized = str(unit).strip().lower().replace("/", "_per_")
+    return "_".join(normalized.replace("-", "_").split())
+
+
+def _evidence_date_is_compatible(
+    item: EvidenceItem,
+    metric_name: str,
+    data_packet: DataPacket,
+    metrics_packet: MetricsPacket,
+) -> bool:
+    technical_metrics = {
+        "close",
+        "sma_10",
+        "sma_20",
+        "sma_50",
+        "sma_200",
+        "ema_10",
+        "ema_20",
+        "rsi_14",
+        "macd",
+        "macd_signal",
+        "macd_histogram",
+        "bollinger_upper",
+        "bollinger_mid",
+        "bollinger_lower",
+        "atr_14",
+        "avg_volume_20",
+    }
+    if metric_name not in technical_metrics or not item.date:
+        return True
+    expected_date = (
+        data_packet.price_basis.date
+        if metric_name == "close"
+        else metrics_packet.technical.indicator_date
+    )
+    return item.date == expected_date
+
+
+def _evidence_period_is_compatible(
+    item: EvidenceItem,
+    metric_name: str,
+) -> bool:
+    if not metric_name.endswith("_ttm"):
+        return True
+    if item.duration_days is not None and not 300 <= item.duration_days <= 430:
+        return False
+    period = str(item.period or "").strip().lower()
+    if not period or "ttm" in period or ".." in period:
+        return True
+    return not any(token in period for token in ("q1", "q2", "q3", "q4"))
 
 
 def _money(value: Optional[float], currency: str = "USD") -> str:

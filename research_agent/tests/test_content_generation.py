@@ -7,7 +7,7 @@ from research_agent.content.report_composer import compose_research_report
 from research_agent.content.publish_composer import compose_internal_best_report
 from research_agent.decision.decision_packet import DecisionPacket
 from research_agent.evidence.evidence_item import EvidenceItem
-from research_agent.evidence.evidence_ledger import EvidenceLedger
+from research_agent.evidence.evidence_ledger import EvidenceLedger, unit_for_metric
 from research_agent.quality.quality_score import calculate_quality_score
 from research_agent.reconciliation.canonical_financials import (
     CanonicalFinancials,
@@ -29,8 +29,53 @@ def _load_packet(ticker: str):
     )
 
 
+def _add_exact_metric_evidence(data, metrics, ledger):
+    for section_name in ("fundamentals", "technical", "valuation"):
+        section = getattr(metrics, section_name)
+        for metric_name, value in section.model_dump().items():
+            if not isinstance(value, (int, float)):
+                continue
+            is_technical = section_name == "technical"
+            period = (
+                metrics.fundamentals.fiscal_period
+                if metric_name.endswith("_ttm")
+                else f"as of {data.as_of_date}"
+            )
+            ledger.evidence_items.append(
+                EvidenceItem(
+                    evidence_id=f"TEST_EXACT_{metric_name.upper()}",
+                    ticker=data.ticker,
+                    claim_type=(
+                        "technical_metric"
+                        if is_technical
+                        else "valuation_metric"
+                        if section_name == "valuation"
+                        else "financial_metric"
+                    ),
+                    source_id="TEST_EXACT_EVIDENCE",
+                    source_type="deterministic_calculation",
+                    authority_rank=1,
+                    statement=f"Exact evidence for {metric_name}.",
+                    value=float(value),
+                    unit=unit_for_metric(
+                        metric_name,
+                        currency=data.price_basis.currency,
+                    ),
+                    period=period,
+                    date=(
+                        metrics.technical.indicator_date
+                        if is_technical
+                        else data.as_of_date
+                    ),
+                    supports_metrics=[metric_name],
+                    confidence="high",
+                )
+            )
+
+
 def test_content_generator_keeps_only_evidence_mapped_substantive_claims():
     data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    _add_exact_metric_evidence(data, metrics, ledger)
 
     claims = generate_research_claims(data, metrics, ledger, decision, validation)
     quality = claim_quality_metrics(claims)
@@ -128,6 +173,7 @@ def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():
     metrics.fundamentals.sbc_to_revenue = None
     metrics.fundamentals.net_cash = -4_610_000_000
     metrics.fundamentals.total_debt = 13_460_000_000
+    _add_exact_metric_evidence(data, metrics, ledger)
 
     claims = generate_research_claims(
         data,
@@ -295,6 +341,30 @@ def test_generic_company_gets_latest_reported_period_claim():
             )
         ],
     )
+    _add_exact_metric_evidence(data, metrics, ledger)
+    for metric in canonical.metrics:
+        metric_ref = (
+            "current_q_revenue"
+            if metric.metric_name == "revenue"
+            else metric.metric_name
+        )
+        ledger.evidence_items.append(
+            EvidenceItem(
+                evidence_id=metric.evidence_ids[0],
+                ticker=data.ticker,
+                claim_type="financial_metric",
+                source_id=metric.source_ids[0],
+                source_type="company_ir",
+                authority_rank=1,
+                statement=f"{metric_ref} exact current-period evidence.",
+                value=metric.value,
+                unit=metric.unit,
+                period=metric.period,
+                date=metric.end_date,
+                supports_metrics=[metric_ref],
+                confidence="high",
+            )
+        )
 
     claims = generate_research_claims(
         data,
@@ -315,6 +385,130 @@ def test_generic_company_gets_latest_reported_period_claim():
         "operating_income",
         "net_income",
     ]
+
+
+def test_claim_evidence_selection_excludes_conflicting_units_and_values():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    _add_exact_metric_evidence(data, metrics, ledger)
+    fcf_value = metrics.fundamentals.free_cash_flow_ttm
+    ledger.evidence_items.extend(
+        [
+            EvidenceItem(
+                evidence_id="CONFLICTING_FCF_UNIT",
+                ticker=data.ticker,
+                claim_type="financial_metric",
+                source_id="CONFLICTING_SOURCE",
+                source_type="deterministic_calculation",
+                authority_rank=1,
+                statement="Same number in the wrong currency.",
+                value=fcf_value,
+                unit="EUR",
+                period=metrics.fundamentals.fiscal_period,
+                date=data.as_of_date,
+                supports_metrics=["free_cash_flow_ttm"],
+            ),
+            EvidenceItem(
+                evidence_id="CONFLICTING_FCF_VALUE",
+                ticker=data.ticker,
+                claim_type="financial_metric",
+                source_id="CONFLICTING_SOURCE",
+                source_type="deterministic_calculation",
+                authority_rank=1,
+                statement="Wrong value in the right currency.",
+                value=fcf_value + 1,
+                unit=data.price_basis.currency,
+                period=metrics.fundamentals.fiscal_period,
+                date=data.as_of_date,
+                supports_metrics=["free_cash_flow_ttm"],
+            ),
+        ]
+    )
+
+    claims = generate_research_claims(data, metrics, ledger, decision, validation)
+    fcf_claim = next(
+        claim for claim in claims if claim.metric_refs == ["free_cash_flow_ttm"]
+    )
+
+    assert "CONFLICTING_FCF_UNIT" not in fcf_claim.evidence_ids
+    assert "CONFLICTING_FCF_VALUE" not in fcf_claim.evidence_ids
+
+
+def test_claim_is_dropped_when_only_conflicting_metric_evidence_remains():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    conflicting_ids = {
+        item.evidence_id
+        for item in ledger.find_by_metric("free_cash_flow_ttm")
+    }
+    ledger.evidence_items = [
+        item for item in ledger.evidence_items
+        if item.evidence_id not in conflicting_ids
+    ]
+    ledger.evidence_items.append(
+        EvidenceItem(
+            evidence_id="ONLY_WRONG_FCF_CURRENCY",
+            ticker=data.ticker,
+            claim_type="financial_metric",
+            source_id="CONFLICTING_SOURCE",
+            source_type="deterministic_calculation",
+            authority_rank=1,
+            statement="Only wrong-currency FCF evidence remains.",
+            value=metrics.fundamentals.free_cash_flow_ttm,
+            unit="EUR",
+            period=metrics.fundamentals.fiscal_period,
+            date=data.as_of_date,
+            supports_metrics=["free_cash_flow_ttm"],
+        )
+    )
+
+    claims = generate_research_claims(data, metrics, ledger, decision, validation)
+
+    assert not any(
+        "free_cash_flow_ttm" in claim.metric_refs for claim in claims
+    )
+
+
+def test_claim_is_dropped_when_its_only_evidence_id_is_ambiguous():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    existing_ids = {
+        item.evidence_id
+        for item in ledger.find_by_metric("free_cash_flow_ttm")
+    }
+    ledger.evidence_items = [
+        item for item in ledger.evidence_items
+        if item.evidence_id not in existing_ids
+    ]
+    common = {
+        "evidence_id": "AMBIGUOUS_FCF_ID",
+        "ticker": data.ticker,
+        "claim_type": "financial_metric",
+        "source_id": "DUPLICATE_SOURCE",
+        "source_type": "sec_filing",
+        "authority_rank": 1,
+        "unit": data.price_basis.currency,
+        "period": metrics.fundamentals.fiscal_period,
+        "date": data.as_of_date,
+        "supports_metrics": ["free_cash_flow_ttm"],
+    }
+    ledger.evidence_items.extend(
+        [
+            EvidenceItem(
+                **common,
+                statement="Correct value under an ambiguous identifier.",
+                value=metrics.fundamentals.free_cash_flow_ttm,
+            ),
+            EvidenceItem(
+                **common,
+                statement="Different value under the same identifier.",
+                value=metrics.fundamentals.free_cash_flow_ttm + 1,
+            ),
+        ]
+    )
+
+    claims = generate_research_claims(data, metrics, ledger, decision, validation)
+
+    assert not any(
+        "free_cash_flow_ttm" in claim.metric_refs for claim in claims
+    )
 
 
 def test_unpadded_claim_report_stays_internal_when_substance_gate_fails():

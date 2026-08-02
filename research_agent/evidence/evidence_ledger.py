@@ -71,7 +71,7 @@ def build_evidence_ledger_from_source_registry(
                     else rank_source(source.source_type),
                     statement=f"{source.source_id} supports {metric}.",
                     value=value,
-                    unit=_unit_for_metric(metric, currency=currency),
+                    unit=unit_for_metric(metric, currency=currency),
                     period=None,
                     date=None,
                     url=source.url,
@@ -248,7 +248,7 @@ def build_fundamental_derivation_evidence(
                     f"with {formula_id}; operands={operands}."
                 ),
                 value=value,
-                unit=_unit_for_metric(metric_name, currency=currency),
+                unit=unit_for_metric(metric_name, currency=currency),
                 period=(
                     f"{bridge.get('period_start') or 'unknown'}"
                     f"..{bridge.get('period_end') or as_of_date}"
@@ -1829,7 +1829,7 @@ def _claim_type_for_metric(metric_name: str, source_type: str):
     return "financial_metric"
 
 
-def _unit_for_metric(
+def unit_for_metric(
     metric_name: str,
     *,
     currency: str = "USD",
@@ -1838,6 +1838,8 @@ def _unit_for_metric(
     currency = str(currency or "USD").strip().upper()
     if "margin" in metric_name or metric_name.startswith("sbc_to"):
         return "percent"
+    if metric_name == "fcf_yield":
+        return "fraction"
     if "eps" in metric_name:
         return f"{currency}_per_share"
     if metric_name in {"close", "price", "price_basis", "price_data"} or metric_name.startswith(
