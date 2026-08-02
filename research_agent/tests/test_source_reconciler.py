@@ -8,6 +8,9 @@ from research_agent.reconciliation.source_reconciler import (
     quality_relevant_reconciliation_warnings,
     reconcile_metric,
 )
+from research_agent.research_core.calculations.fundamentals import (
+    calculate_fundamental_metrics,
+)
 from research_agent.sources.sec.companyfacts_parser import ParsedFact
 
 
@@ -358,6 +361,117 @@ def test_ttm_bridge_subtracts_matching_prior_interim_for_current_q2():
     assert fundamentals["latest_quarter"] == "FY2026_Q2"
     assert fundamentals["fiscal_year_end"] == "12-31"
     assert fundamentals["fiscal_period"] == "TTM through FY2026_Q2"
+
+
+def test_ttm_bridge_uses_matching_ytd_for_non_calendar_year():
+    facts = [
+        ParsedFact(
+            metric_name="revenue",
+            value=100,
+            unit="USD",
+            period="FY2025",
+            fy=2025,
+            fp="FY",
+            form="10-K",
+            filed="2025-10-01",
+            start="2024-09-02",
+            end="2025-08-31",
+            accession="fy-2025",
+        ),
+        ParsedFact(
+            metric_name="revenue",
+            value=70,
+            unit="USD",
+            period="FY2025_Q3",
+            fy=2025,
+            fp="Q3",
+            form="10-Q",
+            filed="2025-06-01",
+            start="2024-09-02",
+            end="2025-05-11",
+            accession="q3-2025",
+        ),
+        ParsedFact(
+            metric_name="revenue",
+            value=80,
+            unit="USD",
+            period="FY2026_Q3",
+            fy=2026,
+            fp="Q3",
+            form="10-Q",
+            filed="2026-06-01",
+            start="2025-09-01",
+            end="2026-05-10",
+            accession="q3-2026",
+        ),
+    ]
+
+    canonical, _ = build_canonical_financials_from_facts(
+        "COST", "2026-07-31", facts
+    )
+    fundamentals = canonical_financials_to_fundamentals(canonical)
+
+    assert fundamentals["ttm"]["revenue"] == 110
+    assert calculate_fundamental_metrics(fundamentals).revenue_ttm == 110
+    assert fundamentals["ttm_bridges"]["revenue"]["operands"] == {
+        "annual": 100,
+        "prior_interim": 70,
+        "current_interim": 80,
+    }
+    assert fundamentals["ttm_bridges"]["revenue"]["period_start"] == "2025-05-12"
+
+
+def test_ttm_bridge_rejects_standalone_q3_as_ytd_replacement():
+    facts = [
+        ParsedFact(
+            metric_name="revenue",
+            value=100,
+            unit="USD",
+            period="FY2025",
+            fy=2025,
+            fp="FY",
+            form="10-K",
+            filed="2025-10-01",
+            start="2024-09-02",
+            end="2025-08-31",
+            accession="fy-2025",
+        ),
+        ParsedFact(
+            metric_name="revenue",
+            value=25,
+            unit="USD",
+            period="FY2025_Q3",
+            fy=2025,
+            fp="Q3",
+            form="10-Q",
+            filed="2025-06-01",
+            start="2025-02-17",
+            end="2025-05-11",
+            accession="q3-2025",
+        ),
+        ParsedFact(
+            metric_name="revenue",
+            value=30,
+            unit="USD",
+            period="FY2026_Q3",
+            fy=2026,
+            fp="Q3",
+            form="10-Q",
+            filed="2026-06-01",
+            start="2026-02-16",
+            end="2026-05-10",
+            accession="q3-2026",
+        ),
+    ]
+
+    canonical, _ = build_canonical_financials_from_facts(
+        "COST", "2026-07-31", facts
+    )
+    fundamentals = canonical_financials_to_fundamentals(canonical)
+
+    assert "revenue" not in fundamentals["ttm"]
+    assert "revenue" not in fundamentals.get("ttm_bridges", {})
+    assert calculate_fundamental_metrics(fundamentals).revenue_ttm == 100
 
 
 def test_ttm_uses_four_reported_contiguous_quarters_before_annual_bridge():

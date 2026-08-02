@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from datetime import date
+from datetime import date, timedelta
 from typing import Iterable, Optional
 
 from research_agent.reconciliation.canonical_financials import CanonicalFinancials, CanonicalMetric
@@ -301,6 +301,7 @@ def _coalesce_share_scale_warnings(warnings: list[dict]) -> list[dict]:
 def canonical_financials_to_fundamentals(canonical: CanonicalFinancials) -> dict:
     fundamentals = {
         "quarterly": {},
+        "ttm": {},
         "annual": {},
         "balance_sheet": {},
         "share_data": {},
@@ -324,8 +325,11 @@ def canonical_financials_to_fundamentals(canonical: CanonicalFinancials) -> dict
     }
     for metric_name in duration_metrics:
         values, issue, bridge = _compatible_trailing_period_values(canonical, metric_name)
-        if len(values) == 4:
-            fundamentals["quarterly"][metric_name] = values
+        if values:
+            if len(values) == 4:
+                fundamentals["quarterly"][metric_name] = values
+            elif bridge:
+                fundamentals["ttm"][metric_name] = sum(values)
             if bridge:
                 fundamentals.setdefault("ttm_bridges", {})[metric_name] = bridge
         else:
@@ -420,6 +424,14 @@ def _compatible_trailing_period_values(
 
     annual = _latest_annual_metric(canonical, metric_name)
     if annual is not None:
+        interim_bridge = _derive_ttm_from_matching_interims(
+            canonical,
+            metric_name,
+            annual,
+        )
+        if interim_bridge is not None:
+            values, bridge = interim_bridge
+            return values, None, bridge
         derived = _derive_q4_and_trailing_values(annual, quarterly)
         if derived is not None:
             values, bridge = derived
@@ -609,6 +621,89 @@ def _derive_q4_and_trailing_values(
         )
         return selected, bridge
     return values[-4:], bridge
+
+
+def _derive_ttm_from_matching_interims(
+    canonical: CanonicalFinancials,
+    metric_name: str,
+    annual: CanonicalMetric,
+) -> Optional[tuple[list[float], dict]]:
+    if annual.fiscal_year is None:
+        return None
+    interims = [
+        metric
+        for metric in canonical.metrics_for(metric_name)
+        if metric.basis == "gaap"
+        and metric.period_bucket in {"quarterly", "ytd"}
+        and metric.fiscal_year is not None
+        and metric.fiscal_period in {"Q1", "Q2", "Q3"}
+        and metric.start_date
+        and metric.end_date
+        and _is_valid_interim_duration(metric)
+        and _is_current_metric(canonical, metric)
+    ]
+    current_candidates = [
+        metric
+        for metric in interims
+        if metric.fiscal_year == annual.fiscal_year + 1
+        and (metric.start_date or "") > (annual.end_date or "")
+    ]
+    if not current_candidates:
+        return None
+    current = max(
+        current_candidates,
+        key=lambda metric: (metric.end_date or "", metric.duration_days or 0),
+    )
+    prior_candidates = [
+        metric
+        for metric in interims
+        if metric.fiscal_year == annual.fiscal_year
+        and metric.fiscal_period == current.fiscal_period
+        and (metric.end_date or "") <= (annual.end_date or "")
+        and abs((metric.duration_days or 0) - (current.duration_days or 0)) <= 7
+    ]
+    if not prior_candidates:
+        return None
+    prior = max(
+        prior_candidates,
+        key=lambda metric: (metric.end_date or "", metric.duration_days or 0),
+    )
+    trailing_prior = annual.value - prior.value
+    return (
+        [trailing_prior, current.value],
+        {
+            "formula_id": "annual_minus_prior_interim_plus_current_interim",
+            "operands": {
+                "annual": annual.value,
+                "prior_interim": prior.value,
+                "current_interim": current.value,
+            },
+            "period_start": (
+                date.fromisoformat(prior.end_date) + timedelta(days=1)
+            ).isoformat(),
+            "period_end": current.end_date,
+            "source_ids": sorted(
+                {
+                    *annual.source_ids,
+                    *prior.source_ids,
+                    *current.source_ids,
+                }
+            ),
+        },
+    )
+
+
+def _is_valid_interim_duration(metric: CanonicalMetric) -> bool:
+    duration = metric.duration_days
+    if duration is None:
+        return False
+    expected_ranges = {
+        "Q1": (70, 110),
+        "Q2": (150, 210),
+        "Q3": (230, 310),
+    }
+    lower, upper = expected_ranges[metric.fiscal_period]
+    return lower <= duration <= upper
 
 
 def _quarters_are_contiguous(metrics: list[CanonicalMetric]) -> bool:

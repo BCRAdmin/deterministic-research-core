@@ -4,6 +4,29 @@ from research_agent.evidence.evidence_ledger import EvidenceLedger
 
 
 def map_claim_to_evidence(claim, ledger: EvidenceLedger):
+    explicit_ids = list(dict.fromkeys(
+        str(evidence_id).strip()
+        for evidence_id in getattr(claim, "evidence_ids", [])
+        if str(evidence_id).strip()
+    ))
+    if explicit_ids:
+        ledger_id_counts: dict[str, int] = {}
+        for item in ledger.evidence_items:
+            ledger_id_counts[item.evidence_id] = (
+                ledger_id_counts.get(item.evidence_id, 0) + 1
+            )
+        if all(ledger_id_counts.get(evidence_id) == 1 for evidence_id in explicit_ids):
+            return {
+                "claim_id": getattr(claim, "claim_id", None),
+                "evidence_ids": explicit_ids,
+                "status": "mapped",
+            }
+        return {
+            "claim_id": getattr(claim, "claim_id", None),
+            "evidence_ids": [],
+            "status": "missing_evidence",
+        }
+
     matched = []
     for metric in claim.evidence_metrics:
         matched.extend(ledger.find_by_metric(metric))

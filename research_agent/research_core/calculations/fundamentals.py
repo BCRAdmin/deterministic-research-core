@@ -97,32 +97,33 @@ def calculate_fundamental_metrics(
 ) -> FundamentalMetrics:
     fcf_definition = fcf_definition or FCFDefinitionConfig()
     quarterly = fundamentals.get("quarterly", {})
+    ttm = fundamentals.get("ttm", {})
     annual = fundamentals.get("annual", {})
     balance_sheet = fundamentals.get("balance_sheet", {})
     share_data = fundamentals.get("share_data", {})
 
-    revenue_ttm = _ttm_or_annual_if_present(quarterly, annual, "revenue")
-    gross_profit_ttm = _ttm_or_annual_if_present(quarterly, annual, "gross_profit")
-    operating_income_ttm = _ttm_or_annual_if_present(quarterly, annual, "operating_income")
-    ebitda_ttm = _ttm_or_annual_if_present(quarterly, annual, "ebitda")
-    net_income_ttm = _ttm_or_annual_if_present(quarterly, annual, "net_income")
-    operating_cash_flow_ttm = _ttm_or_annual_if_present(quarterly, annual, "operating_cash_flow")
-    capex_ttm = _ttm_or_annual_if_present(quarterly, annual, "capex")
-    company_defined_fcf_ttm = _ttm_or_annual_if_present(quarterly, annual, "free_cash_flow")
-    adjusted_fcf_ttm = _ttm_or_annual_if_present(quarterly, annual, "adjusted_free_cash_flow")
-    sbc_ttm = _ttm_or_annual_if_present(quarterly, annual, "sbc")
+    revenue_ttm = _ttm_or_annual_if_present(quarterly, ttm, annual, "revenue")
+    gross_profit_ttm = _ttm_or_annual_if_present(quarterly, ttm, annual, "gross_profit")
+    operating_income_ttm = _ttm_or_annual_if_present(quarterly, ttm, annual, "operating_income")
+    ebitda_ttm = _ttm_or_annual_if_present(quarterly, ttm, annual, "ebitda")
+    net_income_ttm = _ttm_or_annual_if_present(quarterly, ttm, annual, "net_income")
+    operating_cash_flow_ttm = _ttm_or_annual_if_present(quarterly, ttm, annual, "operating_cash_flow")
+    capex_ttm = _ttm_or_annual_if_present(quarterly, ttm, annual, "capex")
+    company_defined_fcf_ttm = _ttm_or_annual_if_present(quarterly, ttm, annual, "free_cash_flow")
+    adjusted_fcf_ttm = _ttm_or_annual_if_present(quarterly, ttm, annual, "adjusted_free_cash_flow")
+    sbc_ttm = _ttm_or_annual_if_present(quarterly, ttm, annual, "sbc")
     diluted_eps_ttm = _ttm_or_annual_if_present(
-        quarterly, annual, "eps_diluted"
+        quarterly, ttm, annual, "eps_diluted"
     )
-    buybacks_ttm = _ttm_or_annual_if_present(quarterly, annual, "buybacks")
+    buybacks_ttm = _ttm_or_annual_if_present(quarterly, ttm, annual, "buybacks")
     dividends_paid_ttm = _ttm_or_annual_if_present(
-        quarterly, annual, "dividends_paid"
+        quarterly, ttm, annual, "dividends_paid"
     )
     depreciation_and_amortization_ttm = _ttm_or_annual_if_present(
-        quarterly, annual, "depreciation_and_amortization"
+        quarterly, ttm, annual, "depreciation_and_amortization"
     )
     interest_expense_ttm = _ttm_or_annual_if_present(
-        quarterly, annual, "interest_expense"
+        quarterly, ttm, annual, "interest_expense"
     )
     if (
         ebitda_ttm is None
@@ -329,6 +330,7 @@ def _ttm_if_present(
 
 def _ttm_or_annual_if_present(
     quarterly: Mapping[str, Any],
+    ttm: Mapping[str, Any],
     annual: Mapping[str, Any],
     key: str,
     default: Optional[float] = None,
@@ -336,6 +338,8 @@ def _ttm_or_annual_if_present(
     values = quarterly.get(key)
     if values is not None and len(values) == 4:
         return ttm_sum([float(value) for value in values])
+    if key in ttm and ttm[key] is not None:
+        return float(ttm[key])
     if key in annual and annual[key] is not None:
         return float(annual[key])
     return default

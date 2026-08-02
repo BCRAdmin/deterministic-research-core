@@ -238,6 +238,72 @@ def test_conflicting_xbrl_alias_facts_remain_visible():
     assert fundamentals["balance_sheet"]["cash_and_equivalents"] == 1_170_000_000
 
 
+def test_same_ten_k_q4_fact_is_not_emitted_twice():
+    fixture = {
+        "facts": {
+            "us-gaap": {
+                "GrossProfit": {
+                    "units": {
+                        "USD": [
+                            {
+                                "val": 16_465_000_000,
+                                "fy": 2019,
+                                "fp": "Q4",
+                                "form": "10-K",
+                                "filed": "2019-10-11",
+                                "start": "2018-09-03",
+                                "end": "2019-09-01",
+                                "accn": "0000909832-19-000019",
+                                "frame": "CY2019",
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    }
+
+    _metrics, evidence = build_sec_fundamentals_from_companyfacts(
+        "COST", "909832", fixture
+    )
+
+    assert len(evidence) == 1
+    assert len({item.evidence_id for item in evidence}) == 1
+
+
+def test_diluted_eps_evidence_supports_trailing_eps():
+    parser = CompanyFactsParser(
+        "COST",
+        "909832",
+        {
+            "facts": {
+                "us-gaap": {
+                    "EarningsPerShareDiluted": {
+                        "units": {
+                            "USD/shares": [
+                                {
+                                    "val": 18.21,
+                                    "fy": 2025,
+                                    "fp": "FY",
+                                    "form": "10-K",
+                                    "filed": "2025-10-08",
+                                    "start": "2024-09-02",
+                                    "end": "2025-08-31",
+                                    "accn": "0000909832-25-000101",
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+    )
+
+    item = parser.to_evidence_item(parser.get_facts_for_metric("eps_diluted")[0])
+
+    assert "trailing_eps" in item.supports_metrics
+
+
 def test_sec_fundamentals_builder_returns_metrics_and_evidence():
     metrics, evidence = build_sec_fundamentals_from_companyfacts("TEST", "1", FIXTURE_COMPANYFACTS)
 

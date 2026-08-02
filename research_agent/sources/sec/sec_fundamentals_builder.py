@@ -63,17 +63,27 @@ def build_sec_fundamentals_from_companyfacts(
         "source": "sec_companyfacts",
     }
     evidence_items: list[EvidenceItem] = []
+    seen_evidence_ids: set[str] = set()
 
     for metric in SEC_FUNDAMENTAL_METRICS:
         annual = parser.latest_annual_fact(metric)
         if annual:
             metrics[f"{metric}_latest_annual"] = annual.value
-            evidence_items.append(parser.to_evidence_item(annual))
+            _append_evidence_once(
+                evidence_items,
+                seen_evidence_ids,
+                parser.to_evidence_item(annual),
+            )
 
         quarterly = parser.latest_quarterly_facts(metric, n=4)
         if quarterly:
             metrics[f"{metric}_latest_4_quarters"] = [fact.value for fact in quarterly]
-            evidence_items.extend(parser.to_evidence_item(fact) for fact in quarterly)
+            for fact in quarterly:
+                _append_evidence_once(
+                    evidence_items,
+                    seen_evidence_ids,
+                    parser.to_evidence_item(fact),
+                )
             _assign_normalized_metric(
                 metrics,
                 metric,
@@ -82,6 +92,17 @@ def build_sec_fundamentals_from_companyfacts(
             )
 
     return metrics, evidence_items
+
+
+def _append_evidence_once(
+    evidence_items: list[EvidenceItem],
+    seen_evidence_ids: set[str],
+    item: EvidenceItem,
+) -> None:
+    if item.evidence_id in seen_evidence_ids:
+        return
+    seen_evidence_ids.add(item.evidence_id)
+    evidence_items.append(item)
 
 
 def build_sec_evidence_for_source_ids(

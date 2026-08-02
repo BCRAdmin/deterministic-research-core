@@ -195,6 +195,9 @@ class CompanyFactsParser:
             f"{fact.start or 'instant'}_{fact.end or fact.filed or 'unknown'}"
         )
         concept_identity = (fact.concept or "unknown_concept").replace(":", "_")
+        supports_metrics = [fact.metric_name, _metrics_packet_name(fact.metric_name)]
+        if fact.metric_name == "eps_diluted":
+            supports_metrics.append("trailing_eps")
         return EvidenceItem(
             evidence_id=(
                 f"{self.ticker}_SEC_{fact.metric_name}_{fact.period}_"
@@ -213,11 +216,7 @@ class CompanyFactsParser:
             unit=fact.unit,
             period=fact.period,
             date=fact.end,
-            supports_metrics=list(
-                dict.fromkeys(
-                    [fact.metric_name, _metrics_packet_name(fact.metric_name)]
-                )
-            ),
+            supports_metrics=list(dict.fromkeys(supports_metrics)),
             confidence="high",
             formula_id=None,
             raw_value=fact.raw_value,

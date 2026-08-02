@@ -605,11 +605,11 @@ def test_generic_current_period_claim_uses_evidenced_yoy_comparison():
                 unit="USD",
                 period="CY2026Q1",
                 fiscal_year=2026,
-                fiscal_period="Q1",
+                fiscal_period="Q3",
                 period_bucket="quarterly",
-                start_date="2026-01-01",
-                end_date="2026-03-31",
-                duration_days=89,
+                start_date="2026-02-16",
+                end_date="2026-05-10",
+                duration_days=83,
                 basis="gaap",
                 statement_type="income_statement",
                 source_ids=["GENERIC_SEC_Q1_2026"],
@@ -665,6 +665,8 @@ def test_generic_current_period_claim_uses_evidenced_yoy_comparison():
         claim for claim in claims if "latest reported period" in claim.claim
     )
 
+    assert "latest reported period FY2026_Q3" in current.claim
+    assert "latest reported period CY2026Q1" not in current.claim
     assert "revenue changed by 10.0%" in current.claim
     assert "operating income by 20.0%" in current.claim
     assert "net income by 25.0%" in current.claim
@@ -715,6 +717,57 @@ def test_claim_evidence_selection_excludes_conflicting_units_and_values():
 
     assert "CONFLICTING_FCF_UNIT" not in fcf_claim.evidence_ids
     assert "CONFLICTING_FCF_VALUE" not in fcf_claim.evidence_ids
+
+
+def test_claim_prefers_formula_lineage_over_equal_stale_raw_evidence():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    _add_exact_metric_evidence(data, metrics, ledger)
+    expected_fcf = metrics.fundamentals.free_cash_flow_ttm
+    ledger.evidence_items.extend(
+        [
+            EvidenceItem(
+                evidence_id="STALE_EQUAL_FCF",
+                ticker=data.ticker,
+                claim_type="financial_metric",
+                source_id="OLD_SEC_FILING",
+                source_type="sec_filing",
+                authority_rank=1,
+                statement="An older filing reported the same FCF value.",
+                raw_value=expected_fcf,
+                value=expected_fcf,
+                unit="USD",
+                period="FY2022",
+                date="2022-12-31",
+                supports_metrics=["free_cash_flow_ttm"],
+                confidence="high",
+            ),
+            EvidenceItem(
+                evidence_id="CURRENT_DERIVED_FCF",
+                ticker=data.ticker,
+                claim_type="financial_metric",
+                source_id="CURRENT_DETERMINISTIC_CALCULATIONS",
+                source_type="deterministic_calculation",
+                authority_rank=1,
+                statement="Current FCF was derived from current SEC operands.",
+                normalized_value=expected_fcf,
+                value=expected_fcf,
+                unit="USD",
+                period=metrics.fundamentals.fiscal_period,
+                date=data.as_of_date,
+                supports_metrics=["free_cash_flow_ttm"],
+                formula_id="operating_cash_flow_minus_capex",
+                formula_operands={"operating_cash_flow": 2.0, "capex": 1.0},
+                confidence="high",
+            ),
+        ]
+    )
+
+    claims = generate_research_claims(data, metrics, ledger, decision, validation)
+    fcf_claim = next(
+        claim for claim in claims if claim.metric_refs == ["free_cash_flow_ttm"]
+    )
+
+    assert fcf_claim.evidence_ids == ["CURRENT_DERIVED_FCF"]
 
 
 def test_claim_is_dropped_when_only_conflicting_metric_evidence_remains():

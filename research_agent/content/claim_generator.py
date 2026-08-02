@@ -757,7 +757,58 @@ class _ClaimBuilder:
             and _evidence_unit_is_compatible(item.unit, expected_unit)
         ]
         with_explicit_unit = [item for item in candidates if item.unit]
-        return with_explicit_unit or candidates
+        candidates = with_explicit_unit or candidates
+        if not candidates:
+            return []
+
+        formula_backed = [
+            item
+            for item in candidates
+            if item.formula_id and item.formula_operands
+        ]
+        if formula_backed:
+            return _latest_evidence(formula_backed)
+
+        canonical_ids = self._canonical_evidence_ids(metric_name, expected_value)
+        canonical_matches = [
+            item for item in candidates if item.evidence_id in canonical_ids
+        ]
+        if canonical_matches:
+            return _latest_evidence(canonical_matches)
+
+        raw_candidates = [item for item in candidates if item.raw_value is not None]
+        return _latest_evidence(raw_candidates or candidates)
+
+    def _canonical_evidence_ids(
+        self,
+        metric_name: str,
+        expected_value: float,
+    ) -> set[str]:
+        if self.canonical is None:
+            return set()
+        matching_metrics = [
+            metric
+            for metric in self.canonical.metrics_for(metric_name)
+            if math.isclose(
+                float(metric.value),
+                expected_value,
+                rel_tol=0.0,
+                abs_tol=1e-9,
+            )
+        ]
+        if not matching_metrics:
+            return set()
+        latest_end_date = max(metric.end_date or "" for metric in matching_metrics)
+        latest_metrics = [
+            metric
+            for metric in matching_metrics
+            if (metric.end_date or "") == latest_end_date
+        ]
+        return {
+            evidence_id
+            for metric in latest_metrics
+            for evidence_id in metric.evidence_ids
+        }
 
 
 def _evidence_value(item: EvidenceItem) -> Optional[float]:
@@ -767,6 +818,13 @@ def _evidence_value(item: EvidenceItem) -> Optional[float]:
         else item.value
     )
     return float(value) if isinstance(value, (int, float)) else None
+
+
+def _latest_evidence(items: list[EvidenceItem]) -> list[EvidenceItem]:
+    latest_date = max((item.date or "") for item in items)
+    latest = [item for item in items if (item.date or "") == latest_date]
+    best_rank = min(item.authority_rank for item in latest)
+    return [item for item in latest if item.authority_rank == best_rank]
 
 
 def _evidence_value_is_compatible(
@@ -1229,6 +1287,16 @@ def _latest_current_period_metric(
             {"high": 3, "medium": 2, "low": 1}.get(metric.confidence, 0),
         ),
     )
+
+
+def _display_period(metric: object) -> str:
+    fiscal_year = getattr(metric, "fiscal_year", None)
+    fiscal_period = str(getattr(metric, "fiscal_period", "") or "").upper()
+    if fiscal_year is not None and fiscal_period in {"Q1", "Q2", "Q3", "Q4"}:
+        return f"FY{fiscal_year}_{fiscal_period}"
+    if fiscal_year is not None and fiscal_period == "FY":
+        return f"FY{fiscal_year}"
+    return str(getattr(metric, "period", "") or "current period")
 
 
 def _is_current_period_metric(period: str, source_ids: list[str]) -> bool:
@@ -1794,7 +1862,7 @@ def _current_period_claim_specs(
                         "evidence_type": "financial_metric",
                         "text": (
                             f"{ticker}'s latest reported period "
-                            f"{current_revenue.period} includes revenue of "
+                            f"{_display_period(current_revenue)} includes revenue of "
                             f"{_money(current_revenue.value, currency)}, "
                             "operating income of "
                             f"{_money(operating_income.value, currency)} and "

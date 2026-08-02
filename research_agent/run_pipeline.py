@@ -350,15 +350,7 @@ def run_research_pipeline(
         ticker=data_packet.ticker,
     )
     audit_report_path = _save_model_json(audit_report, manifest_output_dir / "audit_report.json")
-    publish_quality_payload = {
-        "publish_report_exists": 0,
-        "publish_mechanical_language_count": 0,
-        "publish_current_kpi_count": 0,
-        "publish_evidence_appendix_exists": 0,
-        "publish_claim_id_main_body_count": 0,
-        "publish_valuation_sensitivity_present": 0,
-        "publish_action_plan_trigger_count": 0,
-    }
+    publish_quality_payload = _empty_publish_quality_payload()
     publish_report_path = ""
     publish_quality_path = ""
     if claim_coverage_complete:
@@ -448,17 +440,10 @@ def run_research_pipeline(
         **deeptech_assessment.to_quality_payload(),
     )
     if not quality_report.publishable:
-        publish_report = compose_manual_review_publish_stub(
-            data_packet=data_packet,
-            metrics_packet=metrics_packet,
-            evidence_ledger=evidence_ledger,
-            claims=claims,
-            external_display_rating=quality_report.external_display_rating or decision_packet.rating_permission.preferred_rating.value,
-            reason=_manual_review_stub_reason(quality_report.manual_review_reasons),
-        )
-        publish_report_path = str(save_publish_report(publish_report, manifest_output_dir / "publish_report.md"))
-        publish_quality_payload = publish_report_quality(publish_report)
-        publish_quality_path = str(save_publish_quality(publish_quality_payload, manifest_output_dir / "publish_report_quality_score.json"))
+        _remove_unapproved_publish_artifacts(manifest_output_dir)
+        publish_report_path = ""
+        publish_quality_path = ""
+        publish_quality_payload = _empty_publish_quality_payload()
         _apply_publish_quality_to_report(quality_report, publish_quality_payload)
     quality_report_path = manifest_output_dir / "quality_score.json"
     internal_best_report_path = ""
@@ -1276,10 +1261,22 @@ def _count_audit_code(audit_report, code: str) -> int:
     return sum(1 for issue in audit_report.issues if issue.code == code)
 
 
-def _manual_review_stub_reason(manual_review_reasons: list[str]) -> str:
-    if not manual_review_reasons:
-        return "MANUAL_REVIEW_REQUIRED"
-    return ", ".join(manual_review_reasons[:4])
+def _empty_publish_quality_payload() -> dict[str, int]:
+    return {
+        "publish_report_exists": 0,
+        "publish_mechanical_language_count": 0,
+        "publish_current_kpi_count": 0,
+        "publish_evidence_appendix_exists": 0,
+        "publish_claim_id_main_body_count": 0,
+        "publish_valuation_sensitivity_present": 0,
+        "publish_action_plan_trigger_count": 0,
+        "publish_report_quality_score": 0,
+    }
+
+
+def _remove_unapproved_publish_artifacts(output_dir: Path) -> None:
+    for filename in ("publish_report.md", "publish_report_quality_score.json"):
+        (output_dir / filename).unlink(missing_ok=True)
 
 
 def _apply_publish_quality_to_report(quality_report, payload: dict[str, int]) -> None:
