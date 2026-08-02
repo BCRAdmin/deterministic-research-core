@@ -261,7 +261,7 @@ def test_material_calculations_require_exact_auditable_operands():
         "buybacks": 30.0,
         "dividends_paid": 60.0,
         "depreciation_and_amortization": 30.0,
-        "interest_expense": 20.0,
+        "interest_expense": -20.0,
         "eps_diluted": 10.0,
     }
     ttm_bridges = {
@@ -552,6 +552,16 @@ def test_material_calculations_require_exact_auditable_operands():
     ].formula_operands == {
         "operating_income_ttm": 120.0,
         "interest_expense_ttm": 20.0,
+    }
+    assert (
+        by_metric["interest_expense_ttm"].formula_id
+        == "absolute_value_of_sum_four_contiguous_quarters"
+    )
+    assert by_metric["interest_expense_ttm"].formula_operands == {
+        "2025_Q1": -5.0,
+        "2025_Q2": -5.0,
+        "2025_Q3": -5.0,
+        "2025_Q4": -5.0,
     }
     assert by_metric["price_to_fcf"].formula_operands == {
         "market_cap": 1_000.0,

@@ -43,6 +43,11 @@ _BUSINESS_CONTEXT_SKIP_PREFIXES = (
     "see part",
     "additional information",
 )
+_BUSINESS_CONTEXT_ABBREVIATION = re.compile(
+    r"\b(?:i\.e\.|e\.g\.|u\.s\.|u\.k\.|inc\.|corp\.|ltd\.|co\.)",
+    re.IGNORECASE,
+)
+_PROTECTED_PERIOD = "\ue000"
 
 
 @dataclass(frozen=True)
@@ -343,11 +348,16 @@ def save_sec_risk_evidence(
     *,
     filing: SecFilingReference,
     evidence: list[EvidenceItem],
+    filings: list[SecFilingReference] | None = None,
 ) -> Path:
     target = Path(path)
     target.parent.mkdir(parents=True, exist_ok=True)
     payload = {
         "filing": filing.to_dict(),
+        "filings": [
+            item.to_dict()
+            for item in (filings or [filing])
+        ],
         "evidence_items": [item.model_dump(mode="json") for item in evidence],
     }
     target.write_text(
@@ -423,11 +433,19 @@ def _is_business_context_paragraph(text: str) -> bool:
 
 
 def _business_context_fragments(text: str) -> list[str]:
-    return [
-        fragment
-        for fragment in re.split(r"(?<=[.!?])\s+", text.strip())
-        if _is_business_context_paragraph(fragment)
-    ]
+    protected = _BUSINESS_CONTEXT_ABBREVIATION.sub(
+        lambda match: match.group(0).replace(".", _PROTECTED_PERIOD),
+        text.strip(),
+    )
+    fragments: list[str] = []
+    for raw_fragment in re.split(r"(?<=[.!?])\s+", protected):
+        fragment = raw_fragment.replace(_PROTECTED_PERIOD, ".").strip()
+        fragment = re.sub(r"^[•●▪◦-]\s*", "", fragment).strip()
+        if fragment and fragment[-1] not in ".!?":
+            fragment = f"{fragment}."
+        if _is_business_context_paragraph(fragment):
+            fragments.append(fragment)
+    return fragments
 
 
 def _business_context_score(text: str) -> int:

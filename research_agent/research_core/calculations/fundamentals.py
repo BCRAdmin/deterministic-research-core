@@ -125,6 +125,8 @@ def calculate_fundamental_metrics(
     interest_expense_ttm = _ttm_or_annual_if_present(
         quarterly, ttm, annual, "interest_expense"
     )
+    if interest_expense_ttm is not None:
+        interest_expense_ttm = abs(interest_expense_ttm)
     if (
         ebitda_ttm is None
         and operating_income_ttm is not None

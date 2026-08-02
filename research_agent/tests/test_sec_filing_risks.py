@@ -152,6 +152,22 @@ def test_extracts_business_context_from_cross_referenced_annual_report():
     ]
 
 
+def test_business_context_keeps_abbreviations_and_cleans_list_markers():
+    html = """
+    <html><body>
+      <p><strong>BUSINESS SUMMARY</strong></p>
+      <p>• Subscription fees - Fees charged to customers for streaming services, including fees charged to distributors (i.e. television providers) and direct subscribers.</p>
+      <p>◦ The company operates its entertainment products and consumer services through three reportable business segments</p>
+      <div><strong>ITEM 1A. RISK FACTORS</strong></div>
+    </body></html>
+    """
+
+    assert extract_sec_business_context(html) == [
+        "Subscription fees - Fees charged to customers for streaming services, including fees charged to distributors (i.e. television providers) and direct subscribers.",
+        "The company operates its entertainment products and consumer services through three reportable business segments.",
+    ]
+
+
 def test_builds_primary_risk_evidence_without_inventing_numeric_metrics():
     filing = select_sec_risk_filing_candidates(
         _submissions(), cik="1234", as_of_date="2026-07-24"

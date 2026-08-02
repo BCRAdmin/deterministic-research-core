@@ -201,6 +201,7 @@ def run_current_research(
     risk_filing_date: Optional[str] = None
     risk_factor_count = 0
     risk_filing_to_save = None
+    risk_filings_to_save = []
     risk_evidence_to_save = []
     business_context_status = "not_available"
     business_context_filing_date: Optional[str] = None
@@ -247,6 +248,7 @@ def run_current_research(
             as_of_date=request.as_of_date,
         )
         filing_html_by_accession: dict[str, str] = {}
+        seen_risk_statements: set[str] = set()
         for filing in filing_candidates:
             try:
                 filing_html = sec.get_filing_html(
@@ -266,13 +268,23 @@ def run_current_research(
             )
             if not risk_evidence:
                 continue
-            risk_factors_path = risk_factors_dir / f"{symbol}.json"
-            risk_filing_to_save = filing
-            risk_evidence_to_save = risk_evidence
+            if risk_filing_to_save is None:
+                risk_factors_path = risk_factors_dir / f"{symbol}.json"
+                risk_filing_to_save = filing
+                risk_filing_date = filing.filing_date
+            risk_filings_to_save.append(filing)
+            for item in risk_evidence:
+                statement_key = " ".join(item.statement.lower().split())
+                if statement_key in seen_risk_statements:
+                    continue
+                seen_risk_statements.add(statement_key)
+                risk_evidence_to_save.append(item)
+                if len(risk_evidence_to_save) == 30:
+                    break
             risk_source_status = "available"
-            risk_filing_date = filing.filing_date
-            risk_factor_count = len(risk_evidence)
-            break
+            risk_factor_count = len(risk_evidence_to_save)
+            if risk_factor_count >= 4 or len(risk_evidence_to_save) == 30:
+                break
         if official_news_dir is None:
             annual_filing = next(
                 (filing for filing in filing_candidates if filing.form == "10-K"),
@@ -404,6 +416,7 @@ def run_current_research(
                 risk_factors_path,
                 filing=risk_filing_to_save,
                 evidence=risk_evidence_to_save,
+                filings=risk_filings_to_save,
             )
         if business_context_count and business_context_payload is not None:
             _write_json(

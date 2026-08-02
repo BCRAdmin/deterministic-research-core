@@ -216,10 +216,12 @@ def build_fundamental_derivation_evidence(
             if isinstance(value, (int, float))
         }
         formula_id = str(bridge.get("formula_id") or "unknown_ttm_formula")
+        absolute_result = str(raw_metric) == "interest_expense"
         if not _bridge_value_matches(
             value=float(value),
             formula_id=formula_id,
             operands=operands,
+            absolute_result=absolute_result,
         ) or not _bridge_operands_have_exact_evidence(
             runtime_items,
             metric_name=str(raw_metric),
@@ -232,6 +234,11 @@ def build_fundamental_derivation_evidence(
             ],
         ):
             continue
+        evidence_formula_id = (
+            f"absolute_value_of_{formula_id}"
+            if absolute_result
+            else formula_id
+        )
         evidence.append(
             EvidenceItem(
                 evidence_id=(
@@ -245,7 +252,7 @@ def build_fundamental_derivation_evidence(
                 authority_rank=1,
                 statement=(
                     f"{metric_name}={value:g} was derived deterministically "
-                    f"with {formula_id}; operands={operands}."
+                    f"with {evidence_formula_id}; operands={operands}."
                 ),
                 value=value,
                 unit=unit_for_metric(metric_name, currency=currency),
@@ -256,7 +263,7 @@ def build_fundamental_derivation_evidence(
                 date=str(bridge.get("period_end") or as_of_date),
                 supports_metrics=[metric_name, str(raw_metric)],
                 confidence="high",
-                formula_id=formula_id,
+                formula_id=evidence_formula_id,
                 formula_operands=operands,
                 normalized_value=value,
                 source_lineage=sorted(
@@ -1604,6 +1611,7 @@ def _bridge_value_matches(
     value: float,
     formula_id: str,
     operands: Mapping[str, float],
+    absolute_result: bool = False,
 ) -> bool:
     expected: Optional[float] = None
     if formula_id == "sum_four_contiguous_quarters" and operands:
@@ -1635,6 +1643,8 @@ def _bridge_value_matches(
                 abs_tol=1e-9,
             ):
                 expected = annual
+    if expected is not None and absolute_result:
+        expected = abs(expected)
     return (
         expected is not None
         and math.isclose(

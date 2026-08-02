@@ -53,7 +53,7 @@ def test_calculate_fundamental_metrics_builds_ttm_margins_and_fcf():
                 "capex": [2, 2, 3, 3],
                 "finance_lease_principal_payments": [1, 1, 1, 1],
                 "sbc": [4, 4, 5, 5],
-                "interest_expense": [1, 1, 1, 1],
+                "interest_expense": [-1, -1, -1, -1],
                 "buybacks": [2, 3, 4, 5],
                 "dividends_paid": [6, 7, 8, 9],
             },
@@ -96,6 +96,7 @@ def test_calculate_fundamental_metrics_builds_ttm_margins_and_fcf():
     assert metrics.free_cash_flow_ttm == 76
     assert metrics.free_cash_flow_conversion_ttm == 76 / 26
     assert metrics.free_cash_flow_definition_basis == "issuer_defined"
+    assert metrics.interest_expense_ttm == 4
     assert metrics.operating_income_interest_coverage_ttm == 52 / 4
     assert metrics.free_cash_flow_interest_coverage_ttm == 76 / 4
     assert metrics.shareholder_distributions_ttm == 44

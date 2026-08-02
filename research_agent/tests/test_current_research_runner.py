@@ -103,6 +103,48 @@ class _FakeSecWithRisks(_FakeSec):
         """
 
 
+class _FakeSecWithQuarterAndAnnualRisks(_FakeSecWithRisks):
+    def get_companyfacts(self, cik):
+        payload = super().get_companyfacts(cik)
+        row = payload["facts"]["us-gaap"]["Revenues"]["units"]["USD"][0]
+        row["form"] = "10-Q"
+        row["accn"] = "0000123456-26-000010"
+        return payload
+
+    def get_submissions(self, cik):
+        return {
+            "filings": {
+                "recent": {
+                    "form": ["10-Q", "10-K"],
+                    "filingDate": ["2026-07-20", "2026-02-20"],
+                    "reportDate": ["2026-06-30", "2025-12-31"],
+                    "accessionNumber": [
+                        "0000123456-26-000010",
+                        "0000123456-26-000001",
+                    ],
+                    "primaryDocument": ["quarter.htm", "annual.htm"],
+                }
+            }
+        }
+
+    def get_filing_html(self, **kwargs):
+        if kwargs["accession_number"].endswith("000010"):
+            return """
+            <div><strong>ITEM 1A. RISK FACTORS</strong></div>
+            <p><strong>Seasonality could adversely affect quarterly operating results.</strong></p>
+            <div>Item 2. Unregistered Sales</div>
+            """
+        return """
+        <div><strong>ITEM 1. BUSINESS</strong></div>
+        <p>The issuer develops software products and subscription services for business customers worldwide.</p>
+        <div><strong>ITEM 1A. RISK FACTORS</strong></div>
+        <p><strong>Competition could adversely affect operating results.</strong></p>
+        <p><strong>Cyberattacks may harm our services or reputation.</strong></p>
+        <p><strong>Supply interruptions could increase costs or reduce revenue.</strong></p>
+        <div>Item 2. Properties</div>
+        """
+
+
 class _FakeSecWithLaggingCompanyFacts(_FakeSecWithRisks):
     def get_companyfacts(self, cik):
         payload = super().get_companyfacts(cik)
@@ -398,6 +440,42 @@ def test_current_runner_stages_sec_risks_for_the_existing_pipeline(monkeypatch, 
     assert result["business_context_status"] == "available"
     assert result["business_context_filing_date"] == "2026-07-20"
     assert result["business_context_count"] == 1
+
+
+def test_current_runner_supplements_sparse_quarterly_risks_from_annual_filing(
+    monkeypatch,
+    tmp_path,
+):
+    def fake_pipeline(ticker, as_of_date, config):
+        payload = json.loads(
+            Path(config.sec_risk_factors_path).read_text(encoding="utf-8")
+        )
+        assert [item["form"] for item in payload["filings"]] == ["10-Q", "10-K"]
+        assert len(payload["evidence_items"]) == 4
+        assert len({item["source_id"] for item in payload["evidence_items"]}) == 2
+        authority = tmp_path / "outputs" / ticker / as_of_date / "authority_bundle"
+        authority.mkdir(parents=True)
+        (authority / "authority_manifest.json").write_text(
+            json.dumps(
+                {
+                    "contract_id": "room16.research_authority_bundle",
+                    "analysis_allowed": True,
+                }
+            ),
+            encoding="utf-8",
+        )
+
+    monkeypatch.setattr(runner, "run_research_pipeline", fake_pipeline)
+    result = run_current_research(
+        _request(tmp_path),
+        price_provider=_FakePrices(),
+        sec_client=_FakeSecWithQuarterAndAnnualRisks(),
+    )
+
+    assert result["risk_source_status"] == "available"
+    assert result["risk_filing_date"] == "2026-07-20"
+    assert result["risk_factor_count"] == 4
+    assert result["business_context_filing_date"] == "2026-02-20"
 
 
 def test_current_runner_blocks_when_latest_sec_financials_are_not_in_companyfacts(
