@@ -119,6 +119,8 @@ def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():
     data.ticker = "GENERIC"
     data.price_basis.currency = "HUF"
     metrics.fundamentals.revenue_growth_yoy = None
+    metrics.fundamentals.net_cash = -4_610_000_000
+    metrics.fundamentals.total_debt = 13_460_000_000
 
     claims = generate_research_claims(
         data,
@@ -153,6 +155,7 @@ def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():
                 "revenue TTM of",
                 "FCF TTM is",
                 "net cash of",
+                "net debt of",
                 "combines with revenue of",
                 "where revenue ",
             )
@@ -162,6 +165,12 @@ def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():
     assert len(monetary_claims) == 7
     assert all("$" not in claim.claim for claim in monetary_claims)
     assert all("HUF" in claim.claim for claim in monetary_claims)
+    balance_sheet_claim = next(
+        claim for claim in claims if "balance-sheet position" in claim.claim
+    )
+    assert "net debt of 4.61B HUF" in balance_sheet_claim.claim
+    assert "Balance-sheet flexibility" not in balance_sheet_claim.claim
+    assert "holding corridor" not in balance_sheet_claim.investment_implication
     assert "$" not in research_report
     assert "$" not in internal_report
     assert "4.34B HUF" in research_report

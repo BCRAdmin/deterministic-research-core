@@ -156,6 +156,21 @@ def test_auditor_blocks_currency_that_conflicts_with_evidence_ledger():
     assert not correct.has_issue("NUMERIC_MISMATCH", metric="revenue_ttm")
 
 
+def test_auditor_compares_net_debt_with_the_signed_net_cash_position():
+    metrics = simple_metrics(ticker="ANY")
+    metrics.fundamentals.net_cash = -4_610_000_000
+
+    correct = audit_markdown_report("Net debt is 4.61B HUF.", metrics)
+    wrong_amount = audit_markdown_report("Net debt is 3.00B HUF.", metrics)
+
+    metrics.fundamentals.net_cash = 4_610_000_000
+    false_debt = audit_markdown_report("Net debt is 4.61B HUF.", metrics)
+
+    assert not correct.has_issue("NUMERIC_MISMATCH", metric="net_debt")
+    assert wrong_amount.has_issue("NUMERIC_MISMATCH", metric="net_debt")
+    assert false_debt.has_issue("NUMERIC_MISMATCH", metric="net_debt")
+
+
 def test_auditor_catches_nvda_fcf_ttm_mismatch():
     audit = audit_fixture("nvda_2026_05_01")
 

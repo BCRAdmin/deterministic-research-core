@@ -179,10 +179,13 @@ def map_claim_to_metric(
     metric_path = METRIC_PATHS.get(metric_name)
     if metric_path is None:
         return None
+    validated_value = _get_nested_value(metrics_packet, metric_path)
+    if metric_name == "net_debt" and validated_value is not None:
+        validated_value = max(-validated_value, 0.0)
     return MappedMetric(
         metric_name=metric_name,
         metric_path=metric_path,
-        validated_value=_get_nested_value(metrics_packet, metric_path),
+        validated_value=validated_value,
     )
 
 

@@ -214,15 +214,39 @@ class _ClaimBuilder:
             counterargument="Sector and lifecycle matter, but persistent dilution can still reduce equity quality.",
             implication="Treat SBC as a risk modifier rather than an automatic rating override.",
         )
+        net_cash = self.metrics.fundamentals.net_cash
+        total_debt = self.metrics.fundamentals.total_debt
+        if net_cash is None:
+            balance_sheet_claim = (
+                f"Total debt is {self._money(total_debt)}, while a signed net cash "
+                "or net debt position is not available in the evidence set."
+            )
+        elif net_cash < 0:
+            balance_sheet_claim = (
+                "The balance-sheet position includes net debt of "
+                f"{self._money(abs(net_cash))} and total debt of "
+                f"{self._money(total_debt)}. This is a leverage input, not "
+                "evidence of financial flexibility."
+            )
+        else:
+            balance_sheet_claim = (
+                "The balance-sheet position includes net cash of "
+                f"{self._money(net_cash)} and total debt of "
+                f"{self._money(total_debt)}. This is a liquidity input, not a "
+                "standalone rating signal."
+            )
         self.add(
             "Fundamental Analysis",
             "fundamental",
             "financial_metric",
-            f"Balance-sheet flexibility is anchored in net cash of {self._money(self.metrics.fundamentals.net_cash)} and debt evidence, which affects how much downside tolerance the action plan can carry.",
+            balance_sheet_claim,
             ["net_cash", "total_debt"],
             "medium",
             "medium",
-            implication="A stronger liquidity position can widen the acceptable holding corridor.",
+            implication=(
+                "Interpret liquidity or leverage only from the signed net position "
+                "and its underlying debt evidence."
+            ),
         )
 
         self.add(
