@@ -22,7 +22,7 @@ from research_agent.evidence.evidence_ledger import unit_for_metric
 
 
 AUTHORITY_CONTRACT_ID = "room16.research_authority_bundle"
-AUTHORITY_CONTRACT_VERSION = 1
+AUTHORITY_CONTRACT_VERSION = 2
 PIPELINE_VERSION = "research_agent_v0.1.0"
 
 REQUIRED_PACKET_FILES = {
