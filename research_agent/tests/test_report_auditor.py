@@ -167,6 +167,30 @@ def test_direct_percent_evidence_normalizes_single_digit_percentage():
     assert not audit.has_issue("NUMERIC_MISMATCH")
 
 
+def test_auditor_maps_each_matching_quarter_percentage_to_nearest_growth_metric():
+    metrics = simple_metrics(ticker="GENERIC")
+    metrics.fundamentals.current_period_revenue_growth_yoy = 0.02
+    metrics.fundamentals.current_period_operating_income_growth_yoy = -0.014
+    metrics.fundamentals.current_period_net_income_growth_yoy = -0.002
+    markdown = (
+        "Matching-quarter evidence shows revenue growth 2.0%, "
+        "operating-income growth -1.4%, net-income growth -0.2%."
+    )
+
+    percent_claims = [
+        claim for claim in extract_numeric_claims(markdown)
+        if claim.unit == "percent"
+    ]
+    audit = audit_markdown_report(markdown, metrics)
+
+    assert [claim.possible_metric for claim in percent_claims] == [
+        "current_period_revenue_growth_yoy",
+        "current_period_operating_income_growth_yoy",
+        "current_period_net_income_growth_yoy",
+    ]
+    assert not audit.has_issue("NUMERIC_MISMATCH")
+
+
 def test_auditor_blocks_direction_from_unbenchmarked_valuation():
     metrics = simple_metrics(ticker="GENERIC")
     decision = build_decision_packet(metrics)

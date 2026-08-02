@@ -122,7 +122,10 @@ def _claim(
         unit=unit,
         nearby_text=nearby_text,
         line_number=line_number,
-        possible_metric=infer_possible_metric(metric_context or nearby_text),
+        possible_metric=infer_possible_metric(
+            metric_context or nearby_text,
+            unit=unit,
+        ),
         period_hint=_infer_period_hint(nearby_text),
     )
 

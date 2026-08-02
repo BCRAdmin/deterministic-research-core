@@ -132,6 +132,15 @@ METRIC_PATHS = {
     "price_to_fcf": "valuation.price_to_fcf",
     "close": "technical.close",
     "rsi_14": "technical.rsi_14",
+    "current_period_revenue_growth_yoy": (
+        "fundamentals.current_period_revenue_growth_yoy"
+    ),
+    "current_period_operating_income_growth_yoy": (
+        "fundamentals.current_period_operating_income_growth_yoy"
+    ),
+    "current_period_net_income_growth_yoy": (
+        "fundamentals.current_period_net_income_growth_yoy"
+    ),
 }
 
 
@@ -141,7 +150,7 @@ class MappedMetric(BaseModel):
     validated_value: Optional[float] = None
 
 
-def infer_possible_metric(text: str) -> Optional[str]:
+def infer_possible_metric(text: str, unit: Optional[str] = None) -> Optional[str]:
     normalized = _normalize_text(text)
     compact = normalized.replace(" / ", "/")
     if "sbc/revenue" in compact or "sbc to revenue" in normalized or "sbc-to-revenue" in normalized:
@@ -152,6 +161,10 @@ def infer_possible_metric(text: str) -> Optional[str]:
         return "price_to_fcf"
     if "fcf margin" in normalized or "free cash flow margin" in normalized:
         return "fcf_margin_ttm"
+    if str(unit or "").lower() == "percent":
+        growth_metric = _nearest_growth_metric(normalized)
+        if growth_metric is not None:
+            return growth_metric
     tokens = set(normalized.replace("-", " ").split())
     if "rsi" in tokens:
         return "rsi_14"
@@ -173,7 +186,10 @@ def map_claim_to_metric(
     claim: ExtractedNumericClaim,
     metrics_packet: Any,
 ) -> Optional[MappedMetric]:
-    metric_name = claim.possible_metric or infer_possible_metric(claim.nearby_text)
+    metric_name = claim.possible_metric or infer_possible_metric(
+        claim.nearby_text,
+        unit=claim.unit,
+    )
     if metric_name is None:
         return None
     if metric_name == "forward_pe_consensus" and "guidance" in claim.nearby_text.lower():
@@ -205,3 +221,31 @@ def _get_nested_value(payload: Any, path: str) -> Optional[float]:
 
 def _normalize_text(text: str) -> str:
     return " ".join(text.lower().replace("_", " ").split())
+
+
+def _nearest_growth_metric(text: str) -> Optional[str]:
+    semantic = text.replace("-", " ")
+    markers = {
+        "current_period_revenue_growth_yoy": (
+            "revenue growth",
+            "revenue changed",
+            "revenue by",
+        ),
+        "current_period_operating_income_growth_yoy": (
+            "operating income growth",
+            "operating income changed",
+            "operating income by",
+        ),
+        "current_period_net_income_growth_yoy": (
+            "net income growth",
+            "net income changed",
+            "net income by",
+        ),
+    }
+    candidates = [
+        (semantic.rfind(marker), metric_name)
+        for metric_name, metric_markers in markers.items()
+        for marker in metric_markers
+        if semantic.rfind(marker) >= 0
+    ]
+    return max(candidates)[1] if candidates else None
