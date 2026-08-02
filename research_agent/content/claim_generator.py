@@ -296,7 +296,14 @@ class _ClaimBuilder:
             "Technical Setup",
             "technical",
             "technical_metric",
-            f"The technical setup uses close {_plain_number(self.metrics.technical.close)}, 50-SMA {_plain_number(self.metrics.technical.sma_50)}, 200-SMA {_plain_number(self.metrics.technical.sma_200)} and RSI {_number(self.metrics.technical.rsi_14)}, creating timing risk if price cannot reclaim trend support.",
+            (
+                "The technical setup uses close "
+                f"{self._money(self.metrics.technical.close)}, 50-SMA "
+                f"{self._money(self.metrics.technical.sma_50)}, 200-SMA "
+                f"{self._money(self.metrics.technical.sma_200)} and RSI "
+                f"{_number(self.metrics.technical.rsi_14)}, creating timing "
+                "risk if price cannot reclaim trend support."
+            ),
             ["close", "sma_50", "sma_200", "rsi_14"],
             "high",
             "high",
@@ -306,7 +313,13 @@ class _ClaimBuilder:
             "Technical Setup",
             "technical",
             "technical_metric",
-            f"{ticker}'s close of {_plain_number(self.metrics.technical.close)} and moving-average position imply {_technical_interpretation(self.metrics)}; this remains timing evidence and does not prescribe an entry, trim or position size.",
+            (
+                f"{ticker}'s close of {self._money(self.metrics.technical.close)} "
+                "and moving-average position imply "
+                f"{_technical_interpretation(self.metrics)}; this remains "
+                "timing evidence and does not prescribe an entry, trim or "
+                "position size."
+            ),
             ["close", "sma_50", "sma_200", "rsi_14"],
             "medium",
             "medium",
@@ -408,7 +421,13 @@ class _ClaimBuilder:
             "Catalysts & Triggers",
             "catalyst",
             "price_data",
-            f"Catalysts for {ticker} at the validated close of {_plain_number(self.metrics.technical.close)} should be limited to confirmed packet inputs; missing earnings or forward company data should be stated as unavailable rather than converted into event-risk claims.",
+            (
+                f"Catalysts for {ticker} at the validated close of "
+                f"{self._money(self.metrics.technical.close)} should be limited "
+                "to confirmed packet inputs; missing earnings or forward "
+                "company data should be stated as unavailable rather than "
+                "converted into event-risk claims."
+            ),
             ["close"],
             "high",
             "medium",
@@ -418,7 +437,12 @@ class _ClaimBuilder:
             "Catalysts & Triggers",
             "catalyst",
             "technical_metric",
-            f"Trigger language should use evidence-backed levels such as 50-SMA {_plain_number(self.metrics.technical.sma_50)} and 200-SMA {_plain_number(self.metrics.technical.sma_200)}, not unvalidated price targets.",
+            (
+                "Trigger language should use evidence-backed levels such as "
+                f"50-SMA {self._money(self.metrics.technical.sma_50)} and "
+                f"200-SMA {self._money(self.metrics.technical.sma_200)}, not "
+                "unvalidated price targets."
+            ),
             ["sma_50", "sma_200"],
             "medium",
             "medium",

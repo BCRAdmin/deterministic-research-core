@@ -172,6 +172,16 @@ def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():
     assert "net debt of 4.61B HUF" in balance_sheet_claim.claim
     assert "Balance-sheet flexibility" not in balance_sheet_claim.claim
     assert "holding corridor" not in balance_sheet_claim.investment_implication
+    technical_text = "\n".join(
+        claim.claim for claim in claims if claim.section == "Technical Setup"
+    )
+    catalyst_text = "\n".join(
+        claim.claim for claim in claims if claim.section == "Catalysts & Triggers"
+    )
+    assert "close 141.71 HUF" in technical_text
+    assert f"50-SMA {metrics.technical.sma_50:.2f} HUF" in technical_text
+    assert f"200-SMA {metrics.technical.sma_200:.2f} HUF" in technical_text
+    assert "validated close of 141.71 HUF" in catalyst_text
     assert "$" not in research_report
     assert "$" not in internal_report
     assert "4.34B HUF" in research_report

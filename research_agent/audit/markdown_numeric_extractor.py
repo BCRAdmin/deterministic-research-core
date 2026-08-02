@@ -48,15 +48,15 @@ def _extract_line_claims(line: str, line_number: int) -> list[ExtractedNumericCl
             )
         )
 
-    for match in _iter_currency_matches(line):
-        raw_text, number, scale, currency = match
+    for match, currency in _iter_currency_matches(line):
         claims.append(
             _claim(
-                raw_text=raw_text,
-                value=_normalize_number(number, scale),
+                raw_text=match.group(0),
+                value=_normalize_number(match.group("number"), match.group("scale")),
                 unit=currency,
                 nearby_text=nearby,
                 line_number=line_number,
+                metric_context=_metric_context(line, match.start(), match.end()),
             )
         )
 
@@ -68,6 +68,7 @@ def _extract_line_claims(line: str, line_number: int) -> list[ExtractedNumericCl
                 unit="percent",
                 nearby_text=nearby,
                 line_number=line_number,
+                metric_context=_metric_context(line, match.start(), match.end()),
             )
         )
 
@@ -79,13 +80,14 @@ def _extract_line_claims(line: str, line_number: int) -> list[ExtractedNumericCl
                 unit="multiple",
                 nearby_text=nearby,
                 line_number=line_number,
+                metric_context=_metric_context(line, match.start(), match.end()),
             )
         )
 
     return claims
 
 
-def _iter_currency_matches(line: str) -> Iterable[tuple[str, str, Optional[str], str]]:
+def _iter_currency_matches(line: str) -> Iterable[tuple[re.Match[str], str]]:
     seen_spans: set[tuple[int, int]] = set()
     for regex in [CURRENCY_PREFIX_RE, CURRENCY_SUFFIX_RE]:
         for match in regex.finditer(line):
@@ -93,7 +95,7 @@ def _iter_currency_matches(line: str) -> Iterable[tuple[str, str, Optional[str],
                 continue
             seen_spans.add(match.span())
             currency = "usd" if match.group("symbol") else (match.group("currency") or "USD").lower()
-            yield match.group(0), match.group("number"), match.group("scale"), currency
+            yield match, currency
 
 
 def _claim(
@@ -102,6 +104,7 @@ def _claim(
     unit: str,
     nearby_text: str,
     line_number: int,
+    metric_context: Optional[str] = None,
 ) -> ExtractedNumericClaim:
     return ExtractedNumericClaim(
         raw_text=raw_text,
@@ -109,9 +112,13 @@ def _claim(
         unit=unit,
         nearby_text=nearby_text,
         line_number=line_number,
-        possible_metric=infer_possible_metric(nearby_text),
+        possible_metric=infer_possible_metric(metric_context or nearby_text),
         period_hint=_infer_period_hint(nearby_text),
     )
+
+
+def _metric_context(line: str, start: int, end: int) -> str:
+    return line[max(0, start - 48) : end]
 
 
 def _normalize_number(number_text: str, scale_text: Optional[str]) -> float:

@@ -62,6 +62,7 @@ METRIC_ALIASES = {
     ],
     "sma_200": [
         "200 sma",
+        "200-sma",
         "200-tage-sma",
         "200 tage durchschnitt",
         "200-day moving average",
@@ -69,6 +70,7 @@ METRIC_ALIASES = {
     ],
     "sma_50": [
         "50 sma",
+        "50-sma",
         "50-tage-sma",
         "50 tage durchschnitt",
         "50-day moving average",

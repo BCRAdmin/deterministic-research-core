@@ -1776,6 +1776,8 @@ def _metric_aliases(metric_name: str) -> set[str]:
         return {"ev_to_sales", "revenue_ttm", "close", "price_data"}
     if normalized == "price_to_fcf":
         return {"price_to_fcf", "free_cash_flow_ttm", "close", "price_data"}
+    if normalized in {"sma_50", "sma_200", "rsi_14"}:
+        return {normalized, "technical_indicators"}
     aliases = {normalized}
     alias_map = {
         "revenue": {"revenue", "revenue_ttm", "sales", "umsatz"},
