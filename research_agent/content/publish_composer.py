@@ -89,6 +89,7 @@ def compose_publish_report(
             rating,
             grouped,
             metrics_packet,
+            decision_packet,
             claim_list,
             evidence_ledger,
             currency=data_packet.price_basis.currency,
@@ -674,6 +675,7 @@ def _generic_publish_report(
     rating: str,
     grouped: dict[str, list[ResearchClaim]],
     metrics_packet: MetricsPacket,
+    decision_packet: DecisionPacket,
     claim_list: list[ResearchClaim],
     evidence_ledger: EvidenceLedger,
     *,
@@ -704,9 +706,9 @@ def _generic_publish_report(
         (
             "| Scenario | KPI trigger | Valuation implication | Rating implication |\n"
             "|---|---|---|---|\n"
-            "| Bull | Current-period KPIs improve while free-cash-flow conversion holds | The current multiple becomes easier to defend | Move more constructive |\n"
-            "| Base | Fundamentals remain intact but valuation and timing stay balanced | Current risk/reward supports discipline | Keep the current stance |\n"
-            "| Bear | Growth, margins, cash conversion or technical trend weakens | Multiple support deteriorates | Reduce risk / downgrade |"
+            "| Constructive | Current-period KPIs improve while free-cash-flow conversion holds | Benchmark evidence would need to show valuation support | Reassess toward a more constructive rating |\n"
+            "| Current | Measured fundamental and technical signals remain unchanged | Unbenchmarked multiples remain observations only | Retain the current research rating |\n"
+            "| Cautious | Fundamentals or the technical trend deteriorate | Benchmark evidence would need to show valuation pressure | Reassess toward a more cautious rating |"
         ),
         "",
         "## Technical Setup",
@@ -724,8 +726,16 @@ def _generic_publish_report(
         "## Catalysts",
         _paragraphs(grouped.get("Catalysts & Triggers", []), limit=4),
         "",
-        "## Final Rating & Action Plan",
-        _final_rating_section(ticker, rating, f, v, t, currency=currency),
+        "## Final Rating & Review Conditions",
+        _final_rating_section(
+            ticker,
+            rating,
+            f,
+            v,
+            t,
+            decision_packet,
+            currency=currency,
+        ),
         "",
         "## Evidence Appendix",
         _evidence_appendix(claim_list, evidence_ledger),
@@ -1563,19 +1573,73 @@ def _current_kpi_claims(claims: list[ResearchClaim]) -> list[ResearchClaim]:
     ]
 
 
-def _final_rating_section(ticker: str, rating: str, f, v, t, *, currency: str = "USD") -> str:
-    return "\n\n".join([
-        f"Final Rating: {rating}. The central debate is whether {ticker}'s current business momentum can overcome valuation and timing constraints.",
-        (
-            f"Why this rating? Revenue of {_fmt_money(f.revenue_ttm, currency)} and FCF of {_fmt_money(f.free_cash_flow_ttm, currency)} support the base case, "
-            f"but EV/Sales of {_fmt_multiple(v.ev_to_sales)}, P/FCF of {_fmt_multiple(v.price_to_fcf)} and RSI of {_fmt_number(t.rsi_14)} argue against chasing the stock."
-        ),
-        "Why not more bullish? A more constructive stance needs either a better entry point, stronger cash-flow conversion after investment needs, or clearer technical confirmation.",
-        "Why not more bearish? The evidence still supports a functioning business with defensible cash generation; the rating is about position discipline, not a rejection of the company.",
-        "Research continuation rule: keep the current stance while risk/reward, technical trend and current-period cash conversion remain unchanged.",
-        "Upgrade or downgrade only when new evidence changes valuation support, technical confirmation or durable free-cash-flow conversion.",
-        "Upgrade/downgrade triggers: improve the stance if fundamentals accelerate with cleaner FCF conversion; cut risk if source quality deteriorates, valuation expands further, or the technical setup breaks down.",
-    ])
+def _final_rating_section(
+    ticker: str,
+    rating: str,
+    f,
+    v,
+    t,
+    decision_packet: DecisionPacket,
+    *,
+    currency: str = "USD",
+) -> str:
+    scores = decision_packet.signal_scores
+    rating_reason = (
+        decision_packet.analytical_rating_reason
+        or decision_packet.rating_permission.reason
+    )
+    if scores.valuation_status == "unbenchmarked":
+        valuation_text = (
+            f"EV/Sales of {_fmt_multiple(v.ev_to_sales)} and P/FCF of "
+            f"{_fmt_multiple(v.price_to_fcf)} are unbenchmarked observations. "
+            "They add neither a positive nor a negative rating signal."
+        )
+    elif scores.valuation_status != "measured":
+        valuation_text = (
+            "Valuation is not sufficiently measured and therefore cannot move "
+            "the rating."
+        )
+    elif scores.valuation_score > 0:
+        valuation_text = "Benchmarked valuation evidence is constructive."
+    elif scores.valuation_score < 0:
+        valuation_text = "Benchmarked valuation evidence is cautious."
+    else:
+        valuation_text = "Benchmarked valuation evidence is neutral."
+
+    technical_text = (
+        "constructive"
+        if scores.technical_status == "measured" and scores.technical_score > 0
+        else "cautious"
+        if scores.technical_status == "measured" and scores.technical_score < 0
+        else "neutral or incomplete"
+    )
+    return "\n\n".join(
+        [
+            f"Final Rating: {rating}. {rating_reason}",
+            (
+                f"Factual anchors are revenue of {_fmt_money(f.revenue_ttm, currency)}, "
+                f"FCF of {_fmt_money(f.free_cash_flow_ttm, currency)} and RSI of "
+                f"{_fmt_number(t.rsi_14)}. The measured technical direction is "
+                f"{technical_text}."
+            ),
+            valuation_text,
+            (
+                "Why not more constructive? A rating change requires stronger "
+                "measured fundamentals or technical confirmation and, where "
+                "valuation is relevant, benchmark evidence."
+            ),
+            (
+                "Why not more cautious? A raw multiple or an isolated price "
+                "signal cannot establish business deterioration."
+            ),
+            (
+                f"Review condition: retain the {ticker} research rating while "
+                "the measured evidence state is unchanged. Reassess only when "
+                "new primary evidence changes fundamentals, benchmarked valuation "
+                "or the technical trend."
+            ),
+        ]
+    )
 
 
 def _googl_rating_section(rating: str) -> str:

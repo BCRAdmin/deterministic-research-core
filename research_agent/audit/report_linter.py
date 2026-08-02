@@ -82,6 +82,9 @@ def audit_markdown_report(
     issues.extend(_lint_no_news_claim(markdown, source_registry))
     issues.extend(_lint_evidence_grounding(claims, metrics_packet, evidence_ledger))
     issues.extend(_lint_decision_permission(markdown, decision_packet))
+    issues.extend(
+        _lint_unbenchmarked_valuation_direction(markdown, decision_packet)
+    )
     issues.extend(_lint_unsupported_guidance_claims(markdown, evidence_ledger))
     issues.extend(_lint_unsupported_earnings_claims(markdown, validation_report))
     issues.extend(
@@ -483,6 +486,75 @@ def _lint_decision_permission(
                 message=f"Final rating {rating.value} is blocked by DecisionPacket.",
             )
         ]
+    return []
+
+
+UNBENCHMARKED_VALUATION_DIRECTION_PATTERNS = (
+    re.compile(r"\bvaluation(?:\s+and\s+[^.\n]{0,60})?\s+constraints?\b", re.IGNORECASE),
+    re.compile(
+        r"\b(?:ev/sales|p/fcf)\b[^\n]{0,200}"
+        r"\b(?:argues?\s+against|limits?|blocks?|"
+        r"supports?\s+(?:the\s+)?(?:rating|case|view)|"
+        r"justif(?:y|ies))\b",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"\b(?:current\s+)?multiple\s+(?:becomes\s+easier\s+to\s+defend|"
+        r"support\s+deteriorates)\b",
+        re.IGNORECASE,
+    ),
+    re.compile(r"\bvaluation\s+expands?\s+further\b", re.IGNORECASE),
+)
+UNBENCHMARKED_VALUATION_LABEL_PATTERN = re.compile(
+    r"\b(?:ev/sales|p/fcf)\b[^\n]{0,200}\b(?:cheap|expensive)\b",
+    re.IGNORECASE,
+)
+
+
+def _lint_unbenchmarked_valuation_direction(
+    markdown: str,
+    decision_packet: Optional[DecisionPacket],
+) -> list[AuditIssue]:
+    if (
+        decision_packet is None
+        or decision_packet.signal_scores.valuation_status != "unbenchmarked"
+    ):
+        return []
+
+    neutral_markers = (
+        "unbenchmarked",
+        "without a validated peer",
+        "without a validated benchmark",
+        "does not label",
+        "without labeling",
+        "benchmark evidence",
+        "raw multiple",
+        "observations only",
+    )
+    for line_number, line in enumerate(markdown.splitlines(), start=1):
+        lower = line.lower()
+        directional_match = any(
+            pattern.search(line)
+            for pattern in UNBENCHMARKED_VALUATION_DIRECTION_PATTERNS
+        )
+        unsupported_label = (
+            UNBENCHMARKED_VALUATION_LABEL_PATTERN.search(line) is not None
+            and not any(marker in lower for marker in neutral_markers)
+        )
+        if directional_match or unsupported_label:
+            return [
+                AuditIssue(
+                    severity="error",
+                    code="UNBENCHMARKED_VALUATION_DIRECTION",
+                    metric="valuation",
+                    message=(
+                        "Report gives an unbenchmarked valuation multiple a "
+                        "positive or negative rating direction."
+                    ),
+                    line_number=line_number,
+                    raw_text=line.strip(),
+                )
+            ]
     return []
 
 

@@ -195,8 +195,9 @@ def _render_investment_thesis(
     fcf = metrics_packet.fundamentals.free_cash_flow_ttm
     ev_sales = metrics_packet.valuation.ev_to_sales
     currency = data_packet.price_basis.currency
+    valuation_status = decision_packet.signal_scores.valuation_status
     parts = [
-        f"- Thesis anchor: `{preferred}` reflects the balance between business momentum, valuation discipline and technical timing.",
+        f"- Thesis anchor: `{preferred}` follows the measured fundamental and technical evidence plus the explicit valuation measurement status.",
     ]
     if revenue is not None:
         parts.append(f"- Fundamental basis: revenue scale is `{_fmt_money(revenue, currency)}`.")
@@ -205,7 +206,21 @@ def _render_investment_thesis(
     else:
         parts.append("- Cash-conversion basis: FCF is unavailable in the evidence set and should be treated as a data limitation.")
     if ev_sales is not None:
-        parts.append(f"- Valuation constraint: EV/Sales is `{ev_sales:.2f}x`.")
+        if valuation_status == "unbenchmarked":
+            parts.append(
+                f"- Valuation observation: EV/Sales is `{ev_sales:.2f}x`; "
+                "without benchmark evidence it is neutral for the rating."
+            )
+        elif valuation_status == "measured":
+            parts.append(
+                f"- Benchmarked valuation evidence includes EV/Sales of "
+                f"`{ev_sales:.2f}x`."
+            )
+        else:
+            parts.append(
+                f"- Valuation observation: EV/Sales is `{ev_sales:.2f}x`, but "
+                "valuation is not sufficiently measured to affect the rating."
+            )
     parts.append(
         f"- Research implication: the stance for `{data_packet.ticker}` remains conditional on the business, valuation and technical evidence."
     )
@@ -250,14 +265,36 @@ def _render_final_rating_logic(
     v = metrics_packet.valuation
     t = metrics_packet.technical
     currency = data_packet.price_basis.currency
+    scores = decision_packet.signal_scores
+    rating_reason = (
+        decision_packet.analytical_rating_reason
+        or decision_packet.rating_permission.reason
+    )
+    if scores.valuation_status == "unbenchmarked":
+        valuation_line = (
+            f"- Valuation status: EV/Sales `{_fmt_multiple(v.ev_to_sales)}` and "
+            f"P/FCF `{_fmt_multiple(v.price_to_fcf)}` are unbenchmarked "
+            "observations and add neither a positive nor a negative rating signal."
+        )
+    elif scores.valuation_status != "measured":
+        valuation_line = (
+            "- Valuation status: insufficiently measured; valuation cannot move "
+            "the rating."
+        )
+    elif scores.valuation_score > 0:
+        valuation_line = "- Valuation status: benchmarked evidence is constructive."
+    elif scores.valuation_score < 0:
+        valuation_line = "- Valuation status: benchmarked evidence is cautious."
+    else:
+        valuation_line = "- Valuation status: benchmarked evidence is neutral."
     lines = [
-        f"- Why this rating? `{preferred}` balances revenue of `{_fmt_money(f.revenue_ttm, currency)}` against valuation and technical timing.",
-        f"- Cash conversion: FCF is `{_fmt_money(f.free_cash_flow_ttm, currency)}` and determines whether growth converts into equity value.",
-        f"- Why not more bullish? EV/Sales `{_fmt_multiple(v.ev_to_sales)}` limits new-money urgency unless current-period KPIs accelerate.",
-        f"- Additional valuation/technical constraint: P/FCF `{_fmt_multiple(v.price_to_fcf)}` and RSI `{_fmt_number(t.rsi_14)}` argue against chasing without a better setup.",
-        "- Why not more bearish? The report avoids a harsher stance unless validated fundamentals deteriorate, source reconciliation breaks, or technical weakness confirms a deeper drawdown.",
-        "- What would change the rating? Cleaner current-period KPI acceleration, better FCF conversion, lower valuation risk or confirmed technical recovery would support a more constructive action.",
-        f"- Research-status rule: keep `{data_packet.ticker}` at `{preferred}` until better risk/reward supports an upgrade or weaker current-period evidence supports a downgrade.",
+        f"- Why this rating? `{preferred}`: {rating_reason}",
+        f"- Fundamental anchors: revenue is `{_fmt_money(f.revenue_ttm, currency)}` and FCF is `{_fmt_money(f.free_cash_flow_ttm, currency)}`.",
+        valuation_line,
+        f"- Technical context: RSI is `{_fmt_number(t.rsi_14)}`; its directional role is limited to the measured technical score.",
+        "- Why not more constructive? A rating change requires stronger measured fundamentals or technical confirmation and, where valuation is relevant, benchmark evidence.",
+        "- Why not more cautious? A raw multiple or an isolated price signal cannot establish business deterioration.",
+        f"- Review condition: retain `{data_packet.ticker}` at `{preferred}` while the measured evidence state is unchanged; reassess only when new primary evidence changes fundamentals, benchmarked valuation or the technical trend.",
     ]
     return "\n".join(lines)
 

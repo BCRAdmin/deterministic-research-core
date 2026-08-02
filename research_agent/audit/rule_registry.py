@@ -46,6 +46,7 @@ REGISTERED_AUDIT_RULES: tuple[AuditRuleDefinition, ...] = (
     AuditRuleDefinition("RATING_TOO_HARSH_FOR_ACTION", "warning", "rating", "rating/action mismatch fixture", "requires_review"),
     AuditRuleDefinition("RATING_ACTION_MISMATCH", "warning", "rating", "rating/action class fixture", "requires_review"),
     AuditRuleDefinition("RATING_BLOCKED_BY_DECISION_PACKET", "error", "rating", "blocked rating fixture", "blocks_publish"),
+    AuditRuleDefinition("UNBENCHMARKED_VALUATION_DIRECTION", "error", "rating", "unbenchmarked multiple used directionally fixture", "blocks_publish"),
     AuditRuleDefinition("MISSING_FCF_SUPPORT_FOR_ACCUMULATE", "error", "rating", "accumulate without FCF support fixture", "blocks_publish"),
     AuditRuleDefinition("CLEAN_BUY_ACCUMULATE_BLOCKED", "warning", "rating", "deep-tech clean buy/accumulate block fixture", "requires_review"),
     AuditRuleDefinition("CLEAN_HOLD_BLOCKED_FOR_SPECULATIVE_DEEP_TECH", "warning", "rating", "speculative deep-tech clean hold block fixture", "requires_review"),

@@ -239,6 +239,8 @@ def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():
     metrics.fundamentals.sbc_to_revenue = None
     metrics.fundamentals.net_cash = -4_610_000_000
     metrics.fundamentals.total_debt = 13_460_000_000
+    decision.signal_scores.valuation_status = "unbenchmarked"
+    decision.signal_scores.valuation_score = 0
     _add_exact_metric_evidence(data, metrics, ledger)
 
     claims = generate_research_claims(
@@ -306,6 +308,20 @@ def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():
     assert "4.34B HUF" in internal_report
     assert "| Close | 141.71 HUF |" in research_report
     assert "| FCF TTM | 1,120,000,000 HUF |" in research_report
+    assert "unbenchmarked observations" in research_report
+    assert "unbenchmarked observations" in internal_report
+    directional_valuation_language = (
+        "valuation constraint",
+        "valuation and timing constraints",
+        "argue against chasing",
+        "better entry point",
+        "position discipline",
+        "valuation expands further",
+    )
+    assert not any(
+        phrase in f"{research_report}\n{internal_report}".lower()
+        for phrase in directional_valuation_language
+    )
     unsupported_language = (
         "company-specific growth",
         "margin quality",
@@ -343,7 +359,7 @@ def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():
     ]
     assert "revenue TTM of 4.34B HUF" in rating_claim.claim
     assert "FCF TTM of 1.12B HUF" in rating_claim.claim
-    assert "No benchmarked valuation signal is present" in rating_claim.claim
+    assert "Valuation multiples are unbenchmarked" in rating_claim.claim
     personal_action_language = (
         "entries should be",
         "staged entries",

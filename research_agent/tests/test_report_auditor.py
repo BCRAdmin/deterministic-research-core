@@ -7,6 +7,7 @@ import pytest
 
 from research_agent.audit.markdown_numeric_extractor import extract_numeric_claims
 from research_agent.audit.report_linter import audit_markdown_report
+from research_agent.decision.rating_engine import build_decision_packet
 from research_agent.evidence.evidence_item import EvidenceItem
 from research_agent.evidence.evidence_ledger import EvidenceLedger
 from research_agent.reconciliation.canonical_financials import CanonicalFinancials, CanonicalMetric
@@ -164,6 +165,52 @@ def test_direct_percent_evidence_normalizes_single_digit_percentage():
     )
 
     assert not audit.has_issue("NUMERIC_MISMATCH")
+
+
+def test_auditor_blocks_direction_from_unbenchmarked_valuation():
+    metrics = simple_metrics(ticker="GENERIC")
+    decision = build_decision_packet(metrics)
+
+    audit = audit_markdown_report(
+        markdown=(
+            "Final Rating: Hold. EV/Sales of 118.78x argues against chasing "
+            "the stock."
+        ),
+        metrics_packet=metrics,
+        decision_packet=decision,
+        ticker="GENERIC",
+    )
+
+    assert decision.signal_scores.valuation_status == "unbenchmarked"
+    assert audit.has_issue("UNBENCHMARKED_VALUATION_DIRECTION")
+    assert audit.has_blocking_errors
+
+
+def test_auditor_accepts_neutral_unbenchmarked_valuation_observation():
+    metrics = simple_metrics(ticker="GENERIC")
+    decision = build_decision_packet(metrics)
+
+    audit = audit_markdown_report(
+        markdown=(
+            "Final Rating: Hold. EV/Sales of 118.78x is an unbenchmarked "
+            "observation and adds neither a positive nor a negative rating signal."
+        ),
+        metrics_packet=metrics,
+        decision_packet=decision,
+        ticker="GENERIC",
+    )
+    neutral_label = audit_markdown_report(
+        markdown=(
+            "Final Rating: Hold. P/FCF is 118.78x. This records the valuation "
+            "level without labeling it cheap or expensive."
+        ),
+        metrics_packet=metrics,
+        decision_packet=decision,
+        ticker="GENERIC",
+    )
+
+    assert not audit.has_issue("UNBENCHMARKED_VALUATION_DIRECTION")
+    assert not neutral_label.has_issue("UNBENCHMARKED_VALUATION_DIRECTION")
 
 
 def test_auditor_blocks_currency_that_conflicts_with_evidence_ledger():
