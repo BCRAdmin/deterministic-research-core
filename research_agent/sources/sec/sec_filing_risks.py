@@ -226,9 +226,10 @@ def extract_sec_business_context(html: str) -> list[str]:
         )
         section = blocks[start + 1 : end]
         candidates = [
-            (index, text)
+            (index, fragment)
             for index, (text, emphasized) in enumerate(section)
-            if not emphasized and _is_business_context_paragraph(text)
+            if not emphasized
+            for fragment in _business_context_fragments(text)
         ]
         if not candidates:
             continue
@@ -243,7 +244,7 @@ def extract_sec_business_context(html: str) -> list[str]:
                 for _, text in candidates
                 if text != activity
                 and "segment" in text.lower()
-                and _business_context_score(text) >= 3
+                and _business_context_score(text) >= 2
             ),
             None,
         )
@@ -407,7 +408,16 @@ def _is_business_context_paragraph(text: str) -> bool:
         return False
     if stripped.isupper() or stripped.count(". ") > 3:
         return False
-    return _business_context_score(stripped) >= 3
+    score = _business_context_score(stripped)
+    return score >= 3 or ("segment" in lowered and score >= 2)
+
+
+def _business_context_fragments(text: str) -> list[str]:
+    return [
+        fragment
+        for fragment in re.split(r"(?<=[.!?])\s+", text.strip())
+        if _is_business_context_paragraph(fragment)
+    ]
 
 
 def _business_context_score(text: str) -> int:

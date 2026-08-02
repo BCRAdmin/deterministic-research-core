@@ -83,7 +83,7 @@ def test_extracts_business_context_only_from_annual_item_1():
       <div>Item 1.</div><div>Business</div><div>3</div>
       <div><strong>ITEM 1. B USINESS</strong></div>
       <p>GENERAL</p>
-      <p>The issuer develops secure software platforms and cloud services for business customers across several markets.</p>
+      <p>The issuer employs 12,000 people worldwide. The issuer develops secure software platforms and cloud services for business customers across several markets.</p>
       <p><strong>OPERATING SEGMENTS</strong></p>
       <p>The business operates through Enterprise Platforms, Cloud Services, and Consumer Products segments.</p>
       <div><strong>ITEM 1A. RIS K FACTORS</strong></div>
