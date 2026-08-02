@@ -3,6 +3,7 @@ from pathlib import Path
 
 from research_agent.audit.report_linter import audit_markdown_report
 from research_agent.content.claim_generator import (
+    _bear_case_claim_text,
     claim_coverage_gaps,
     claim_quality_metrics,
     generate_research_claims,
@@ -154,6 +155,25 @@ def test_claim_coverage_names_missing_topics_instead_of_padding_count():
     }
 
     assert claim_coverage_gaps(metrics) == ["missing_valuation_analysis"]
+
+
+def test_bear_case_distinguishes_bullish_bearish_and_mixed_trends():
+    _, metrics, _, _, _ = _load_packet("SNOW")
+    metrics.technical.close = 120.0
+    metrics.technical.sma_50 = 110.0
+    metrics.technical.sma_200 = 100.0
+    bullish = _bear_case_claim_text("TEST", metrics, "USD")
+
+    metrics.technical.close = 80.0
+    metrics.technical.sma_50 = 90.0
+    bearish = _bear_case_claim_text("TEST", metrics, "USD")
+
+    metrics.technical.close = 105.0
+    mixed = _bear_case_claim_text("TEST", metrics, "USD")
+
+    assert "bullish long-term trend state is not current downside evidence" in bullish
+    assert "bearish long-term trend state is current downside evidence" in bearish
+    assert "mixed long-term trend state is inconclusive" in mixed
 
 
 def test_content_generator_uses_precomputed_distribution_comparison():

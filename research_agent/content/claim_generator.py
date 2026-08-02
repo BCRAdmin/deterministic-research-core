@@ -440,12 +440,10 @@ class _ClaimBuilder:
                 "Bear Case",
                 "bear",
                 "financial_metric",
-                (
-                    "The current downside evidence is "
-                    f"{_technical_interpretation(self.metrics)}. FCF TTM of "
-                    f"{self._money(self.metrics.fundamentals.free_cash_flow_ttm)} "
-                    "is the counterweight; without comparative business data, "
-                    "this does not establish company-specific deterioration."
+                _bear_case_claim_text(
+                    ticker,
+                    self.metrics,
+                    self.data_packet.price_basis.currency,
                 ),
                 bear_metrics,
                 "medium",
@@ -734,6 +732,43 @@ def _technical_interpretation(metrics: MetricsPacket) -> str:
     if trend_state == "mixed":
         return "a mixed long-term trend state"
     return "an unavailable long-term trend state"
+
+
+def _bear_case_claim_text(
+    ticker: str,
+    metrics: MetricsPacket,
+    currency: str,
+) -> str:
+    trend_state = classify_technical_trend(metrics)
+    fcf = _money(metrics.fundamentals.free_cash_flow_ttm, currency)
+    if trend_state == "bearish":
+        return (
+            f"{ticker}'s bearish long-term trend state is current downside "
+            f"evidence. FCF TTM of {fcf} is the counterweight; without "
+            "comparable business data, this does not establish company-specific "
+            "deterioration."
+        )
+    if trend_state == "bullish":
+        return (
+            f"{ticker}'s bullish long-term trend state is not current downside "
+            f"evidence. FCF TTM of {fcf} is also counterevidence. A bear case "
+            "requires a future technical reversal or comparable evidence of "
+            "weaker cash generation; neither is established by the current "
+            "packet."
+        )
+    if trend_state == "mixed":
+        return (
+            f"{ticker}'s mixed long-term trend state is inconclusive rather than "
+            f"current downside evidence. FCF TTM of {fcf} is the counterweight. "
+            "A bear case requires downside confirmation or comparable evidence "
+            "of weaker cash generation."
+        )
+    return (
+        f"{ticker}'s long-term technical trend is not fully measured and therefore "
+        f"is not current downside evidence. FCF TTM of {fcf} is the available "
+        "counterweight; a bear case requires separate evidence of weaker cash "
+        "generation."
+    )
 
 
 def _claim_text(claim: ResearchClaim) -> str:
