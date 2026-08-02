@@ -251,6 +251,11 @@ def _request(tmp_path, ticker="GENR"):
     )
 
 
+def _assert_no_run_dirs(tmp_path):
+    assert not (tmp_path / "staging").exists()
+    assert not (tmp_path / "outputs").exists()
+
+
 def test_current_runner_stages_generic_inputs_and_returns_authority(monkeypatch, tmp_path):
     def fake_pipeline(ticker, as_of_date, config):
         authority = tmp_path / "outputs" / ticker / as_of_date / "authority_bundle"
@@ -320,6 +325,7 @@ def test_current_runner_rejects_unsupported_official_issuer(tmp_path):
             sec_client=_FakeSec(ticker="GENR"),
             bse_provider=_NoBse(),
         )
+    _assert_no_run_dirs(tmp_path)
 
 
 def test_current_runner_names_unsupported_sec_ifrs_profile_before_pipeline(tmp_path):
@@ -330,7 +336,7 @@ def test_current_runner_names_unsupported_sec_ifrs_profile_before_pipeline(tmp_p
             sec_client=_FakeIfrsSec(),
         )
 
-    assert not list((tmp_path / "outputs").rglob("authority_manifest.json"))
+    _assert_no_run_dirs(tmp_path)
 
 
 def test_current_runner_names_missing_sec_identity_before_adapter_lookup(tmp_path):
@@ -346,6 +352,7 @@ def test_current_runner_names_missing_sec_identity_before_adapter_lookup(tmp_pat
             price_provider=_FakePrices(),
             bse_provider=_NoBse(),
         )
+    _assert_no_run_dirs(tmp_path)
 
 
 def test_auto_price_provider_uses_public_nasdaq_without_paid_key():
@@ -377,6 +384,7 @@ def test_current_runner_rejects_non_authority_price_provider(tmp_path):
             price_provider=_WeakPrices(),
             sec_client=_FakeSec(),
         )
+    _assert_no_run_dirs(tmp_path)
 
 
 def test_current_runner_builds_real_authority_bundle_from_generic_adapters(tmp_path):
@@ -470,6 +478,14 @@ def test_current_runner_routes_public_bse_issuer_without_sec_or_api_key(
     assert result["jurisdiction"] == "HU"
     assert result["isin"] == "HU0000000001"
     assert result["price_provider"] == "bse"
+    assert not (
+        tmp_path
+        / "staging"
+        / "GENR"
+        / "2026-07-26"
+        / "sources"
+        / "sec_companyfacts"
+    ).exists()
 
 
 def test_current_runner_uses_resolved_jurisdiction_for_colliding_ticker(
@@ -527,6 +543,7 @@ def test_current_runner_blocks_cross_market_ticker_ambiguity(tmp_path):
             sec_client=_FakeSec(ticker="GENR"),
             bse_provider=_FakeBse(),
         )
+    _assert_no_run_dirs(tmp_path)
 
 
 def test_current_runner_blocks_resolver_isin_mismatch(tmp_path):
@@ -541,6 +558,7 @@ def test_current_runner_blocks_resolver_isin_mismatch(tmp_path):
 
     with pytest.raises(CurrentResearchError, match="widersprüchlichen Wertpapieridentität"):
         run_current_research(request, bse_provider=_FakeBse())
+    _assert_no_run_dirs(tmp_path)
 
 
 def test_data_packet_uses_explicit_exchange_price_currency():

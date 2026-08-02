@@ -121,8 +121,7 @@ def run_current_research(
     companyfacts_dir = source_dir / "sec_companyfacts"
     risk_factors_dir = source_dir / "sec_risk_factors"
     packet_root = staging_dir / "packets"
-    for path in (price_dir, companyfacts_dir, packet_root, Path(request.output_root)):
-        path.mkdir(parents=True, exist_ok=True)
+    output_root = Path(request.output_root).expanduser().resolve()
 
     requested_jurisdiction = request.jurisdiction
     sec = sec_client
@@ -185,6 +184,8 @@ def run_current_research(
     risk_source_status = "not_applicable"
     risk_filing_date: Optional[str] = None
     risk_factor_count = 0
+    risk_filing_to_save = None
+    risk_evidence_to_save = []
     cik_records_path: Optional[Path] = None
     ir_release_dir: Optional[Path] = (
         Path(request.ir_release_dir).expanduser().resolve()
@@ -196,6 +197,12 @@ def run_current_research(
     official_news_dir = request.official_news_dir
     jurisdiction = "US"
     isin: Optional[str] = None
+    companyfacts: Optional[dict[str, Any]] = None
+    submissions: Optional[dict[str, Any]] = None
+    bse_financial_payload: Optional[dict[str, Any]] = None
+    bse_news_payload: Optional[dict[str, Any]] = None
+    bse_calendar_path: Optional[Path] = None
+    bse_calendar_payload: Optional[dict[str, Any]] = None
     if issuer is not None:
         assert sec is not None
         cik = str(issuer["cik"])
@@ -204,12 +211,7 @@ def run_current_research(
         submissions = sec.get_submissions(cik)
         _require_supported_sec_reporting_profile(symbol, companyfacts)
         companyfacts_path = companyfacts_dir / f"{symbol}.json"
-        _write_json(companyfacts_path, companyfacts)
         cik_records_path = source_dir / "cik_records.json"
-        _write_json(
-            cik_records_path,
-            [{"ticker": symbol, "cik": cik, "company_name": company_name}],
-        )
         risk_source_status = "no_extractable_risk_factors"
         for filing in select_sec_risk_filing_candidates(
             submissions,
@@ -234,11 +236,8 @@ def run_current_research(
             if not risk_evidence:
                 continue
             risk_factors_path = risk_factors_dir / f"{symbol}.json"
-            save_sec_risk_evidence(
-                risk_factors_path,
-                filing=filing,
-                evidence=risk_evidence,
-            )
+            risk_filing_to_save = filing
+            risk_evidence_to_save = risk_evidence
             risk_source_status = "available"
             risk_filing_date = filing.filing_date
             risk_factor_count = len(risk_evidence)
@@ -261,19 +260,17 @@ def run_current_research(
         isin = bse_issuer.isin
         company_name = bse_issuer.company_name
         ir_release_dir = source_dir / "bse_financials"
-        financial_payload = bse.build_financial_payload(
+        bse_financial_payload = bse.build_financial_payload(
             bse_issuer,
             as_of_date=request.as_of_date,
             retrieved_at=retrieved_at,
         )
-        _write_json(ir_release_dir / f"{symbol}.json", financial_payload)
         bse_news_dir = source_dir / "bse_news"
         bse_news_payload = bse.build_news_payload(
             bse_issuer,
             as_of_date=request.as_of_date,
             retrieved_at=retrieved_at,
         )
-        _write_json(bse_news_dir / f"{symbol}_news.json", bse_news_payload)
         official_news_dir = str(bse_news_dir)
         calendar_builder = getattr(bse, "build_earnings_calendar", None)
         bse_calendar = (
@@ -286,14 +283,14 @@ def run_current_research(
             else {"events": []}
         )
         if bse_calendar.get("events"):
-            calendar_path = source_dir / "bse_earnings_calendar.json"
-            _write_json(calendar_path, bse_calendar)
-            earnings_calendar_path = str(calendar_path)
-        latest_filing_date = _latest_metric_date(financial_payload)
+            bse_calendar_path = source_dir / "bse_earnings_calendar.json"
+            bse_calendar_payload = bse_calendar
+            earnings_calendar_path = str(bse_calendar_path)
+        latest_filing_date = _latest_metric_date(bse_financial_payload)
         provider = price_provider or bse
         provider_name = "bse"
         financial_source = SourceRegistryEntry(
-            source_id=str(financial_payload["source_id"]),
+            source_id=str(bse_financial_payload["source_id"]),
             ticker=symbol,
             source_type="company_ir",
             authority_rank=1,
@@ -302,7 +299,7 @@ def run_current_research(
             used_for=sorted(
                 {
                     str(item["metric_name"])
-                    for item in financial_payload.get("metrics") or []
+                    for item in bse_financial_payload.get("metrics") or []
                     if item.get("metric_name")
                 }
             ),
@@ -310,11 +307,6 @@ def run_current_research(
             source_tier="official_financial_authority",
             freshness_status="current_ingestion",
         )
-
-    start = (as_of - timedelta(days=request.lookback_calendar_days)).isoformat()
-    prices = provider.get_history(symbol, start, request.as_of_date)
-    price_csv_path = price_dir / f"{symbol}.csv"
-    prices.to_csv(price_csv_path, index=False)
 
     source_type = str(
         getattr(provider, "source_type", "unknown_market_data_provider")
@@ -324,6 +316,41 @@ def run_current_research(
             f"Der Kursdatenanbieter meldet den Quellentyp {source_type!r}; dieser "
             "erfüllt den verbindlichen Quellenstandard nicht."
         )
+    start = (as_of - timedelta(days=request.lookback_calendar_days)).isoformat()
+    prices = provider.get_history(symbol, start, request.as_of_date)
+
+    for path in (price_dir, packet_root, output_root):
+        path.mkdir(parents=True, exist_ok=True)
+    if issuer is not None:
+        assert companyfacts is not None
+        assert companyfacts_path is not None
+        assert cik_records_path is not None
+        assert cik is not None
+        _write_json(companyfacts_path, companyfacts)
+        _write_json(
+            cik_records_path,
+            [{"ticker": symbol, "cik": cik, "company_name": company_name}],
+        )
+        if risk_factors_path is not None:
+            assert risk_filing_to_save is not None
+            save_sec_risk_evidence(
+                risk_factors_path,
+                filing=risk_filing_to_save,
+                evidence=risk_evidence_to_save,
+            )
+    else:
+        assert ir_release_dir is not None
+        assert bse_financial_payload is not None
+        assert bse_news_payload is not None
+        _write_json(ir_release_dir / f"{symbol}.json", bse_financial_payload)
+        bse_news_dir = source_dir / "bse_news"
+        _write_json(bse_news_dir / f"{symbol}_news.json", bse_news_payload)
+        if bse_calendar_path is not None:
+            assert bse_calendar_payload is not None
+            _write_json(bse_calendar_path, bse_calendar_payload)
+
+    price_csv_path = price_dir / f"{symbol}.csv"
+    prices.to_csv(price_csv_path, index=False)
     source_url = str(getattr(provider, "source_url", "") or "")
     price_source_id = (
         f"{symbol}_US_MARKET_DAILY_OHLCV"
