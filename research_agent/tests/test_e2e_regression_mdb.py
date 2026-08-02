@@ -9,8 +9,4 @@ def test_e2e_mdb_causality_softened_and_sell_blocked(tmp_path):
     assert result.initial_audit.has_issue("OVERSTATED_CAUSALITY")
     assert not result.final_audit.has_issue("OVERSTATED_CAUSALITY")
     assert "Sell" in {rating.value for rating in result.decision_packet.rating_permission.blocked_ratings}
-    assert result.decision_packet.rating_permission.preferred_rating.value in {
-        "Tactical Underweight",
-        "Tactical Trim",
-        "Hold",
-    }
+    assert result.decision_packet.rating_permission.preferred_rating.value == "Hold"

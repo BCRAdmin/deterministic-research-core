@@ -18,78 +18,19 @@ def determine_rating_permission(
     validation_report: Optional[ValidationReport] = None,
     audit_report: Optional[AuditReport] = None,
 ) -> RatingPermission:
-    fundamental = scores.fundamental_score
-    technical = scores.technical_score
-    valuation = scores.valuation_score
-    risk = scores.risk_score
-    coverage_states = {
-        scores.fundamental_status,
-        scores.technical_status,
-        scores.valuation_status,
-        scores.risk_status,
-    }
-    evidence_status = (
-        "incomplete"
-        if "not_measured" in {
-            scores.fundamental_status,
-            scores.technical_status,
-        }
-        else "partial" if coverage_states & {"partial", "unbenchmarked"}
-        else "complete"
-    )
+    """Apply a fail-closed policy after the independent analytical rating.
 
-    if fundamental >= 2 and technical >= 1 and valuation >= 0 and risk >= -1:
-        allowed = [Rating.BUY, Rating.ACCUMULATE, Rating.HOLD]
-        preferred = Rating.ACCUMULATE
-        reason = "Positive fundamental and constructive technical scores support staged accumulation."
-    elif fundamental >= 1 and technical <= -1:
-        allowed = [Rating.HOLD, Rating.TACTICAL_TRIM, Rating.TACTICAL_UNDERWEIGHT]
-        preferred = Rating.TACTICAL_UNDERWEIGHT if risk <= -2 else Rating.HOLD
-        reason = "The fundamental score is positive, but the technical score is weak and risk controls matter."
-    elif fundamental <= -1 and technical <= -1:
-        allowed = [Rating.TACTICAL_UNDERWEIGHT, Rating.UNDERWEIGHT, Rating.SELL]
-        preferred = Rating.UNDERWEIGHT
-        reason = "Negative fundamental and technical scores restrict the rating to underweight or sell territory."
-    elif fundamental >= 1 and technical >= 1 and risk <= -2:
-        allowed = [Rating.HOLD, Rating.ACCUMULATE, Rating.TACTICAL_TRIM]
-        preferred = Rating.HOLD
-        reason = "Fundamentals and trend are constructive, but elevated risk prevents an aggressive rating."
-    else:
-        allowed = [Rating.HOLD, Rating.ACCUMULATE, Rating.TACTICAL_TRIM]
-        preferred = Rating.HOLD
-        reason = "Mixed signals require a neutral-to-tactical rating corridor."
+    ``action_class`` and the reports remain accepted for API compatibility,
+    but they must not feed a conclusion back into the evidence layer.  Report
+    wording and validation quality can constrain publication separately; they
+    cannot create a different company rating.
+    """
 
-    if action_class == "tactical_trim":
-        allowed = _ordered_unique(allowed + [Rating.TACTICAL_TRIM, Rating.HOLD])
-        allowed = [rating for rating in allowed if rating != Rating.SELL]
-        preferred = Rating.TACTICAL_TRIM
-        reason = "Operative action implies partial trim and core hold, not a full exit."
-    elif action_class == "staged_entry":
-        allowed = _ordered_unique(allowed + [Rating.ACCUMULATE, Rating.BUY])
-        allowed = [rating for rating in allowed if rating != Rating.STRONG_BUY]
-        preferred = Rating.ACCUMULATE
-        reason = "Operative action implies staged accumulation rather than an immediate full buy."
-    elif action_class == "sell":
-        allowed = _ordered_unique(allowed + [Rating.SELL, Rating.UNDERWEIGHT])
-        preferred = Rating.SELL if fundamental <= -1 and technical <= -1 else preferred
-
-    if scores.valuation_status == "unbenchmarked":
-        allowed = [
-            rating
-            for rating in allowed
-            if rating not in {Rating.STRONG_BUY, Rating.BUY, Rating.ACCUMULATE}
-        ]
-        if preferred in {Rating.STRONG_BUY, Rating.BUY, Rating.ACCUMULATE}:
-            preferred = Rating.HOLD
-            reason = (
-                "Constructive signals are not enough for an overweight rating "
-                "without validated peer, history or cycle valuation evidence."
-            )
-
-    if _has_material_warnings(validation_report, audit_report) and Rating.STRONG_BUY in allowed:
-        allowed.remove(Rating.STRONG_BUY)
-        if preferred == Rating.STRONG_BUY:
-            preferred = Rating.BUY if Rating.BUY in allowed else Rating.ACCUMULATE
+    preferred, reason = determine_unconstrained_analytical_rating(scores)
+    # There is no independent policy model that justifies alternative ratings
+    # today.  Keep the compatibility layer fail-closed to the analytical result
+    # instead of inventing a corridor around it.
+    allowed = [preferred]
 
     all_ratings = list(Rating)
     blocked = [rating for rating in all_ratings if rating not in allowed]
@@ -99,7 +40,7 @@ def determine_rating_permission(
         blocked_ratings=blocked,
         preferred_rating=preferred,
         reason=reason,
-        evidence_status=evidence_status,
+        evidence_status=_evidence_status(scores),
     )
 
 
@@ -110,35 +51,20 @@ def determine_unconstrained_analytical_rating(
 
     fundamental = scores.fundamental_score
     technical = scores.technical_score
-    valuation = scores.valuation_score
-    risk = scores.risk_score
-    if fundamental >= 2 and technical >= 1 and valuation >= 0 and risk >= -1:
-        if scores.valuation_status == "unbenchmarked":
-            return (
-                Rating.HOLD,
-                "Constructive fundamental and technical evidence is not enough "
-                "for an overweight analytical rating without benchmarked "
-                "valuation evidence.",
-            )
-        return (
-            Rating.ACCUMULATE,
-            "Positive fundamental and constructive technical evidence support an overweight analytical stance.",
-        )
-    if fundamental >= 1 and technical <= -1:
-        rating = Rating.TACTICAL_UNDERWEIGHT if risk <= -2 else Rating.HOLD
-        return (
-            rating,
-            "Positive fundamental evidence is offset by weak technical evidence and measured risk.",
-        )
     if fundamental <= -1 and technical <= -1:
         return (
             Rating.UNDERWEIGHT,
-            "Weak fundamental and technical evidence support an underweight analytical stance.",
+            "Negative fundamental direction and a bearish long-term trend support an underweight analytical stance.",
         )
-    if fundamental >= 1 and technical >= 1 and risk <= -2:
+    if fundamental >= 1 and technical <= -1:
         return (
             Rating.HOLD,
-            "Constructive fundamentals and trend are offset by elevated measured risk.",
+            "Positive cash-flow direction is offset by a bearish long-term trend.",
+        )
+    if fundamental >= 1 and technical >= 1:
+        return (
+            Rating.HOLD,
+            "Constructive directional evidence is not enough for an overweight rating without benchmarked valuation evidence.",
         )
     return (
         Rating.HOLD,
@@ -178,7 +104,7 @@ def build_decision_packet(
         analytical_rating_reason=analytical_reason,
         rating_permission=permission,
         action_policy=build_action_policy(permission.preferred_rating, metrics_packet),
-        key_reasons=_build_key_reasons(scores, action_class),
+        key_reasons=_build_key_reasons(scores),
         key_risks=_build_key_risks(scores, validation_report, audit_report),
         triggered_rules=triggered_rules,
         score_version=score_version,
@@ -186,20 +112,17 @@ def build_decision_packet(
     )
 
 
-def _ordered_unique(ratings: list[Rating]) -> list[Rating]:
-    return [rating for rating in Rating if rating in ratings]
+def _evidence_status(scores: SignalScores) -> str:
+    core_states = {scores.fundamental_status, scores.technical_status}
+    all_states = core_states | {scores.valuation_status, scores.risk_status}
+    if "not_measured" in core_states:
+        return "incomplete"
+    if all_states & {"partial", "unbenchmarked", "not_measured"}:
+        return "partial"
+    return "complete"
 
 
-def _has_material_warnings(
-    validation_report: Optional[ValidationReport],
-    audit_report: Optional[AuditReport],
-) -> bool:
-    validation_warnings = validation_report.issues if validation_report else []
-    audit_warnings = audit_report.issues if audit_report else []
-    return bool(validation_warnings or audit_warnings)
-
-
-def _build_key_reasons(scores: SignalScores, action_class: Optional[str]) -> list[str]:
+def _build_key_reasons(scores: SignalScores) -> list[str]:
     reasons = [
         f"Fundamental score: {scores.fundamental_score}",
         f"Technical score: {scores.technical_score}",
@@ -208,8 +131,6 @@ def _build_key_reasons(scores: SignalScores, action_class: Optional[str]) -> lis
             f"(measurement status: {scores.valuation_status})"
         ),
     ]
-    if action_class:
-        reasons.append(f"Operative action class: {action_class}")
     return reasons
 
 
@@ -219,10 +140,13 @@ def _build_key_risks(
     audit_report: Optional[AuditReport],
 ) -> list[str]:
     risks = [
-        f"Risk score: {scores.risk_score} (measurement status: {scores.risk_status})"
+        "Evidence-control score: "
+        f"{scores.risk_score} (measurement status: {scores.risk_status})"
     ]
     if scores.risk_status != "measured":
-        risks.append("Missing risk evidence is not equivalent to low risk.")
+        risks.append(
+            "Incomplete validation or audit coverage is not evidence of low company risk."
+        )
     if validation_report and validation_report.issues:
         risks.append(f"Validation issues: {len(validation_report.issues)}")
     if audit_report and audit_report.issues:

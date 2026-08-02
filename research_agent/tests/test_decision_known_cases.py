@@ -70,16 +70,23 @@ def test_nvda_decision_stays_hold_without_valuation_benchmark():
     assert Rating.ACCUMULATE in packet.rating_permission.blocked_ratings
 
 
-def test_ddog_trim_not_sell():
-    packet = build_decision_packet(
+def test_ddog_report_action_does_not_override_analytical_rating():
+    with_action = build_decision_packet(
         metrics_packet=_metrics("ddog_2026_05_01"),
         validation_report=_validation("ddog_2026_05_01"),
         audit_report=_audit("ddog_2026_05_01"),
         action_class=_action_class("ddog_2026_05_01"),
     )
+    without_action = build_decision_packet(
+        metrics_packet=_metrics("ddog_2026_05_01"),
+        validation_report=_validation("ddog_2026_05_01"),
+        audit_report=_audit("ddog_2026_05_01"),
+    )
 
-    assert packet.rating_permission.preferred_rating == Rating.TACTICAL_TRIM
-    assert Rating.SELL in packet.rating_permission.blocked_ratings
+    assert with_action.analytical_rating_unconstrained == Rating.HOLD
+    assert with_action.rating_permission == without_action.rating_permission
+    assert with_action.rating_permission.allowed_ratings == [Rating.HOLD]
+    assert not any("action class" in reason.lower() for reason in with_action.key_reasons)
 
 
 def test_mdb_blocks_strong_buy_and_sell():
@@ -91,8 +98,5 @@ def test_mdb_blocks_strong_buy_and_sell():
 
     assert Rating.STRONG_BUY in packet.rating_permission.blocked_ratings
     assert Rating.SELL in packet.rating_permission.blocked_ratings
-    assert packet.rating_permission.preferred_rating in {
-        Rating.TACTICAL_UNDERWEIGHT,
-        Rating.TACTICAL_TRIM,
-        Rating.HOLD,
-    }
+    assert packet.rating_permission.preferred_rating == Rating.HOLD
+    assert packet.rating_permission.allowed_ratings == [Rating.HOLD]

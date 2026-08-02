@@ -57,7 +57,7 @@ def test_fundamentals_use_directional_evidence_not_global_quality_thresholds():
     assert score_valuation(metrics) == 0
     assert score_risk(metrics) == 0
     assert packet.signal_scores.valuation_status == "unbenchmarked"
-    benchmark_permission = determine_rating_permission(
+    unbenchmarked_permission = determine_rating_permission(
         SignalScores(
             fundamental_score=3,
             technical_score=3,
@@ -67,7 +67,8 @@ def test_fundamentals_use_directional_evidence_not_global_quality_thresholds():
             valuation_status="unbenchmarked",
         )
     )
-    assert benchmark_permission.evidence_status == "partial"
+    assert unbenchmarked_permission.evidence_status == "partial"
+    assert unbenchmarked_permission.allowed_ratings == [Rating.HOLD]
     assert not any(
         rule.startswith(
             (
@@ -121,8 +122,23 @@ def test_unbenchmarked_strong_setup_is_capped_at_hold():
     assert Rating.STRONG_BUY in packet.rating_permission.blocked_ratings
     assert Rating.SELL in packet.rating_permission.blocked_ratings
 
+    negative_permission = determine_rating_permission(
+        SignalScores(
+            fundamental_score=-2,
+            technical_score=-1,
+            valuation_score=0,
+            risk_score=-3,
+            composite_score=-3,
+            valuation_status="unbenchmarked",
+            risk_status="partial",
+        )
+    )
+    assert negative_permission.preferred_rating == Rating.UNDERWEIGHT
+    assert negative_permission.allowed_ratings == [Rating.UNDERWEIGHT]
+    assert Rating.SELL in negative_permission.blocked_ratings
 
-def test_material_validation_warnings_keep_strong_buy_blocked():
+
+def test_validation_quality_cannot_change_the_company_rating():
     metrics = _strong_metrics()
     validation = ValidationReport(
         ticker="TEST",
@@ -137,6 +153,13 @@ def test_material_validation_warnings_keep_strong_buy_blocked():
         ],
     )
     scores = calculate_signal_scores(metrics, validation)
-    permission = determine_rating_permission(scores, validation_report=validation)
+    permission = determine_rating_permission(
+        scores,
+        action_class="staged_entry",
+        validation_report=validation,
+    )
 
+    assert permission.preferred_rating == Rating.HOLD
+    assert permission.allowed_ratings == [Rating.HOLD]
     assert Rating.STRONG_BUY in permission.blocked_ratings
+    assert Rating.ACCUMULATE in permission.blocked_ratings

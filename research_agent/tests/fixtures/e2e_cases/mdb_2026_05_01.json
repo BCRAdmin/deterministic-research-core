@@ -13,7 +13,7 @@
     {"code": "RATING_TOO_HARSH_FOR_ACTION"}
   ],
   "expected_rating": {
-    "preferred_rating": "Tactical Trim",
+    "preferred_rating": "Hold",
     "blocked_ratings": ["Sell", "Strong Buy"]
   },
   "minimum_quality_score": 85.0,

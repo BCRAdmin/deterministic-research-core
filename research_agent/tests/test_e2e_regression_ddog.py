@@ -9,5 +9,5 @@ def test_e2e_ddog_invalid_stop_repaired(tmp_path):
     assert result.initial_audit.has_issue("INVALID_TRADE_LEVEL")
     assert result.initial_audit.has_issue("RATING_TOO_HARSH_FOR_ACTION")
     assert not result.final_audit.has_issue("INVALID_TRADE_LEVEL")
-    assert result.decision_packet.rating_permission.preferred_rating.value == "Tactical Trim"
+    assert result.decision_packet.rating_permission.preferred_rating.value == "Hold"
     assert "Sell" in {rating.value for rating in result.decision_packet.rating_permission.blocked_ratings}

@@ -16,7 +16,7 @@ GOLDEN_E2E_CASES = {
     },
     "nvda_2026_05_01": {
         "ticker": "NVDA",
-        "preferred_rating": "Accumulate",
+        "preferred_rating": "Hold",
         "blocked_ratings": ["Sell", "Underweight"],
         "expected_issues": ["NUMERIC_MISMATCH", "PERIOD_MISMATCH"],
         "minimum_quality_score_after_repair": 85,
@@ -24,7 +24,7 @@ GOLDEN_E2E_CASES = {
     },
     "ddog_2026_05_01": {
         "ticker": "DDOG",
-        "preferred_rating": "Tactical Trim",
+        "preferred_rating": "Hold",
         "blocked_ratings": ["Sell", "Strong Buy"],
         "expected_issues": ["INVALID_TRADE_LEVEL", "RATING_TOO_HARSH_FOR_ACTION"],
         "minimum_quality_score_after_repair": 85,
@@ -32,7 +32,7 @@ GOLDEN_E2E_CASES = {
     },
     "mdb_2026_05_01": {
         "ticker": "MDB",
-        "preferred_rating": "Tactical Trim",
+        "preferred_rating": "Hold",
         "blocked_ratings": ["Sell", "Strong Buy"],
         "expected_issues": ["OVERSTATED_CAUSALITY", "FORWARD_EPS_GUIDANCE_MISMATCH", "RATING_TOO_HARSH_FOR_ACTION"],
         "minimum_quality_score_after_repair": 85,

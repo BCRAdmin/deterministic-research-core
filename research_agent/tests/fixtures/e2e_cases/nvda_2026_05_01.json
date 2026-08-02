@@ -12,7 +12,7 @@
     {"code": "PERIOD_MISMATCH"}
   ],
   "expected_rating": {
-    "preferred_rating": "Accumulate",
+    "preferred_rating": "Hold",
     "blocked_ratings": ["Sell", "Underweight"]
   },
   "minimum_quality_score": 85.0,
