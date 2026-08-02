@@ -196,8 +196,9 @@ def extract_sec_risk_headings(html: str) -> list[str]:
                 continue
             seen.add(key)
             candidates.append((block, emphasized))
-        emphasized = [block for block, is_emphasized in candidates if is_emphasized]
-        section_risks = emphasized or [block for block, _ in candidates]
+        section_risks = [
+            block for block, is_emphasized in candidates if is_emphasized
+        ]
         if len(section_risks) > len(best):
             best = section_risks
     return best[:30]

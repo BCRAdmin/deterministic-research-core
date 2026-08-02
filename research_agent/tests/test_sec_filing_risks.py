@@ -77,6 +77,19 @@ def test_extracts_split_risk_heading_across_repeated_item_1a_page_headers():
     ]
 
 
+def test_rejects_unemphasized_narrative_from_false_risk_section():
+    html = """
+    <html><body>
+      <div>Item 1A.</div><div>Risk Factors.</div><div>42</div>
+      <p>Income tax expense may increase because of changes in the level and mix of income.</p>
+      <p>Refer to the annual report for a discussion of the factors that could affect credit ratings.</p>
+      <div>Item 2. Unregistered Sales of Equity Securities.</div>
+    </body></html>
+    """
+
+    assert extract_sec_risk_headings(html) == []
+
+
 def test_extracts_business_context_only_from_annual_item_1():
     html = """
     <html><body>
