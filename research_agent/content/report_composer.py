@@ -194,13 +194,14 @@ def _render_investment_thesis(
     revenue = metrics_packet.fundamentals.revenue_ttm
     fcf = metrics_packet.fundamentals.free_cash_flow_ttm
     ev_sales = metrics_packet.valuation.ev_to_sales
+    currency = data_packet.price_basis.currency
     parts = [
         f"- Thesis anchor: `{preferred}` reflects the balance between business momentum, valuation discipline and technical timing.",
     ]
     if revenue is not None:
-        parts.append(f"- Fundamental basis: revenue scale is `{_fmt_money(revenue)}`.")
+        parts.append(f"- Fundamental basis: revenue scale is `{_fmt_money(revenue, currency)}`.")
     if fcf is not None:
-        parts.append(f"- Cash-conversion basis: free cash flow is `{_fmt_money(fcf)}`.")
+        parts.append(f"- Cash-conversion basis: free cash flow is `{_fmt_money(fcf, currency)}`.")
     else:
         parts.append("- Cash-conversion basis: FCF is unavailable in the evidence set and should be treated as a data limitation.")
     if ev_sales is not None:
@@ -248,9 +249,10 @@ def _render_final_rating_logic(
     f = metrics_packet.fundamentals
     v = metrics_packet.valuation
     t = metrics_packet.technical
+    currency = data_packet.price_basis.currency
     lines = [
-        f"- Why this rating? `{preferred}` balances revenue of `{_fmt_money(f.revenue_ttm)}` against valuation and technical timing.",
-        f"- Cash conversion: FCF is `{_fmt_money(f.free_cash_flow_ttm)}` and determines whether growth converts into equity value.",
+        f"- Why this rating? `{preferred}` balances revenue of `{_fmt_money(f.revenue_ttm, currency)}` against valuation and technical timing.",
+        f"- Cash conversion: FCF is `{_fmt_money(f.free_cash_flow_ttm, currency)}` and determines whether growth converts into equity value.",
         f"- Why not more bullish? EV/Sales `{_fmt_multiple(v.ev_to_sales)}` limits new-money urgency unless current-period KPIs accelerate.",
         f"- Additional valuation/technical constraint: P/FCF `{_fmt_multiple(v.price_to_fcf)}` and RSI `{_fmt_number(t.rsi_14)}` argue against chasing without a better setup.",
         "- Why not more bearish? The report avoids a harsher stance unless validated fundamentals deteriorate, source reconciliation breaks, or technical weakness confirms a deeper drawdown.",
@@ -341,14 +343,17 @@ def _table_text(text: str) -> str:
     return " ".join(text.replace("|", "/").split())
 
 
-def _fmt_money(value: float) -> str:
+def _fmt_money(value: float, currency: str = "USD") -> str:
     if value is None:
         return "unavailable"
+    normalized_currency = str(currency or "USD").strip().upper()
     if abs(value) >= 1_000_000_000:
-        return f"${value / 1_000_000_000:.2f}B"
-    if abs(value) >= 1_000_000:
-        return f"${value / 1_000_000:.1f}M"
-    return f"${value:.2f}"
+        amount = f"{value / 1_000_000_000:.2f}B"
+    elif abs(value) >= 1_000_000:
+        amount = f"{value / 1_000_000:.1f}M"
+    else:
+        amount = f"{value:.2f}"
+    return f"${amount}" if normalized_currency == "USD" else f"{amount} {normalized_currency}"
 
 
 def _fmt_multiple(value: float | None) -> str:

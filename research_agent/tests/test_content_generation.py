@@ -4,6 +4,7 @@ from pathlib import Path
 from research_agent.audit.report_linter import audit_markdown_report
 from research_agent.content.claim_generator import claim_quality_metrics, generate_research_claims
 from research_agent.content.report_composer import compose_research_report
+from research_agent.content.publish_composer import compose_internal_best_report
 from research_agent.decision.decision_packet import DecisionPacket
 from research_agent.evidence.evidence_item import EvidenceItem
 from research_agent.evidence.evidence_ledger import EvidenceLedger
@@ -110,7 +111,7 @@ def test_content_generator_uses_precomputed_distribution_comparison():
     assert "does not identify a funding source" in claim.claim
 
 
-def test_generic_claims_use_the_packet_currency_instead_of_dollars():
+def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():
     data, metrics, validation, ledger, decision = _load_packet("SNOW")
     data.ticker = "GENERIC"
     data.price_basis.currency = "HUF"
@@ -121,6 +122,23 @@ def test_generic_claims_use_the_packet_currency_instead_of_dollars():
         ledger,
         decision,
         validation,
+    )
+    research_report = compose_research_report(
+        data,
+        metrics,
+        validation,
+        decision,
+        ledger,
+        claims,
+    )
+    internal_report = compose_internal_best_report(
+        data,
+        metrics,
+        decision,
+        ledger,
+        claims,
+        status="manual_review",
+        publishable=False,
     )
     monetary_claims = [
         claim
@@ -140,6 +158,10 @@ def test_generic_claims_use_the_packet_currency_instead_of_dollars():
     assert len(monetary_claims) == 5
     assert all("$" not in claim.claim for claim in monetary_claims)
     assert all("HUF" in claim.claim for claim in monetary_claims)
+    assert "$" not in research_report
+    assert "$" not in internal_report
+    assert "4.34B HUF" in research_report
+    assert "4.34B HUF" in internal_report
 
 
 def test_composed_claim_report_can_pass_quality_when_audit_is_clean():

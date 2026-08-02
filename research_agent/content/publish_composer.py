@@ -84,7 +84,15 @@ def compose_publish_report(
     elif ticker == "CRM":
         body = _crm_publish_report(rating, metrics_packet, claim_list, evidence_ledger)
     else:
-        body = _generic_publish_report(ticker, rating, grouped, metrics_packet, claim_list, evidence_ledger)
+        body = _generic_publish_report(
+            ticker,
+            rating,
+            grouped,
+            metrics_packet,
+            claim_list,
+            evidence_ledger,
+            currency=data_packet.price_basis.currency,
+        )
     return _strip_main_body_internal_language(body).strip() + "\n"
 
 
@@ -668,6 +676,8 @@ def _generic_publish_report(
     metrics_packet: MetricsPacket,
     claim_list: list[ResearchClaim],
     evidence_ledger: EvidenceLedger,
+    *,
+    currency: str = "USD",
 ) -> str:
     f = metrics_packet.fundamentals
     v = metrics_packet.valuation
@@ -715,7 +725,7 @@ def _generic_publish_report(
         _paragraphs(grouped.get("Catalysts & Triggers", []), limit=4),
         "",
         "## Final Rating & Action Plan",
-        _final_rating_section(ticker, rating, f, v, t),
+        _final_rating_section(ticker, rating, f, v, t, currency=currency),
         "",
         "## Evidence Appendix",
         _evidence_appendix(claim_list, evidence_ledger),
@@ -1553,11 +1563,11 @@ def _current_kpi_claims(claims: list[ResearchClaim]) -> list[ResearchClaim]:
     ]
 
 
-def _final_rating_section(ticker: str, rating: str, f, v, t) -> str:
+def _final_rating_section(ticker: str, rating: str, f, v, t, *, currency: str = "USD") -> str:
     return "\n\n".join([
         f"Final Rating: {rating}. The central debate is whether {ticker}'s current business momentum can overcome valuation and timing constraints.",
         (
-            f"Why this rating? Revenue of {_fmt_money(f.revenue_ttm)} and FCF of {_fmt_money(f.free_cash_flow_ttm)} support the base case, "
+            f"Why this rating? Revenue of {_fmt_money(f.revenue_ttm, currency)} and FCF of {_fmt_money(f.free_cash_flow_ttm, currency)} support the base case, "
             f"but EV/Sales of {_fmt_multiple(v.ev_to_sales)}, P/FCF of {_fmt_multiple(v.price_to_fcf)} and RSI of {_fmt_number(t.rsi_14)} argue against chasing the stock."
         ),
         "Why not more bullish? A more constructive stance needs either a better entry point, stronger cash-flow conversion after investment needs, or clearer technical confirmation.",
@@ -1859,14 +1869,17 @@ def _table_text(text: str) -> str:
     return _clean_text(text).replace("|", "\\|")
 
 
-def _fmt_money(value: float | None) -> str:
+def _fmt_money(value: float | None, currency: str = "USD") -> str:
     if value is None:
         return "not available"
+    normalized_currency = str(currency or "USD").strip().upper()
     if abs(value) >= 1_000_000_000:
-        return f"${value / 1_000_000_000:.2f}B"
-    if abs(value) >= 1_000_000:
-        return f"${value / 1_000_000:.1f}M"
-    return f"${value:.2f}"
+        amount = f"{value / 1_000_000_000:.2f}B"
+    elif abs(value) >= 1_000_000:
+        amount = f"{value / 1_000_000:.1f}M"
+    else:
+        amount = f"{value:.2f}"
+    return f"${amount}" if normalized_currency == "USD" else f"{amount} {normalized_currency}"
 
 
 def _fmt_multiple(value: float | None) -> str:
