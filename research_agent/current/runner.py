@@ -199,6 +199,7 @@ def run_current_research(
         company_name = str(issuer["company_name"])
         companyfacts = sec.get_companyfacts(cik)
         submissions = sec.get_submissions(cik)
+        _require_supported_sec_reporting_profile(symbol, companyfacts)
         companyfacts_path = companyfacts_dir / f"{symbol}.json"
         _write_json(companyfacts_path, companyfacts)
         cik_records_path = source_dir / "cik_records.json"
@@ -435,6 +436,36 @@ def request_from_environment(
             "ROOM16_RESEARCH_AUTHORITY_ROOT", "research_agent/data/outputs"
         ),
         official_news_dir=os.environ.get("ROOM16_OFFICIAL_NEWS_DIR") or None,
+    )
+
+
+def _require_supported_sec_reporting_profile(
+    ticker: str,
+    companyfacts: dict[str, Any],
+) -> None:
+    facts = companyfacts.get("facts")
+    if not isinstance(facts, dict):
+        return
+    if facts.get("us-gaap") or not facts.get("ifrs-full"):
+        return
+    forms = sorted(
+        {
+            str(row.get("form"))
+            for record in facts["ifrs-full"].values()
+            if isinstance(record, dict)
+            for unit_rows in (record.get("units") or {}).values()
+            for row in unit_rows
+            if isinstance(row, dict) and row.get("form")
+        }
+    )
+    form_label = "/".join(forms) if forms else "20-F/6-K"
+    raise CurrentResearchError(
+        f"{ticker} was recognized as an SEC registrant, but its official "
+        f"CompanyFacts use the IFRS taxonomy with {form_label} filings. "
+        "The current SEC financial adapter supports US-GAAP 10-K/10-Q data; "
+        "Room16 will not reinterpret IFRS concepts through US-GAAP mappings "
+        "or substitute weaker data. A generic SEC IFRS adapter is required "
+        "before this instrument can be analysed."
     )
 
 

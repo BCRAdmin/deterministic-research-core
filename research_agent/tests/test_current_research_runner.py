@@ -67,6 +67,31 @@ class _FakeSecWithRisks(_FakeSec):
         """
 
 
+class _FakeIfrsSec(_FakeSec):
+    def get_companyfacts(self, cik):
+        return {
+            "cik": int(cik),
+            "entityName": "Generic IFRS Issuer",
+            "facts": {
+                "ifrs-full": {
+                    "Revenue": {
+                        "units": {
+                            "TWD": [
+                                {
+                                    "val": 1_000_000,
+                                    "form": "20-F",
+                                    "filed": "2026-04-30",
+                                    "start": "2025-01-01",
+                                    "end": "2025-12-31",
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+        }
+
+
 class _FakePrices(PriceProviderBase):
     source_type = "trusted_market_data_vendor"
     source_url = "https://prices.example/docs"
@@ -295,6 +320,17 @@ def test_current_runner_rejects_unsupported_official_issuer(tmp_path):
             sec_client=_FakeSec(ticker="GENR"),
             bse_provider=_NoBse(),
         )
+
+
+def test_current_runner_names_unsupported_sec_ifrs_profile_before_pipeline(tmp_path):
+    with pytest.raises(CurrentResearchError, match="IFRS taxonomy with 20-F"):
+        run_current_research(
+            _request(tmp_path),
+            price_provider=_FakePrices(),
+            sec_client=_FakeIfrsSec(),
+        )
+
+    assert not list((tmp_path / "outputs").rglob("authority_manifest.json"))
 
 
 def test_current_runner_names_missing_sec_identity_before_adapter_lookup(tmp_path):
