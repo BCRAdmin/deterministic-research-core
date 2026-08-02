@@ -9,6 +9,10 @@ from research_agent.decision.decision_packet import DecisionPacket
 from research_agent.evidence.evidence_item import EvidenceItem
 from research_agent.evidence.evidence_ledger import EvidenceLedger
 from research_agent.quality.quality_score import calculate_quality_score
+from research_agent.reconciliation.canonical_financials import (
+    CanonicalFinancials,
+    CanonicalMetric,
+)
 from research_agent.research_core.models.data_packet import DataPacket
 from research_agent.research_core.models.metrics_packet import MetricsPacket
 from research_agent.research_core.models.validation_report import ValidationReport
@@ -243,6 +247,60 @@ def test_content_generator_does_not_render_missing_values_as_claims():
     assert claims
     assert all("not available in evidence set" not in claim.claim for claim in claims)
     assert not any("revenue TTM of" in claim.claim for claim in claims)
+
+
+def test_generic_company_gets_latest_reported_period_claim():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    data.ticker = "GENERIC"
+    data.price_basis.currency = "HUF"
+    canonical = CanonicalFinancials(
+        ticker="GENERIC",
+        as_of_date=data.as_of_date,
+        metrics=[
+            CanonicalMetric(
+                metric_name=metric_name,
+                value=value,
+                unit="HUF",
+                period="FY2026_Q1",
+                fiscal_year=2026,
+                fiscal_period="Q1",
+                period_bucket="quarterly",
+                start_date="2026-01-01",
+                end_date="2026-03-31",
+                duration_days=89,
+                basis="gaap",
+                statement_type="income_statement",
+                source_ids=["GENERIC_IR_FY2026_Q1"],
+                evidence_ids=[f"GENERIC_{metric_name}_FY2026_Q1"],
+                confidence="high",
+            )
+            for metric_name, value in (
+                ("revenue", 17_190_000_000),
+                ("operating_income", 3_790_000_000),
+                ("net_income", 2_680_000_000),
+            )
+        ],
+    )
+
+    claims = generate_research_claims(
+        data,
+        metrics,
+        ledger,
+        decision,
+        validation,
+        canonical,
+    )
+    current = next(
+        claim for claim in claims if "latest reported period" in claim.claim
+    )
+
+    assert " HUF" in current.claim
+    assert "do not by themselves establish growth" in current.claim
+    assert current.metric_refs == [
+        "current_q_revenue",
+        "operating_income",
+        "net_income",
+    ]
 
 
 def test_generic_claim_report_stays_internal_when_substance_gate_fails():

@@ -141,7 +141,12 @@ class _ClaimBuilder:
             implication=f"The action language should stay consistent with the {preferred} stance.",
         )
 
-        for current_claim in _current_period_claim_specs(ticker, self.metrics, self.canonical):
+        for current_claim in _current_period_claim_specs(
+            ticker,
+            self.metrics,
+            self.canonical,
+            currency=self.data_packet.price_basis.currency,
+        ):
             self.add(
                 current_claim["section"],
                 current_claim["kind"],
@@ -771,6 +776,7 @@ def _has_ticker_specific_kpi(claim: ResearchClaim) -> bool:
         "backlog", "contract backlog", "contracted missions", "launch manifest",
         "electron", "haste", "launch cadence", "neutron", "space systems",
         "launch services", "service revenue", "execution milestone", "capital intensity",
+        "latest reported period", "operating income", "net income",
     }
     return any(term in text for term in terms)
 
@@ -899,6 +905,26 @@ def _canonical_value(
     return candidates[0].value
 
 
+def _latest_current_period_metric(
+    canonical_financials: CanonicalFinancials,
+    metric_name: str,
+):
+    candidates = [
+        metric
+        for metric in canonical_financials.metrics_for(metric_name)
+        if _is_current_period_metric(metric.period, metric.source_ids)
+    ]
+    if not candidates:
+        return None
+    return max(
+        candidates,
+        key=lambda metric: (
+            metric.end_date or "",
+            {"high": 3, "medium": 2, "low": 1}.get(metric.confidence, 0),
+        ),
+    )
+
+
 def _is_current_period_metric(period: str, source_ids: list[str]) -> bool:
     period_lower = (period or "").lower()
     source_lower = " ".join(source_ids).lower()
@@ -909,6 +935,10 @@ def _is_current_period_metric(period: str, source_ids: list[str]) -> bool:
         or "q4_2026" in period_lower
         or "2026q1" in period_lower
         or "2026q2" in period_lower
+        or "2026_q1" in period_lower
+        or "2026_q2" in period_lower
+        or "2026_q3" in period_lower
+        or "2026_q4" in period_lower
         or "_ir_" in source_lower
         or "release" in source_lower
     )
@@ -982,6 +1012,7 @@ def _current_period_claim_specs(
     ticker: str,
     metrics: MetricsPacket,
     canonical_financials: Optional[CanonicalFinancials],
+    currency: str = "USD",
 ) -> list[dict[str, object]]:
     fundamentals = metrics.fundamentals
     specs: list[dict[str, object]] = []
@@ -1381,6 +1412,52 @@ def _current_period_claim_specs(
                 "implication": "Hold remains appropriate until FCF durability and ad-tier execution are clearer.",
             },
         ])
+    if not specs:
+        current_revenue = _latest_current_period_metric(
+            canonical_financials,
+            "revenue",
+        )
+        if current_revenue is not None:
+            operating_income = canonical_financials.get_metric(
+                "operating_income",
+                period=current_revenue.period,
+            )
+            net_income = canonical_financials.get_metric(
+                "net_income",
+                period=current_revenue.period,
+            )
+            if operating_income is not None and net_income is not None:
+                specs.append(
+                    {
+                        "section": "Fundamental Analysis",
+                        "kind": "current_period",
+                        "evidence_type": "financial_metric",
+                        "text": (
+                            f"{ticker}'s latest reported period "
+                            f"{current_revenue.period} includes revenue of "
+                            f"{_money(current_revenue.value, currency)}, "
+                            "operating income of "
+                            f"{_money(operating_income.value, currency)} and "
+                            f"net income of {_money(net_income.value, currency)}. "
+                            "These are current-period results; they do not by "
+                            "themselves establish growth without a comparable "
+                            "prior period."
+                        ),
+                        "metrics": [
+                            "current_q_revenue",
+                            "operating_income",
+                            "net_income",
+                        ],
+                        "counterargument": (
+                            "A single reported period does not establish a "
+                            "durable trend."
+                        ),
+                        "implication": (
+                            "Use the latest period as current context, not as "
+                            "standalone evidence for an upgrade or downgrade."
+                        ),
+                    }
+                )
     return specs
 
 
