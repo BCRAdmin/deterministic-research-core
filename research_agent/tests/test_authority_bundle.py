@@ -201,6 +201,29 @@ def test_authority_bundle_is_ticker_agnostic(tmp_path: Path, ticker: str) -> Non
     assert verification["analysis_allowed"] is True
 
 
+def test_authority_verifier_rejects_inconsistent_manifest_permission(
+    tmp_path: Path,
+) -> None:
+    packet_dir, registry_path = _packet_set(tmp_path)
+    output_dir = tmp_path / "bundle"
+    build_authority_bundle(
+        packet_dir=packet_dir,
+        source_registry_path=registry_path,
+        output_dir=output_dir,
+    )
+    manifest_path = output_dir / "authority_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    failed_check = next(item for item in manifest["checks"] if item["blocking"])
+    failed_check["status"] = "fail"
+    manifest["blocking_failures"] = [failed_check["check_id"]]
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+    verification = verify_authority_bundle(output_dir)
+
+    assert verification["analysis_allowed"] is False
+    assert "manifest_gate_consistent" in verification["blocking_failures"]
+
+
 def test_authority_bundle_fails_when_validation_blocks(tmp_path: Path) -> None:
     packet_dir, registry_path = _packet_set(tmp_path)
     validation_path = packet_dir / "validation_report.json"

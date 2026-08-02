@@ -170,6 +170,35 @@ def _check(
     )
 
 
+def _manifest_gate_consistent(manifest: Mapping[str, Any]) -> bool:
+    declared_failures = manifest.get("blocking_failures")
+    manifest_checks = manifest.get("checks")
+    if not isinstance(declared_failures, list) or not isinstance(manifest_checks, list):
+        return False
+    if not manifest_checks or any(not isinstance(item, Mapping) for item in manifest_checks):
+        return False
+    check_ids: set[str] = set()
+    derived_failures: list[str] = []
+    for item in manifest_checks:
+        check_id = str(item.get("check_id") or "")
+        status = item.get("status")
+        blocking = item.get("blocking")
+        if (
+            not check_id
+            or check_id in check_ids
+            or status not in {"pass", "fail"}
+            or not isinstance(blocking, bool)
+        ):
+            return False
+        check_ids.add(check_id)
+        if blocking and status != "pass":
+            derived_failures.append(check_id)
+    return (
+        [str(item) for item in declared_failures] == derived_failures
+        and manifest.get("analysis_allowed") is (not derived_failures)
+    )
+
+
 def _metric_items(metrics_packet: Mapping[str, Any]) -> Iterable[tuple[str, Any]]:
     for section in ("technical", "fundamentals", "valuation"):
         values = metrics_packet.get(section)
@@ -798,6 +827,11 @@ def verify_authority_bundle(bundle_dir: str | Path) -> dict[str, Any]:
         manifest.get("contract_id") == AUTHORITY_CONTRACT_ID
         and manifest.get("contract_version") == AUTHORITY_CONTRACT_VERSION,
         detail=f"{manifest.get('contract_id')}@{manifest.get('contract_version')}",
+    )
+    _check(
+        checks,
+        "manifest_gate_consistent",
+        _manifest_gate_consistent(manifest),
     )
     artifacts = manifest.get("artifacts")
     artifacts = artifacts if isinstance(artifacts, Mapping) else {}
