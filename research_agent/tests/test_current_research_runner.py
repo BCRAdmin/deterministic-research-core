@@ -44,6 +44,29 @@ class _FakeSec:
         return {"filings": {"recent": {"filingDate": ["2026-07-20"]}}}
 
 
+class _FakeSecWithRisks(_FakeSec):
+    def get_submissions(self, cik):
+        return {
+            "filings": {
+                "recent": {
+                    "form": ["10-Q"],
+                    "filingDate": ["2026-07-20"],
+                    "reportDate": ["2026-06-30"],
+                    "accessionNumber": ["0000123456-26-000001"],
+                    "primaryDocument": ["generic-20260630.htm"],
+                }
+            }
+        }
+
+    def get_filing_html(self, **kwargs):
+        return """
+        <div>Risk Factors</div>
+        <p><strong>Failure to execute our strategy could adversely affect business growth.</strong></p>
+        <p>Supporting explanation for the disclosed issuer risk.</p>
+        <div>Item 3. Market Risk</div>
+        """
+
+
 class _FakePrices(PriceProviderBase):
     source_type = "trusted_market_data_vendor"
     source_url = "https://prices.example/docs"
@@ -127,10 +150,45 @@ class _StoredSnowSec(_FakeSec):
             )
         )
 
+    def get_company_tickers(self):
+        return {
+            "0": {
+                "ticker": "SNOW",
+                "cik_str": 1640147,
+                "title": "Snowflake Inc.",
+            }
+        }
+
 
 class _StoredSnowPrices(_FakePrices):
     def get_history(self, ticker, start, end):
         return pd.read_csv(SNOW_SOURCE_ROOT / "prices" / "SNOW.csv")
+
+
+class _StoredAaplSec(_FakeSec):
+    def __init__(self):
+        super().__init__(ticker="AAPL")
+
+    def get_company_tickers(self):
+        return {
+            "0": {
+                "ticker": "AAPL",
+                "cik_str": 320193,
+                "title": "Apple Inc.",
+            }
+        }
+
+    def get_companyfacts(self, cik):
+        return json.loads(
+            (SNOW_SOURCE_ROOT / "sec_companyfacts" / "AAPL.json").read_text(
+                encoding="utf-8"
+            )
+        )
+
+
+class _StoredAaplPrices(_FakePrices):
+    def get_history(self, ticker, start, end):
+        return pd.read_csv(SNOW_SOURCE_ROOT / "prices" / "AAPL.csv")
 
 
 def _request(tmp_path, ticker="GENR"):
@@ -172,6 +230,35 @@ def test_current_runner_stages_generic_inputs_and_returns_authority(monkeypatch,
     assert result["price_row_count"] == 261
     assert result["latest_filing_date"] == "2026-07-20"
     assert (tmp_path / "staging" / "GENR" / "2026-07-26" / "sources").exists()
+
+
+def test_current_runner_stages_sec_risks_for_the_existing_pipeline(monkeypatch, tmp_path):
+    def fake_pipeline(ticker, as_of_date, config):
+        risk_path = Path(config.sec_risk_factors_path)
+        payload = json.loads(risk_path.read_text(encoding="utf-8"))
+        assert payload["evidence_items"][0]["claim_type"] == "risk"
+        authority = tmp_path / "outputs" / ticker / as_of_date / "authority_bundle"
+        authority.mkdir(parents=True)
+        (authority / "authority_manifest.json").write_text(
+            json.dumps(
+                {
+                    "contract_id": "room16.research_authority_bundle",
+                    "analysis_allowed": True,
+                }
+            ),
+            encoding="utf-8",
+        )
+
+    monkeypatch.setattr(runner, "run_research_pipeline", fake_pipeline)
+    result = run_current_research(
+        _request(tmp_path),
+        price_provider=_FakePrices(),
+        sec_client=_FakeSecWithRisks(),
+    )
+
+    assert result["risk_source_status"] == "available"
+    assert result["risk_filing_date"] == "2026-07-20"
+    assert result["risk_factor_count"] == 1
 
 
 def test_current_runner_rejects_unsupported_official_issuer(tmp_path):
@@ -232,7 +319,7 @@ def test_current_runner_rejects_non_authority_price_provider(tmp_path):
 
 def test_current_runner_builds_real_authority_bundle_from_generic_adapters(tmp_path):
     request = CurrentResearchRequest(
-        ticker="SNOW",
+        ticker="AAPL",
         as_of_date="2026-05-17",
         sec_user_agent="Room16 operator@example.com",
         staging_root=str(tmp_path / "staging"),
@@ -243,15 +330,15 @@ def test_current_runner_builds_real_authority_bundle_from_generic_adapters(tmp_p
 
     result = run_current_research(
         request,
-        price_provider=_StoredSnowPrices(),
-        sec_client=_StoredSnowSec(),
+        price_provider=_StoredAaplPrices(),
+        sec_client=_StoredAaplSec(),
     )
 
     manifest = json.loads(
         (
             tmp_path
             / "outputs"
-            / "SNOW"
+            / "AAPL"
             / "2026-05-17"
             / "authority_bundle"
             / "authority_manifest.json"
@@ -261,6 +348,25 @@ def test_current_runner_builds_real_authority_bundle_from_generic_adapters(tmp_p
     assert result["analysis_allowed"] is True
     assert manifest["analysis_allowed"] is True
     assert manifest["contract_id"] == "room16.research_authority_bundle"
+
+
+def test_current_runner_rejects_ambiguous_stored_authority_inputs(tmp_path):
+    request = CurrentResearchRequest(
+        ticker="SNOW",
+        as_of_date="2026-05-17",
+        sec_user_agent="Room16 operator@example.com",
+        staging_root=str(tmp_path / "staging"),
+        output_root=str(tmp_path / "outputs"),
+        ir_release_dir=str(SNOW_SOURCE_ROOT / "ir_releases"),
+        price_api_key="unused-in-test",
+    )
+
+    with pytest.raises(RuntimeError, match="evidence_ids_unique"):
+        run_current_research(
+            request,
+            price_provider=_StoredSnowPrices(),
+            sec_client=_StoredSnowSec(),
+        )
 
 
 def test_current_runner_routes_public_bse_issuer_without_sec_or_api_key(

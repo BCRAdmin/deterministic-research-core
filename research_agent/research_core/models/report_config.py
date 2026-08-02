@@ -31,6 +31,7 @@ class ReportConfig(BaseModel):
     price_currency: str = "USD"
     cik_records_path: Optional[str] = None
     sec_companyfacts_path: Optional[str] = None
+    sec_risk_factors_path: Optional[str] = None
     sec_user_agent: Optional[str] = None
     earnings_calendar_path: Optional[str] = None
     ir_release_dir: Optional[str] = None

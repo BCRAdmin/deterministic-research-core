@@ -6,7 +6,7 @@ import urllib.error
 import urllib.request
 import gzip
 from dataclasses import dataclass
-from typing import Any, Dict, Optional
+from typing import Any, Callable, Dict, Optional
 
 from research_agent.sources.sec.sec_cache import SecCache
 from research_agent.sources.sec.sec_rate_limiter import SecRateLimiter
@@ -34,7 +34,7 @@ class SecClient:
             SecCache(config.cache_dir, config.cache_ttl_hours) if config.use_cache else None
         )
 
-    def get_json(self, path: str) -> Dict[str, Any]:
+    def _get(self, path: str, *, accept: str, decode: Callable[[bytes], Any]) -> Any:
         if not path.startswith("/"):
             path = "/" + path
         cache_key = f"{self.config.base_url}{path}"
@@ -53,7 +53,7 @@ class SecClient:
                     headers={
                         "User-Agent": self.config.user_agent,
                         "Accept-Encoding": "gzip, deflate",
-                        "Accept": "application/json",
+                        "Accept": accept,
                     },
                 )
                 with urllib.request.urlopen(
@@ -62,7 +62,7 @@ class SecClient:
                     raw = response.read()
                     if response.headers.get("Content-Encoding") == "gzip":
                         raw = gzip.decompress(raw)
-                    payload = json.loads(raw.decode("utf-8"))
+                    payload = decode(raw)
                 if self.cache:
                     self.cache.set(cache_key, payload)
                 return payload
@@ -76,6 +76,26 @@ class SecClient:
                 last_error = exc
                 time.sleep(min(2**attempt, 10))
         raise RuntimeError(f"SEC request failed after retries: {url}") from last_error
+
+    def get_json(self, path: str) -> Dict[str, Any]:
+        payload = self._get(
+            path,
+            accept="application/json",
+            decode=lambda raw: json.loads(raw.decode("utf-8")),
+        )
+        if not isinstance(payload, dict):
+            raise RuntimeError(f"SEC JSON response is not an object: {path}")
+        return payload
+
+    def get_text(self, path: str) -> str:
+        payload = self._get(
+            path,
+            accept="text/html,application/xhtml+xml",
+            decode=lambda raw: raw.decode("utf-8", "replace"),
+        )
+        if not isinstance(payload, str):
+            raise RuntimeError(f"SEC text response is not text: {path}")
+        return payload
 
     def get_companyfacts(self, cik: str) -> Dict[str, Any]:
         cik10 = str(cik).zfill(10)
@@ -104,3 +124,28 @@ class SecClient:
             cache_ttl_hours=self.config.cache_ttl_hours,
         )
         return SecClient(website_config).get_json("/files/company_tickers.json")
+
+    def get_filing_html(
+        self,
+        *,
+        cik: str,
+        accession_number: str,
+        primary_document: str,
+    ) -> str:
+        cik_digits = str(int(cik))
+        accession_digits = accession_number.replace("-", "")
+        document = primary_document.rsplit("/", 1)[-1]
+        if not accession_digits.isdigit() or not document.lower().endswith((".htm", ".html")):
+            raise ValueError("invalid SEC filing identity")
+        website_config = SecClientConfig(
+            user_agent=self.config.user_agent,
+            base_url="https://www.sec.gov",
+            request_delay_seconds=self.config.request_delay_seconds,
+            timeout_seconds=self.config.timeout_seconds,
+            max_retries=self.config.max_retries,
+            use_cache=self.config.use_cache,
+            cache_dir=self.config.cache_dir,
+            cache_ttl_hours=self.config.cache_ttl_hours,
+        )
+        path = f"/Archives/edgar/data/{cik_digits}/{accession_digits}/{document}"
+        return SecClient(website_config).get_text(path)

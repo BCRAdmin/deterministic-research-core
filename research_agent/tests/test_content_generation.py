@@ -179,6 +179,34 @@ def test_claim_coverage_names_missing_risk_analysis_without_padding():
     assert claim_coverage_gaps(metrics) == ["missing_risk_analysis"]
 
 
+def test_content_generator_turns_primary_risk_evidence_into_qualitative_claims():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    _add_exact_metric_evidence(data, metrics, ledger)
+    ledger.evidence_items.append(
+        EvidenceItem(
+            evidence_id="SNOW_SEC_RISK_001",
+            ticker="SNOW",
+            claim_type="risk",
+            source_id="SEC_SNOW_10K",
+            source_type="sec_filing",
+            authority_rank=1,
+            statement="Service interruptions could adversely affect customer demand.",
+            period="10-K period ended 2026-01-31",
+            date="2026-03-20",
+            supports_claims=["company_risk_analysis"],
+            confidence="high",
+        )
+    )
+
+    claims = generate_research_claims(data, metrics, ledger, decision, validation)
+    risk_claim = next(claim for claim in claims if claim.claim_type == "risk")
+
+    assert risk_claim.section == "Key Risks"
+    assert risk_claim.metric_refs == []
+    assert risk_claim.evidence_ids == ["SNOW_SEC_RISK_001"]
+    assert claim_quality_metrics(claims)["risk_specific_claim_count"] == 1
+
+
 def test_bear_case_distinguishes_bullish_bearish_and_mixed_trends():
     _, metrics, _, _, _ = _load_packet("SNOW")
     metrics.technical.close = 120.0
@@ -408,6 +436,7 @@ def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():
 
 def test_content_generator_does_not_render_missing_values_as_claims():
     data, metrics, validation, ledger, decision = _load_packet("CRWD")
+    _add_exact_metric_evidence(data, metrics, ledger)
 
     claims = generate_research_claims(data, metrics, ledger, decision, validation)
 

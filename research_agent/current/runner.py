@@ -20,6 +20,11 @@ from research_agent.sources.prices.massive_price_provider import MassivePricePro
 from research_agent.sources.prices.nasdaq_price_provider import NasdaqPriceProvider
 from research_agent.sources.prices.price_provider_base import PriceProviderBase
 from research_agent.sources.sec.sec_client import SecClient, SecClientConfig
+from research_agent.sources.sec.sec_filing_risks import (
+    build_sec_risk_evidence,
+    save_sec_risk_evidence,
+    select_sec_risk_filing_candidates,
+)
 
 
 class CurrentResearchError(RuntimeError):
@@ -92,6 +97,7 @@ def run_current_research(
     source_dir = staging_dir / "sources"
     price_dir = source_dir / "prices"
     companyfacts_dir = source_dir / "sec_companyfacts"
+    risk_factors_dir = source_dir / "sec_risk_factors"
     packet_root = staging_dir / "packets"
     for path in (price_dir, companyfacts_dir, packet_root, Path(request.output_root)):
         path.mkdir(parents=True, exist_ok=True)
@@ -121,6 +127,10 @@ def run_current_research(
 
     cik: Optional[str] = None
     companyfacts_path: Optional[Path] = None
+    risk_factors_path: Optional[Path] = None
+    risk_source_status = "not_applicable"
+    risk_filing_date: Optional[str] = None
+    risk_factor_count = 0
     cik_records_path: Optional[Path] = None
     ir_release_dir: Optional[Path] = (
         Path(request.ir_release_dir).expanduser().resolve()
@@ -144,6 +154,39 @@ def run_current_research(
             cik_records_path,
             [{"ticker": symbol, "cik": cik, "company_name": company_name}],
         )
+        risk_source_status = "no_extractable_risk_factors"
+        for filing in select_sec_risk_filing_candidates(
+            submissions,
+            cik=cik,
+            as_of_date=request.as_of_date,
+        ):
+            try:
+                filing_html = sec.get_filing_html(
+                    cik=filing.cik,
+                    accession_number=filing.accession_number,
+                    primary_document=filing.primary_document,
+                )
+            except RuntimeError:
+                risk_source_status = "filing_fetch_failed"
+                continue
+            risk_evidence = build_sec_risk_evidence(
+                ticker=symbol,
+                filing=filing,
+                html=filing_html,
+                retrieved_at=retrieved_at,
+            )
+            if not risk_evidence:
+                continue
+            risk_factors_path = risk_factors_dir / f"{symbol}.json"
+            save_sec_risk_evidence(
+                risk_factors_path,
+                filing=filing,
+                evidence=risk_evidence,
+            )
+            risk_source_status = "available"
+            risk_filing_date = filing.filing_date
+            risk_factor_count = len(risk_evidence)
+            break
         latest_filing_date = _latest_filing_date(submissions)
         provider = price_provider or _build_price_provider(request)
         provider_name = str(
@@ -256,6 +299,7 @@ def run_current_research(
         price_retrieved_at=retrieved_at,
         cik_records_path=str(cik_records_path) if cik_records_path else None,
         sec_companyfacts_path=str(companyfacts_path) if companyfacts_path else None,
+        sec_risk_factors_path=str(risk_factors_path) if risk_factors_path else None,
         sec_user_agent=request.sec_user_agent or None,
         ir_release_dir=str(ir_release_dir) if ir_release_dir else None,
         earnings_calendar_path=earnings_calendar_path,
@@ -285,6 +329,9 @@ def run_current_research(
         "jurisdiction": jurisdiction,
         "isin": isin,
         "latest_filing_date": latest_filing_date,
+        "risk_source_status": risk_source_status,
+        "risk_filing_date": risk_filing_date,
+        "risk_factor_count": risk_factor_count,
         "price_provider": provider_name,
         "price_source_type": source_type,
         "price_row_count": int(len(prices)),

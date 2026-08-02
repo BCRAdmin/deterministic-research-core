@@ -64,3 +64,32 @@ def test_sec_company_ticker_map_uses_official_website_with_same_identity(monkeyp
         "user_agent": "ResearchAgent contact@example.com",
         "path": "/files/company_tickers.json",
     }
+
+
+def test_sec_filing_uses_official_archive_with_same_identity(monkeypatch):
+    captured = {}
+
+    def fake_get_text(self, path):
+        captured["base_url"] = self.config.base_url
+        captured["user_agent"] = self.config.user_agent
+        captured["path"] = path
+        return "<html>filing</html>"
+
+    monkeypatch.setattr(SecClient, "get_text", fake_get_text)
+    client = SecClient(
+        SecClientConfig(
+            user_agent="ResearchAgent contact@example.com",
+            use_cache=False,
+        )
+    )
+
+    assert client.get_filing_html(
+        cik="63908",
+        accession_number="0000063908-26-000051",
+        primary_document="mcd-20260331.htm",
+    ) == "<html>filing</html>"
+    assert captured == {
+        "base_url": "https://www.sec.gov",
+        "user_agent": "ResearchAgent contact@example.com",
+        "path": "/Archives/edgar/data/63908/000006390826000051/mcd-20260331.htm",
+    }

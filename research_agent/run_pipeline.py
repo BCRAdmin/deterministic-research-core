@@ -107,6 +107,7 @@ from research_agent.sources.ir.earnings_release_parser import (
 from research_agent.sources.sec.cik_mapper import load_cik_mapper
 from research_agent.sources.sec.companyfacts_parser import CompanyFactsParser
 from research_agent.sources.sec.sec_client import SecClient, SecClientConfig
+from research_agent.sources.sec.sec_filing_risks import load_sec_risk_evidence
 from research_agent.sources.sec.sec_fundamentals_builder import (
     SEC_FUNDAMENTAL_METRICS,
     build_sec_evidence_for_source_ids,
@@ -744,6 +745,10 @@ def _load_source_ingestion_inputs(ticker: str, as_of_date: str, config: ReportCo
         )
         reconciliation_warnings.extend(
             canonical_fundamentals.get("reconciliation_issues", [])
+        )
+    if config.sec_risk_factors_path:
+        evidence_items.extend(
+            load_sec_risk_evidence(config.sec_risk_factors_path, ticker=ticker)
         )
     if config.ir_release_dir:
         guidance_fundamentals, guidance_evidence, guidance_canonical = _load_ir_guidance_inputs(ticker, config.ir_release_dir)

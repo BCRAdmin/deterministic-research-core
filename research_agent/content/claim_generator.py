@@ -84,7 +84,10 @@ def claim_quality_metrics(claims: Iterable[ResearchClaim]) -> dict[str, float | 
         for claim in claim_list
         if (claim.section or "") == "Key Risks"
         and bool(claim.evidence_ids)
-        and bool(claim.metric_refs or claim.evidence_metrics)
+        and (
+            (claim.claim_type or "") == "risk"
+            or bool(claim.metric_refs or claim.evidence_metrics)
+        )
         and not _is_generic_meta_claim(claim)
         and not _is_data_limitation_claim(claim)
     ]
@@ -215,6 +218,11 @@ class _ClaimBuilder:
                 counterargument=current_claim.get("counterargument"),
                 implication=current_claim.get("implication"),
             )
+
+        for index, risk_evidence in enumerate(
+            self._selected_risk_evidence(limit=4)
+        ):
+            self.add_risk(risk_evidence, explain_disclosure=index == 0)
 
         self.add(
             "Fundamental Analysis",
@@ -505,6 +513,57 @@ class _ClaimBuilder:
             implication=_final_rating_implication(ticker, preferred, self.metrics),
         )
         return self.claims
+
+    def add_risk(
+        self,
+        evidence: EvidenceItem,
+        *,
+        explain_disclosure: bool,
+    ) -> None:
+        self.counter += 1
+        claim_id = f"{self.data_packet.ticker}_CLAIM_{self.counter:03d}"
+        text = f"Issuer-disclosed risk: {evidence.statement}"
+        if explain_disclosure:
+            text += (
+                " This identifies an exposure; it does not establish that the "
+                "adverse outcome has occurred."
+            )
+        self.claims.append(
+            ResearchClaim(
+                claim_id=claim_id,
+                section="Key Risks",
+                claim_type="risk",
+                agent="deterministic_content_generator",
+                claim=text,
+                claim_text=text,
+                evidence_metrics=[],
+                metric_refs=[],
+                metric_values={},
+                evidence_ids=[evidence.evidence_id],
+                source_ids=[evidence.source_id],
+                confidence=evidence.confidence,
+                importance="high",
+            )
+        )
+
+    def _selected_risk_evidence(self, *, limit: int) -> list[EvidenceItem]:
+        candidates = [
+            item
+            for item in self.ledger.evidence_items
+            if item.claim_type == "risk"
+            and item.source_type in {"sec_filing", "company_ir", "official_press_release"}
+            and item.authority_rank <= 2
+            and self.evidence_id_counts.get(item.evidence_id) == 1
+            and item.statement.strip()
+        ]
+        candidates = list({item.evidence_id: item for item in candidates}.values())
+        if len(candidates) <= limit:
+            return candidates
+        positions = {
+            round(index * (len(candidates) - 1) / (limit - 1))
+            for index in range(limit)
+        }
+        return [candidates[index] for index in sorted(positions)]
 
     def add(
         self,
