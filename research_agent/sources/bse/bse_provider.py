@@ -59,6 +59,120 @@ class _TextExtractor(HTMLParser):
         return " ".join(self.parts)
 
 
+def _html_text(fragment: str) -> str:
+    parser = _TextExtractor()
+    parser.feed(fragment)
+    return parser.text()
+
+
+def _profile_business_activity(html: str) -> Optional[str]:
+    match = re.search(
+        r"<td[^>]*>\s*Business activity\s*</td>\s*<td[^>]*>(.*?)</td>",
+        html,
+        re.IGNORECASE | re.DOTALL,
+    )
+    return _html_text(match.group(1)).strip() if match else None
+
+
+def _qualitative_business_summary(activity: Optional[str]) -> Optional[str]:
+    if not activity:
+        return None
+    sentences = [
+        sentence.strip()
+        for sentence in re.split(r"(?<=[.!?])\s+", activity)
+        if len(sentence.strip()) >= 40
+        and not any(character.isdigit() for character in sentence)
+    ]
+    if not sentences:
+        return None
+    return (
+        "The BSE issuer profile describes the business as follows: "
+        f"{sentences[0]}"
+    )[:800].strip()
+
+
+def _bse_publications(html: str, *, as_of_date: str) -> list[dict[str, str]]:
+    tab_start = html.find('id="cp_tab_content_5"')
+    tab_end = html.find('id="cp_tab_content_6"', tab_start + 1)
+    if tab_start < 0 or tab_end < 0:
+        return []
+    as_of = date.fromisoformat(as_of_date)
+    publications: list[dict[str, str]] = []
+    seen_urls: set[str] = set()
+    for row in re.findall(
+        r"<tr[^>]*>(.*?)</tr>",
+        html[tab_start:tab_end],
+        re.IGNORECASE | re.DOTALL,
+    ):
+        date_match = re.search(
+            r"<span[^>]*>\s*(\d{1,2})\s+([A-Za-z]{3})\s+(\d{4})",
+            row,
+            re.IGNORECASE,
+        )
+        link_match = re.search(
+            r"<a[^>]+href=[\"']([^\"']+)[\"'][^>]*>(.*?)</a>",
+            row,
+            re.IGNORECASE | re.DOTALL,
+        )
+        if not date_match or not link_match:
+            continue
+        month = {
+            "jan": 1,
+            "feb": 2,
+            "mar": 3,
+            "apr": 4,
+            "may": 5,
+            "jun": 6,
+            "jul": 7,
+            "aug": 8,
+            "sep": 9,
+            "oct": 10,
+            "nov": 11,
+            "dec": 12,
+        }.get(date_match.group(2).lower())
+        if month is None:
+            continue
+        published = date(
+            int(date_match.group(3)),
+            month,
+            int(date_match.group(1)),
+        )
+        if published > as_of:
+            continue
+        url = urllib.parse.urljoin("https://www.bse.hu", link_match.group(1))
+        if url in seen_urls:
+            continue
+        headline = _html_text(link_match.group(2)).strip()
+        if not headline:
+            continue
+        seen_urls.add(url)
+        publications.append(
+            {
+                "date": published.isoformat(),
+                "headline": headline,
+                "url": url,
+            }
+        )
+    return sorted(publications, key=lambda item: item["date"], reverse=True)
+
+
+def _bse_publication_type(headline: str) -> str:
+    text = headline.lower()
+    if "dividend" in text:
+        return "dividend"
+    if "voting rights" in text or "share capital" in text:
+        return "capital_structure"
+    if "quarter" in text or "half-year" in text:
+        return "earnings_results"
+    if "annual report" in text:
+        return "filing"
+    if "governance" in text or "general meeting" in text:
+        return "governance"
+    if "corporate action timetable" in text:
+        return "calendar"
+    return "issuer_publication"
+
+
 class BseIssuerProvider(PriceProviderBase):
     """Official issuer, financial and OHLCV data from Budapest Stock Exchange."""
 
@@ -196,6 +310,65 @@ class BseIssuerProvider(PriceProviderBase):
             "isin": issuer.isin,
             "currency": issuer.currency,
             "metrics": metrics,
+        }
+
+    def build_news_payload(
+        self,
+        issuer: BseIssuer,
+        *,
+        as_of_date: str,
+        retrieved_at: str,
+    ) -> dict[str, Any]:
+        html = self._html_by_ticker.get(issuer.ticker)
+        if not html:
+            raise RuntimeError(
+                f"BSE issuer profile is unavailable for {issuer.ticker}."
+            )
+        events: list[dict[str, Any]] = []
+        business_summary = _qualitative_business_summary(
+            _profile_business_activity(html)
+        )
+        if business_summary:
+            events.append(
+                {
+                    "date": as_of_date,
+                    "headline": f"BSE issuer profile describes {issuer.ticker}'s business activity",
+                    "event_type": "business_context",
+                    "material": True,
+                    "source_id": f"BSE_{issuer.ticker}_ISSUER_PROFILE",
+                    "source_type": "company_ir",
+                    "authority_rank": 1,
+                    "url": issuer.profile_url,
+                    "retrieved_at": retrieved_at,
+                    "summary": business_summary,
+                }
+            )
+        publications = _bse_publications(html, as_of_date=as_of_date)
+        for index, publication in enumerate(publications, start=1):
+            event_type = _bse_publication_type(publication["headline"])
+            events.append(
+                {
+                    **publication,
+                    "event_type": event_type,
+                    "material": False,
+                    "source_id": (
+                        f"BSE_{issuer.ticker}_PUBLICATION_"
+                        f"{publication['date'].replace('-', '')}_{index:02d}"
+                    ),
+                    "source_type": "company_ir",
+                    "authority_rank": 1,
+                    "retrieved_at": retrieved_at,
+                    "summary": publication["headline"],
+                }
+            )
+        publication_dates = [item["date"] for item in publications]
+        return {
+            "coverage_status": "partial",
+            "checked_at": retrieved_at,
+            "window_start": min(publication_dates) if publication_dates else None,
+            "window_end": as_of_date,
+            "sources_checked": [issuer.profile_url],
+            "events": events,
         }
 
     def _corporate_actions(self, issuer: BseIssuer) -> list[dict[str, Any]]:

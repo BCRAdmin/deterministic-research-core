@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import Counter
 from typing import Optional
 
 from research_agent.evidence.citation_policy import requires_primary_source
@@ -97,6 +98,30 @@ def validate_guidance_consensus_separation(ledger: EvidenceLedger):
 
 
 def validate_claim_has_evidence(claim: ResearchClaim, ledger: EvidenceLedger):
+    referenced_ids = [
+        str(evidence_id).strip()
+        for evidence_id in claim.evidence_ids
+        if str(evidence_id).strip()
+    ]
+    if referenced_ids:
+        ledger_id_counts = Counter(
+            item.evidence_id for item in ledger.evidence_items
+        )
+        invalid_ids = [
+            evidence_id
+            for evidence_id in referenced_ids
+            if ledger_id_counts[evidence_id] != 1
+        ]
+        if not invalid_ids:
+            return None
+        return {
+            "severity": "error",
+            "code": "MISSING_EVIDENCE_FOR_CLAIM",
+            "evidence_ids": sorted(set(invalid_ids)),
+            "message": (
+                "ResearchClaim references missing or non-unique EvidenceItems."
+            ),
+        }
     for metric in claim.evidence_metrics:
         if ledger.find_by_metric(metric):
             return None

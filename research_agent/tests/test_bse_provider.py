@@ -17,6 +17,17 @@ def _profile_html() -> str:
       Short name ANY PLC
       Basic Information Ticker ANY ISIN HU0000093257
       Currency of trading HUF
+      <table>
+        <tr><td>Business activity</td><td><span>ANY provides secure document and identity solutions to public administrations. Its certified production capabilities offer the highest level of secure card and document personalisation.</span></td></tr>
+      </table>
+      <div class="tab_content" id="cp_tab_content_5">
+        <table class="news"><tbody>
+          <tr><td><span>31 Jul 2026 08:15</span></td><td><a href="/future">Future publication</a></td></tr>
+          <tr><td><span>03 Jul 2026 12:13</span></td><td><a href="/dividend">Final dividend announcement</a></td></tr>
+          <tr><td><span>18 May 2026 18:31</span></td><td><a href="/quarter">Stable first quarter</a></td></tr>
+        </tbody></table>
+      </div>
+      <div class="tab_content" id="cp_tab_content_6"></div>
       <script>
       window.data = {{
         "SecurityHistoricDataSource;securityId=4042":{{
@@ -108,3 +119,35 @@ def test_bse_provider_builds_trailing_quarters_without_company_branch(monkeypatc
         17_000_000.0,
         17_000_000.0,
     ]
+
+
+def test_bse_provider_builds_honest_profile_context_and_publication_snapshot(
+    monkeypatch,
+):
+    provider = BseIssuerProvider()
+    monkeypatch.setattr(provider, "_fetch", lambda _url: _profile_html().encode())
+    issuer = provider.resolve("ANY")
+    assert issuer is not None
+
+    payload = provider.build_news_payload(
+        issuer,
+        as_of_date="2026-07-24",
+        retrieved_at="2026-07-26T00:00:00+00:00",
+    )
+
+    assert payload["coverage_status"] == "partial"
+    assert payload["window_start"] == "2026-05-18"
+    assert [event["event_type"] for event in payload["events"]] == [
+        "business_context",
+        "dividend",
+        "earnings_results",
+    ]
+    assert not any(
+        character.isdigit() for character in payload["events"][0]["summary"]
+    )
+    assert payload["events"][0]["summary"].startswith(
+        "The BSE issuer profile describes the business as follows:"
+    )
+    assert "highest level" not in payload["events"][0]["summary"]
+    assert all(not event["material"] for event in payload["events"][1:])
+    assert all(event["date"] <= "2026-07-24" for event in payload["events"])

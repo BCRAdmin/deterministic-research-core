@@ -190,6 +190,7 @@ def run_current_research(
     )
     financial_source: Optional[SourceRegistryEntry] = None
     earnings_calendar_path = request.earnings_calendar_path
+    official_news_dir = request.official_news_dir
     jurisdiction = "US"
     isin: Optional[str] = None
     if issuer is not None:
@@ -262,6 +263,14 @@ def run_current_research(
             retrieved_at=retrieved_at,
         )
         _write_json(ir_release_dir / f"{symbol}.json", financial_payload)
+        bse_news_dir = source_dir / "bse_news"
+        bse_news_payload = bse.build_news_payload(
+            bse_issuer,
+            as_of_date=request.as_of_date,
+            retrieved_at=retrieved_at,
+        )
+        _write_json(bse_news_dir / f"{symbol}_news.json", bse_news_payload)
+        official_news_dir = str(bse_news_dir)
         calendar_builder = getattr(bse, "build_earnings_calendar", None)
         bse_calendar = (
             calendar_builder(
@@ -360,7 +369,7 @@ def run_current_research(
         sec_user_agent=request.sec_user_agent or None,
         ir_release_dir=str(ir_release_dir) if ir_release_dir else None,
         earnings_calendar_path=earnings_calendar_path,
-        official_news_dir=request.official_news_dir,
+        official_news_dir=official_news_dir,
         price_currency=bse_issuer.currency if bse_issuer else "USD",
     )
     run_research_pipeline(symbol, request.as_of_date, config)

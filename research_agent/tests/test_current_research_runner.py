@@ -138,6 +138,29 @@ class _FakeBse(_FakePrices):
             ],
         }
 
+    def build_news_payload(self, issuer, *, as_of_date, retrieved_at):
+        return {
+            "coverage_status": "partial",
+            "checked_at": retrieved_at,
+            "window_start": as_of_date,
+            "window_end": as_of_date,
+            "sources_checked": [issuer.profile_url],
+            "events": [
+                {
+                    "date": as_of_date,
+                    "headline": "BSE issuer profile describes the business activity",
+                    "event_type": "business_context",
+                    "material": True,
+                    "source_id": "BSE_GENR_ISSUER_PROFILE",
+                    "source_type": "company_ir",
+                    "authority_rank": 1,
+                    "url": issuer.profile_url,
+                    "retrieved_at": retrieved_at,
+                    "summary": "The issuer provides secure identity solutions.",
+                }
+            ],
+        }
+
 
 class _StoredSnowSec(_FakeSec):
     def __init__(self):
@@ -383,6 +406,7 @@ def test_current_runner_routes_public_bse_issuer_without_sec_or_api_key(
         assert config.price_source_type == "exchange_ohlcv"
         assert config.price_currency == "HUF"
         assert Path(config.ir_release_dir, "GENR.json").exists()
+        assert Path(config.official_news_dir, "GENR_news.json").exists()
         authority = tmp_path / "outputs" / ticker / as_of_date / "authority_bundle"
         authority.mkdir(parents=True)
         (authority / "authority_manifest.json").write_text(

@@ -1,11 +1,13 @@
 from research_agent.evidence.evidence_item import EvidenceItem
 from research_agent.evidence.evidence_ledger import EvidenceLedger
 from research_agent.evidence.evidence_validator import (
+    validate_claim_has_evidence,
     validate_guidance_consensus_separation,
     validate_metric_evidence,
     validate_news_event_date,
     validate_vendor_not_primary,
 )
+from research_agent.research_core.models.claims import ResearchClaim
 
 
 def test_missing_evidence_for_hard_metric_is_flagged():
@@ -129,6 +131,69 @@ def test_guidance_consensus_conflation_is_flagged():
     issue = validate_guidance_consensus_separation(ledger)
 
     assert issue["code"] == "GUIDANCE_CONSENSUS_CONFLATION"
+
+
+def test_qualitative_claim_accepts_one_exact_evidence_id():
+    item = EvidenceItem(
+        evidence_id="ANY_BSE_BUSINESS_CONTEXT",
+        ticker="ANY",
+        claim_type="event",
+        source_id="BSE_ANY_PROFILE",
+        source_type="company_ir",
+        authority_rank=1,
+        statement="ANY provides secure identity solutions.",
+    )
+    claim = ResearchClaim(
+        agent="business_context",
+        claim="ANY provides secure identity solutions.",
+        evidence_metrics=[],
+        evidence_ids=[item.evidence_id],
+        source_ids=[item.source_id],
+        confidence="high",
+    )
+    ledger = EvidenceLedger(
+        ticker="ANY",
+        as_of_date="2026-07-24",
+        evidence_items=[item],
+    )
+
+    assert validate_claim_has_evidence(claim, ledger) is None
+
+
+def test_qualitative_claim_rejects_missing_or_non_unique_evidence_id():
+    duplicate_items = [
+        EvidenceItem(
+            evidence_id="ANY_BSE_BUSINESS_CONTEXT",
+            ticker="ANY",
+            claim_type="event",
+            source_id=source_id,
+            source_type="company_ir",
+            authority_rank=1,
+            statement="ANY provides secure identity solutions.",
+        )
+        for source_id in ("BSE_ANY_PROFILE", "BSE_ANY_PROFILE_COPY")
+    ]
+    claim = ResearchClaim(
+        agent="business_context",
+        claim="ANY provides secure identity solutions.",
+        evidence_metrics=[],
+        evidence_ids=["ANY_BSE_BUSINESS_CONTEXT", "ANY_MISSING_CONTEXT"],
+        source_ids=["BSE_ANY_PROFILE"],
+        confidence="high",
+    )
+    ledger = EvidenceLedger(
+        ticker="ANY",
+        as_of_date="2026-07-24",
+        evidence_items=duplicate_items,
+    )
+
+    issue = validate_claim_has_evidence(claim, ledger)
+
+    assert issue["code"] == "MISSING_EVIDENCE_FOR_CLAIM"
+    assert issue["evidence_ids"] == [
+        "ANY_BSE_BUSINESS_CONTEXT",
+        "ANY_MISSING_CONTEXT",
+    ]
 
 
 def _build_mdb_fixture_ledger():
