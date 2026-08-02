@@ -32,6 +32,10 @@ _BUSINESS_LANGUAGE = re.compile(
     r"manufacture|manufactures|distribute|distributes|market|markets)\b",
     re.IGNORECASE,
 )
+_BUSINESS_MODEL_LANGUAGE = re.compile(
+    r"\b(franchis(?:e|es|ed|ing|or|ors|ee|ees)|restaurant|restaurants)\b",
+    re.IGNORECASE,
+)
 _BUSINESS_CONTEXT_SKIP_PREFIXES = (
     "this report includes",
     "the following discussion",
@@ -213,7 +217,8 @@ def extract_sec_business_context(html: str) -> list[str]:
     starts = [
         index
         for index, (block, _) in enumerate(blocks)
-        if _compact_heading(block) == "item1business"
+        if _compact_heading(block)
+        in {"item1business", "businesssummary", "descriptionofthebusiness"}
     ]
     best: list[str] = []
     for start in starts:
@@ -225,7 +230,7 @@ def extract_sec_business_context(html: str) -> list[str]:
             ),
             len(blocks),
         )
-        section = blocks[start + 1 : end]
+        section = blocks[start + 1 : min(end, start + 81)]
         candidates = [
             (index, fragment)
             for index, (text, emphasized) in enumerate(section)
@@ -234,10 +239,14 @@ def extract_sec_business_context(html: str) -> list[str]:
         ]
         if not candidates:
             continue
-        activity = max(
-            candidates,
-            key=lambda item: (_business_context_score(item[1]), -item[0]),
-        )[1]
+        activity = next(
+            (
+                text
+                for _, text in candidates
+                if _business_context_score(text) >= 3
+            ),
+            candidates[0][1],
+        )
         selected = [activity]
         segment = next(
             (
@@ -422,4 +431,10 @@ def _business_context_fragments(text: str) -> list[str]:
 
 
 def _business_context_score(text: str) -> int:
-    return len({match.group(0).lower() for match in _BUSINESS_LANGUAGE.finditer(text)})
+    terms = {
+        match.group(0).lower() for match in _BUSINESS_LANGUAGE.finditer(text)
+    }
+    terms.update(
+        match.group(0).lower() for match in _BUSINESS_MODEL_LANGUAGE.finditer(text)
+    )
+    return len(terms)

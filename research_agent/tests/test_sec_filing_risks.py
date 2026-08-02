@@ -2,6 +2,7 @@ from research_agent.sources.sec.sec_filing_risks import (
     SecFilingReference,
     build_sec_business_context_payload,
     build_sec_risk_evidence,
+    extract_sec_business_context,
     extract_sec_risk_headings,
     select_sec_risk_filing_candidates,
 )
@@ -128,6 +129,27 @@ def test_extracts_business_context_only_from_annual_item_1():
         "sec_filing"
     }
     assert len({event["evidence_id"] for event in payload["events"]}) == 2
+
+
+def test_extracts_business_context_from_cross_referenced_annual_report():
+    html = """
+    <html><body>
+      <p><strong>BUSINESS SUMMARY</strong></p>
+      <p><strong>DESCRIPTION OF THE BUSINESS</strong></p>
+      <p>The company is primarily a franchisor, and franchising enables local restaurant operators to serve customers in their communities.</p>
+      <p>The reportable business segments are Domestic Markets and International Markets.</p>
+      <div><strong>ITEM 1A. RISK FACTORS</strong></div>
+      <p><strong>Competition could adversely affect operating results.</strong></p>
+      <div>Form 10-K Cross-Reference Index</div>
+      <div>Item 1 Business</div><div>Page 3</div>
+      <div>Item 1A Risk Factors</div><div>Page 27</div>
+    </body></html>
+    """
+
+    assert extract_sec_business_context(html) == [
+        "The company is primarily a franchisor, and franchising enables local restaurant operators to serve customers in their communities.",
+        "The reportable business segments are Domestic Markets and International Markets.",
+    ]
 
 
 def test_builds_primary_risk_evidence_without_inventing_numeric_metrics():
