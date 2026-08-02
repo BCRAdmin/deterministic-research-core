@@ -370,7 +370,8 @@ def test_unknown_company_is_not_classified_from_metadata_or_revenue_scale():
     assessment = assess_speculative_deep_tech_manual_review(
         markdown=(
             "Corporate action timetable and deterministic calculations are "
-            "available. The evidence does not establish growth."
+            "available. Revenue growth is measured, but the evidence does not "
+            "establish a growth-company archetype."
         ),
         metrics_packet=metrics,
         source_registry=SourceRegistry(

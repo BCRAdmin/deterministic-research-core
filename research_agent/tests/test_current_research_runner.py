@@ -11,7 +11,13 @@ from research_agent.current.runner import (
     CurrentResearchRequest,
     run_current_research,
 )
-from research_agent.run_pipeline import _load_ir_guidance_inputs, build_data_packet
+from research_agent.evidence.evidence_item import EvidenceItem
+from research_agent.evidence.evidence_ledger import EvidenceLedger
+from research_agent.run_pipeline import (
+    _load_ir_guidance_inputs,
+    _sec_derived_fcf_used,
+    build_data_packet,
+)
 from research_agent.sources.bse.bse_provider import BseIssuer
 from research_agent.sources.prices.price_provider_base import PriceProviderBase
 
@@ -45,6 +51,30 @@ class _FakeSec:
 
 
 class _FakeSecWithRisks(_FakeSec):
+    def get_companyfacts(self, cik):
+        return {
+            "cik": int(cik),
+            "entityName": "Generic Research Corp.",
+            "facts": {
+                "us-gaap": {
+                    "Revenues": {
+                        "units": {
+                            "USD": [
+                                {
+                                    "val": 1_000_000,
+                                    "form": "10-Q",
+                                    "filed": "2026-07-20",
+                                    "start": "2026-04-01",
+                                    "end": "2026-06-30",
+                                    "accn": "0000123456-26-000001",
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+        }
+
     def get_submissions(self, cik):
         return {
             "filings": {
@@ -65,6 +95,15 @@ class _FakeSecWithRisks(_FakeSec):
         <p>Supporting explanation for the disclosed issuer risk.</p>
         <div>Item 3. Market Risk</div>
         """
+
+
+class _FakeSecWithLaggingCompanyFacts(_FakeSecWithRisks):
+    def get_companyfacts(self, cik):
+        payload = super().get_companyfacts(cik)
+        row = payload["facts"]["us-gaap"]["Revenues"]["units"]["USD"][0]
+        row["filed"] = "2026-04-20"
+        row["accn"] = "0000123456-26-000000"
+        return payload
 
 
 class _FakeIfrsSec(_FakeSec):
@@ -313,6 +352,19 @@ def test_current_runner_stages_sec_risks_for_the_existing_pipeline(monkeypatch, 
     assert result["risk_source_status"] == "available"
     assert result["risk_filing_date"] == "2026-07-20"
     assert result["risk_factor_count"] == 1
+
+
+def test_current_runner_blocks_when_latest_sec_financials_are_not_in_companyfacts(
+    tmp_path,
+):
+    with pytest.raises(CurrentResearchError, match="älteren Quartal"):
+        run_current_research(
+            _request(tmp_path),
+            price_provider=_FakePrices(),
+            sec_client=_FakeSecWithLaggingCompanyFacts(),
+        )
+
+    _assert_no_run_dirs(tmp_path)
 
 
 def test_current_runner_rejects_unsupported_official_issuer(tmp_path):
@@ -680,3 +732,25 @@ def test_official_metrics_preserve_ttm_fiscal_period(tmp_path):
     assert fundamentals["latest_quarter"] == "FY2026_Q1"
     assert fundamentals["fiscal_period"] == "TTM through FY2026_Q1"
     assert fundamentals["fiscal_year_end"] == "12-31"
+
+
+def test_sec_derived_fcf_is_recognized_from_deterministic_lineage():
+    ledger = EvidenceLedger(
+        ticker="KO",
+        as_of_date="2026-07-28",
+        evidence_items=[
+            EvidenceItem(
+                evidence_id="KO_DETERMINISTIC_FCF",
+                ticker="KO",
+                claim_type="financial_metric",
+                source_id="ROOM16_KO_DETERMINISTIC_CALCULATIONS",
+                source_type="deterministic_calculation",
+                authority_rank=1,
+                statement="FCF equals SEC operating cash flow minus SEC capex.",
+                supports_metrics=["free_cash_flow_ttm"],
+                source_lineage=["SEC_0000021344_10Q"],
+            )
+        ],
+    )
+
+    assert _sec_derived_fcf_used(ledger) == 1

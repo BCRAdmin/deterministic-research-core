@@ -4,6 +4,7 @@ from __future__ import annotations
 SOURCE_AUTHORITY_RANKS = {
     "company_ir": 1,
     "sec_filing": 1,
+    "deterministic_calculation": 1,
     "earnings_release": 1,
     "earnings_transcript": 2,
     "exchange_ohlcv": 2,

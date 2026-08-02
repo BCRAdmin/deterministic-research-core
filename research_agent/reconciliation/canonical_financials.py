@@ -6,6 +6,8 @@ from typing import List, Literal, Optional, Union
 
 from pydantic import BaseModel, Field
 
+from research_agent.sources.sec.xbrl_concepts import concept_priority
+
 
 BasisType = Literal["gaap", "non_gaap", "company_defined", "consensus", "technical"]
 StatementType = Literal["income_statement", "balance_sheet", "cash_flow", "guidance", "price", "technical"]
@@ -45,7 +47,15 @@ class CanonicalFinancials(BaseModel):
         if not candidates:
             return None
         if len(candidates) > 1:
-            candidates = sorted(candidates, key=lambda metric: _confidence_rank(metric.confidence), reverse=True)
+            candidates = sorted(
+                candidates,
+                key=lambda metric: (
+                    metric.end_date or "",
+                    _confidence_rank(metric.confidence),
+                    concept_priority(metric.metric_name, metric.source_concept),
+                ),
+                reverse=True,
+            )
         return candidates[0]
 
     def metrics_for(self, metric_name: str) -> list[CanonicalMetric]:

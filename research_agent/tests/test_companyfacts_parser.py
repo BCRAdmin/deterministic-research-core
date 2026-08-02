@@ -224,11 +224,18 @@ def test_conflicting_xbrl_alias_facts_remain_visible():
         }
     }
 
-    facts = CompanyFactsParser("MCD", "63908", fixture).get_facts_for_metric(
-        "cash_and_equivalents"
+    parser = CompanyFactsParser("MCD", "63908", fixture)
+    facts = parser.get_facts_for_metric("cash_and_equivalents")
+    evidence_ids = [parser.to_evidence_item(fact).evidence_id for fact in facts]
+    canonical, _warnings = build_canonical_financials_from_facts(
+        "MCD", "2026-05-07", facts
     )
+    fundamentals = canonical_financials_to_fundamentals(canonical)
 
     assert [fact.value for fact in facts] == [1_170_000_000, 1_180_000_000]
+    assert len(set(evidence_ids)) == 2
+    assert len(canonical.metrics_for("cash_and_equivalents")) == 2
+    assert fundamentals["balance_sheet"]["cash_and_equivalents"] == 1_170_000_000
 
 
 def test_sec_fundamentals_builder_returns_metrics_and_evidence():

@@ -17,4 +17,5 @@ def test_vendor_source_detection_starts_at_rank_five():
     assert is_vendor_source("zacks")
     assert is_vendor_source("finviz")
     assert not is_vendor_source("company_ir")
+    assert not is_vendor_source("deterministic_calculation")
     assert not is_vendor_source("reuters")

@@ -11,7 +11,16 @@ def is_amended_form(form: str | None) -> bool:
 def prefer_restatement(facts):
     grouped = {}
     for fact in facts:
-        key = (fact.metric_name, fact.fy, fact.fp, fact.start, fact.end)
+        key = (
+            fact.metric_name,
+            fact.fy,
+            fact.fp,
+            fact.start,
+            fact.end,
+            fact.unit,
+            getattr(fact, "frame", None),
+            getattr(fact, "concept", None),
+        )
         grouped.setdefault(key, []).append(fact)
 
     selected = []

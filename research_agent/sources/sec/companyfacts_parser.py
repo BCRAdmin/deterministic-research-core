@@ -194,10 +194,11 @@ class CompanyFactsParser:
         period_identity = (
             f"{fact.start or 'instant'}_{fact.end or fact.filed or 'unknown'}"
         )
+        concept_identity = (fact.concept or "unknown_concept").replace(":", "_")
         return EvidenceItem(
             evidence_id=(
                 f"{self.ticker}_SEC_{fact.metric_name}_{fact.period}_"
-                f"{period_identity}_{fact.accession or fact.filed}"
+                f"{period_identity}_{concept_identity}_{fact.accession or fact.filed}"
             ),
             ticker=self.ticker,
             claim_type="financial_metric",

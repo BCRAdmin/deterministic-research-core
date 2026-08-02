@@ -25,6 +25,19 @@ from research_agent.sources.sec.sec_filing_risks import (
     save_sec_risk_evidence,
     select_sec_risk_filing_candidates,
 )
+from research_agent.sources.sec.xbrl_concepts import US_GAAP_CONCEPTS
+
+
+SEC_FINANCIAL_FORMS = {"10-K", "10-Q"}
+SEC_COMPANYFACTS_COVERAGE_METRICS = {
+    "revenue",
+    "operating_income",
+    "net_income",
+    "operating_cash_flow",
+    "current_assets",
+    "current_liabilities",
+    "equity",
+}
 
 
 class CurrentResearchError(RuntimeError):
@@ -199,6 +212,7 @@ def run_current_research(
     isin: Optional[str] = None
     companyfacts: Optional[dict[str, Any]] = None
     submissions: Optional[dict[str, Any]] = None
+    latest_financial_filing: Optional[dict[str, str]] = None
     bse_financial_payload: Optional[dict[str, Any]] = None
     bse_news_payload: Optional[dict[str, Any]] = None
     bse_calendar_path: Optional[Path] = None
@@ -210,6 +224,12 @@ def run_current_research(
         companyfacts = sec.get_companyfacts(cik)
         submissions = sec.get_submissions(cik)
         _require_supported_sec_reporting_profile(symbol, companyfacts)
+        latest_financial_filing = _require_current_sec_financial_filing_coverage(
+            symbol,
+            request.as_of_date,
+            submissions,
+            companyfacts,
+        )
         companyfacts_path = companyfacts_dir / f"{symbol}.json"
         cik_records_path = source_dir / "cik_records.json"
         risk_source_status = "no_extractable_risk_factors"
@@ -242,7 +262,9 @@ def run_current_research(
             risk_filing_date = filing.filing_date
             risk_factor_count = len(risk_evidence)
             break
-        latest_filing_date = _latest_filing_date(submissions)
+        latest_filing_date = _latest_filing_date(
+            submissions, as_of_date=request.as_of_date
+        )
         provider = price_provider or _build_price_provider(request)
         provider_name = str(
             getattr(provider, "provider_id", None)
@@ -428,6 +450,11 @@ def run_current_research(
         "jurisdiction": jurisdiction,
         "isin": isin,
         "latest_filing_date": latest_filing_date,
+        "latest_financial_filing_date": (
+            latest_financial_filing.get("filing_date")
+            if issuer is not None and latest_financial_filing is not None
+            else latest_filing_date
+        ),
         "risk_source_status": risk_source_status,
         "risk_filing_date": risk_filing_date,
         "risk_factor_count": risk_factor_count,
@@ -536,11 +563,91 @@ def _resolve_sec_issuer(payload: dict[str, Any], ticker: str) -> Optional[dict[s
     return None
 
 
-def _latest_filing_date(submissions: dict[str, Any]) -> Optional[str]:
+def _latest_filing_date(
+    submissions: dict[str, Any], *, as_of_date: Optional[str] = None
+) -> Optional[str]:
     dates = (
         submissions.get("filings", {}).get("recent", {}).get("filingDate") or []
     )
-    return max(dates) if dates else None
+    eligible = [
+        str(filing_date)
+        for filing_date in dates
+        if filing_date and (as_of_date is None or str(filing_date) <= as_of_date)
+    ]
+    return max(eligible) if eligible else None
+
+
+def _require_current_sec_financial_filing_coverage(
+    ticker: str,
+    as_of_date: str,
+    submissions: dict[str, Any],
+    companyfacts: dict[str, Any],
+) -> Optional[dict[str, str]]:
+    latest = _latest_sec_financial_filing(submissions, as_of_date)
+    if latest is None:
+        return None
+    accession = latest["accession_number"]
+    if accession in _mapped_companyfacts_accessions(companyfacts, as_of_date):
+        return latest
+    raise CurrentResearchError(
+        f"{ticker} hat mit dem {latest['form']} vom {latest['filing_date']} einen "
+        "neueren offiziellen SEC-Finanzbericht, dessen standardisierte "
+        f"CompanyFacts für die Einreichung {accession} noch nicht verfügbar "
+        "sind. Room16 startet keine Analyse mit dem älteren Quartal als "
+        "angeblich aktuellem Finanzstand. Bitte den Lauf nach der SEC-"
+        "Aktualisierung erneut starten."
+    )
+
+
+def _latest_sec_financial_filing(
+    submissions: dict[str, Any], as_of_date: str
+) -> Optional[dict[str, str]]:
+    recent = submissions.get("filings", {}).get("recent", {})
+    forms = recent.get("form") or []
+    filing_dates = recent.get("filingDate") or []
+    accessions = recent.get("accessionNumber") or []
+    candidates = [
+        {
+            "form": str(form),
+            "filing_date": str(filing_dates[index]),
+            "accession_number": str(accessions[index]),
+        }
+        for index, form in enumerate(forms)
+        if form in SEC_FINANCIAL_FORMS
+        and index < len(filing_dates)
+        and index < len(accessions)
+        and filing_dates[index]
+        and accessions[index]
+        and str(filing_dates[index]) <= as_of_date
+    ]
+    if not candidates:
+        return None
+    return max(
+        candidates,
+        key=lambda item: (item["filing_date"], item["accession_number"]),
+    )
+
+
+def _mapped_companyfacts_accessions(
+    companyfacts: dict[str, Any], as_of_date: str
+) -> set[str]:
+    mapped_concepts = {
+        concept
+        for metric_name in SEC_COMPANYFACTS_COVERAGE_METRICS
+        for concept in US_GAAP_CONCEPTS.get(metric_name, [])
+    }
+    us_gaap = companyfacts.get("facts", {}).get("us-gaap", {})
+    return {
+        str(row.get("accn"))
+        for concept in mapped_concepts
+        for row_set in ((us_gaap.get(concept) or {}).get("units") or {}).values()
+        for row in row_set
+        if isinstance(row, dict)
+        and row.get("accn")
+        and row.get("filed")
+        and str(row.get("filed")) <= as_of_date
+        and row.get("form") in SEC_FINANCIAL_FORMS
+    }
 
 
 def _latest_metric_date(payload: dict[str, Any]) -> Optional[str]:

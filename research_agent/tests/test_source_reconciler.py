@@ -354,6 +354,10 @@ def test_ttm_bridge_subtracts_matching_prior_interim_for_current_q2():
         "prior_interim": 30,
         "current_interim": 33,
     }
+    assert fundamentals["latest_fiscal_year"] == "FY2026"
+    assert fundamentals["latest_quarter"] == "FY2026_Q2"
+    assert fundamentals["fiscal_year_end"] == "12-31"
+    assert fundamentals["fiscal_period"] == "TTM through FY2026_Q2"
 
 
 def test_ttm_uses_four_reported_contiguous_quarters_before_annual_bridge():

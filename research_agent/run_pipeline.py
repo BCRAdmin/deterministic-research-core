@@ -432,7 +432,7 @@ def run_research_pipeline(
         publish_action_plan_trigger_count=publish_quality_payload["publish_action_plan_trigger_count"],
         fcf_ocf_inconsistency_count=_count_audit_code(audit_report, "COMPANY_DEFINED_FCF_OCF_INCONSISTENCY"),
         company_defined_fcf_used=_company_defined_fcf_used(canonical_financials),
-        sec_derived_fcf_used=_sec_derived_fcf_used(canonical_financials),
+        sec_derived_fcf_used=_sec_derived_fcf_used(evidence_ledger),
         company_defined_fcf_mismatch_count=_count_audit_code(audit_report, "COMPANY_DEFINED_FCF_MISMATCH"),
         fcf_unavailable_block_count=_count_audit_code(audit_report, "FCF_UNAVAILABLE_WITHOUT_IR_SUPPORT"),
         company_specific_claim_count=int(claim_metrics["company_specific_claim_count"]),
@@ -1313,11 +1313,19 @@ def _company_defined_fcf_used(canonical_financials) -> int:
     ))
 
 
-def _sec_derived_fcf_used(canonical_financials) -> int:
-    if canonical_financials is None:
+def _sec_derived_fcf_used(evidence_ledger) -> int:
+    if evidence_ledger is None:
         return 0
-    return int(any(
-        metric.metric_name == "free_cash_flow"
-        and any("SEC" in source_id for source_id in metric.source_ids)
-        for metric in canonical_financials.metrics
-    ))
+    return int(
+        any(
+            "free_cash_flow_ttm" in item.supports_metrics
+            and (
+                item.source_type == "sec_filing"
+                or any(
+                    source_id.startswith("SEC_")
+                    for source_id in item.source_lineage
+                )
+            )
+            for item in evidence_ledger.evidence_items
+        )
+    )

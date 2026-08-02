@@ -65,3 +65,24 @@ US_GAAP_CONCEPTS = {
 DEI_CONCEPTS = {
     "listed_share_count": ["EntityCommonStockSharesOutstanding"],
 }
+
+
+def concept_priority(metric_name: str, source_concept: str | None) -> int:
+    """Return the configured preference rank for a canonical SEC concept."""
+
+    if not source_concept:
+        return 0
+    namespace, separator, concept = source_concept.partition(":")
+    if not separator:
+        namespace, concept = "us-gaap", namespace
+    concepts = (
+        US_GAAP_CONCEPTS.get(metric_name, [])
+        if namespace == "us-gaap"
+        else DEI_CONCEPTS.get(metric_name, [])
+        if namespace == "dei"
+        else []
+    )
+    try:
+        return len(concepts) - concepts.index(concept)
+    except ValueError:
+        return 0

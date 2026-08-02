@@ -574,7 +574,6 @@ def _infer_non_deeptech_archetype(text: str, metrics_packet: Any) -> CompanyArch
         [
             "high-growth",
             "high growth",
-            "revenue growth",
             "growth company",
             "commercial expansion",
         ],

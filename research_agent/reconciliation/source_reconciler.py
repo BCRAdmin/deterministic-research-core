@@ -12,6 +12,7 @@ from research_agent.reconciliation.period_resolver import resolve_period, valida
 from research_agent.reconciliation.restatement_resolver import prefer_restatement
 from research_agent.reconciliation.unit_normalizer import normalize_value, validate_unit_for_metric
 from research_agent.sources.sec.companyfacts_parser import ParsedFact
+from research_agent.sources.sec.xbrl_concepts import concept_priority
 
 
 MAX_CURRENT_FINANCIAL_AGE_DAYS = 550
@@ -444,6 +445,7 @@ def _dedupe_period_metrics(metrics: list[CanonicalMetric]) -> list[CanonicalMetr
         key=lambda item: (
             item.end_date or "",
             _confidence_rank(item.confidence),
+            concept_priority(item.metric_name, item.source_concept),
             1 if item.frame else 0,
         ),
     ):
@@ -477,6 +479,7 @@ def _latest_annual_metric(
         key=lambda metric: (
             metric.end_date or "",
             _confidence_rank(metric.confidence),
+            concept_priority(metric.metric_name, metric.source_concept),
             1 if metric.frame else 0,
         ),
         reverse=True,
@@ -501,6 +504,7 @@ def _latest_current_metric(
         key=lambda metric: (
             metric.end_date or "",
             _confidence_rank(metric.confidence),
+            concept_priority(metric.metric_name, metric.source_concept),
             1 if metric.frame else 0,
         ),
         reverse=True,
@@ -776,6 +780,23 @@ def _derive_fiscal_context(
     canonical: CanonicalFinancials,
     fundamentals: dict,
 ) -> None:
+    annual = sorted(
+        [
+            metric
+            for metric in canonical.metrics
+            if metric.metric_name == "revenue"
+            and metric.period_bucket == "annual"
+            and metric.end_date
+            and metric.fiscal_year is not None
+            and _is_current_metric(canonical, metric)
+        ],
+        key=lambda metric: metric.end_date or "",
+    )
+    if annual:
+        latest_annual = annual[-1]
+        fundamentals["latest_fiscal_year"] = f"FY{latest_annual.fiscal_year}"
+        fundamentals["fiscal_year_end"] = latest_annual.end_date[5:10]
+
     quarterly = sorted(
         [
             metric
@@ -789,6 +810,10 @@ def _derive_fiscal_context(
     if not quarterly:
         return
     latest = quarterly[-1]
+    if latest.fiscal_year and latest.fiscal_period:
+        fundamentals["latest_quarter"] = (
+            f"FY{latest.fiscal_year}_{latest.fiscal_period}"
+        )
     fundamentals["fiscal_period"] = (
         f"TTM through FY{latest.fiscal_year}_{latest.fiscal_period}"
         if latest.fiscal_year and latest.fiscal_period
