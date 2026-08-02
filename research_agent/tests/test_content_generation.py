@@ -533,7 +533,7 @@ def test_generic_company_gets_latest_reported_period_claim():
             )
             for metric_name, value in (
                 ("revenue", 17_190_000_000),
-                ("operating_income", 3_790_000_000),
+                ("gross_profit", 9_790_000_000),
                 ("net_income", 2_680_000_000),
             )
         ],
@@ -574,7 +574,7 @@ def test_generic_company_gets_latest_reported_period_claim():
     assert "without a matching prior-year quarter" in current.claim
     assert current.metric_refs == [
         "revenue",
-        "operating_income",
+        "gross_profit",
         "net_income",
     ]
 
@@ -586,6 +586,7 @@ def test_generic_current_period_claim_uses_evidenced_yoy_comparison():
     current_values = {
         "revenue": 110.0,
         "operating_income": 24.0,
+        "gross_profit": 60.0,
         "net_income": 15.0,
     }
     growth_values = {

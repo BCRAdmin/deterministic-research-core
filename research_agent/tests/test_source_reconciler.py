@@ -255,6 +255,56 @@ def test_stale_balance_sheet_metric_is_not_treated_as_current():
     assert "short_term_investments" not in fundamentals["balance_sheet"]
 
 
+def test_stale_debt_current_does_not_hide_current_short_term_debt():
+    def instant_metric(metric_name, value, end_date, source_concept):
+        return CanonicalMetric(
+            metric_name=metric_name,
+            value=value,
+            unit="USD",
+            period=end_date,
+            period_bucket="instant",
+            end_date=end_date,
+            basis="gaap",
+            statement_type="balance_sheet",
+            source_ids=[f"SEC_{metric_name}"],
+            evidence_ids=[f"EVIDENCE_{metric_name}"],
+            confidence="high",
+            source_concept=source_concept,
+        )
+
+    canonical = CanonicalFinancials(
+        ticker="BASE",
+        as_of_date="2026-07-31",
+        metrics=[
+            instant_metric(
+                "total_debt", 41_438, "2025-12-28", "us-gaap:LongTermDebt"
+            ),
+            instant_metric(
+                "debt_current", 8_500, "2025-12-28", "us-gaap:DebtCurrent"
+            ),
+            instant_metric(
+                "short_term_debt",
+                11_692,
+                "2026-06-28",
+                "us-gaap:ShortTermBorrowings",
+            ),
+            instant_metric(
+                "debt_noncurrent",
+                37_344,
+                "2026-06-28",
+                "us-gaap:LongTermDebtNoncurrent",
+            ),
+        ],
+    )
+
+    balance = canonical_financials_to_fundamentals(canonical)["balance_sheet"]
+
+    assert balance["total_debt"] == 49_036
+    assert balance["short_term_debt"] == 11_692
+    assert balance["debt_noncurrent"] == 37_344
+    assert "debt_current" not in balance
+
+
 def test_ttm_bridge_does_not_skip_q4_when_current_q1_arrives():
     facts = [
         _fact("revenue", 25_920, "FY", "2024-01-01", "2024-12-31", "fy-2024"),

@@ -750,6 +750,7 @@ def _derive_debt_and_lease_totals(
             component_values["debt_current"] = current.value
         current_is_aggregate = (
             current is not None
+            and current.end_date == noncurrent.end_date
             and current.source_concept == "us-gaap:DebtCurrent"
         )
         if (

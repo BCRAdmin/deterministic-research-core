@@ -1817,21 +1817,65 @@ def _current_period_claim_specs(
             "revenue",
         )
         if current_revenue is not None:
-            operating_income = canonical_financials.get_metric(
-                "operating_income",
-                period=current_revenue.period,
-            )
-            net_income = canonical_financials.get_metric(
-                "net_income",
-                period=current_revenue.period,
-            )
-            if operating_income is not None and net_income is not None:
+            available_metrics = {
+                metric_name: canonical_financials.get_metric(
+                    metric_name,
+                    period=current_revenue.period,
+                )
+                for metric_name in (
+                    "operating_income",
+                    "gross_profit",
+                    "net_income",
+                    "eps_diluted",
+                )
+            }
+            if (
+                available_metrics["operating_income"] is not None
+                and available_metrics["net_income"] is not None
+            ):
+                candidate_names = ("operating_income", "net_income")
+            else:
+                candidate_names = (
+                    "gross_profit",
+                    "net_income",
+                    "operating_income",
+                    "eps_diluted",
+                )
+            period_metrics = [("revenue", current_revenue)]
+            for metric_name in candidate_names:
+                metric = available_metrics[metric_name]
+                if metric is not None:
+                    period_metrics.append((metric_name, metric))
+                if len(period_metrics) == 3:
+                    break
+            if len(period_metrics) == 3:
+                metric_names = [metric_name for metric_name, _ in period_metrics]
+                metric_labels = {
+                    "revenue": "revenue",
+                    "operating_income": "operating income",
+                    "gross_profit": "gross profit",
+                    "net_income": "net income",
+                    "eps_diluted": "diluted EPS",
+                }
+                metric_phrases = [
+                    f"{metric_labels[metric_name]} of "
+                    f"{_money(metric.value, currency)}"
+                    for metric_name, metric in period_metrics
+                ]
+                period_result_text = (
+                    ", ".join(metric_phrases[:-1])
+                    + f" and {metric_phrases[-1]}"
+                )
                 growth_values = (
                     metrics.fundamentals.current_period_revenue_growth_yoy,
                     metrics.fundamentals.current_period_operating_income_growth_yoy,
                     metrics.fundamentals.current_period_net_income_growth_yoy,
                 )
-                has_matching_comparison = all(
+                has_matching_comparison = metric_names == [
+                    "revenue",
+                    "operating_income",
+                    "net_income",
+                ] and all(
                     value is not None for value in growth_values
                 )
                 if has_matching_comparison:
@@ -1860,7 +1904,7 @@ def _current_period_claim_specs(
                         "themselves establish growth without a matching "
                         "prior-year quarter."
                     )
-                    claim_metrics = ["revenue", "operating_income", "net_income"]
+                    claim_metrics = metric_names
                     comparison_counterargument = (
                         "A single reported period does not establish a durable "
                         "trend."
@@ -1872,11 +1916,8 @@ def _current_period_claim_specs(
                         "evidence_type": "financial_metric",
                         "text": (
                             f"{ticker}'s latest reported period "
-                            f"{_display_period(current_revenue)} includes revenue of "
-                            f"{_money(current_revenue.value, currency)}, "
-                            "operating income of "
-                            f"{_money(operating_income.value, currency)} and "
-                            f"net income of {_money(net_income.value, currency)}."
+                            f"{_display_period(current_revenue)} includes "
+                            f"{period_result_text}."
                             f"{comparison_text}"
                         ),
                         "metrics": claim_metrics,
