@@ -36,15 +36,9 @@ class RuleWeightConfig(BaseModel):
 DEFAULT_RULE_WEIGHTS = RuleWeightConfig(
     version="v1",
     rules={
-        "REVENUE_GROWTH_GT_30": RuleWeight(rule_id="REVENUE_GROWTH_GT_30", base_weight=2.0),
-        "REVENUE_GROWTH_GT_15": RuleWeight(rule_id="REVENUE_GROWTH_GT_15", base_weight=1.0),
-        "REVENUE_GROWTH_LT_5": RuleWeight(rule_id="REVENUE_GROWTH_LT_5", base_weight=-1.0),
         "FCF_TTM_POSITIVE": RuleWeight(rule_id="FCF_TTM_POSITIVE", base_weight=1.0),
-        "FCF_MARGIN_GT_25": RuleWeight(rule_id="FCF_MARGIN_GT_25", base_weight=1.0),
         "FCF_MARGIN_NEGATIVE": RuleWeight(rule_id="FCF_MARGIN_NEGATIVE", base_weight=-1.0),
-        "OPERATING_MARGIN_GT_10": RuleWeight(rule_id="OPERATING_MARGIN_GT_10", base_weight=1.0),
         "OPERATING_MARGIN_NEGATIVE": RuleWeight(rule_id="OPERATING_MARGIN_NEGATIVE", base_weight=-1.0),
-        "NET_CASH_POSITIVE": RuleWeight(rule_id="NET_CASH_POSITIVE", base_weight=1.0),
         "PRICE_ABOVE_200SMA": RuleWeight(rule_id="PRICE_ABOVE_200SMA", base_weight=1.0),
         "PRICE_BELOW_200SMA": RuleWeight(rule_id="PRICE_BELOW_200SMA", base_weight=-1.0),
         "GOLDEN_CROSS": RuleWeight(rule_id="GOLDEN_CROSS", base_weight=1.0),

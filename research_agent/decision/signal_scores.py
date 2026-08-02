@@ -19,11 +19,6 @@ def score_fundamentals(
     score = 0.0
     f = metrics.fundamentals
 
-    if f.revenue_growth_yoy is not None:
-        score = _apply_rule(score, "REVENUE_GROWTH_GT_30", f.revenue_growth_yoy >= 0.30, weights, triggered_rules, calibration_mode)
-        score = _apply_rule(score, "REVENUE_GROWTH_GT_15", 0.15 <= f.revenue_growth_yoy < 0.30, weights, triggered_rules, calibration_mode)
-        score = _apply_rule(score, "REVENUE_GROWTH_LT_5", f.revenue_growth_yoy < 0.05, weights, triggered_rules, calibration_mode)
-
     score = _apply_rule(
         score,
         "FCF_TTM_POSITIVE",
@@ -34,21 +29,10 @@ def score_fundamentals(
     )
 
     if f.fcf_margin_ttm is not None:
-        score = _apply_rule(score, "FCF_MARGIN_GT_25", f.fcf_margin_ttm >= 0.25, weights, triggered_rules, calibration_mode)
         score = _apply_rule(score, "FCF_MARGIN_NEGATIVE", f.fcf_margin_ttm < 0, weights, triggered_rules, calibration_mode)
 
     if f.operating_margin_ttm is not None:
-        score = _apply_rule(score, "OPERATING_MARGIN_GT_10", f.operating_margin_ttm > 0.10, weights, triggered_rules, calibration_mode)
         score = _apply_rule(score, "OPERATING_MARGIN_NEGATIVE", f.operating_margin_ttm < 0, weights, triggered_rules, calibration_mode)
-
-    score = _apply_rule(
-        score,
-        "NET_CASH_POSITIVE",
-        f.net_cash is not None and f.net_cash > 0,
-        weights,
-        triggered_rules,
-        calibration_mode,
-    )
 
     return _clamp(score)
 

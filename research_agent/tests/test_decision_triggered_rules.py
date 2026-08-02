@@ -20,6 +20,12 @@ def test_decision_packet_records_triggered_rules():
     )
 
     assert "SBC_TO_REVENUE_GT_20" not in packet.triggered_rules
+    assert "REVENUE_GROWTH_GT_30" not in packet.triggered_rules
+    assert "REVENUE_GROWTH_GT_15" not in packet.triggered_rules
+    assert "REVENUE_GROWTH_LT_5" not in packet.triggered_rules
+    assert "FCF_MARGIN_GT_25" not in packet.triggered_rules
+    assert "OPERATING_MARGIN_GT_10" not in packet.triggered_rules
+    assert "NET_CASH_POSITIVE" not in packet.triggered_rules
     assert "PRICE_BELOW_200SMA" in packet.triggered_rules
     assert "BEARISH_MA_ALIGNMENT" in packet.triggered_rules
     assert "DEATH_CROSS" not in packet.triggered_rules

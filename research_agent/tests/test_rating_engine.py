@@ -48,11 +48,11 @@ def _strong_metrics():
     )
 
 
-def test_signal_scores_are_clamped_to_rating_scale():
+def test_fundamentals_use_directional_evidence_not_global_quality_thresholds():
     metrics = _strong_metrics()
     packet = build_decision_packet(metrics)
 
-    assert score_fundamentals(metrics) == 3
+    assert score_fundamentals(metrics) == 1
     assert score_technicals(metrics) == 3
     assert score_valuation(metrics) == 0
     assert score_risk(metrics) == 0
@@ -69,7 +69,18 @@ def test_signal_scores_are_clamped_to_rating_scale():
     )
     assert benchmark_permission.evidence_status == "partial"
     assert not any(
-        rule.startswith(("FORWARD_PE_", "PRICE_TO_FCF_", "PEG_", "SBC_TO_"))
+        rule.startswith(
+            (
+                "REVENUE_GROWTH_",
+                "FCF_MARGIN_GT_",
+                "OPERATING_MARGIN_GT_",
+                "NET_CASH_",
+                "FORWARD_PE_",
+                "PRICE_TO_FCF_",
+                "PEG_",
+                "SBC_TO_",
+            )
+        )
         for rule in packet.triggered_rules
     )
 
