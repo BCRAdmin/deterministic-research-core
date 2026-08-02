@@ -36,7 +36,10 @@ def test_content_generator_creates_minimum_evidence_mapped_claims():
     assert quality["hard_claim_evidence_ratio"] == 1.0
     assert all(claim.evidence_ids for claim in claims)
     valuation_claim = next(
-        claim for claim in claims if "EV/Sales" in claim.claim
+        claim
+        for claim in claims
+        if claim.section == "Valuation / Multiples"
+        and claim.claim.startswith("Valuation is framed by EV/Sales")
     )
     technical_claim = next(
         claim for claim in claims if "50-SMA" in claim.claim
@@ -115,6 +118,7 @@ def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():
     data, metrics, validation, ledger, decision = _load_packet("SNOW")
     data.ticker = "GENERIC"
     data.price_basis.currency = "HUF"
+    metrics.fundamentals.revenue_growth_yoy = None
 
     claims = generate_research_claims(
         data,
@@ -155,7 +159,7 @@ def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():
         )
     ]
 
-    assert len(monetary_claims) == 5
+    assert len(monetary_claims) == 7
     assert all("$" not in claim.claim for claim in monetary_claims)
     assert all("HUF" in claim.claim for claim in monetary_claims)
     assert "$" not in research_report
@@ -164,6 +168,29 @@ def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():
     assert "4.34B HUF" in internal_report
     assert "| Close | 141.71 HUF |" in research_report
     assert "| FCF TTM | 1,120,000,000 HUF |" in research_report
+    unsupported_language = (
+        "company-specific growth",
+        "margin quality",
+        "validated growth",
+    )
+    assert not any(
+        phrase in claim.claim.lower()
+        for claim in claims
+        for phrase in unsupported_language
+    )
+    rating_claim = next(
+        claim
+        for claim in claims
+        if claim.section == "Final Rating & Action Plan"
+    )
+    assert rating_claim.metric_refs == [
+        "close",
+        "revenue_ttm",
+        "free_cash_flow_ttm",
+        "ev_to_sales",
+    ]
+    assert "revenue TTM of 4.34B HUF" in rating_claim.claim
+    assert "FCF TTM of 1.12B HUF" in rating_claim.claim
 
 
 def test_composed_claim_report_can_pass_quality_when_audit_is_clean():

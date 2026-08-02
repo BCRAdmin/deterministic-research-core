@@ -113,13 +113,20 @@ class _ClaimBuilder:
         ticker = self.data_packet.ticker.upper()
         profile = _company_profile(ticker)
         preferred = self.decision.rating_permission.preferred_rating.value
+        core_rating_metrics = _core_rating_metric_refs(self.metrics)
 
         self.add(
             "Executive Summary",
             "summary",
-            "price_data",
-            f"{ticker} enters the report at a frozen close of {_plain_number(self.metrics.technical.close)} with a {preferred} stance; the action should reflect {profile['business_driver']}, valuation discipline and the current technical setup.",
-            ["close"],
+            "rating",
+            (
+                f"{ticker} enters the report at a frozen close of "
+                f"{_money(self.metrics.technical.close, self.data_packet.price_basis.currency)} "
+                f"with a {preferred} stance. The available evidence anchors are "
+                f"{_core_rating_evidence_text(self.metrics, self.data_packet.price_basis.currency)}; "
+                "source quality and the technical setup remain separate constraints."
+            ),
+            core_rating_metrics,
             "high",
             "high",
             implication=f"The action language should stay consistent with the {preferred} stance.",
@@ -288,7 +295,7 @@ class _ClaimBuilder:
             "Bear Case",
             "bear",
             "financial_metric",
-            f"The bear case is that {profile['bear_driver']} overwhelms validated FCF quality and leaves the stock vulnerable if SBC/Revenue at {_pct(self.metrics.fundamentals.sbc_to_revenue)} or source-quality issues persist.",
+            f"The bear case is that {profile['bear_driver']} outweighs the available FCF evidence and leaves the stock vulnerable if SBC/Revenue at {_pct(self.metrics.fundamentals.sbc_to_revenue)} or source-quality issues persist.",
             ["free_cash_flow_ttm", "sbc_to_revenue"],
             "medium",
             "high",
@@ -351,8 +358,13 @@ class _ClaimBuilder:
             "Final Rating & Action Plan",
             "rating",
             "rating",
-            _final_rating_claim_text(ticker, preferred, self.metrics, profile),
-            ["close"],
+            _final_rating_claim_text(
+                ticker,
+                preferred,
+                self.metrics,
+                self.data_packet.price_basis.currency,
+            ),
+            core_rating_metrics,
             "high",
             "high",
             counterargument=_final_rating_counterargument(preferred, self.metrics),
@@ -487,10 +499,10 @@ def _company_profile(ticker: str) -> dict[str, str]:
             "bear_driver": "inventory correction, gross-margin pressure or weak management forecast",
         }
     return {
-        "business_driver": "company-specific growth, margin quality and source-quality drivers",
+        "business_driver": "available revenue, cash-flow and source-quality evidence",
         "sector_lens": "sector-specific quality and valuation context",
-        "valuation_lens": "validated growth, cash-flow and risk context",
-        "bull_driver": "validated growth and cash-flow quality",
+        "valuation_lens": "revenue scale, cash-flow evidence and risk context",
+        "bull_driver": "revenue scale and available cash-flow evidence",
         "bear_driver": "source-quality issues, valuation risk or technical weakness",
     }
 
@@ -798,13 +810,42 @@ def _final_rating_claim_text(
     ticker: str,
     preferred: str,
     metrics: MetricsPacket,
-    profile: dict[str, str],
+    currency: str,
 ) -> str:
-    close = _plain_number(metrics.technical.close)
+    evidence_anchor = _core_rating_evidence_text(metrics, currency)
     return (
-        f"We rate {ticker} {preferred} at the validated close of {close} because {profile['business_driver']} supports the base case, "
-        "while valuation and technical risk limit the case for a more bullish rating."
+        f"We rate {ticker} {preferred} at the validated close of "
+        f"{_money(metrics.technical.close, currency)}. The evidence anchors are "
+        f"{evidence_anchor}; source quality, valuation and technical risk limit "
+        "the case for a more bullish rating."
     )
+
+
+def _core_rating_metric_refs(metrics: MetricsPacket) -> list[str]:
+    metric_refs = ["close"]
+    for metric_name, value in (
+        ("revenue_ttm", metrics.fundamentals.revenue_ttm),
+        ("free_cash_flow_ttm", metrics.fundamentals.free_cash_flow_ttm),
+        ("ev_to_sales", metrics.valuation.ev_to_sales),
+    ):
+        if value is not None:
+            metric_refs.append(metric_name)
+    return metric_refs
+
+
+def _core_rating_evidence_text(metrics: MetricsPacket, currency: str) -> str:
+    anchors = []
+    if metrics.fundamentals.revenue_ttm is not None:
+        anchors.append(
+            f"revenue TTM of {_money(metrics.fundamentals.revenue_ttm, currency)}"
+        )
+    if metrics.fundamentals.free_cash_flow_ttm is not None:
+        anchors.append(
+            f"FCF TTM of {_money(metrics.fundamentals.free_cash_flow_ttm, currency)}"
+        )
+    if metrics.valuation.ev_to_sales is not None:
+        anchors.append(f"EV/Sales of {_multiple(metrics.valuation.ev_to_sales)}")
+    return ", ".join(anchors) if anchors else "the available validated metrics"
 
 
 def _final_rating_counterargument(preferred: str, metrics: MetricsPacket) -> str:
