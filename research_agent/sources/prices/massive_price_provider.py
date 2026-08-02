@@ -63,6 +63,9 @@ class MassivePriceProvider(PriceProviderBase):
                 "low": float(item["l"]),
                 "close": float(item["c"]),
                 "volume": int(item["v"]),
+                "adjusted_open": float(item["o"]),
+                "adjusted_high": float(item["h"]),
+                "adjusted_low": float(item["l"]),
                 "adjusted_close": float(item["c"]),
             }
             for item in payload.get("results") or []

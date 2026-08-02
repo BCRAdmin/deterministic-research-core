@@ -8,5 +8,5 @@ import pandas as pd
 class PriceProviderBase(ABC):
     @abstractmethod
     def get_history(self, ticker: str, start: str, end: str) -> pd.DataFrame:
-        """Return date, open, high, low, close, volume, adjusted_close(optional)."""
+        """Return raw OHLCV and, only when verified, a complete adjusted OHLC set."""
         raise NotImplementedError

@@ -50,6 +50,7 @@ def test_ema_macd_bollinger_atr_return_expected_shapes():
 def test_calculate_technical_metrics_includes_required_signals():
     metrics = calculate_technical_metrics(_sample_ohlcv())
 
+    assert metrics.price_series_basis == "unadjusted_or_provider_default"
     assert metrics.sma_10 is not None
     assert metrics.sma_20 is not None
     assert metrics.sma_50 is not None
@@ -61,8 +62,17 @@ def test_calculate_technical_metrics_includes_required_signals():
     assert "price_distance_pct" in metrics.signals
 
 
+def test_calculate_technical_metrics_accepts_only_complete_adjusted_ohlc():
+    prices = _sample_ohlcv()
+    for column in ("open", "high", "low", "close"):
+        prices[f"adjusted_{column}"] = prices[column]
+
+    metrics = calculate_technical_metrics(prices)
+
+    assert metrics.price_series_basis == "corporate_action_adjusted"
+
+
 def test_rsi_wilder_stays_in_indicator_bounds_for_mixed_series():
     close = pd.Series([10, 11, 10, 12, 13, 12, 14, 13, 15, 16, 15, 17, 18, 17, 19, 20])
     latest = rsi_wilder(close).dropna().iloc[-1]
     assert 0 <= latest <= 100
-

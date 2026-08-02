@@ -53,10 +53,18 @@ def test_massive_provider_normalizes_daily_ohlcv(monkeypatch):
         "low",
         "close",
         "volume",
+        "adjusted_open",
+        "adjusted_high",
+        "adjusted_low",
         "adjusted_close",
     ]
     assert frame.iloc[0]["close"] == 11
+    assert frame.iloc[0]["adjusted_open"] == 10
+    assert frame.iloc[0]["adjusted_high"] == 12
+    assert frame.iloc[0]["adjusted_low"] == 9
+    assert frame.iloc[0]["adjusted_close"] == 11
     assert "/v2/aggs/ticker/GENR/range/1/day/2026-01-01/2026-07-26" in captured["url"]
+    assert "adjusted=true" in captured["url"]
     assert "secret" not in captured["url"]
     assert "apiKey=" not in captured["url"]
     assert captured["authorization"] == "Bearer secret"
