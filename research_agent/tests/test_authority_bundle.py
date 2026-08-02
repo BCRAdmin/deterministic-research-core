@@ -323,8 +323,8 @@ def test_authority_bundle_blocks_material_metric_value_mismatch(
         for item in ledger["evidence_items"]
         if item["supports_metrics"] == ["revenue_ttm"]
     )
-    revenue["value"] = 999_000_000.0
-    revenue["normalized_value"] = 999_000_000.0
+    revenue["value"] = 1_000_000_001.0
+    revenue["normalized_value"] = 1_000_000_001.0
     _write_json(ledger_path, ledger)
 
     manifest = build_authority_bundle(
@@ -354,3 +354,47 @@ def test_authority_bundle_blocks_material_metric_value_mismatch(
         output_dir=tmp_path / "formula_only_bundle",
     )
     assert "material_metrics_evidence_mapped" in manifest["blocking_failures"]
+
+
+def test_authority_bundle_blocks_wrong_explicit_metric_currency(
+    tmp_path: Path,
+) -> None:
+    packet_dir, registry_path = _packet_set(tmp_path)
+    ledger_path = packet_dir / "evidence_ledger.json"
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    revenue = next(
+        item
+        for item in ledger["evidence_items"]
+        if item["supports_metrics"] == ["revenue_ttm"]
+    )
+    revenue["unit"] = "EUR"
+    _write_json(ledger_path, ledger)
+
+    manifest = build_authority_bundle(
+        packet_dir=packet_dir,
+        source_registry_path=registry_path,
+        output_dir=tmp_path / "bundle",
+    )
+
+    assert manifest["analysis_allowed"] is False
+    assert "material_metrics_evidence_mapped" in manifest["blocking_failures"]
+
+
+def test_authority_bundle_blocks_duplicate_evidence_ids(tmp_path: Path) -> None:
+    packet_dir, registry_path = _packet_set(tmp_path)
+    ledger_path = packet_dir / "evidence_ledger.json"
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    duplicate = dict(ledger["evidence_items"][0])
+    duplicate["value"] = 101.0
+    duplicate["normalized_value"] = 101.0
+    ledger["evidence_items"].append(duplicate)
+    _write_json(ledger_path, ledger)
+
+    manifest = build_authority_bundle(
+        packet_dir=packet_dir,
+        source_registry_path=registry_path,
+        output_dir=tmp_path / "bundle",
+    )
+
+    assert manifest["analysis_allowed"] is False
+    assert "evidence_ids_unique" in manifest["blocking_failures"]

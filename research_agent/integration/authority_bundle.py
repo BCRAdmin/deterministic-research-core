@@ -12,11 +12,13 @@ import json
 import math
 import re
 import shutil
+from collections import Counter
 from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable, Mapping
 
 from research_agent.batch.freshness import evaluate_price_freshness
+from research_agent.evidence.evidence_ledger import unit_for_metric
 
 
 AUTHORITY_CONTRACT_ID = "room16.research_authority_bundle"
@@ -105,6 +107,13 @@ MATERIAL_METRIC_KEYS = {
     "rsi_14",
     "avg_volume_20",
 }
+TECHNICAL_METRIC_KEYS = {
+    "close",
+    "sma_50",
+    "sma_200",
+    "rsi_14",
+    "avg_volume_20",
+}
 
 
 class AuthorityBundleError(ValueError):
@@ -175,12 +184,21 @@ def _has_exact_numeric_evidence(
     evidence_items: Iterable[Mapping[str, Any]],
     metric_name: str,
     value: Any,
+    *,
+    currency: str,
+    price_date: str,
+    indicator_date: str,
 ) -> bool:
     if not isinstance(value, (int, float)) or isinstance(value, bool):
         return False
     expected = float(value)
+    expected_unit = unit_for_metric(metric_name, currency=currency)
     for item in evidence_items:
-        evidence_value = item.get("value")
+        evidence_value = (
+            item.get("normalized_value")
+            if item.get("normalized_value") is not None
+            else item.get("value")
+        )
         if (
             metric_name not in (item.get("supports_metrics") or [])
             or not isinstance(evidence_value, (int, float))
@@ -188,10 +206,23 @@ def _has_exact_numeric_evidence(
             or not math.isclose(
                 float(evidence_value),
                 expected,
-                rel_tol=1e-9,
+                rel_tol=0.0,
                 abs_tol=1e-9,
             )
         ):
+            continue
+        actual_unit = str(item.get("unit") or "").strip()
+        if (
+            actual_unit
+            and expected_unit
+            and _normalize_unit(actual_unit) != _normalize_unit(expected_unit)
+        ):
+            continue
+        if metric_name in TECHNICAL_METRIC_KEYS and item.get("date"):
+            expected_date = price_date if metric_name == "close" else indicator_date
+            if str(item.get("date")) != expected_date:
+                continue
+        if not _ttm_period_is_compatible(item, metric_name):
             continue
         if (
             (
@@ -205,6 +236,29 @@ def _has_exact_numeric_evidence(
         ):
             return True
     return False
+
+
+def _normalize_unit(value: Any) -> str:
+    normalized = str(value or "").strip().lower().replace("/", "_per_")
+    return "_".join(normalized.replace("-", "_").split())
+
+
+def _ttm_period_is_compatible(
+    item: Mapping[str, Any],
+    metric_name: str,
+) -> bool:
+    if not metric_name.endswith("_ttm") and metric_name not in {
+        "buybacks",
+        "dividends_paid",
+    }:
+        return True
+    duration_days = item.get("duration_days")
+    if isinstance(duration_days, (int, float)) and not 300 <= duration_days <= 430:
+        return False
+    period = str(item.get("period") or "").strip().lower()
+    if not period or "ttm" in period or ".." in period:
+        return True
+    return not any(token in period for token in ("q1", "q2", "q3", "q4"))
 
 
 def _resolve_source_registry_path(
@@ -464,8 +518,34 @@ def _assess_packets(
         bool(evidence_tickers) and evidence_tickers == {ticker},
         detail=",".join(sorted(evidence_tickers)),
     )
+    evidence_ids = [
+        str(item.get("evidence_id") or "").strip()
+        for item in evidence_items
+        if isinstance(item, Mapping)
+    ]
+    evidence_id_counts = Counter(evidence_ids)
+    duplicate_evidence_ids = sorted(
+        evidence_id
+        for evidence_id, count in evidence_id_counts.items()
+        if evidence_id and count > 1
+    )
+    missing_evidence_id_count = sum(not evidence_id for evidence_id in evidence_ids)
+    _check(
+        checks,
+        "evidence_ids_unique",
+        not duplicate_evidence_ids and missing_evidence_id_count == 0,
+        detail=json.dumps(
+            {
+                "duplicate_ids": duplicate_evidence_ids,
+                "missing_id_count": missing_evidence_id_count,
+            },
+            sort_keys=True,
+        ),
+    )
 
     material_metrics = dict(_metric_items(metrics_packet))
+    technical = metrics_packet.get("technical")
+    technical = technical if isinstance(technical, Mapping) else {}
     missing_metric_evidence = sorted(
         metric_name
         for metric_name, value in material_metrics.items()
@@ -477,6 +557,9 @@ def _assess_packets(
             ),
             metric_name,
             value,
+            currency=str(price_basis.get("currency") or "USD"),
+            price_date=price_date,
+            indicator_date=str(technical.get("indicator_date") or ""),
         )
     )
     _check(
