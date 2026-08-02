@@ -22,6 +22,18 @@
       "summary": "McDonald's reported 3.8% global comparable-sales growth, 3.9% U.S. comparable-sales growth, 4% revenue growth in constant currencies and 6% operating-income growth in constant currencies for Q1 2026. The official release describes more than 45,000 locations in over 100 countries and says approximately 95% are operated by independent local business owners."
     },
     {
+      "date": "2026-05-07",
+      "headline": "McDonald's describes its predominantly franchised operating system",
+      "event_type": "business_context",
+      "material": true,
+      "source_id": "MCD_IR_Q1_2026_RESULTS",
+      "source_type": "company_ir",
+      "authority_rank": 1,
+      "url": "https://corporate.mcdonalds.com/corpmcd/our-stories/article/Q1-2026-results.html",
+      "retrieved_at": "2026-07-27T00:00:00Z",
+      "summary": "McDonald's describes a global restaurant system predominantly operated by independent local business owners."
+    },
+    {
       "date": "2026-06-01",
       "headline": "Our Next Era of Growth & Productivity: Introducing McDonald's > NEXT",
       "event_type": "strategy",

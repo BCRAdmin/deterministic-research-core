@@ -9,9 +9,28 @@ from research_agent.evidence.evidence_item import EvidenceItem
 from research_agent.evidence.evidence_ledger import EvidenceLedger, unit_for_metric
 from research_agent.reconciliation.canonical_financials import CanonicalFinancials
 from research_agent.research_core.models.claims import ResearchClaim
-from research_agent.research_core.models.data_packet import DataPacket
+from research_agent.research_core.models.data_packet import DataPacket, MaterialNewsEvent
 from research_agent.research_core.models.metrics_packet import MetricsPacket
 from research_agent.research_core.models.validation_report import ValidationReport
+
+
+_BUSINESS_CONTEXT_SECTIONS = {
+    "Business & Segment Context",
+    "Business Model Reality",
+    "Revenue Scale and Backlog",
+    "Contract / Backlog Materiality",
+    "Segment Mix",
+    "Execution Milestones",
+}
+_BUSINESS_CONTEXT_EVENT_TYPES = {"business_context", "business_model"}
+_CATALYST_EVENT_TYPES = {
+    "acquisition",
+    "divestiture",
+    "leadership",
+    "partnership",
+    "product_strategy",
+    "strategy",
+}
 
 
 def generate_research_claims(
@@ -61,7 +80,7 @@ def claim_quality_metrics(claims: Iterable[ResearchClaim]) -> dict[str, float | 
     company_specific = [
         claim
         for claim in claim_list
-        if not _is_generic_meta_claim(claim) and _has_company_specific_driver(claim)
+        if _is_company_specific_claim(claim)
     ]
     valuation_specific = [
         claim for claim in claim_list
@@ -201,12 +220,13 @@ class _ClaimBuilder:
             implication=f"The action language should stay consistent with the {preferred} stance.",
         )
 
-        for current_claim in _current_period_claim_specs(
+        current_claim_specs = _current_period_claim_specs(
             ticker,
             self.metrics,
             self.canonical,
             currency=self.data_packet.price_basis.currency,
-        ):
+        )
+        for current_claim in current_claim_specs:
             self.add(
                 current_claim["section"],
                 current_claim["kind"],
@@ -218,6 +238,12 @@ class _ClaimBuilder:
                 counterargument=current_claim.get("counterargument"),
                 implication=current_claim.get("implication"),
             )
+
+        for event in self.data_packet.news_coverage.material_events:
+            if event.event_type in _BUSINESS_CONTEXT_EVENT_TYPES:
+                self.add_event(event, section="Business & Segment Context")
+            elif event.event_type in _CATALYST_EVENT_TYPES:
+                self.add_event(event, section="Catalysts & Triggers")
 
         for index, risk_evidence in enumerate(
             self._selected_risk_evidence(limit=4)
@@ -419,18 +445,41 @@ class _ClaimBuilder:
             implication="Treat technical and fundamental divergence as a review condition, not as a personal trade instruction.",
         )
 
-        self.add(
-            "Bull Case",
-            "bull",
-            "financial_metric",
-            (
+        growth_metrics = [
+            metric
+            for claim in current_claim_specs
+            for metric in claim["metrics"]
+            if str(metric).startswith("current_period_")
+            and str(metric).endswith("_growth_yoy")
+        ]
+        growth_metrics = list(dict.fromkeys(str(metric) for metric in growth_metrics))
+        if growth_metrics:
+            growth_text = ", ".join(
+                f"{_growth_metric_label(metric)} {_pct(self._metric_value(metric))}"
+                for metric in growth_metrics
+            )
+            bull_text = (
+                f"Matching-quarter evidence shows {growth_text}. Together with "
+                f"revenue TTM of {self._money(self.metrics.fundamentals.revenue_ttm)} "
+                f"and FCF TTM of {self._money(self.metrics.fundamentals.free_cash_flow_ttm)}, "
+                "this establishes current business direction, scale and cash generation. "
+                "A more constructive rating still requires those comparisons to persist "
+                "and stronger technical or benchmarked valuation support."
+            )
+        else:
+            bull_text = (
                 "The bull case combines revenue of "
                 f"{self._money(self.metrics.fundamentals.revenue_ttm)} with "
                 "available FCF evidence. These totals establish scale and cash "
                 "generation, not growth; a more constructive rating requires "
                 "comparable current-period evidence or technical confirmation."
-            ),
-            ["revenue_ttm", "free_cash_flow_ttm"],
+            )
+        self.add(
+            "Bull Case",
+            "bull",
+            "financial_metric",
+            bull_text,
+            ["revenue_ttm", "free_cash_flow_ttm", *growth_metrics],
             "medium",
             "medium",
             counterargument="Strong scale does not resolve valuation or reconciliation anomalies.",
@@ -513,6 +562,55 @@ class _ClaimBuilder:
             implication=_final_rating_implication(ticker, preferred, self.metrics),
         )
         return self.claims
+
+    def add_event(self, event: MaterialNewsEvent, *, section: str) -> None:
+        statement = str(event.summary or event.headline).strip()
+        if not statement or any(character.isdigit() for character in statement):
+            return
+        evidence = [
+            item
+            for item in self.ledger.evidence_items
+            if item.source_id == event.source_id
+            and item.claim_type in {"event", "guidance", "news", "management_quote"}
+            and item.authority_rank <= 2
+            and item.date == event.date
+            and item.statement.strip() == statement
+            and self.evidence_id_counts.get(item.evidence_id) == 1
+        ]
+        if not evidence:
+            return
+        self.counter += 1
+        claim_id = f"{self.data_packet.ticker}_CLAIM_{self.counter:03d}"
+        counterargument = None
+        implication = None
+        if event.event_type in _CATALYST_EVENT_TYPES:
+            counterargument = (
+                "An announced strategy is forward-looking intent; execution and "
+                "financial contribution remain unproven."
+            )
+            implication = (
+                "Reassess only when subsequent reported evidence shows whether "
+                "the stated objectives are being achieved."
+            )
+        self.claims.append(
+            ResearchClaim(
+                claim_id=claim_id,
+                section=section,
+                claim_type="news",
+                agent="deterministic_content_generator",
+                claim=statement,
+                claim_text=statement,
+                evidence_metrics=[],
+                metric_refs=[],
+                metric_values={},
+                evidence_ids=[item.evidence_id for item in evidence],
+                source_ids=list(dict.fromkeys(item.source_id for item in evidence)),
+                confidence="high",
+                importance="high",
+                counterargument=counterargument,
+                investment_implication=implication,
+            )
+        )
 
     def add_risk(
         self,
@@ -797,6 +895,14 @@ def _plain_number(value: Optional[float]) -> str:
     return f"{value:.2f}"
 
 
+def _growth_metric_label(metric_name: str) -> str:
+    return {
+        "current_period_revenue_growth_yoy": "revenue growth",
+        "current_period_operating_income_growth_yoy": "operating-income growth",
+        "current_period_net_income_growth_yoy": "net-income growth",
+    }.get(metric_name, metric_name.replace("_", " "))
+
+
 def _technical_interpretation(metrics: MetricsPacket) -> str:
     trend_state = classify_technical_trend(metrics)
     if trend_state == "bullish":
@@ -819,14 +925,14 @@ def _bear_case_claim_text(
         return (
             f"{ticker}'s bearish long-term trend state is current downside "
             f"evidence. FCF TTM of {fcf} is the counterweight; without "
-            "comparable business data, this does not establish company-specific "
-            "deterioration."
+            "separate operating evidence, the technical state alone does not "
+            "establish company-specific deterioration."
         )
     if trend_state == "bullish":
         return (
             f"{ticker}'s bullish long-term trend state is not current downside "
             f"evidence. FCF TTM of {fcf} is also counterevidence. A bear case "
-            "requires a future technical reversal or comparable evidence of "
+            "requires a future technical reversal or separate evidence of "
             "weaker cash generation; neither is established by the current "
             "packet."
         )
@@ -834,7 +940,7 @@ def _bear_case_claim_text(
         return (
             f"{ticker}'s mixed long-term trend state is inconclusive rather than "
             f"current downside evidence. FCF TTM of {fcf} is the counterweight. "
-            "A bear case requires downside confirmation or comparable evidence "
+            "A bear case requires downside confirmation or separate evidence "
             "of weaker cash generation."
         )
     return (
@@ -878,6 +984,27 @@ def _has_company_specific_driver(claim: ResearchClaim) -> bool:
         "earnings", "trigger language",
     }
     return any(driver in text for driver in drivers)
+
+
+def _is_company_specific_claim(claim: ResearchClaim) -> bool:
+    if (
+        not claim.evidence_ids
+        or _is_generic_meta_claim(claim)
+        or _is_data_limitation_claim(claim)
+    ):
+        return False
+    section = claim.section or ""
+    claim_type = claim.claim_type or ""
+    if section in _BUSINESS_CONTEXT_SECTIONS:
+        return claim_type in {"event", "guidance", "management_quote", "news"} or (
+            _has_ticker_specific_kpi(claim)
+        )
+    return section == "Catalysts & Triggers" and claim_type in {
+        "event",
+        "guidance",
+        "management_quote",
+        "news",
+    }
 
 
 def _has_sector_specific_interpretation(claim: ResearchClaim) -> bool:

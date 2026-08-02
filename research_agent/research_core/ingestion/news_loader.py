@@ -48,6 +48,8 @@ def news_evidence_items(
                 "official news events require source_id, source_type, date, and headline"
             )
         rank = int(event.get("authority_rank") or 1)
+        event_type = str(event.get("event_type") or "").strip()
+        is_guidance = event_type in {"company_outlook", "guidance"}
         evidence.append(
             EvidenceItem(
                 evidence_id=str(
@@ -55,7 +57,7 @@ def news_evidence_items(
                     or f"{symbol}_NEWS_{event_date}_{index:02d}"
                 ),
                 ticker=symbol,
-                claim_type="news",
+                claim_type="guidance" if is_guidance else "news",
                 source_id=source_id,
                 source_type=source_type,
                 authority_rank=rank,
@@ -63,7 +65,10 @@ def news_evidence_items(
                 date=event_date,
                 url=event.get("url"),
                 retrieved_at=event.get("retrieved_at"),
-                supports_claims=["material_news_coverage"],
+                supports_claims=[
+                    "material_news_coverage",
+                    *(["company_guidance"] if is_guidance else []),
+                ],
                 confidence="high" if rank <= 2 else "medium",
             )
         )

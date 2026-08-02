@@ -18,7 +18,7 @@ from research_agent.reconciliation.canonical_financials import (
     CanonicalFinancials,
     CanonicalMetric,
 )
-from research_agent.research_core.models.data_packet import DataPacket
+from research_agent.research_core.models.data_packet import DataPacket, MaterialNewsEvent
 from research_agent.research_core.models.metrics_packet import MetricsPacket
 from research_agent.research_core.models.validation_report import ValidationReport
 
@@ -441,8 +441,69 @@ def test_content_generator_does_not_render_missing_values_as_claims():
     claims = generate_research_claims(data, metrics, ledger, decision, validation)
 
     assert claims
+    assert claim_quality_metrics(claims)["company_specific_claim_count"] == 0
     assert all("not available in evidence set" not in claim.claim for claim in claims)
     assert not any("revenue TTM of" in claim.claim for claim in claims)
+
+
+def test_material_company_events_create_real_context_not_generic_finance_padding():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    _add_exact_metric_evidence(data, metrics, ledger)
+    data.news_coverage.material_events = [
+        MaterialNewsEvent(
+            date="2026-05-01",
+            headline="Company explains operating model",
+            event_type="business_context",
+            source_id="SNOW_IR_CONTEXT",
+            source_type="company_ir",
+            summary="The company describes a consumption-based platform model.",
+        ),
+        MaterialNewsEvent(
+            date="2026-05-02",
+            headline="Company announces platform strategy",
+            event_type="strategy",
+            source_id="SNOW_IR_STRATEGY",
+            source_type="company_ir",
+            summary="The company announced a strategy focused on platform adoption.",
+        ),
+    ]
+    ledger.evidence_items.extend(
+        [
+            EvidenceItem(
+                evidence_id="SNOW_CONTEXT_EVENT",
+                ticker="SNOW",
+                claim_type="news",
+                source_id="SNOW_IR_CONTEXT",
+                source_type="company_ir",
+                authority_rank=1,
+                statement="The company describes a consumption-based platform model.",
+                date="2026-05-01",
+                supports_claims=["material_news_coverage"],
+                confidence="high",
+            ),
+            EvidenceItem(
+                evidence_id="SNOW_STRATEGY_EVENT",
+                ticker="SNOW",
+                claim_type="news",
+                source_id="SNOW_IR_STRATEGY",
+                source_type="company_ir",
+                authority_rank=1,
+                statement="The company announced a strategy focused on platform adoption.",
+                date="2026-05-02",
+                supports_claims=["material_news_coverage"],
+                confidence="high",
+            ),
+        ]
+    )
+
+    claims = generate_research_claims(data, metrics, ledger, decision, validation)
+    context = next(claim for claim in claims if claim.source_ids == ["SNOW_IR_CONTEXT"])
+    strategy = next(claim for claim in claims if claim.source_ids == ["SNOW_IR_STRATEGY"])
+
+    assert context.section == "Business & Segment Context"
+    assert strategy.section == "Catalysts & Triggers"
+    assert "execution and financial contribution remain unproven" in strategy.counterargument
+    assert claim_quality_metrics(claims)["company_specific_claim_count"] >= 2
 
 
 def test_generic_company_gets_latest_reported_period_claim():

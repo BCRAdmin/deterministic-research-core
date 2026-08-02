@@ -23,13 +23,18 @@ def test_official_news_manifest_becomes_coverage_and_evidence(tmp_path: Path):
 
     assert events[0]["event_type"] == "coverage_manifest"
     assert events[0]["status"] == "complete"
-    assert len(evidence) == 3
+    assert len(evidence) == 4
     assert {item.source_id for item in evidence} == {
         "MCD_IR_Q1_2026_RESULTS",
         "MCD_IR_NEXT_2026",
         "SEC_0000063908_2026_Q1_OUTLOOK",
     }
-    assert all(item.claim_type == "news" for item in evidence)
+    assert sum(item.claim_type == "news" for item in evidence) == 3
+    outlook = next(
+        item for item in evidence if item.source_id == "SEC_0000063908_2026_Q1_OUTLOOK"
+    )
+    assert outlook.claim_type == "guidance"
+    assert "company_guidance" in outlook.supports_claims
 
 
 def test_missing_official_news_manifest_is_explicitly_empty(tmp_path: Path):
