@@ -8,6 +8,7 @@ from research_agent.audit.rule_registry import assert_registered_audit_rule_ids
 
 
 BLOCKING_AUDIT_CODES = {
+    "CURRENCY_MISMATCH",
     "NUMERIC_MISMATCH",
     "PERIOD_MISMATCH",
     "INVALID_TRADE_LEVEL",

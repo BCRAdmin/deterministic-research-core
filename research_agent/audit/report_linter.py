@@ -75,6 +75,7 @@ def audit_markdown_report(
         source_registry=source_registry,
     )
     issues.extend(_lint_numeric_claims(claims, metrics_packet, evidence_ledger))
+    issues.extend(_lint_currency_consistency(claims, evidence_ledger))
     issues.extend(_lint_trade_levels(markdown))
     issues.extend(_lint_rating_action(markdown))
     issues.extend(_lint_news_causality(markdown, validation_report))
@@ -211,6 +212,39 @@ def _lint_numeric_claims(
                 )
             )
     return issues
+
+
+def _lint_currency_consistency(
+    claims: list[ExtractedNumericClaim],
+    evidence_ledger: Optional[EvidenceLedger],
+) -> list[AuditIssue]:
+    if evidence_ledger is None:
+        return []
+    evidence_currencies = {
+        match.group(1).lower()
+        for item in evidence_ledger.evidence_items
+        if item.unit
+        for match in [re.fullmatch(r"([A-Za-z]{3})(?:_per_share)?", item.unit.strip())]
+        if match
+    }
+    if len(evidence_currencies) != 1:
+        return []
+    expected_currency = next(iter(evidence_currencies))
+    return [
+        AuditIssue(
+            severity="error",
+            code="CURRENCY_MISMATCH",
+            metric=claim.possible_metric,
+            message=(
+                f"Report uses {claim.unit.upper()} for a monetary claim, but the "
+                f"evidence ledger is denominated in {expected_currency.upper()}."
+            ),
+            line_number=claim.line_number,
+            raw_text=claim.raw_text,
+        )
+        for claim in claims
+        if claim.unit in {"usd", "huf"} and claim.unit != expected_currency
+    ]
 
 
 def _lint_trade_levels(markdown: str) -> list[AuditIssue]:
@@ -1373,7 +1407,7 @@ def _base_metric_name(metric_name: str) -> str:
 
 
 def _looks_like_unverified_hard_metric(claim: ExtractedNumericClaim) -> bool:
-    return claim.unit in {"usd", "percent", "multiple"} and bool(HARD_METRIC_RE.search(claim.nearby_text))
+    return claim.unit in {"usd", "huf", "percent", "multiple"} and bool(HARD_METRIC_RE.search(claim.nearby_text))
 
 
 def _comparable_reported_value(claim: ExtractedNumericClaim, validated_value: float) -> float:

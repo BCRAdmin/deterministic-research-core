@@ -29,6 +29,7 @@ class AuditRuleDefinition:
 
 
 REGISTERED_AUDIT_RULES: tuple[AuditRuleDefinition, ...] = (
+    AuditRuleDefinition("CURRENCY_MISMATCH", "error", "numeric", "report versus evidence currency fixture", "blocks_publish"),
     AuditRuleDefinition("NUMERIC_MISMATCH", "error", "numeric", "numeric mismatch golden fixture", "blocks_publish"),
     AuditRuleDefinition("UNVERIFIED_HARD_METRIC", "warning", "numeric", "unmapped hard metric fixture", "requires_review"),
     AuditRuleDefinition("MISSING_EVIDENCE_FOR_HARD_CLAIM", "error", "evidence", "missing evidence ledger fixture", "blocks_publish"),

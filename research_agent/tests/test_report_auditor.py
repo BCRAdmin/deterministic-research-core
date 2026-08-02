@@ -7,6 +7,8 @@ import pytest
 
 from research_agent.audit.markdown_numeric_extractor import extract_numeric_claims
 from research_agent.audit.report_linter import audit_markdown_report
+from research_agent.evidence.evidence_item import EvidenceItem
+from research_agent.evidence.evidence_ledger import EvidenceLedger
 from research_agent.reconciliation.canonical_financials import CanonicalFinancials, CanonicalMetric
 from research_agent.research_core.ingestion.source_registry import SourceRegistry, SourceRegistryEntry
 from research_agent.research_core.models.claims import ResearchClaim
@@ -110,6 +112,48 @@ def test_markdown_numeric_extractor_normalizes_german_cash_claim():
     assert claim.normalized_value == 58100000000
     assert claim.possible_metric == "free_cash_flow_ttm"
     assert claim.period_hint == "ttm"
+
+    huf_claim = extract_numeric_claims("Revenue TTM is 65.51B HUF.")[0]
+    assert huf_claim.normalized_value == pytest.approx(65_510_000_000)
+    assert huf_claim.unit == "huf"
+
+
+def test_auditor_blocks_currency_that_conflicts_with_evidence_ledger():
+    metrics = simple_metrics(ticker="ANY", revenue_ttm=65_510_000_000)
+    ledger = EvidenceLedger(
+        ticker="ANY",
+        as_of_date="2026-05-15",
+        evidence_items=[
+            EvidenceItem(
+                evidence_id="ANY_REVENUE",
+                ticker="ANY",
+                claim_type="financial_metric",
+                source_id="BSE_ANY_FINANCIALS",
+                source_type="company_ir",
+                authority_rank=1,
+                statement="Revenue was reported in HUF.",
+                value=65_510_000_000,
+                unit="HUF",
+                supports_metrics=["revenue_ttm"],
+            )
+        ],
+    )
+
+    wrong = audit_markdown_report(
+        "Revenue TTM is $65.51B.",
+        metrics,
+        evidence_ledger=ledger,
+    )
+    correct = audit_markdown_report(
+        "Revenue TTM is 65.51B HUF.",
+        metrics,
+        evidence_ledger=ledger,
+    )
+
+    assert wrong.has_issue("CURRENCY_MISMATCH", metric="revenue_ttm")
+    assert wrong.has_blocking_errors
+    assert not correct.has_issue("CURRENCY_MISMATCH")
+    assert not correct.has_issue("NUMERIC_MISMATCH", metric="revenue_ttm")
 
 
 def test_auditor_catches_nvda_fcf_ttm_mismatch():

@@ -10,12 +10,16 @@ from research_agent.audit.claim_mapper import infer_possible_metric
 DATE_RE = re.compile(r"\b(?:\d{4}-\d{2}-\d{2}|\d{1,2}\.\d{1,2}\.\d{4})\b")
 PERCENT_RE = re.compile(r"(?<![\w$])([+-]?\d+(?:[.,]\d+)?)\s*(?:%|Prozent)", re.IGNORECASE)
 MULTIPLE_RE = re.compile(r"(?<![\w$])([+-]?\d+(?:[.,]\d+)?)\s*-?\s*(?:x|faches|fach|fache)\b", re.IGNORECASE)
-USD_PREFIX_RE = re.compile(
-    r"(?:\$|USD\s*)\s*([+-]?\d+(?:[.,]\d{1,3})*)\s*(B|bn|billion|Mrd\.?|Mio\.?|million|M|k)?(?=\W|$)",
+CURRENCY_PREFIX_RE = re.compile(
+    r"(?:(?P<symbol>\$)|(?P<currency>USD|HUF)\s*)\s*"
+    r"(?P<number>[+-]?\d+(?:[.,]\d{1,3})*)\s*"
+    r"(?P<scale>B|bn|billion|Mrd\.?|Mio\.?|million|M|k)?(?=\W|$)",
     re.IGNORECASE,
 )
-USD_SUFFIX_RE = re.compile(
-    r"(?<![\w])([+-]?\d+(?:[.,]\d{1,3})*)\s*(B|bn|billion|Mrd\.?|Mio\.?|million|M|k)?\s*(?:\$|USD|US-Dollar)(?=\W|$)",
+CURRENCY_SUFFIX_RE = re.compile(
+    r"(?<![\w])(?P<number>[+-]?\d+(?:[.,]\d{1,3})*)\s*"
+    r"(?P<scale>B|bn|billion|Mrd\.?|Mio\.?|million|M|k)?\s*"
+    r"(?:(?P<symbol>\$)|(?P<currency>USD|HUF)|US-Dollar)(?=\W|$)",
     re.IGNORECASE,
 )
 
@@ -45,12 +49,12 @@ def _extract_line_claims(line: str, line_number: int) -> list[ExtractedNumericCl
         )
 
     for match in _iter_currency_matches(line):
-        raw_text, number, scale = match
+        raw_text, number, scale, currency = match
         claims.append(
             _claim(
                 raw_text=raw_text,
                 value=_normalize_number(number, scale),
-                unit="usd",
+                unit=currency,
                 nearby_text=nearby,
                 line_number=line_number,
             )
@@ -81,14 +85,15 @@ def _extract_line_claims(line: str, line_number: int) -> list[ExtractedNumericCl
     return claims
 
 
-def _iter_currency_matches(line: str) -> Iterable[tuple[str, str, Optional[str]]]:
+def _iter_currency_matches(line: str) -> Iterable[tuple[str, str, Optional[str], str]]:
     seen_spans: set[tuple[int, int]] = set()
-    for regex in [USD_PREFIX_RE, USD_SUFFIX_RE]:
+    for regex in [CURRENCY_PREFIX_RE, CURRENCY_SUFFIX_RE]:
         for match in regex.finditer(line):
             if match.span() in seen_spans:
                 continue
             seen_spans.add(match.span())
-            yield match.group(0), match.group(1), match.group(2)
+            currency = "usd" if match.group("symbol") else (match.group("currency") or "USD").lower()
+            yield match.group(0), match.group("number"), match.group("scale"), currency
 
 
 def _claim(
