@@ -245,7 +245,7 @@ def test_content_generator_does_not_render_missing_values_as_claims():
     assert not any("revenue TTM of" in claim.claim for claim in claims)
 
 
-def test_composed_claim_report_can_pass_quality_when_audit_is_clean():
+def test_generic_claim_report_stays_internal_when_substance_gate_fails():
     data, metrics, validation, ledger, decision = _load_packet("SNOW")
     claims = generate_research_claims(data, metrics, ledger, decision, validation)
     report = compose_research_report(data, metrics, validation, decision, ledger, claims)
@@ -268,7 +268,14 @@ def test_composed_claim_report_can_pass_quality_when_audit_is_clean():
         evidence_mapped_claim_ratio=claim_quality["evidence_mapped_claim_ratio"],
         hard_claim_evidence_ratio=claim_quality["hard_claim_evidence_ratio"],
         substantive_analyst_claim_count=claim_quality["substantive_analyst_claim_count"],
+        substantive_claim_ratio=claim_quality["substantive_claim_ratio"],
+        generic_claim_count=claim_quality["generic_claim_count"],
         generic_claim_ratio=claim_quality["generic_claim_ratio"],
+        data_limitation_claim_count=claim_quality["data_limitation_claim_count"],
+        current_period_kpi_claim_count=claim_quality["current_period_kpi_claim_count"],
+        ticker_specific_kpi_claim_count=claim_quality["ticker_specific_kpi_claim_count"],
+        final_rating_rationale_quality=claim_quality["final_rating_rationale_quality"],
+        mechanical_rating_language_count=claim_quality["mechanical_rating_language_count"],
         company_specific_claim_count=claim_quality["company_specific_claim_count"],
         valuation_specific_claim_count=claim_quality["valuation_specific_claim_count"],
         technical_specific_claim_count=claim_quality["technical_specific_claim_count"],
@@ -276,10 +283,13 @@ def test_composed_claim_report_can_pass_quality_when_audit_is_clean():
     )
 
     assert not audit.has_blocking_errors
-    assert quality.publishable
+    assert not quality.publishable
+    assert quality.content_score == 60
     assert "No LLM claims attached" not in report
     assert "## Evidence Appendix" in report
-    assert claim_quality["substantive_analyst_claim_count"] >= 15
+    assert claim_quality["analyst_claim_count"] >= 15
+    assert claim_quality["substantive_analyst_claim_count"] < 12
+    assert claim_quality["generic_claim_count"] >= 5
 
 
 def test_financial_sanity_errors_still_block_claim_rich_reports():

@@ -52,21 +52,30 @@ def claim_quality_metrics(claims: Iterable[ResearchClaim]) -> dict[str, float | 
     hard_mapped = sum(1 for claim in hard if claim.evidence_ids)
     data_limitations = [claim for claim in claim_list if _is_data_limitation_claim(claim)]
     substantive = [claim for claim in claim_list if _is_substantive_claim(claim)]
+    generic = [claim for claim in claim_list if _is_generic_meta_claim(claim)]
     current_period_kpis = [claim for claim in claim_list if _is_current_period_kpi_claim(claim)]
-    company_specific = [claim for claim in claim_list if _has_company_specific_driver(claim)]
+    company_specific = [
+        claim
+        for claim in claim_list
+        if not _is_generic_meta_claim(claim) and _has_company_specific_driver(claim)
+    ]
     valuation_specific = [
         claim for claim in claim_list
-        if (claim.section or "") == "Valuation / Multiples" and _has_validated_number(claim)
+        if not _is_generic_meta_claim(claim)
+        and (claim.section or "") == "Valuation / Multiples"
+        and _has_validated_number(claim)
     ]
     technical_specific = [
         claim for claim in claim_list
-        if (claim.section or "") == "Technical Setup" and _has_validated_number(claim)
+        if not _is_generic_meta_claim(claim)
+        and (claim.section or "") == "Technical Setup"
+        and _has_validated_number(claim)
     ]
     rating_rationale = [
         claim for claim in claim_list
         if (claim.section or "") == "Final Rating & Action Plan" and _has_rating_implication(claim)
     ]
-    generic_count = sum(1 for claim in claim_list if _is_generic_meta_claim(claim))
+    generic_count = len(generic)
     ticker_kpi_count = sum(1 for claim in claim_list if _has_ticker_specific_kpi(claim))
     substantive_ratio = (len(substantive) / total) if total else 0.0
     return {
@@ -715,13 +724,21 @@ def _has_counterargument_or_risk_implication(claim: ResearchClaim) -> bool:
 
 
 def _is_generic_meta_claim(claim: ResearchClaim) -> bool:
-    text = _claim_text(claim)
+    text = (claim.claim_text or claim.claim or "").lower()
     generic_phrases = {
         "is available in the validated packet",
         "should anchor business-quality discussion",
         "not from manually recomputed",
         "rather than narrative",
         "use validated",
+        "business discussion should focus",
+        "should be read against",
+        "should not be translated into a blocked rating",
+        "validation and audit issues are part of",
+        "blocking data issue should override",
+        "source disagreement or current-period mismatch can reduce conviction",
+        "should be limited to confirmed packet inputs",
+        "trigger language should use",
     }
     return any(phrase in text for phrase in generic_phrases)
 
