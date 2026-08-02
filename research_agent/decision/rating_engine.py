@@ -51,6 +51,16 @@ def determine_unconstrained_analytical_rating(
 
     fundamental = scores.fundamental_score
     technical = scores.technical_score
+    if (
+        scores.fundamental_status != "measured"
+        or scores.technical_status != "measured"
+    ):
+        return (
+            Rating.HOLD,
+            "Directional signals are not enough for a non-neutral rating while "
+            "core fundamental or corporate-action-adjusted technical coverage "
+            "is incomplete.",
+        )
     if fundamental <= -1 and technical <= -1:
         return (
             Rating.UNDERWEIGHT,

@@ -137,6 +137,22 @@ def test_unbenchmarked_strong_setup_is_capped_at_hold():
     assert negative_permission.allowed_ratings == [Rating.UNDERWEIGHT]
     assert Rating.SELL in negative_permission.blocked_ratings
 
+    partial_negative_permission = determine_rating_permission(
+        SignalScores(
+            fundamental_score=-2,
+            technical_score=-1,
+            valuation_score=0,
+            risk_score=0,
+            composite_score=-3,
+            fundamental_status="partial",
+            technical_status="partial",
+            valuation_status="unbenchmarked",
+            risk_status="not_measured",
+        )
+    )
+    assert partial_negative_permission.preferred_rating == Rating.HOLD
+    assert partial_negative_permission.allowed_ratings == [Rating.HOLD]
+
 
 def test_validation_quality_cannot_change_the_company_rating():
     metrics = _strong_metrics()
