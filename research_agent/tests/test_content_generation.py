@@ -110,6 +110,38 @@ def test_content_generator_uses_precomputed_distribution_comparison():
     assert "does not identify a funding source" in claim.claim
 
 
+def test_generic_claims_use_the_packet_currency_instead_of_dollars():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    data.ticker = "GENERIC"
+    data.price_basis.currency = "HUF"
+
+    claims = generate_research_claims(
+        data,
+        metrics,
+        ledger,
+        decision,
+        validation,
+    )
+    monetary_claims = [
+        claim
+        for claim in claims
+        if any(
+            phrase in claim.claim
+            for phrase in (
+                "revenue TTM of",
+                "FCF TTM is",
+                "net cash of",
+                "combines with revenue of",
+                "where revenue ",
+            )
+        )
+    ]
+
+    assert len(monetary_claims) == 5
+    assert all("$" not in claim.claim for claim in monetary_claims)
+    assert all("HUF" in claim.claim for claim in monetary_claims)
+
+
 def test_composed_claim_report_can_pass_quality_when_audit_is_clean():
     data, metrics, validation, ledger, decision = _load_packet("SNOW")
     claims = generate_research_claims(data, metrics, ledger, decision, validation)

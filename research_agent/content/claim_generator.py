@@ -142,7 +142,7 @@ class _ClaimBuilder:
             "Fundamental Analysis",
             "fundamental",
             "financial_metric",
-            f"{ticker} has revenue TTM of {_money(self.metrics.fundamentals.revenue_ttm)}, so the business discussion should focus on {profile['business_driver']} rather than generic scale language.",
+            f"{ticker} has revenue TTM of {self._money(self.metrics.fundamentals.revenue_ttm)}, so the business discussion should focus on {profile['business_driver']} rather than generic scale language.",
             ["revenue_ttm"],
             "high",
             "high",
@@ -153,7 +153,7 @@ class _ClaimBuilder:
             "Fundamental Analysis",
             "fundamental",
             "financial_metric",
-            f"FCF TTM is {_money(self.metrics.fundamentals.free_cash_flow_ttm)}, making cash conversion a direct rating input for {ticker}.",
+            f"FCF TTM is {self._money(self.metrics.fundamentals.free_cash_flow_ttm)}, making cash conversion a direct rating input for {ticker}.",
             ["free_cash_flow_ttm"],
             "high",
             "high",
@@ -175,9 +175,9 @@ class _ClaimBuilder:
                 "financial_metric",
                 (
                     "TTM shareholder distributions are "
-                    f"{_money(self.metrics.fundamentals.shareholder_distributions_ttm)}; "
+                    f"{self._money(self.metrics.fundamentals.shareholder_distributions_ttm)}; "
                     "distributions minus FCF are "
-                    f"{_money(self.metrics.fundamentals.shareholder_distributions_minus_fcf_ttm)}. "
+                    f"{self._money(self.metrics.fundamentals.shareholder_distributions_minus_fcf_ttm)}. "
                     "This is an arithmetic comparison and does not identify a "
                     "funding source."
                 ),
@@ -211,7 +211,7 @@ class _ClaimBuilder:
             "Fundamental Analysis",
             "fundamental",
             "financial_metric",
-            f"Balance-sheet flexibility is anchored in net cash of {_money(self.metrics.fundamentals.net_cash)} and debt evidence, which affects how much downside tolerance the action plan can carry.",
+            f"Balance-sheet flexibility is anchored in net cash of {self._money(self.metrics.fundamentals.net_cash)} and debt evidence, which affects how much downside tolerance the action plan can carry.",
             ["net_cash", "total_debt"],
             "medium",
             "medium",
@@ -266,7 +266,7 @@ class _ClaimBuilder:
             "Bull Case",
             "bull",
             "financial_metric",
-            f"The bull case is that {profile['bull_driver']} combines with revenue of {_money(self.metrics.fundamentals.revenue_ttm)} to support the allowed upside rating path when cash conversion quality also holds.",
+            f"The bull case is that {profile['bull_driver']} combines with revenue of {self._money(self.metrics.fundamentals.revenue_ttm)} to support the allowed upside rating path when cash conversion quality also holds.",
             ["revenue_ttm", "free_cash_flow_ttm"],
             "medium",
             "medium",
@@ -319,7 +319,7 @@ class _ClaimBuilder:
             "Key Risks",
             "risk",
             "financial_metric",
-            f"Source disagreement or current-period mismatch can reduce conviction for {ticker}, especially where revenue {_money(self.metrics.fundamentals.revenue_ttm)} is a key valuation denominator.",
+            f"Source disagreement or current-period mismatch can reduce conviction for {ticker}, especially where revenue {self._money(self.metrics.fundamentals.revenue_ttm)} is a key valuation denominator.",
             ["revenue_ttm", "free_cash_flow_ttm"],
             "medium",
             "medium",
@@ -410,6 +410,9 @@ class _ClaimBuilder:
                     return float(value)
         return _canonical_value(self.canonical, metric_name)
 
+    def _money(self, value: Optional[float]) -> str:
+        return _money(value, currency=self.data_packet.price_basis.currency)
+
     def _evidence_for(self, metrics: list[str]) -> list[EvidenceItem]:
         matched: list[EvidenceItem] = []
         for metric in metrics:
@@ -492,14 +495,17 @@ def _company_profile(ticker: str) -> dict[str, str]:
     }
 
 
-def _money(value: Optional[float]) -> str:
+def _money(value: Optional[float], currency: str = "USD") -> str:
     if value is None:
         return "not available in evidence set"
+    currency = str(currency or "USD").strip().upper()
     if abs(value) >= 1_000_000_000:
-        return f"${value / 1_000_000_000:.2f}B"
-    if abs(value) >= 1_000_000:
-        return f"${value / 1_000_000:.1f}M"
-    return f"${value:.2f}"
+        amount = f"{value / 1_000_000_000:.2f}B"
+    elif abs(value) >= 1_000_000:
+        amount = f"{value / 1_000_000:.1f}M"
+    else:
+        amount = f"{value:.2f}"
+    return f"${amount}" if currency == "USD" else f"{amount} {currency}"
 
 
 def _pct(value: Optional[float]) -> str:
