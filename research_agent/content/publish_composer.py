@@ -1572,8 +1572,8 @@ def _final_rating_section(ticker: str, rating: str, f, v, t, *, currency: str = 
         ),
         "Why not more bullish? A more constructive stance needs either a better entry point, stronger cash-flow conversion after investment needs, or clearer technical confirmation.",
         "Why not more bearish? The evidence still supports a functioning business with defensible cash generation; the rating is about position discipline, not a rejection of the company.",
-        "Action plan for existing holders: maintain exposure if it fits the target allocation, but avoid adding solely on momentum.",
-        "Action plan for new capital: wait for better risk/reward, a technical reset, or evidence that current-period KPIs are converting into durable free cash flow.",
+        "Research continuation rule: keep the current stance while risk/reward, technical trend and current-period cash conversion remain unchanged.",
+        "Upgrade or downgrade only when new evidence changes valuation support, technical confirmation or durable free-cash-flow conversion.",
         "Upgrade/downgrade triggers: improve the stance if fundamentals accelerate with cleaner FCF conversion; cut risk if source quality deteriorates, valuation expands further, or the technical setup breaks down.",
     ])
 

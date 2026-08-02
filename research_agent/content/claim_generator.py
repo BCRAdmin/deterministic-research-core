@@ -261,12 +261,12 @@ class _ClaimBuilder:
             "Technical Setup",
             "technical",
             "technical_metric",
-            f"{ticker}'s close of {_plain_number(self.metrics.technical.close)} and moving-average position imply {_technical_interpretation(self.metrics)}, so entries should be staged, delayed or trimmed according to business evidence and risk/reward.",
+            f"{ticker}'s close of {_plain_number(self.metrics.technical.close)} and moving-average position imply {_technical_interpretation(self.metrics)}; this remains timing evidence and does not prescribe an entry, trim or position size.",
             ["close", "sma_50", "sma_200", "rsi_14"],
             "medium",
             "medium",
             counterargument="Technical weakness can be temporary if fundamentals and catalysts improve.",
-            implication="Use staged entries or trims when technical and fundamental signals diverge.",
+            implication="Treat technical and fundamental divergence as a review condition, not as a personal trade instruction.",
         )
 
         self.add(
@@ -288,7 +288,7 @@ class _ClaimBuilder:
             ["rsi_14", "sma_50", "sma_200", "close"],
             "medium",
             "medium",
-            implication="Add or accumulate language should require confirmation when the preferred rating is not Buy.",
+            implication="A more constructive research stance should require confirmation when the preferred rating is not Buy.",
         )
 
         self.add(
@@ -309,7 +309,7 @@ class _ClaimBuilder:
             ["revenue_ttm", "free_cash_flow_ttm"],
             "medium",
             "medium",
-            implication="Avoid full-exit language when the evidence supports only trim or hold actions.",
+            implication="Avoid a more bearish research label when the evidence supports only a Hold or tactical-risk stance.",
         )
 
         self.add(
@@ -549,7 +549,7 @@ def _technical_interpretation(metrics: MetricsPacket) -> str:
     if technical.rsi_14 is not None and technical.rsi_14 > 75:
         return "an overbought setup that favors patience or tactical trimming over immediate full accumulation"
     if technical.close and technical.sma_200 and technical.close < technical.sma_200:
-        return "a damaged trend that requires confirmation before adding exposure"
+        return "a damaged trend that lacks confirmation of recovery"
     if technical.close and technical.sma_50 and technical.close > technical.sma_50:
         return "constructive momentum but still requires valuation and risk discipline"
     return "a mixed setup that should not override validated fundamentals"
@@ -858,10 +858,10 @@ def _final_rating_counterargument(preferred: str, metrics: MetricsPacket) -> str
 
 def _final_rating_implication(ticker: str, preferred: str, metrics: MetricsPacket) -> str:
     if preferred == "Accumulate":
-        return f"Use staged accumulation for {ticker}; add on pullbacks or confirmed KPI acceleration, not on valuation-insensitive momentum."
+        return f"An Accumulate research stance for {ticker} requires confirmed KPI acceleration and valuation discipline."
     if preferred in {"Tactical Trim", "Tactical Underweight"}:
-        return f"Keep {ticker} below target weight until valuation, trend or current-period KPIs improve."
-    return f"Hold {ticker}; maintain core exposure but require better valuation, technical setup or current-period KPI proof before adding."
+        return f"The tactical-risk stance for {ticker} remains until valuation, trend or current-period KPIs improve."
+    return f"The Hold research stance for {ticker} remains until valuation, technical setup or current-period KPI evidence changes."
 
 
 def _current_period_claim_specs(

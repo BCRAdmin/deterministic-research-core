@@ -191,6 +191,25 @@ def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():
     ]
     assert "revenue TTM of 4.34B HUF" in rating_claim.claim
     assert "FCF TTM of 1.12B HUF" in rating_claim.claim
+    personal_action_language = (
+        "entries should be",
+        "staged entries",
+        "maintain core exposure",
+        "existing holders",
+        "new capital",
+        "below target weight",
+        "before adding",
+        "add on pullbacks",
+    )
+    rendered_text = "\n".join(
+        [
+            research_report,
+            internal_report,
+            *(claim.claim for claim in claims),
+            *(claim.investment_implication or "" for claim in claims),
+        ]
+    ).lower()
+    assert not any(phrase in rendered_text for phrase in personal_action_language)
 
 
 def test_composed_claim_report_can_pass_quality_when_audit_is_clean():

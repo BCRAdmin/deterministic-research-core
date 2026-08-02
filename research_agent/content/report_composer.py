@@ -257,7 +257,7 @@ def _render_final_rating_logic(
         f"- Additional valuation/technical constraint: P/FCF `{_fmt_multiple(v.price_to_fcf)}` and RSI `{_fmt_number(t.rsi_14)}` argue against chasing without a better setup.",
         "- Why not more bearish? The report avoids a harsher stance unless validated fundamentals deteriorate, source reconciliation breaks, or technical weakness confirms a deeper drawdown.",
         "- What would change the rating? Cleaner current-period KPI acceleration, better FCF conversion, lower valuation risk or confirmed technical recovery would support a more constructive action.",
-        f"- Plain-language action plan: keep `{data_packet.ticker}` inside the stated action plan; add only on better risk/reward or trim if current-period evidence weakens.",
+        f"- Research-status rule: keep `{data_packet.ticker}` at `{preferred}` until better risk/reward supports an upgrade or weaker current-period evidence supports a downgrade.",
     ]
     return "\n".join(lines)
 
