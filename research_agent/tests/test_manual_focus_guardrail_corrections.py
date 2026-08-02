@@ -156,7 +156,18 @@ def test_internal_quality_score_caps_when_manual_review_reasons_exist():
         ),
         decision_packet=_decision("NVDA", Rating.HOLD),
         final_markdown=_strong_report_text("NVDA"),
-        reconciliation_warnings=[{"code": "TRUE_SOURCE_VALUE_DISAGREEMENT", "severity": "warning", "count": 10}],
+        reconciliation_warnings=[
+            {
+                "code": "TRUE_SOURCE_VALUE_DISAGREEMENT",
+                "severity": "warning",
+                "count": 10,
+            },
+            {
+                "code": "BALANCE_SHEET_DATE_MISMATCH_EXCLUDED",
+                "severity": "warning",
+                "metric": "total_debt",
+            },
+        ],
         analyst_claim_count=30,
         substantive_analyst_claim_count=24,
         substantive_claim_ratio=0.85,
@@ -182,6 +193,7 @@ def test_internal_quality_score_caps_when_manual_review_reasons_exist():
 
     assert "TRUE_FINANCIAL_ANOMALY" in quality.manual_review_reasons
     assert "TRUE_SOURCE_VALUE_DISAGREEMENT" in quality.manual_review_reasons
+    assert "BALANCE_SHEET_DATE_MISMATCH_EXCLUDED" in quality.manual_review_reasons
     assert quality.internal_research_quality_score <= 90
     assert quality.internal_research_quality_score < 100
 

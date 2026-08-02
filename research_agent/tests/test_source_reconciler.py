@@ -305,6 +305,62 @@ def test_stale_debt_current_does_not_hide_current_short_term_debt():
     assert "debt_current" not in balance
 
 
+def test_balance_sheet_totals_do_not_mix_prior_debt_with_current_cash():
+    def instant_metric(metric_name, value, end_date, source_concept):
+        return CanonicalMetric(
+            metric_name=metric_name,
+            value=value,
+            unit="USD",
+            period=end_date,
+            period_bucket="instant",
+            end_date=end_date,
+            basis="gaap",
+            statement_type="balance_sheet",
+            source_ids=[f"SEC_{metric_name}"],
+            evidence_ids=[f"EVIDENCE_{metric_name}"],
+            confidence="high",
+            source_concept=source_concept,
+        )
+
+    canonical = CanonicalFinancials(
+        ticker="BASE",
+        as_of_date="2026-07-31",
+        metrics=[
+            instant_metric(
+                "cash_and_equivalents",
+                4_072,
+                "2026-03-31",
+                "us-gaap:CashAndCashEquivalentsAtCarryingValue",
+            ),
+            instant_metric(
+                "short_term_debt",
+                5_514,
+                "2025-12-31",
+                "us-gaap:ShortTermBorrowings",
+            ),
+            instant_metric(
+                "debt_noncurrent",
+                30_696,
+                "2025-12-31",
+                "us-gaap:LongTermDebtNoncurrent",
+            ),
+        ],
+    )
+
+    fundamentals = canonical_financials_to_fundamentals(canonical)
+    balance = fundamentals["balance_sheet"]
+
+    assert balance["cash_and_equivalents"] == 4_072
+    assert "short_term_debt" not in balance
+    assert "debt_noncurrent" not in balance
+    assert "total_debt" not in balance
+    assert {
+        issue["metric"]
+        for issue in fundamentals["reconciliation_issues"]
+        if issue["code"] == "BALANCE_SHEET_DATE_MISMATCH_EXCLUDED"
+    } == {"short_term_debt", "debt_noncurrent"}
+
+
 def test_ttm_bridge_does_not_skip_q4_when_current_q1_arrives():
     facts = [
         _fact("revenue", 25_920, "FY", "2024-01-01", "2024-12-31", "fy-2024"),

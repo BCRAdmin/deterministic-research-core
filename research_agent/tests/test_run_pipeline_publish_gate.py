@@ -1,5 +1,6 @@
 from research_agent.run_pipeline import (
     _empty_publish_quality_payload,
+    _manual_review_report,
     _remove_unapproved_publish_artifacts,
 )
 
@@ -18,3 +19,18 @@ def test_unapproved_report_leaves_no_publish_artifact(tmp_path):
     assert not publish_quality.exists()
     assert internal_report.read_text(encoding="utf-8") == "internal"
     assert _empty_publish_quality_payload()["publish_report_exists"] == 0
+
+
+def test_manual_review_report_surfaces_active_reason_codes_once():
+    report = _manual_review_report(
+        "# CAT Research Report\n",
+        [
+            "EARNINGS_DATE_UNAVAILABLE",
+            "BALANCE_SHEET_DATE_MISMATCH_EXCLUDED",
+            "BALANCE_SHEET_DATE_MISMATCH_EXCLUDED",
+        ],
+    )
+
+    assert report.startswith("# Manual Review Required")
+    assert report.count("`BALANCE_SHEET_DATE_MISMATCH_EXCLUDED`") == 1
+    assert "# CAT Research Report" in report

@@ -27,6 +27,7 @@ from research_agent.research_core.models.validation_report import ValidationRepo
 
 MISSING_FCF_SUPPORT_FOR_ACCUMULATE = "MISSING_FCF_SUPPORT_FOR_ACCUMULATE"
 HOLD_PENDING_FCF_SUPPORT_DISPLAY_RATING = "Hold Pending FCF Support"
+BALANCE_SHEET_DATE_MISMATCH_EXCLUDED = "BALANCE_SHEET_DATE_MISMATCH_EXCLUDED"
 
 
 def calculate_quality_score(
@@ -786,6 +787,7 @@ def _audit_manual_review_reasons(
         "PRICE_DATE_BEFORE_AS_OF_DATE",
     }
     reconciliation_reason_codes = {
+        BALANCE_SHEET_DATE_MISMATCH_EXCLUDED,
         "TRUE_SOURCE_VALUE_DISAGREEMENT",
         "SOURCE_FRAME_VARIANT_IGNORED",
         "PERIOD_TYPE_MISMATCH_IGNORED",
@@ -949,10 +951,14 @@ def _data_confidence_score(
     score -= min(10, sum(1 for issue in validation_report.issues if issue.severity == "warning") * 2)
 
     true_source_disagreement_count = 0
+    balance_sheet_mismatch_count = 0
     for warning in reconciliation_warnings or []:
         if warning.get("code") == "TRUE_SOURCE_VALUE_DISAGREEMENT":
             true_source_disagreement_count += int(warning.get("count") or 1)
+        elif warning.get("code") == BALANCE_SHEET_DATE_MISMATCH_EXCLUDED:
+            balance_sheet_mismatch_count += 1
     score -= min(10, true_source_disagreement_count * 2)
+    score -= min(8, balance_sheet_mismatch_count * 2)
 
     if vendor_only_hard_metrics_count:
         score -= 6
@@ -1099,6 +1105,7 @@ def _internal_research_quality_score(
 
 def _has_manual_review_evidence_or_sanity_reason(manual_review_reasons: list[str]) -> bool:
     cap_reasons = {
+        BALANCE_SHEET_DATE_MISMATCH_EXCLUDED,
         "TRUE_SOURCE_VALUE_DISAGREEMENT",
         "SOURCE_FRAME_VARIANT_IGNORED",
         "PERIOD_TYPE_MISMATCH_IGNORED",

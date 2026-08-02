@@ -8,6 +8,9 @@ from research_agent.evidence.source_ranker import rank_source
 from research_agent.sources.sec.xbrl_concepts import DEI_CONCEPTS, US_GAAP_CONCEPTS
 
 
+SEC_FINANCIAL_FACT_FORMS = {"10-K", "10-K/A", "10-Q", "10-Q/A"}
+
+
 @dataclass
 class ParsedFact:
     metric_name: str
@@ -58,7 +61,10 @@ class CompanyFactsParser:
         seen_facts: set[tuple[object, ...]] = set()
         for namespace, concept in concepts:
             for row in self._get_facts(namespace, concept):
-                if "val" not in row:
+                if (
+                    "val" not in row
+                    or row.get("form") not in SEC_FINANCIAL_FACT_FORMS
+                ):
                     continue
                 raw_value = float(row["val"])
                 value, normalization_note = self._normalize_metric_value(

@@ -817,3 +817,77 @@ def test_companyfacts_maps_point_in_time_shares_debt_leases_and_buybacks():
         fundamentals["balance_sheet"]["total_lease_liabilities"]
         == 14_776_000_000
     )
+
+
+def test_net_income_uses_financial_filing_fallback_and_ignores_proxy_facts():
+    def fact(value, start, end, fp, form, accession):
+        return {
+            "val": value,
+            "fy": 2026 if end.startswith("2026") else 2025,
+            "fp": fp,
+            "form": form,
+            "filed": "2026-05-06",
+            "start": start,
+            "end": end,
+            "accn": accession,
+        }
+
+    companyfacts = {
+        "facts": {
+            "us-gaap": {
+                "NetIncomeLoss": {
+                    "units": {
+                        "USD": [
+                            fact(
+                                8_884_000_000,
+                                "2025-01-01",
+                                "2025-12-31",
+                                "FY",
+                                "DEF 14A",
+                                "proxy",
+                            )
+                        ]
+                    }
+                },
+                "NetIncomeLossAvailableToCommonStockholdersBasic": {
+                    "units": {
+                        "USD": [
+                            fact(
+                                8_884_000_000,
+                                "2025-01-01",
+                                "2025-12-31",
+                                "FY",
+                                "10-K",
+                                "annual",
+                            ),
+                            fact(
+                                2_003_000_000,
+                                "2025-01-01",
+                                "2025-03-31",
+                                "Q1",
+                                "10-Q",
+                                "prior-q1",
+                            ),
+                            fact(
+                                2_549_000_000,
+                                "2026-01-01",
+                                "2026-03-31",
+                                "Q1",
+                                "10-Q",
+                                "current-q1",
+                            ),
+                        ]
+                    }
+                },
+            }
+        }
+    }
+    parser = CompanyFactsParser("TEST", "1", companyfacts)
+    facts = parser.get_facts_for_metric("net_income")
+    canonical, _ = build_canonical_financials_from_facts(
+        "TEST", "2026-07-31", facts
+    )
+    fundamentals = canonical_financials_to_fundamentals(canonical)
+
+    assert {fact.form for fact in facts} == {"10-K", "10-Q"}
+    assert fundamentals["ttm"]["net_income"] == 9_430_000_000

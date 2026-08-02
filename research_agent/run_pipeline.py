@@ -449,7 +449,10 @@ def run_research_pipeline(
     internal_best_report_path = ""
     if audit_report.has_blocking_errors or not quality_report.publishable:
         manifest_output_dir.mkdir(parents=True, exist_ok=True)
-        (manifest_output_dir / "manual_review_required.md").write_text(report, encoding="utf-8")
+        (manifest_output_dir / "manual_review_required.md").write_text(
+            _manual_review_report(report, quality_report.manual_review_reasons),
+            encoding="utf-8",
+        )
         if claim_coverage_complete:
             internal_best_report = compose_internal_best_report(
                 data_packet=data_packet,
@@ -1277,6 +1280,22 @@ def _empty_publish_quality_payload() -> dict[str, int]:
 def _remove_unapproved_publish_artifacts(output_dir: Path) -> None:
     for filename in ("publish_report.md", "publish_report_quality_score.json"):
         (output_dir / filename).unlink(missing_ok=True)
+
+
+def _manual_review_report(report: str, reasons: list[str]) -> str:
+    reason_lines = [f"- `{reason}`" for reason in dict.fromkeys(reasons) if reason]
+    if not reason_lines:
+        reason_lines = [
+            "- No machine-readable reason code was produced; operator review remains required."
+        ]
+    return (
+        "# Manual Review Required\n\n"
+        "This report is internal and must not be published before operator review.\n\n"
+        "## Active Review Reasons\n\n"
+        + "\n".join(reason_lines)
+        + "\n\n---\n\n"
+        + report.lstrip()
+    )
 
 
 def _apply_publish_quality_to_report(quality_report, payload: dict[str, int]) -> None:

@@ -353,14 +353,34 @@ def canonical_financials_to_fundamentals(canonical: CanonicalFinancials) -> dict
         "lease_liability_noncurrent",
         "treasury_stock_value",
     }
+    balance_sheet_date = _latest_balance_sheet_date(canonical)
     for metric_name in balance_sheet_metrics:
         selected = _latest_current_metric(canonical, metric_name, require_gaap=True)
         if selected is not None:
+            if balance_sheet_date and selected.end_date != balance_sheet_date:
+                fundamentals["reconciliation_issues"].append(
+                    {
+                        "severity": "warning",
+                        "code": "BALANCE_SHEET_DATE_MISMATCH_EXCLUDED",
+                        "metric": metric_name,
+                        "metric_end_date": selected.end_date,
+                        "balance_sheet_date": balance_sheet_date,
+                        "message": (
+                            f"Excluded {metric_name} from {selected.end_date} because "
+                            f"the latest financial-statement balance date is {balance_sheet_date}."
+                        ),
+                    }
+                )
+                continue
             fundamentals["balance_sheet"][metric_name] = selected.value
         elif canonical.metrics_for(metric_name):
             fundamentals["reconciliation_issues"].append(_stale_metric_issue(metric_name))
 
-    _derive_debt_and_lease_totals(canonical, fundamentals)
+    _derive_debt_and_lease_totals(
+        canonical,
+        fundamentals,
+        balance_sheet_date=balance_sheet_date,
+    )
     _derive_revenue_growth(canonical, fundamentals)
     _derive_current_period_growth(canonical, fundamentals)
     _derive_fiscal_context(canonical, fundamentals)
@@ -724,6 +744,8 @@ def _quarters_are_contiguous(metrics: list[CanonicalMetric]) -> bool:
 def _derive_debt_and_lease_totals(
     canonical: CanonicalFinancials,
     fundamentals: dict,
+    *,
+    balance_sheet_date: Optional[str],
 ) -> None:
     balance = fundamentals["balance_sheet"]
     aggregate = _latest_current_metric(
@@ -738,6 +760,17 @@ def _derive_debt_and_lease_totals(
     noncurrent = _latest_current_metric(
         canonical, "debt_noncurrent", require_gaap=True
     )
+    if balance_sheet_date:
+        aggregate = (
+            aggregate if aggregate and aggregate.end_date == balance_sheet_date else None
+        )
+        short_term = (
+            short_term if short_term and short_term.end_date == balance_sheet_date else None
+        )
+        current = current if current and current.end_date == balance_sheet_date else None
+        noncurrent = (
+            noncurrent if noncurrent and noncurrent.end_date == balance_sheet_date else None
+        )
     component_end_dates = [
         metric.end_date
         for metric in (short_term, current, noncurrent)
@@ -791,6 +824,18 @@ def _derive_debt_and_lease_totals(
         balance["total_lease_liabilities"] = (
             float(lease_current or 0.0) + float(lease_noncurrent or 0.0)
         )
+
+
+def _latest_balance_sheet_date(canonical: CanonicalFinancials) -> Optional[str]:
+    statement_dates = [
+        metric.end_date
+        for metric in canonical.metrics
+        if metric.statement_type == "balance_sheet"
+        and metric.metric_name not in {"listed_share_count", "treasury_share_count"}
+        and metric.end_date
+        and _is_current_metric(canonical, metric)
+    ]
+    return max(statement_dates) if statement_dates else None
 
 
 def _derive_revenue_growth(

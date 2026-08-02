@@ -6,7 +6,11 @@ US_GAAP_CONCEPTS = {
     ],
     "gross_profit": ["GrossProfit"],
     "operating_income": ["OperatingIncomeLoss"],
-    "net_income": ["NetIncomeLoss"],
+    "net_income": [
+        "NetIncomeLoss",
+        "NetIncomeLossAvailableToCommonStockholdersBasic",
+        "ProfitLoss",
+    ],
     "operating_cash_flow": ["NetCashProvidedByUsedInOperatingActivities"],
     "capex": [
         "PaymentsToAcquirePropertyPlantAndEquipment",
