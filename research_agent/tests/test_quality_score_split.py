@@ -6,7 +6,10 @@ from research_agent.batch.dashboard_adapter import build_dashboard_status
 from research_agent.decision.decision_packet import DecisionPacket, RatingPermission, SignalScores
 from research_agent.decision.rating_taxonomy import Rating
 from research_agent.quality.quality_score import calculate_quality_score
-from research_agent.research_core.models.validation_report import ValidationReport
+from research_agent.research_core.models.validation_report import (
+    ValidationIssue,
+    ValidationReport,
+)
 
 
 def test_manual_review_can_have_high_internal_quality():
@@ -33,6 +36,7 @@ def test_manual_review_can_have_high_internal_quality():
         evidence_mapped_claim_ratio=1.0,
         hard_claim_evidence_ratio=1.0,
         current_period_kpi_claim_count=6,
+        current_period_kpi_metric_count=6,
         ticker_specific_kpi_claim_count=10,
         final_rating_rationale_quality=80,
         mechanical_rating_language_count=0,
@@ -117,12 +121,14 @@ def test_gold_report_scores_high_on_all_three():
         audit_report=_audit("GOOGL"),
         decision_packet=_decision("GOOGL", Rating.HOLD),
         final_markdown=_gold_text(),
-        analyst_claim_count=28,
-        substantive_analyst_claim_count=22,
-        substantive_claim_ratio=0.85,
+        analyst_claim_count=9,
+        substantive_analyst_claim_count=7,
+        substantive_claim_ratio=7 / 9,
         evidence_mapped_claim_ratio=1.0,
         hard_claim_evidence_ratio=1.0,
+        data_limitation_claim_count=0,
         current_period_kpi_claim_count=6,
+        current_period_kpi_metric_count=6,
         ticker_specific_kpi_claim_count=8,
         final_rating_rationale_quality=90,
         mechanical_rating_language_count=0,
@@ -144,6 +150,52 @@ def test_gold_report_scores_high_on_all_three():
     assert quality.publish_quality_score >= 85
     assert quality.internal_research_quality_score >= 85
     assert quality.data_confidence_score >= 80
+
+
+def test_manual_review_reason_blocks_compact_complete_report():
+    validation = _validation("MCD").model_copy(
+        update={
+            "issues": [
+                ValidationIssue(
+                    severity="warning",
+                    code="EARNINGS_DATE_UNAVAILABLE",
+                    message="Next earnings date is unavailable.",
+                )
+            ]
+        }
+    )
+    quality = calculate_quality_score(
+        validation_report=validation,
+        audit_report=_audit("MCD"),
+        decision_packet=_decision("MCD", Rating.HOLD),
+        final_markdown=_gold_text(),
+        analyst_claim_count=9,
+        substantive_analyst_claim_count=7,
+        substantive_claim_ratio=7 / 9,
+        evidence_mapped_claim_ratio=1.0,
+        hard_claim_evidence_ratio=1.0,
+        data_limitation_claim_count=0,
+        current_period_kpi_claim_count=6,
+        current_period_kpi_metric_count=6,
+        ticker_specific_kpi_claim_count=8,
+        final_rating_rationale_quality=90,
+        mechanical_rating_language_count=0,
+        generic_claim_ratio=0.0,
+        company_specific_claim_count=4,
+        valuation_specific_claim_count=2,
+        technical_specific_claim_count=1,
+        rating_rationale_claim_count=1,
+        publish_report_exists=1,
+        publish_current_kpi_count=5,
+        publish_evidence_appendix_exists=1,
+        publish_mechanical_language_count=0,
+        publish_claim_id_main_body_count=0,
+        publish_valuation_sensitivity_present=1,
+        publish_action_plan_trigger_count=2,
+    )
+
+    assert quality.publishable is False
+    assert quality.manual_review_reasons == ["EARNINGS_DATE_UNAVAILABLE"]
 
 
 def test_good_data_bad_writing_split():

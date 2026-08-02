@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Optional, Union
 
 from research_agent.audit.audit_report import AuditReport
+from research_agent.content.claim_generator import claim_coverage_gaps
 from research_agent.decision.decision_packet import DecisionPacket
 from research_agent.decision.rating_permission import extract_rating_from_text
 from research_agent.batch.freshness import STALE_PRICE_BASIS_FOR_CURRENT_REPORT
@@ -43,6 +44,7 @@ def calculate_quality_score(
     generic_claim_ratio: Optional[float] = None,
     data_limitation_claim_count: Optional[int] = None,
     current_period_kpi_claim_count: Optional[int] = None,
+    current_period_kpi_metric_count: Optional[int] = None,
     missing_current_period_context_count: Optional[int] = None,
     ticker_specific_kpi_claim_count: Optional[int] = None,
     final_rating_rationale_quality: Optional[int] = None,
@@ -121,6 +123,24 @@ def calculate_quality_score(
             mechanical_rating_language_count,
         }
     )
+    coverage_fields = {
+        "analyst_claim_count": analyst_claim_count,
+        "evidence_mapped_claim_ratio": evidence_mapped_claim_ratio,
+        "hard_claim_evidence_ratio": hard_claim_evidence_ratio,
+        "generic_claim_ratio": generic_claim_ratio,
+        "data_limitation_claim_count": data_limitation_claim_count,
+        "current_period_kpi_metric_count": current_period_kpi_metric_count,
+        "final_rating_rationale_quality": final_rating_rationale_quality,
+        "company_specific_claim_count": company_specific_claim_count,
+        "valuation_specific_claim_count": valuation_specific_claim_count,
+        "technical_specific_claim_count": technical_specific_claim_count,
+        "rating_rationale_claim_count": rating_rationale_claim_count,
+    }
+    coverage_gaps: Optional[list[str]] = None
+    claim_coverage_complete: Optional[bool] = None
+    if all(value is not None for value in coverage_fields.values()):
+        coverage_gaps = claim_coverage_gaps(coverage_fields)
+        claim_coverage_complete = not coverage_gaps
 
     for issue in validation_report.issues:
         if issue.code in {"EARNINGS_DATE_UNAVAILABLE", "EARNINGS_DATE_UNCONFIRMED"}:
@@ -201,7 +221,7 @@ def calculate_quality_score(
     if research_incomplete:
         writing_structure = min(writing_structure, 4)
         content_score = min(content_score, 40)
-    elif analyst_claim_count is not None and analyst_claim_count < 15:
+    elif claim_coverage_complete is False:
         content_score = min(content_score, 60)
         writing_structure -= 3
     if evidence_mapped_claim_ratio is not None and evidence_mapped_claim_ratio < 0.90:
@@ -211,9 +231,6 @@ def calculate_quality_score(
         numerical_accuracy -= 10
         source_quality -= 8
         content_score = min(content_score, 60)
-    if strict_content_v2 and substantive_analyst_claim_count is not None and substantive_analyst_claim_count < 12:
-        content_score = min(content_score, 60)
-        writing_structure -= 3
     if substantive_claim_ratio is None and analyst_claim_count:
         substantive_claim_ratio = (substantive_analyst_claim_count or 0) / analyst_claim_count
     if strict_content_v2 and substantive_claim_ratio is not None and substantive_claim_ratio < 0.70:
@@ -232,12 +249,9 @@ def calculate_quality_score(
     if missing_current_period_context_count:
         content_score = min(content_score, 70)
         event_awareness -= min(6, missing_current_period_context_count * 3)
-    if current_period_kpi_claim_count is not None:
-        if current_period_kpi_claim_count < 2:
-            content_score = min(content_score, 84)
-            event_awareness -= 3
-        elif current_period_kpi_claim_count < 3:
-            content_score = min(content_score, 92)
+    if current_period_kpi_metric_count is not None and current_period_kpi_metric_count < 3:
+        content_score = min(content_score, 84)
+        event_awareness -= 3
     if appendix_only_kpi_count:
         content_score = min(content_score, 88)
     if placeholder_business_context_count:
@@ -246,20 +260,6 @@ def calculate_quality_score(
     if empty_required_section_count:
         content_score = min(content_score, 76 if empty_required_section_count >= 3 else 84)
         writing_structure -= min(4, empty_required_section_count)
-    if ticker_specific_kpi_claim_count is not None and ticker_specific_kpi_claim_count < 2:
-        content_score = min(content_score, 78)
-        writing_structure -= 2
-    elif ticker_specific_kpi_claim_count is not None:
-        if ticker_specific_kpi_claim_count < 3:
-            content_score = min(content_score, 87)
-        elif ticker_specific_kpi_claim_count < 5:
-            content_score = min(content_score, 90)
-        elif ticker_specific_kpi_claim_count < 7:
-            content_score = min(content_score, 92)
-        else:
-            content_score = min(content_score, 95)
-    elif analyst_claim_count is not None:
-        content_score = min(content_score, 90)
     if company_defined_fcf_mismatch_count:
         content_score = min(content_score, 60)
         numerical_accuracy -= 15
@@ -280,7 +280,7 @@ def calculate_quality_score(
             content_score = min(content_score, 84)
         if not publish_evidence_appendix_exists:
             content_score = min(content_score, 84)
-        if publish_current_kpi_count is not None and publish_current_kpi_count < 3:
+        if publish_current_kpi_count is not None and publish_current_kpi_count < 1:
             content_score = min(content_score, 88)
         if publish_mechanical_language_count:
             content_score = min(content_score, 82)
@@ -377,6 +377,7 @@ def calculate_quality_score(
         generic_claim_ratio=generic_claim_ratio,
         data_limitation_claim_count=data_limitation_claim_count,
         current_period_kpi_claim_count=current_period_kpi_claim_count,
+        current_period_kpi_metric_count=current_period_kpi_metric_count,
         missing_current_period_context_count=missing_current_period_context_count,
         ticker_specific_kpi_claim_count=ticker_specific_kpi_claim_count,
         final_rating_rationale_quality=final_rating_rationale_quality,
@@ -401,6 +402,7 @@ def calculate_quality_score(
         deeptech_sec_ir_current_period_evidence_complete=deeptech_sec_ir_current_period_evidence_complete,
         current_report_allowed=current_report_allowed,
         freshness_issue_code=freshness_issue_code,
+        claim_coverage_complete=claim_coverage_complete,
     )
     risk_profiles = []
     if speculative_deep_tech_profile_count:
@@ -428,6 +430,8 @@ def calculate_quality_score(
             reconciliation_warnings=reconciliation_warnings,
         )
     )
+    if manual_review_reasons:
+        publishable = False
     data_confidence_score = _data_confidence_score(
         source_quality=category_scores["source_quality"],
         validation_report=validation_report,
@@ -435,7 +439,7 @@ def calculate_quality_score(
         reconciliation_warnings=reconciliation_warnings,
         evidence_mapped_claim_ratio=evidence_mapped_claim_ratio,
         hard_claim_evidence_ratio=hard_claim_evidence_ratio,
-        current_period_kpi_claim_count=current_period_kpi_claim_count,
+        current_period_kpi_metric_count=current_period_kpi_metric_count,
         vendor_only_hard_metrics_count=vendor_only_hard_metrics_count,
         speculative_deep_tech_profile_count=speculative_deep_tech_profile_count,
         deeptech_sec_ir_current_period_evidence_complete=deeptech_sec_ir_current_period_evidence_complete,
@@ -448,13 +452,12 @@ def calculate_quality_score(
         content_score=content_score,
         final_markdown=final_markdown,
         research_incomplete=research_incomplete,
-        analyst_claim_count=analyst_claim_count,
-        substantive_analyst_claim_count=substantive_analyst_claim_count,
+        claim_coverage_complete=claim_coverage_complete,
         evidence_mapped_claim_ratio=evidence_mapped_claim_ratio,
         hard_claim_evidence_ratio=hard_claim_evidence_ratio,
         generic_claim_ratio=generic_claim_ratio,
         data_limitation_claim_count=data_limitation_claim_count,
-        current_period_kpi_claim_count=current_period_kpi_claim_count,
+        current_period_kpi_metric_count=current_period_kpi_metric_count,
         missing_current_period_context_count=missing_current_period_context_count,
         ticker_specific_kpi_claim_count=ticker_specific_kpi_claim_count,
         final_rating_rationale_quality=final_rating_rationale_quality,
@@ -502,6 +505,8 @@ def calculate_quality_score(
         historical_qa_only=bool(historical_qa_only),
         freshness_issue_code=freshness_issue_code,
         content_score=_clamp(content_score, 100),
+        claim_coverage_complete=bool(claim_coverage_complete),
+        claim_coverage_gaps=coverage_gaps or [],
         analyst_claim_count=int(analyst_claim_count or 0),
         substantive_analyst_claim_count=int(substantive_analyst_claim_count or 0),
         substantive_claim_count=int(substantive_analyst_claim_count or 0),
@@ -509,6 +514,7 @@ def calculate_quality_score(
         generic_claim_count=int(generic_claim_count or 0),
         data_limitation_claim_count=int(data_limitation_claim_count or 0),
         current_period_kpi_claim_count=int(current_period_kpi_claim_count or 0),
+        current_period_kpi_metric_count=int(current_period_kpi_metric_count or 0),
         current_period_kpi_claim_count_main_body=int(main_body_kpi_count or 0),
         current_kpi_appendix_only_count=int(appendix_only_kpi_count or 0),
         missing_current_period_context_count=int(missing_current_period_context_count or 0),
@@ -587,6 +593,7 @@ def is_publishable(
     generic_claim_ratio: Optional[float] = None,
     data_limitation_claim_count: Optional[int] = None,
     current_period_kpi_claim_count: Optional[int] = None,
+    current_period_kpi_metric_count: Optional[int] = None,
     missing_current_period_context_count: Optional[int] = None,
     ticker_specific_kpi_claim_count: Optional[int] = None,
     final_rating_rationale_quality: Optional[int] = None,
@@ -611,6 +618,7 @@ def is_publishable(
     deeptech_sec_ir_current_period_evidence_complete: Optional[bool] = None,
     current_report_allowed: Optional[bool] = None,
     freshness_issue_code: Optional[str] = None,
+    claim_coverage_complete: Optional[bool] = None,
 ) -> bool:
     strict_content_v2 = any(
         value is not None
@@ -629,9 +637,7 @@ def is_publishable(
         return False
     if _is_research_incomplete(final_markdown, analyst_claim_count):
         return False
-    if analyst_claim_count is not None and analyst_claim_count < 15:
-        return False
-    if strict_content_v2 and substantive_analyst_claim_count is not None and substantive_analyst_claim_count < 12:
+    if claim_coverage_complete is False:
         return False
     if substantive_claim_ratio is None and analyst_claim_count:
         substantive_claim_ratio = (substantive_analyst_claim_count or 0) / analyst_claim_count
@@ -644,18 +650,7 @@ def is_publishable(
             return False
     if missing_current_period_context_count:
         return False
-    if current_period_kpi_claim_count is not None and current_period_kpi_claim_count < 3:
-        return False
-    if ticker_specific_kpi_claim_count is not None and ticker_specific_kpi_claim_count < 2:
-        return False
-    if analyst_claim_count is not None and total_score > 92 and (
-        current_period_kpi_claim_count is None
-        or current_period_kpi_claim_count < 3
-        or ticker_specific_kpi_claim_count is None
-        or ticker_specific_kpi_claim_count < 3
-        or final_rating_rationale_quality is None
-        or final_rating_rationale_quality < 70
-    ):
+    if current_period_kpi_metric_count is not None and current_period_kpi_metric_count < 3:
         return False
     if final_rating_rationale_quality is not None and final_rating_rationale_quality < 50:
         return False
@@ -914,7 +909,7 @@ def _data_confidence_score(
     reconciliation_warnings: Optional[list[dict]],
     evidence_mapped_claim_ratio: Optional[float],
     hard_claim_evidence_ratio: Optional[float],
-    current_period_kpi_claim_count: Optional[int],
+    current_period_kpi_metric_count: Optional[int],
     vendor_only_hard_metrics_count: Optional[int],
     speculative_deep_tech_profile_count: Optional[int],
     deeptech_sec_ir_current_period_evidence_complete: Optional[bool],
@@ -929,7 +924,7 @@ def _data_confidence_score(
         score += 3
     if hard_claim_evidence_ratio is not None and hard_claim_evidence_ratio >= 1.0:
         score += 3
-    if current_period_kpi_claim_count is not None and current_period_kpi_claim_count >= 3:
+    if current_period_kpi_metric_count is not None and current_period_kpi_metric_count >= 3:
         score += 3
     if deeptech_sec_ir_current_period_evidence_complete:
         score += 3
@@ -972,13 +967,12 @@ def _internal_research_quality_score(
     content_score: int,
     final_markdown: Optional[str],
     research_incomplete: bool,
-    analyst_claim_count: Optional[int],
-    substantive_analyst_claim_count: Optional[int],
+    claim_coverage_complete: Optional[bool],
     evidence_mapped_claim_ratio: Optional[float],
     hard_claim_evidence_ratio: Optional[float],
     generic_claim_ratio: Optional[float],
     data_limitation_claim_count: Optional[int],
-    current_period_kpi_claim_count: Optional[int],
+    current_period_kpi_metric_count: Optional[int],
     missing_current_period_context_count: Optional[int],
     ticker_specific_kpi_claim_count: Optional[int],
     final_rating_rationale_quality: Optional[int],
@@ -1000,17 +994,11 @@ def _internal_research_quality_score(
 ) -> int:
     score = 50
     score += 5 if not research_incomplete else -20
-    if analyst_claim_count is not None:
-        if analyst_claim_count >= 15:
-            score += 8
-        elif analyst_claim_count < 10:
-            score -= 10
-    if substantive_analyst_claim_count is not None:
-        if substantive_analyst_claim_count >= 12:
-            score += 8
-        elif substantive_analyst_claim_count < 8:
-            score -= 8
-    if current_period_kpi_claim_count is not None and current_period_kpi_claim_count >= 3:
+    if claim_coverage_complete is True:
+        score += 12
+    elif claim_coverage_complete is False:
+        score -= 10
+    if current_period_kpi_metric_count is not None and current_period_kpi_metric_count >= 3:
         score += 5
     if ticker_specific_kpi_claim_count is not None and ticker_specific_kpi_claim_count >= 3:
         score += 5
@@ -1083,18 +1071,18 @@ def _internal_research_quality_score(
     if research_incomplete:
         score = min(score, 45)
     if early_commercial_capital_intensive_tech_count:
-        if analyst_claim_count and analyst_claim_count >= 15 and (hard_claim_evidence_ratio or 0) >= 1.0:
+        if claim_coverage_complete and (hard_claim_evidence_ratio or 0) >= 1.0:
             score = max(score, 76)
         score = min(score, 80)
     if speculative_deep_tech_profile_count:
-        if analyst_claim_count and analyst_claim_count >= 15:
+        if claim_coverage_complete:
             score = max(score, 78)
         score = min(score, 85)
     if vendor_only_hard_metrics_count:
         score = min(score, 85)
     if current_report_allowed is False and freshness_issue_code == STALE_PRICE_BASIS_FOR_CURRENT_REPORT:
         score = min(score, 75)
-    if manual_review_reasons and score < 70 and analyst_claim_count and analyst_claim_count >= 15 and (hard_claim_evidence_ratio or 0) >= 1.0:
+    if manual_review_reasons and score < 70 and claim_coverage_complete and (hard_claim_evidence_ratio or 0) >= 1.0:
         score = 70
     if empty_required_section_count:
         score = min(score, 70 if empty_required_section_count >= 3 else 75)

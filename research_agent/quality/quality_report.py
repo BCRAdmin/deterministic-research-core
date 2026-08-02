@@ -15,6 +15,8 @@ class QualityReport(BaseModel):
     historical_qa_only: bool = False
     freshness_issue_code: Optional[str] = None
     content_score: int = 100
+    claim_coverage_complete: bool = False
+    claim_coverage_gaps: list[str] = Field(default_factory=list)
     analyst_claim_count: int = 0
     substantive_analyst_claim_count: int = 0
     substantive_claim_count: int = 0
@@ -22,6 +24,7 @@ class QualityReport(BaseModel):
     generic_claim_count: int = 0
     data_limitation_claim_count: int = 0
     current_period_kpi_claim_count: int = 0
+    current_period_kpi_metric_count: int = 0
     current_period_kpi_claim_count_main_body: int = 0
     current_kpi_appendix_only_count: int = 0
     missing_current_period_context_count: int = 0

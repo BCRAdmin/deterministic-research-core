@@ -5,7 +5,11 @@ from pathlib import Path
 from typing import Any, Optional
 
 from research_agent.batch.freshness import evaluate_price_freshness
-from research_agent.content.claim_generator import claim_quality_metrics, generate_research_claims
+from research_agent.content.claim_generator import (
+    claim_coverage_gaps,
+    claim_quality_metrics,
+    generate_research_claims,
+)
 from research_agent.content.publish_composer import (
     compose_early_commercial_manual_review_publish_stub,
     compose_internal_best_report,
@@ -271,6 +275,8 @@ def run_research_pipeline(
     )
     manifest_output_dir = Path(config.output_dir) / data_packet.ticker / data_packet.as_of_date
     claim_metrics = claim_quality_metrics(claims)
+    coverage_gaps = claim_coverage_gaps(claim_metrics)
+    claim_coverage_complete = not coverage_gaps
     analyst_claims_path = save_research_claims(
         claims,
         manifest_output_dir / "analyst_claims.json",
@@ -298,7 +304,7 @@ def run_research_pipeline(
             f"{failures or 'unknown authority failure'}"
         )
 
-    if claim_metrics["analyst_claim_count"] >= 15 and claim_metrics["hard_claim_evidence_ratio"] == 1.0:
+    if claim_coverage_complete:
         report = compose_research_report(
             data_packet=data_packet,
             metrics_packet=metrics_packet,
@@ -318,7 +324,11 @@ def run_research_pipeline(
             evidence_ledger=evidence_ledger if evidence_ledger.evidence_items else None,
             decision_packet=decision_packet,
         )
-        report += "\n\n## Content Generation Status\n\nResearch incomplete: minimum evidence-mapped claim coverage was not met.\n"
+        report += (
+            "\n\n## Content Generation Status\n\n"
+            "Research incomplete: missing evidence-backed coverage for "
+            f"{', '.join(coverage_gaps)}.\n"
+        )
     report_path = manifest_output_dir / "final_report.md"
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(report, encoding="utf-8")
@@ -351,7 +361,7 @@ def run_research_pipeline(
     }
     publish_report_path = ""
     publish_quality_path = ""
-    if claim_metrics["analyst_claim_count"] >= 15 and claim_metrics["hard_claim_evidence_ratio"] == 1.0:
+    if claim_coverage_complete:
         early_commercial_manual_review = (
             deeptech_assessment.company_archetype.value == "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH"
             and not deeptech_assessment.publishable
@@ -404,6 +414,7 @@ def run_research_pipeline(
         generic_claim_ratio=float(claim_metrics["generic_claim_ratio"]),
         data_limitation_claim_count=int(claim_metrics["data_limitation_claim_count"]),
         current_period_kpi_claim_count=int(claim_metrics["current_period_kpi_claim_count"]),
+        current_period_kpi_metric_count=int(claim_metrics["current_period_kpi_metric_count"]),
         missing_current_period_context_count=(
             _count_audit_code(audit_report, "MISSING_CURRENT_PERIOD_CONTEXT")
             + _count_audit_code(audit_report, "MISSING_CURRENT_PERIOD_KPI_CONTEXT")
@@ -453,7 +464,7 @@ def run_research_pipeline(
     if audit_report.has_blocking_errors or not quality_report.publishable:
         manifest_output_dir.mkdir(parents=True, exist_ok=True)
         (manifest_output_dir / "manual_review_required.md").write_text(report, encoding="utf-8")
-        if claim_metrics["analyst_claim_count"] >= 15 and claim_metrics["hard_claim_evidence_ratio"] == 1.0:
+        if claim_coverage_complete:
             internal_best_report = compose_internal_best_report(
                 data_packet=data_packet,
                 metrics_packet=metrics_packet,
@@ -479,7 +490,7 @@ def run_research_pipeline(
         )
         if empty_required_sections:
             _apply_empty_required_section_cap(quality_report, empty_required_sections)
-            if claim_metrics["analyst_claim_count"] >= 15 and claim_metrics["hard_claim_evidence_ratio"] == 1.0:
+            if claim_coverage_complete:
                 internal_best_report = compose_internal_best_report(
                     data_packet=data_packet,
                     metrics_packet=metrics_packet,

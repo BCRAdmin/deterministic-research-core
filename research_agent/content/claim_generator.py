@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import math
-from typing import Iterable, Optional
+from typing import Iterable, Mapping, Optional
 
 from research_agent.decision.decision_packet import DecisionPacket
 from research_agent.decision.signal_scores import classify_technical_trend
@@ -12,9 +12,6 @@ from research_agent.research_core.models.claims import ResearchClaim
 from research_agent.research_core.models.data_packet import DataPacket
 from research_agent.research_core.models.metrics_packet import MetricsPacket
 from research_agent.research_core.models.validation_report import ValidationReport
-
-
-MIN_ANALYST_CLAIMS = 15
 
 
 def generate_research_claims(
@@ -56,6 +53,11 @@ def claim_quality_metrics(claims: Iterable[ResearchClaim]) -> dict[str, float | 
     substantive = [claim for claim in claim_list if _is_substantive_claim(claim)]
     generic = [claim for claim in claim_list if _is_generic_meta_claim(claim)]
     current_period_kpis = [claim for claim in claim_list if _is_current_period_kpi_claim(claim)]
+    current_period_metrics = {
+        metric
+        for claim in current_period_kpis
+        for metric in claim.metric_refs
+    }
     company_specific = [
         claim
         for claim in claim_list
@@ -90,6 +92,7 @@ def claim_quality_metrics(claims: Iterable[ResearchClaim]) -> dict[str, float | 
         "generic_claim_count": generic_count,
         "data_limitation_claim_count": len(data_limitations),
         "current_period_kpi_claim_count": len(current_period_kpis),
+        "current_period_kpi_metric_count": len(current_period_metrics),
         "ticker_specific_kpi_claim_count": ticker_kpi_count,
         "final_rating_rationale_quality": _final_rating_rationale_quality(claim_list),
         "mechanical_rating_language_count": sum(1 for claim in claim_list if _has_mechanical_rating_language(claim)),
@@ -99,6 +102,38 @@ def claim_quality_metrics(claims: Iterable[ResearchClaim]) -> dict[str, float | 
         "technical_specific_claim_count": len(technical_specific),
         "rating_rationale_claim_count": len(rating_rationale),
     }
+
+
+def claim_coverage_gaps(metrics: Mapping[str, object]) -> list[str]:
+    """Return missing content dimensions without rewarding padded claim totals."""
+
+    total = int(metrics.get("analyst_claim_count") or 0)
+    gaps: list[str] = []
+    if total == 0:
+        gaps.append("no_evidence_mapped_claims")
+    if float(metrics.get("evidence_mapped_claim_ratio") or 0.0) < 1.0:
+        gaps.append("incomplete_claim_evidence")
+    if float(metrics.get("hard_claim_evidence_ratio") or 0.0) < 1.0:
+        gaps.append("incomplete_hard_claim_evidence")
+    if int(metrics.get("current_period_kpi_metric_count") or 0) < 3:
+        gaps.append("missing_current_period_context")
+    if int(metrics.get("company_specific_claim_count") or 0) < 1:
+        gaps.append("missing_company_specific_analysis")
+    if int(metrics.get("valuation_specific_claim_count") or 0) < 1:
+        gaps.append("missing_valuation_analysis")
+    if int(metrics.get("technical_specific_claim_count") or 0) < 1:
+        gaps.append("missing_technical_analysis")
+    if int(metrics.get("rating_rationale_claim_count") or 0) < 1:
+        gaps.append("missing_rating_rationale")
+    if int(metrics.get("final_rating_rationale_quality") or 0) < 50:
+        gaps.append("weak_rating_rationale")
+    if float(metrics.get("generic_claim_ratio") or 0.0) > 0.50:
+        gaps.append("excessive_generic_content")
+    if total and (
+        int(metrics.get("data_limitation_claim_count") or 0) / total > 0.25
+    ):
+        gaps.append("excessive_data_limitation_content")
+    return gaps
 
 
 class _ClaimBuilder:
@@ -1493,11 +1528,7 @@ def _current_period_claim_specs(
                             "themselves establish growth without a comparable "
                             "prior period."
                         ),
-                        "metrics": [
-                            "current_q_revenue",
-                            "operating_income",
-                            "net_income",
-                        ],
+                        "metrics": ["revenue", "operating_income", "net_income"],
                         "counterargument": (
                             "A single reported period does not establish a "
                             "durable trend."

@@ -2,7 +2,11 @@ import json
 from pathlib import Path
 
 from research_agent.audit.report_linter import audit_markdown_report
-from research_agent.content.claim_generator import claim_quality_metrics, generate_research_claims
+from research_agent.content.claim_generator import (
+    claim_coverage_gaps,
+    claim_quality_metrics,
+    generate_research_claims,
+)
 from research_agent.content.report_composer import compose_research_report
 from research_agent.content.publish_composer import compose_internal_best_report
 from research_agent.decision.decision_packet import DecisionPacket
@@ -108,6 +112,48 @@ def test_content_generator_keeps_only_evidence_mapped_substantive_claims():
         "rsi_14",
     ]
     assert technical_claim.metric_values["sma_200"] == metrics.technical.sma_200
+
+
+def test_compact_claim_set_can_cover_every_required_dimension():
+    metrics = {
+        "analyst_claim_count": 9,
+        "evidence_mapped_claim_ratio": 1.0,
+        "hard_claim_evidence_ratio": 1.0,
+        "substantive_claim_ratio": 7 / 9,
+        "generic_claim_ratio": 0.0,
+        "data_limitation_claim_count": 0,
+        "current_period_kpi_claim_count": 3,
+        "current_period_kpi_metric_count": 3,
+        "ticker_specific_kpi_claim_count": 3,
+        "final_rating_rationale_quality": 80,
+        "company_specific_claim_count": 4,
+        "valuation_specific_claim_count": 1,
+        "technical_specific_claim_count": 1,
+        "rating_rationale_claim_count": 1,
+    }
+
+    assert claim_coverage_gaps(metrics) == []
+
+
+def test_claim_coverage_names_missing_topics_instead_of_padding_count():
+    metrics = {
+        "analyst_claim_count": 30,
+        "evidence_mapped_claim_ratio": 1.0,
+        "hard_claim_evidence_ratio": 1.0,
+        "substantive_claim_ratio": 0.80,
+        "generic_claim_ratio": 0.0,
+        "data_limitation_claim_count": 0,
+        "current_period_kpi_claim_count": 4,
+        "current_period_kpi_metric_count": 4,
+        "ticker_specific_kpi_claim_count": 4,
+        "final_rating_rationale_quality": 80,
+        "company_specific_claim_count": 5,
+        "valuation_specific_claim_count": 0,
+        "technical_specific_claim_count": 2,
+        "rating_rationale_claim_count": 1,
+    }
+
+    assert claim_coverage_gaps(metrics) == ["missing_valuation_analysis"]
 
 
 def test_content_generator_uses_precomputed_distribution_comparison():
@@ -537,7 +583,7 @@ def test_claim_evidence_excludes_value_injected_source_placeholders():
     assert "VALUE_INJECTED_FCF_PLACEHOLDER" not in fcf_claim.evidence_ids
 
 
-def test_unpadded_claim_report_stays_internal_when_substance_gate_fails():
+def test_claimless_report_stays_rejected_when_evidence_gate_fails():
     data, metrics, validation, ledger, decision = _load_packet("SNOW")
     claims = generate_research_claims(data, metrics, ledger, decision, validation)
     report = compose_research_report(data, metrics, validation, decision, ledger, claims)
@@ -576,11 +622,11 @@ def test_unpadded_claim_report_stays_internal_when_substance_gate_fails():
 
     assert not audit.has_blocking_errors
     assert not quality.publishable
-    assert quality.content_score == 60
+    assert quality.content_score == 40
     assert "No LLM claims attached" not in report
     assert "## Evidence Appendix" in report
-    assert claim_quality["analyst_claim_count"] < 15
-    assert claim_quality["substantive_analyst_claim_count"] < 12
+    assert claim_quality["analyst_claim_count"] == 0
+    assert claim_quality["substantive_analyst_claim_count"] == 0
     assert claim_quality["generic_claim_count"] == 0
 
 

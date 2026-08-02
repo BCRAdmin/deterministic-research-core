@@ -115,6 +115,8 @@ def _dashboard_item(item) -> dict:
         "reconciliation_warning_codes": _reconciliation_warning_codes(item),
         "true_source_disagreements": counts.get("true_source_disagreements", 0),
         "current_period_kpi_claim_count": counts.get("current_period_kpi_claim_count", 0),
+        "current_period_kpi_metric_count": counts.get("current_period_kpi_metric_count", 0),
+        "claim_coverage_complete": bool(counts.get("claim_coverage_complete", 0)),
         "ticker_specific_kpi_claim_count": counts.get("ticker_specific_kpi_claim_count", 0),
         "substantive_claim_count": counts.get("substantive_claim_count", 0),
         "mechanical_rating_language_count": counts.get("mechanical_rating_language_count", 0),

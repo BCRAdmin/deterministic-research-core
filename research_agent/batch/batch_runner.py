@@ -461,6 +461,8 @@ def _counts_from_artifacts(artifacts: dict[str, str]) -> dict[str, int]:
         "publish_quality_score": 0,
         "internal_research_quality_score": 0,
         "data_confidence_score": 0,
+        "claim_coverage_complete": 0,
+        "claim_coverage_gap_count": 0,
         "unsupported_guidance_claims": 0,
         "unsupported_earnings_event_claims": 0,
         "analyst_claim_count": 0,
@@ -470,6 +472,7 @@ def _counts_from_artifacts(artifacts: dict[str, str]) -> dict[str, int]:
         "generic_claim_count": 0,
         "data_limitation_claim_count": 0,
         "current_period_kpi_claim_count": 0,
+        "current_period_kpi_metric_count": 0,
         "current_period_kpi_claim_count_main_body": 0,
         "current_kpi_appendix_only_count": 0,
         "missing_current_period_context_count": 0,
@@ -648,6 +651,8 @@ def _count_quality_content(path: Optional[str], counts: dict[str, int]) -> None:
     counts["internal_research_quality_score"] = int(payload.get("internal_research_quality_score") or 0)
     counts["data_confidence_score"] = int(payload.get("data_confidence_score") or 0)
     counts["content_completeness_score"] = int(payload.get("content_score") or 0)
+    counts["claim_coverage_complete"] = int(bool(payload.get("claim_coverage_complete")))
+    counts["claim_coverage_gap_count"] = len(payload.get("claim_coverage_gaps") or [])
     counts["analyst_claim_count"] = int(payload.get("analyst_claim_count") or counts.get("analyst_claim_count", 0))
     counts["substantive_analyst_claim_count"] = int(payload.get("substantive_analyst_claim_count") or 0)
     counts["substantive_claim_count"] = int(payload.get("substantive_claim_count") or counts["substantive_analyst_claim_count"])
@@ -657,6 +662,7 @@ def _count_quality_content(path: Optional[str], counts: dict[str, int]) -> None:
     counts["generic_claim_count"] = int(payload.get("generic_claim_count") or 0)
     counts["data_limitation_claim_count"] = int(payload.get("data_limitation_claim_count") or 0)
     counts["current_period_kpi_claim_count"] = int(payload.get("current_period_kpi_claim_count") or 0)
+    counts["current_period_kpi_metric_count"] = int(payload.get("current_period_kpi_metric_count") or 0)
     counts["current_period_kpi_claim_count_main_body"] = int(payload.get("current_period_kpi_claim_count_main_body") or 0)
     counts["current_kpi_appendix_only_count"] = int(payload.get("current_kpi_appendix_only_count") or 0)
     counts["missing_current_period_context_count"] = int(payload.get("missing_current_period_context_count") or counts.get("missing_current_period_context_count", 0))
