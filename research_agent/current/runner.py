@@ -140,8 +140,8 @@ def run_current_research(
     if requested_jurisdiction == "US":
         if sec is None:
             raise CurrentResearchError(
-                f"{symbol} was resolved as a US issuer, but "
-                "ROOM16_SEC_USER_AGENT is missing or invalid."
+                f"{symbol} wurde als US-Emittent erkannt, aber die SEC-"
+                "Kontaktkennung ROOM16_SEC_USER_AGENT fehlt oder ist ungültig."
             )
         issuer = _resolve_sec_issuer(sec.get_company_tickers(), symbol)
     elif requested_jurisdiction == "HU":
@@ -151,29 +151,32 @@ def run_current_research(
         bse_issuer = bse.resolve(symbol)
         if issuer is not None and bse_issuer is not None:
             raise CurrentResearchError(
-                f"{symbol} is ambiguous across the US and Hungarian issuer "
-                "registers. Provide the resolved jurisdiction or ISIN; Room16 "
-                "will not guess the listed instrument."
+                f"{symbol} ist zwischen dem US-amerikanischen und dem ungarischen "
+                "Emittentenregister mehrdeutig. Bitte Jurisdiktion oder ISIN "
+                "eindeutig übergeben; Room16 errät das Wertpapier nicht."
             )
     if issuer is None and bse_issuer is None:
         if requested_jurisdiction:
             raise CurrentResearchError(
-                f"{symbol} was resolved for jurisdiction {requested_jurisdiction}, "
-                "but the corresponding official issuer adapter did not confirm "
-                "that identity. Room16 will not substitute another market."
+                f"{symbol} wurde der Jurisdiktion {requested_jurisdiction} "
+                "zugeordnet, aber der zuständige offizielle Marktadapter konnte "
+                "diese Identität nicht bestätigen. Room16 weicht nicht auf einen "
+                "anderen Markt aus."
             )
         if sec is None:
             raise CurrentResearchError(
-                f"{symbol} was not checked against the SEC issuer registry because "
-                "ROOM16_SEC_USER_AGENT is missing or invalid, and no other enabled "
-                "official jurisdiction adapter recognized it. Configure a SEC "
-                "contact identity before retrying a US issuer; Room16 will not "
-                "substitute vendor fundamentals."
+                f"{symbol} konnte nicht gegen das SEC-Emittentenregister geprüft "
+                "werden, weil ROOM16_SEC_USER_AGENT fehlt oder ungültig ist; kein "
+                "anderer aktivierter offizieller Marktadapter hat das Unternehmen "
+                "erkannt. Vor einem neuen Versuch mit einem US-Emittenten muss die "
+                "SEC-Kontaktkennung eingerichtet werden. Room16 ersetzt offizielle "
+                "Fundamentaldaten nicht durch Händlerdaten."
             )
         raise CurrentResearchError(
-            f"{symbol} is not available through the configured official issuer adapters. "
-            "Configure SEC identity for SEC filers or add the issuer's official "
-            "jurisdiction adapter; Room16 will not substitute vendor fundamentals."
+            f"{symbol} ist über die eingerichteten offiziellen Marktadapter nicht "
+            "verfügbar. Für SEC-Emittenten muss die SEC-Kontaktkennung eingerichtet "
+            "sein; für andere Märkte wird ein passender offizieller Adapter benötigt. "
+            "Room16 ersetzt offizielle Fundamentaldaten nicht durch Händlerdaten."
         )
 
     cik: Optional[str] = None
@@ -250,9 +253,9 @@ def run_current_research(
         assert bse_issuer is not None
         if request.isin and request.isin != bse_issuer.isin:
             raise CurrentResearchError(
-                f"{symbol} resolved to ISIN {bse_issuer.isin}, not "
-                f"{request.isin}. Room16 will not continue with a mismatched "
-                "instrument identity."
+                f"{symbol} gehört laut offiziellem BSE-Register zur ISIN "
+                f"{bse_issuer.isin}, nicht zu {request.isin}. Room16 setzt die "
+                "Analyse mit einer widersprüchlichen Wertpapieridentität nicht fort."
             )
         jurisdiction = "HU"
         isin = bse_issuer.isin
@@ -318,7 +321,8 @@ def run_current_research(
     )
     if source_type not in {"exchange_ohlcv", "trusted_market_data_vendor"}:
         raise CurrentResearchError(
-            f"Price provider source type {source_type!r} is not authority-grade."
+            f"Der Kursdatenanbieter meldet den Quellentyp {source_type!r}; dieser "
+            "erfüllt den verbindlichen Quellenstandard nicht."
         )
     source_url = str(getattr(provider, "source_url", "") or "")
     price_source_id = (
@@ -384,7 +388,8 @@ def run_current_research(
     manifest_path = authority_dir / "authority_manifest.json"
     if not manifest_path.exists():
         raise CurrentResearchError(
-            "Deterministic pipeline completed without an authority manifest."
+            "Der deterministische Research-Lauf endete ohne Authority-Manifest. "
+            "Room16 erstellt daraus keinen Bericht."
         )
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     result = {
@@ -460,20 +465,21 @@ def _require_supported_sec_reporting_profile(
     )
     form_label = "/".join(forms) if forms else "20-F/6-K"
     raise CurrentResearchError(
-        f"{ticker} was recognized as an SEC registrant, but its official "
-        f"CompanyFacts use the IFRS taxonomy with {form_label} filings. "
-        "The current SEC financial adapter supports US-GAAP 10-K/10-Q data; "
-        "Room16 will not reinterpret IFRS concepts through US-GAAP mappings "
-        "or substitute weaker data. A generic SEC IFRS adapter is required "
-        "before this instrument can be analysed."
+        f"{ticker} wurde als SEC-Emittent erkannt, verwendet in den offiziellen "
+        f"CompanyFacts aber die IFRS-Taxonomie mit {form_label}-Filings. Der "
+        "vorhandene SEC-Finanzadapter unterstützt US-GAAP-Daten aus 10-K und "
+        "10-Q. Room16 deutet IFRS-Konzepte nicht über US-GAAP-Zuordnungen um und "
+        "setzt keine schwächeren Ersatzdaten ein. Vor einer Analyse dieses "
+        "Wertpapiers wird ein allgemeiner SEC-IFRS-Adapter benötigt."
     )
 
 
 def _build_price_provider(request: CurrentResearchRequest) -> PriceProviderBase:
     if request.price_provider not in {"auto", "massive", "nasdaq"}:
         raise CurrentResearchError(
-            f"Unsupported price provider {request.price_provider!r}; "
-            "configure an authority-grade provider adapter."
+            f"Der Kursdatenanbieter {request.price_provider!r} wird nicht "
+            "unterstützt. Bitte einen Adapter einrichten, der den verbindlichen "
+            "Quellenstandard erfüllt."
         )
     if request.price_provider == "nasdaq":
         return NasdaqPriceProvider()
@@ -481,7 +487,9 @@ def _build_price_provider(request: CurrentResearchRequest) -> PriceProviderBase:
         return NasdaqPriceProvider()
     if not request.price_api_key:
         raise CurrentResearchError(
-            "Massive/Polygon API key missing. Set MASSIVE_API_KEY or POLYGON_API_KEY."
+            "Der API-Schlüssel für Massive/Polygon fehlt. Für diesen bewusst "
+            "gewählten Kursdatenweg muss MASSIVE_API_KEY oder POLYGON_API_KEY "
+            "eingerichtet werden."
         )
     return MassivePriceProvider(request.price_api_key)
 

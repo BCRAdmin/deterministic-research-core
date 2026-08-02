@@ -311,7 +311,7 @@ def test_current_runner_stages_sec_risks_for_the_existing_pipeline(monkeypatch, 
 
 
 def test_current_runner_rejects_unsupported_official_issuer(tmp_path):
-    with pytest.raises(CurrentResearchError, match="official issuer adapters"):
+    with pytest.raises(CurrentResearchError, match="offiziellen Marktadapter"):
         run_current_research(
             _request(tmp_path, ticker="OTHER").model_copy(
                 update={"jurisdiction": None}
@@ -323,7 +323,7 @@ def test_current_runner_rejects_unsupported_official_issuer(tmp_path):
 
 
 def test_current_runner_names_unsupported_sec_ifrs_profile_before_pipeline(tmp_path):
-    with pytest.raises(CurrentResearchError, match="IFRS taxonomy with 20-F"):
+    with pytest.raises(CurrentResearchError, match="IFRS-Taxonomie mit 20-F"):
         run_current_research(
             _request(tmp_path),
             price_provider=_FakePrices(),
@@ -366,12 +366,12 @@ def test_explicit_massive_provider_still_requires_key():
         sec_user_agent="Room16 operator@example.com",
         price_provider="massive",
     )
-    with pytest.raises(CurrentResearchError, match="Massive/Polygon API key"):
+    with pytest.raises(CurrentResearchError, match="API-Schlüssel für Massive/Polygon"):
         runner._build_price_provider(request)
 
 
 def test_current_runner_rejects_non_authority_price_provider(tmp_path):
-    with pytest.raises(CurrentResearchError, match="not authority-grade"):
+    with pytest.raises(CurrentResearchError, match="Quellenstandard nicht"):
         run_current_research(
             _request(tmp_path),
             price_provider=_WeakPrices(),
@@ -521,7 +521,7 @@ def test_current_runner_blocks_cross_market_ticker_ambiguity(tmp_path):
         output_root=str(tmp_path / "outputs"),
     )
 
-    with pytest.raises(CurrentResearchError, match="ambiguous across"):
+    with pytest.raises(CurrentResearchError, match="mehrdeutig"):
         run_current_research(
             request,
             sec_client=_FakeSec(ticker="GENR"),
@@ -539,7 +539,7 @@ def test_current_runner_blocks_resolver_isin_mismatch(tmp_path):
         output_root=str(tmp_path / "outputs"),
     )
 
-    with pytest.raises(CurrentResearchError, match="mismatched instrument identity"):
+    with pytest.raises(CurrentResearchError, match="widersprüchlichen Wertpapieridentität"):
         run_current_research(request, bse_provider=_FakeBse())
 
 
