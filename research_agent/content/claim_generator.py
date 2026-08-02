@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Iterable, Optional
 
 from research_agent.decision.decision_packet import DecisionPacket
+from research_agent.decision.signal_scores import classify_technical_trend
 from research_agent.evidence.evidence_item import EvidenceItem
 from research_agent.evidence.evidence_ledger import EvidenceLedger
 from research_agent.reconciliation.canonical_financials import CanonicalFinancials
@@ -327,8 +328,9 @@ class _ClaimBuilder:
                 f"{self._money(self.metrics.technical.close)}, 50-SMA "
                 f"{self._money(self.metrics.technical.sma_50)}, 200-SMA "
                 f"{self._money(self.metrics.technical.sma_200)} and RSI "
-                f"{_number(self.metrics.technical.rsi_14)}, creating timing "
-                "risk if price cannot reclaim trend support."
+                f"{_number(self.metrics.technical.rsi_14)}. The combined "
+                "long-term trend state is "
+                f"{classify_technical_trend(self.metrics)}."
             ),
             ["close", "sma_50", "sma_200", "rsi_14"],
             "high",
@@ -553,14 +555,14 @@ def _plain_number(value: Optional[float]) -> str:
 
 
 def _technical_interpretation(metrics: MetricsPacket) -> str:
-    technical = metrics.technical
-    if technical.rsi_14 is not None and technical.rsi_14 > 75:
-        return "an overbought setup that favors patience or tactical trimming over immediate full accumulation"
-    if technical.close and technical.sma_200 and technical.close < technical.sma_200:
-        return "a damaged trend that lacks confirmation of recovery"
-    if technical.close and technical.sma_50 and technical.close > technical.sma_50:
-        return "constructive momentum that still requires fundamental and risk confirmation"
-    return "a mixed setup that should not override validated fundamentals"
+    trend_state = classify_technical_trend(metrics)
+    if trend_state == "bullish":
+        return "a bullish long-term trend state"
+    if trend_state == "bearish":
+        return "a bearish long-term trend state"
+    if trend_state == "mixed":
+        return "a mixed long-term trend state"
+    return "an unavailable long-term trend state"
 
 
 def _claim_text(claim: ResearchClaim) -> str:

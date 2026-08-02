@@ -53,7 +53,7 @@ def test_fundamentals_use_directional_evidence_not_global_quality_thresholds():
     packet = build_decision_packet(metrics)
 
     assert score_fundamentals(metrics) == 1
-    assert score_technicals(metrics) == 3
+    assert score_technicals(metrics) == 1
     assert score_valuation(metrics) == 0
     assert score_risk(metrics) == 0
     assert packet.signal_scores.valuation_status == "unbenchmarked"
@@ -79,10 +79,37 @@ def test_fundamentals_use_directional_evidence_not_global_quality_thresholds():
                 "PRICE_TO_FCF_",
                 "PEG_",
                 "SBC_TO_",
+                "PRICE_ABOVE_",
+                "PRICE_BELOW_",
+                "BULLISH_MA_",
+                "BEARISH_MA_",
+                "GOLDEN_CROSS",
+                "DEATH_CROSS",
+                "RSI_",
+                "MACD_",
+                "ATR_PCT_",
             )
         )
         for rule in packet.triggered_rules
     )
+    assert "TREND_STATE_BULLISH" in packet.triggered_rules
+
+
+def test_momentum_and_volatility_observations_do_not_stack_rating_scores():
+    metrics = _strong_metrics()
+    metrics.technical.rsi_14 = 90
+    metrics.technical.atr_14 = 20
+    metrics.technical.ema_10 = 120
+    metrics.technical.macd_histogram = -10
+    packet = build_decision_packet(metrics)
+
+    assert packet.signal_scores.technical_score == 1
+    assert packet.signal_scores.risk_score == 0
+    assert packet.signal_scores.risk_status == "not_measured"
+    assert packet.triggered_rules == [
+        "FCF_TTM_POSITIVE",
+        "TREND_STATE_BULLISH",
+    ]
 
 
 def test_unbenchmarked_strong_setup_is_capped_at_hold():

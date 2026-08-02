@@ -45,35 +45,38 @@ def score_technicals(
 ) -> float:
     weights = weights or DEFAULT_RULE_WEIGHTS
     score = 0.0
-    t = metrics.technical
-
-    if t.sma_200 is not None:
-        score = _apply_rule(score, "PRICE_ABOVE_200SMA", t.close > t.sma_200, weights, triggered_rules, calibration_mode)
-        score = _apply_rule(score, "PRICE_BELOW_200SMA", t.close <= t.sma_200, weights, triggered_rules, calibration_mode)
-
-    if t.sma_50 is not None and t.sma_200 is not None:
-        alignment = t.signals.get("ma_50_200_state") or (
-            "bullish_alignment" if t.sma_50 > t.sma_200 else "bearish_alignment"
-        )
-        cross_event = t.signals.get("cross_event")
-        score = _apply_rule(score, "BULLISH_MA_ALIGNMENT", alignment == "bullish_alignment", weights, triggered_rules, calibration_mode)
-        score = _apply_rule(score, "BEARISH_MA_ALIGNMENT", alignment == "bearish_alignment", weights, triggered_rules, calibration_mode)
-        score = _apply_rule(score, "GOLDEN_CROSS", cross_event == "golden_cross", weights, triggered_rules, calibration_mode)
-        score = _apply_rule(score, "DEATH_CROSS", cross_event == "death_cross", weights, triggered_rules, calibration_mode)
-
-    if t.ema_10 is not None:
-        score = _apply_rule(score, "PRICE_ABOVE_EMA10", t.close > t.ema_10, weights, triggered_rules, calibration_mode)
-        score = _apply_rule(score, "PRICE_BELOW_EMA10", t.close <= t.ema_10, weights, triggered_rules, calibration_mode)
-
-    if t.rsi_14 is not None:
-        score = _apply_rule(score, "RSI_GT_75", t.rsi_14 > 75, weights, triggered_rules, calibration_mode)
-        score = _apply_rule(score, "RSI_LT_30", t.rsi_14 < 30, weights, triggered_rules, calibration_mode)
-
-    if t.macd_histogram is not None:
-        score = _apply_rule(score, "MACD_HISTOGRAM_POSITIVE", t.macd_histogram > 0, weights, triggered_rules, calibration_mode)
-        score = _apply_rule(score, "MACD_HISTOGRAM_NEGATIVE", t.macd_histogram <= 0, weights, triggered_rules, calibration_mode)
+    trend_state = classify_technical_trend(metrics)
+    score = _apply_rule(
+        score,
+        "TREND_STATE_BULLISH",
+        trend_state == "bullish",
+        weights,
+        triggered_rules,
+        calibration_mode,
+    )
+    score = _apply_rule(
+        score,
+        "TREND_STATE_BEARISH",
+        trend_state == "bearish",
+        weights,
+        triggered_rules,
+        calibration_mode,
+    )
 
     return _clamp(score)
+
+
+def classify_technical_trend(metrics: MetricsPacket) -> str:
+    technical = metrics.technical
+    if technical.sma_50 is None or technical.sma_200 is None:
+        return "not_measured"
+    price_above_long_term = technical.close > technical.sma_200
+    averages_bullish = technical.sma_50 > technical.sma_200
+    if price_above_long_term and averages_bullish:
+        return "bullish"
+    if not price_above_long_term and not averages_bullish:
+        return "bearish"
+    return "mixed"
 
 
 def score_valuation(
@@ -98,12 +101,6 @@ def score_risk(
 ) -> float:
     weights = weights or DEFAULT_RULE_WEIGHTS
     score = 0.0
-    t = metrics.technical
-
-    if t.atr_14 and t.close:
-        atr_pct = t.atr_14 / t.close
-        score = _apply_rule(score, "ATR_PCT_GT_8", atr_pct > 0.08, weights, triggered_rules, calibration_mode)
-        score = _apply_rule(score, "ATR_PCT_GT_5", 0.05 < atr_pct <= 0.08, weights, triggered_rules, calibration_mode)
 
     if validation_report:
         errors = [issue for issue in validation_report.issues if issue.severity == "error"]
@@ -181,11 +178,11 @@ def calculate_signal_scores_with_rules(
             else "not_measured"
         ),
         valuation_status=_valuation_status(metrics),
-        risk_status=_coverage_status([
-            metrics.technical.atr_14,
-            metrics.fundamentals.total_debt,
-            metrics.fundamentals.cash_and_investments,
-        ]),
+        risk_status=(
+            "partial"
+            if validation_report is not None or audit_report is not None
+            else "not_measured"
+        ),
     )
     return scores, _ordered_unique(triggered_rules), weights.version, calibration_mode
 
