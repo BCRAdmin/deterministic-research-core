@@ -347,7 +347,7 @@ def build_fundamental_derivation_evidence(
                         or "annual_revenue_yoy_growth"
                     ),
                     operands=operands,
-                    unit="fraction",
+                    unit="percent",
                     period=(
                         f"{growth_bridge.get('period_start') or 'unknown'}"
                         f"..{growth_bridge.get('period_end') or as_of_date}"
@@ -1837,6 +1837,8 @@ def unit_for_metric(
     metric_name = str(metric_name or "").strip().lower()
     currency = str(currency or "USD").strip().upper()
     if "margin" in metric_name or metric_name.startswith("sbc_to"):
+        return "percent"
+    if metric_name.endswith("_growth_yoy") or metric_name == "growth_rate":
         return "percent"
     if metric_name == "fcf_yield":
         return "fraction"

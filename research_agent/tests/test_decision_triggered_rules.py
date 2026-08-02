@@ -33,7 +33,9 @@ def test_decision_packet_records_triggered_rules():
     assert "FORWARD_EPS_GUIDANCE_MISMATCH" not in packet.triggered_rules
     assert packet.signal_scores.risk_score == 0
     assert packet.signal_scores.risk_status == "not_measured"
-    assert "Validation issues: 2" in packet.key_risks
+    assert packet.key_risks == [
+        "Company risk score: not measured by the current decision model."
+    ]
     assert packet.signal_scores.valuation_score == 0
     assert packet.signal_scores.valuation_status == "unbenchmarked"
     assert packet.score_version == "v1"

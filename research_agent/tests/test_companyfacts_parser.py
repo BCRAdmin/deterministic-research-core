@@ -166,6 +166,71 @@ def test_comparative_facts_in_one_filing_keep_distinct_evidence_ids():
     assert len(evidence_ids) == 2
 
 
+def test_identical_xbrl_alias_facts_are_materialized_once():
+    row = {
+        "val": 1_170_000_000,
+        "fy": 2026,
+        "fp": "Q1",
+        "form": "10-Q",
+        "filed": "2026-05-07",
+        "end": "2026-03-31",
+        "accn": "mcd-q1",
+        "frame": "CY2026Q1I",
+    }
+    fixture = {
+        "facts": {
+            "us-gaap": {
+                "CashAndCashEquivalentsAtCarryingValue": {
+                    "units": {"USD": [row]}
+                },
+                "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents": {
+                    "units": {"USD": [dict(row)]}
+                },
+            }
+        }
+    }
+
+    facts = CompanyFactsParser("MCD", "63908", fixture).get_facts_for_metric(
+        "cash_and_equivalents"
+    )
+    evidence = CompanyFactsParser("MCD", "63908", fixture).to_evidence_item(
+        facts[0]
+    )
+
+    assert len(facts) == 1
+    assert evidence.supports_metrics == ["cash_and_equivalents"]
+
+
+def test_conflicting_xbrl_alias_facts_remain_visible():
+    common = {
+        "fy": 2026,
+        "fp": "Q1",
+        "form": "10-Q",
+        "filed": "2026-05-07",
+        "end": "2026-03-31",
+        "accn": "mcd-q1",
+        "frame": "CY2026Q1I",
+    }
+    fixture = {
+        "facts": {
+            "us-gaap": {
+                "CashAndCashEquivalentsAtCarryingValue": {
+                    "units": {"USD": [{**common, "val": 1_170_000_000}]}
+                },
+                "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents": {
+                    "units": {"USD": [{**common, "val": 1_180_000_000}]}
+                },
+            }
+        }
+    }
+
+    facts = CompanyFactsParser("MCD", "63908", fixture).get_facts_for_metric(
+        "cash_and_equivalents"
+    )
+
+    assert [fact.value for fact in facts] == [1_170_000_000, 1_180_000_000]
+
+
 def test_sec_fundamentals_builder_returns_metrics_and_evidence():
     metrics, evidence = build_sec_fundamentals_from_companyfacts("TEST", "1", FIXTURE_COMPANYFACTS)
 

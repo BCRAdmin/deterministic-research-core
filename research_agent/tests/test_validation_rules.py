@@ -72,6 +72,14 @@ def test_source_authority_warns_for_low_authority_hard_metric():
     assert issue["code"] == "LOW_AUTHORITY_SOURCE_FOR_HARD_METRIC"
 
 
+def test_explicit_authority_rank_controls_derived_source_validation():
+    assert validate_source_authority(
+        "revenue_ttm",
+        "deterministic_calculation",
+        authority_rank=1,
+    ) is None
+
+
 def test_rating_action_consistency_detects_tactical_trim():
     assert infer_action_class(["Reduce 20-30%, hold core position"]) == "tactical_trim"
     issue = validate_rating_vs_actions("Sell", ["Reduce 20-30%, hold core position"])

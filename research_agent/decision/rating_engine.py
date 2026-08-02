@@ -115,7 +115,7 @@ def build_decision_packet(
         rating_permission=permission,
         action_policy=build_action_policy(permission.preferred_rating, metrics_packet),
         key_reasons=_build_key_reasons(scores),
-        key_risks=_build_key_risks(scores, validation_report, audit_report),
+        key_risks=_build_key_risks(),
         triggered_rules=triggered_rules,
         score_version=score_version,
         calibration_mode=mode,
@@ -144,14 +144,5 @@ def _build_key_reasons(scores: SignalScores) -> list[str]:
     return reasons
 
 
-def _build_key_risks(
-    scores: SignalScores,
-    validation_report: Optional[ValidationReport],
-    audit_report: Optional[AuditReport],
-) -> list[str]:
-    risks = ["Company risk score: not measured by the current decision model."]
-    if validation_report and validation_report.issues:
-        risks.append(f"Validation issues: {len(validation_report.issues)}")
-    if audit_report and audit_report.issues:
-        risks.append(f"Audit issues: {len(audit_report.issues)}")
-    return risks
+def _build_key_risks() -> list[str]:
+    return ["Company risk score: not measured by the current decision model."]

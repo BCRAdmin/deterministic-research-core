@@ -32,8 +32,16 @@ def validate_news_price_causality(
     return None
 
 
-def validate_source_authority(metric_name: str, source_type: str):
-    rank = get_source_authority_rank(source_type)
+def validate_source_authority(
+    metric_name: str,
+    source_type: str,
+    authority_rank: int | None = None,
+):
+    rank = (
+        authority_rank
+        if authority_rank is not None
+        else get_source_authority_rank(source_type)
+    )
 
     if rank > 3:
         return {
@@ -61,4 +69,3 @@ def validate_primary_financial_source(registry: SourceRegistry):
             "message": "Hard financial metrics require at least one company IR or SEC filing source.",
         }
     return None
-

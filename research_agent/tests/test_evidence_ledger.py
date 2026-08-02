@@ -4,6 +4,7 @@ from research_agent.evidence.evidence_ledger import (
     build_evidence_ledger_from_source_registry,
     build_fundamental_derivation_evidence,
     build_technical_derivation_evidence,
+    unit_for_metric,
 )
 from research_agent.research_core.ingestion.source_registry import (
     SourceRegistry,
@@ -16,6 +17,10 @@ from research_agent.research_core.models.metrics_packet import (
     TechnicalMetrics,
     ValuationMetrics,
 )
+
+
+def test_revenue_growth_uses_percentage_unit():
+    assert unit_for_metric("revenue_growth_yoy", currency="USD") == "percent"
 
 
 def test_evidence_ledger_finds_metric_and_primary_evidence():
@@ -478,6 +483,7 @@ def test_material_calculations_require_exact_auditable_operands():
     assert by_metric["operating_margin_ttm"].unit == "percent"
     assert by_metric["net_margin_ttm"].unit == "percent"
     assert by_metric["fcf_margin_ttm"].unit == "percent"
+    assert by_metric["revenue_growth_yoy"].unit == "percent"
     assert by_metric["sbc_to_fcf"].unit == "percent"
     assert by_metric["free_cash_flow_conversion_ttm"].unit == "multiple"
     assert by_metric[

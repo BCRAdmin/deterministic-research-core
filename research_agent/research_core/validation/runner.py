@@ -68,7 +68,11 @@ def run_all_validations(
         for source in source_registry.sources:
             for metric_name in source.used_for:
                 if metric_name not in {"price", "volume", "technical_indicators", "news"}:
-                    issue = validate_source_authority(metric_name, source.source_type)
+                    issue = validate_source_authority(
+                        metric_name,
+                        source.source_type,
+                        source.resolved_authority_rank(),
+                    )
                     if issue:
                         raw_issues.append(issue)
         bse_sources = [

@@ -55,6 +55,7 @@ class CompanyFactsParser:
             for concept in DEI_CONCEPTS.get(metric_name, [])
         ]
         parsed: List[ParsedFact] = []
+        seen_facts: set[tuple[object, ...]] = set()
         for namespace, concept in concepts:
             for row in self._get_facts(namespace, concept):
                 if "val" not in row:
@@ -65,25 +66,43 @@ class CompanyFactsParser:
                     row,
                     raw_value,
                 )
-                parsed.append(
-                    ParsedFact(
-                        metric_name=metric_name,
-                        value=value,
-                        unit=row.get("_unit", "unknown"),
-                        period=self._period_label(row),
-                        fy=row.get("fy"),
-                        fp=row.get("fp"),
-                        form=row.get("form"),
-                        filed=row.get("filed"),
-                        start=row.get("start"),
-                        end=row.get("end"),
-                        accession=row.get("accn"),
-                        frame=row.get("frame"),
-                        concept=f"{namespace}:{row.get('_concept')}",
-                        raw_value=raw_value,
-                        normalization_note=normalization_note,
-                    )
+                fact = ParsedFact(
+                    metric_name=metric_name,
+                    value=value,
+                    unit=row.get("_unit", "unknown"),
+                    period=self._period_label(row),
+                    fy=row.get("fy"),
+                    fp=row.get("fp"),
+                    form=row.get("form"),
+                    filed=row.get("filed"),
+                    start=row.get("start"),
+                    end=row.get("end"),
+                    accession=row.get("accn"),
+                    frame=row.get("frame"),
+                    concept=f"{namespace}:{row.get('_concept')}",
+                    raw_value=raw_value,
+                    normalization_note=normalization_note,
                 )
+                identity = (
+                    fact.metric_name,
+                    fact.raw_value,
+                    fact.value,
+                    fact.unit,
+                    fact.period,
+                    fact.fy,
+                    fact.fp,
+                    fact.form,
+                    fact.filed,
+                    fact.start,
+                    fact.end,
+                    fact.accession,
+                    fact.frame,
+                    fact.normalization_note,
+                )
+                if identity in seen_facts:
+                    continue
+                seen_facts.add(identity)
+                parsed.append(fact)
         return parsed
 
     def _normalize_metric_value(
@@ -193,7 +212,11 @@ class CompanyFactsParser:
             unit=fact.unit,
             period=fact.period,
             date=fact.end,
-            supports_metrics=[fact.metric_name, _metrics_packet_name(fact.metric_name)],
+            supports_metrics=list(
+                dict.fromkeys(
+                    [fact.metric_name, _metrics_packet_name(fact.metric_name)]
+                )
+            ),
             confidence="high",
             formula_id=None,
             raw_value=fact.raw_value,
