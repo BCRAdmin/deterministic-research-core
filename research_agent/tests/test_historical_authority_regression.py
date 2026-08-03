@@ -125,8 +125,24 @@ def test_authority_runtime_paths_do_not_contain_company_overrides() -> None:
         Path(__file__).resolve().parents[1] / "evidence",
         Path(__file__).resolve().parents[1] / "decision",
         Path(__file__).resolve().parents[1] / "research_core",
+        Path(__file__).resolve().parents[1] / "content",
     )
-    known_fixture_tickers = ("AMZN", "NVDA", "DDOG", "MDB", "RR", "RYCEY")
+    known_fixture_tickers = (
+        "AMZN",
+        "NVDA",
+        "DDOG",
+        "MDB",
+        "RR",
+        "RYCEY",
+        "GOOGL",
+        "SNOW",
+        "MSFT",
+        "META",
+        "AAPL",
+        "NFLX",
+        "AVGO",
+        "CRM",
+    )
     violations: list[str] = []
     for root in roots:
         for path in root.rglob("*.py"):

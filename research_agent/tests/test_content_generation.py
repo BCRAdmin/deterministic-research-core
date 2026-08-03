@@ -1495,6 +1495,44 @@ def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():
     assert not any(phrase in rendered_text for phrase in personal_action_language)
 
 
+def test_named_ticker_uses_generic_authority_report_without_legacy_copy():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    data.ticker = "CRM"
+    data.company_name = "Salesforce, Inc."
+    metrics.ticker = "CRM"
+    ledger.ticker = "CRM"
+    decision.ticker = "CRM"
+    metrics.fundamentals.revenue_ttm = 12_345_678_901
+    metrics.fundamentals.free_cash_flow_ttm = 2_345_678_901
+    _add_exact_metric_evidence(data, metrics, ledger)
+
+    claims = generate_research_claims(
+        data,
+        metrics,
+        ledger,
+        decision,
+        validation,
+    )
+    report = compose_internal_best_report(
+        data,
+        metrics,
+        decision,
+        ledger,
+        claims,
+        status="manual_review",
+        publishable=False,
+    )
+
+    assert report.startswith("# CRM Research Report")
+    assert "## Final Rating & Review Conditions" in report
+    assert "$12.35B" in report
+    assert "$2.35B" in report
+    assert "FY2026 revenue of $41.5B" not in report
+    assert "Move toward Accumulate" not in report
+    assert "before adding aggressively" not in report
+    assert "appropriately sized exposure" not in report
+
+
 def test_content_generator_does_not_render_missing_values_as_claims():
     data, metrics, validation, ledger, decision = _load_packet("CRWD")
     _add_exact_metric_evidence(data, metrics, ledger)

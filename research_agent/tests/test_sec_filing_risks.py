@@ -327,6 +327,25 @@ def test_business_context_prefers_direct_activity_over_orphan_market_reference()
     ]
 
 
+def test_business_context_prefers_named_offerings_over_market_segment_fragments():
+    html = """
+    <html><body>
+      <div><strong>ITEM 1. BUSINESS</strong></div>
+      <p>Salesforce, Inc. is a global leader in customer relationship management technology.</p>
+      <p>Our Agentforce Service offering enables companies to bring customer and field service needs onto one integrated AI-powered platform.</p>
+      <p>Our Commerce offering helps connect marketing, sales, service and fulfillment on a single platform.</p>
+      <p>Vendors offer software tailored to industries or market segments, including marketing, e-commerce and AI software vendors.</p>
+      <div><strong>ITEM 1A. RISK FACTORS</strong></div>
+    </body></html>
+    """
+
+    assert extract_sec_business_context(html) == [
+        "Salesforce, Inc. is a global leader in customer relationship management technology.",
+        "Our Agentforce Service offering enables companies to bring customer and field service needs onto one integrated AI-powered platform.",
+        "Our Commerce offering helps connect marketing, sales, service and fulfillment on a single platform.",
+    ]
+
+
 def test_extracts_business_context_from_cross_referenced_annual_report():
     html = """
     <html><body>

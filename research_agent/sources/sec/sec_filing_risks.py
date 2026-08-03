@@ -131,7 +131,10 @@ _BUSINESS_CONTEXT_DIRECT_ACTIVITY = re.compile(
 )
 _BUSINESS_CONTEXT_CORE_OFFERING = re.compile(
     r"^(?:our|the company(?:'s)?|the issuer(?:'s)?)\s+"
-    r"(?:products|services|offerings)\s+(?:include|comprise|consist of)\b",
+    r"(?:(?:[A-Za-z0-9&.'’()-]+)\s+){0,5}"
+    r"(?:products?(?:\s+and\s+services?)?|services?|offerings?|platforms?|suites?)\s+"
+    r"(?:also\s+)?(?:include|includes|comprise|comprises|consist of|help|helps|"
+    r"enable|enables|provide|provides|connect|connects|deliver|delivers)\b",
     re.IGNORECASE,
 )
 _BUSINESS_CONTEXT_NAMED_ACTIVITY = re.compile(
@@ -734,6 +737,7 @@ def _is_business_context_paragraph(text: str) -> bool:
     revenue_activity = bool(_BUSINESS_CONTEXT_REVENUE_ACTIVITY.search(stripped))
     single_segment = bool(_BUSINESS_CONTEXT_SINGLE_SEGMENT.search(stripped))
     segment_activity = bool(_BUSINESS_CONTEXT_SEGMENT_ACTIVITY.search(stripped))
+    core_offering = bool(_BUSINESS_CONTEXT_CORE_OFFERING.search(stripped))
     minimum_length = (
         25 if single_segment else 45 if identity_statement or "segment" in lowered else 80
     )
@@ -767,6 +771,7 @@ def _is_business_context_paragraph(text: str) -> bool:
         or revenue_activity
         or single_segment
         or segment_activity
+        or core_offering
         or score >= 3
         or ("segment" in lowered and score >= 2)
     )
@@ -812,9 +817,16 @@ def _is_business_context_segment_description(text: str) -> bool:
         return True
     if _BUSINESS_CONTEXT_SEGMENT_ACTIVITY.search(text):
         return True
-    return bool(re.search(r"\bsegments\b", text, re.IGNORECASE)) and (
-        _business_context_score(text) >= 2
+    explicit_reporting_context = bool(
+        re.search(
+            r"\b(?:reportable|operating|reporting|business|geographic) segments?\b"
+            r"|\b(?:report|reports|reported|reporting)\b.+\bsegments?\b"
+            r"|\boperate(?:s)? through\b.+\bsegments?\b",
+            text,
+            re.IGNORECASE,
+        )
     )
+    return explicit_reporting_context and _business_context_score(text) >= 2
 
 
 def _business_context_is_distinct(

@@ -1,6 +1,11 @@
+from types import SimpleNamespace
+
+from research_agent.audit.audit_report import AuditIssue, AuditReport
 from research_agent.run_pipeline import (
+    _apply_readable_report_audit_failure,
     _empty_publish_quality_payload,
     _manual_review_report,
+    _merge_audit_reports,
     _remove_unapproved_publish_artifacts,
 )
 
@@ -60,3 +65,37 @@ def test_manual_review_report_explains_machine_reason_codes():
         "`EARNINGS_DATE_UNAVAILABLE`: Next earnings date is unavailable."
         in report
     )
+
+
+def test_readable_report_audit_failure_blocks_the_readable_surface():
+    clean = AuditReport.from_issues([], ticker="CRM")
+    failed = AuditReport.from_issues(
+        [
+            AuditIssue(
+                severity="error",
+                code="NUMERIC_MISMATCH",
+                message="Readable report contains a stale revenue value.",
+            )
+        ],
+        ticker="CRM",
+    )
+    merged = _merge_audit_reports(clean, failed)
+    quality = SimpleNamespace(
+        total_score=90,
+        content_score=90,
+        internal_research_quality_score=90,
+        publishable=True,
+        status="Pass",
+        grade="A",
+        score_explanation_short="",
+        manual_review_reasons=[],
+    )
+
+    _apply_readable_report_audit_failure(quality, merged)
+
+    assert merged.has_blocking_errors
+    assert quality.publishable is False
+    assert quality.total_score == 60
+    assert quality.internal_research_quality_score == 60
+    assert quality.manual_review_reasons == ["NUMERIC_MISMATCH"]
+    assert quality.status == "Needs manual review"

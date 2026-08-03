@@ -21,6 +21,7 @@ from research_agent.content.publish_composer import (
     save_publish_report,
 )
 from research_agent.content.report_composer import compose_research_report, save_research_claims
+from research_agent.audit.audit_report import AuditReport
 from research_agent.audit.report_linter import audit_markdown_report
 from research_agent.decision.rating_engine import build_decision_packet
 from research_agent.evidence.evidence_item import EvidenceItem
@@ -356,10 +357,14 @@ def run_research_pipeline(
         reconciliation_warnings=reconciliation_warnings,
         ticker=data_packet.ticker,
     )
-    audit_report_path = _save_model_json(audit_report, manifest_output_dir / "audit_report.json")
+    audit_report_path = _save_model_json(
+        audit_report,
+        manifest_output_dir / "audit_report.json",
+    )
     publish_quality_payload = _empty_publish_quality_payload()
     publish_report_path = ""
     publish_quality_path = ""
+    readable_report_audit_path = ""
     if claim_coverage_complete:
         early_commercial_manual_review = (
             deeptech_assessment.company_archetype.value == "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH"
@@ -392,6 +397,30 @@ def run_research_pipeline(
             )
         if deeptech_assessment.status == "manual_review" and not early_commercial_manual_review and not missing_fcf_accumulate_support:
             publish_report = manual_review_banner(deeptech_assessment) + publish_report
+        readable_report_audit = audit_markdown_report(
+            markdown=publish_report,
+            metrics_packet=metrics_packet,
+            validation_report=validation_report,
+            source_registry=source_registry,
+            decision_packet=decision_packet,
+            evidence_ledger=(
+                evidence_ledger if evidence_ledger.evidence_items else None
+            ),
+            canonical_financials=canonical_financials,
+            reconciliation_warnings=reconciliation_warnings,
+            ticker=data_packet.ticker,
+        )
+        readable_report_audit_path = str(
+            _save_model_json(
+                readable_report_audit,
+                manifest_output_dir / "readable_report_audit.json",
+            )
+        )
+        audit_report = _merge_audit_reports(audit_report, readable_report_audit)
+        audit_report_path = _save_model_json(
+            audit_report,
+            manifest_output_dir / "audit_report.json",
+        )
         publish_report_path = str(save_publish_report(publish_report, manifest_output_dir / "publish_report.md"))
         publish_quality_payload = publish_report_quality(publish_report)
         publish_quality_path = str(save_publish_quality(publish_quality_payload, manifest_output_dir / "publish_report_quality_score.json"))
@@ -451,6 +480,7 @@ def run_research_pipeline(
         _apply_publish_quality_to_report(quality_report, publish_quality_payload)
     quality_report_path = manifest_output_dir / "quality_score.json"
     internal_best_report_path = ""
+    internal_best_audit_report_path = ""
     if audit_report.has_blocking_errors or not quality_report.publishable:
         manifest_output_dir.mkdir(parents=True, exist_ok=True)
         (manifest_output_dir / "manual_review_required.md").write_text(
@@ -513,12 +543,63 @@ def run_research_pipeline(
                     internal_research_quality_score=quality_report.internal_research_quality_score,
                     data_confidence_score=quality_report.data_confidence_score,
                 )
-        internal_best_report_path = str(
-            save_internal_best_report(
-                internal_best_report,
-                manifest_output_dir / "internal_best_report.md",
+        internal_best_audit = audit_markdown_report(
+            markdown=internal_best_report,
+            metrics_packet=metrics_packet,
+            validation_report=validation_report,
+            source_registry=source_registry,
+            decision_packet=decision_packet,
+            evidence_ledger=(
+                evidence_ledger if evidence_ledger.evidence_items else None
+            ),
+            canonical_financials=canonical_financials,
+            reconciliation_warnings=reconciliation_warnings,
+            ticker=data_packet.ticker,
+        )
+        internal_best_audit_report_path = str(
+            _save_model_json(
+                internal_best_audit,
+                manifest_output_dir / "internal_best_audit_report.json",
             )
         )
+        audit_report = _merge_audit_reports(audit_report, internal_best_audit)
+        audit_report_path = _save_model_json(
+            audit_report,
+            manifest_output_dir / "audit_report.json",
+        )
+        if internal_best_audit.has_blocking_errors:
+            _apply_readable_report_audit_failure(
+                quality_report,
+                internal_best_audit,
+            )
+            (manifest_output_dir / "internal_best_report.md").unlink(
+                missing_ok=True
+            )
+            (manifest_output_dir / "manual_review_required.md").write_text(
+                _manual_review_report(
+                    report,
+                    quality_report.manual_review_reasons,
+                    issue_details=[
+                        *(
+                            {"code": issue.code, "message": issue.message}
+                            for issue in audit_report.issues
+                        ),
+                        *(
+                            {"code": issue.code, "message": issue.message}
+                            for issue in validation_report.issues
+                        ),
+                        *current_reconciliation_warnings,
+                    ],
+                ),
+                encoding="utf-8",
+            )
+        else:
+            internal_best_report_path = str(
+                save_internal_best_report(
+                    internal_best_report,
+                    manifest_output_dir / "internal_best_report.md",
+                )
+            )
     quality_report_path = save_quality_report(
         quality_report,
         quality_report_path,
@@ -562,7 +643,9 @@ def run_research_pipeline(
             "freshness_issue_code": freshness.issue_code or "",
             "publish_report_path": publish_report_path,
             "publish_report_quality_score_path": publish_quality_path,
+            "readable_report_audit_path": readable_report_audit_path,
             "internal_best_report_path": internal_best_report_path,
+            "internal_best_audit_report_path": internal_best_audit_report_path,
             "analyst_claims_path": str(analyst_claims_path),
             "fact_ledger_path": str(fact_ledger_path),
             "evidence_ledger_path": str(evidence_ledger_path),
@@ -1302,6 +1385,65 @@ def _model_to_dict(model) -> dict:
 
 def _count_audit_code(audit_report, code: str) -> int:
     return sum(1 for issue in audit_report.issues if issue.code == code)
+
+
+def _merge_audit_reports(*reports: AuditReport) -> AuditReport:
+    issues = []
+    numeric_claims = []
+    issue_keys = set()
+    numeric_keys = set()
+    ticker = None
+    for report in reports:
+        ticker = ticker or report.ticker
+        for issue in report.issues:
+            key = (
+                issue.code,
+                issue.message,
+                issue.metric,
+                issue.reported,
+                issue.validated,
+                issue.line_number,
+                issue.raw_text,
+            )
+            if key not in issue_keys:
+                issue_keys.add(key)
+                issues.append(issue)
+        for claim in report.numeric_claims:
+            key = (
+                claim.raw_text,
+                claim.normalized_value,
+                claim.unit,
+                claim.line_number,
+                claim.possible_metric,
+                claim.period_hint,
+            )
+            if key not in numeric_keys:
+                numeric_keys.add(key)
+                numeric_claims.append(claim)
+    return AuditReport.from_issues(
+        issues,
+        numeric_claims=numeric_claims,
+        ticker=ticker,
+    )
+
+
+def _apply_readable_report_audit_failure(quality_report, audit_report) -> None:
+    for issue in audit_report.issues:
+        if issue.code not in quality_report.manual_review_reasons:
+            quality_report.manual_review_reasons.append(issue.code)
+    quality_report.total_score = min(quality_report.total_score, 60)
+    quality_report.content_score = min(quality_report.content_score, 60)
+    quality_report.internal_research_quality_score = min(
+        quality_report.internal_research_quality_score,
+        60,
+    )
+    quality_report.publishable = False
+    quality_report.status = "Needs manual review"
+    quality_report.grade = "D"
+    quality_report.score_explanation_short = (
+        "The readable report failed the deterministic report audit and remains "
+        "unavailable until the reported issues are corrected."
+    )
 
 
 def _empty_publish_quality_payload() -> dict[str, int]:
