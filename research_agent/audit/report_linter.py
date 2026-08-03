@@ -22,6 +22,9 @@ from research_agent.reconciliation.canonical_financials import CanonicalFinancia
 from research_agent.research_core.ingestion.source_registry import SourceRegistry
 from research_agent.research_core.models.metrics_packet import MetricsPacket
 from research_agent.research_core.models.validation_report import ValidationReport
+from research_agent.research_core.calculations.fundamentals import (
+    current_profit_growth_divergence_metrics,
+)
 from research_agent.quality.quality_report import QualityReport
 from research_agent.quality.deeptech_manual_review import CompanyArchetype, assess_speculative_deep_tech_manual_review
 from research_agent.research_core.validation.trading_logic import validate_trade_levels
@@ -627,6 +630,25 @@ def _lint_financial_sanity(
     issues: list[AuditIssue] = []
     sector = _sector_profile(ticker)
     ev_sales_issue_emitted = False
+
+    profit_growth_divergence = current_profit_growth_divergence_metrics(
+        fundamentals
+    )
+    if profit_growth_divergence:
+        issues.append(
+            AuditIssue(
+                severity="warning",
+                code="GUARD_THRESHOLD_REVIEW",
+                metric=profit_growth_divergence[0],
+                reported=getattr(fundamentals, profit_growth_divergence[0]),
+                message=(
+                    "Profit growth above 100% exceeds current-period revenue growth "
+                    "by at least 75 percentage points; review base effects, "
+                    "impairments or other non-recurring items before treating it as "
+                    "evidence of operating direction."
+                ),
+            )
+        )
 
     denominator_bug_reason = _valuation_denominator_bug_reason(
         metrics_packet=metrics_packet,

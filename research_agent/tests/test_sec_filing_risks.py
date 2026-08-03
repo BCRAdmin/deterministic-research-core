@@ -234,6 +234,23 @@ def test_business_context_keeps_abbreviations_and_cleans_list_markers():
     ]
 
 
+def test_business_context_skips_fragments_with_unresolved_references():
+    html = """
+    <html><body>
+      <p><strong>ITEM 1. BUSINESS</strong></p>
+      <p>Our products are primarily brought to market through direct-store delivery, customer warehouse and distributor networks.</p>
+      <p>One customer represented 14 percent of sales. The loss of this customer would have a material adverse effect on our food and beverage segments.</p>
+      <p>The reportable business segments are North America Foods, North America Beverages and International Markets.</p>
+      <div><strong>ITEM 1A. RISK FACTORS</strong></div>
+    </body></html>
+    """
+
+    assert extract_sec_business_context(html) == [
+        "Our products are primarily brought to market through direct-store delivery, customer warehouse and distributor networks.",
+        "The reportable business segments are North America Foods, North America Beverages and International Markets.",
+    ]
+
+
 def test_builds_primary_risk_evidence_without_inventing_numeric_metrics():
     filing = select_sec_risk_filing_candidates(
         _submissions(), cik="1234", as_of_date="2026-07-24"

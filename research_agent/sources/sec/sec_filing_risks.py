@@ -70,6 +70,11 @@ _BUSINESS_CONTEXT_SKIP_PREFIXES = (
     "see part",
     "additional information",
 )
+_BUSINESS_CONTEXT_UNRESOLVED_REFERENCE = re.compile(
+    r"\b(?:this|that|these|those|such) "
+    r"(?:arrangements?|business|customers?|products?|relationships?|segments?|services?)\b",
+    re.IGNORECASE,
+)
 _BUSINESS_CONTEXT_ABBREVIATION = re.compile(
     r"\b(?:i\.e\.|e\.g\.|u\.s\.|u\.k\.|inc\.|corp\.|ltd\.|co\.)",
     re.IGNORECASE,
@@ -507,6 +512,8 @@ def _is_business_context_paragraph(text: str) -> bool:
     if any(character.isdigit() for character in stripped):
         return False
     if lowered.startswith(_BUSINESS_CONTEXT_SKIP_PREFIXES):
+        return False
+    if _BUSINESS_CONTEXT_UNRESOLVED_REFERENCE.search(stripped):
         return False
     if stripped.isupper() or stripped.count(". ") > 3:
         return False

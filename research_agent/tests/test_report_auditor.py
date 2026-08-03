@@ -434,6 +434,36 @@ def test_auditor_keeps_high_fcf_margin_as_one_non_blocking_context_review():
     assert not audit.has_blocking_errors
 
 
+def test_auditor_requires_context_for_extreme_profit_revenue_divergence():
+    metrics = simple_metrics(
+        ticker="BASE",
+        revenue_ttm=100_000_000_000,
+        market_cap=190_000_000_000,
+        enterprise_value=233_000_000_000,
+        ev_to_sales=2.33,
+    )
+    metrics.fundamentals.current_period_revenue_growth_yoy = 0.064
+    metrics.fundamentals.current_period_operating_income_growth_yoy = 1.249
+    metrics.fundamentals.current_period_net_income_growth_yoy = 1.36
+
+    audit = audit_markdown_report(
+        "## Executive Summary\nValidated skeleton.",
+        metrics,
+        ticker="BASE",
+    )
+    growth_issues = [
+        issue
+        for issue in audit.issues
+        if issue.metric == "current_period_operating_income_growth_yoy"
+    ]
+
+    assert len(growth_issues) == 1
+    assert growth_issues[0].code == "GUARD_THRESHOLD_REVIEW"
+    assert growth_issues[0].severity == "warning"
+    assert "base effects" in growth_issues[0].message
+    assert not audit.has_blocking_errors
+
+
 def test_auditor_catches_long_stop_above_entry_in_markdown():
     audit = audit_fixture("ddog_2026_05_01")
 

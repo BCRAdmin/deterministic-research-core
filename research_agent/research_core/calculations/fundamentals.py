@@ -12,6 +12,32 @@ def safe_divide(numerator: Optional[float], denominator: Optional[float]):
     return numerator / denominator
 
 
+def current_profit_growth_divergence_metrics(
+    fundamentals: FundamentalMetrics,
+) -> tuple[str, ...]:
+    """Return exceptional profit-growth metrics that outrun revenue sharply."""
+
+    revenue_growth = fundamentals.current_period_revenue_growth_yoy
+    if revenue_growth is None:
+        return ()
+    return tuple(
+        metric_name
+        for metric_name, value in (
+            (
+                "current_period_operating_income_growth_yoy",
+                fundamentals.current_period_operating_income_growth_yoy,
+            ),
+            (
+                "current_period_net_income_growth_yoy",
+                fundamentals.current_period_net_income_growth_yoy,
+            ),
+        )
+        if value is not None
+        and value >= 1.0
+        and value - revenue_growth >= 0.75
+    )
+
+
 def ttm_sum(values: list[float]) -> float:
     if len(values) != 4:
         raise ValueError("TTM requires exactly 4 quarterly values.")

@@ -360,6 +360,59 @@ def test_bull_case_does_not_present_negative_fcf_as_cash_generation():
     )
 
 
+def test_bull_case_does_not_call_extreme_profit_divergence_business_direction():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    metrics.fundamentals.current_period_revenue_growth_yoy = 0.064
+    metrics.fundamentals.current_period_operating_income_growth_yoy = 1.249
+    metrics.fundamentals.current_period_net_income_growth_yoy = 1.36
+    canonical = CanonicalFinancials(
+        ticker=data.ticker,
+        as_of_date=data.as_of_date,
+        metrics=[
+            CanonicalMetric(
+                metric_name=metric_name,
+                value=value,
+                unit="USD",
+                period="FY2026_Q2",
+                fiscal_year=2026,
+                fiscal_period="Q2",
+                period_bucket="quarterly",
+                start_date="2026-03-22",
+                end_date="2026-06-13",
+                duration_days=84,
+                basis="gaap",
+                statement_type="income_statement",
+                source_ids=["GENERIC_SEC_Q2"],
+                confidence="high",
+            )
+            for metric_name, value in (
+                ("revenue", 24_180_000_000),
+                ("operating_income", 4_023_000_000),
+                ("net_income", 2_981_000_000),
+            )
+        ],
+    )
+    _add_exact_metric_evidence(data, metrics, ledger)
+
+    claims = generate_research_claims(
+        data,
+        metrics,
+        ledger,
+        decision,
+        validation,
+        canonical,
+    )
+    bull_claim = next(
+        claim
+        for claim in claims
+        if claim.section == "Bull Case" and claim.claim_type == "financial_metric"
+    )
+
+    assert "requires base-effect or one-off review" in bull_claim.claim
+    assert "do not establish operating business direction" in bull_claim.claim
+    assert "establishes current business direction" not in bull_claim.claim
+
+
 def test_final_rating_names_partial_bullish_price_basis_precisely():
     _, metrics, _, _, decision = _load_packet("SNOW")
     decision.signal_scores.technical_status = "partial"

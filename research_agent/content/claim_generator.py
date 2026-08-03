@@ -12,6 +12,9 @@ from research_agent.research_core.models.claims import ResearchClaim
 from research_agent.research_core.models.data_packet import DataPacket, MaterialNewsEvent
 from research_agent.research_core.models.metrics_packet import MetricsPacket
 from research_agent.research_core.models.validation_report import ValidationReport
+from research_agent.research_core.calculations.fundamentals import (
+    current_profit_growth_divergence_metrics,
+)
 
 
 _BUSINESS_CONTEXT_SECTIONS = {
@@ -533,7 +536,42 @@ class _ClaimBuilder:
             else:
                 comparison_label = "Matching-period"
             fcf_value = self.metrics.fundamentals.free_cash_flow_ttm
-            if fcf_value is not None and fcf_value < 0:
+            growth_divergence = current_profit_growth_divergence_metrics(
+                self.metrics.fundamentals
+            )
+            if growth_divergence:
+                if fcf_value is not None and fcf_value < 0:
+                    cash_context = (
+                        "Revenue TTM establishes scale, while negative FCF remains "
+                        "evidence of weak cash conversion."
+                    )
+                elif fcf_value == 0:
+                    cash_context = (
+                        "Revenue TTM establishes scale, while zero FCF does not "
+                        "establish positive cash conversion."
+                    )
+                elif fcf_value is not None:
+                    cash_context = (
+                        "Revenue TTM and positive FCF establish scale and cash "
+                        "generation, not the cause or durability of the reported "
+                        "profit growth."
+                    )
+                else:
+                    cash_context = (
+                        "Revenue TTM establishes scale, while unavailable FCF cannot "
+                        "support a cash-conversion conclusion."
+                    )
+                bull_text = (
+                    f"{comparison_label} evidence reports {growth_text}. The sharp "
+                    "divergence between profit growth and revenue growth requires "
+                    "base-effect or one-off review; without causal filing evidence, "
+                    "these comparisons do not establish operating business direction. "
+                    f"Revenue TTM is {self._money(self.metrics.fundamentals.revenue_ttm)} "
+                    f"and FCF TTM is {self._money(fcf_value)}. {cash_context} A more "
+                    "constructive rating still requires persistence and stronger "
+                    "technical or benchmarked valuation support."
+                )
+            elif fcf_value is not None and fcf_value < 0:
                 cash_context = (
                     "this establishes current business direction and scale, but the "
                     "negative FCF remains evidence of weak cash conversion. A more "
@@ -563,11 +601,12 @@ class _ClaimBuilder:
                     "persist, cash-conversion evidence and stronger technical or "
                     "benchmarked valuation support."
                 )
-            bull_text = (
-                f"{comparison_label} evidence shows {growth_text}. Together with "
-                f"revenue TTM of {self._money(self.metrics.fundamentals.revenue_ttm)} "
-                f"and FCF TTM of {self._money(fcf_value)}, {cash_context}"
-            )
+            if not growth_divergence:
+                bull_text = (
+                    f"{comparison_label} evidence shows {growth_text}. Together with "
+                    f"revenue TTM of {self._money(self.metrics.fundamentals.revenue_ttm)} "
+                    f"and FCF TTM of {self._money(fcf_value)}, {cash_context}"
+                )
         else:
             fcf_value = self.metrics.fundamentals.free_cash_flow_ttm
             if fcf_value is not None and fcf_value < 0:
