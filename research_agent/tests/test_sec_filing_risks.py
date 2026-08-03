@@ -107,6 +107,25 @@ def test_extracts_plain_risk_factor_summary_without_category_titles():
     ]
 
 
+def test_extracts_title_case_heading_merged_with_risk_narrative():
+    html = """
+    <html><body>
+      <div><strong>Item 1A. Risk Factors:</strong></div>
+      <p><strong>Risks Related to Our Business</strong></p>
+      <p>Failure of Innovation Initiatives Could Impact the Long-Term Success of the Company: IBM invests in emerging technologies, and these initiatives may fail to produce sustainable returns.</p>
+      <p>Damage to Our Reputation Could Impact the Company’s Business: Negative perceptions could reduce customer demand and make it harder to retain employees.</p>
+      <p>Risk Factors Related to IBM Securities: The market value of our securities may fluctuate or decline.</p>
+      <p>This narrative contains a caution: ordinary prose may mention risks but is not a title case heading.</p>
+      <div><strong>Item 1B. Unresolved Staff Comments</strong></div>
+    </body></html>
+    """
+
+    assert extract_sec_risk_headings(html) == [
+        "Failure of Innovation Initiatives Could Impact the Long-Term Success of the Company",
+        "Damage to Our Reputation Could Impact the Company’s Business",
+    ]
+
+
 def test_extracts_split_risk_heading_across_repeated_item_1a_page_headers():
     html = """
     <html><body>

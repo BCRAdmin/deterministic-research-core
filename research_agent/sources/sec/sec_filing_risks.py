@@ -23,7 +23,8 @@ _RISK_LANGUAGE = re.compile(
 )
 _GENERIC_RISK_CATEGORY = re.compile(
     r"^(?:(?!(?:we|our|the company)\b)[a-z,& -]+ risks?|"
-    r"risks? (?:related|relating|associated) (?:to|with)\b.+)$",
+    r"(?:risks?|risk factors?) (?:related|relating|associated) "
+    r"(?:to|with)\b.+)$",
     re.IGNORECASE,
 )
 _GENERIC_PREFIXES = (
@@ -32,6 +33,25 @@ _GENERIC_PREFIXES = (
     "risk factors should be read",
     "for a discussion of risk factors",
 )
+_TITLE_CASE_CONNECTORS = {
+    "a",
+    "an",
+    "and",
+    "as",
+    "at",
+    "by",
+    "for",
+    "from",
+    "in",
+    "into",
+    "of",
+    "on",
+    "or",
+    "our",
+    "the",
+    "to",
+    "with",
+}
 _BUSINESS_LANGUAGE = re.compile(
     r"\b(business|customer|customers|develop|develops|offer|offers|operate|"
     r"product|products|service|services|solution|solutions|platform|platforms|"
@@ -220,15 +240,25 @@ def extract_sec_risk_headings(html: str) -> list[str]:
                 else:
                     summary_categories.add(category_key)
                 continue
-            if not emphasized and not summary_mode:
+            candidate = block
+            candidate_emphasized = emphasized
+            if not emphasized:
+                inline_heading = _inline_title_case_risk_heading(block)
+                if inline_heading:
+                    candidate = inline_heading
+                    candidate_emphasized = True
+                elif not summary_mode:
+                    continue
+            if not _is_risk_heading(
+                candidate,
+                emphasized=candidate_emphasized,
+            ):
                 continue
-            if not _is_risk_heading(block, emphasized=emphasized):
-                continue
-            key = block.casefold()
+            key = candidate.casefold()
             if key in seen:
                 continue
             seen.add(key)
-            candidates.append(block)
+            candidates.append(candidate)
         if len(candidates) > len(best):
             best = candidates
     return best[:30]
@@ -443,6 +473,30 @@ def _is_risk_heading(text: str, *, emphasized: bool = False) -> bool:
     if stripped.count(". ") > 1:
         return False
     return bool(_RISK_LANGUAGE.search(stripped))
+
+
+def _inline_title_case_risk_heading(text: str) -> str | None:
+    """Return an issuer heading when a filing merges it with body text."""
+
+    prefix, separator, narrative = text.strip().partition(":")
+    if not separator or not 20 <= len(prefix) <= 240 or len(narrative.strip()) < 20:
+        return None
+    if ". " in prefix or not _looks_like_title_case_heading(prefix):
+        return None
+    return prefix if _is_risk_heading(prefix, emphasized=True) else None
+
+
+def _looks_like_title_case_heading(text: str) -> bool:
+    words = re.findall(r"[A-Za-z][A-Za-z’'\-]*", text)
+    meaningful = [
+        word
+        for word in words
+        if word.lower().strip("’'") not in _TITLE_CASE_CONNECTORS
+    ]
+    if len(meaningful) < 4:
+        return False
+    title_case_count = sum(word[0].isupper() for word in meaningful)
+    return title_case_count / len(meaningful) >= 0.75
 
 
 def _is_business_context_paragraph(text: str) -> bool:

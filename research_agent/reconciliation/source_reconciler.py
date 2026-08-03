@@ -834,8 +834,11 @@ def _derive_debt_and_lease_totals(
             short_term is not None
             and short_term.end_date == noncurrent.end_date
             and not current_is_aggregate
+            and not _duplicate_debt_component(current, short_term)
         ):
             component_values["short_term_debt"] = short_term.value
+        elif _duplicate_debt_component(current, short_term):
+            balance.pop("short_term_debt", None)
         use_components = (
             aggregate is None
             or (
@@ -868,6 +871,33 @@ def _derive_debt_and_lease_totals(
         balance["total_lease_liabilities"] = (
             float(lease_current or 0.0) + float(lease_noncurrent or 0.0)
         )
+
+
+def _duplicate_debt_component(
+    current: Optional[CanonicalMetric],
+    short_term: Optional[CanonicalMetric],
+) -> bool:
+    if (
+        current is None
+        or short_term is None
+        or current.end_date != short_term.end_date
+        or not set(current.source_ids).intersection(short_term.source_ids)
+        or current.source_concept
+        not in {
+            "us-gaap:LongTermDebtCurrent",
+            "us-gaap:LongTermDebtAndCapitalLeaseObligationsCurrent",
+        }
+        or short_term.source_concept
+        not in {
+            "us-gaap:ShortTermBorrowings",
+            "us-gaap:CommercialPaper",
+        }
+    ):
+        return False
+    scale = max(abs(current.value), abs(short_term.value))
+    if scale == 0:
+        return True
+    return abs(current.value - short_term.value) / scale <= 0.001
 
 
 def _latest_balance_sheet_date(canonical: CanonicalFinancials) -> Optional[str]:

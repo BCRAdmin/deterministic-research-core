@@ -345,6 +345,53 @@ def test_stale_debt_current_does_not_hide_current_short_term_debt():
     assert "debt_current" not in balance
 
 
+def test_duplicate_short_term_debt_alias_is_not_double_counted():
+    def instant_metric(metric_name, value, source_concept):
+        return CanonicalMetric(
+            metric_name=metric_name,
+            value=value,
+            unit="USD",
+            period="2026-06-30",
+            period_bucket="instant",
+            end_date="2026-06-30",
+            basis="gaap",
+            statement_type="balance_sheet",
+            source_ids=["SEC_CURRENT"],
+            evidence_ids=[f"EVIDENCE_{metric_name}"],
+            confidence="high",
+            source_concept=source_concept,
+        )
+
+    canonical = CanonicalFinancials(
+        ticker="BASE",
+        as_of_date="2026-07-31",
+        metrics=[
+            instant_metric(
+                "debt_current",
+                5_772,
+                "us-gaap:LongTermDebtAndCapitalLeaseObligationsCurrent",
+            ),
+            instant_metric(
+                "short_term_debt",
+                5_775,
+                "us-gaap:ShortTermBorrowings",
+            ),
+            instant_metric(
+                "debt_noncurrent",
+                56_212,
+                "us-gaap:LongTermDebtNoncurrent",
+            ),
+        ],
+    )
+
+    balance = canonical_financials_to_fundamentals(canonical)["balance_sheet"]
+
+    assert balance["total_debt"] == 61_984
+    assert balance["debt_current"] == 5_772
+    assert balance["debt_noncurrent"] == 56_212
+    assert "short_term_debt" not in balance
+
+
 def test_balance_sheet_totals_do_not_mix_prior_debt_with_current_cash():
     def instant_metric(metric_name, value, end_date, source_concept):
         return CanonicalMetric(
