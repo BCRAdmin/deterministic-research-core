@@ -944,12 +944,12 @@ def build_fundamental_derivation_evidence(
         )
     share_basis_name = None
     share_basis_value = None
-    if fundamentals.economic_share_count not in (None, 0):
-        share_basis_name = "economic_share_count"
-        share_basis_value = fundamentals.economic_share_count
-    elif fundamentals.diluted_share_count not in (None, 0):
+    if fundamentals.diluted_share_count not in (None, 0):
         share_basis_name = "diluted_share_count"
         share_basis_value = fundamentals.diluted_share_count
+    elif fundamentals.economic_share_count not in (None, 0):
+        share_basis_name = "economic_share_count"
+        share_basis_value = fundamentals.economic_share_count
     if (
         fundamentals.trailing_eps is not None
         and fundamentals.net_income_ttm is not None

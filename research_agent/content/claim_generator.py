@@ -2575,46 +2575,6 @@ def _current_period_claim_specs(
                 "implication": "A stronger rating needs capital returns plus clearer product and AI momentum.",
             },
         ])
-    elif ticker == "NFLX":
-        q_revenue = _canonical_value(canonical_financials, "current_q_revenue")
-        op_income = _canonical_value(canonical_financials, "operating_income")
-        op_margin = _canonical_value(canonical_financials, "operating_margin")
-        q_fcf = _canonical_value(canonical_financials, "current_q_free_cash_flow")
-        specs.extend([
-            {
-                "section": "Business & Segment Context",
-                "kind": "current_period",
-                "evidence_type": "financial_metric",
-                "text": (
-                    f"NFLX's Q1 revenue of {_money(q_revenue)} shows that the streaming scale and monetization base remain strong."
-                ),
-                "metrics": ["current_q_revenue"],
-                "counterargument": "Revenue scale can be offset if engagement weakens or content costs rise.",
-                "implication": "Revenue quality supports Hold rather than a bearish rating.",
-            },
-            {
-                "section": "Fundamental Analysis",
-                "kind": "current_period",
-                "evidence_type": "financial_metric",
-                "text": (
-                    f"NFLX's Q1 operating income of {_money(op_income)} and operating margin of {_pct(op_margin)} show strong current-period profitability."
-                ),
-                "metrics": ["operating_income", "operating_margin"],
-                "counterargument": "Margin strength can fade if content spend or competition accelerates.",
-                "implication": "A more bullish stance needs sustained margin durability, not just one strong quarter.",
-            },
-            {
-                "section": "Catalysts & Triggers",
-                "kind": "current_period",
-                "evidence_type": "financial_metric",
-                "text": (
-                    f"NFLX's Q1 FCF of {_money(q_fcf)} is the key cash-flow proof point for whether operating leverage is translating into shareholder value."
-                ),
-                "metrics": ["current_q_free_cash_flow"],
-                "counterargument": "FCF can be period-sensitive if content cash timing changes.",
-                "implication": "Hold remains appropriate until FCF durability and ad-tier execution are clearer.",
-            },
-        ])
     specs = [
         spec
         for spec in specs

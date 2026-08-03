@@ -13,7 +13,7 @@ from research_agent.evidence.source_ranker import rank_source
 
 
 _BLOCK_TAGS = {"br", "div", "h1", "h2", "h3", "h4", "li", "p", "table", "tr"}
-_ITEM_HEADING = re.compile(r"^item\s+\d+[a-z]?[.\s]", re.IGNORECASE)
+_ITEM_HEADING = re.compile(r"^item\s+\d+[a-z]?(?:[.\s]|$)", re.IGNORECASE)
 _RISK_LANGUAGE = re.compile(
     r"\b(could|may|might|failure|fail|unable|adverse|adversely|competition|"
     r"volatility|volatile|risk|risks|harm|harmed|strain|fraudulent|unlawful|"
@@ -94,29 +94,61 @@ _BUSINESS_CONTEXT_IDENTITY = re.compile(
     re.IGNORECASE,
 )
 _BUSINESS_CONTEXT_NAMED_IDENTITY = re.compile(
-    r"^[A-Z][A-Za-z0-9&.,'’ -]{1,60}\s+(?:is|are)\s+"
+    r"^(?!(?:We|Our)\b)[A-Z][A-Za-z0-9&.,'’ -]{1,60}\s+(?:is|are)\s+"
     r"(?:(?:one of the|a|an)\s+)?"
-    r"(?:(?:[A-Za-z&-]+)\s+){0,4}"
     r"(?:collection of businesses|group of companies|holding company|"
-    r"leader|provider|manufacturer|operator|developer|retailer|franchisor|"
+    r"provider|manufacturer|operator|developer|retailer|franchisor|"
     r"(?:(?:[A-Za-z&]+)\s+){1,6}company)\b"
 )
+_BUSINESS_CONTEXT_NAMED_LEADER_IDENTITY = re.compile(
+    r"^(?!(?:We|Our|The)\b)[A-Z][A-Za-z0-9&.,'’ -]{1,60}\s+(?:is|are)\s+"
+    r"(?:(?:one of the|a|an)\s+)?(?:(?:[A-Za-z&'’-]+)\s+){0,5}leader\b"
+)
+_BUSINESS_CONTEXT_PARENTHETICAL_IDENTITY = re.compile(
+    r"^(?!(?:We|Our)\b)[A-Z][A-Za-z0-9&.,'’ -]{1,60}"
+    r"\s+\([^)]{1,120}\)\s+(?:is|are)\s+"
+    r"(?:(?:one of (?:the )?|a|an)\s+)?"
+    r"(?:(?:[A-Za-z&'’-]+)\s+){0,6}"
+    r"(?:leader|provider|operator|services?)\b"
+)
 _BUSINESS_CONTEXT_REVENUE_ACTIVITY = re.compile(
-    r"^(?:we|the company|the issuer)\s+"
+    r"^(?:(?:we|the company|the issuer)\s+"
     r"(?:generate|generates|derive|derives)\b.+\b"
-    r"(?:revenue|revenues)\b.+\b(?:by|from)\b",
+    r"(?:revenue|revenues)\b.+\b(?:by|from)\b|"
+    r"our\s+revenues?\s+(?:are|is)\s+(?:primarily\s+)?derived\b.+\bfrom\b)",
+    re.IGNORECASE,
+)
+_BUSINESS_CONTEXT_SINGLE_SEGMENT = re.compile(
+    r"^(?:we|the company|the issuer)\s+operate(?:s)?\s+as\s+"
+    r"(?:one|a single)\s+(?:operating|reportable)\s+segment[.]?$",
     re.IGNORECASE,
 )
 _BUSINESS_CONTEXT_DIRECT_ACTIVITY = re.compile(
     r"^(?:we|the company|the issuer)\s+"
-    r"(?:build|create|deliver|design|develop|distribute|help|manufacture|"
+    r"(?:build|create|deliver|design|develop|distribute|explore|help|manufacture|"
     r"offer|operate|provide|sell|serve)\b",
     re.IGNORECASE,
 )
+_BUSINESS_CONTEXT_CORE_OFFERING = re.compile(
+    r"^(?:our|the company(?:'s)?|the issuer(?:'s)?)\s+"
+    r"(?:products|services|offerings)\s+(?:include|comprise|consist of)\b",
+    re.IGNORECASE,
+)
 _BUSINESS_CONTEXT_NAMED_ACTIVITY = re.compile(
-    r"^[A-Z][A-Za-z0-9&.,'’() -]{1,90}\s+"
+    r"^(?!(?:The|We|Our)\b)[A-Z][A-Za-z0-9&.,'’() -]{1,90}\s+"
     r"(?:builds|creates|delivers|designs|develops|distributes|helps|"
     r"manufactures|offers|operates|provides|sells|serves)\b"
+)
+_BUSINESS_CONTEXT_NAMED_OFFERING = re.compile(
+    r"^(?!(?:The|We|Our)\b)[A-Z][A-Za-z0-9&.,'’() -]{1,70}\s+"
+    r"(?:products|services|platforms)(?:\s+and\s+(?:products|services|platforms))*\s+"
+    r"(?:include|comprise)\b"
+)
+_BUSINESS_CONTEXT_SEGMENT_ACTIVITY = re.compile(
+    r"^(?:the|our)\s+(?:[A-Za-z0-9&.'’()-]+\s+){0,5}segment\s+"
+    r"(?:builds|creates|delivers|designs|develops|distributes|helps|"
+    r"manufactures|offers|operates|provides|sells|serves)\b",
+    re.IGNORECASE,
 )
 _BUSINESS_CONTEXT_PROMOTIONAL_LANGUAGE = re.compile(
     r"\b(?:unmatched combination|unwavering focus|undisputable drive|"
@@ -391,29 +423,41 @@ def extract_sec_business_context(html: str) -> list[str]:
                     (
                         text
                         for _, text in candidates
-                        if (
-                            _BUSINESS_CONTEXT_DIRECT_ACTIVITY.search(text)
-                            or _BUSINESS_CONTEXT_NAMED_ACTIVITY.search(text)
-                        )
+                        if _BUSINESS_CONTEXT_CORE_OFFERING.search(text)
                         and _business_context_score(text) >= 3
                     ),
                     next(
                         (
                             text
                             for _, text in candidates
-                            if _business_context_score(text) >= 3
+                            if (
+                                _BUSINESS_CONTEXT_DIRECT_ACTIVITY.search(text)
+                                or _BUSINESS_CONTEXT_NAMED_ACTIVITY.search(text)
+                                or _BUSINESS_CONTEXT_NAMED_OFFERING.search(text)
+                                or _BUSINESS_CONTEXT_SEGMENT_ACTIVITY.search(text)
+                            )
+                            and _business_context_score(text) >= 3
                         ),
-                        candidates[0][1],
+                        next(
+                            (
+                                text
+                                for _, text in candidates
+                                if _business_context_score(text) >= 3
+                            ),
+                            candidates[0][1],
+                        ),
                     ),
                 ),
             ),
+        )
+        activity_is_core_offering = bool(
+            _BUSINESS_CONTEXT_CORE_OFFERING.search(activity)
         )
         selected = [activity]
         for _, segment in candidates:
             if (
                 _business_context_is_distinct(segment, selected)
-                and "segment" in segment.lower()
-                and _business_context_score(segment) >= 2
+                and _is_business_context_segment_description(segment)
             ):
                 selected.append(segment)
             if len(selected) == 2:
@@ -423,9 +467,12 @@ def extract_sec_business_context(html: str) -> list[str]:
                 candidates,
                 key=lambda item: (
                     bool(_BUSINESS_CONTEXT_REVENUE_ACTIVITY.search(item[1])),
+                    bool(_BUSINESS_CONTEXT_CORE_OFFERING.search(item[1])),
                     bool(
                         _BUSINESS_CONTEXT_DIRECT_ACTIVITY.search(item[1])
                         or _BUSINESS_CONTEXT_NAMED_ACTIVITY.search(item[1])
+                        or _BUSINESS_CONTEXT_NAMED_OFFERING.search(item[1])
+                        or _BUSINESS_CONTEXT_SEGMENT_ACTIVITY.search(item[1])
                     ),
                     _business_context_score(item[1]),
                     -item[0],
@@ -433,6 +480,31 @@ def extract_sec_business_context(html: str) -> list[str]:
                 reverse=True,
             )
             for _, context in ranked_context:
+                revenue_context = bool(
+                    _BUSINESS_CONTEXT_REVENUE_ACTIVITY.search(context)
+                )
+                segment_context = _is_business_context_segment_description(context)
+                direct_context = bool(
+                    _BUSINESS_CONTEXT_DIRECT_ACTIVITY.search(context)
+                    or _BUSINESS_CONTEXT_NAMED_ACTIVITY.search(context)
+                    or _BUSINESS_CONTEXT_NAMED_OFFERING.search(context)
+                    or _BUSINESS_CONTEXT_SEGMENT_ACTIVITY.search(context)
+                )
+                core_context = bool(_BUSINESS_CONTEXT_CORE_OFFERING.search(context))
+                if not (
+                    revenue_context
+                    or segment_context
+                    or direct_context
+                    or core_context
+                ):
+                    continue
+                if (
+                    activity_is_core_offering
+                    and direct_context
+                    and not revenue_context
+                    and not segment_context
+                ):
+                    continue
                 if _business_context_is_distinct(context, selected):
                     selected.append(context)
                 if len(selected) == 3:
@@ -680,7 +752,15 @@ def _is_business_context_paragraph(text: str) -> bool:
     stripped = text.strip()
     lowered = stripped.lower()
     identity_statement = _is_business_context_identity(stripped)
-    minimum_length = 45 if identity_statement or "segment" in lowered else 80
+    revenue_activity = bool(_BUSINESS_CONTEXT_REVENUE_ACTIVITY.search(stripped))
+    single_segment = bool(_BUSINESS_CONTEXT_SINGLE_SEGMENT.search(stripped))
+    minimum_length = (
+        25
+        if single_segment
+        else 45
+        if identity_statement or "segment" in lowered
+        else 80
+    )
     if not minimum_length <= len(stripped) <= 700:
         return False
     if any(character.isdigit() for character in stripped):
@@ -706,7 +786,13 @@ def _is_business_context_paragraph(text: str) -> bool:
     if stripped.isupper() or stripped.count(". ") > 3:
         return False
     score = _business_context_score(stripped)
-    return identity_statement or score >= 3 or ("segment" in lowered and score >= 2)
+    return (
+        identity_statement
+        or revenue_activity
+        or single_segment
+        or score >= 3
+        or ("segment" in lowered and score >= 2)
+    )
 
 
 def _business_context_fragments(text: str) -> list[str]:
@@ -742,6 +828,18 @@ def _is_business_context_identity(text: str) -> bool:
     return bool(
         _BUSINESS_CONTEXT_IDENTITY.search(text)
         or _BUSINESS_CONTEXT_NAMED_IDENTITY.search(text)
+        or _BUSINESS_CONTEXT_NAMED_LEADER_IDENTITY.search(text)
+        or _BUSINESS_CONTEXT_PARENTHETICAL_IDENTITY.search(text)
+    )
+
+
+def _is_business_context_segment_description(text: str) -> bool:
+    if _BUSINESS_CONTEXT_SINGLE_SEGMENT.search(text):
+        return True
+    if _BUSINESS_CONTEXT_SEGMENT_ACTIVITY.search(text):
+        return True
+    return bool(re.search(r"\bsegments\b", text, re.IGNORECASE)) and (
+        _business_context_score(text) >= 2
     )
 
 

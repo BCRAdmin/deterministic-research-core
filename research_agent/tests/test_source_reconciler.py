@@ -1,3 +1,5 @@
+from datetime import date
+
 from research_agent.reconciliation.canonical_financials import (
     CanonicalFinancials,
     CanonicalMetric,
@@ -316,6 +318,66 @@ def test_stale_duration_metric_is_not_mixed_into_current_ttm():
         issue["code"] == "STALE_FINANCIAL_METRIC_EXCLUDED"
         and issue["metric"] == "gross_profit"
         for issue in fundamentals["reconciliation_issues"]
+    )
+
+
+def test_split_incompatible_eps_bridge_is_excluded_and_rederived():
+    def duration_metric(metric_name, value, period, fiscal_year, fiscal_period, bucket, start, end):
+        return CanonicalMetric(
+            metric_name=metric_name,
+            value=value,
+            unit="USD_per_share" if metric_name == "eps_diluted" else "USD",
+            period=period,
+            fiscal_year=fiscal_year,
+            fiscal_period=fiscal_period,
+            period_bucket=bucket,
+            start_date=start,
+            end_date=end,
+            duration_days=(date.fromisoformat(end) - date.fromisoformat(start)).days,
+            basis="gaap",
+            statement_type="income_statement",
+            source_ids=[f"SEC_{metric_name}_{period}"],
+            confidence="high",
+        )
+
+    canonical = CanonicalFinancials(
+        ticker="SPLIT",
+        as_of_date="2026-07-31",
+        metrics=[
+            duration_metric("net_income", 12.0, "FY2025", 2025, "FY", "annual", "2025-01-01", "2025-12-31"),
+            duration_metric("net_income", 5.0, "Q2_FY2025_ytd", 2025, "Q2", "ytd", "2025-01-01", "2025-06-30"),
+            duration_metric("net_income", 6.0, "Q2_FY2026_ytd", 2026, "Q2", "ytd", "2026-01-01", "2026-06-30"),
+            duration_metric("eps_diluted", 2.53, "FY2025", 2025, "FY", "annual", "2025-01-01", "2025-12-31"),
+            duration_metric("eps_diluted", 13.80, "Q2_FY2025_ytd", 2025, "Q2", "ytd", "2025-01-01", "2025-06-30"),
+            duration_metric("eps_diluted", 2.03, "Q2_FY2026_ytd", 2026, "Q2", "ytd", "2026-01-01", "2026-06-30"),
+            CanonicalMetric(
+                metric_name="shares_diluted",
+                value=4.0,
+                unit="shares",
+                period="Q2_FY2026_quarterly",
+                fiscal_year=2026,
+                fiscal_period="Q2",
+                period_bucket="quarterly",
+                start_date="2026-04-01",
+                end_date="2026-06-30",
+                duration_days=90,
+                basis="gaap",
+                statement_type="income_statement",
+                source_ids=["SEC_SHARES_Q2_2026"],
+                confidence="high",
+            ),
+        ],
+    )
+
+    normalized = canonical_financials_to_fundamentals(canonical)
+    metrics = calculate_fundamental_metrics(normalized)
+
+    assert "eps_diluted" not in normalized["ttm"]
+    assert metrics.net_income_ttm == 13.0
+    assert metrics.trailing_eps == 3.25
+    assert any(
+        issue["code"] == "PER_SHARE_BASIS_MISMATCH_EXCLUDED"
+        for issue in normalized["reconciliation_issues"]
     )
 
 

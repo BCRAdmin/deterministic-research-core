@@ -793,6 +793,7 @@ def _audit_manual_review_reasons(
         "COMPANY_DEFINED_FCF_MISMATCH",
         "COMPANY_DEFINED_FCF_OCF_INCONSISTENCY",
         "GUARD_THRESHOLD_REVIEW",
+        "PER_SHARE_BASIS_MISMATCH_EXCLUDED",
     }
     validation_reason_codes = {
         "EARNINGS_DATE_UNAVAILABLE",
@@ -805,6 +806,7 @@ def _audit_manual_review_reasons(
         "TRUE_SOURCE_VALUE_DISAGREEMENT",
         "SOURCE_FRAME_VARIANT_IGNORED",
         "PERIOD_TYPE_MISMATCH_IGNORED",
+        "PER_SHARE_BASIS_MISMATCH_EXCLUDED",
     }
     for issue in audit_report.issues:
         if issue.code in audit_reason_codes and issue.code not in reasons:
@@ -1134,6 +1136,7 @@ def _has_manual_review_evidence_or_sanity_reason(manual_review_reasons: list[str
         "COMPANY_DEFINED_FCF_OCF_INCONSISTENCY",
         "EARNINGS_DATE_UNAVAILABLE",
         "EARNINGS_DATE_UNCONFIRMED",
+        "PER_SHARE_BASIS_MISMATCH_EXCLUDED",
     }
     return any(reason in cap_reasons for reason in manual_review_reasons)
 

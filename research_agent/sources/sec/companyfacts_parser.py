@@ -200,8 +200,6 @@ class CompanyFactsParser:
     def to_evidence_item(self, fact: ParsedFact) -> EvidenceItem:
         normalization_suffix = f" {fact.normalization_note}" if fact.normalization_note else ""
         supports_metrics = [fact.metric_name, _metrics_packet_name(fact.metric_name)]
-        if fact.metric_name == "eps_diluted":
-            supports_metrics.append("trailing_eps")
         return EvidenceItem(
             evidence_id=fact.evidence_id or self._evidence_id(fact),
             ticker=self.ticker,

@@ -1831,6 +1831,56 @@ def test_missing_ticker_specific_metrics_fall_back_to_latest_fiscal_year():
     ]
 
 
+def test_netflix_uses_generic_current_quarter_when_legacy_aliases_are_absent():
+    _, metrics, _, _, _ = _load_packet("SNOW")
+    metrics.fundamentals.current_period_revenue_growth_yoy = 0.13
+    metrics.fundamentals.current_period_operating_income_growth_yoy = 0.11
+    metrics.fundamentals.current_period_net_income_growth_yoy = 0.09
+    canonical = CanonicalFinancials(
+        ticker="NFLX",
+        as_of_date="2026-07-31",
+        metrics=[
+            CanonicalMetric(
+                metric_name=metric_name,
+                value=value,
+                unit="USD",
+                period="Q2_FY2026_quarterly",
+                fiscal_year=2026,
+                fiscal_period="Q2",
+                period_bucket="quarterly",
+                start_date="2026-04-01",
+                end_date="2026-06-30",
+                duration_days=90,
+                basis="gaap",
+                statement_type="income_statement",
+                source_ids=["NFLX_SEC_Q2_2026"],
+                confidence="high",
+            )
+            for metric_name, value in (
+                ("revenue", 11_533_000_000),
+                ("operating_income", 3_682_000_000),
+                ("net_income", 3_125_000_000),
+            )
+        ],
+    )
+
+    current = next(
+        spec
+        for spec in _current_period_claim_specs("NFLX", metrics, canonical)
+        if "latest reported period" in spec["text"]
+    )
+
+    assert "FY2026_Q2" in current["text"]
+    assert current["metrics"] == [
+        "revenue",
+        "operating_income",
+        "net_income",
+        "current_period_revenue_growth_yoy",
+        "current_period_operating_income_growth_yoy",
+        "current_period_net_income_growth_yoy",
+    ]
+
+
 def test_annual_claim_matches_same_dates_across_sec_period_labels():
     _, metrics, _, _, _ = _load_packet("SNOW")
     metrics.fundamentals.current_period_revenue_growth_yoy = 0.002

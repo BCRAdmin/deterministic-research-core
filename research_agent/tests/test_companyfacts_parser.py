@@ -514,7 +514,7 @@ def test_same_ten_k_q4_fact_is_not_emitted_twice():
     assert len({item.evidence_id for item in evidence}) == 1
 
 
-def test_diluted_eps_evidence_supports_trailing_eps():
+def test_period_eps_evidence_does_not_impersonate_trailing_eps():
     parser = CompanyFactsParser(
         "COST",
         "909832",
@@ -544,7 +544,8 @@ def test_diluted_eps_evidence_supports_trailing_eps():
 
     item = parser.to_evidence_item(parser.get_facts_for_metric("eps_diluted")[0])
 
-    assert "trailing_eps" in item.supports_metrics
+    assert item.supports_metrics == ["eps_diluted", "eps_diluted_ttm"]
+    assert "trailing_eps" not in item.supports_metrics
 
 
 def test_sec_fundamentals_builder_returns_metrics_and_evidence():

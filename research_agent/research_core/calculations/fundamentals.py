@@ -299,7 +299,7 @@ def calculate_fundamental_metrics(
         )
         trailing_eps = safe_divide(
             net_income_ttm,
-            point_in_time_eps_shares or diluted_share_count,
+            diluted_share_count or point_in_time_eps_shares,
         )
     prior_diluted_share_count = _optional_float(share_data.get("diluted_share_count_prior_year"))
     diluted_share_count_yoy = _yoy_change(diluted_share_count, prior_diluted_share_count)

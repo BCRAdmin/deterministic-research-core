@@ -31,7 +31,7 @@ def _submissions():
 def _risk_html():
     return """
     <html><body>
-      <div>Risk Factors</div><div>Item 2. Short table entry</div>
+      <div>Risk Factors</div><div>Item 2.</div>
       <div>Risk Factors</div>
       <p>Our business results are subject to a variety of risks described below.</p>
       <p><strong>If we fail to execute our strategy, our business growth may suffer.</strong></p>
@@ -470,6 +470,24 @@ def test_business_context_prefers_revenue_activity_over_promotional_puffery():
 
     assert extract_sec_business_context(html) == [
         "We generate the majority of our service revenues by providing wireless communications and broadband services to postpaid and prepaid customers."
+    ]
+
+
+def test_business_context_keeps_streaming_identity_segment_and_revenue_model():
+    html = """
+    <html><body>
+      <p><strong>ITEM 1. BUSINESS</strong></p>
+      <p>Netflix, Inc. (“Netflix”, the “Company”, “registrant”, “we”, or “us”) is one of the world’s leading entertainment services offering TV series, films, games and live programming.</p>
+      <p>We believe an important component of our success is our company culture.</p>
+      <p>We operate as one operating segment. Our revenues are primarily derived from monthly membership fees for services related to streaming content to our members.</p>
+      <div><strong>ITEM 1A. RISK FACTORS</strong></div>
+    </body></html>
+    """
+
+    assert extract_sec_business_context(html) == [
+        "Netflix, Inc. (“Netflix”, the “Company”, “registrant”, “we”, or “us”) is one of the world’s leading entertainment services offering TV series, films, games and live programming.",
+        "We operate as one operating segment.",
+        "Our revenues are primarily derived from monthly membership fees for services related to streaming content to our members.",
     ]
 
 

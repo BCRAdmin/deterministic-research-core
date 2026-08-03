@@ -549,8 +549,55 @@ def canonical_financials_to_fundamentals(canonical: CanonicalFinancials) -> dict
                 )
         elif canonical.metrics_for(metric_name):
             fundamentals["reconciliation_issues"].append(_stale_metric_issue(metric_name))
+    _exclude_incompatible_per_share_basis(fundamentals)
     _derive_diluted_share_count_yoy(canonical, fundamentals)
     return fundamentals
+
+
+def _exclude_incompatible_per_share_basis(fundamentals: dict) -> None:
+    """Reject TTM EPS assembled across materially different share bases."""
+
+    def duration_value(metric_name: str) -> Optional[float]:
+        values = fundamentals["quarterly"].get(metric_name)
+        if values is not None and len(values) == 4:
+            return sum(float(value) for value in values)
+        value = fundamentals["ttm"].get(metric_name)
+        if value is not None:
+            return float(value)
+        value = fundamentals["annual"].get(metric_name)
+        return float(value) if value is not None else None
+
+    direct_eps = duration_value("eps_diluted")
+    net_income = duration_value("net_income")
+    diluted_shares = fundamentals["share_data"].get("diluted_share_count")
+    economic_shares = fundamentals["share_data"].get("economic_share_count")
+    share_basis = "diluted_share_count" if diluted_shares else "economic_share_count"
+    shares = diluted_shares or economic_shares
+    if direct_eps is None or net_income is None or not shares:
+        return
+    implied_eps = float(net_income) / float(shares)
+    if isclose(direct_eps, implied_eps, rel_tol=0.5, abs_tol=0.05):
+        return
+
+    for section in ("quarterly", "ttm", "annual"):
+        fundamentals[section].pop("eps_diluted", None)
+    fundamentals.get("ttm_bridges", {}).pop("eps_diluted", None)
+    fundamentals["reconciliation_material_dates"].pop("eps_diluted", None)
+    fundamentals["reconciliation_issues"].append(
+        {
+            "severity": "warning",
+            "code": "PER_SHARE_BASIS_MISMATCH_EXCLUDED",
+            "metric": "eps_diluted",
+            "direct_ttm_eps": direct_eps,
+            "implied_ttm_eps": implied_eps,
+            "share_basis": share_basis,
+            "message": (
+                "Excluded diluted EPS because its TTM value materially conflicts "
+                f"with net income divided by {share_basis}; the source periods may "
+                "use incompatible per-share bases after a corporate action."
+            ),
+        }
+    )
 
 
 def _compatible_trailing_period_values(
