@@ -788,6 +788,7 @@ def _audit_manual_review_reasons(
     }
     reconciliation_reason_codes = {
         BALANCE_SHEET_DATE_MISMATCH_EXCLUDED,
+        "MULTI_CLASS_PRICE_BASIS_UNAVAILABLE",
         "TRUE_SOURCE_VALUE_DISAGREEMENT",
         "SOURCE_FRAME_VARIANT_IGNORED",
         "PERIOD_TYPE_MISMATCH_IGNORED",

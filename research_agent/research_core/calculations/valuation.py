@@ -3,7 +3,11 @@ from __future__ import annotations
 from typing import Optional
 
 from research_agent.research_core.models.data_packet import CompanyGuidanceEPS, ForwardEPS
-from research_agent.research_core.models.metrics_packet import FundamentalMetrics, ValuationMetrics
+from research_agent.research_core.models.metrics_packet import (
+    MULTI_CLASS_PRICE_EQUIVALENCE_UNVERIFIED,
+    FundamentalMetrics,
+    ValuationMetrics,
+)
 
 
 def market_cap(close_price: float, diluted_shares: float):
@@ -57,14 +61,22 @@ def calculate_valuation_metrics(
 ) -> ValuationMetrics:
     market_value = None
     ev = None
-    share_count = (
-        fundamentals.listed_share_count
-        or fundamentals.economic_share_count
+    economic_share_count_eligible = (
+        fundamentals.economic_share_count_basis
+        != MULTI_CLASS_PRICE_EQUIVALENCE_UNVERIFIED
+    )
+    share_count = fundamentals.listed_share_count or (
+        fundamentals.economic_share_count
+        if economic_share_count_eligible
+        else None
     )
     share_basis = None
     if fundamentals.listed_share_count is not None:
         share_basis = "listed_share_count"
-    elif fundamentals.economic_share_count is not None:
+    elif (
+        fundamentals.economic_share_count is not None
+        and economic_share_count_eligible
+    ):
         share_basis = "economic_share_count"
     if share_count is not None:
         market_value = market_cap(close_price, share_count)

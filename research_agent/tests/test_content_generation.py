@@ -151,6 +151,14 @@ def test_content_generator_uses_trailing_pe_without_point_in_time_share_count():
         decision,
         ledger,
         claims,
+        reconciliation_warnings=[
+            {
+                "severity": "warning",
+                "code": "MULTI_CLASS_PRICE_BASIS_UNAVAILABLE",
+                "metric": "market_cap",
+                "message": "Cross-class price equivalence is unverified.",
+            }
+        ],
     )
     valuation_claim = next(
         claim
@@ -167,6 +175,10 @@ def test_content_generator_uses_trailing_pe_without_point_in_time_share_count():
         in report
     )
     assert "EV/Sales `unavailable`" not in report
+    assert (
+        "Market-cap-derived multiples are unavailable because the filing "
+        "reports multiple stock classes"
+    ) in report
 
 
 def test_content_generator_explains_extreme_positive_price_to_fcf():

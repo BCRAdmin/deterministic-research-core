@@ -19,6 +19,9 @@ SEC_INLINE_FACT_SUPPLEMENT_CONTRACT = "room16.sec_inline_fact_supplement.v1"
 _NONCURRENT_DEBT_CONCEPT = "us-gaap:LongTermDebtNoncurrent"
 _OUTSTANDING_SHARES_CONCEPT = "dei:EntityCommonStockSharesOutstanding"
 _STOCK_CLASS_AXIS = "us-gaap:StatementClassOfStockAxis"
+_MULTI_CLASS_PRICE_EQUIVALENCE_NOTE = (
+    "[MULTI_CLASS_PRICE_EQUIVALENCE_UNVERIFIED]"
+)
 
 
 class _InlineStatementParser(HTMLParser):
@@ -325,11 +328,17 @@ def _inline_economic_share_count_fact(
         f"{symbol}_SEC_INLINE_economic_share_count_{period}_instant_"
         f"{instant}_dei_EntityCommonStockSharesOutstanding_{accession}"
     )
-    class_note = (
-        f"summed across {len(class_values)} separately tagged stock classes"
-        if class_values and aggregate is None
-        else "taken from the undimensioned issuer total"
-    )
+    if len(class_values) > 1:
+        class_note = (
+            f"{_MULTI_CLASS_PRICE_EQUIVALENCE_NOTE} summed across "
+            f"{len(class_values)} separately tagged stock classes. The cover-page "
+            "facts do not establish that one traded class price can be applied "
+            "to every class"
+        )
+    elif class_values and aggregate is None:
+        class_note = "taken from one separately tagged stock class"
+    else:
+        class_note = "taken from the undimensioned issuer total"
     return {
         "metric_name": "economic_share_count",
         "value": value,

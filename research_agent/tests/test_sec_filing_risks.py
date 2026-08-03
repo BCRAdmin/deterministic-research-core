@@ -215,6 +215,31 @@ def test_business_context_preserves_two_distinct_segment_descriptions():
     ]
 
 
+def test_named_issuer_context_deduplicates_segments_and_rejects_risk_category():
+    html = """
+    <html><body>
+      <div><strong>ITEM 1. BUSINESS</strong></div>
+      <p>Alphabet is a collection of businesses, the largest of which is Google.</p>
+      <p>We report Google in two segments, Google Services and Google Cloud, and all non-Google businesses collectively as Other Bets.</p>
+      <p>For reporting purposes Google comprises two segments: Google Services and Google Cloud.</p>
+      <p>Google Services products and platforms include ads, Android, Chrome, devices, Search and YouTube for users around the world.</p>
+      <div><strong>ITEM 1A. RISK FACTORS</strong></div>
+      <p><strong>Risks Specific to our Company</strong></p>
+      <p><strong>Reduced advertising spending could harm our business and operating results.</strong></p>
+      <div><strong>ITEM 2. PROPERTIES</strong></div>
+    </body></html>
+    """
+
+    assert extract_sec_business_context(html) == [
+        "Alphabet is a collection of businesses, the largest of which is Google.",
+        "We report Google in two segments, Google Services and Google Cloud, and all non-Google businesses collectively as Other Bets.",
+        "Google Services products and platforms include ads, Android, Chrome, devices, Search and YouTube for users around the world.",
+    ]
+    assert extract_sec_risk_headings(html) == [
+        "Reduced advertising spending could harm our business and operating results."
+    ]
+
+
 def test_extracts_business_context_from_cross_referenced_annual_report():
     html = """
     <html><body>

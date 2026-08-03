@@ -19,6 +19,9 @@ from typing import Any, Iterable, Mapping
 
 from research_agent.batch.freshness import evaluate_price_freshness
 from research_agent.evidence.evidence_ledger import unit_for_metric
+from research_agent.research_core.models.metrics_packet import (
+    MULTI_CLASS_PRICE_EQUIVALENCE_UNVERIFIED,
+)
 
 
 AUTHORITY_CONTRACT_ID = "room16.research_authority_bundle"
@@ -614,6 +617,16 @@ def _assess_packets(
             and share_basis != "listed_share_count"
         ),
         detail=share_basis,
+    )
+    _check(
+        checks,
+        "market_cap_rejects_unverified_multi_class_price_basis",
+        not (
+            market_cap is not None
+            and fundamentals.get("economic_share_count_basis")
+            == MULTI_CLASS_PRICE_EQUIVALENCE_UNVERIFIED
+        ),
+        detail=str(fundamentals.get("economic_share_count_basis") or ""),
     )
 
     ttm_metric_names = {

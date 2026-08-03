@@ -11,6 +11,9 @@ from research_agent.reconciliation.gaap_nongaap_classifier import classify_metri
 from research_agent.reconciliation.period_resolver import resolve_period, validate_resolved_period
 from research_agent.reconciliation.restatement_resolver import prefer_restatement
 from research_agent.reconciliation.unit_normalizer import normalize_value, validate_unit_for_metric
+from research_agent.research_core.models.metrics_packet import (
+    MULTI_CLASS_PRICE_EQUIVALENCE_UNVERIFIED,
+)
 from research_agent.sources.sec.companyfacts_parser import ParsedFact
 from research_agent.sources.sec.xbrl_concepts import concept_priority
 
@@ -473,6 +476,26 @@ def canonical_financials_to_fundamentals(canonical: CanonicalFinancials) -> dict
             fundamentals["reconciliation_material_dates"][metric_name] = (
                 selected.end_date
             )
+            if metric_name == "economic_share_count" and any(
+                "[MULTI_CLASS_PRICE_EQUIVALENCE_UNVERIFIED]" in note
+                for note in selected.reconciliation_notes
+            ):
+                fundamentals["share_data"]["economic_share_count_basis"] = (
+                    MULTI_CLASS_PRICE_EQUIVALENCE_UNVERIFIED
+                )
+                fundamentals["reconciliation_issues"].append(
+                    {
+                        "severity": "warning",
+                        "code": "MULTI_CLASS_PRICE_BASIS_UNAVAILABLE",
+                        "metric": "market_cap",
+                        "message": (
+                            "The filed cover page reports multiple stock classes, "
+                            "but the current packet has only one traded-class price "
+                            "and no evidence that this price can be applied across "
+                            "all classes. Market-cap-derived valuation is unavailable."
+                        ),
+                    }
+                )
         elif canonical.metrics_for(metric_name):
             fundamentals["reconciliation_issues"].append(_stale_metric_issue(metric_name))
     return fundamentals

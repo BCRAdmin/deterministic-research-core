@@ -137,6 +137,9 @@ def test_sums_current_cover_page_stock_classes_as_economic_shares(tmp_path):
     assert payload["facts"][0]["metric_name"] == "economic_share_count"
     assert payload["facts"][0]["value"] == 3_548_636_573
     assert payload["facts"][0]["end"] == "2026-07-15"
+    assert "[MULTI_CLASS_PRICE_EQUIVALENCE_UNVERIFIED]" in (
+        payload["facts"][0]["normalization_note"]
+    )
     path = save_sec_inline_fact_supplement(tmp_path / "CMCSA.json", payload)
     facts, evidence = load_sec_inline_fact_supplement(path, ticker="CMCSA")
     assert facts[0].metric_name == "economic_share_count"

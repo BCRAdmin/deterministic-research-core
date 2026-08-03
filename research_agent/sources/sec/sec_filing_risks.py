@@ -23,6 +23,7 @@ _RISK_LANGUAGE = re.compile(
 )
 _GENERIC_RISK_CATEGORY = re.compile(
     r"^(?:(?!(?:we|our|the company)\b)[a-z,& -]+ risks?|"
+    r"risks? (?:specific|applicable) to (?:our|the) company|"
     r"(?:risks?|risk factors?) (?:related|relating|associated) "
     r"(?:to|with)\b.+)$",
     re.IGNORECASE,
@@ -74,6 +75,12 @@ _BUSINESS_CONTEXT_IDENTITY = re.compile(
     r"(?:provider|manufacturer|operator|developer|retailer|franchisor|"
     r"(?:(?:[a-z]+|&)\s+){1,6}company)\b",
     re.IGNORECASE,
+)
+_BUSINESS_CONTEXT_NAMED_IDENTITY = re.compile(
+    r"^[A-Z][A-Za-z0-9&.,'’ -]{1,60}\s+(?:is|are)\s+"
+    r"(?:(?:one of the|a|an)\s+)?"
+    r"(?:collection of businesses|group of companies|holding company|"
+    r"provider|manufacturer|operator|developer|retailer|franchisor)\b"
 )
 _BUSINESS_CONTEXT_REVENUE_ACTIVITY = re.compile(
     r"^(?:we|the company|the issuer)\s+"
@@ -335,7 +342,7 @@ def extract_sec_business_context(html: str) -> list[str]:
             (
                 text
                 for _, text in candidates
-                if _BUSINESS_CONTEXT_IDENTITY.search(text)
+                if _is_business_context_identity(text)
             ),
             next(
                 (
@@ -356,13 +363,28 @@ def extract_sec_business_context(html: str) -> list[str]:
         selected = [activity]
         for _, segment in candidates:
             if (
-                segment not in selected
+                _business_context_is_distinct(segment, selected)
                 and "segment" in segment.lower()
                 and _business_context_score(segment) >= 2
             ):
                 selected.append(segment)
             if len(selected) == 3:
                 break
+        if len(selected) < 3:
+            ranked_context = sorted(
+                candidates,
+                key=lambda item: (
+                    bool(_BUSINESS_CONTEXT_REVENUE_ACTIVITY.search(item[1])),
+                    _business_context_score(item[1]),
+                    -item[0],
+                ),
+                reverse=True,
+            )
+            for _, context in ranked_context:
+                if _business_context_is_distinct(context, selected):
+                    selected.append(context)
+                if len(selected) == 3:
+                    break
         if len(selected) > len(best):
             best = selected
     return best[:3]
@@ -549,7 +571,7 @@ def _looks_like_title_case_heading(text: str) -> bool:
 def _is_business_context_paragraph(text: str) -> bool:
     stripped = text.strip()
     lowered = stripped.lower()
-    identity_statement = bool(_BUSINESS_CONTEXT_IDENTITY.search(stripped))
+    identity_statement = _is_business_context_identity(stripped)
     minimum_length = 45 if identity_statement or "segment" in lowered else 80
     if not minimum_length <= len(stripped) <= 700:
         return False
@@ -596,3 +618,52 @@ def _business_context_score(text: str) -> int:
         match.group(0).lower() for match in _BUSINESS_MODEL_LANGUAGE.finditer(text)
     )
     return len(terms)
+
+
+def _is_business_context_identity(text: str) -> bool:
+    return bool(
+        _BUSINESS_CONTEXT_IDENTITY.search(text)
+        or _BUSINESS_CONTEXT_NAMED_IDENTITY.search(text)
+    )
+
+
+def _business_context_is_distinct(
+    candidate: str,
+    selected: list[str],
+) -> bool:
+    if candidate in selected:
+        return False
+    stopwords = {
+        "a",
+        "an",
+        "and",
+        "are",
+        "business",
+        "businesses",
+        "collectively",
+        "comprises",
+        "for",
+        "in",
+        "is",
+        "of",
+        "our",
+        "purposes",
+        "report",
+        "reported",
+        "reporting",
+        "segment",
+        "segments",
+        "the",
+        "to",
+        "two",
+        "we",
+    }
+    candidate_tokens = set(re.findall(r"[a-z]+", candidate.casefold())) - stopwords
+    if not candidate_tokens:
+        return False
+    for existing in selected:
+        existing_tokens = set(re.findall(r"[a-z]+", existing.casefold())) - stopwords
+        smaller = min(len(candidate_tokens), len(existing_tokens))
+        if smaller and len(candidate_tokens & existing_tokens) / smaller >= 0.8:
+            return False
+    return True

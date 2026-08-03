@@ -2,7 +2,10 @@ from __future__ import annotations
 
 from typing import Any, Mapping, Optional
 
-from research_agent.research_core.models.metrics_packet import FundamentalMetrics
+from research_agent.research_core.models.metrics_packet import (
+    MULTI_CLASS_PRICE_EQUIVALENCE_UNVERIFIED,
+    FundamentalMetrics,
+)
 from research_agent.research_core.models.report_config import FCFDefinitionConfig
 
 
@@ -277,14 +280,26 @@ def calculate_fundamental_metrics(
     listed_share_count = _optional_float(share_data.get("listed_share_count"))
     treasury_share_count = _optional_float(share_data.get("treasury_share_count"))
     economic_share_count = _optional_float(share_data.get("economic_share_count"))
+    economic_share_count_basis = (
+        str(share_data.get("economic_share_count_basis"))
+        if share_data.get("economic_share_count_basis")
+        else None
+    )
     if economic_share_count is None and listed_share_count is not None:
         # SEC DEI outstanding shares are already net of treasury shares.
         economic_share_count = listed_share_count
+        economic_share_count_basis = "listed_share_count"
     trailing_eps = diluted_eps_ttm
     if trailing_eps is None:
+        point_in_time_eps_shares = (
+            None
+            if economic_share_count_basis
+            == MULTI_CLASS_PRICE_EQUIVALENCE_UNVERIFIED
+            else economic_share_count
+        )
         trailing_eps = safe_divide(
             net_income_ttm,
-            economic_share_count or diluted_share_count,
+            point_in_time_eps_shares or diluted_share_count,
         )
     prior_diluted_share_count = _optional_float(share_data.get("diluted_share_count_prior_year"))
     diluted_share_count_yoy = _yoy_change(diluted_share_count, prior_diluted_share_count)
@@ -354,6 +369,7 @@ def calculate_fundamental_metrics(
         treasury_share_count=treasury_share_count,
         treasury_stock_value=treasury_stock_value,
         economic_share_count=economic_share_count,
+        economic_share_count_basis=economic_share_count_basis,
         trailing_eps=trailing_eps,
         diluted_share_count_yoy=diluted_share_count_yoy,
         buybacks=buybacks_ttm

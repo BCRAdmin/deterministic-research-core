@@ -3,6 +3,11 @@ from typing import Dict, Optional
 from pydantic import BaseModel, Field
 
 
+MULTI_CLASS_PRICE_EQUIVALENCE_UNVERIFIED = (
+    "multi_class_unverified_price_equivalence"
+)
+
+
 class TechnicalMetrics(BaseModel):
     indicator_date: str
     close: float
@@ -80,6 +85,7 @@ class FundamentalMetrics(BaseModel):
     treasury_share_count: Optional[float] = None
     treasury_stock_value: Optional[float] = None
     economic_share_count: Optional[float] = None
+    economic_share_count_basis: Optional[str] = None
     trailing_eps: Optional[float] = None
     diluted_share_count_yoy: Optional[float] = None
     buybacks: Optional[float] = None

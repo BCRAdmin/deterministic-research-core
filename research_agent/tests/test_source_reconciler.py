@@ -811,3 +811,44 @@ def test_ttm_uses_four_reported_contiguous_quarters_before_annual_bridge():
     assert list(bridge["operands"].values()) == [20, 30, 40, 25]
     assert bridge["period_start"] == "2025-04-01"
     assert bridge["period_end"] == "2026-03-31"
+
+
+def test_multi_class_share_sum_carries_unverified_price_basis_warning():
+    canonical = CanonicalFinancials(
+        ticker="GENERIC",
+        as_of_date="2026-07-31",
+        metrics=[
+            CanonicalMetric(
+                metric_name="economic_share_count",
+                value=1_200_000_000,
+                unit="shares",
+                period="FY2026_Q2",
+                fiscal_year=2026,
+                fiscal_period="Q2",
+                period_bucket="instant",
+                end_date="2026-07-15",
+                basis="gaap",
+                statement_type="balance_sheet",
+                source_ids=["SEC_CURRENT"],
+                evidence_ids=["SEC_CURRENT_SHARES"],
+                confidence="high",
+                reconciliation_notes=[
+                    "[MULTI_CLASS_PRICE_EQUIVALENCE_UNVERIFIED] summed across "
+                    "three filed stock classes."
+                ],
+            )
+        ],
+    )
+
+    normalized = canonical_financials_to_fundamentals(canonical)
+    metrics = calculate_fundamental_metrics(normalized)
+
+    assert normalized["share_data"]["economic_share_count_basis"] == (
+        "multi_class_unverified_price_equivalence"
+    )
+    assert metrics.economic_share_count_basis == (
+        "multi_class_unverified_price_equivalence"
+    )
+    assert "MULTI_CLASS_PRICE_BASIS_UNAVAILABLE" in {
+        issue["code"] for issue in normalized["reconciliation_issues"]
+    }

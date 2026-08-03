@@ -279,6 +279,71 @@ def test_authority_bundle_blocks_stale_price_basis(tmp_path: Path) -> None:
     assert "price_basis_current_for_analysis" in manifest["blocking_failures"]
 
 
+def test_authority_bundle_rejects_market_cap_from_unverified_multi_class_price(
+    tmp_path: Path,
+):
+    packet_dir, registry_path = _packet_set(tmp_path)
+    metrics_path = packet_dir / "metrics_packet.json"
+    metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
+    metrics["fundamentals"].update(
+        {
+            "economic_share_count": 12_000_000,
+            "economic_share_count_basis": (
+                "multi_class_unverified_price_equivalence"
+            ),
+        }
+    )
+    metrics["valuation"].update(
+        {
+            "market_cap": 1_200_000_000,
+            "market_cap_share_basis": "economic_share_count",
+        }
+    )
+    _write_json(metrics_path, metrics)
+    ledger_path = packet_dir / "evidence_ledger.json"
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    ledger["evidence_items"].append(
+        {
+            "evidence_id": "GENERIC_MARKET_CAP",
+            "ticker": "GENERIC",
+            "source_id": "GENERIC_SEC",
+            "supports_metrics": ["market_cap"],
+            "value": 1_200_000_000,
+            "normalized_value": 1_200_000_000,
+            "formula_id": "close_times_point_in_time_shares",
+            "formula_operands": {
+                "close": 100.0,
+                "economic_share_count": 12_000_000,
+            },
+            "date": "2026-07-01",
+            "period": "as of 2026-07-01",
+        }
+    )
+    ledger["evidence_items"].append(
+        {
+            "evidence_id": "GENERIC_ECONOMIC_SHARES",
+            "ticker": "GENERIC",
+            "source_id": "GENERIC_SEC",
+            "supports_metrics": ["economic_share_count"],
+            "value": 12_000_000,
+            "normalized_value": 12_000_000,
+            "date": "2026-07-01",
+            "period": "as of 2026-07-01",
+        }
+    )
+    _write_json(ledger_path, ledger)
+
+    manifest = build_authority_bundle(
+        packet_dir=packet_dir,
+        source_registry_path=registry_path,
+        output_dir=packet_dir.parent / "bundle",
+    )
+
+    assert "market_cap_rejects_unverified_multi_class_price_basis" in (
+        manifest["blocking_failures"]
+    )
+
+
 def test_authority_bundle_blocks_when_fact_ledger_is_missing(tmp_path: Path) -> None:
     packet_dir, registry_path = _packet_set(tmp_path)
     (packet_dir / "fact_ledger.json").unlink()

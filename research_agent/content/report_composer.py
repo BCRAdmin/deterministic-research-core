@@ -182,6 +182,15 @@ def _render_data_note(
         if warning.get("code") == "TRUE_SOURCE_VALUE_DISAGREEMENT"
     ]
     lines.append(f"- True unresolved source disagreements: `{len(true_disagreements)}`.")
+    if any(
+        warning.get("code") == "MULTI_CLASS_PRICE_BASIS_UNAVAILABLE"
+        for warning in (reconciliation_warnings or [])
+    ):
+        lines.append(
+            "- Market-cap-derived multiples are unavailable because the filing "
+            "reports multiple stock classes, while the packet has only one "
+            "traded-class price and no verified cross-class price equivalence."
+        )
     return "\n".join(lines)
 
 
