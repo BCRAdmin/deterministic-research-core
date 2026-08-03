@@ -188,6 +188,7 @@ def test_gold_report_without_risk_claim_is_incomplete():
 
     assert quality.claim_coverage_complete is False
     assert quality.claim_coverage_gaps == ["missing_risk_analysis"]
+    assert quality.manual_review_reasons == ["MISSING_RISK_ANALYSIS"]
     assert quality.publishable is False
 
 

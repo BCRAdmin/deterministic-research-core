@@ -784,6 +784,11 @@ def build_fundamental_derivation_evidence(
             debt_components,
         )
     ):
+        debt_period_end = _common_operand_date(
+            [*runtime_items, *evidence],
+            debt_components,
+            as_of_date=as_of_date,
+        ) or as_of_date
         evidence.append(
             EvidenceItem(
                 evidence_id=(
@@ -801,8 +806,8 @@ def build_fundamental_derivation_evidence(
                 ),
                 value=float(fundamentals.total_debt),
                 unit=currency,
-                period=f"as of {as_of_date}",
-                date=as_of_date,
+                period=f"as of {debt_period_end}",
+                date=debt_period_end,
                 supports_metrics=["total_debt"],
                 confidence="high",
                 formula_id="sum_available_interest_bearing_debt_components",
@@ -838,6 +843,11 @@ def build_fundamental_derivation_evidence(
             liquid_assets,
         )
     ):
+        liquid_assets_period_end = _common_operand_date(
+            [*runtime_items, *evidence],
+            liquid_assets,
+            as_of_date=as_of_date,
+        ) or as_of_date
         evidence.append(
             EvidenceItem(
                 evidence_id=(
@@ -856,8 +866,8 @@ def build_fundamental_derivation_evidence(
                 ),
                 value=float(fundamentals.cash_and_investments),
                 unit=currency,
-                period=f"as of {as_of_date}",
-                date=as_of_date,
+                period=f"as of {liquid_assets_period_end}",
+                date=liquid_assets_period_end,
                 supports_metrics=["cash_and_investments"],
                 confidence="high",
                 formula_id="sum_available_liquid_assets",
@@ -897,6 +907,11 @@ def build_fundamental_derivation_evidence(
         ):
             operands = {}
     if operands:
+        net_cash_period_end = _common_operand_date(
+            [*runtime_items, *evidence],
+            operands,
+            as_of_date=as_of_date,
+        ) or as_of_date
         evidence.append(
             EvidenceItem(
                 evidence_id=(
@@ -913,8 +928,8 @@ def build_fundamental_derivation_evidence(
                 ),
                 value=float(fundamentals.net_cash),
                 unit=currency,
-                period=f"as of {as_of_date}",
-                date=as_of_date,
+                period=f"as of {net_cash_period_end}",
+                date=net_cash_period_end,
                 supports_metrics=["net_cash"],
                 confidence="high",
                 formula_id="liquid_assets_minus_total_debt",
@@ -1297,6 +1312,15 @@ def build_fundamental_derivation_evidence(
             operands,
         ):
             continue
+        ratio_date = _common_operand_date(
+            [*runtime_items, *evidence],
+            operands,
+            as_of_date=as_of_date,
+        ) or as_of_date
+        if period.startswith("TTM through "):
+            period = f"TTM through {ratio_date}"
+        elif period.startswith("as of "):
+            period = f"as of {ratio_date}"
         evidence.append(
             _calculation_evidence(
                 ticker=ticker,
@@ -1308,7 +1332,7 @@ def build_fundamental_derivation_evidence(
                 operands=operands,
                 unit=unit,
                 period=period,
-                date=as_of_date,
+                date=ratio_date,
                 evidence_items=[*runtime_items, *evidence],
             )
         )
@@ -1902,6 +1926,36 @@ def _operands_have_exact_evidence(
         )
         for metric_name, value in operands.items()
     )
+
+
+def _common_operand_date(
+    evidence_items: Iterable[EvidenceItem],
+    operands: dict[str, float],
+    *,
+    as_of_date: str,
+) -> Optional[str]:
+    """Return the latest date on which every exact operand is evidenced."""
+
+    items = list(evidence_items)
+    dates_by_operand: list[set[str]] = []
+    for metric_name, value in operands.items():
+        dates = {
+            str(item.date)
+            for item in items
+            if metric_name in item.supports_metrics
+            and item.value is not None
+            and abs(float(item.value) - value)
+            <= max(1e-9, abs(value) * 1e-9)
+            and item.date
+            and str(item.date) <= as_of_date
+        }
+        if not dates:
+            return None
+        dates_by_operand.append(dates)
+    if not dates_by_operand:
+        return None
+    common_dates = set.intersection(*dates_by_operand)
+    return max(common_dates) if common_dates else None
 
 
 def _operand_source_lineage(

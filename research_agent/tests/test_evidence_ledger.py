@@ -661,6 +661,16 @@ def test_material_calculations_require_exact_auditable_operands():
         "finance_lease_liability_noncurrent": 15.0,
     }
     assert by_metric["total_lease_liabilities"].date == "2026-06-30"
+    for metric_name in (
+        "cash_and_investments",
+        "total_debt",
+        "net_cash",
+        "operating_margin_ttm",
+        "net_margin_ttm",
+        "fcf_margin_ttm",
+        "current_ratio",
+    ):
+        assert by_metric[metric_name].date == "2026-06-30"
     assert by_metric["operating_margin_ttm"].unit == "percent"
     assert by_metric["net_margin_ttm"].unit == "percent"
     assert by_metric["fcf_margin_ttm"].unit == "percent"

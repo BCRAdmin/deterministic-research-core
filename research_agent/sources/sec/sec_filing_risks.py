@@ -34,6 +34,12 @@ _GENERIC_PREFIXES = (
     "risk factors should be read",
     "for a discussion of risk factors",
 )
+_GENERIC_RISK_HEADINGS = {
+    "generalriskfactors",
+    "riskfactorsgenerally",
+    "riskfactorsummary",
+    "summaryofriskfactors",
+}
 _TITLE_CASE_CONNECTORS = {
     "a",
     "an",
@@ -99,7 +105,8 @@ _BUSINESS_CONTEXT_DIRECT_ACTIVITY = re.compile(
 )
 _BUSINESS_CONTEXT_PROMOTIONAL_LANGUAGE = re.compile(
     r"\b(?:unmatched combination|unwavering focus|undisputable drive|"
-    r"best possible service|best value|best network)\b",
+    r"best possible service|best value|best network|"
+    r"win in (?:its|our|their) markets|win together)\b",
     re.IGNORECASE,
 )
 _BUSINESS_CONTEXT_SKIP_PREFIXES = (
@@ -558,7 +565,7 @@ def _is_risk_heading(text: str, *, emphasized: bool = False) -> bool:
         "riskfactors",
         "item1a",
         "item1ariskfactors",
-    }:
+    } | _GENERIC_RISK_HEADINGS:
         return False
     if stripped.startswith(("•", "●", "▪", "-")):
         return False

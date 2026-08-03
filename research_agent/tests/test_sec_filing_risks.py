@@ -157,6 +157,19 @@ def test_rejects_unemphasized_narrative_from_false_risk_section():
     assert extract_sec_risk_headings(html) == []
 
 
+def test_rejects_generic_risk_section_heading_as_evidence():
+    html = """
+    <html><body>
+      <div><strong>Item 1A. Risk Factors</strong></div>
+      <p><strong>General risk factors</strong></p>
+      <p>The following discussion describes the principal risks affecting the company.</p>
+      <div><strong>Item 1B. Unresolved Staff Comments</strong></div>
+    </body></html>
+    """
+
+    assert extract_sec_risk_headings(html) == []
+
+
 def test_extracts_business_context_only_from_annual_item_1():
     html = """
     <html><body>
@@ -407,6 +420,7 @@ def test_business_context_prefers_revenue_activity_over_promotional_puffery():
     <html><body>
       <p><strong>ITEM 1. BUSINESS</strong></p>
       <p>Our customers benefit from what we believe is an unmatched combination of the best value and best network, alongside an unwavering focus on offering them the best possible service experience and an undisputable drive for disruptive innovation in wireless and beyond.</p>
+      <p>We work with our customers to understand the service they need to win in their markets and then drive how we win together.</p>
       <p>We generate the majority of our service revenues by providing wireless communications and broadband services to postpaid and prepaid customers.</p>
       <div><strong>ITEM 1A. RISK FACTORS</strong></div>
     </body></html>

@@ -28,6 +28,7 @@ from research_agent.research_core.models.validation_report import ValidationRepo
 MISSING_FCF_SUPPORT_FOR_ACCUMULATE = "MISSING_FCF_SUPPORT_FOR_ACCUMULATE"
 HOLD_PENDING_FCF_SUPPORT_DISPLAY_RATING = "Hold Pending FCF Support"
 BALANCE_SHEET_DATE_MISMATCH_EXCLUDED = "BALANCE_SHEET_DATE_MISMATCH_EXCLUDED"
+MISSING_RISK_ANALYSIS = "MISSING_RISK_ANALYSIS"
 
 
 def calculate_quality_score(
@@ -435,6 +436,12 @@ def calculate_quality_score(
             reconciliation_warnings=reconciliation_warnings,
         )
     )
+    if (
+        coverage_gaps
+        and "missing_risk_analysis" in coverage_gaps
+        and MISSING_RISK_ANALYSIS not in manual_review_reasons
+    ):
+        manual_review_reasons.append(MISSING_RISK_ANALYSIS)
     if manual_review_reasons:
         publishable = False
     data_confidence_score = _data_confidence_score(
