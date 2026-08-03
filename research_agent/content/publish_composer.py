@@ -1664,11 +1664,22 @@ def _generic_investment_thesis(
             fundamentals.current_period_net_income_growth_yoy,
         )
     )
-    if scores.fundamental_score > 0 and current_profit_decline:
-        fundamental_text = (
-            "mixed fundamental picture: positive FCF alongside weaker "
-            "current-period profit comparisons"
-        )
+    if current_profit_decline:
+        if fundamentals.free_cash_flow_ttm is None:
+            fundamental_text = (
+                "pressured but incomplete fundamental picture driven by weaker "
+                "current-period profit comparisons and unavailable FCF"
+            )
+        elif fundamentals.free_cash_flow_ttm > 0:
+            fundamental_text = (
+                "mixed fundamental picture: positive FCF alongside weaker "
+                "current-period profit comparisons"
+            )
+        else:
+            fundamental_text = (
+                "pressured fundamental picture: weaker current-period profit "
+                "comparisons without positive FCF support"
+            )
     else:
         fundamental_direction = (
             "cautious"
@@ -1704,11 +1715,27 @@ def _final_rating_section(
         or decision_packet.rating_permission.reason
     )
     if scores.valuation_status == "unbenchmarked":
-        valuation_text = (
-            f"EV/Sales of {_fmt_multiple(v.ev_to_sales)} and P/FCF of "
-            f"{_fmt_multiple(v.price_to_fcf)} are unbenchmarked observations. "
-            "They add neither a positive nor a negative rating signal."
-        )
+        available_valuation = [
+            f"{label} of {_fmt_multiple(value)}"
+            for label, value in (
+                ("EV/Sales", v.ev_to_sales),
+                ("P/FCF", v.price_to_fcf),
+            )
+            if value is not None
+        ]
+        if available_valuation:
+            valuation_subject = " and ".join(available_valuation)
+            valuation_text = (
+                f"{valuation_subject} "
+                f"{'is an unbenchmarked observation' if len(available_valuation) == 1 else 'are unbenchmarked observations'}. "
+                f"{'It adds' if len(available_valuation) == 1 else 'They add'} neither "
+                "a positive nor a negative rating signal."
+            )
+        else:
+            valuation_text = (
+                "No measured valuation multiple is available; unbenchmarked "
+                "valuation cannot move the rating."
+            )
     elif scores.valuation_status != "measured":
         valuation_text = (
             "Valuation is not sufficiently measured and therefore cannot move "
@@ -1767,6 +1794,48 @@ def _final_rating_section(
             "Why not more cautious? Negative FCF is already fundamental downside "
             "evidence and is not dismissed. A more cautious permitted rating still "
             f"requires additional measured confirmation because {confirmation_text}."
+        )
+    elif (
+        f.free_cash_flow_ttm is None
+        and any(
+            value is not None and value < 0
+            for value in (
+                f.current_period_operating_income_growth_yoy,
+                f.current_period_net_income_growth_yoy,
+            )
+        )
+    ):
+        decline_labels = [
+            label
+            for label, value in (
+                (
+                    "operating-income",
+                    f.current_period_operating_income_growth_yoy,
+                ),
+                ("net-income", f.current_period_net_income_growth_yoy),
+            )
+            if value is not None and value < 0
+        ]
+        decline_text = " and ".join(decline_labels)
+        technical_counterevidence = (
+            " The bullish technical direction is counterevidence, but does not "
+            "erase those declines."
+            if scores.technical_score > 0
+            else ""
+        )
+        why_not_constructive = (
+            f"Why not more constructive? Current-period {decline_text} declines "
+            "are current downside evidence. FCF is unavailable, so cash conversion "
+            "cannot offset or confirm the reported weakness. A more constructive "
+            "rating requires improving profit comparisons and measurable cash-flow "
+            "support."
+        )
+        why_not_cautious = (
+            f"Why not more cautious? The {decline_text} declines are not dismissed."
+            f"{technical_counterevidence} One reported period does not establish "
+            "the cause or durability of the weakness; a more cautious rating "
+            "requires persistence or corroborating cash-flow deterioration once "
+            "cash conversion is measurable."
         )
     elif (
         f.equity is not None
@@ -1855,12 +1924,17 @@ def _final_rating_section(
             "Why not more cautious? A raw multiple or an isolated price signal cannot "
             "establish business deterioration."
         )
+    fcf_anchor = (
+        f"FCF of {_fmt_money(f.free_cash_flow_ttm, currency)}"
+        if f.free_cash_flow_ttm is not None
+        else "FCF unavailable"
+    )
     return "\n\n".join(
         [
             f"Final Rating: {rating}. {rating_reason}",
             (
                 f"Factual anchors are revenue of {_fmt_money(f.revenue_ttm, currency)}, "
-                f"FCF of {_fmt_money(f.free_cash_flow_ttm, currency)} and RSI of "
+                f"{fcf_anchor} and RSI of "
                 f"{_fmt_number(t.rsi_14)}. The available technical direction is "
                 f"{technical_text}."
             ),

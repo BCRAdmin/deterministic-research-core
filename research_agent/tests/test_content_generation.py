@@ -514,7 +514,8 @@ def test_sub_one_current_ratio_is_visible_without_claiming_distress():
     assert "current ratio is 0.77x" in constraint.claim
     assert "lease liabilities total $22.72B" in constraint.claim
     assert "does not by itself establish an inability" in constraint.claim
-    assert "working-capital models" in constraint.counterargument
+    assert "recurring receipts or rapid working-capital turnover" in constraint.counterargument
+    assert "Retail" not in constraint.counterargument
     assert constraint.metric_refs == [
         "current_ratio",
         "total_lease_liabilities",
@@ -921,6 +922,79 @@ def test_mixed_profit_declines_remain_visible_across_thesis_bear_and_rating():
     assert "current_period_operating_income_growth_yoy" in final_claim.metric_refs
     assert "current_period_net_income_growth_yoy" in final_claim.metric_refs
     assert "are measured counterevidence" in rating
+
+
+def test_missing_fcf_keeps_profit_declines_visible_across_complete_report_logic():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    metrics.fundamentals.free_cash_flow_ttm = None
+    metrics.fundamentals.current_period_revenue_growth_yoy = -0.007
+    metrics.fundamentals.current_period_operating_income_growth_yoy = -0.122
+    metrics.fundamentals.current_period_net_income_growth_yoy = -0.233
+    metrics.technical.close = 46.81
+    metrics.technical.sma_50 = 45.47
+    metrics.technical.sma_200 = 44.62
+    decision.signal_scores.fundamental_score = 0
+    decision.signal_scores.technical_score = 1
+    decision.signal_scores.technical_status = "partial"
+    decision.signal_scores.valuation_status = "unbenchmarked"
+    _add_exact_metric_evidence(data, metrics, ledger)
+
+    claims = generate_research_claims(
+        data,
+        metrics,
+        ledger,
+        decision,
+        validation,
+    )
+    financial_bull = next(
+        claim
+        for claim in claims
+        if claim.section == "Bull Case" and claim.claim_type == "financial_metric"
+    )
+    bear = next(claim for claim in claims if claim.section == "Bear Case")
+    final_claim = next(
+        claim
+        for claim in claims
+        if claim.section == "Final Rating & Action Plan"
+        and claim.claim_type == "rating"
+    )
+    thesis = _generic_investment_thesis("TEST", "Hold", metrics, decision)
+    rating = _final_rating_section(
+        "TEST",
+        "Hold",
+        metrics.fundamentals,
+        metrics.valuation,
+        metrics.technical,
+        decision,
+    )
+    research_report = compose_research_report(
+        data,
+        metrics,
+        validation,
+        decision,
+        ledger,
+        claims,
+    )
+
+    assert "unavailable FCF" in financial_bull.claim
+    assert "free_cash_flow_ttm" not in financial_bull.metric_refs
+    assert "operating-income and net-income declines" in bear.claim
+    assert "FCF is unavailable" in bear.claim
+    assert "bullish long-term trend state is counterevidence" in bear.claim
+    assert "pressured but incomplete" in thesis
+    assert "weaker current-period profit comparisons" in thesis
+    assert "pressured but incomplete" in final_claim.claim
+    assert "operating-income and net-income declines" in final_claim.claim
+    assert "Current-period operating-income and net-income declines" in rating
+    assert "FCF is unavailable" in rating
+    assert "FCF of not available" not in rating
+    assert "P/FCF of not available" not in rating
+    assert "bullish technical direction is counterevidence" in rating
+    assert "A raw multiple or an isolated price signal" not in rating
+    assert "Current-period operating-income and net-income declines" in research_report
+    assert "FCF is unavailable" in research_report
+    assert "bullish technical direction is counterevidence" in research_report
+    assert "A raw multiple or an isolated price signal" not in research_report
 
 
 def test_final_rating_names_partial_bullish_price_basis_precisely():

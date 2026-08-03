@@ -480,8 +480,8 @@ class _ClaimBuilder:
                 "high",
                 "high",
                 counterargument=(
-                    "Retail and other fast-turning working-capital models can operate "
-                    "with current liabilities above current assets."
+                    "Business models with recurring receipts or rapid working-capital "
+                    "turnover can operate with current liabilities above current assets."
                 ),
                 implication=(
                     "Assess the working-capital model, cash conversion, debt maturities "
@@ -824,17 +824,17 @@ class _ClaimBuilder:
                 f"{self._money(fcf_value)}. {cash_context}; a more constructive rating "
                 "requires comparable current-period evidence or technical confirmation."
             )
+        bull_metrics = ["revenue_ttm"]
+        if self.metrics.fundamentals.free_cash_flow_ttm is not None:
+            bull_metrics.append("free_cash_flow_ttm")
+        bull_metrics.extend(growth_metrics)
+        bull_metrics.extend(current_period_loss_metrics)
         self.add(
             "Bull Case",
             "bull",
             "financial_metric",
             bull_text,
-            [
-                "revenue_ttm",
-                "free_cash_flow_ttm",
-                *growth_metrics,
-                *current_period_loss_metrics,
-            ],
+            bull_metrics,
             "medium",
             "medium",
             counterargument=(
@@ -854,22 +854,24 @@ class _ClaimBuilder:
             implication="A more constructive research stance should require confirmation when the preferred rating is not Buy.",
         )
 
+        bear_metrics = []
         if self.metrics.fundamentals.free_cash_flow_ttm is not None:
-            bear_metrics = ["free_cash_flow_ttm"]
-            bear_metrics.extend(
-                metric
-                for metric, value in (
-                    (
-                        "current_period_operating_income_growth_yoy",
-                        self.metrics.fundamentals.current_period_operating_income_growth_yoy,
-                    ),
-                    (
-                        "current_period_net_income_growth_yoy",
-                        self.metrics.fundamentals.current_period_net_income_growth_yoy,
-                    ),
-                )
-                if value is not None and value < 0
+            bear_metrics.append("free_cash_flow_ttm")
+        bear_metrics.extend(
+            metric
+            for metric, value in (
+                (
+                    "current_period_operating_income_growth_yoy",
+                    self.metrics.fundamentals.current_period_operating_income_growth_yoy,
+                ),
+                (
+                    "current_period_net_income_growth_yoy",
+                    self.metrics.fundamentals.current_period_net_income_growth_yoy,
+                ),
             )
+            if value is not None and value < 0
+        )
+        if bear_metrics:
             bear_metrics.extend(
                 metric
                 for metric, value in (
@@ -1431,6 +1433,37 @@ def _bear_case_claim_text(
         )
         if value is not None and value < 0
     ]
+    if profit_declines and fcf_value is None:
+        decline_text = " and ".join(profit_declines)
+        decline_subject = (
+            f"{decline_text} decline"
+            if len(profit_declines) == 1
+            else f"{decline_text} declines"
+        )
+        trend_context = {
+            "bullish": (
+                "The bullish long-term trend state is counterevidence, but does "
+                "not erase the reported weakness."
+            ),
+            "bearish": (
+                "The bearish long-term trend state adds technical confirmation, "
+                "but does not establish the cause or durability of the weakness."
+            ),
+            "mixed": (
+                "The mixed long-term trend state neither confirms nor offsets "
+                "the reported weakness."
+            ),
+        }.get(
+            trend_state,
+            "The long-term technical trend is unavailable and adds no confirmation.",
+        )
+        return (
+            f"{ticker}'s current-period {decline_subject} "
+            f"{'is' if len(profit_declines) == 1 else 'are'} current downside "
+            f"evidence. FCF is unavailable, so the current packet cannot confirm "
+            f"or offset that weakness through cash conversion. {trend_context} "
+            "Persistence and cause still require separate confirmation."
+        )
     if profit_declines and fcf_value is not None and fcf_value > 0:
         decline_text = " and ".join(profit_declines)
         if trend_state == "bullish":
@@ -1919,12 +1952,24 @@ def _final_rating_claim_text(
         )
         if value is not None and value < 0
     ]
-    if decision.signal_scores.fundamental_score > 0 and current_profit_declines:
+    if current_profit_declines:
         decline_text = " and ".join(current_profit_declines)
-        fundamental_note = (
-            "The measured fundamental picture is mixed: positive scoring inputs "
-            f"do not erase current-period {decline_text} declines."
-        )
+        if metrics.fundamentals.free_cash_flow_ttm is None:
+            fundamental_note = (
+                "The measured fundamental picture is pressured but incomplete: "
+                f"current-period {decline_text} declines are measured while FCF "
+                "is unavailable."
+            )
+        elif metrics.fundamentals.free_cash_flow_ttm > 0:
+            fundamental_note = (
+                "The measured fundamental picture is mixed: positive FCF does "
+                f"not erase current-period {decline_text} declines."
+            )
+        else:
+            fundamental_note = (
+                "The measured fundamental picture is cautious: current-period "
+                f"{decline_text} declines lack positive FCF counterevidence."
+            )
     elif decision.signal_scores.fundamental_score < 0:
         fundamental_note = (
             "The measured fundamental signal is cautious and remains part of the "

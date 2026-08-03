@@ -309,13 +309,56 @@ def _render_final_rating_logic(
         valuation_line = "- Valuation status: benchmarked evidence is cautious."
     else:
         valuation_line = "- Valuation status: benchmarked evidence is neutral."
+    current_profit_declines = [
+        label
+        for label, value in (
+            (
+                "operating-income",
+                f.current_period_operating_income_growth_yoy,
+            ),
+            ("net-income", f.current_period_net_income_growth_yoy),
+        )
+        if value is not None and value < 0
+    ]
+    if current_profit_declines and f.free_cash_flow_ttm is None:
+        decline_text = " and ".join(current_profit_declines)
+        technical_counterevidence = (
+            " The bullish technical direction is counterevidence, but does not "
+            "erase those declines."
+            if scores.technical_score > 0
+            else ""
+        )
+        why_not_constructive = (
+            f"- Why not more constructive? Current-period {decline_text} declines "
+            "are current downside evidence. FCF is unavailable, so cash conversion "
+            "cannot offset or confirm the reported weakness. A more constructive "
+            "rating requires improving profit comparisons and measurable cash-flow "
+            "support."
+        )
+        why_not_cautious = (
+            f"- Why not more cautious? The {decline_text} declines are not dismissed."
+            f"{technical_counterevidence} One reported period does not establish "
+            "the cause or durability of the weakness; a more cautious rating "
+            "requires persistence or corroborating cash-flow deterioration once "
+            "cash conversion is measurable."
+        )
+    else:
+        why_not_constructive = (
+            "- Why not more constructive? A rating change requires stronger measured "
+            "fundamentals or technical confirmation and, where valuation is relevant, "
+            "benchmark evidence."
+        )
+        why_not_cautious = (
+            "- Why not more cautious? A raw multiple or an isolated price signal "
+            "cannot establish business deterioration."
+        )
     lines = [
         f"- Why this rating? `{preferred}`: {rating_reason}",
         f"- Fundamental anchors: revenue is `{_fmt_money(f.revenue_ttm, currency)}` and FCF is `{_fmt_money(f.free_cash_flow_ttm, currency)}`.",
         valuation_line,
         f"- Technical context: RSI is `{_fmt_number(t.rsi_14)}`; its directional role is limited to the measured technical score.",
-        "- Why not more constructive? A rating change requires stronger measured fundamentals or technical confirmation and, where valuation is relevant, benchmark evidence.",
-        "- Why not more cautious? A raw multiple or an isolated price signal cannot establish business deterioration.",
+        why_not_constructive,
+        why_not_cautious,
         f"- Review condition: retain `{data_packet.ticker}` at `{preferred}` while the measured evidence state is unchanged; reassess only when new primary evidence changes fundamentals, benchmarked valuation or the technical trend.",
     ]
     return "\n".join(lines)
