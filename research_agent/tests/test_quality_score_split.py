@@ -192,6 +192,37 @@ def test_gold_report_without_risk_claim_is_incomplete():
     assert quality.publishable is False
 
 
+def test_missing_core_claim_dimensions_are_named_for_manual_review():
+    quality = calculate_quality_score(
+        validation_report=_validation("GENERIC"),
+        audit_report=_audit("GENERIC"),
+        decision_packet=_decision("GENERIC", Rating.HOLD),
+        final_markdown=_gold_text(),
+        analyst_claim_count=6,
+        substantive_analyst_claim_count=5,
+        substantive_claim_ratio=5 / 6,
+        evidence_mapped_claim_ratio=1.0,
+        hard_claim_evidence_ratio=1.0,
+        data_limitation_claim_count=0,
+        current_period_kpi_claim_count=1,
+        current_period_kpi_metric_count=2,
+        ticker_specific_kpi_claim_count=4,
+        final_rating_rationale_quality=90,
+        mechanical_rating_language_count=0,
+        generic_claim_ratio=0.0,
+        company_specific_claim_count=0,
+        valuation_specific_claim_count=1,
+        technical_specific_claim_count=1,
+        rating_rationale_claim_count=1,
+        risk_specific_claim_count=1,
+    )
+
+    assert quality.manual_review_reasons == [
+        "MISSING_CURRENT_PERIOD_KPI_CONTEXT",
+        "MISSING_COMPANY_SPECIFIC_ANALYSIS",
+    ]
+
+
 def test_manual_review_reason_blocks_compact_complete_report():
     validation = _validation("MCD").model_copy(
         update={

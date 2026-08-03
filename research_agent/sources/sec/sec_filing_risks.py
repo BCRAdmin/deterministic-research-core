@@ -40,6 +40,13 @@ _GENERIC_RISK_HEADINGS = {
     "riskfactorsummary",
     "summaryofriskfactors",
 }
+_RISK_SECTION_END = re.compile(
+    r"^(?:LEGAL PROCEEDINGS|MINE SAFETY DISCLOSURES|PROPERTIES|"
+    r"UNRESOLVED STAFF COMMENTS)(?:[.:]|$)"
+)
+_BUSINESS_ABOUT_HEADING = re.compile(
+    r"^ABOUT [A-Z][A-Z0-9&.,'’ -]{1,80}[.]\s+"
+)
 _TITLE_CASE_CONNECTORS = {
     "a",
     "an",
@@ -87,8 +94,9 @@ _BUSINESS_CONTEXT_IDENTITY = re.compile(
 _BUSINESS_CONTEXT_NAMED_IDENTITY = re.compile(
     r"^[A-Z][A-Za-z0-9&.,'’ -]{1,60}\s+(?:is|are)\s+"
     r"(?:(?:one of the|a|an)\s+)?"
+    r"(?:(?:[A-Za-z&-]+)\s+){0,4}"
     r"(?:collection of businesses|group of companies|holding company|"
-    r"provider|manufacturer|operator|developer|retailer|franchisor|"
+    r"leader|provider|manufacturer|operator|developer|retailer|franchisor|"
     r"(?:(?:[A-Za-z&]+)\s+){1,6}company)\b"
 )
 _BUSINESS_CONTEXT_REVENUE_ACTIVITY = re.compile(
@@ -102,6 +110,11 @@ _BUSINESS_CONTEXT_DIRECT_ACTIVITY = re.compile(
     r"(?:build|create|deliver|design|develop|distribute|help|manufacture|"
     r"offer|operate|provide|sell|serve)\b",
     re.IGNORECASE,
+)
+_BUSINESS_CONTEXT_NAMED_ACTIVITY = re.compile(
+    r"^[A-Z][A-Za-z0-9&.,'’() -]{1,90}\s+"
+    r"(?:builds|creates|delivers|designs|develops|distributes|helps|"
+    r"manufactures|offers|operates|provides|sells|serves)\b"
 )
 _BUSINESS_CONTEXT_PROMOTIONAL_LANGUAGE = re.compile(
     r"\b(?:unmatched combination|unwavering focus|undisputable drive|"
@@ -271,7 +284,7 @@ def extract_sec_risk_headings(html: str) -> list[str]:
     starts = [
         index
         for index, (block, _) in enumerate(blocks)
-        if _compact_heading(block) in {"riskfactors", "item1ariskfactors"}
+        if _is_risk_section_start(blocks, index)
     ]
     best: list[str] = []
     for start in starts:
@@ -280,6 +293,7 @@ def extract_sec_risk_headings(html: str) -> list[str]:
                 index
                 for index in range(start + 1, len(blocks))
                 if _is_later_item_heading(blocks[index][0])
+                or _RISK_SECTION_END.match(blocks[index][0].strip())
             ),
             len(blocks),
         )
@@ -303,14 +317,18 @@ def extract_sec_risk_headings(html: str) -> list[str]:
                 continue
             candidate = block
             candidate_emphasized = emphasized
+            explicit_inline_heading = False
             if not emphasized:
                 inline_heading = _inline_title_case_risk_heading(block)
                 if inline_heading:
                     candidate = inline_heading
                     candidate_emphasized = True
+                elif inline_heading := _inline_dash_risk_heading(block):
+                    candidate = inline_heading
+                    explicit_inline_heading = True
                 elif not summary_mode:
                     continue
-            if not _is_risk_heading(
+            if not explicit_inline_heading and not _is_risk_heading(
                 candidate,
                 emphasized=candidate_emphasized,
             ):
@@ -334,13 +352,7 @@ def extract_sec_business_context(html: str) -> list[str]:
     starts = [
         index
         for index, (block, _) in enumerate(blocks)
-        if _compact_heading(block)
-        in {
-            "item1business",
-            "items1and2businessandproperties",
-            "businesssummary",
-            "descriptionofthebusiness",
-        }
+        if _is_business_section_start(block)
     ]
     best: list[str] = []
     for start in starts:
@@ -348,11 +360,11 @@ def extract_sec_business_context(html: str) -> list[str]:
             (
                 index
                 for index in range(start + 1, len(blocks))
-                if _compact_heading(blocks[index][0]).startswith("item1a")
+                if _is_risk_section_start_text(blocks[index][0])
             ),
             len(blocks),
         )
-        section = blocks[start + 1 : min(end, start + 81)]
+        section = blocks[start : min(end, start + 81)]
         candidates = [
             (index, fragment)
             for index, (text, emphasized) in enumerate(section)
@@ -377,7 +389,10 @@ def extract_sec_business_context(html: str) -> list[str]:
                     (
                         text
                         for _, text in candidates
-                        if _BUSINESS_CONTEXT_DIRECT_ACTIVITY.search(text)
+                        if (
+                            _BUSINESS_CONTEXT_DIRECT_ACTIVITY.search(text)
+                            or _BUSINESS_CONTEXT_NAMED_ACTIVITY.search(text)
+                        )
                         and _business_context_score(text) >= 3
                     ),
                     next(
@@ -406,7 +421,10 @@ def extract_sec_business_context(html: str) -> list[str]:
                 candidates,
                 key=lambda item: (
                     bool(_BUSINESS_CONTEXT_REVENUE_ACTIVITY.search(item[1])),
-                    bool(_BUSINESS_CONTEXT_DIRECT_ACTIVITY.search(item[1])),
+                    bool(
+                        _BUSINESS_CONTEXT_DIRECT_ACTIVITY.search(item[1])
+                        or _BUSINESS_CONTEXT_NAMED_ACTIVITY.search(item[1])
+                    ),
                     _business_context_score(item[1]),
                     -item[0],
                 ),
@@ -555,6 +573,40 @@ def _is_later_item_heading(text: str) -> bool:
     )
 
 
+def _is_risk_section_start(
+    blocks: list[tuple[str, bool]],
+    index: int,
+) -> bool:
+    text, emphasized = blocks[index]
+    compact = _compact_heading(text)
+    if compact in {"item1ariskfactors", "item1a"}:
+        return True
+    if compact == "riskfactors":
+        next_text = blocks[index + 1][0].strip() if index + 1 < len(blocks) else ""
+        if not emphasized and re.fullmatch(r"(?:page\s*)?\d+(?:-\d+)?", next_text, re.IGNORECASE):
+            return False
+        return True
+    return _is_risk_section_start_text(text)
+
+
+def _is_risk_section_start_text(text: str) -> bool:
+    stripped = text.strip()
+    return bool(
+        re.match(r"^(?:item\s*1a[.\s:-]*)?risk factors(?:[.:]|$)", stripped, re.IGNORECASE)
+    )
+
+
+def _is_business_section_start(text: str) -> bool:
+    if _compact_heading(text) in {
+        "item1business",
+        "items1and2businessandproperties",
+        "businesssummary",
+        "descriptionofthebusiness",
+    }:
+        return True
+    return bool(_BUSINESS_ABOUT_HEADING.match(text.strip()))
+
+
 def _is_risk_heading(text: str, *, emphasized: bool = False) -> bool:
     stripped = text.strip()
     lowered = stripped.lower()
@@ -591,6 +643,22 @@ def _inline_title_case_risk_heading(text: str) -> str | None:
     if ". " in prefix or not _looks_like_title_case_heading(prefix):
         return None
     return prefix if _is_risk_heading(prefix, emphasized=True) else None
+
+
+def _inline_dash_risk_heading(text: str) -> str | None:
+    """Return a concise issuer label joined to its risk narrative by a dash."""
+
+    prefix, separator, narrative = text.strip().partition(" - ")
+    if not separator or not 4 <= len(prefix) <= 120 or len(narrative.strip()) < 40:
+        return None
+    if prefix.isupper() or any(character.isdigit() for character in prefix):
+        return None
+    words = re.findall(r"[A-Za-z][A-Za-z&/'’\-]*", prefix)
+    if not 1 <= len(words) <= 12:
+        return None
+    if _GENERIC_RISK_CATEGORY.fullmatch(prefix) or not _RISK_LANGUAGE.search(narrative):
+        return None
+    return prefix
 
 
 def _looks_like_title_case_heading(text: str) -> bool:

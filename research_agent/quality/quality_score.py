@@ -29,6 +29,8 @@ MISSING_FCF_SUPPORT_FOR_ACCUMULATE = "MISSING_FCF_SUPPORT_FOR_ACCUMULATE"
 HOLD_PENDING_FCF_SUPPORT_DISPLAY_RATING = "Hold Pending FCF Support"
 BALANCE_SHEET_DATE_MISMATCH_EXCLUDED = "BALANCE_SHEET_DATE_MISMATCH_EXCLUDED"
 MISSING_RISK_ANALYSIS = "MISSING_RISK_ANALYSIS"
+MISSING_CURRENT_PERIOD_KPI_CONTEXT = "MISSING_CURRENT_PERIOD_KPI_CONTEXT"
+MISSING_COMPANY_SPECIFIC_ANALYSIS = "MISSING_COMPANY_SPECIFIC_ANALYSIS"
 
 
 def calculate_quality_score(
@@ -436,12 +438,15 @@ def calculate_quality_score(
             reconciliation_warnings=reconciliation_warnings,
         )
     )
-    if (
-        coverage_gaps
-        and "missing_risk_analysis" in coverage_gaps
-        and MISSING_RISK_ANALYSIS not in manual_review_reasons
-    ):
-        manual_review_reasons.append(MISSING_RISK_ANALYSIS)
+    coverage_review_reasons = {
+        "missing_current_period_context": MISSING_CURRENT_PERIOD_KPI_CONTEXT,
+        "missing_company_specific_analysis": MISSING_COMPANY_SPECIFIC_ANALYSIS,
+        "missing_risk_analysis": MISSING_RISK_ANALYSIS,
+    }
+    for gap in coverage_gaps or []:
+        reason = coverage_review_reasons.get(gap)
+        if reason and reason not in manual_review_reasons:
+            manual_review_reasons.append(reason)
     if manual_review_reasons:
         publishable = False
     data_confidence_score = _data_confidence_score(

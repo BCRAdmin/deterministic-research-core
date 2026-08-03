@@ -126,6 +126,43 @@ def test_extracts_title_case_heading_merged_with_risk_narrative():
     ]
 
 
+def test_extracts_dash_labeled_risks_from_narrative_heading_not_toc():
+    html = """
+    <html><body>
+      <div>Risk Factors</div><div>24</div>
+      <p>ABOUT THE COMPANY. The company manufactures aerospace products and provides aftermarket services.</p>
+      <p>RISK FACTORS. The following discussion describes material factors that may make an investment risky.</p>
+      <p>STRATEGIC RISKS. Strategic risk relates to future business plans.</p>
+      <p>Commercial aviation sector - Our financial performance may be adversely affected by cyclical demand and weaker customers.</p>
+      <p>Supply chain - Significant input shortages and supplier disruptions could delay production and increase costs.</p>
+      <p>LEGAL PROCEEDINGS. Refer to the financial statement notes.</p>
+      <p><strong>COMPONENTS OF DEFERRED TAX ASSETS AND LIABILITIES</strong></p>
+    </body></html>
+    """
+
+    assert extract_sec_risk_headings(html) == [
+        "Commercial aviation sector",
+        "Supply chain",
+    ]
+
+
+def test_extracts_business_context_from_about_company_heading():
+    html = """
+    <html><body>
+      <p>ABOUT GE AEROSPACE. General Electric Company operates as GE Aerospace. GE Aerospace is a global aerospace leader with a large commercial propulsion fleet.</p>
+      <p>SEGMENTS. GE Aerospace operates through two reportable segments: Commercial Engines &amp; Services and Defense &amp; Propulsion Technologies.</p>
+      <p>COMMERCIAL ENGINES &amp; SERVICES. The segment designs, develops, manufactures and services jet engines for commercial airframes.</p>
+      <p>RISK FACTORS. The following discussion describes material risks.</p>
+    </body></html>
+    """
+
+    assert extract_sec_business_context(html) == [
+        "GE Aerospace is a global aerospace leader with a large commercial propulsion fleet.",
+        "GE Aerospace operates through two reportable segments: Commercial Engines & Services and Defense & Propulsion Technologies.",
+        "The segment designs, develops, manufactures and services jet engines for commercial airframes.",
+    ]
+
+
 def test_extracts_split_risk_heading_across_repeated_item_1a_page_headers():
     html = """
     <html><body>
