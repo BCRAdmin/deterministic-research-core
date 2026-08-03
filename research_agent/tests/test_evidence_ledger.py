@@ -752,7 +752,11 @@ def test_trailing_eps_fallback_is_evidenced_from_income_and_share_basis():
             economic_share_count=10.0,
             trailing_eps=10.0,
         ),
-        valuation=ValuationMetrics(trailing_pe=10.0),
+        valuation=ValuationMetrics(
+            market_cap=1_000.0,
+            market_cap_share_basis="economic_share_count",
+            trailing_pe=10.0,
+        ),
     )
     runtime_evidence = [
         EvidenceItem(
@@ -818,4 +822,8 @@ def test_trailing_eps_fallback_is_evidenced_from_income_and_share_basis():
     assert by_metric["trailing_pe"].formula_operands == {
         "close": 100.0,
         "trailing_eps": 10.0,
+    }
+    assert by_metric["market_cap"].formula_operands == {
+        "close": 100.0,
+        "economic_share_count": 10.0,
     }

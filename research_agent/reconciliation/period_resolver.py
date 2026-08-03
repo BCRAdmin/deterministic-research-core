@@ -41,6 +41,7 @@ INSTANT_METRICS = {
     "treasury_stock_value",
     "treasury_share_count",
     "listed_share_count",
+    "economic_share_count",
 }
 
 

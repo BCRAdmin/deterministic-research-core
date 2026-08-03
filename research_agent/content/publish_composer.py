@@ -10,6 +10,9 @@ from research_agent.evidence.evidence_ledger import EvidenceLedger
 from research_agent.research_core.models.claims import ResearchClaim
 from research_agent.research_core.models.data_packet import DataPacket
 from research_agent.research_core.models.metrics_packet import MetricsPacket
+from research_agent.research_core.calculations.fundamentals import (
+    current_operating_profit_decline_metrics,
+)
 
 
 PUBLISH_MECHANICAL_PHRASES = {
@@ -1657,12 +1660,8 @@ def _generic_investment_thesis(
         )
     else:
         cash_text = "FCF is unavailable and cannot support the thesis"
-    current_profit_decline = any(
-        value is not None and value < 0
-        for value in (
-            fundamentals.current_period_operating_income_growth_yoy,
-            fundamentals.current_period_net_income_growth_yoy,
-        )
+    current_profit_decline = bool(
+        current_operating_profit_decline_metrics(fundamentals)
     )
     if current_profit_decline:
         if fundamentals.free_cash_flow_ttm is None:
@@ -1720,6 +1719,9 @@ def _final_rating_section(
             for label, value in (
                 ("EV/Sales", v.ev_to_sales),
                 ("P/FCF", v.price_to_fcf),
+                ("trailing P/E", v.trailing_pe),
+                ("forward P/E consensus", v.forward_pe_consensus),
+                ("forward P/E guidance", v.forward_pe_guidance),
             )
             if value is not None
         ]
@@ -1797,24 +1799,19 @@ def _final_rating_section(
         )
     elif (
         f.free_cash_flow_ttm is None
-        and any(
-            value is not None and value < 0
-            for value in (
-                f.current_period_operating_income_growth_yoy,
-                f.current_period_net_income_growth_yoy,
-            )
-        )
+        and current_operating_profit_decline_metrics(f)
     ):
+        decline_metrics = set(current_operating_profit_decline_metrics(f))
         decline_labels = [
             label
-            for label, value in (
+            for label, metric_name in (
                 (
                     "operating-income",
-                    f.current_period_operating_income_growth_yoy,
+                    "current_period_operating_income_growth_yoy",
                 ),
-                ("net-income", f.current_period_net_income_growth_yoy),
+                ("net-income", "current_period_net_income_growth_yoy"),
             )
-            if value is not None and value < 0
+            if metric_name in decline_metrics
         ]
         decline_text = " and ".join(decline_labels)
         technical_counterevidence = (
@@ -1857,24 +1854,19 @@ def _final_rating_section(
     elif (
         f.free_cash_flow_ttm is not None
         and f.free_cash_flow_ttm > 0
-        and any(
-            value is not None and value < 0
-            for value in (
-                f.current_period_operating_income_growth_yoy,
-                f.current_period_net_income_growth_yoy,
-            )
-        )
+        and current_operating_profit_decline_metrics(f)
     ):
+        decline_metrics = set(current_operating_profit_decline_metrics(f))
         decline_labels = [
             label
-            for label, value in (
+            for label, metric_name in (
                 (
                     "operating-income",
-                    f.current_period_operating_income_growth_yoy,
+                    "current_period_operating_income_growth_yoy",
                 ),
-                ("net-income", f.current_period_net_income_growth_yoy),
+                ("net-income", "current_period_net_income_growth_yoy"),
             )
-            if value is not None and value < 0
+            if metric_name in decline_metrics
         ]
         decline_text = " and ".join(decline_labels)
         counterevidence_subject = (

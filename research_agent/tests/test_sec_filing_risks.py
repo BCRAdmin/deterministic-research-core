@@ -197,6 +197,24 @@ def test_extracts_business_context_only_from_annual_item_1():
     assert len({event["evidence_id"] for event in payload["events"]}) == 2
 
 
+def test_business_context_preserves_two_distinct_segment_descriptions():
+    html = """
+    <html><body>
+      <div><strong>ITEM 1. BUSINESS</strong></div>
+      <p>We are a global media and technology company that provides connectivity services and creates content and experiences for customers.</p>
+      <p>Our Connectivity business is reported in the Residential Connectivity and Business Services segments.</p>
+      <p>Our Content business is reported in the Media, Studios and Theme Parks segments.</p>
+      <div><strong>ITEM 1A. RISK FACTORS</strong></div>
+    </body></html>
+    """
+
+    assert extract_sec_business_context(html) == [
+        "We are a global media and technology company that provides connectivity services and creates content and experiences for customers.",
+        "Our Connectivity business is reported in the Residential Connectivity and Business Services segments.",
+        "Our Content business is reported in the Media, Studios and Theme Parks segments.",
+    ]
+
+
 def test_extracts_business_context_from_cross_referenced_annual_report():
     html = """
     <html><body>

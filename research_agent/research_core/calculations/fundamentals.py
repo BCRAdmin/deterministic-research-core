@@ -15,7 +15,7 @@ def safe_divide(numerator: Optional[float], denominator: Optional[float]):
 def current_profit_growth_divergence_metrics(
     fundamentals: FundamentalMetrics,
 ) -> tuple[str, ...]:
-    """Return profit-growth metrics that outrun revenue by a review threshold."""
+    """Return extreme profit comparisons that diverge from current revenue."""
 
     revenue_growth = fundamentals.current_period_revenue_growth_yoy
     if revenue_growth is None:
@@ -33,8 +33,37 @@ def current_profit_growth_divergence_metrics(
             ),
         )
         if value is not None
-        and value >= 0.75
-        and value - revenue_growth >= 0.75
+        and (
+            (value >= 0.75 and value - revenue_growth >= 0.75)
+            or (value <= -0.50 and revenue_growth - value >= 0.50)
+        )
+    )
+
+
+def current_operating_profit_decline_metrics(
+    fundamentals: FundamentalMetrics,
+) -> tuple[str, ...]:
+    """Return measured declines usable as operating-direction evidence.
+
+    Extreme profit/revenue divergences remain reported arithmetic, but are
+    excluded from operating-direction language until a causal filing bridge
+    explains the base effect or non-recurring item.
+    """
+
+    distorted = set(current_profit_growth_divergence_metrics(fundamentals))
+    return tuple(
+        metric_name
+        for metric_name, value in (
+            (
+                "current_period_operating_income_growth_yoy",
+                fundamentals.current_period_operating_income_growth_yoy,
+            ),
+            (
+                "current_period_net_income_growth_yoy",
+                fundamentals.current_period_net_income_growth_yoy,
+            ),
+        )
+        if value is not None and value < 0 and metric_name not in distorted
     )
 
 

@@ -1021,7 +1021,12 @@ def _latest_balance_sheet_date(canonical: CanonicalFinancials) -> Optional[str]:
         metric.end_date
         for metric in canonical.metrics
         if metric.statement_type == "balance_sheet"
-        and metric.metric_name not in {"listed_share_count", "treasury_share_count"}
+        and metric.metric_name
+        not in {
+            "economic_share_count",
+            "listed_share_count",
+            "treasury_share_count",
+        }
         and metric.end_date
         and _is_current_metric(canonical, metric)
     ]
@@ -1268,6 +1273,7 @@ def _statement_type(metric_name: str):
         "treasury_stock_value",
         "treasury_share_count",
         "listed_share_count",
+        "economic_share_count",
     }:
         return "balance_sheet"
     if "guidance" in metric_name:

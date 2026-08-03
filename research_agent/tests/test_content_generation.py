@@ -416,6 +416,87 @@ def test_bull_case_does_not_call_extreme_profit_divergence_business_direction():
     assert "establishes current business direction" not in bull_claim.claim
 
 
+def test_extreme_negative_profit_divergence_is_not_operating_downside_evidence():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    metrics.fundamentals.free_cash_flow_ttm = 20_440_000_000
+    metrics.fundamentals.current_period_revenue_growth_yoy = -0.012
+    metrics.fundamentals.current_period_operating_income_growth_yoy = -0.139
+    metrics.fundamentals.current_period_net_income_growth_yoy = -0.683
+    canonical = CanonicalFinancials(
+        ticker=data.ticker,
+        as_of_date=data.as_of_date,
+        metrics=[
+            CanonicalMetric(
+                metric_name=metric_name,
+                value=value,
+                unit="USD",
+                period="FY2026_Q2",
+                fiscal_year=2026,
+                fiscal_period="Q2",
+                period_bucket="quarterly",
+                start_date="2026-04-01",
+                end_date="2026-06-30",
+                duration_days=90,
+                basis="gaap",
+                statement_type="income_statement",
+                source_ids=["GENERIC_SEC_Q2"],
+                confidence="high",
+            )
+            for metric_name, value in (
+                ("revenue", 29_940_000_000),
+                ("operating_income", 5_160_000_000),
+                ("net_income", 3_526_000_000),
+            )
+        ],
+    )
+    _add_exact_metric_evidence(data, metrics, ledger)
+
+    claims = generate_research_claims(
+        data,
+        metrics,
+        ledger,
+        decision,
+        validation,
+        canonical,
+    )
+    bull = next(
+        claim
+        for claim in claims
+        if claim.section == "Bull Case" and claim.claim_type == "financial_metric"
+    )
+    bear = next(claim for claim in claims if claim.section == "Bear Case")
+    final_claim = next(
+        claim
+        for claim in claims
+        if claim.section == "Final Rating & Action Plan"
+        and claim.claim_type == "rating"
+    )
+    final_section = _final_rating_section(
+        "TEST",
+        "Hold",
+        metrics.fundamentals,
+        metrics.valuation,
+        metrics.technical,
+        decision,
+    )
+
+    assert "requires base-effect or one-off review" in bull.claim
+    assert (
+        "without causal filing evidence in the current packet, that comparison "
+        "does not establish operating business direction"
+    ) in bull.claim
+    assert (
+        "Separately, operating-income decline 13.9% remains measured "
+        "current-period downside evidence"
+    ) in bull.claim
+    assert "operating-income decline" in bear.claim
+    assert "net-income decline" not in bear.claim
+    assert "operating-income declines" in final_claim.claim
+    assert "net-income declines" not in final_claim.claim
+    assert "Current-period operating-income declines" in final_section
+    assert "net-income declines" not in final_section
+
+
 def test_bull_case_calls_mixed_growth_mixed_not_business_direction():
     data, metrics, validation, ledger, decision = _load_packet("SNOW")
     metrics.fundamentals.current_period_revenue_growth_yoy = 0.002
@@ -810,6 +891,26 @@ def test_final_rating_acknowledges_negative_fcf_before_defending_hold():
     assert "valuation is unbenchmarked" in section
     assert "the technical basis is partial" in section
     assert "A raw multiple or an isolated price signal" not in section
+
+
+def test_final_rating_preserves_measured_unbenchmarked_trailing_pe():
+    _, metrics, _, _, decision = _load_packet("SNOW")
+    metrics.valuation.ev_to_sales = None
+    metrics.valuation.price_to_fcf = None
+    metrics.valuation.trailing_pe = 7.68
+    decision.signal_scores.valuation_status = "unbenchmarked"
+
+    section = _final_rating_section(
+        "TEST",
+        "Hold",
+        metrics.fundamentals,
+        metrics.valuation,
+        metrics.technical,
+        decision,
+    )
+
+    assert "trailing P/E of 7.68x is an unbenchmarked observation" in section
+    assert "No measured valuation multiple is available" not in section
 
 
 def test_final_rating_balances_non_positive_equity_against_positive_fcf():

@@ -71,7 +71,8 @@ _BUSINESS_CONTEXT_IDENTITY = re.compile(
     r"^(?:we|the company|the issuer)\s+(?:are|is)\s+"
     r"(?:(?:one of the|a|an)\s+)?"
     r"(?:(?:leading|global|major|largest|specialty)\s+)?"
-    r"(?:provider|manufacturer|operator|developer|retailer|franchisor)\b",
+    r"(?:provider|manufacturer|operator|developer|retailer|franchisor|"
+    r"(?:(?:[a-z]+|&)\s+){1,6}company)\b",
     re.IGNORECASE,
 )
 _BUSINESS_CONTEXT_REVENUE_ACTIVITY = re.compile(
@@ -353,21 +354,18 @@ def extract_sec_business_context(html: str) -> list[str]:
             ),
         )
         selected = [activity]
-        segment = next(
-            (
-                text
-                for _, text in candidates
-                if text != activity
-                and "segment" in text.lower()
-                and _business_context_score(text) >= 2
-            ),
-            None,
-        )
-        if segment:
-            selected.append(segment)
+        for _, segment in candidates:
+            if (
+                segment not in selected
+                and "segment" in segment.lower()
+                and _business_context_score(segment) >= 2
+            ):
+                selected.append(segment)
+            if len(selected) == 3:
+                break
         if len(selected) > len(best):
             best = selected
-    return best[:2]
+    return best[:3]
 
 
 def build_sec_business_context_payload(

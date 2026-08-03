@@ -279,6 +279,26 @@ def test_auditor_accepts_neutral_unbenchmarked_valuation_observation():
     assert not neutral_label.has_issue("UNBENCHMARKED_VALUATION_DIRECTION")
 
 
+def test_auditor_blocks_false_missingness_when_trailing_pe_is_measured():
+    metrics = simple_metrics(ticker="GENERIC")
+    metrics.valuation.ev_to_sales = None
+    metrics.valuation.trailing_pe = 7.68
+    decision = build_decision_packet(metrics)
+
+    audit = audit_markdown_report(
+        markdown=(
+            "Final Rating: Hold. No measured valuation multiple is available; "
+            "unbenchmarked valuation cannot move the rating."
+        ),
+        metrics_packet=metrics,
+        decision_packet=decision,
+        ticker="GENERIC",
+    )
+
+    assert audit.has_issue("MEASURED_VALUATION_MISSINGNESS_CONTRADICTION")
+    assert audit.has_blocking_errors
+
+
 def test_auditor_blocks_currency_that_conflicts_with_evidence_ledger():
     metrics = simple_metrics(ticker="ANY", revenue_ttm=65_510_000_000)
     ledger = EvidenceLedger(
@@ -490,6 +510,29 @@ def test_auditor_requires_context_for_extreme_profit_revenue_divergence():
     assert "at least 75%" in growth_issues[0].message
     assert "base effects" in growth_issues[0].message
     assert not audit.has_blocking_errors
+
+
+def test_auditor_reviews_extreme_negative_profit_revenue_divergence():
+    metrics = simple_metrics(ticker="BASE")
+    metrics.fundamentals.current_period_revenue_growth_yoy = -0.012
+    metrics.fundamentals.current_period_operating_income_growth_yoy = -0.139
+    metrics.fundamentals.current_period_net_income_growth_yoy = -0.683
+
+    audit = audit_markdown_report(
+        "## Executive Summary\nValidated skeleton.",
+        metrics,
+        ticker="BASE",
+    )
+    issues = [
+        issue
+        for issue in audit.issues
+        if issue.metric == "current_period_net_income_growth_yoy"
+    ]
+
+    assert len(issues) == 1
+    assert issues[0].code == "GUARD_THRESHOLD_REVIEW"
+    assert issues[0].severity == "warning"
+    assert "Profit decline of at least 50%" in issues[0].message
 
 
 def test_auditor_catches_long_stop_above_entry_in_markdown():

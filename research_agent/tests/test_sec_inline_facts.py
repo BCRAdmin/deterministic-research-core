@@ -3,6 +3,7 @@ import json
 from research_agent.sources.sec.sec_filing_risks import SecFilingReference
 from research_agent.sources.sec.sec_inline_facts import (
     build_sec_inline_debt_supplement_payload,
+    build_sec_inline_fact_supplement_payload,
     load_sec_inline_fact_supplement,
     save_sec_inline_fact_supplement,
 )
@@ -105,3 +106,38 @@ def test_does_not_duplicate_current_companyfacts_debt():
         )
         is None
     )
+
+
+def test_sums_current_cover_page_stock_classes_as_economic_shares(tmp_path):
+    html = _html().replace(
+        "<table>",
+        """
+        <xbrli:context id="class-a"><xbrli:entity><xbrli:identifier>1283699</xbrli:identifier><xbrli:segment><xbrldi:explicitMember dimension="us-gaap:StatementClassOfStockAxis">us-gaap:CommonClassAMember</xbrldi:explicitMember></xbrli:segment></xbrli:entity><xbrli:period><xbrli:instant>2026-07-15</xbrli:instant></xbrli:period></xbrli:context>
+        <xbrli:context id="class-b"><xbrli:entity><xbrli:identifier>1283699</xbrli:identifier><xbrli:segment><xbrldi:explicitMember dimension="us-gaap:StatementClassOfStockAxis">us-gaap:CommonClassBMember</xbrldi:explicitMember></xbrli:segment></xbrli:entity><xbrli:period><xbrli:instant>2026-07-15</xbrli:instant></xbrli:period></xbrli:context>
+        <p>As of July 15, 2026, there were
+          <ix:nonFraction unitRef="shares" contextRef="class-a" name="dei:EntityCommonStockSharesOutstanding" scale="0">3,539,192,198</ix:nonFraction>
+          Class A shares and
+          <ix:nonFraction unitRef="shares" contextRef="class-b" name="dei:EntityCommonStockSharesOutstanding" scale="0">9,444,375</ix:nonFraction>
+          Class B shares outstanding.
+        </p>
+        <table>
+        """,
+        1,
+    )
+    payload = build_sec_inline_fact_supplement_payload(
+        ticker="CMCSA",
+        filing=_filing(),
+        html=html,
+        companyfacts=_companyfacts(with_debt=True),
+        retrieved_at="2026-08-03T04:00:00+00:00",
+    )
+
+    assert payload is not None
+    assert len(payload["facts"]) == 1
+    assert payload["facts"][0]["metric_name"] == "economic_share_count"
+    assert payload["facts"][0]["value"] == 3_548_636_573
+    assert payload["facts"][0]["end"] == "2026-07-15"
+    path = save_sec_inline_fact_supplement(tmp_path / "CMCSA.json", payload)
+    facts, evidence = load_sec_inline_fact_supplement(path, ticker="CMCSA")
+    assert facts[0].metric_name == "economic_share_count"
+    assert evidence[0].supports_metrics == ["economic_share_count"]

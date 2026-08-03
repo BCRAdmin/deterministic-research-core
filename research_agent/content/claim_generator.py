@@ -13,6 +13,7 @@ from research_agent.research_core.models.data_packet import DataPacket, Material
 from research_agent.research_core.models.metrics_packet import MetricsPacket
 from research_agent.research_core.models.validation_report import ValidationReport
 from research_agent.research_core.calculations.fundamentals import (
+    current_operating_profit_decline_metrics,
     current_profit_growth_divergence_metrics,
 )
 
@@ -666,6 +667,33 @@ class _ClaimBuilder:
                 self.metrics.fundamentals
             )
             if growth_divergence:
+                divergence_text = " and ".join(
+                    _growth_metric_phrase(metric, growth_values[metric])
+                    for metric in growth_divergence
+                )
+                divergence_subject = (
+                    f"The extreme {divergence_text}"
+                    if len(growth_divergence) == 1
+                    else f"The extreme profit comparisons ({divergence_text})"
+                )
+                guarded_reference = (
+                    "that comparison"
+                    if len(growth_divergence) == 1
+                    else "those comparisons"
+                )
+                operating_declines = current_operating_profit_decline_metrics(
+                    self.metrics.fundamentals
+                )
+                separate_operating_direction = ""
+                if operating_declines:
+                    operating_decline_text = " and ".join(
+                        _growth_metric_phrase(metric, growth_values[metric])
+                        for metric in operating_declines
+                    )
+                    separate_operating_direction = (
+                        f" Separately, {operating_decline_text} remains measured "
+                        "current-period downside evidence."
+                    )
                 if fcf_value is not None and fcf_value < 0:
                     cash_context = (
                         "Revenue TTM establishes scale, while negative FCF remains "
@@ -679,8 +707,8 @@ class _ClaimBuilder:
                 elif fcf_value is not None:
                     cash_context = (
                         "Revenue TTM and positive FCF establish scale and cash "
-                        "generation, not the cause or durability of the reported "
-                        "profit growth."
+                        "generation, not the cause or durability of the guarded "
+                        "profit comparison."
                     )
                 else:
                     cash_context = (
@@ -688,10 +716,12 @@ class _ClaimBuilder:
                         "support a cash-conversion conclusion."
                     )
                 bull_text = (
-                    f"{comparison_label} evidence reports {growth_text}. The sharp "
-                    "divergence between profit growth and revenue growth requires "
-                    "base-effect or one-off review; without causal filing evidence, "
-                    "these comparisons do not establish operating business direction. "
+                    f"{comparison_label} evidence reports {growth_text}. "
+                    f"{divergence_subject} diverges from revenue growth and requires "
+                    "base-effect or one-off review; without causal filing evidence "
+                    f"in the current packet, {guarded_reference} does not establish "
+                    "operating business "
+                    f"direction.{separate_operating_direction} "
                     f"Revenue TTM is {self._money(self.metrics.fundamentals.revenue_ttm)} "
                     f"and FCF TTM is {self._money(fcf_value)}. {cash_context} A more "
                     "constructive rating still requires persistence and stronger "
@@ -877,18 +907,9 @@ class _ClaimBuilder:
         if self.metrics.fundamentals.free_cash_flow_ttm is not None:
             bear_metrics.append("free_cash_flow_ttm")
         bear_metrics.extend(
-            metric
-            for metric, value in (
-                (
-                    "current_period_operating_income_growth_yoy",
-                    self.metrics.fundamentals.current_period_operating_income_growth_yoy,
-                ),
-                (
-                    "current_period_net_income_growth_yoy",
-                    self.metrics.fundamentals.current_period_net_income_growth_yoy,
-                ),
+            current_operating_profit_decline_metrics(
+                self.metrics.fundamentals
             )
-            if value is not None and value < 0
         )
         if bear_metrics:
             bear_metrics.extend(
@@ -1439,18 +1460,13 @@ def _bear_case_claim_text(
             "measured technical confirmation or offset."
         )
     profit_declines = [
-        label
-        for label, value in (
-            (
-                "operating-income",
-                metrics.fundamentals.current_period_operating_income_growth_yoy,
-            ),
-            (
-                "net-income",
-                metrics.fundamentals.current_period_net_income_growth_yoy,
-            ),
+        {
+            "current_period_operating_income_growth_yoy": "operating-income",
+            "current_period_net_income_growth_yoy": "net-income",
+        }[metric_name]
+        for metric_name in current_operating_profit_decline_metrics(
+            metrics.fundamentals
         )
-        if value is not None and value < 0
     ]
     if profit_declines and fcf_value is None:
         decline_text = " and ".join(profit_declines)
@@ -1958,18 +1974,13 @@ def _final_rating_claim_text(
         else "No benchmarked valuation signal is present."
     )
     current_profit_declines = [
-        label
-        for label, value in (
-            (
-                "operating-income",
-                metrics.fundamentals.current_period_operating_income_growth_yoy,
-            ),
-            (
-                "net-income",
-                metrics.fundamentals.current_period_net_income_growth_yoy,
-            ),
+        {
+            "current_period_operating_income_growth_yoy": "operating-income",
+            "current_period_net_income_growth_yoy": "net-income",
+        }[metric_name]
+        for metric_name in current_operating_profit_decline_metrics(
+            metrics.fundamentals
         )
-        if value is not None and value < 0
     ]
     if current_profit_declines:
         decline_text = " and ".join(current_profit_declines)

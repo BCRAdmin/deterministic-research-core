@@ -86,7 +86,11 @@ def audit_markdown_report(
     issues.extend(_lint_evidence_grounding(claims, metrics_packet, evidence_ledger))
     issues.extend(_lint_decision_permission(markdown, decision_packet))
     issues.extend(
-        _lint_unbenchmarked_valuation_direction(markdown, decision_packet)
+        _lint_unbenchmarked_valuation_direction(
+            markdown,
+            decision_packet,
+            metrics_packet,
+        )
     )
     issues.extend(_lint_unsupported_guidance_claims(markdown, evidence_ledger))
     issues.extend(_lint_unsupported_earnings_claims(markdown, validation_report))
@@ -528,12 +532,37 @@ UNBENCHMARKED_VALUATION_LABEL_PATTERN = re.compile(
 def _lint_unbenchmarked_valuation_direction(
     markdown: str,
     decision_packet: Optional[DecisionPacket],
+    metrics_packet: MetricsPacket,
 ) -> list[AuditIssue]:
     if (
         decision_packet is None
         or decision_packet.signal_scores.valuation_status != "unbenchmarked"
     ):
         return []
+
+    valuation = metrics_packet.valuation
+    measured_multiples = (
+        valuation.ev_to_sales,
+        valuation.price_to_fcf,
+        valuation.trailing_pe,
+        valuation.forward_pe_consensus,
+        valuation.forward_pe_guidance,
+    )
+    if (
+        any(value is not None for value in measured_multiples)
+        and "no measured valuation multiple is available" in markdown.casefold()
+    ):
+        return [
+            AuditIssue(
+                severity="error",
+                code="MEASURED_VALUATION_MISSINGNESS_CONTRADICTION",
+                metric="valuation",
+                message=(
+                    "Report says no valuation multiple is measured even though "
+                    "the validated packet contains one."
+                ),
+            )
+        ]
 
     neutral_markers = (
         "unbenchmarked",
@@ -646,18 +675,25 @@ def _lint_financial_sanity(
         fundamentals
     )
     if profit_growth_divergence:
+        reported = getattr(fundamentals, profit_growth_divergence[0])
+        message = (
+            "Profit growth of at least 75% exceeds current-period revenue growth "
+            "by at least 75 percentage points; review base effects, impairments "
+            "or other non-recurring items before treating it as evidence of "
+            "operating direction."
+            if reported is not None and reported > 0
+            else "Profit decline of at least 50% trails current-period revenue "
+            "growth by at least 50 percentage points; review base effects, "
+            "impairments or other non-recurring items before treating it as "
+            "evidence of operating direction."
+        )
         issues.append(
             AuditIssue(
                 severity="warning",
                 code="GUARD_THRESHOLD_REVIEW",
                 metric=profit_growth_divergence[0],
-                reported=getattr(fundamentals, profit_growth_divergence[0]),
-                message=(
-                    "Profit growth of at least 75% exceeds current-period revenue "
-                    "growth by at least 75 percentage points; review base effects, "
-                    "impairments or other non-recurring items before treating it as "
-                    "evidence of operating direction."
-                ),
+                reported=reported,
+                message=message,
             )
         )
 

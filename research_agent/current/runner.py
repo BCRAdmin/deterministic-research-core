@@ -27,7 +27,7 @@ from research_agent.sources.sec.sec_filing_risks import (
     select_sec_risk_filing_candidates,
 )
 from research_agent.sources.sec.sec_inline_facts import (
-    build_sec_inline_debt_supplement_payload,
+    build_sec_inline_fact_supplement_payload,
     save_sec_inline_fact_supplement,
 )
 from research_agent.sources.sec.xbrl_concepts import US_GAAP_CONCEPTS
@@ -310,7 +310,7 @@ def run_current_research(
             )
             if latest_financial_html is not None:
                 try:
-                    inline_facts_payload = build_sec_inline_debt_supplement_payload(
+                    inline_facts_payload = build_sec_inline_fact_supplement_payload(
                         ticker=symbol,
                         filing=latest_financial_reference,
                         html=latest_financial_html,
@@ -319,9 +319,9 @@ def run_current_research(
                     )
                 except ValueError as exc:
                     raise CurrentResearchError(
-                        f"{symbol} weist im aktuellen SEC-Bericht eine getrennte "
-                        "Schuldenstruktur aus, die der enge Inline-XBRL-"
-                        f"Ergänzungsweg nicht sicher konsolidieren kann: {exc}"
+                        f"{symbol} weist im aktuellen SEC-Bericht eine Inline-XBRL-"
+                        "Struktur aus, die der enge Ergänzungsweg nicht sicher "
+                        f"konsolidieren kann: {exc}"
                     ) from exc
                 if inline_facts_payload is not None:
                     inline_facts_path = inline_facts_dir / f"{symbol}.json"

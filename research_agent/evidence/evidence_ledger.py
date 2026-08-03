@@ -1341,18 +1341,26 @@ def build_fundamental_derivation_evidence(
     valuation = metrics_packet.valuation
     technical = metrics_packet.technical
     operands = {}
+    market_cap_share_basis = valuation.market_cap_share_basis
+    market_cap_share_value = (
+        getattr(fundamentals, market_cap_share_basis, None)
+        if market_cap_share_basis
+        in {"economic_share_count", "listed_share_count"}
+        else None
+    )
     if (
         valuation.market_cap is not None
-        and fundamentals.listed_share_count is not None
+        and market_cap_share_basis is not None
+        and market_cap_share_value is not None
     ):
         operands = {
             "close": float(technical.close),
-            "listed_share_count": float(fundamentals.listed_share_count),
+            market_cap_share_basis: float(market_cap_share_value),
         }
         market_cap_matches = (
             math.isclose(
                 float(valuation.market_cap),
-                operands["close"] * operands["listed_share_count"],
+                operands["close"] * operands[market_cap_share_basis],
                 rel_tol=1e-9,
                 abs_tol=1e-9,
             )
@@ -1382,7 +1390,7 @@ def build_fundamental_derivation_evidence(
                 unit=currency,
                 period=f"as of {as_of_date}",
                 date=as_of_date,
-                supports_metrics=["market_cap", "listed_share_count"],
+                supports_metrics=["market_cap", market_cap_share_basis],
                 confidence="high",
                 formula_id="close_times_point_in_time_shares",
                 formula_operands=operands,
