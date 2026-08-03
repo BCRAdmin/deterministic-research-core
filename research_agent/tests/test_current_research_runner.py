@@ -211,6 +211,38 @@ class _FakeIfrsSec(_FakeSec):
         }
 
 
+class _FakeUsGaapForeignIssuerSec(_FakeSec):
+    def get_companyfacts(self, cik):
+        return {
+            "cik": int(cik),
+            "entityName": "Generic US-GAAP Foreign Issuer",
+            "facts": {
+                "us-gaap": {
+                    "Revenues": {
+                        "units": {
+                            "CNY": [
+                                {
+                                    "val": 1_000_000,
+                                    "form": "20-F",
+                                    "filed": "2026-04-30",
+                                    "start": "2025-04-01",
+                                    "end": "2026-03-31",
+                                },
+                                {
+                                    "val": 300_000,
+                                    "form": "6-K",
+                                    "filed": "2026-07-30",
+                                    "start": "2026-04-01",
+                                    "end": "2026-06-30",
+                                },
+                            ]
+                        }
+                    }
+                }
+            },
+        }
+
+
 class _FakeSuccessorWithoutStandardFacts(_FakeSec):
     def get_companyfacts(self, cik):
         return {
@@ -555,6 +587,22 @@ def test_current_runner_names_unsupported_sec_ifrs_profile_before_pipeline(tmp_p
             _request(tmp_path),
             price_provider=_FakePrices(),
             sec_client=_FakeIfrsSec(),
+        )
+
+    _assert_no_run_dirs(tmp_path)
+
+
+def test_current_runner_names_us_gaap_foreign_issuer_basis_gap_before_pipeline(
+    tmp_path,
+):
+    with pytest.raises(
+        CurrentResearchError,
+        match=r"US-GAAP.*20-F/6-K.*ADS-Verhältnis.*SEC-FPI-Adapter",
+    ):
+        run_current_research(
+            _request(tmp_path),
+            price_provider=_FakePrices(),
+            sec_client=_FakeUsGaapForeignIssuerSec(),
         )
 
     _assert_no_run_dirs(tmp_path)

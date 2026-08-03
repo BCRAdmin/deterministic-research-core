@@ -309,6 +309,7 @@ def test_material_calculations_require_exact_auditable_operands():
             cash_and_equivalents=50.0,
             short_term_investments=20.0,
             cash_and_investments=70.0,
+            short_term_debt=10.0,
             debt_current=70.0,
             debt_noncurrent=200.0,
             total_debt=270.0,
@@ -333,6 +334,7 @@ def test_material_calculations_require_exact_auditable_operands():
         ),
         valuation=ValuationMetrics(
             market_cap=1_000.0,
+            market_cap_share_basis="economic_share_count",
             enterprise_value=1_200.0,
             price_to_fcf=12.5,
             ev_to_sales=6.0,
@@ -346,6 +348,7 @@ def test_material_calculations_require_exact_auditable_operands():
         "close": 100.0,
         "cash_and_equivalents": 50.0,
         "short_term_investments": 20.0,
+        "short_term_debt": 10.0,
         "debt_current": 70.0,
         "debt_noncurrent": 200.0,
         "current_assets": 300.0,
@@ -575,7 +578,9 @@ def test_material_calculations_require_exact_auditable_operands():
         "fcf_yield",
         "trailing_pe",
     }
-    assert newly_bound_metrics <= by_metric.keys()
+    assert newly_bound_metrics <= by_metric.keys(), (
+        newly_bound_metrics - by_metric.keys()
+    )
     assert by_metric["lease_liability_current"].formula_operands == {
         "operating_lease_liability_current": 2.0,
         "finance_lease_liability_current": 3.0,
@@ -650,6 +655,15 @@ def test_material_calculations_require_exact_auditable_operands():
     assert by_metric["cash_and_investments"].formula_operands == {
         "cash_and_equivalents": 50.0,
         "short_term_investments": 20.0,
+    }
+    assert by_metric["total_debt"].formula_operands == {
+        "debt_current": 70.0,
+        "debt_noncurrent": 200.0,
+    }
+    assert by_metric["net_cash"].formula_operands == {
+        "cash_and_equivalents": 50.0,
+        "short_term_investments": 20.0,
+        "total_debt": 270.0,
     }
     assert by_metric["market_cap"].unit == "HUF"
     assert by_metric["revenue_ttm"].unit == "HUF"

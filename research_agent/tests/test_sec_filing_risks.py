@@ -223,6 +223,7 @@ def test_named_issuer_context_deduplicates_segments_and_rejects_risk_category():
       <p>We report Google in two segments, Google Services and Google Cloud, and all non-Google businesses collectively as Other Bets.</p>
       <p>For reporting purposes Google comprises two segments: Google Services and Google Cloud.</p>
       <p>Google Services products and platforms include ads, Android, Chrome, devices, Search and YouTube for users around the world.</p>
+      <div>Risk Factors</div>
       <div><strong>ITEM 1A. RISK FACTORS</strong></div>
       <p><strong>Risks Specific to our Company</strong></p>
       <p><strong>Reduced advertising spending could harm our business and operating results.</strong></p>
@@ -237,6 +238,26 @@ def test_named_issuer_context_deduplicates_segments_and_rejects_risk_category():
     ]
     assert extract_sec_risk_headings(html) == [
         "Reduced advertising spending could harm our business and operating results."
+    ]
+
+
+def test_business_context_prefers_direct_activity_over_orphan_market_reference():
+    html = """
+    <html><body>
+      <div><strong>ITEM 1. BUSINESS</strong></div>
+      <p>These markets bring together all of our services with local and global talent and solutions.</p>
+      <p>Our three geographic markets are our reporting segments.</p>
+      <p>The geographic markets have primary responsibility for building relationships and delivering our full range of solutions and services.</p>
+      <p>We help our clients build their digital core using AI, data, cloud products, platforms, solutions and security services.</p>
+      <p>We operate business processes for clients across finance, procurement, supply chain, marketing, sales and human resources.</p>
+      <div><strong>ITEM 1A. RISK FACTORS</strong></div>
+    </body></html>
+    """
+
+    assert extract_sec_business_context(html) == [
+        "We help our clients build their digital core using AI, data, cloud products, platforms, solutions and security services.",
+        "Our three geographic markets are our reporting segments.",
+        "We operate business processes for clients across finance, procurement, supply chain, marketing, sales and human resources.",
     ]
 
 

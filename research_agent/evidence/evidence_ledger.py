@@ -676,7 +676,7 @@ def build_fundamental_derivation_evidence(
                 evidence_items=[*runtime_items, *evidence],
             )
         )
-    debt_components = {
+    available_debt_components = {
         metric_name: float(value)
         for metric_name, value in (
             ("short_term_debt", fundamentals.short_term_debt),
@@ -685,13 +685,34 @@ def build_fundamental_derivation_evidence(
         )
         if value is not None
     }
+    debt_components: dict[str, float] = {}
+    if fundamentals.total_debt is not None:
+        for component_names in (
+            ("debt_current", "debt_noncurrent"),
+            ("short_term_debt", "debt_current", "debt_noncurrent"),
+            ("short_term_debt", "debt_noncurrent"),
+            ("debt_noncurrent",),
+            ("debt_current",),
+            ("short_term_debt",),
+        ):
+            candidate = {
+                metric_name: available_debt_components[metric_name]
+                for metric_name in component_names
+                if metric_name in available_debt_components
+            }
+            if len(candidate) != len(component_names):
+                continue
+            if math.isclose(
+                sum(candidate.values()),
+                float(fundamentals.total_debt),
+                rel_tol=1e-9,
+                abs_tol=1e-9,
+            ):
+                debt_components = candidate
+                break
     if (
         fundamentals.total_debt is not None
         and debt_components
-        and abs(
-            sum(debt_components.values()) - float(fundamentals.total_debt)
-        )
-        <= max(1e-9, abs(float(fundamentals.total_debt)) * 1e-9)
         and _operands_have_exact_evidence(
             [*runtime_items, *evidence],
             debt_components,

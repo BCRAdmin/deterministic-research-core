@@ -88,6 +88,12 @@ _BUSINESS_CONTEXT_REVENUE_ACTIVITY = re.compile(
     r"(?:revenue|revenues)\b.+\b(?:by|from)\b",
     re.IGNORECASE,
 )
+_BUSINESS_CONTEXT_DIRECT_ACTIVITY = re.compile(
+    r"^(?:we|the company|the issuer)\s+"
+    r"(?:build|create|deliver|design|develop|distribute|help|manufacture|"
+    r"offer|operate|provide|sell|serve)\b",
+    re.IGNORECASE,
+)
 _BUSINESS_CONTEXT_PROMOTIONAL_LANGUAGE = re.compile(
     r"\b(?:unmatched combination|unwavering focus|undisputable drive|"
     r"best possible service|best value|best network)\b",
@@ -110,7 +116,7 @@ _BUSINESS_CONTEXT_ACCOUNTING_LANGUAGE = re.compile(
 )
 _BUSINESS_CONTEXT_UNRESOLVED_REFERENCE = re.compile(
     r"\b(?:this|that|these|those|such) "
-    r"(?:arrangements?|business|customers?|products?|relationships?|segments?|services?)\b",
+    r"(?:arrangements?|business|customers?|markets?|products?|relationships?|segments?|services?)\b",
     re.IGNORECASE,
 )
 _BUSINESS_CONTEXT_ABBREVIATION = re.compile(
@@ -354,9 +360,17 @@ def extract_sec_business_context(html: str) -> list[str]:
                     (
                         text
                         for _, text in candidates
-                        if _business_context_score(text) >= 3
+                        if _BUSINESS_CONTEXT_DIRECT_ACTIVITY.search(text)
+                        and _business_context_score(text) >= 3
                     ),
-                    candidates[0][1],
+                    next(
+                        (
+                            text
+                            for _, text in candidates
+                            if _business_context_score(text) >= 3
+                        ),
+                        candidates[0][1],
+                    ),
                 ),
             ),
         )
@@ -375,6 +389,7 @@ def extract_sec_business_context(html: str) -> list[str]:
                 candidates,
                 key=lambda item: (
                     bool(_BUSINESS_CONTEXT_REVENUE_ACTIVITY.search(item[1])),
+                    bool(_BUSINESS_CONTEXT_DIRECT_ACTIVITY.search(item[1])),
                     _business_context_score(item[1]),
                     -item[0],
                 ),
@@ -528,6 +543,12 @@ def _is_risk_heading(text: str, *, emphasized: bool = False) -> bool:
     lowered = stripped.lower()
     minimum_length = 20 if emphasized else 40
     if not minimum_length <= len(stripped) <= 320:
+        return False
+    if _compact_heading(stripped) in {
+        "riskfactors",
+        "item1a",
+        "item1ariskfactors",
+    }:
         return False
     if stripped.startswith(("•", "●", "▪", "-")):
         return False

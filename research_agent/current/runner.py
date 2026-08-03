@@ -628,7 +628,37 @@ def _require_supported_sec_reporting_profile(
             "integriert werden."
         )
     if facts.get("us-gaap"):
-        return
+        forms = sorted(
+            {
+                str(row.get("form"))
+                for record in facts["us-gaap"].values()
+                if isinstance(record, dict)
+                for unit_rows in (record.get("units") or {}).values()
+                for row in unit_rows
+                if isinstance(row, dict) and row.get("form")
+            }
+        )
+        if not forms or set(forms).intersection(SEC_FINANCIAL_FORMS):
+            return
+        form_label = "/".join(forms)
+        if set(forms).intersection({"20-F", "40-F", "6-K"}):
+            raise CurrentResearchError(
+                f"{ticker} wurde als SEC-Emittent erkannt und verwendet US-GAAP, "
+                f"berichtet aber über {form_label} als ausländischer Emittent. "
+                "Der vorhandene SEC-Finanzadapter unterstützt US-GAAP-Daten aus "
+                "10-K und 10-Q. Bei 20-F/40-F/6-K müssen Berichts- und "
+                "Preiswährung, Ordinary Shares, ADS-Verhältnis und Perioden "
+                "separat belegt werden. Room16 startet keine scheinbar vollständige "
+                "Analyse, bis ein allgemeiner SEC-FPI-Adapter diese Grundlagen "
+                "unterstützt."
+            )
+        raise CurrentResearchError(
+            f"{ticker} wurde als SEC-Emittent erkannt und verwendet US-GAAP, "
+            f"aber die offiziellen CompanyFacts enthalten nur die nicht "
+            f"unterstützten Filing-Formulare {form_label}. Der vorhandene "
+            "SEC-Finanzadapter unterstützt US-GAAP-Daten aus 10-K und 10-Q; "
+            "Room16 setzt keine schwächeren Ersatzdaten ein."
+        )
     if facts.get("ifrs-full"):
         forms = sorted(
             {
