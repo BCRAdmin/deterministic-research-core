@@ -53,10 +53,11 @@ _TITLE_CASE_CONNECTORS = {
     "with",
 }
 _BUSINESS_LANGUAGE = re.compile(
-    r"\b(business|customer|customers|develop|develops|offer|offers|operate|"
+    r"\b(business|customer|customers|develop|develops|offer|offers|operate|operating|"
     r"product|products|service|services|solution|solutions|platform|platforms|"
     r"segment|segments|software|subscription|subscriptions|device|devices|"
-    r"manufacture|manufactures|distribute|distributes|market|markets)\b",
+    r"manufacture|manufactures|distribute|distributes|market|markets|roast|"
+    r"roaster|retail|retailer|sell|sells|store|stores|coffee)\b",
     re.IGNORECASE,
 )
 _BUSINESS_MODEL_LANGUAGE = re.compile(
@@ -64,11 +65,19 @@ _BUSINESS_MODEL_LANGUAGE = re.compile(
     re.IGNORECASE,
 )
 _BUSINESS_CONTEXT_SKIP_PREFIXES = (
+    "accordingly",
+    "as a result",
     "this report includes",
     "the following discussion",
     "information contained",
     "see part",
     "additional information",
+    "therefore",
+)
+_BUSINESS_CONTEXT_ACCOUNTING_LANGUAGE = re.compile(
+    r"\b(?:segment information is prepared|chief operating decision maker|"
+    r"evaluates financial results|makes key operating decisions)\b",
+    re.IGNORECASE,
 )
 _BUSINESS_CONTEXT_UNRESOLVED_REFERENCE = re.compile(
     r"\b(?:this|that|these|those|such) "
@@ -513,6 +522,8 @@ def _is_business_context_paragraph(text: str) -> bool:
         return False
     if lowered.startswith(_BUSINESS_CONTEXT_SKIP_PREFIXES):
         return False
+    if _BUSINESS_CONTEXT_ACCOUNTING_LANGUAGE.search(stripped):
+        return False
     if _BUSINESS_CONTEXT_UNRESOLVED_REFERENCE.search(stripped):
         return False
     if stripped.isupper() or stripped.count(". ") > 3:
@@ -530,6 +541,9 @@ def _business_context_fragments(text: str) -> list[str]:
     for raw_fragment in re.split(r"(?<=[.!?])\s+", protected):
         fragment = raw_fragment.replace(_PROTECTED_PERIOD, ".").strip()
         fragment = re.sub(r"^[•●▪◦-]\s*", "", fragment).strip()
+        fragment = re.sub(r"\b[1-9]\)\s*", "", fragment)
+        if fragment.endswith(":"):
+            continue
         if fragment and fragment[-1] not in ".!?":
             fragment = f"{fragment}."
         if _is_business_context_paragraph(fragment):

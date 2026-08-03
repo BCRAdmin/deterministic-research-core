@@ -364,9 +364,9 @@ def test_bull_case_does_not_present_negative_fcf_as_cash_generation():
 
 def test_bull_case_does_not_call_extreme_profit_divergence_business_direction():
     data, metrics, validation, ledger, decision = _load_packet("SNOW")
-    metrics.fundamentals.current_period_revenue_growth_yoy = 0.064
-    metrics.fundamentals.current_period_operating_income_growth_yoy = 1.249
-    metrics.fundamentals.current_period_net_income_growth_yoy = 1.36
+    metrics.fundamentals.current_period_revenue_growth_yoy = -0.014
+    metrics.fundamentals.current_period_operating_income_growth_yoy = 0.048
+    metrics.fundamentals.current_period_net_income_growth_yoy = 0.872
     canonical = CanonicalFinancials(
         ticker=data.ticker,
         as_of_date=data.as_of_date,
@@ -413,6 +413,87 @@ def test_bull_case_does_not_call_extreme_profit_divergence_business_direction():
     assert "requires base-effect or one-off review" in bull_claim.claim
     assert "do not establish operating business direction" in bull_claim.claim
     assert "establishes current business direction" not in bull_claim.claim
+
+
+def test_bull_case_calls_mixed_growth_mixed_not_business_direction():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    metrics.fundamentals.current_period_revenue_growth_yoy = 0.002
+    metrics.fundamentals.current_period_operating_income_growth_yoy = None
+    metrics.fundamentals.current_period_net_income_growth_yoy = -0.034
+    canonical = CanonicalFinancials(
+        ticker=data.ticker,
+        as_of_date=data.as_of_date,
+        metrics=[
+            CanonicalMetric(
+                metric_name=metric_name,
+                value=value,
+                unit="USD",
+                period="FY2026",
+                fiscal_year=2026,
+                fiscal_period="FY",
+                period_bucket="annual",
+                start_date="2025-06-01",
+                end_date="2026-05-31",
+                duration_days=364,
+                basis="gaap",
+                statement_type="income_statement",
+                source_ids=["GENERIC_SEC_FY2026"],
+                confidence="high",
+            )
+            for metric_name, value in (
+                ("revenue", 46_398_000_000),
+                ("gross_profit", 19_911_000_000),
+                ("net_income", 3_108_000_000),
+            )
+        ],
+    )
+    _add_exact_metric_evidence(data, metrics, ledger)
+
+    claims = generate_research_claims(
+        data,
+        metrics,
+        ledger,
+        decision,
+        validation,
+        canonical,
+    )
+    bull_claim = next(
+        claim
+        for claim in claims
+        if claim.section == "Bull Case" and claim.claim_type == "financial_metric"
+    )
+
+    assert "revenue growth 0.2%" in bull_claim.claim
+    assert "net-income decline 3.4%" in bull_claim.claim
+    assert "current-period comparisons are mixed" in bull_claim.claim
+    assert "broad-based operating improvement" in bull_claim.claim
+    assert "current business direction" not in bull_claim.claim
+
+
+def test_non_positive_equity_is_visible_with_liquidity_and_lease_context():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    metrics.fundamentals.equity = -7_674_300_000
+    metrics.fundamentals.current_ratio = 0.7597
+    metrics.fundamentals.total_lease_liabilities = 9_155_500_000
+    metrics.fundamentals.debt_to_equity = None
+    _add_exact_metric_evidence(data, metrics, ledger)
+
+    claims = generate_research_claims(data, metrics, ledger, decision, validation)
+    constraint = next(
+        claim
+        for claim in claims
+        if "debt/equity is not a meaningful leverage ratio" in claim.claim
+    )
+
+    assert "Book equity is -$7.67B" in constraint.claim
+    assert "current ratio is 0.76x" in constraint.claim
+    assert "lease liabilities total $9.16B" in constraint.claim
+    assert "does not by itself establish insolvency" in constraint.claim
+    assert constraint.metric_refs == [
+        "equity",
+        "current_ratio",
+        "total_lease_liabilities",
+    ]
 
 
 def test_bull_case_does_not_call_revenue_growth_operating_improvement_during_loss():
@@ -531,6 +612,12 @@ def test_generic_report_routes_claims_without_repeating_main_body_paragraphs():
             ["free_cash_flow_ttm"],
         ),
         claim(
+            "BALANCE_SHEET",
+            "Fundamental Analysis",
+            "Current ratio balance-sheet marker 406.",
+            ["equity", "current_ratio", "total_lease_liabilities"],
+        ),
+        claim(
             "BULL",
             "Bull Case",
             "Bull case current-period marker 405.",
@@ -572,8 +659,10 @@ def test_generic_report_routes_claims_without_repeating_main_body_paragraphs():
     assert claims[2].claim in current_section
     assert claims[4].claim not in current_section
     assert claims[5].claim not in current_section
+    assert claims[6].claim not in current_section
     assert claims[2].claim not in fundamental_section
     assert claims[3].claim in fundamental_section
+    assert claims[4].claim in fundamental_section
 
 
 def test_final_rating_acknowledges_negative_fcf_before_defending_hold():
@@ -597,6 +686,29 @@ def test_final_rating_acknowledges_negative_fcf_before_defending_hold():
     assert "Negative FCF is already fundamental downside evidence" in section
     assert "valuation is unbenchmarked" in section
     assert "the technical basis is partial" in section
+    assert "A raw multiple or an isolated price signal" not in section
+
+
+def test_final_rating_balances_non_positive_equity_against_positive_fcf():
+    _, metrics, _, _, decision = _load_packet("SNOW")
+    metrics.fundamentals.equity = -7_674_300_000
+    metrics.fundamentals.free_cash_flow_ttm = 3_642_100_000
+    decision.signal_scores.fundamental_score = 0
+    decision.signal_scores.fundamental_status = "measured"
+
+    section = _final_rating_section(
+        "TEST",
+        "Hold",
+        metrics.fundamentals,
+        metrics.valuation,
+        metrics.technical,
+        decision,
+    )
+
+    assert "Non-positive book equity is a material balance-sheet constraint" in section
+    assert "positive FCF does not remove that constraint" in section
+    assert "positive FCF is measured counterevidence" in section
+    assert "does not establish insolvency or business deterioration" in section
     assert "A raw multiple or an isolated price signal" not in section
 
 
@@ -1263,8 +1375,8 @@ def test_annual_claim_matches_same_dates_across_sec_period_labels():
 
     assert "FY2026" in current["text"]
     assert "matching prior-year fiscal year" in current["text"]
-    assert "revenue changed by 0.2%" in current["text"]
-    assert "net income by -3.4%" in current["text"]
+    assert "revenue increased by 0.2%" in current["text"]
+    assert "net income declined by 3.4%" in current["text"]
     assert "prior-year quarter" not in current["text"]
     assert current["metrics"] == [
         "revenue",

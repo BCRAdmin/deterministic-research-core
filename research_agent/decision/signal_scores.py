@@ -34,6 +34,15 @@ def score_fundamentals(
     if f.operating_margin_ttm is not None:
         score = _apply_rule(score, "OPERATING_MARGIN_NEGATIVE", f.operating_margin_ttm < 0, weights, triggered_rules, calibration_mode)
 
+    score = _apply_rule(
+        score,
+        "EQUITY_NON_POSITIVE",
+        f.equity is not None and f.equity <= 0,
+        weights,
+        triggered_rules,
+        calibration_mode,
+    )
+
     return _clamp(score)
 
 

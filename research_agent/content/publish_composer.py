@@ -1623,7 +1623,7 @@ def _current_kpi_claims(claims: list[ResearchClaim]) -> list[ResearchClaim]:
         if (claim.section or "") in CURRENT_PERIOD_SECTIONS
         and (
             any(
-                metric.startswith("current_") or "guidance" in metric
+                metric.startswith("current_period_") or "guidance" in metric
                 for metric in claim.metric_refs
             )
             or CURRENT_PERIOD_MARKER_RE.search(_claim_text(claim)) is not None
@@ -1753,6 +1753,23 @@ def _final_rating_section(
             "Why not more cautious? Negative FCF is already fundamental downside "
             "evidence and is not dismissed. A more cautious permitted rating still "
             f"requires additional measured confirmation because {confirmation_text}."
+        )
+    elif (
+        f.equity is not None
+        and f.equity <= 0
+        and f.free_cash_flow_ttm is not None
+        and f.free_cash_flow_ttm > 0
+    ):
+        why_not_constructive = (
+            "Why not more constructive? Non-positive book equity is a material "
+            "balance-sheet constraint; positive FCF does not remove that constraint. "
+            "A more constructive rating requires durable cash coverage and stronger "
+            "liquidity or leverage evidence."
+        )
+        why_not_cautious = (
+            "Why not more cautious? The non-positive equity constraint is not "
+            "dismissed, but positive FCF is measured counterevidence. Non-positive "
+            "equity alone does not establish insolvency or business deterioration."
         )
     else:
         why_not_constructive = (

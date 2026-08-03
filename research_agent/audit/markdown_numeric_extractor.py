@@ -65,14 +65,18 @@ def _extract_line_claims(line: str, line_number: int) -> list[ExtractedNumericCl
         )
 
     for match in PERCENT_RE.finditer(line):
+        metric_context = _metric_context(line, match.start(), match.end())
         claims.append(
             _claim(
                 raw_text=match.group(0),
-                value=_normalize_plain_number(match.group(1)),
+                value=_normalize_directional_percent(
+                    _normalize_plain_number(match.group(1)),
+                    metric_context,
+                ),
                 unit="percent",
                 nearby_text=nearby,
                 line_number=line_number,
-                metric_context=_metric_context(line, match.start(), match.end()),
+                metric_context=metric_context,
             )
         )
 
@@ -163,6 +167,30 @@ def _normalize_plain_number(number_text: str) -> float:
         else:
             text = text.replace(",", ".")
     return float(text)
+
+
+def _normalize_directional_percent(value: float, context: str) -> float:
+    if value < 0:
+        return value
+    direction_markers = [
+        (match.start(), -1.0)
+        for match in re.finditer(
+            r"\b(?:decline|declined|decrease|decreased|fell)\b",
+            context,
+            re.IGNORECASE,
+        )
+    ]
+    direction_markers.extend(
+        (match.start(), 1.0)
+        for match in re.finditer(
+            r"\b(?:growth|increase|increased|rose)\b",
+            context,
+            re.IGNORECASE,
+        )
+    )
+    if not direction_markers:
+        return value
+    return abs(value) * max(direction_markers)[1]
 
 
 def _infer_period_hint(text: str) -> str:

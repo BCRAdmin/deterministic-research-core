@@ -184,12 +184,14 @@ def test_direct_percent_evidence_normalizes_single_digit_percentage():
 
 def test_auditor_maps_each_matching_quarter_percentage_to_nearest_growth_metric():
     metrics = simple_metrics(ticker="GENERIC")
-    metrics.fundamentals.current_period_revenue_growth_yoy = 0.02
-    metrics.fundamentals.current_period_operating_income_growth_yoy = -0.014
-    metrics.fundamentals.current_period_net_income_growth_yoy = -0.002
+    metrics.fundamentals.current_period_revenue_growth_yoy = -0.014
+    metrics.fundamentals.current_period_operating_income_growth_yoy = 0.048
+    metrics.fundamentals.current_period_net_income_growth_yoy = 0.872
     markdown = (
-        "Matching-quarter evidence shows revenue growth 2.0%, "
-        "operating-income growth -1.4%, net-income growth -0.2%."
+        "Against the matching prior-year quarter, revenue declined by 1.4%, "
+        "operating income increased by 4.8% and net income increased by 87.2%.\n"
+        "Matching-quarter evidence reports revenue decline 1.4%, "
+        "operating-income growth 4.8%, net-income growth 87.2%."
     )
 
     percent_claims = [
@@ -199,6 +201,9 @@ def test_auditor_maps_each_matching_quarter_percentage_to_nearest_growth_metric(
     audit = audit_markdown_report(markdown, metrics)
 
     assert [claim.possible_metric for claim in percent_claims] == [
+        "current_period_revenue_growth_yoy",
+        "current_period_operating_income_growth_yoy",
+        "current_period_net_income_growth_yoy",
         "current_period_revenue_growth_yoy",
         "current_period_operating_income_growth_yoy",
         "current_period_net_income_growth_yoy",
@@ -442,9 +447,9 @@ def test_auditor_requires_context_for_extreme_profit_revenue_divergence():
         enterprise_value=233_000_000_000,
         ev_to_sales=2.33,
     )
-    metrics.fundamentals.current_period_revenue_growth_yoy = 0.064
-    metrics.fundamentals.current_period_operating_income_growth_yoy = 1.249
-    metrics.fundamentals.current_period_net_income_growth_yoy = 1.36
+    metrics.fundamentals.current_period_revenue_growth_yoy = -0.014
+    metrics.fundamentals.current_period_operating_income_growth_yoy = 0.048
+    metrics.fundamentals.current_period_net_income_growth_yoy = 0.872
 
     audit = audit_markdown_report(
         "## Executive Summary\nValidated skeleton.",
@@ -454,12 +459,13 @@ def test_auditor_requires_context_for_extreme_profit_revenue_divergence():
     growth_issues = [
         issue
         for issue in audit.issues
-        if issue.metric == "current_period_operating_income_growth_yoy"
+        if issue.metric == "current_period_net_income_growth_yoy"
     ]
 
     assert len(growth_issues) == 1
     assert growth_issues[0].code == "GUARD_THRESHOLD_REVIEW"
     assert growth_issues[0].severity == "warning"
+    assert "at least 75%" in growth_issues[0].message
     assert "base effects" in growth_issues[0].message
     assert not audit.has_blocking_errors
 

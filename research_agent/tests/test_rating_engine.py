@@ -113,6 +113,22 @@ def test_momentum_and_volatility_observations_do_not_stack_rating_scores():
     ]
 
 
+def test_non_positive_equity_offsets_positive_fcf_without_inventing_a_ratio():
+    metrics = _strong_metrics()
+    metrics.fundamentals.equity = -7_674_300_000
+
+    packet = build_decision_packet(metrics)
+
+    assert score_fundamentals(metrics) == 0
+    assert packet.signal_scores.fundamental_score == 0
+    assert packet.signal_scores.composite_score == 1
+    assert packet.triggered_rules == [
+        "FCF_TTM_POSITIVE",
+        "EQUITY_NON_POSITIVE",
+        "TREND_STATE_BULLISH",
+    ]
+
+
 def test_unbenchmarked_strong_setup_is_capped_at_hold():
     packet = build_decision_packet(_strong_metrics())
 

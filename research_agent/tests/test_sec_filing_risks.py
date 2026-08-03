@@ -251,6 +251,25 @@ def test_business_context_skips_fragments_with_unresolved_references():
     ]
 
 
+def test_business_context_prefers_business_and_segments_over_transition_or_accounting_text():
+    html = """
+    <html><body>
+      <p><strong>ITEM 1. BUSINESS</strong></p>
+      <p>Starbucks is a specialty coffee retailer operating in 89 markets. Formed in 1985, its shares trade on Nasdaq. We purchase and roast high-quality coffees that we sell with handcrafted beverages and food through company-operated stores.</p>
+      <p>Therefore, one of our core strategies is to support our partners in the competitive specialty coffee market:</p>
+      <p><strong>SEGMENT FINANCIAL INFORMATION</strong></p>
+      <p>Segment information is prepared on the same basis that our Chief Operating Decision Maker evaluates financial results and makes key operating decisions.</p>
+      <p>We have three reportable operating segments: 1) North America; 2) International; and 3) Channel Development.</p>
+      <div><strong>ITEM 1A. RISK FACTORS</strong></div>
+    </body></html>
+    """
+
+    assert extract_sec_business_context(html) == [
+        "We purchase and roast high-quality coffees that we sell with handcrafted beverages and food through company-operated stores.",
+        "We have three reportable operating segments: North America; International; and Channel Development.",
+    ]
+
+
 def test_builds_primary_risk_evidence_without_inventing_numeric_metrics():
     filing = select_sec_risk_filing_candidates(
         _submissions(), cik="1234", as_of_date="2026-07-24"

@@ -399,6 +399,49 @@ class _ClaimBuilder:
                 "and its underlying debt evidence."
             ),
         )
+        equity = self.metrics.fundamentals.equity
+        if equity is not None and equity <= 0:
+            constraint_parts = [
+                f"Book equity is {self._money(equity)}, so debt/equity is not a "
+                "meaningful leverage ratio"
+            ]
+            constraint_metrics = ["equity"]
+            current_ratio = self.metrics.fundamentals.current_ratio
+            if current_ratio is not None:
+                constraint_parts.append(
+                    f"the current ratio is {_multiple(current_ratio)}"
+                )
+                constraint_metrics.append("current_ratio")
+            lease_liabilities = (
+                self.metrics.fundamentals.total_lease_liabilities
+            )
+            if lease_liabilities is not None:
+                constraint_parts.append(
+                    "separate lease liabilities total "
+                    f"{self._money(lease_liabilities)}"
+                )
+                constraint_metrics.append("total_lease_liabilities")
+            self.add(
+                "Fundamental Analysis",
+                "balance_sheet_constraint",
+                "financial_metric",
+                (
+                    f"{'; '.join(constraint_parts)}. Non-positive book equity is a "
+                    "material balance-sheet constraint, but does not by itself "
+                    "establish insolvency or its cause."
+                ),
+                constraint_metrics,
+                "high",
+                "high",
+                counterargument=(
+                    "Book equity can reflect accumulated distributions, losses, "
+                    "accounting charges or a combination of factors."
+                ),
+                implication=(
+                    "Assess leverage from debt, cash, liquidity, lease obligations "
+                    "and cash-flow coverage instead of a debt/equity multiple."
+                ),
+            )
 
         self.add(
             "Valuation / Multiples",
@@ -524,9 +567,20 @@ class _ClaimBuilder:
             current_period_loss_metrics
         )
         if growth_metrics:
+            growth_values = {
+                metric: self._metric_value(metric) for metric in growth_metrics
+            }
             growth_text = ", ".join(
-                f"{_growth_metric_label(metric)} {_pct(self._metric_value(metric))}"
+                _growth_metric_phrase(metric, growth_values[metric])
                 for metric in growth_metrics
+            )
+            growth_declines = any(
+                value is not None and value < 0
+                for value in growth_values.values()
+            )
+            growth_increases = any(
+                value is not None and value > 0
+                for value in growth_values.values()
             )
             comparison_periods = {
                 str(claim.get("comparison_period") or "")
@@ -574,6 +628,41 @@ class _ClaimBuilder:
                     f"and FCF TTM is {self._money(fcf_value)}. {cash_context} A more "
                     "constructive rating still requires persistence and stronger "
                     "technical or benchmarked valuation support."
+                )
+            elif growth_declines:
+                comparison_summary = (
+                    "The current-period comparisons are mixed"
+                    if growth_increases
+                    else "All available current-period comparisons decline"
+                )
+                if fcf_value is not None and fcf_value < 0:
+                    cash_context = (
+                        "negative FCF remains separate evidence of weak cash "
+                        "conversion"
+                    )
+                elif fcf_value == 0:
+                    cash_context = (
+                        "zero FCF does not establish positive cash conversion"
+                    )
+                elif fcf_value is not None:
+                    cash_context = (
+                        "positive FCF establishes cash generation, but does not turn "
+                        "mixed comparisons into broad-based operating improvement"
+                    )
+                else:
+                    cash_context = (
+                        "FCF is unavailable and cannot support a cash-conversion "
+                        "conclusion"
+                    )
+                bull_text = (
+                    f"{comparison_label} evidence reports {growth_text}. "
+                    f"{comparison_summary}; segment, margin or one-off context is "
+                    "needed before treating them as business direction. Revenue TTM "
+                    f"is {self._money(self.metrics.fundamentals.revenue_ttm)} and FCF "
+                    f"TTM is {self._money(fcf_value)}; {cash_context}. A more "
+                    "constructive rating requires revenue and profit measures to "
+                    "improve together, plus stronger technical or benchmarked "
+                    "valuation support."
                 )
             elif current_period_loss_metrics:
                 if fcf_value is not None and fcf_value < 0:
@@ -624,7 +713,7 @@ class _ClaimBuilder:
                     "persist, cash-conversion evidence and stronger technical or "
                     "benchmarked valuation support."
                 )
-            if not growth_divergence:
+            if not growth_divergence and not growth_declines:
                 bull_text = (
                     f"{comparison_label} evidence shows {growth_text}. Together with "
                     f"revenue TTM of {self._money(self.metrics.fundamentals.revenue_ttm)} "
@@ -1172,6 +1261,25 @@ def _growth_metric_label(metric_name: str) -> str:
         "current_period_operating_income_growth_yoy": "operating-income growth",
         "current_period_net_income_growth_yoy": "net-income growth",
     }.get(metric_name, metric_name.replace("_", " "))
+
+
+def _growth_metric_phrase(metric_name: str, value: Optional[float]) -> str:
+    label = _growth_metric_label(metric_name)
+    if value is None:
+        return f"{label} not available"
+    if value < 0:
+        return f"{label.replace(' growth', ' decline')} {_pct(abs(value))}"
+    if value == 0:
+        return f"{label.replace(' growth', '')} unchanged"
+    return f"{label} {_pct(value)}"
+
+
+def _yoy_change_phrase(label: str, value: float) -> str:
+    if value < 0:
+        return f"{label} declined by {_pct(abs(value))}"
+    if value > 0:
+        return f"{label} increased by {_pct(value)}"
+    return f"{label} was unchanged"
 
 
 def _technical_interpretation(metrics: MetricsPacket) -> str:
@@ -2257,14 +2365,9 @@ def _current_period_claim_specs(
                         else "quarter"
                     )
                     growth_phrases = [
-                        f"{label} by {_pct(value)}"
+                        _yoy_change_phrase(label, value)
                         for _, label, value in available_growth
                     ]
-                    growth_phrases[0] = growth_phrases[0].replace(
-                        " by ",
-                        " changed by ",
-                        1,
-                    )
                     if len(growth_phrases) == 1:
                         growth_text = growth_phrases[0]
                     else:

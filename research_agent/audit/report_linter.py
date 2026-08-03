@@ -642,8 +642,8 @@ def _lint_financial_sanity(
                 metric=profit_growth_divergence[0],
                 reported=getattr(fundamentals, profit_growth_divergence[0]),
                 message=(
-                    "Profit growth above 100% exceeds current-period revenue growth "
-                    "by at least 75 percentage points; review base effects, "
+                    "Profit growth of at least 75% exceeds current-period revenue "
+                    "growth by at least 75 percentage points; review base effects, "
                     "impairments or other non-recurring items before treating it as "
                     "evidence of operating direction."
                 ),

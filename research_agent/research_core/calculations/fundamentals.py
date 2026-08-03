@@ -15,7 +15,7 @@ def safe_divide(numerator: Optional[float], denominator: Optional[float]):
 def current_profit_growth_divergence_metrics(
     fundamentals: FundamentalMetrics,
 ) -> tuple[str, ...]:
-    """Return exceptional profit-growth metrics that outrun revenue sharply."""
+    """Return profit-growth metrics that outrun revenue by a review threshold."""
 
     revenue_growth = fundamentals.current_period_revenue_growth_yoy
     if revenue_growth is None:
@@ -33,7 +33,7 @@ def current_profit_growth_divergence_metrics(
             ),
         )
         if value is not None
-        and value >= 1.0
+        and value >= 0.75
         and value - revenue_growth >= 0.75
     )
 
