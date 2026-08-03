@@ -152,7 +152,7 @@ def _lint_numeric_claims(
 ) -> list[AuditIssue]:
     issues: list[AuditIssue] = []
     for claim in claims:
-        if claim.unit == "date":
+        if claim.unit == "date" or _is_comparison_threshold(claim):
             continue
         mapped = map_claim_to_metric(claim, metrics_packet)
         if mapped is None:
@@ -218,6 +218,17 @@ def _lint_numeric_claims(
                 )
             )
     return issues
+
+
+def _is_comparison_threshold(claim: ExtractedNumericClaim) -> bool:
+    if not claim.raw_text:
+        return False
+    return re.search(
+        rf"\b(?:above|below|under|over|at\s+least|at\s+most|"
+        rf"less\s+than|greater\s+than)\s+{re.escape(claim.raw_text)}",
+        claim.nearby_text,
+        re.IGNORECASE,
+    ) is not None
 
 
 def _lint_currency_consistency(

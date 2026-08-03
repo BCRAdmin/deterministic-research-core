@@ -348,8 +348,6 @@ def test_material_calculations_require_exact_auditable_operands():
         "short_term_investments": 20.0,
         "debt_current": 70.0,
         "debt_noncurrent": 200.0,
-        "lease_liability_current": 5.0,
-        "lease_liability_noncurrent": 25.0,
         "current_assets": 300.0,
         "current_liabilities": 150.0,
         "equity": 400.0,
@@ -390,6 +388,31 @@ def test_material_calculations_require_exact_auditable_operands():
         )
         for metric_name, value in direct_values.items()
     ]
+    runtime_evidence.extend(
+        EvidenceItem(
+            evidence_id=f"GENERIC_RAW_{metric_name.upper()}_{component.upper()}",
+            ticker="GENERIC",
+            claim_type="financial_metric",
+            source_id="SEC_GENERIC_FILING_A",
+            source_type="sec_filing",
+            authority_rank=1,
+            statement=f"Exact {component} source value for {metric_name}.",
+            value=value,
+            unit="HUF",
+            period="as of 2026-06-30",
+            date="2026-06-30",
+            supports_metrics=[metric_name],
+            raw_value=value,
+            normalized_value=value,
+            confidence="high",
+        )
+        for metric_name, component, value in (
+            ("lease_liability_current", "operating", 2.0),
+            ("lease_liability_current", "finance", 3.0),
+            ("lease_liability_noncurrent", "operating", 10.0),
+            ("lease_liability_noncurrent", "finance", 15.0),
+        )
+    )
     runtime_evidence.extend(
         EvidenceItem(
             evidence_id=(
@@ -496,6 +519,29 @@ def test_material_calculations_require_exact_auditable_operands():
                 }
                 for metric_name, (current, prior) in current_growth_inputs.items()
             },
+            "lease_component_bridges": {
+                "lease_liability_current": {
+                    "formula_id": "sum_distinct_lease_liability_concepts",
+                    "operands": {
+                        "operating_lease_liability_current": 2.0,
+                        "finance_lease_liability_current": 3.0,
+                    },
+                    "period_end": "2026-06-30",
+                    "source_ids": ["SEC_GENERIC_FILING_A"],
+                },
+                "lease_liability_noncurrent": {
+                    "formula_id": "sum_distinct_lease_liability_concepts",
+                    "operands": {
+                        "operating_lease_liability_noncurrent": 10.0,
+                        "finance_lease_liability_noncurrent": 15.0,
+                    },
+                    "period_end": "2026-06-30",
+                    "source_ids": ["SEC_GENERIC_FILING_A"],
+                },
+            },
+            "reconciliation_material_dates": {
+                "total_lease_liabilities": "2026-06-30",
+            },
         },
         price_source_id="GENERIC_EXCHANGE",
         runtime_evidence=runtime_evidence,
@@ -530,6 +576,15 @@ def test_material_calculations_require_exact_auditable_operands():
         "trailing_pe",
     }
     assert newly_bound_metrics <= by_metric.keys()
+    assert by_metric["lease_liability_current"].formula_operands == {
+        "operating_lease_liability_current": 2.0,
+        "finance_lease_liability_current": 3.0,
+    }
+    assert by_metric["lease_liability_noncurrent"].formula_operands == {
+        "operating_lease_liability_noncurrent": 10.0,
+        "finance_lease_liability_noncurrent": 15.0,
+    }
+    assert by_metric["total_lease_liabilities"].date == "2026-06-30"
     assert by_metric["operating_margin_ttm"].unit == "percent"
     assert by_metric["net_margin_ttm"].unit == "percent"
     assert by_metric["fcf_margin_ttm"].unit == "percent"

@@ -20,6 +20,16 @@ INFORMATIONAL_RECONCILIATION_CODES = {
     "SOURCE_FRAME_VARIANT_IGNORED",
     "PERIOD_TYPE_MISMATCH_IGNORED",
 }
+LEASE_COMPONENT_CONCEPTS = {
+    "lease_liability_current": (
+        "us-gaap:OperatingLeaseLiabilityCurrent",
+        "us-gaap:FinanceLeaseLiabilityCurrent",
+    ),
+    "lease_liability_noncurrent": (
+        "us-gaap:OperatingLeaseLiabilityNoncurrent",
+        "us-gaap:FinanceLeaseLiabilityNoncurrent",
+    ),
+}
 
 
 def reconcile_metric(metric_name: str, candidate_metrics: Iterable[CanonicalMetric]):
@@ -588,6 +598,62 @@ def _latest_current_metric(
     )[0]
 
 
+def _distinct_lease_component_bridge(
+    canonical: CanonicalFinancials,
+    metric_name: str,
+    *,
+    balance_sheet_date: Optional[str],
+) -> Optional[tuple[float, dict]]:
+    concepts = LEASE_COMPONENT_CONCEPTS.get(metric_name, ())
+    selected: list[CanonicalMetric] = []
+    for concept in concepts:
+        candidates = [
+            metric
+            for metric in canonical.metrics_for(metric_name)
+            if metric.basis == "gaap"
+            and metric.source_concept == concept
+            and _is_current_metric(canonical, metric)
+            and (
+                not balance_sheet_date
+                or metric.end_date == balance_sheet_date
+            )
+        ]
+        if not candidates:
+            continue
+        selected.append(
+            sorted(
+                candidates,
+                key=lambda metric: (
+                    metric.end_date or "",
+                    _confidence_rank(metric.confidence),
+                    1 if metric.frame else 0,
+                ),
+                reverse=True,
+            )[0]
+        )
+    if len(selected) != len(concepts):
+        return None
+    operand_suffix = (
+        "current" if metric_name.endswith("_current") else "noncurrent"
+    )
+    operands = {
+        f"operating_lease_liability_{operand_suffix}": selected[0].value,
+        f"finance_lease_liability_{operand_suffix}": selected[1].value,
+    }
+    return sum(operands.values()), {
+        "formula_id": "sum_distinct_lease_liability_concepts",
+        "operands": operands,
+        "period_end": selected[0].end_date,
+        "source_ids": sorted(
+            {
+                source_id
+                for metric in selected
+                for source_id in metric.source_ids
+            }
+        ),
+    }
+
+
 def _is_current_metric(
     canonical: CanonicalFinancials,
     metric: CanonicalMetric,
@@ -865,12 +931,33 @@ def _derive_debt_and_lease_totals(
     ):
         balance.pop("debt_current", None)
 
+    for metric_name in LEASE_COMPONENT_CONCEPTS:
+        bridge_result = _distinct_lease_component_bridge(
+            canonical,
+            metric_name,
+            balance_sheet_date=balance_sheet_date,
+        )
+        if bridge_result is None:
+            continue
+        value, bridge = bridge_result
+        balance[metric_name] = value
+        fundamentals.setdefault("lease_component_bridges", {})[
+            metric_name
+        ] = bridge
+        fundamentals["reconciliation_material_dates"][metric_name] = (
+            bridge["period_end"]
+        )
+
     lease_current = balance.get("lease_liability_current")
     lease_noncurrent = balance.get("lease_liability_noncurrent")
     if lease_current is not None or lease_noncurrent is not None:
         balance["total_lease_liabilities"] = (
             float(lease_current or 0.0) + float(lease_noncurrent or 0.0)
         )
+        if balance_sheet_date:
+            fundamentals["reconciliation_material_dates"][
+                "total_lease_liabilities"
+            ] = balance_sheet_date
 
 
 def _duplicate_debt_component(

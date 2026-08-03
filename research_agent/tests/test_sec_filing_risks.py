@@ -270,6 +270,23 @@ def test_business_context_prefers_business_and_segments_over_transition_or_accou
     ]
 
 
+def test_business_context_prefers_complete_segment_subject_over_orphan_detail():
+    html = """
+    <html><body>
+      <p><strong>ITEM 1. BUSINESS</strong></p>
+      <p>We operate retail and ecommerce businesses serving customers through stores and digital channels.</p>
+      <p>Our operations comprise three reportable segments: Walmart U.S., Walmart International and Sam's Club U.S.</p>
+      <p>As a membership-only club, membership income is a significant component of the segment's operating income.</p>
+      <div><strong>ITEM 1A. RISK FACTORS</strong></div>
+    </body></html>
+    """
+
+    assert extract_sec_business_context(html) == [
+        "We operate retail and ecommerce businesses serving customers through stores and digital channels.",
+        "Our operations comprise three reportable segments: Walmart U.S., Walmart International and Sam's Club U.S.",
+    ]
+
+
 def test_builds_primary_risk_evidence_without_inventing_numeric_metrics():
     filing = select_sec_risk_filing_candidates(
         _submissions(), cik="1234", as_of_date="2026-07-24"

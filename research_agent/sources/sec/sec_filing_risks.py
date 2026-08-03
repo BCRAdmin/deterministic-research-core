@@ -54,6 +54,7 @@ _TITLE_CASE_CONNECTORS = {
 }
 _BUSINESS_LANGUAGE = re.compile(
     r"\b(business|customer|customers|develop|develops|offer|offers|operate|operating|"
+    r"operation|operations|"
     r"product|products|service|services|solution|solutions|platform|platforms|"
     r"segment|segments|software|subscription|subscriptions|device|devices|"
     r"manufacture|manufactures|distribute|distributes|market|markets|roast|"

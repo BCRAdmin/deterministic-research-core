@@ -496,6 +496,84 @@ def test_non_positive_equity_is_visible_with_liquidity_and_lease_context():
     ]
 
 
+def test_sub_one_current_ratio_is_visible_without_claiming_distress():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    metrics.fundamentals.equity = 94_330_000_000
+    metrics.fundamentals.current_ratio = 0.7714
+    metrics.fundamentals.total_lease_liabilities = 22_723_000_000
+    _add_exact_metric_evidence(data, metrics, ledger)
+
+    claims = generate_research_claims(data, metrics, ledger, decision, validation)
+    constraint = next(
+        claim
+        for claim in claims
+        if "current ratio below 1.0x" in claim.claim
+    )
+
+    assert "current ratio is 0.77x" in constraint.claim
+    assert "lease liabilities total $22.72B" in constraint.claim
+    assert "does not by itself establish an inability" in constraint.claim
+    assert "working-capital models" in constraint.counterargument
+    assert constraint.metric_refs == [
+        "current_ratio",
+        "total_lease_liabilities",
+    ]
+
+
+def test_aligned_positive_quarter_is_direction_not_durability_or_cause():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    metrics.fundamentals.current_period_revenue_growth_yoy = 0.073
+    metrics.fundamentals.current_period_operating_income_growth_yoy = 0.050
+    metrics.fundamentals.current_period_net_income_growth_yoy = 0.188
+    metrics.fundamentals.free_cash_flow_ttm = 12_552_000_000
+    canonical = CanonicalFinancials(
+        ticker=data.ticker,
+        as_of_date=data.as_of_date,
+        metrics=[
+            CanonicalMetric(
+                metric_name=metric_name,
+                value=value,
+                unit="USD",
+                period="FY2027_Q1",
+                fiscal_year=2027,
+                fiscal_period="Q1",
+                period_bucket="quarterly",
+                start_date="2026-02-01",
+                end_date="2026-04-30",
+                duration_days=89,
+                basis="gaap",
+                statement_type="income_statement",
+                source_ids=["GENERIC_SEC_Q1"],
+                confidence="high",
+            )
+            for metric_name, value in (
+                ("revenue", 177_751_000_000),
+                ("operating_income", 7_493_000_000),
+                ("net_income", 5_330_000_000),
+            )
+        ],
+    )
+    _add_exact_metric_evidence(data, metrics, ledger)
+
+    claims = generate_research_claims(
+        data,
+        metrics,
+        ledger,
+        decision,
+        validation,
+        canonical,
+    )
+    bull_claim = next(
+        claim
+        for claim in claims
+        if claim.section == "Bull Case" and claim.claim_type == "financial_metric"
+    )
+
+    assert "records aligned current-period direction" in bull_claim.claim
+    assert "does not establish durability or cause" in bull_claim.claim
+    assert "establishes current business direction" not in bull_claim.claim
+
+
 def test_bull_case_does_not_call_revenue_growth_operating_improvement_during_loss():
     data, metrics, validation, ledger, decision = _load_packet("SNOW")
     metrics.fundamentals.current_period_revenue_growth_yoy = 0.08
@@ -709,6 +787,32 @@ def test_final_rating_balances_non_positive_equity_against_positive_fcf():
     assert "positive FCF does not remove that constraint" in section
     assert "positive FCF is measured counterevidence" in section
     assert "does not establish insolvency or business deterioration" in section
+    assert "A raw multiple or an isolated price signal" not in section
+
+
+def test_final_rating_balances_bearish_technical_state_against_positive_fcf():
+    _, metrics, _, _, decision = _load_packet("SNOW")
+    metrics.fundamentals.equity = 94_330_000_000
+    metrics.fundamentals.free_cash_flow_ttm = 12_552_000_000
+    decision.signal_scores.fundamental_score = 1
+    decision.signal_scores.fundamental_status = "measured"
+    decision.signal_scores.technical_score = -1
+    decision.signal_scores.technical_status = "partial"
+    decision.signal_scores.valuation_status = "unbenchmarked"
+
+    section = _final_rating_section(
+        "TEST",
+        "Hold",
+        metrics.fundamentals,
+        metrics.valuation,
+        metrics.technical,
+        decision,
+    )
+
+    assert "do not override the observed bearish technical direction" in section
+    assert "bearish technical state is not dismissed" in section
+    assert "positive FCF and the constructive fundamental signal" in section
+    assert "corroborating fundamental deterioration" in section
     assert "A raw multiple or an isolated price signal" not in section
 
 

@@ -1771,6 +1771,25 @@ def _final_rating_section(
             "dismissed, but positive FCF is measured counterevidence. Non-positive "
             "equity alone does not establish insolvency or business deterioration."
         )
+    elif (
+        f.free_cash_flow_ttm is not None
+        and f.free_cash_flow_ttm > 0
+        and scores.fundamental_score > 0
+        and scores.technical_score < 0
+        and scores.technical_status in {"measured", "partial"}
+    ):
+        why_not_constructive = (
+            "Why not more constructive? Constructive fundamentals and positive FCF "
+            "do not override the observed bearish technical direction. A more "
+            "constructive rating requires technical confirmation and benchmarked "
+            "valuation support."
+        )
+        why_not_cautious = (
+            "Why not more cautious? The bearish technical state is not dismissed, "
+            "but positive FCF and the constructive fundamental signal are measured "
+            "counterevidence. A more cautious rating requires corroborating "
+            "fundamental deterioration."
+        )
     else:
         why_not_constructive = (
             "Why not more constructive? A rating change requires stronger measured "

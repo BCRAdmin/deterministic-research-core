@@ -400,21 +400,19 @@ class _ClaimBuilder:
             ),
         )
         equity = self.metrics.fundamentals.equity
+        current_ratio = self.metrics.fundamentals.current_ratio
+        lease_liabilities = self.metrics.fundamentals.total_lease_liabilities
         if equity is not None and equity <= 0:
             constraint_parts = [
                 f"Book equity is {self._money(equity)}, so debt/equity is not a "
                 "meaningful leverage ratio"
             ]
             constraint_metrics = ["equity"]
-            current_ratio = self.metrics.fundamentals.current_ratio
             if current_ratio is not None:
                 constraint_parts.append(
                     f"the current ratio is {_multiple(current_ratio)}"
                 )
                 constraint_metrics.append("current_ratio")
-            lease_liabilities = (
-                self.metrics.fundamentals.total_lease_liabilities
-            )
             if lease_liabilities is not None:
                 constraint_parts.append(
                     "separate lease liabilities total "
@@ -440,6 +438,38 @@ class _ClaimBuilder:
                 implication=(
                     "Assess leverage from debt, cash, liquidity, lease obligations "
                     "and cash-flow coverage instead of a debt/equity multiple."
+                ),
+            )
+        elif current_ratio is not None and current_ratio < 1.0:
+            constraint_parts = [
+                f"The current ratio is {_multiple(current_ratio)}"
+            ]
+            constraint_metrics = ["current_ratio"]
+            if lease_liabilities is not None:
+                constraint_parts.append(
+                    "separate lease liabilities total "
+                    f"{self._money(lease_liabilities)}"
+                )
+                constraint_metrics.append("total_lease_liabilities")
+            self.add(
+                "Fundamental Analysis",
+                "balance_sheet_constraint",
+                "financial_metric",
+                (
+                    f"{'; '.join(constraint_parts)}. A current ratio below 1.0x "
+                    "is material liquidity context, but does not by itself establish "
+                    "an inability to meet obligations."
+                ),
+                constraint_metrics,
+                "high",
+                "high",
+                counterargument=(
+                    "Retail and other fast-turning working-capital models can operate "
+                    "with current liabilities above current assets."
+                ),
+                implication=(
+                    "Assess the working-capital model, cash conversion, debt maturities "
+                    "and lease obligations together."
                 ),
             )
 
@@ -685,30 +715,34 @@ class _ClaimBuilder:
                     )
             elif fcf_value is not None and fcf_value < 0:
                 cash_context = (
-                    "this establishes current business direction and scale, but the "
-                    "negative FCF remains evidence of weak cash conversion. A more "
+                    "this records aligned current-period direction and scale, but does "
+                    "not establish durability or cause; negative FCF remains evidence "
+                    "of weak cash conversion. A more "
                     "constructive rating still requires those comparisons to persist, "
                     "cash conversion to improve and stronger technical or benchmarked "
                     "valuation support."
                 )
             elif fcf_value == 0:
                 cash_context = (
-                    "this establishes current business direction and scale, but does "
-                    "not establish positive cash conversion. A more constructive rating "
+                    "this records aligned current-period direction and scale, but does "
+                    "not establish durability, cause or positive cash conversion. A more "
+                    "constructive rating "
                     "still requires those comparisons to persist, cash conversion to "
                     "improve and stronger technical or benchmarked valuation support."
                 )
             elif fcf_value is not None:
                 cash_context = (
-                    "this establishes current business direction, scale and positive "
-                    "cash generation. A more constructive rating still requires those "
+                    "this records aligned current-period direction, scale and positive "
+                    "cash generation, but does not establish durability or cause. A more "
+                    "constructive rating still requires those "
                     "comparisons to persist and stronger technical or benchmarked "
                     "valuation support."
                 )
             else:
                 cash_context = (
-                    "this establishes current business direction and scale, but FCF "
-                    "is unavailable and cannot support a cash-conversion conclusion. "
+                    "this records aligned current-period direction and scale, but does "
+                    "not establish durability or cause; FCF is unavailable and cannot "
+                    "support a cash-conversion conclusion. "
                     "A more constructive rating still requires those comparisons to "
                     "persist, cash-conversion evidence and stronger technical or "
                     "benchmarked valuation support."

@@ -182,6 +182,28 @@ def test_direct_percent_evidence_normalizes_single_digit_percentage():
     assert not audit.has_issue("NUMERIC_MISMATCH")
 
 
+def test_current_ratio_threshold_is_not_mapped_to_rsi_or_a_reported_value():
+    metrics = simple_metrics(ticker="GENERIC")
+    metrics.fundamentals.current_ratio = 0.7714
+    markdown = (
+        "The current ratio is 0.77x. A current ratio below 1.0x is material "
+        "liquidity context; assess cash conversion and debt maturities together."
+    )
+
+    claims = [
+        claim
+        for claim in extract_numeric_claims(markdown)
+        if claim.unit == "multiple"
+    ]
+    audit = audit_markdown_report(markdown, metrics)
+
+    assert [claim.possible_metric for claim in claims] == [
+        "current_ratio",
+        "current_ratio",
+    ]
+    assert not audit.has_issue("NUMERIC_MISMATCH")
+
+
 def test_auditor_maps_each_matching_quarter_percentage_to_nearest_growth_metric():
     metrics = simple_metrics(ticker="GENERIC")
     metrics.fundamentals.current_period_revenue_growth_yoy = -0.014

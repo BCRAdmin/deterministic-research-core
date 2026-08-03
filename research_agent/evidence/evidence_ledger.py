@@ -495,6 +495,70 @@ def build_fundamental_derivation_evidence(
                 evidence_items=[*runtime_items, *evidence],
             )
         )
+    lease_component_bridges = normalized_fundamentals.get(
+        "lease_component_bridges"
+    )
+    if isinstance(lease_component_bridges, Mapping):
+        for metric_name in (
+            "lease_liability_current",
+            "lease_liability_noncurrent",
+        ):
+            bridge = lease_component_bridges.get(metric_name)
+            value = getattr(fundamentals, metric_name, None)
+            if value is None or not isinstance(bridge, Mapping):
+                continue
+            operands = {
+                str(key): float(operand)
+                for key, operand in (bridge.get("operands") or {}).items()
+                if isinstance(operand, (int, float))
+            }
+            formula_id = str(
+                bridge.get("formula_id")
+                or "sum_distinct_lease_liability_concepts"
+            )
+            source_ids = [
+                str(item)
+                for item in bridge.get("source_ids") or []
+                if item
+            ]
+            if (
+                not operands
+                or not math.isclose(
+                    sum(operands.values()),
+                    float(value),
+                    rel_tol=1e-9,
+                    abs_tol=1e-9,
+                )
+                or not _bridge_operands_have_exact_evidence(
+                    runtime_items,
+                    metric_name=metric_name,
+                    formula_id=formula_id,
+                    operands=operands,
+                    source_ids=source_ids,
+                )
+            ):
+                continue
+            period_end = str(bridge.get("period_end") or as_of_date)
+            evidence.append(
+                _calculation_evidence(
+                    ticker=ticker,
+                    as_of_date=as_of_date,
+                    source_id=source_id,
+                    metric_name=metric_name,
+                    value=float(value),
+                    formula_id=formula_id,
+                    operands=operands,
+                    unit=currency,
+                    period=f"as of {period_end}",
+                    date=period_end,
+                    evidence_items=[*runtime_items, *evidence],
+                    source_lineage=_canonical_lineage_source_ids(
+                        runtime_items,
+                        source_ids,
+                    ),
+                )
+            )
+
     lease_components = {
         metric_name: float(value)
         for metric_name, value in (
@@ -523,6 +587,13 @@ def build_fundamental_derivation_evidence(
             lease_components,
         )
     ):
+        lease_period_end = str(
+            (
+                normalized_fundamentals.get("reconciliation_material_dates")
+                or {}
+            ).get("total_lease_liabilities")
+            or as_of_date
+        )
         evidence.append(
             _calculation_evidence(
                 ticker=ticker,
@@ -533,8 +604,8 @@ def build_fundamental_derivation_evidence(
                 formula_id="sum_available_lease_liability_components",
                 operands=lease_components,
                 unit=currency,
-                period=f"as of {as_of_date}",
-                date=as_of_date,
+                period=f"as of {lease_period_end}",
+                date=lease_period_end,
                 evidence_items=[*runtime_items, *evidence],
             )
         )

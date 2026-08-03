@@ -108,9 +108,9 @@ METRIC_ALIASES = {
         "price basis",
         "schlusskurs",
     ],
-    "rsi_14": [
-        "rsi",
-        "rsi 14",
+    "current_ratio": [
+        "current ratio",
+        "current liquidity ratio",
     ],
 }
 
@@ -138,6 +138,7 @@ METRIC_PATHS = {
     "price_to_fcf": "valuation.price_to_fcf",
     "close": "technical.close",
     "rsi_14": "technical.rsi_14",
+    "current_ratio": "fundamentals.current_ratio",
     "current_period_revenue_growth_yoy": (
         "fundamentals.current_period_revenue_growth_yoy"
     ),

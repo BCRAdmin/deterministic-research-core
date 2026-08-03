@@ -816,6 +816,36 @@ def test_companyfacts_maps_point_in_time_shares_debt_leases_and_buybacks():
                         ]
                     }
                 },
+                "FinanceLeaseLiabilityCurrent": {
+                    "units": {
+                        "USD": [
+                            {
+                                "val": 100_000_000,
+                                "fy": 2026,
+                                "fp": "Q1",
+                                "form": "10-Q",
+                                "filed": "2026-05-07",
+                                "end": "2026-03-31",
+                                "accn": "mcd-q1",
+                            }
+                        ]
+                    }
+                },
+                "FinanceLeaseLiabilityNoncurrent": {
+                    "units": {
+                        "USD": [
+                            {
+                                "val": 1_000_000_000,
+                                "fy": 2026,
+                                "fp": "Q1",
+                                "form": "10-Q",
+                                "filed": "2026-05-07",
+                                "end": "2026-03-31",
+                                "accn": "mcd-q1",
+                            }
+                        ]
+                    }
+                },
                 "PaymentsForRepurchaseOfCommonStock": {
                     "units": {
                         "USD": [
@@ -854,10 +884,18 @@ def test_companyfacts_maps_point_in_time_shares_debt_leases_and_buybacks():
 
     assert fundamentals["share_data"]["listed_share_count"] == 710_505_859
     assert fundamentals["balance_sheet"]["total_debt"] == 40_105_000_000
+    assert fundamentals["balance_sheet"]["lease_liability_current"] == 807_000_000
     assert (
-        fundamentals["balance_sheet"]["total_lease_liabilities"]
-        == 14_776_000_000
+        fundamentals["balance_sheet"]["lease_liability_noncurrent"]
+        == 15_069_000_000
     )
+    assert fundamentals["balance_sheet"]["total_lease_liabilities"] == 15_876_000_000
+    assert fundamentals["lease_component_bridges"][
+        "lease_liability_current"
+    ]["operands"] == {
+        "operating_lease_liability_current": 707_000_000,
+        "finance_lease_liability_current": 100_000_000,
+    }
 
 
 def test_net_income_uses_financial_filing_fallback_and_ignores_proxy_facts():
