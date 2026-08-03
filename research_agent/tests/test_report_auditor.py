@@ -419,13 +419,19 @@ def test_auditor_does_not_flag_clean_mega_cap_ev_sales_below_30_as_valuation_ano
     assert not audit.has_issue("PERIOD_DENOMINATOR_BUG", metric="ev_to_sales")
 
 
-def test_auditor_flags_mega_cap_fcf_margin_anomaly():
+def test_auditor_keeps_high_fcf_margin_as_one_non_blocking_context_review():
     metrics = MetricsPacket(**load_fixture("amzn_2026_05_01", "metrics_packet.json"))
     metrics.fundamentals.fcf_margin_ttm = 0.50
 
     audit = audit_markdown_report("## Executive Summary\nValidated skeleton.", metrics, ticker="AMZN")
 
-    assert audit.has_issue("FINANCIAL_SANITY_FCF_MARGIN_ANOMALY", metric="fcf_margin_ttm")
+    margin_issues = [issue for issue in audit.issues if issue.metric == "fcf_margin_ttm"]
+
+    assert len(margin_issues) == 1
+    assert margin_issues[0].code == "GUARD_THRESHOLD_REVIEW"
+    assert margin_issues[0].severity == "warning"
+    assert "mega_cap_tech context" in margin_issues[0].message
+    assert not audit.has_blocking_errors
 
 
 def test_auditor_catches_long_stop_above_entry_in_markdown():

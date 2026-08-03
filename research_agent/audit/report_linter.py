@@ -785,23 +785,17 @@ def _lint_financial_sanity(
                 message="FCF margin above 100% indicates a likely FCF/revenue period denominator mismatch.",
             )
         )
-    elif fundamentals.fcf_margin_ttm is not None and fundamentals.fcf_margin_ttm > 0.40 and _requires_fcf_margin_sanity(ticker):
-        issues.append(
-            AuditIssue(
-                severity="warning",
-                code="FINANCIAL_SANITY_FCF_MARGIN_ANOMALY",
-                metric="fcf_margin_ttm",
-                reported=fundamentals.fcf_margin_ttm,
-                message="FCF margin above 40% requires sector-context review.",
-            )
-        )
+    elif fundamentals.fcf_margin_ttm is not None and fundamentals.fcf_margin_ttm > 0.40:
         issues.append(
             AuditIssue(
                 severity="warning",
                 code="GUARD_THRESHOLD_REVIEW",
                 metric="fcf_margin_ttm",
                 reported=fundamentals.fcf_margin_ttm,
-                message="FCF margin above 40% should be reviewed in sector context.",
+                message=(
+                    "FCF margin above 40% should be reviewed in "
+                    f"{sector} context."
+                ),
             )
         )
 
@@ -1413,11 +1407,6 @@ def _has_current_primary_cash_flow_support(
 def _requires_sbc_sanity(ticker: str) -> bool:
     saas_exceptions = {"DDOG", "MDB", "SNOW", "CRWD", "NET", "ZS"}
     return ticker not in saas_exceptions
-
-
-def _requires_fcf_margin_sanity(ticker: str) -> bool:
-    high_margin_software = {"DDOG", "MDB", "SNOW", "CRWD", "NET", "ZS"}
-    return ticker not in high_margin_software
 
 
 def _mirror_validation_warnings(
