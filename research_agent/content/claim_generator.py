@@ -519,6 +519,10 @@ class _ClaimBuilder:
             and str(metric).endswith("_growth_yoy")
         ]
         growth_metrics = list(dict.fromkeys(str(metric) for metric in growth_metrics))
+        current_period_loss_metrics = _current_period_loss_metrics(self.canonical)
+        current_period_loss_phrase = _current_period_loss_phrase(
+            current_period_loss_metrics
+        )
         if growth_metrics:
             growth_text = ", ".join(
                 f"{_growth_metric_label(metric)} {_pct(self._metric_value(metric))}"
@@ -571,6 +575,25 @@ class _ClaimBuilder:
                     "constructive rating still requires persistence and stronger "
                     "technical or benchmarked valuation support."
                 )
+            elif current_period_loss_metrics:
+                if fcf_value is not None and fcf_value < 0:
+                    cash_context = (
+                        "the latest reported period still contains "
+                        f"{current_period_loss_phrase}, and negative FCF remains "
+                        "evidence of weak cash conversion. These figures show "
+                        "reported top-line direction and scale; they do not establish "
+                        "operating improvement. A more constructive rating still requires "
+                        "profitability and cash conversion to improve, plus stronger "
+                        "technical or benchmarked valuation support."
+                    )
+                else:
+                    cash_context = (
+                        "the latest reported period still contains "
+                        f"{current_period_loss_phrase}. Revenue and FCF therefore do "
+                        "not establish operating improvement. A more constructive "
+                        "rating still requires profitability to improve and stronger "
+                        "technical or benchmarked valuation support."
+                    )
             elif fcf_value is not None and fcf_value < 0:
                 cash_context = (
                     "this establishes current business direction and scale, but the "
@@ -609,7 +632,13 @@ class _ClaimBuilder:
                 )
         else:
             fcf_value = self.metrics.fundamentals.free_cash_flow_ttm
-            if fcf_value is not None and fcf_value < 0:
+            if current_period_loss_metrics:
+                cash_context = (
+                    "The revenue total establishes scale, but the latest reported "
+                    f"period still contains {current_period_loss_phrase}; these totals "
+                    "do not establish operating improvement"
+                )
+            elif fcf_value is not None and fcf_value < 0:
                 cash_context = (
                     "The revenue total establishes scale, while negative FCF is a "
                     "cash-conversion constraint rather than bull-case support"
@@ -639,7 +668,12 @@ class _ClaimBuilder:
             "bull",
             "financial_metric",
             bull_text,
-            ["revenue_ttm", "free_cash_flow_ttm", *growth_metrics],
+            [
+                "revenue_ttm",
+                "free_cash_flow_ttm",
+                *growth_metrics,
+                *current_period_loss_metrics,
+            ],
             "medium",
             "medium",
             counterargument=(
@@ -1504,6 +1538,40 @@ def _latest_current_period_metric(
     )
 
 
+def _current_period_loss_metrics(
+    canonical_financials: Optional[CanonicalFinancials],
+) -> list[str]:
+    if canonical_financials is None:
+        return []
+    anchor = _latest_current_period_metric(canonical_financials, "revenue")
+    if anchor is None:
+        return []
+    return [
+        metric_name
+        for metric_name in ("operating_income", "net_income")
+        if (
+            metric := _metric_for_same_reported_period(
+                canonical_financials,
+                metric_name,
+                anchor,
+            )
+        )
+        is not None
+        and metric.value < 0
+    ]
+
+
+def _current_period_loss_phrase(metric_names: list[str]) -> str:
+    labels = {
+        "operating_income": "an operating loss",
+        "net_income": "a net loss",
+    }
+    phrases = [labels[name] for name in metric_names if name in labels]
+    if len(phrases) <= 1:
+        return phrases[0] if phrases else "a loss"
+    return f"{phrases[0]} and {phrases[1]}"
+
+
 def _metric_for_same_reported_period(
     canonical_financials: CanonicalFinancials,
     metric_name: str,
@@ -1605,11 +1673,20 @@ def _final_rating_claim_text(
         if valuation_status == "unbenchmarked"
         else "No benchmarked valuation signal is present."
     )
+    fundamental_note = (
+        "The measured fundamental signal is cautious and remains part of the "
+        "rating rationale."
+        if decision.signal_scores.fundamental_score < 0
+        else "The measured fundamental signal is constructive."
+        if decision.signal_scores.fundamental_score > 0
+        else "The measured fundamental signal is neutral."
+    )
     return (
         f"We rate {ticker} {preferred} at the validated close of "
         f"{_money(metrics.technical.close, currency)}. {reason} The factual "
         f"anchors are {evidence_anchor}; the technical evidence indicates "
-        f"{_technical_interpretation(metrics)}. {valuation_note}"
+        f"{_technical_interpretation(metrics)}. {fundamental_note} "
+        f"{valuation_note}"
     )
 
 

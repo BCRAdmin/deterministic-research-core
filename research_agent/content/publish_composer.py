@@ -43,6 +43,24 @@ CURRENT_KPI_TERMS = {
     "electron", "haste", "launch cadence", "neutron", "space systems",
     "launch services", "segment mix", "capital intensity", "execution milestone",
 }
+CURRENT_PERIOD_MARKER_RE = re.compile(
+    r"\b(?:current-period|latest reported period|q[1-4]|fy20\d{2}[_ -]?q[1-4])\b",
+    re.IGNORECASE,
+)
+CURRENT_PERIOD_SECTIONS = {
+    "Business & Segment Context",
+    "Fundamental Analysis",
+    "Catalysts & Triggers",
+    "Key Risks",
+    "Business Model Reality",
+    "Revenue Scale and Backlog",
+    "Contract / Backlog Materiality",
+    "Segment Mix",
+    "Execution Milestones",
+    "FCF Path",
+    "Capital Intensity",
+    "Valuation vs Revenue/Backlog",
+}
 
 
 def compose_publish_report(
@@ -687,6 +705,30 @@ def _generic_publish_report(
     constructive_cash_trigger = _constructive_cash_conversion_trigger(
         f.free_cash_flow_ttm
     )
+    current_kpi_claims = _current_kpi_claims(claim_list)
+    current_kpi_ids = {claim.claim_id for claim in current_kpi_claims}
+    fundamental_claims = [
+        claim
+        for claim in grouped.get("Fundamental Analysis", [])
+        if claim.claim_id not in current_kpi_ids
+    ]
+    investment_thesis = "\n\n".join(
+        part
+        for part in (
+            _generic_investment_thesis(
+                ticker,
+                rating,
+                metrics_packet,
+                decision_packet,
+                currency=currency,
+            ),
+            _paragraphs(
+                grouped.get("Business & Segment Context", []),
+                limit=2,
+            ),
+        )
+        if part
+    )
 
     sections = [
         f"# {ticker} Research Report",
@@ -694,13 +736,13 @@ def _generic_publish_report(
         _executive_summary(ticker, rating, grouped, metrics_packet),
         "",
         "## Investment Thesis",
-        _paragraphs(grouped.get("Executive Summary", []) + grouped.get("Business & Segment Context", []), limit=3),
+        investment_thesis,
         "",
         "## Current Period KPIs",
-        _paragraphs(_current_kpi_claims(claim_list), limit=5),
+        _paragraphs(current_kpi_claims, limit=5),
         "",
         "## Fundamental Analysis",
-        _paragraphs(grouped.get("Fundamental Analysis", []), limit=5),
+        _paragraphs(fundamental_claims, limit=5),
         "",
         "## Valuation / Risk-Reward",
         _paragraphs(grouped.get("Valuation / Multiples", []), limit=3),
@@ -1559,7 +1601,14 @@ def _executive_summary(
     grouped: dict[str, list[ResearchClaim]],
     metrics: MetricsPacket,
 ) -> str:
-    current = _paragraphs(_current_kpi_claims([claim for claims in grouped.values() for claim in claims]), limit=2)
+    current = _paragraphs(grouped.get("Executive Summary", []), limit=1)
+    if not current:
+        current = _paragraphs(
+            _current_kpi_claims(
+                [claim for claims in grouped.values() for claim in claims]
+            ),
+            limit=1,
+        )
     technical = (
         f"Technically, {ticker} carries an RSI of {_fmt_number(metrics.technical.rsi_14)} with price at "
         f"{_fmt_number(metrics.technical.close)}, so timing remains part of the rating debate."
@@ -1571,9 +1620,58 @@ def _current_kpi_claims(claims: list[ResearchClaim]) -> list[ResearchClaim]:
     return [
         claim
         for claim in claims
-        if any(term in _claim_text(claim).lower() for term in CURRENT_KPI_TERMS)
+        if (claim.section or "") in CURRENT_PERIOD_SECTIONS
+        and (
+            any(
+                metric.startswith("current_") or "guidance" in metric
+                for metric in claim.metric_refs
+            )
+            or CURRENT_PERIOD_MARKER_RE.search(_claim_text(claim)) is not None
+        )
         and any(char.isdigit() for char in _claim_text(claim))
     ]
+
+
+def _generic_investment_thesis(
+    ticker: str,
+    rating: str,
+    metrics: MetricsPacket,
+    decision: DecisionPacket,
+    *,
+    currency: str = "USD",
+) -> str:
+    fundamentals = metrics.fundamentals
+    scores = decision.signal_scores
+    if (
+        fundamentals.free_cash_flow_ttm is not None
+        and fundamentals.free_cash_flow_ttm < 0
+    ):
+        cash_text = (
+            f"negative FCF of {_fmt_money(fundamentals.free_cash_flow_ttm, currency)} keeps "
+            "cash conversion as a fundamental constraint"
+        )
+    elif fundamentals.free_cash_flow_ttm is not None:
+        cash_text = (
+            f"positive FCF of {_fmt_money(fundamentals.free_cash_flow_ttm, currency)} "
+            "provides measured cash-conversion support"
+        )
+    else:
+        cash_text = "FCF is unavailable and cannot support the thesis"
+    fundamental_direction = (
+        "cautious"
+        if scores.fundamental_score < 0
+        else "constructive"
+        if scores.fundamental_score > 0
+        else "neutral"
+    )
+    return (
+        f"{ticker}'s central investment debate is whether revenue scale of "
+        f"{_fmt_money(fundamentals.revenue_ttm, currency)} can translate into durable cash "
+        f"generation; {cash_text}. The {rating} stance combines a "
+        f"{fundamental_direction} fundamental signal with "
+        f"{scores.technical_status} technical evidence and "
+        f"{scores.valuation_status} valuation evidence."
+    )
 
 
 def _final_rating_section(
@@ -1631,6 +1729,41 @@ def _final_rating_section(
         )
     else:
         technical_text = "not measured"
+    if f.free_cash_flow_ttm is not None and f.free_cash_flow_ttm < 0:
+        confirmation_limits = []
+        if scores.valuation_status != "measured":
+            confirmation_limits.append(
+                f"valuation is {scores.valuation_status}"
+            )
+        if scores.technical_status != "measured":
+            confirmation_limits.append(
+                f"the technical basis is {scores.technical_status}"
+            )
+        confirmation_text = (
+            " and ".join(confirmation_limits)
+            if confirmation_limits
+            else "the other measured signals do not corroborate a further downgrade"
+        )
+        why_not_constructive = (
+            "Why not more constructive? Negative FCF and the cautious measured "
+            "fundamental signal block a more constructive rating without clear "
+            "cash-conversion improvement."
+        )
+        why_not_cautious = (
+            "Why not more cautious? Negative FCF is already fundamental downside "
+            "evidence and is not dismissed. A more cautious permitted rating still "
+            f"requires additional measured confirmation because {confirmation_text}."
+        )
+    else:
+        why_not_constructive = (
+            "Why not more constructive? A rating change requires stronger measured "
+            "fundamentals or technical confirmation and, where valuation is relevant, "
+            "benchmark evidence."
+        )
+        why_not_cautious = (
+            "Why not more cautious? A raw multiple or an isolated price signal cannot "
+            "establish business deterioration."
+        )
     return "\n\n".join(
         [
             f"Final Rating: {rating}. {rating_reason}",
@@ -1641,15 +1774,8 @@ def _final_rating_section(
                 f"{technical_text}."
             ),
             valuation_text,
-            (
-                "Why not more constructive? A rating change requires stronger "
-                "measured fundamentals or technical confirmation and, where "
-                "valuation is relevant, benchmark evidence."
-            ),
-            (
-                "Why not more cautious? A raw multiple or an isolated price "
-                "signal cannot establish business deterioration."
-            ),
+            why_not_constructive,
+            why_not_cautious,
             (
                 f"Review condition: retain the {ticker} research rating while "
                 "the measured evidence state is unchanged. Reassess only when "

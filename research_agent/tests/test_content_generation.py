@@ -20,6 +20,7 @@ from research_agent.content.publish_composer import (
     _constructive_cash_conversion_trigger,
     _final_rating_section,
     _fmt_money as _publish_money,
+    _generic_publish_report,
     compose_internal_best_report,
 )
 from research_agent.decision.decision_packet import DecisionPacket
@@ -30,6 +31,7 @@ from research_agent.reconciliation.canonical_financials import (
     CanonicalFinancials,
     CanonicalMetric,
 )
+from research_agent.research_core.models.claims import ResearchClaim
 from research_agent.research_core.models.data_packet import DataPacket, MaterialNewsEvent
 from research_agent.research_core.models.metrics_packet import MetricsPacket
 from research_agent.research_core.models.validation_report import ValidationReport
@@ -411,6 +413,191 @@ def test_bull_case_does_not_call_extreme_profit_divergence_business_direction():
     assert "requires base-effect or one-off review" in bull_claim.claim
     assert "do not establish operating business direction" in bull_claim.claim
     assert "establishes current business direction" not in bull_claim.claim
+
+
+def test_bull_case_does_not_call_revenue_growth_operating_improvement_during_loss():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    metrics.fundamentals.current_period_revenue_growth_yoy = 0.08
+    metrics.fundamentals.current_period_operating_income_growth_yoy = None
+    metrics.fundamentals.current_period_net_income_growth_yoy = None
+    metrics.fundamentals.free_cash_flow_ttm = -210_000_000
+    canonical = CanonicalFinancials(
+        ticker=data.ticker,
+        as_of_date=data.as_of_date,
+        metrics=[
+            CanonicalMetric(
+                metric_name=metric_name,
+                value=value,
+                unit="USD",
+                period="FY2026_Q2",
+                fiscal_year=2026,
+                fiscal_period="Q2",
+                period_bucket="quarterly",
+                start_date="2026-04-01",
+                end_date="2026-06-30",
+                duration_days=91,
+                basis="gaap",
+                statement_type="income_statement",
+                source_ids=["GENERIC_SEC_Q2"],
+                evidence_ids=[evidence_id],
+                confidence="high",
+            )
+            for metric_name, value, evidence_id in (
+                ("revenue", 24_560_000_000, "GENERIC_REVENUE_Q2"),
+                ("operating_income", 156_000_000, "GENERIC_OPERATING_INCOME_Q2"),
+                ("net_income", -444_000_000, "GENERIC_NET_INCOME_Q2"),
+            )
+        ],
+    )
+    _add_exact_metric_evidence(data, metrics, ledger)
+    ledger.evidence_items.append(
+        EvidenceItem(
+            evidence_id="GENERIC_NET_INCOME_Q2",
+            ticker=data.ticker,
+            claim_type="financial_metric",
+            source_id="GENERIC_SEC_Q2",
+            source_type="regulatory_filing",
+            authority_rank=1,
+            statement="Current-period net income was a loss.",
+            value=-444_000_000,
+            unit="USD",
+            period="FY2026_Q2",
+            date="2026-06-30",
+            supports_metrics=["net_income"],
+            confidence="high",
+        )
+    )
+
+    claims = generate_research_claims(
+        data,
+        metrics,
+        ledger,
+        decision,
+        validation,
+        canonical,
+    )
+    bull_claim = next(
+        claim
+        for claim in claims
+        if claim.section == "Bull Case" and claim.claim_type == "financial_metric"
+    )
+
+    assert "latest reported period still contains a net loss" in bull_claim.claim
+    assert "do not establish operating improvement" in bull_claim.claim
+    assert "net_income" in bull_claim.metric_refs
+    assert "establishes current business direction" not in bull_claim.claim
+
+
+def test_generic_report_routes_claims_without_repeating_main_body_paragraphs():
+    _, metrics, _, ledger, decision = _load_packet("SNOW")
+
+    def claim(
+        claim_id: str,
+        section: str,
+        text: str,
+        metric_refs: list[str],
+    ) -> ResearchClaim:
+        return ResearchClaim(
+            claim_id=claim_id,
+            section=section,
+            agent="test",
+            claim=text,
+            claim_text=text,
+            evidence_metrics=metric_refs,
+            metric_refs=metric_refs,
+            evidence_ids=["SEC_TEST"],
+            source_ids=["SEC_TEST"],
+            confidence="high",
+        )
+
+    claims = [
+        claim("EXEC", "Executive Summary", "Executive summary marker 101.", []),
+        claim(
+            "BUSINESS",
+            "Business & Segment Context",
+            "Business context marker 202.",
+            [],
+        ),
+        claim(
+            "CURRENT",
+            "Fundamental Analysis",
+            "Current revenue growth marker 303.",
+            ["current_period_revenue_growth_yoy"],
+        ),
+        claim(
+            "FCF",
+            "Fundamental Analysis",
+            "Free cash flow marker 404.",
+            ["free_cash_flow_ttm"],
+        ),
+        claim(
+            "BULL",
+            "Bull Case",
+            "Bull case current-period marker 405.",
+            ["current_period_revenue_growth_yoy"],
+        ),
+        claim(
+            "VALUATION",
+            "Valuation / Multiples",
+            "Valuation marker 505.",
+            ["ev_to_sales"],
+        ),
+    ]
+    grouped = {
+        section: [item for item in claims if item.section == section]
+        for section in {item.section for item in claims}
+    }
+
+    report = _generic_publish_report(
+        "TEST",
+        "Hold",
+        grouped,
+        metrics,
+        decision,
+        claims,
+        ledger,
+    )
+    main_body = report.split("## Evidence Appendix", 1)[0]
+    current_section = main_body.split("## Current Period KPIs", 1)[1].split(
+        "## Fundamental Analysis",
+        1,
+    )[0]
+    fundamental_section = main_body.split("## Fundamental Analysis", 1)[1].split(
+        "## Valuation / Risk-Reward",
+        1,
+    )[0]
+
+    for item in claims:
+        assert main_body.count(item.claim) == 1
+    assert claims[2].claim in current_section
+    assert claims[4].claim not in current_section
+    assert claims[5].claim not in current_section
+    assert claims[2].claim not in fundamental_section
+    assert claims[3].claim in fundamental_section
+
+
+def test_final_rating_acknowledges_negative_fcf_before_defending_hold():
+    _, metrics, _, _, decision = _load_packet("SNOW")
+    metrics.fundamentals.free_cash_flow_ttm = -210_000_000
+    decision.signal_scores.fundamental_score = -1
+    decision.signal_scores.fundamental_status = "measured"
+    decision.signal_scores.technical_status = "partial"
+    decision.signal_scores.valuation_status = "unbenchmarked"
+
+    section = _final_rating_section(
+        "TEST",
+        "Hold",
+        metrics.fundamentals,
+        metrics.valuation,
+        metrics.technical,
+        decision,
+    )
+
+    assert "Negative FCF and the cautious measured fundamental signal" in section
+    assert "Negative FCF is already fundamental downside evidence" in section
+    assert "valuation is unbenchmarked" in section
+    assert "the technical basis is partial" in section
+    assert "A raw multiple or an isolated price signal" not in section
 
 
 def test_final_rating_names_partial_bullish_price_basis_precisely():
