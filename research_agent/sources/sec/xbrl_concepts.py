@@ -26,6 +26,7 @@ US_GAAP_CONCEPTS = {
     "total_debt": [
         "DebtAndFinanceLeaseObligations",
         "DebtAndCapitalLeaseObligations",
+        "DebtLongtermAndShorttermCombinedAmount",
         "LongTermDebt",
     ],
     "short_term_debt": ["ShortTermBorrowings", "CommercialPaper"],

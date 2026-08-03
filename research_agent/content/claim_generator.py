@@ -603,7 +603,10 @@ class _ClaimBuilder:
             ["revenue_ttm", "free_cash_flow_ttm", *growth_metrics],
             "medium",
             "medium",
-            counterargument="Strong scale does not resolve valuation or reconciliation anomalies.",
+            counterargument=(
+                "Strong growth and scale do not by themselves prove durable cash "
+                "conversion or justify an unbenchmarked valuation."
+            ),
             implication="The bull case remains a research scenario, not an action plan.",
         )
         self.add(
@@ -642,8 +645,8 @@ class _ClaimBuilder:
                 "medium",
                 "high",
                 implication=(
-                    "Manual review remains appropriate when financial-sanity "
-                    "guards fire."
+                    "Treat the bear case as evidence to monitor, not as proof of "
+                    "permanent business deterioration."
                 ),
             )
         self.add(

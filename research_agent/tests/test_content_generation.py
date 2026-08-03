@@ -349,6 +349,15 @@ def test_bull_case_does_not_present_negative_fcf_as_cash_generation():
 
     assert "negative FCF is a cash-conversion constraint" in bull_claim.claim
     assert "scale and cash generation" not in bull_claim.claim
+    assert "reconciliation anomalies" not in bull_claim.counterargument
+    assert "unbenchmarked valuation" in bull_claim.counterargument
+
+    bear_claim = next(claim for claim in claims if claim.section == "Bear Case")
+    assert (
+        bear_claim.investment_implication
+        == "Treat the bear case as evidence to monitor, not as proof of permanent "
+        "business deterioration."
+    )
 
 
 def test_final_rating_names_partial_bullish_price_basis_precisely():

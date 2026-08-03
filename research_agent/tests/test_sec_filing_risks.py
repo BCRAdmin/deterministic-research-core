@@ -82,6 +82,31 @@ def test_extracts_emphasized_title_case_risks_without_terminal_periods():
     ]
 
 
+def test_extracts_plain_risk_factor_summary_without_category_titles():
+    html = """
+    <html><body>
+      <div><strong>Item 1A. Risk Factors</strong></div>
+      <p><strong>Risk Factor Summary</strong></p>
+      <p><strong>Business and Operational Risks</strong></p>
+      <p>We may fail to execute our cloud strategy, which could reduce our revenues and profitability.</p>
+      <p>Our products may contain errors that could adversely affect customer demand and our reputation.</p>
+      <p><strong>Risks Related to Our Common Stock</strong></p>
+      <p>Our stock price could become volatile and investors may lose value.</p>
+      <p><strong>Business and Operational Risks</strong></p>
+      <p>This explanatory narrative may describe a risk but is not a heading.</p>
+      <p><strong>Cybersecurity incidents could harm our operations and reputation.</strong></p>
+      <div><strong>Item 1B. Unresolved Staff Comments</strong></div>
+    </body></html>
+    """
+
+    assert extract_sec_risk_headings(html) == [
+        "We may fail to execute our cloud strategy, which could reduce our revenues and profitability.",
+        "Our products may contain errors that could adversely affect customer demand and our reputation.",
+        "Our stock price could become volatile and investors may lose value.",
+        "Cybersecurity incidents could harm our operations and reputation.",
+    ]
+
+
 def test_extracts_split_risk_heading_across_repeated_item_1a_page_headers():
     html = """
     <html><body>

@@ -22,7 +22,8 @@ _RISK_LANGUAGE = re.compile(
     re.IGNORECASE,
 )
 _GENERIC_RISK_CATEGORY = re.compile(
-    r"^(?!(?:we|our|the company)\b)[a-z,& -]+ risks?$",
+    r"^(?:(?!(?:we|our|the company)\b)[a-z,& -]+ risks?|"
+    r"risks? (?:related|relating|associated) (?:to|with)\b.+)$",
     re.IGNORECASE,
 )
 _GENERIC_PREFIXES = (
@@ -201,21 +202,35 @@ def extract_sec_risk_headings(html: str) -> list[str]:
             ),
             len(blocks),
         )
-        candidates: list[tuple[str, bool]] = []
+        candidates: list[str] = []
         seen: set[str] = set()
+        summary_mode = False
+        summary_categories: set[str] = set()
         for block, emphasized in blocks[start + 1 : end]:
+            compact = _compact_heading(block)
+            if compact == "riskfactorsummary":
+                summary_mode = True
+                summary_categories = set()
+                continue
+            is_category = bool(_GENERIC_RISK_CATEGORY.fullmatch(block.strip()))
+            if summary_mode and emphasized and is_category:
+                category_key = block.casefold()
+                if category_key in summary_categories:
+                    summary_mode = False
+                else:
+                    summary_categories.add(category_key)
+                continue
+            if not emphasized and not summary_mode:
+                continue
             if not _is_risk_heading(block, emphasized=emphasized):
                 continue
             key = block.casefold()
             if key in seen:
                 continue
             seen.add(key)
-            candidates.append((block, emphasized))
-        section_risks = [
-            block for block, is_emphasized in candidates if is_emphasized
-        ]
-        if len(section_risks) > len(best):
-            best = section_risks
+            candidates.append(block)
+        if len(candidates) > len(best):
+            best = candidates
     return best[:30]
 
 

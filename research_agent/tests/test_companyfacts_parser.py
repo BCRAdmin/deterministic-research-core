@@ -116,6 +116,42 @@ def test_companyfacts_parser_extracts_revenue():
     assert fact.period == "FY2026_FY"
 
 
+def test_companyfacts_parser_maps_combined_short_and_long_term_debt():
+    fixture = {
+        "facts": {
+            "us-gaap": {
+                "DebtLongtermAndShorttermCombinedAmount": {
+                    "units": {
+                        "USD": [
+                            {
+                                "val": 129_541_000_000,
+                                "fy": 2026,
+                                "fp": "FY",
+                                "form": "10-K",
+                                "filed": "2026-06-22",
+                                "end": "2026-05-31",
+                                "accn": "orcl-2026",
+                                "frame": "CY2026Q2I",
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    }
+
+    facts = CompanyFactsParser("TEST", "1", fixture).get_facts_for_metric(
+        "total_debt"
+    )
+
+    assert len(facts) == 1
+    assert facts[0].value == 129_541_000_000
+    assert (
+        facts[0].concept
+        == "us-gaap:DebtLongtermAndShorttermCombinedAmount"
+    )
+
+
 def test_sec_fact_generates_high_authority_evidence():
     parser = CompanyFactsParser("TEST", "0000000001", FIXTURE_COMPANYFACTS)
     fact = parser.latest_annual_fact("revenue")

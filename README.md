@@ -123,10 +123,14 @@ python -m research_agent.audit.report_linter \
   --report path/to/report.md \
   --metrics path/to/metrics_packet.json \
   --validation path/to/validation_report.json \
-  --sources path/to/source_registry.json
+  --sources path/to/source_registry.json \
+  --evidence path/to/evidence_ledger.json
 ```
 
-It emits `audit_report.json`-style output and exits with status `2` when blocking audit errors are found.
+The evidence ledger is required for a full generated-report audit because one
+sentence can contain several distinct financial metrics. The linter emits
+`audit_report.json`-style output and exits with status `2` when blocking audit
+errors are found.
 
 ## Decision Engine
 
