@@ -67,6 +67,13 @@ _BUSINESS_MODEL_LANGUAGE = re.compile(
     r"\b(franchis(?:e|es|ed|ing|or|ors|ee|ees)|restaurant|restaurants)\b",
     re.IGNORECASE,
 )
+_BUSINESS_CONTEXT_IDENTITY = re.compile(
+    r"^(?:we|the company|the issuer)\s+(?:are|is)\s+"
+    r"(?:(?:one of the|a|an)\s+)?"
+    r"(?:(?:leading|global|major|largest|specialty)\s+)?"
+    r"(?:provider|manufacturer|operator|developer|retailer|franchisor)\b",
+    re.IGNORECASE,
+)
 _BUSINESS_CONTEXT_SKIP_PREFIXES = (
     "accordingly",
     "as a result",
@@ -316,7 +323,8 @@ def extract_sec_business_context(html: str) -> list[str]:
             (
                 text
                 for _, text in candidates
-                if _business_context_score(text) >= 3
+                if _BUSINESS_CONTEXT_IDENTITY.search(text)
+                or _business_context_score(text) >= 3
             ),
             candidates[0][1],
         )
@@ -519,7 +527,8 @@ def _looks_like_title_case_heading(text: str) -> bool:
 def _is_business_context_paragraph(text: str) -> bool:
     stripped = text.strip()
     lowered = stripped.lower()
-    minimum_length = 50 if "segment" in lowered else 80
+    identity_statement = bool(_BUSINESS_CONTEXT_IDENTITY.search(stripped))
+    minimum_length = 45 if identity_statement or "segment" in lowered else 80
     if not minimum_length <= len(stripped) <= 700:
         return False
     if any(character.isdigit() for character in stripped):
@@ -533,7 +542,7 @@ def _is_business_context_paragraph(text: str) -> bool:
     if stripped.isupper() or stripped.count(". ") > 3:
         return False
     score = _business_context_score(stripped)
-    return score >= 3 or ("segment" in lowered and score >= 2)
+    return identity_statement or score >= 3 or ("segment" in lowered and score >= 2)
 
 
 def _business_context_fragments(text: str) -> list[str]:

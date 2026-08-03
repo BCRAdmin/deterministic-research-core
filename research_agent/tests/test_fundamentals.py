@@ -165,8 +165,34 @@ def test_shareholder_distribution_comparison_rejects_mixed_periods():
         "period_end": "2025-12-31",
     }
     mixed_fcf = calculate_fundamental_metrics(shared)
+    assert mixed_fcf.free_cash_flow_ttm is None
+    assert mixed_fcf.fcf_margin_ttm is None
     assert mixed_fcf.shareholder_distributions_ttm == 8
     assert mixed_fcf.shareholder_distributions_minus_fcf_ttm is None
+
+
+def test_free_cash_flow_rejects_mixed_annual_and_trailing_inputs():
+    metrics = calculate_fundamental_metrics(
+        {
+            "quarterly": {},
+            "ttm": {"capex": 22_245},
+            "annual": {"operating_cash_flow": 40_284},
+            "ttm_bridges": {
+                "capex": {
+                    "period_start": "2025-07-01",
+                    "period_end": "2026-06-30",
+                }
+            },
+            "reconciliation_material_dates": {
+                "operating_cash_flow": "2025-01-01",
+            },
+        }
+    )
+
+    assert metrics.operating_cash_flow_ttm == 40_284
+    assert metrics.capex_ttm == 22_245
+    assert metrics.free_cash_flow_ttm is None
+    assert metrics.fcf_margin_ttm is None
 
 
 def test_debt_to_equity_is_not_reported_for_non_positive_equity():

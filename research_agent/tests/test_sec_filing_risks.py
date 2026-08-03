@@ -304,6 +304,22 @@ def test_business_context_prefers_core_logistics_activity_over_technology_detail
     ]
 
 
+def test_business_context_keeps_concise_issuer_identity_before_generic_detail():
+    html = """
+    <html><body>
+      <p><strong>ITEM 1. BUSINESS</strong></p>
+      <p>We are a leading provider of telecommunications and technology services globally. The services and products that we offer vary by market and utilize various technology platforms in a range of geographies.</p>
+      <p>The Communications segment provides wireless and wireline telecom and broadband services to consumers located in the United States and businesses globally.</p>
+      <div><strong>ITEM 1A. RISK FACTORS</strong></div>
+    </body></html>
+    """
+
+    assert extract_sec_business_context(html) == [
+        "We are a leading provider of telecommunications and technology services globally.",
+        "The Communications segment provides wireless and wireline telecom and broadband services to consumers located in the United States and businesses globally.",
+    ]
+
+
 def test_builds_primary_risk_evidence_without_inventing_numeric_metrics():
     filing = select_sec_risk_filing_candidates(
         _submissions(), cik="1234", as_of_date="2026-07-24"

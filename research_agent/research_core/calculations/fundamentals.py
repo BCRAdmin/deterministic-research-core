@@ -169,7 +169,11 @@ def calculate_fundamental_metrics(
     )
 
     fcf_ttm = None
-    if operating_cash_flow_ttm is not None and capex_ttm is not None:
+    if (
+        operating_cash_flow_ttm is not None
+        and capex_ttm is not None
+        and _derived_fcf_inputs_are_period_aligned(fundamentals)
+    ):
         fcf_ttm = free_cash_flow(
             operating_cash_flow=operating_cash_flow_ttm,
             capex=capex_ttm if fcf_definition.subtract_capex else 0.0,
@@ -373,6 +377,64 @@ def _ttm_or_annual_if_present(
     if key in annual and annual[key] is not None:
         return float(annual[key])
     return default
+
+
+def _derived_fcf_inputs_are_period_aligned(
+    fundamentals: Mapping[str, Any],
+) -> bool:
+    """Reject FCF built from cash-flow and capex values on different bases."""
+
+    input_bases = {
+        _metric_input_basis(fundamentals, metric_name)
+        for metric_name in ("operating_cash_flow", "capex")
+    }
+    if None in input_bases or len(input_bases) != 1:
+        return False
+
+    bridges = fundamentals.get("ttm_bridges")
+    if isinstance(bridges, Mapping) and any(
+        metric_name in bridges
+        for metric_name in ("operating_cash_flow", "capex")
+    ):
+        return (
+            _aligned_ttm_bridge_period(
+                fundamentals,
+                "operating_cash_flow",
+                "capex",
+            )
+            is not None
+        )
+
+    if input_bases == {"annual"}:
+        material_dates = fundamentals.get("reconciliation_material_dates")
+        if isinstance(material_dates, Mapping):
+            dates = [
+                str(material_dates.get(metric_name) or "").strip()
+                for metric_name in ("operating_cash_flow", "capex")
+            ]
+            known_dates = [date for date in dates if date]
+            if known_dates:
+                return len(known_dates) == 2 and len(set(known_dates)) == 1
+
+    return True
+
+
+def _metric_input_basis(
+    fundamentals: Mapping[str, Any],
+    key: str,
+) -> Optional[str]:
+    quarterly = fundamentals.get("quarterly")
+    if isinstance(quarterly, Mapping):
+        values = quarterly.get(key)
+        if values is not None and len(values) == 4:
+            return "quarterly"
+    ttm = fundamentals.get("ttm")
+    if isinstance(ttm, Mapping) and ttm.get(key) is not None:
+        return "ttm"
+    annual = fundamentals.get("annual")
+    if isinstance(annual, Mapping) and annual.get(key) is not None:
+        return "annual"
+    return None
 
 
 def _aligned_ttm_bridge_period(

@@ -722,12 +722,17 @@ class _ClaimBuilder:
                         "FCF is unavailable and cannot support a cash-conversion "
                         "conclusion"
                     )
+                scale_and_cash = (
+                    "Revenue TTM is "
+                    f"{self._money(self.metrics.fundamentals.revenue_ttm)}"
+                )
+                if fcf_value is not None:
+                    scale_and_cash += f" and FCF TTM is {self._money(fcf_value)}"
                 bull_text = (
                     f"{comparison_label} evidence reports {growth_text}. "
                     f"{comparison_summary}; segment, margin or one-off context is "
-                    "needed before treating them as business direction. Revenue TTM "
-                    f"is {self._money(self.metrics.fundamentals.revenue_ttm)} and FCF "
-                    f"TTM is {self._money(fcf_value)}; {cash_context}. A more "
+                    "needed before treating them as business direction. "
+                    f"{scale_and_cash}; {cash_context}. A more "
                     "constructive rating requires revenue and profit measures to "
                     "improve together, plus stronger technical or benchmarked "
                     "valuation support."
@@ -786,10 +791,15 @@ class _ClaimBuilder:
                     "benchmarked valuation support."
                 )
             if not growth_divergence and not growth_declines:
+                scale_and_cash = (
+                    "revenue TTM of "
+                    f"{self._money(self.metrics.fundamentals.revenue_ttm)}"
+                )
+                if fcf_value is not None:
+                    scale_and_cash += f" and FCF TTM of {self._money(fcf_value)}"
                 bull_text = (
                     f"{comparison_label} evidence shows {growth_text}. Together with "
-                    f"revenue TTM of {self._money(self.metrics.fundamentals.revenue_ttm)} "
-                    f"and FCF TTM of {self._money(fcf_value)}, {cash_context}"
+                    f"{scale_and_cash}, {cash_context}"
                 )
         else:
             fcf_value = self.metrics.fundamentals.free_cash_flow_ttm
@@ -818,12 +828,21 @@ class _ClaimBuilder:
                     "The revenue total establishes scale, while unavailable FCF cannot "
                     "support a cash-conversion conclusion"
                 )
-            bull_text = (
-                "The bull case combines revenue of "
-                f"{self._money(self.metrics.fundamentals.revenue_ttm)} with FCF of "
-                f"{self._money(fcf_value)}. {cash_context}; a more constructive rating "
-                "requires comparable current-period evidence or technical confirmation."
-            )
+            if fcf_value is None:
+                bull_text = (
+                    "The bull case uses revenue of "
+                    f"{self._money(self.metrics.fundamentals.revenue_ttm)} as scale "
+                    f"evidence. {cash_context}; a more constructive rating requires "
+                    "comparable current-period evidence or technical confirmation."
+                )
+            else:
+                bull_text = (
+                    "The bull case combines revenue of "
+                    f"{self._money(self.metrics.fundamentals.revenue_ttm)} with FCF of "
+                    f"{self._money(fcf_value)}. {cash_context}; a more constructive "
+                    "rating requires comparable current-period evidence or technical "
+                    "confirmation."
+                )
         bull_metrics = ["revenue_ttm"]
         if self.metrics.fundamentals.free_cash_flow_ttm is not None:
             bull_metrics.append("free_cash_flow_ttm")

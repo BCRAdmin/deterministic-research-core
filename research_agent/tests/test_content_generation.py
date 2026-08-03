@@ -997,6 +997,42 @@ def test_missing_fcf_keeps_profit_declines_visible_across_complete_report_logic(
     assert "A raw multiple or an isolated price signal" not in research_report
 
 
+def test_missing_fcf_never_enters_bull_case_as_a_formatted_value():
+    growth_scenarios = (
+        (0.02, 0.08, 0.03),
+        (0.02, 0.90, 0.85),
+        (None, None, None),
+    )
+
+    for revenue_growth, operating_growth, net_growth in growth_scenarios:
+        data, metrics, validation, ledger, decision = _load_packet("SNOW")
+        metrics.fundamentals.free_cash_flow_ttm = None
+        metrics.fundamentals.current_period_revenue_growth_yoy = revenue_growth
+        metrics.fundamentals.current_period_operating_income_growth_yoy = (
+            operating_growth
+        )
+        metrics.fundamentals.current_period_net_income_growth_yoy = net_growth
+        _add_exact_metric_evidence(data, metrics, ledger)
+
+        claims = generate_research_claims(
+            data,
+            metrics,
+            ledger,
+            decision,
+            validation,
+        )
+        bull_claim = next(
+            claim
+            for claim in claims
+            if claim.section == "Bull Case"
+            and claim.claim_type == "financial_metric"
+        )
+
+        assert "not available in evidence set" not in bull_claim.claim
+        assert "FCF" in bull_claim.claim
+        assert "unavailable" in bull_claim.claim
+
+
 def test_final_rating_names_partial_bullish_price_basis_precisely():
     _, metrics, _, _, decision = _load_packet("SNOW")
     decision.signal_scores.technical_status = "partial"
