@@ -315,6 +315,24 @@ def test_business_context_skips_fragments_with_unresolved_references():
     ]
 
 
+def test_business_context_skips_capability_reference_without_its_antecedent():
+    html = """
+    <html><body>
+      <p><strong>ITEM 1. BUSINESS</strong></p>
+      <p>Mastercard is a technology company in the global payments industry.</p>
+      <p>We operate a payments network that provides choice and flexibility for consumers, merchants and our customers.</p>
+      <p>Using these capabilities, we offer consumer and commercial payment products, capture new payment flows and provide services and solutions.</p>
+      <p>Driving brand preference by offering differentiated propositions across cards and platforms; expanding distribution across new channels; and growing acceptance.</p>
+      <div><strong>ITEM 1A. RISK FACTORS</strong></div>
+    </body></html>
+    """
+
+    assert extract_sec_business_context(html) == [
+        "Mastercard is a technology company in the global payments industry.",
+        "We operate a payments network that provides choice and flexibility for consumers, merchants and our customers.",
+    ]
+
+
 def test_business_context_prefers_business_and_segments_over_transition_or_accounting_text():
     html = """
     <html><body>

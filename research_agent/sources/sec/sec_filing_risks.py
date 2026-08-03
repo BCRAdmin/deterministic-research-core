@@ -111,6 +111,7 @@ _BUSINESS_CONTEXT_SKIP_PREFIXES = (
     "see part",
     "additional information",
     "therefore",
+    "driving",
 )
 _BUSINESS_CONTEXT_ACCOUNTING_LANGUAGE = re.compile(
     r"\b(?:segment information is prepared|chief operating decision maker|"
@@ -119,7 +120,7 @@ _BUSINESS_CONTEXT_ACCOUNTING_LANGUAGE = re.compile(
 )
 _BUSINESS_CONTEXT_UNRESOLVED_REFERENCE = re.compile(
     r"\b(?:this|that|these|those|such) "
-    r"(?:arrangements?|business|customers?|markets?|products?|relationships?|segments?|services?)\b"
+    r"(?:arrangements?|business|capabilities|customers?|markets?|products?|relationships?|segments?|services?)\b"
     r"|\b(?:see|refer to)\b",
     re.IGNORECASE,
 )

@@ -498,6 +498,7 @@ def canonical_financials_to_fundamentals(canonical: CanonicalFinancials) -> dict
                 )
         elif canonical.metrics_for(metric_name):
             fundamentals["reconciliation_issues"].append(_stale_metric_issue(metric_name))
+    _derive_diluted_share_count_yoy(canonical, fundamentals)
     return fundamentals
 
 
@@ -1175,6 +1176,66 @@ def _derive_current_period_growth(
         }
     if bridges:
         fundamentals["current_period_growth_bridges"] = bridges
+
+
+def _derive_diluted_share_count_yoy(
+    canonical: CanonicalFinancials,
+    fundamentals: dict,
+) -> None:
+    current = _latest_current_metric(
+        canonical,
+        "shares_diluted",
+        require_gaap=True,
+    )
+    if (
+        current is None
+        or current.period_bucket not in {"annual", "quarterly"}
+        or not current.fiscal_period
+        or not current.start_date
+        or not current.end_date
+        or current.duration_days is None
+    ):
+        return
+    current_end = _valid_iso_date(current.end_date)
+    if current_end is None:
+        return
+    prior_candidates = _dedupe_period_metrics(
+        [
+            metric
+            for metric in canonical.metrics_for("shares_diluted")
+            if metric.basis == "gaap"
+            and metric.period_bucket == current.period_bucket
+            and metric.fiscal_period == current.fiscal_period
+            and metric.start_date
+            and metric.end_date
+            and metric.duration_days is not None
+            and metric.end_date < current.end_date
+            and abs(metric.duration_days - current.duration_days) <= 7
+            and (
+                (prior_end := _valid_iso_date(metric.end_date)) is not None
+                and 330 <= (current_end - prior_end).days <= 400
+            )
+            and _is_current_metric(canonical, metric)
+        ]
+    )
+    if not prior_candidates:
+        return
+    prior = prior_candidates[-1]
+    if prior.value <= 0:
+        return
+    fundamentals["share_data"]["diluted_share_count_prior_year"] = prior.value
+    fundamentals["diluted_share_count_yoy_bridge"] = {
+        "formula_id": "matching_period_diluted_share_count_yoy_change",
+        "operands": {
+            "current_diluted_share_count": current.value,
+            "prior_diluted_share_count": prior.value,
+        },
+        "current_period": current.period,
+        "prior_period": prior.period,
+        "period_start": prior.start_date,
+        "period_end": current.end_date,
+        "source_ids": sorted({*current.source_ids, *prior.source_ids}),
+    }
 
 
 def _derive_fiscal_context(

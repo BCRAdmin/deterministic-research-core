@@ -341,17 +341,41 @@ class _ClaimBuilder:
                     "inventing a financing bridge."
                 ),
             )
+        share_count_change = self.metrics.fundamentals.diluted_share_count_yoy
+        if share_count_change is None:
+            share_count_context = "Without a share-count trend and a"
+            sbc_metrics = ["sbc_to_revenue"]
+        else:
+            if share_count_change > 0:
+                share_count_direction = "increased"
+            elif share_count_change < 0:
+                share_count_direction = "decreased"
+            else:
+                share_count_direction = "was unchanged"
+            share_count_magnitude = (
+                f" by {_pct(abs(share_count_change))}"
+                if share_count_change != 0
+                else ""
+            )
+            share_count_context = (
+                "The diluted weighted-average share count "
+                f"{share_count_direction}{share_count_magnitude} against the "
+                "matching prior-year period. This measures the net share-base "
+                "change; it does not attribute the move solely to SBC or "
+                "repurchases. Without a"
+            )
+            sbc_metrics = ["sbc_to_revenue", "diluted_share_count_yoy"]
         self.add(
             "Fundamental Analysis",
             "fundamental",
             "financial_metric",
             (
                 "SBC/Revenue is "
-                f"{_pct(self.metrics.fundamentals.sbc_to_revenue)}. Without a "
-                "share-count trend and a sector or lifecycle benchmark, this "
+                f"{_pct(self.metrics.fundamentals.sbc_to_revenue)}. "
+                f"{share_count_context} sector or lifecycle benchmark, this "
                 "is a dilution input rather than evidence that SBC is high or low."
             ),
-            ["sbc_to_revenue"],
+            sbc_metrics,
             "medium",
             "medium",
             counterargument="Sector and lifecycle matter, but persistent dilution can still reduce equity quality.",

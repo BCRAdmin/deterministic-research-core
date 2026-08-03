@@ -449,6 +449,72 @@ def build_fundamental_derivation_evidence(
                     ),
                 )
             )
+    share_count_bridge = normalized_fundamentals.get(
+        "diluted_share_count_yoy_bridge"
+    )
+    if (
+        fundamentals.diluted_share_count_yoy is not None
+        and isinstance(share_count_bridge, Mapping)
+    ):
+        operands = {
+            str(key): float(operand)
+            for key, operand in (share_count_bridge.get("operands") or {}).items()
+            if isinstance(operand, (int, float))
+        }
+        current_shares = operands.get("current_diluted_share_count")
+        prior_shares = operands.get("prior_diluted_share_count")
+        expected_change = (
+            (current_shares - prior_shares) / prior_shares
+            if current_shares is not None and prior_shares not in (None, 0)
+            else None
+        )
+        formula_id = str(
+            share_count_bridge.get("formula_id")
+            or "matching_period_diluted_share_count_yoy_change"
+        )
+        source_ids = [
+            str(item)
+            for item in share_count_bridge.get("source_ids") or []
+            if item
+        ]
+        if (
+            expected_change is not None
+            and math.isclose(
+                expected_change,
+                float(fundamentals.diluted_share_count_yoy),
+                rel_tol=1e-9,
+                abs_tol=1e-9,
+            )
+            and _bridge_operands_have_exact_evidence(
+                runtime_items,
+                metric_name="shares_diluted",
+                formula_id=formula_id,
+                operands=operands,
+                source_ids=source_ids,
+            )
+        ):
+            evidence.append(
+                _calculation_evidence(
+                    ticker=ticker,
+                    as_of_date=as_of_date,
+                    source_id=source_id,
+                    metric_name="diluted_share_count_yoy",
+                    value=float(fundamentals.diluted_share_count_yoy),
+                    formula_id=formula_id,
+                    operands=operands,
+                    unit="percent",
+                    period=(
+                        f"{share_count_bridge.get('prior_period') or 'unknown'}"
+                        f"..{share_count_bridge.get('current_period') or 'unknown'}"
+                    ),
+                    date=str(share_count_bridge.get("period_end") or as_of_date),
+                    evidence_items=[*runtime_items, *evidence],
+                    source_lineage=_canonical_lineage_source_ids(
+                        runtime_items,
+                        source_ids,
+                    ),
+                )
+            )
     if (
         fundamentals.ebitda_ttm is not None
         and fundamentals.operating_income_ttm is not None

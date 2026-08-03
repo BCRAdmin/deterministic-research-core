@@ -23,6 +23,77 @@ def test_revenue_growth_uses_percentage_unit():
     assert unit_for_metric("revenue_growth_yoy", currency="USD") == "percent"
 
 
+def test_diluted_share_count_yoy_requires_both_reported_periods():
+    current_shares = 883_000_000.0
+    prior_shares = 909_000_000.0
+    share_change = (current_shares - prior_shares) / prior_shares
+    metrics = MetricsPacket(
+        ticker="GENERIC",
+        as_of_date="2026-07-31",
+        technical=TechnicalMetrics(indicator_date="2026-07-31", close=100.0),
+        fundamentals=FundamentalMetrics(
+            fiscal_period="TTM through FY2026_Q2",
+            diluted_share_count=current_shares,
+            diluted_share_count_yoy=share_change,
+        ),
+        valuation=ValuationMetrics(),
+    )
+    raw_evidence = [
+        EvidenceItem(
+            evidence_id=f"GENERIC_{period}_SHARES",
+            ticker="GENERIC",
+            claim_type="financial_metric",
+            source_id=source_id,
+            source_type="sec_filing",
+            authority_rank=1,
+            statement=f"Diluted shares for {period}.",
+            value=value,
+            unit="shares",
+            period=period,
+            date=date,
+            supports_metrics=["shares_diluted"],
+            raw_value=value,
+            normalized_value=value,
+            confidence="high",
+        )
+        for period, date, value, source_id in (
+            ("CY2025Q2", "2025-06-30", prior_shares, "SEC_PRIOR_Q2"),
+            ("CY2026Q2", "2026-06-30", current_shares, "SEC_CURRENT_Q2"),
+        )
+    ]
+
+    evidence = build_fundamental_derivation_evidence(
+        ticker="GENERIC",
+        as_of_date="2026-07-31",
+        metrics_packet=metrics,
+        normalized_fundamentals={
+            "diluted_share_count_yoy_bridge": {
+                "formula_id": "matching_period_diluted_share_count_yoy_change",
+                "operands": {
+                    "current_diluted_share_count": current_shares,
+                    "prior_diluted_share_count": prior_shares,
+                },
+                "current_period": "CY2026Q2",
+                "prior_period": "CY2025Q2",
+                "period_end": "2026-06-30",
+                "source_ids": ["SEC_CURRENT_Q2", "SEC_PRIOR_Q2"],
+            }
+        },
+        runtime_evidence=raw_evidence,
+    )
+
+    derived = next(
+        item
+        for item in evidence
+        if "diluted_share_count_yoy" in item.supports_metrics
+    )
+    assert derived.value == share_change
+    assert derived.formula_operands == {
+        "current_diluted_share_count": current_shares,
+        "prior_diluted_share_count": prior_shares,
+    }
+
+
 def test_evidence_ledger_finds_metric_and_primary_evidence():
     ledger = EvidenceLedger(
         ticker="MDB",

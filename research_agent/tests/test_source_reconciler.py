@@ -572,6 +572,50 @@ def test_current_period_growth_pairs_same_fiscal_quarter():
     }
 
 
+def test_diluted_share_count_pairs_matching_prior_year_period():
+    canonical = CanonicalFinancials(
+        ticker="GENERIC",
+        as_of_date="2026-07-31",
+        metrics=[
+            CanonicalMetric(
+                metric_name="shares_diluted",
+                value=value,
+                unit="shares",
+                period=f"CY{year}Q2",
+                fiscal_year=year,
+                fiscal_period="Q2",
+                period_bucket="quarterly",
+                start_date=f"{year}-04-01",
+                end_date=f"{year}-06-30",
+                duration_days=90,
+                basis="gaap",
+                statement_type="income_statement",
+                source_ids=[source_id],
+                confidence="high",
+            )
+            for year, value, source_id in (
+                (2025, 909_000_000, "SEC_PRIOR_Q2"),
+                (2026, 883_000_000, "SEC_CURRENT_Q2"),
+            )
+        ],
+    )
+
+    fundamentals = canonical_financials_to_fundamentals(canonical)
+    metrics = calculate_fundamental_metrics(fundamentals)
+
+    assert fundamentals["share_data"] == {
+        "diluted_share_count": 883_000_000,
+        "diluted_share_count_prior_year": 909_000_000,
+    }
+    assert metrics.diluted_share_count_yoy == (
+        883_000_000 - 909_000_000
+    ) / 909_000_000
+    assert fundamentals["diluted_share_count_yoy_bridge"]["operands"] == {
+        "current_diluted_share_count": 883_000_000,
+        "prior_diluted_share_count": 909_000_000,
+    }
+
+
 def test_latest_annual_report_supersedes_prior_quarter_context():
     metrics = []
     for metric_name, prior_value, current_value in (

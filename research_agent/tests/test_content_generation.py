@@ -130,6 +130,23 @@ def test_content_generator_keeps_only_evidence_mapped_substantive_claims():
     assert technical_claim.metric_values["sma_200"] == metrics.technical.sma_200
 
 
+def test_sbc_claim_uses_matching_share_count_trend_when_available():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    metrics.fundamentals.sbc_to_revenue = 0.018
+    metrics.fundamentals.diluted_share_count_yoy = -26 / 909
+    _add_exact_metric_evidence(data, metrics, ledger)
+
+    claims = generate_research_claims(data, metrics, ledger, decision, validation)
+    sbc_claim = next(claim for claim in claims if claim.claim.startswith("SBC/Revenue"))
+
+    assert "diluted weighted-average share count decreased by 2.9%" in sbc_claim.claim
+    assert "does not attribute the move solely to SBC or repurchases" in sbc_claim.claim
+    assert sbc_claim.metric_refs == [
+        "sbc_to_revenue",
+        "diluted_share_count_yoy",
+    ]
+
+
 def test_content_generator_uses_trailing_pe_without_point_in_time_share_count():
     data, metrics, validation, ledger, decision = _load_packet("SNOW")
     metrics.valuation.market_cap = None

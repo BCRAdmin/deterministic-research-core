@@ -742,6 +742,9 @@ def _load_source_ingestion_inputs(ticker: str, as_of_date: str, config: ReportCo
                 canonical_fundamentals.get(
                     "revenue_growth_yoy_bridge"
                 ),
+                canonical_fundamentals.get(
+                    "diluted_share_count_yoy_bridge"
+                ),
             ]
             if isinstance(bridge, dict)
             for source_id in bridge.get("source_ids") or []
