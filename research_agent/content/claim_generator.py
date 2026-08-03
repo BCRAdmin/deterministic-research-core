@@ -273,6 +273,38 @@ class _ClaimBuilder:
                 is not None
             )
         ):
+            distribution_difference = (
+                self.metrics.fundamentals.shareholder_distributions_minus_fcf_ttm
+            )
+            if distribution_difference > 0:
+                distribution_comparison = (
+                    "shareholder distributions exceed FCF; the signed "
+                    "distributions-minus-FCF comparison is "
+                    f"{self._money(distribution_difference)}."
+                )
+                distribution_counterargument = (
+                    "The excess does not by itself prove that distributions were "
+                    "debt-funded or cash-funded."
+                )
+            elif distribution_difference < 0:
+                distribution_comparison = (
+                    "FCF exceeds shareholder distributions; the signed "
+                    "distributions-minus-FCF comparison is "
+                    f"-{self._money(abs(distribution_difference))}."
+                )
+                distribution_counterargument = (
+                    "This period surplus does not prove that every distribution "
+                    "was funded from FCF or that the relationship is durable."
+                )
+            else:
+                distribution_comparison = (
+                    "shareholder distributions equal FCF; the signed "
+                    "distributions-minus-FCF comparison is zero."
+                )
+                distribution_counterargument = (
+                    "Equality in one period does not establish a durable funding "
+                    "relationship."
+                )
             self.add(
                 "Fundamental Analysis",
                 "fundamental",
@@ -280,8 +312,7 @@ class _ClaimBuilder:
                 (
                     "TTM shareholder distributions are "
                     f"{self._money(self.metrics.fundamentals.shareholder_distributions_ttm)}; "
-                    "distributions minus FCF are "
-                    f"{self._money(self.metrics.fundamentals.shareholder_distributions_minus_fcf_ttm)}. "
+                    f"{distribution_comparison} "
                     "This is an arithmetic comparison and does not identify a "
                     "funding source."
                 ),
@@ -291,10 +322,7 @@ class _ClaimBuilder:
                 ],
                 "high",
                 "high",
-                counterargument=(
-                    "A positive difference does not by itself prove debt-funded "
-                    "or cash-funded distributions."
-                ),
+                counterargument=distribution_counterargument,
                 implication=(
                     "Capital-return sustainability should be discussed without "
                     "inventing a financing bridge."

@@ -117,6 +117,12 @@ METRIC_ALIASES = {
 
 METRIC_PATHS = {
     "free_cash_flow_ttm": "fundamentals.free_cash_flow_ttm",
+    "shareholder_distributions_ttm": (
+        "fundamentals.shareholder_distributions_ttm"
+    ),
+    "shareholder_distributions_minus_fcf_ttm": (
+        "fundamentals.shareholder_distributions_minus_fcf_ttm"
+    ),
     "revenue_ttm": "fundamentals.revenue_ttm",
     "fcf_margin_ttm": "fundamentals.fcf_margin_ttm",
     "operating_income_ttm": "fundamentals.operating_income_ttm",
@@ -153,6 +159,13 @@ class MappedMetric(BaseModel):
 def infer_possible_metric(text: str, unit: Optional[str] = None) -> Optional[str]:
     normalized = _normalize_text(text)
     compact = normalized.replace(" / ", "/")
+    if (
+        "distributions-minus-fcf" in normalized
+        or "distributions minus fcf" in normalized
+    ):
+        return "shareholder_distributions_minus_fcf_ttm"
+    if "shareholder distributions" in normalized:
+        return "shareholder_distributions_ttm"
     if "sbc/revenue" in compact or "sbc to revenue" in normalized or "sbc-to-revenue" in normalized:
         return "sbc_to_revenue"
     if "ev/sales" in compact or "ev to sales" in normalized or "ev-to-sales" in normalized:

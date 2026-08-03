@@ -348,6 +348,35 @@ def test_content_generator_uses_precomputed_distribution_comparison():
         "shareholder_distributions_minus_fcf_ttm": 10.0,
     }
     assert "does not identify a funding source" in claim.claim
+    assert (
+        "shareholder distributions exceed FCF; the signed "
+        "distributions-minus-FCF comparison is $10.00"
+    ) in claim.claim
+    assert "The excess does not by itself prove" in claim.counterargument
+
+    metrics.fundamentals.shareholder_distributions_minus_fcf_ttm = -10.0
+    difference_evidence = next(
+        item
+        for item in ledger.evidence_items
+        if "shareholder_distributions_minus_fcf_ttm" in item.supports_metrics
+    )
+    difference_evidence.value = -10.0
+    claims = generate_research_claims(data, metrics, ledger, decision, validation)
+    claim = next(item for item in claims if "arithmetic comparison" in item.claim)
+
+    assert (
+        "FCF exceeds shareholder distributions; the signed "
+        "distributions-minus-FCF comparison is -$10.00"
+    ) in claim.claim
+    assert "$-10.00" not in claim.claim
+    assert "This period surplus does not prove" in claim.counterargument
+    audit = audit_markdown_report(
+        claim.claim,
+        metrics,
+        decision_packet=decision,
+        ticker=data.ticker,
+    )
+    assert not audit.has_issue("NUMERIC_MISMATCH")
 
 
 def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():

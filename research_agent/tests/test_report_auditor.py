@@ -118,6 +118,21 @@ def test_markdown_numeric_extractor_normalizes_german_cash_claim():
     assert huf_claim.normalized_value == pytest.approx(65_510_000_000)
     assert huf_claim.unit == "huf"
 
+    distribution_claims = extract_numeric_claims(
+        "TTM shareholder distributions are $97.87B; FCF exceeds shareholder "
+        "distributions; the signed distributions-minus-FCF comparison is "
+        "-$38.82B."
+    )
+    currency_claims = [item for item in distribution_claims if item.unit == "usd"]
+    assert [item.normalized_value for item in currency_claims] == [
+        97_870_000_000,
+        -38_820_000_000,
+    ]
+    assert [item.possible_metric for item in currency_claims] == [
+        "shareholder_distributions_ttm",
+        "shareholder_distributions_minus_fcf_ttm",
+    ]
+
 
 def test_numeric_extractor_ignores_period_tokens_inside_evidence_metadata():
     claims = extract_numeric_claims(

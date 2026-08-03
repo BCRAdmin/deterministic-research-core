@@ -11,7 +11,7 @@ DATE_RE = re.compile(r"\b(?:\d{4}-\d{2}-\d{2}|\d{1,2}\.\d{1,2}\.\d{4})\b")
 PERCENT_RE = re.compile(r"(?<![\w$])([+-]?\d+(?:[.,]\d+)?)\s*(?:%|Prozent)", re.IGNORECASE)
 MULTIPLE_RE = re.compile(r"(?<![\w$])([+-]?\d+(?:[.,]\d+)?)\s*-?\s*(?:x|faches|fach|fache)\b", re.IGNORECASE)
 CURRENCY_PREFIX_RE = re.compile(
-    r"(?:(?P<symbol>\$)|(?P<currency>USD|HUF)\s*)\s*"
+    r"(?P<leading_sign>[+-]?)\s*(?:(?P<symbol>\$)|(?P<currency>USD|HUF)\s*)\s*"
     r"(?P<number>[+-]?\d+(?:[.,]\d{1,3})*)\s*"
     r"(?P<scale>B|bn|billion|Mrd\.?|Mio\.?|million|M|k)?(?=\W|$)",
     re.IGNORECASE,
@@ -53,7 +53,10 @@ def _extract_line_claims(line: str, line_number: int) -> list[ExtractedNumericCl
         claims.append(
             _claim(
                 raw_text=match.group(0),
-                value=_normalize_number(match.group("number"), match.group("scale")),
+                value=_normalize_number(
+                    f"{match.groupdict().get('leading_sign') or ''}{match.group('number')}",
+                    match.group("scale"),
+                ),
                 unit=currency,
                 nearby_text=nearby,
                 line_number=line_number,
