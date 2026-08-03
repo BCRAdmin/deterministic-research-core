@@ -950,14 +950,20 @@ def _derive_debt_and_lease_totals(
 
     lease_current = balance.get("lease_liability_current")
     lease_noncurrent = balance.get("lease_liability_noncurrent")
-    if lease_current is not None or lease_noncurrent is not None:
+    if lease_current is not None and lease_noncurrent is not None:
         balance["total_lease_liabilities"] = (
-            float(lease_current or 0.0) + float(lease_noncurrent or 0.0)
+            float(lease_current) + float(lease_noncurrent)
         )
         if balance_sheet_date:
             fundamentals["reconciliation_material_dates"][
                 "total_lease_liabilities"
             ] = balance_sheet_date
+    else:
+        balance.pop("total_lease_liabilities", None)
+        fundamentals["reconciliation_material_dates"].pop(
+            "total_lease_liabilities",
+            None,
+        )
 
 
 def _duplicate_debt_component(

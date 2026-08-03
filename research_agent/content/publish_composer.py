@@ -1657,18 +1657,32 @@ def _generic_investment_thesis(
         )
     else:
         cash_text = "FCF is unavailable and cannot support the thesis"
-    fundamental_direction = (
-        "cautious"
-        if scores.fundamental_score < 0
-        else "constructive"
-        if scores.fundamental_score > 0
-        else "neutral"
+    current_profit_decline = any(
+        value is not None and value < 0
+        for value in (
+            fundamentals.current_period_operating_income_growth_yoy,
+            fundamentals.current_period_net_income_growth_yoy,
+        )
     )
+    if scores.fundamental_score > 0 and current_profit_decline:
+        fundamental_text = (
+            "mixed fundamental picture: positive FCF alongside weaker "
+            "current-period profit comparisons"
+        )
+    else:
+        fundamental_direction = (
+            "cautious"
+            if scores.fundamental_score < 0
+            else "constructive"
+            if scores.fundamental_score > 0
+            else "neutral"
+        )
+        fundamental_text = f"{fundamental_direction} fundamental signal"
     return (
         f"{ticker}'s central investment debate is whether revenue scale of "
         f"{_fmt_money(fundamentals.revenue_ttm, currency)} can translate into durable cash "
         f"generation; {cash_text}. The {rating} stance combines a "
-        f"{fundamental_direction} fundamental signal with "
+        f"{fundamental_text} with "
         f"{scores.technical_status} technical evidence and "
         f"{scores.valuation_status} valuation evidence."
     )
@@ -1770,6 +1784,47 @@ def _final_rating_section(
             "Why not more cautious? The non-positive equity constraint is not "
             "dismissed, but positive FCF is measured counterevidence. Non-positive "
             "equity alone does not establish insolvency or business deterioration."
+        )
+    elif (
+        f.free_cash_flow_ttm is not None
+        and f.free_cash_flow_ttm > 0
+        and any(
+            value is not None and value < 0
+            for value in (
+                f.current_period_operating_income_growth_yoy,
+                f.current_period_net_income_growth_yoy,
+            )
+        )
+    ):
+        decline_labels = [
+            label
+            for label, value in (
+                (
+                    "operating-income",
+                    f.current_period_operating_income_growth_yoy,
+                ),
+                ("net-income", f.current_period_net_income_growth_yoy),
+            )
+            if value is not None and value < 0
+        ]
+        decline_text = " and ".join(decline_labels)
+        technical_counterevidence = (
+            " and the bullish technical direction"
+            if scores.technical_score > 0
+            else ""
+        )
+        why_not_constructive = (
+            f"Why not more constructive? Current-period {decline_text} declines "
+            "are current downside evidence; positive FCF does not erase those "
+            "reported comparisons. A more constructive rating requires profit "
+            "comparisons to improve, that improvement to persist, and benchmarked "
+            "valuation support."
+        )
+        why_not_cautious = (
+            f"Why not more cautious? The {decline_text} declines are not dismissed, "
+            f"but positive FCF{technical_counterevidence} is measured counterevidence. "
+            "A more cautious rating requires the profit weakness to persist or be "
+            "corroborated by weaker cash conversion."
         )
     elif (
         f.free_cash_flow_ttm is not None

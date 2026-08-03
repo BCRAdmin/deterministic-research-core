@@ -402,6 +402,28 @@ class _ClaimBuilder:
         equity = self.metrics.fundamentals.equity
         current_ratio = self.metrics.fundamentals.current_ratio
         lease_liabilities = self.metrics.fundamentals.total_lease_liabilities
+        lease_context = None
+        lease_metric = None
+        if lease_liabilities is not None:
+            lease_context = (
+                "separate lease liabilities total "
+                f"{self._money(lease_liabilities)}"
+            )
+            lease_metric = "total_lease_liabilities"
+        elif self.metrics.fundamentals.lease_liability_current is not None:
+            lease_context = (
+                "available current lease liabilities are "
+                f"{self._money(self.metrics.fundamentals.lease_liability_current)}; "
+                "a complete lease-liability total is unavailable"
+            )
+            lease_metric = "lease_liability_current"
+        elif self.metrics.fundamentals.lease_liability_noncurrent is not None:
+            lease_context = (
+                "available noncurrent lease liabilities are "
+                f"{self._money(self.metrics.fundamentals.lease_liability_noncurrent)}; "
+                "a complete lease-liability total is unavailable"
+            )
+            lease_metric = "lease_liability_noncurrent"
         if equity is not None and equity <= 0:
             constraint_parts = [
                 f"Book equity is {self._money(equity)}, so debt/equity is not a "
@@ -413,12 +435,9 @@ class _ClaimBuilder:
                     f"the current ratio is {_multiple(current_ratio)}"
                 )
                 constraint_metrics.append("current_ratio")
-            if lease_liabilities is not None:
-                constraint_parts.append(
-                    "separate lease liabilities total "
-                    f"{self._money(lease_liabilities)}"
-                )
-                constraint_metrics.append("total_lease_liabilities")
+            if lease_context and lease_metric:
+                constraint_parts.append(lease_context)
+                constraint_metrics.append(lease_metric)
             self.add(
                 "Fundamental Analysis",
                 "balance_sheet_constraint",
@@ -445,12 +464,9 @@ class _ClaimBuilder:
                 f"The current ratio is {_multiple(current_ratio)}"
             ]
             constraint_metrics = ["current_ratio"]
-            if lease_liabilities is not None:
-                constraint_parts.append(
-                    "separate lease liabilities total "
-                    f"{self._money(lease_liabilities)}"
-                )
-                constraint_metrics.append("total_lease_liabilities")
+            if lease_context and lease_metric:
+                constraint_parts.append(lease_context)
+                constraint_metrics.append(lease_metric)
             self.add(
                 "Fundamental Analysis",
                 "balance_sheet_constraint",
@@ -800,7 +816,7 @@ class _ClaimBuilder:
             "medium",
             "medium",
             counterargument=(
-                "Strong growth and scale do not by themselves prove durable cash "
+                "Reported comparisons and scale do not by themselves prove durable cash "
                 "conversion or justify an unbenchmarked valuation."
             ),
             implication="The bull case remains a research scenario, not an action plan.",
@@ -818,6 +834,20 @@ class _ClaimBuilder:
 
         if self.metrics.fundamentals.free_cash_flow_ttm is not None:
             bear_metrics = ["free_cash_flow_ttm"]
+            bear_metrics.extend(
+                metric
+                for metric, value in (
+                    (
+                        "current_period_operating_income_growth_yoy",
+                        self.metrics.fundamentals.current_period_operating_income_growth_yoy,
+                    ),
+                    (
+                        "current_period_net_income_growth_yoy",
+                        self.metrics.fundamentals.current_period_net_income_growth_yoy,
+                    ),
+                )
+                if value is not None and value < 0
+            )
             bear_metrics.extend(
                 metric
                 for metric, value in (
@@ -1364,6 +1394,44 @@ def _bear_case_claim_text(
             f"negative FCF TTM of {fcf} is current fundamental downside "
             "evidence. The bear case rests on weak cash conversion without a "
             "measured technical confirmation or offset."
+        )
+    profit_declines = [
+        label
+        for label, value in (
+            (
+                "operating-income",
+                metrics.fundamentals.current_period_operating_income_growth_yoy,
+            ),
+            (
+                "net-income",
+                metrics.fundamentals.current_period_net_income_growth_yoy,
+            ),
+        )
+        if value is not None and value < 0
+    ]
+    if profit_declines and fcf_value is not None and fcf_value > 0:
+        decline_text = " and ".join(profit_declines)
+        if trend_state == "bullish":
+            return (
+                f"{ticker}'s current-period {decline_text} declines are current "
+                f"downside evidence. Positive FCF TTM of {fcf} and the bullish "
+                "long-term trend state are counterevidence, but do not erase the "
+                "declines. A durable bear case requires the profit weakness to "
+                "persist or be confirmed by weaker cash conversion; the current "
+                "packet does not establish its cause."
+            )
+        if trend_state == "bearish":
+            return (
+                f"{ticker}'s current-period {decline_text} declines and bearish "
+                "long-term trend state are current downside evidence. Positive FCF "
+                f"TTM of {fcf} is counterevidence; persistence and cause still need "
+                "separate confirmation."
+            )
+        return (
+            f"{ticker}'s current-period {decline_text} declines are current downside "
+            f"evidence. Positive FCF TTM of {fcf} is counterevidence, while the "
+            f"{trend_state} technical state does not establish the cause or "
+            "durability of the profit weakness."
         )
     if trend_state == "bearish":
         return (

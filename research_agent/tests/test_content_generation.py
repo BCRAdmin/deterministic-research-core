@@ -19,6 +19,7 @@ from research_agent.content.publish_composer import (
     _clean_text,
     _constructive_cash_conversion_trigger,
     _final_rating_section,
+    _generic_investment_thesis,
     _fmt_money as _publish_money,
     _generic_publish_report,
     compose_internal_best_report,
@@ -520,6 +521,30 @@ def test_sub_one_current_ratio_is_visible_without_claiming_distress():
     ]
 
 
+def test_partial_lease_context_stays_partial_in_liquidity_claim():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    metrics.fundamentals.equity = 16_395_000_000
+    metrics.fundamentals.current_ratio = 0.932
+    metrics.fundamentals.lease_liability_current = None
+    metrics.fundamentals.lease_liability_noncurrent = 3_416_000_000
+    metrics.fundamentals.total_lease_liabilities = None
+    _add_exact_metric_evidence(data, metrics, ledger)
+
+    claims = generate_research_claims(data, metrics, ledger, decision, validation)
+    constraint = next(
+        claim
+        for claim in claims
+        if "complete lease-liability total is unavailable" in claim.claim
+    )
+
+    assert "available noncurrent lease liabilities are $3.42B" in constraint.claim
+    assert "lease liabilities total $3.42B" not in constraint.claim
+    assert constraint.metric_refs == [
+        "current_ratio",
+        "lease_liability_noncurrent",
+    ]
+
+
 def test_aligned_positive_quarter_is_direction_not_durability_or_cause():
     data, metrics, validation, ledger, decision = _load_packet("SNOW")
     metrics.fundamentals.current_period_revenue_growth_yoy = 0.073
@@ -814,6 +839,47 @@ def test_final_rating_balances_bearish_technical_state_against_positive_fcf():
     assert "positive FCF and the constructive fundamental signal" in section
     assert "corroborating fundamental deterioration" in section
     assert "A raw multiple or an isolated price signal" not in section
+
+
+def test_mixed_profit_declines_remain_visible_across_thesis_bear_and_rating():
+    _, metrics, _, _, decision = _load_packet("SNOW")
+    metrics.fundamentals.free_cash_flow_ttm = 3_031_000_000
+    metrics.fundamentals.current_period_revenue_growth_yoy = 0.067
+    metrics.fundamentals.current_period_operating_income_growth_yoy = -0.229
+    metrics.fundamentals.current_period_net_income_growth_yoy = -0.246
+    metrics.technical.close = 144.49
+    metrics.technical.sma_50 = 132.61
+    metrics.technical.sma_200 = 114.31
+    decision.signal_scores.fundamental_score = 1
+    decision.signal_scores.technical_score = 1
+    decision.signal_scores.technical_status = "partial"
+    decision.signal_scores.valuation_status = "unbenchmarked"
+
+    thesis = _generic_investment_thesis(
+        "TEST",
+        "Hold",
+        metrics,
+        decision,
+    )
+    bear = _bear_case_claim_text("TEST", metrics, "USD")
+    rating = _final_rating_section(
+        "TEST",
+        "Hold",
+        metrics.fundamentals,
+        metrics.valuation,
+        metrics.technical,
+        decision,
+    )
+
+    assert "mixed fundamental picture" in thesis
+    assert "constructive fundamental signal" not in thesis
+    assert "operating-income and net-income declines are current downside evidence" in bear
+    assert "Positive FCF TTM of $3.03B" in bear
+    assert "do not erase the declines" in bear
+    assert "Current-period operating-income and net-income declines" in rating
+    assert "positive FCF and the bullish technical direction" in rating
+    assert "profit weakness to persist" in rating
+    assert "A raw multiple or an isolated price signal" not in rating
 
 
 def test_final_rating_names_partial_bullish_price_basis_precisely():

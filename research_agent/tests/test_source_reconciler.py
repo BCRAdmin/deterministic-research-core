@@ -598,6 +598,36 @@ def test_latest_annual_report_supersedes_prior_quarter_context():
     ] == "annual"
 
 
+def test_partial_lease_component_does_not_become_a_total():
+    canonical = CanonicalFinancials(
+        ticker="GENERIC",
+        as_of_date="2026-07-31",
+        metrics=[
+            CanonicalMetric(
+                metric_name="lease_liability_noncurrent",
+                value=3_416_000_000,
+                unit="USD",
+                period="FY2026_Q1",
+                fiscal_year=2026,
+                fiscal_period="Q1",
+                period_bucket="instant",
+                end_date="2026-05-02",
+                source_concept="us-gaap:OperatingLeaseLiabilityNoncurrent",
+                basis="gaap",
+                statement_type="balance_sheet",
+                source_ids=["GENERIC_SEC_Q1"],
+                confidence="high",
+            )
+        ],
+    )
+
+    fundamentals = canonical_financials_to_fundamentals(canonical)
+
+    assert fundamentals["balance_sheet"]["lease_liability_noncurrent"] == 3_416_000_000
+    assert "lease_liability_current" not in fundamentals["balance_sheet"]
+    assert "total_lease_liabilities" not in fundamentals["balance_sheet"]
+
+
 def test_ttm_bridge_subtracts_matching_prior_interim_for_current_q2():
     facts = [
         _fact("revenue", 10, "Q1", "2025-01-01", "2025-03-31", "q1-2025"),
