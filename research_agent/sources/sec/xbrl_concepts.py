@@ -2,6 +2,7 @@ US_GAAP_CONCEPTS = {
     "revenue": [
         "Revenues",
         "RevenueFromContractWithCustomerExcludingAssessedTax",
+        "RegulatedAndUnregulatedOperatingRevenue",
         "SalesRevenueNet",
     ],
     "gross_profit": ["GrossProfit"],
@@ -62,6 +63,7 @@ US_GAAP_CONCEPTS = {
     "dividends_paid": [
         "PaymentsOfDividendsCommonStock",
         "PaymentsOfDividends",
+        "PaymentsOfOrdinaryDividends",
     ],
     "treasury_stock_value": [
         "TreasuryStockValue",
@@ -75,7 +77,7 @@ US_GAAP_CONCEPTS = {
         "DepreciationAndAmortization",
         "DepreciationDepletionAndAmortization",
     ],
-    "interest_expense": ["InterestExpenseNonOperating", "InterestExpense"],
+    "interest_expense": ["InterestExpenseNonoperating", "InterestExpense"],
     "shares_diluted": ["WeightedAverageNumberOfDilutedSharesOutstanding"],
     "eps_diluted": ["EarningsPerShareDiluted"],
 }

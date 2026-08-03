@@ -116,6 +116,45 @@ def test_companyfacts_parser_extracts_revenue():
     assert fact.period == "FY2026_FY"
 
 
+def test_companyfacts_parser_maps_utility_standard_concepts():
+    common = {
+        "fy": 2026,
+        "fp": "Q1",
+        "form": "10-Q",
+        "filed": "2026-05-05",
+        "start": "2026-01-01",
+        "end": "2026-03-31",
+        "accn": "utility-q1",
+    }
+    fixture = {
+        "facts": {
+            "us-gaap": {
+                "RegulatedAndUnregulatedOperatingRevenue": {
+                    "units": {"USD": [{**common, "val": 9_178_000_000}]}
+                },
+                "PaymentsOfOrdinaryDividends": {
+                    "units": {"USD": [{**common, "val": 846_000_000}]}
+                },
+                "InterestExpenseNonoperating": {
+                    "units": {"USD": [{**common, "val": 968_000_000}]}
+                },
+            }
+        }
+    }
+
+    parser = CompanyFactsParser("UTILITY", "1", fixture)
+
+    assert parser.get_facts_for_metric("revenue")[0].value == 9_178_000_000
+    assert (
+        parser.get_facts_for_metric("dividends_paid")[0].value
+        == 846_000_000
+    )
+    assert (
+        parser.get_facts_for_metric("interest_expense")[0].value
+        == 968_000_000
+    )
+
+
 def test_companyfacts_parser_maps_combined_short_and_long_term_debt():
     fixture = {
         "facts": {

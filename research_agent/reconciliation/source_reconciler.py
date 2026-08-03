@@ -1077,6 +1077,8 @@ def _derive_revenue_growth(
         return
     current = annual[-1]
     prior = annual[-2]
+    if not _is_current_metric(canonical, current):
+        return
     fundamentals["revenue_growth_yoy"] = (
         current.value - prior.value
     ) / prior.value

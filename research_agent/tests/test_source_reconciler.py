@@ -510,6 +510,26 @@ def test_ttm_bridge_does_not_skip_q4_when_current_q1_arrives():
     }
 
 
+def test_stale_annual_revenue_does_not_create_current_growth_signal():
+    facts = [
+        _fact("revenue", 100, "FY", "2015-01-01", "2015-12-31", "fy-2015"),
+        _fact("revenue", 105, "FY", "2016-01-01", "2016-12-31", "fy-2016"),
+    ]
+
+    canonical, _ = build_canonical_financials_from_facts(
+        "STALE", "2026-07-31", facts
+    )
+    fundamentals = canonical_financials_to_fundamentals(canonical)
+
+    assert "revenue_growth_yoy" not in fundamentals
+    assert "revenue_growth_yoy_bridge" not in fundamentals
+    assert any(
+        issue["code"] == "STALE_FINANCIAL_METRIC_EXCLUDED"
+        and issue["metric"] == "revenue"
+        for issue in fundamentals["reconciliation_issues"]
+    )
+
+
 def test_current_period_growth_pairs_same_fiscal_quarter():
     canonical = CanonicalFinancials(
         ticker="MCD",

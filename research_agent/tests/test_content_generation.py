@@ -375,6 +375,56 @@ def test_bull_case_does_not_present_negative_fcf_as_cash_generation():
     )
 
 
+def test_capex_driven_negative_fcf_is_not_called_weak_operations():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    fundamentals = metrics.fundamentals
+    fundamentals.revenue_ttm = 33_166_000_000
+    fundamentals.current_period_revenue_growth_yoy = 0.1126
+    fundamentals.current_period_operating_income_growth_yoy = 0.1630
+    fundamentals.current_period_net_income_growth_yoy = 0.1240
+    fundamentals.operating_cash_flow_ttm = 11_665_000_000
+    fundamentals.capex_ttm = 14_964_000_000
+    fundamentals.free_cash_flow_ttm = -3_299_000_000
+    ledger.evidence_items = [
+        item
+        for item in ledger.evidence_items
+        if not set(item.supports_metrics).intersection(
+            {
+                "revenue_ttm",
+                "current_period_revenue_growth_yoy",
+                "current_period_operating_income_growth_yoy",
+                "current_period_net_income_growth_yoy",
+                "operating_cash_flow_ttm",
+                "capex_ttm",
+                "free_cash_flow_ttm",
+            }
+        )
+    ]
+    _add_exact_metric_evidence(data, metrics, ledger)
+
+    claims = generate_research_claims(data, metrics, ledger, decision, validation)
+    fundamental = next(
+        claim for claim in claims if claim.section == "Fundamental Analysis"
+    )
+    bull = next(claim for claim in claims if claim.section == "Bull Case")
+    bear = next(claim for claim in claims if claim.section == "Bear Case")
+
+    assert "investment funding gap" in fundamental.claim
+    assert "maintenance-versus-growth split" in fundamental.claim
+    assert set(fundamental.metric_refs) == {
+        "free_cash_flow_ttm",
+        "capex_ttm",
+        "operating_cash_flow_ttm",
+    }
+    assert "funding requirement rather than proving weak operations" in bull.claim
+    assert "does not by itself establish weak operations" in bear.claim
+    assert "The technical picture for SNOW is" in bear.claim
+    assert all(
+        "weak cash conversion" not in claim.claim
+        for claim in (fundamental, bull, bear)
+    )
+
+
 def test_bull_case_does_not_call_extreme_profit_divergence_business_direction():
     data, metrics, validation, ledger, decision = _load_packet("SNOW")
     metrics.fundamentals.current_period_revenue_growth_yoy = -0.014

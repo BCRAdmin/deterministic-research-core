@@ -254,12 +254,21 @@ class _ClaimBuilder:
         ):
             self.add_risk(risk_evidence, explain_disclosure=index == 0)
 
+        fcf_claim_metrics = ["free_cash_flow_ttm"]
+        if _negative_fcf_is_capex_funding_gap(self.metrics):
+            fcf_claim_metrics.extend(
+                ["capex_ttm", "operating_cash_flow_ttm"]
+            )
         self.add(
             "Fundamental Analysis",
             "fundamental",
             "financial_metric",
-            f"FCF TTM is {self._money(self.metrics.fundamentals.free_cash_flow_ttm)}, making cash conversion a direct rating input for {ticker}.",
-            ["free_cash_flow_ttm"],
+            _fundamental_fcf_claim_text(
+                ticker,
+                self.metrics,
+                self.data_packet.price_basis.currency,
+            ),
+            fcf_claim_metrics,
             "high",
             "high",
             counterargument="FCF may be company-defined or period-sensitive and can require reconciliation review.",
@@ -787,14 +796,26 @@ class _ClaimBuilder:
                         "technical or benchmarked valuation support."
                     )
             elif fcf_value is not None and fcf_value < 0:
-                cash_context = (
-                    "this records aligned current-period direction and scale, but does "
-                    "not establish durability or cause; negative FCF remains evidence "
-                    "of weak cash conversion. A more "
-                    "constructive rating still requires those comparisons to persist, "
-                    "cash conversion to improve and stronger technical or benchmarked "
-                    "valuation support."
-                )
+                if _negative_fcf_is_capex_funding_gap(self.metrics):
+                    cash_context = (
+                        "this records aligned current-period direction and scale, but "
+                        "does not establish durability or cause. Negative FCF reflects "
+                        "capital expenditure exceeding positive operating cash flow; "
+                        "without a maintenance-versus-growth split, it identifies a "
+                        "funding requirement rather than proving weak operations. A more "
+                        "constructive rating still requires those comparisons to persist, "
+                        "the investment funding path to remain supportable and stronger "
+                        "technical or benchmarked valuation support."
+                    )
+                else:
+                    cash_context = (
+                        "this records aligned current-period direction and scale, but does "
+                        "not establish durability or cause; negative FCF remains evidence "
+                        "of weak cash conversion. A more "
+                        "constructive rating still requires those comparisons to persist, "
+                        "cash conversion to improve and stronger technical or benchmarked "
+                        "valuation support."
+                    )
             elif fcf_value == 0:
                 cash_context = (
                     "this records aligned current-period direction and scale, but does "
@@ -840,10 +861,19 @@ class _ClaimBuilder:
                     "do not establish operating improvement"
                 )
             elif fcf_value is not None and fcf_value < 0:
-                cash_context = (
-                    "The revenue total establishes scale, while negative FCF is a "
-                    "cash-conversion constraint rather than bull-case support"
-                )
+                if _negative_fcf_is_capex_funding_gap(self.metrics):
+                    cash_context = (
+                        "The revenue total establishes scale, while negative FCF "
+                        "reflects capital expenditure exceeding positive operating "
+                        "cash flow. Without a maintenance-versus-growth split, this "
+                        "identifies a funding requirement rather than proving weak "
+                        "operations"
+                    )
+                else:
+                    cash_context = (
+                        "The revenue total establishes scale, while negative FCF is a "
+                        "cash-conversion constraint rather than bull-case support"
+                    )
             elif fcf_value == 0:
                 cash_context = (
                     "The revenue total establishes scale, while zero FCF does not "
@@ -1421,6 +1451,40 @@ def _technical_interpretation(metrics: MetricsPacket) -> str:
     return "an unavailable long-term trend state"
 
 
+def _negative_fcf_is_capex_funding_gap(metrics: MetricsPacket) -> bool:
+    fundamentals = metrics.fundamentals
+    return (
+        fundamentals.free_cash_flow_ttm is not None
+        and fundamentals.free_cash_flow_ttm < 0
+        and fundamentals.operating_cash_flow_ttm is not None
+        and fundamentals.operating_cash_flow_ttm > 0
+        and fundamentals.capex_ttm is not None
+        and fundamentals.capex_ttm > fundamentals.operating_cash_flow_ttm
+    )
+
+
+def _fundamental_fcf_claim_text(
+    ticker: str,
+    metrics: MetricsPacket,
+    currency: str,
+) -> str:
+    fundamentals = metrics.fundamentals
+    fcf = _money(fundamentals.free_cash_flow_ttm, currency)
+    if _negative_fcf_is_capex_funding_gap(metrics):
+        return (
+            f"FCF TTM is {fcf} because capital expenditure of "
+            f"{_money(fundamentals.capex_ttm, currency)} exceeds positive operating "
+            f"cash flow of {_money(fundamentals.operating_cash_flow_ttm, currency)}. "
+            "This measures an investment funding gap; without a validated "
+            "maintenance-versus-growth split, it does not by itself establish weak "
+            f"operations at {ticker}."
+        )
+    return (
+        f"FCF TTM is {fcf}, making cash conversion a direct rating input for "
+        f"{ticker}."
+    )
+
+
 def _bear_case_claim_text(
     ticker: str,
     metrics: MetricsPacket,
@@ -1430,6 +1494,15 @@ def _bear_case_claim_text(
     fcf_value = metrics.fundamentals.free_cash_flow_ttm
     fcf = _money(fcf_value, currency)
     if fcf_value is not None and fcf_value < 0:
+        if _negative_fcf_is_capex_funding_gap(metrics):
+            return (
+                f"The technical picture for {ticker} is "
+                f"{_technical_interpretation(metrics)} and remains timing evidence. "
+                f"Negative FCF TTM of {fcf} reflects capital expenditure exceeding "
+                "positive operating cash flow. This is a capital-intensity and "
+                "funding risk, but without a maintenance-versus-growth split it does "
+                "not by itself establish weak operations."
+            )
         if trend_state == "bearish":
             return (
                 f"{ticker}'s bearish long-term trend state and negative FCF TTM "
