@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from datetime import date, timedelta
+from math import isclose
 from typing import Iterable, Optional
 
 from research_agent.reconciliation.canonical_financials import CanonicalFinancials, CanonicalMetric
@@ -147,6 +148,7 @@ def quality_relevant_reconciliation_warnings(
     """
 
     review_starts = _material_reconciliation_start_dates(normalized_fundamentals)
+    bridge_values = _material_bridge_operand_values(normalized_fundamentals)
     global_review_start = min(review_starts.values()) if review_starts else None
     relevant: list[dict] = []
     for warning in warnings:
@@ -185,10 +187,59 @@ def quality_relevant_reconciliation_warnings(
             if global_review_start is not None and end_date >= global_review_start:
                 relevant.append(warning)
             continue
+        candidate_values = warning.get("candidate_values")
+        material_values = bridge_values.get(metric)
+        if isinstance(candidate_values, list) and material_values:
+            comparable_candidates = [
+                float(value)
+                for value in candidate_values
+                if isinstance(value, (int, float)) and not isinstance(value, bool)
+            ]
+            if any(
+                isclose(candidate, material, rel_tol=1e-9, abs_tol=1e-6)
+                for candidate in comparable_candidates
+                for material in material_values
+            ):
+                relevant.append(warning)
+            continue
         review_start = review_starts.get(metric)
         if review_start is not None and end_date >= review_start:
             relevant.append(warning)
     return relevant
+
+
+def _material_bridge_operand_values(
+    normalized_fundamentals: dict,
+) -> dict[str, list[float]]:
+    values: dict[str, list[float]] = defaultdict(list)
+
+    def record(metric: object, bridge: object) -> None:
+        metric_name = str(metric or "")
+        if not metric_name or not isinstance(bridge, dict):
+            return
+        operands = bridge.get("operands")
+        if not isinstance(operands, dict):
+            return
+        values[metric_name].extend(
+            float(value)
+            for value in operands.values()
+            if isinstance(value, (int, float)) and not isinstance(value, bool)
+        )
+
+    bridges = normalized_fundamentals.get("ttm_bridges")
+    if isinstance(bridges, dict):
+        for metric, bridge in bridges.items():
+            record(metric, bridge)
+
+    record("revenue", normalized_fundamentals.get("revenue_growth_yoy_bridge"))
+
+    current_growth_bridges = normalized_fundamentals.get(
+        "current_period_growth_bridges"
+    )
+    if isinstance(current_growth_bridges, dict):
+        for metric, bridge in current_growth_bridges.items():
+            record(metric, bridge)
+    return dict(values)
 
 
 def _material_reconciliation_start_date(

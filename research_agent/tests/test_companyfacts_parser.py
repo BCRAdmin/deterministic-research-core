@@ -155,6 +155,44 @@ def test_companyfacts_parser_maps_utility_standard_concepts():
     )
 
 
+def test_treasury_stock_balance_excludes_period_acquisition_cost():
+    common = {
+        "fy": 2026,
+        "fp": "Q2",
+        "form": "10-Q",
+        "filed": "2026-07-21",
+        "end": "2026-06-30",
+        "accn": "treasury-q2",
+    }
+    fixture = {
+        "facts": {
+            "us-gaap": {
+                "TreasuryStockCommonValue": {
+                    "units": {"USD": [{**common, "val": 38_177_000_000}]}
+                },
+                "TreasuryStockValueAcquiredCostMethod": {
+                    "units": {
+                        "USD": [
+                            {
+                                **common,
+                                "start": "2026-04-01",
+                                "val": 991_000_000,
+                            }
+                        ]
+                    }
+                },
+            }
+        }
+    }
+
+    facts = CompanyFactsParser("TEST", "1", fixture).get_facts_for_metric(
+        "treasury_stock_value"
+    )
+
+    assert [fact.value for fact in facts] == [38_177_000_000]
+    assert facts[0].concept == "us-gaap:TreasuryStockCommonValue"
+
+
 def test_companyfacts_parser_maps_combined_short_and_long_term_debt():
     fixture = {
         "facts": {

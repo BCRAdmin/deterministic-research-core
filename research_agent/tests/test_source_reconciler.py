@@ -173,6 +173,44 @@ def test_quality_scope_uses_the_material_window_for_each_metric():
     ]
 
 
+def test_quality_scope_matches_conflicts_to_exact_bridge_operands():
+    historical_quarter = {
+        "code": "TRUE_SOURCE_VALUE_DISAGREEMENT",
+        "metric": "revenue",
+        "end_date": "2024-03-31",
+        "candidate_values": [6_016, 8_003],
+    }
+    material_annual = {
+        "code": "TRUE_SOURCE_VALUE_DISAGREEMENT",
+        "metric": "revenue",
+        "end_date": "2024-12-31",
+        "candidate_values": [24_575, 32_600],
+    }
+    fundamentals = {
+        "revenue_growth_yoy_bridge": {
+            "period_start": "2024-01-01",
+            "operands": {
+                "prior_annual_revenue": 24_575,
+                "current_annual_revenue": 24_948,
+            },
+        },
+        "ttm_bridges": {
+            "revenue": {
+                "period_start": "2025-07-01",
+                "operands": {
+                    "annual": 24_948,
+                    "prior_interim": 12_298,
+                    "current_interim": 12_530,
+                },
+            }
+        },
+    }
+
+    assert quality_relevant_reconciliation_warnings(
+        [historical_quarter, material_annual], fundamentals
+    ) == [material_annual]
+
+
 def test_quality_scope_drops_replaced_balance_sheet_mismatch_only():
     replaced = {
         "code": "BALANCE_SHEET_DATE_MISMATCH_EXCLUDED",

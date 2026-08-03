@@ -66,8 +66,8 @@ US_GAAP_CONCEPTS = {
         "PaymentsOfOrdinaryDividends",
     ],
     "treasury_stock_value": [
+        "TreasuryStockCommonValue",
         "TreasuryStockValue",
-        "TreasuryStockValueAcquiredCostMethod",
     ],
     "treasury_share_count": [
         "TreasuryStockCommonShares",
