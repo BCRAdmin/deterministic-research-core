@@ -792,6 +792,7 @@ def _audit_manual_review_reasons(
         "CURRENT_PERIOD_IR_RECONCILIATION_REQUIRED",
         "COMPANY_DEFINED_FCF_MISMATCH",
         "COMPANY_DEFINED_FCF_OCF_INCONSISTENCY",
+        "GUARD_THRESHOLD_REVIEW",
     }
     validation_reason_codes = {
         "EARNINGS_DATE_UNAVAILABLE",

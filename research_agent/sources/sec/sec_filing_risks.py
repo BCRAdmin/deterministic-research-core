@@ -24,7 +24,7 @@ _RISK_LANGUAGE = re.compile(
 _GENERIC_RISK_CATEGORY = re.compile(
     r"^(?:(?!(?:we|our|the company)\b)[a-z,& -]+ risks?|"
     r"risks? (?:specific|applicable) to (?:our|the) company|"
-    r"(?:risks?|risk factors?) (?:related|relating|associated) "
+    r"(?:other )?(?:risks?|risk factors?) (?:related|relating|associated) "
     r"(?:to|with)\b.+)$",
     re.IGNORECASE,
 )

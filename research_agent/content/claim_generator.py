@@ -714,6 +714,20 @@ class _ClaimBuilder:
                     if len(growth_divergence) == 1
                     else "those comparisons"
                 )
+                divergence_verb = (
+                    "diverges" if len(growth_divergence) == 1 else "diverge"
+                )
+                requirement_verb = (
+                    "requires" if len(growth_divergence) == 1 else "require"
+                )
+                guarded_verb = (
+                    "does" if len(growth_divergence) == 1 else "do"
+                )
+                guarded_profit_reference = (
+                    "the guarded profit comparison"
+                    if len(growth_divergence) == 1
+                    else "the guarded profit comparisons"
+                )
                 operating_declines = current_operating_profit_decline_metrics(
                     self.metrics.fundamentals
                 )
@@ -740,8 +754,8 @@ class _ClaimBuilder:
                 elif fcf_value is not None:
                     cash_context = (
                         "Revenue TTM and positive FCF establish scale and cash "
-                        "generation, not the cause or durability of the guarded "
-                        "profit comparison."
+                        "generation, not the cause or durability of "
+                        f"{guarded_profit_reference}."
                     )
                 else:
                     cash_context = (
@@ -750,9 +764,10 @@ class _ClaimBuilder:
                     )
                 bull_text = (
                     f"{comparison_label} evidence reports {growth_text}. "
-                    f"{divergence_subject} diverges from revenue growth and requires "
+                    f"{divergence_subject} {divergence_verb} from revenue growth "
+                    f"and {requirement_verb} "
                     "base-effect or one-off review; without causal filing evidence "
-                    f"in the current packet, {guarded_reference} does not establish "
+                    f"in the current packet, {guarded_reference} {guarded_verb} not establish "
                     "operating business "
                     f"direction.{separate_operating_direction} "
                     f"Revenue TTM is {self._money(self.metrics.fundamentals.revenue_ttm)} "
@@ -2097,6 +2112,12 @@ def _final_rating_claim_text(
                 "The measured fundamental picture is cautious: current-period "
                 f"{decline_text} declines lack positive FCF counterevidence."
             )
+    elif current_profit_growth_divergence_metrics(metrics.fundamentals):
+        fundamental_note = (
+            "The measured fundamental picture is guarded: extreme current-period "
+            "profit comparisons remain under base-effect or one-off review and "
+            "do not establish operating direction."
+        )
     elif decision.signal_scores.fundamental_score < 0:
         fundamental_note = (
             "The measured fundamental signal is cautious and remains part of the "

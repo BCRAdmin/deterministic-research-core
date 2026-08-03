@@ -269,6 +269,50 @@ def test_manual_review_reason_blocks_compact_complete_report():
     assert quality.manual_review_reasons == ["EARNINGS_DATE_UNAVAILABLE"]
 
 
+def test_guard_threshold_is_a_structured_manual_review_reason():
+    quality = calculate_quality_score(
+        validation_report=_validation("LMT"),
+        audit_report=_audit(
+            "LMT",
+            [
+                AuditIssue(
+                    severity="warning",
+                    code="GUARD_THRESHOLD_REVIEW",
+                    message="Extreme profit growth requires base-effect review.",
+                )
+            ],
+        ),
+        decision_packet=_decision("LMT", Rating.HOLD),
+        final_markdown=_gold_text(),
+        analyst_claim_count=9,
+        substantive_analyst_claim_count=7,
+        substantive_claim_ratio=7 / 9,
+        evidence_mapped_claim_ratio=1.0,
+        hard_claim_evidence_ratio=1.0,
+        current_period_kpi_claim_count=6,
+        current_period_kpi_metric_count=6,
+        ticker_specific_kpi_claim_count=8,
+        final_rating_rationale_quality=90,
+        mechanical_rating_language_count=0,
+        generic_claim_ratio=0.0,
+        company_specific_claim_count=4,
+        valuation_specific_claim_count=2,
+        technical_specific_claim_count=1,
+        rating_rationale_claim_count=1,
+        risk_specific_claim_count=1,
+        publish_report_exists=1,
+        publish_current_kpi_count=5,
+        publish_evidence_appendix_exists=1,
+        publish_mechanical_language_count=0,
+        publish_claim_id_main_body_count=0,
+        publish_valuation_sensitivity_present=1,
+        publish_action_plan_trigger_count=2,
+    )
+
+    assert quality.manual_review_reasons == ["GUARD_THRESHOLD_REVIEW"]
+    assert quality.publishable is False
+
+
 def test_good_data_bad_writing_split():
     quality = calculate_quality_score(
         validation_report=_validation("GOOD"),

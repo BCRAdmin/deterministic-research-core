@@ -445,7 +445,7 @@ def test_capex_driven_negative_fcf_is_not_called_weak_operations():
 def test_bull_case_does_not_call_extreme_profit_divergence_business_direction():
     data, metrics, validation, ledger, decision = _load_packet("SNOW")
     metrics.fundamentals.current_period_revenue_growth_yoy = -0.014
-    metrics.fundamentals.current_period_operating_income_growth_yoy = 0.048
+    metrics.fundamentals.current_period_operating_income_growth_yoy = 1.314
     metrics.fundamentals.current_period_net_income_growth_yoy = 0.872
     canonical = CanonicalFinancials(
         ticker=data.ticker,
@@ -489,10 +489,21 @@ def test_bull_case_does_not_call_extreme_profit_divergence_business_direction():
         for claim in claims
         if claim.section == "Bull Case" and claim.claim_type == "financial_metric"
     )
+    final_claim = next(
+        claim
+        for claim in claims
+        if claim.section == "Final Rating & Action Plan"
+        and claim.claim_type == "rating"
+    )
 
-    assert "requires base-effect or one-off review" in bull_claim.claim
+    assert "require base-effect or one-off review" in bull_claim.claim
     assert "do not establish operating business direction" in bull_claim.claim
+    assert "profit comparisons" in bull_claim.claim
+    assert "diverge from revenue growth and require" in bull_claim.claim
+    assert "guarded profit comparisons" in bull_claim.claim
     assert "establishes current business direction" not in bull_claim.claim
+    assert "extreme current-period profit comparisons" in final_claim.claim
+    assert "measured fundamental signal is constructive" not in final_claim.claim
 
 
 def test_extreme_negative_profit_divergence_is_not_operating_downside_evidence():

@@ -96,6 +96,7 @@ def test_extracts_plain_risk_factor_summary_without_category_titles(summary_head
       <p>Our products may contain errors that could adversely affect customer demand and our reputation.</p>
       <p><strong>Risks Related to Our Common Stock</strong></p>
       <p>Our stock price could become volatile and investors may lose value.</p>
+      <p><strong>Other Risks Related to our Operations</strong></p>
       <p><strong>Business and Operational Risks</strong></p>
       <p>This explanatory narrative may describe a risk but is not a heading.</p>
       <p><strong>Cybersecurity incidents could harm our operations and reputation.</strong></p>
