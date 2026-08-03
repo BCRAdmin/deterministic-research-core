@@ -166,6 +166,21 @@ def test_extracts_business_context_from_about_company_heading():
     ]
 
 
+def test_risk_summary_intro_is_not_a_concrete_risk():
+    html = """
+    <html><body>
+      <div><strong>ITEM 1A. RISK FACTORS</strong></div>
+      <p><strong>The following is a summary of the principal risks that could adversely affect our business, financial condition and results of operations.</strong></p>
+      <p><strong>The semiconductor industry is highly cyclical and severe downturns may adversely affect our business.</strong></p>
+      <div><strong>ITEM 1B. UNRESOLVED STAFF COMMENTS</strong></div>
+    </body></html>
+    """
+
+    assert extract_sec_risk_headings(html) == [
+        "The semiconductor industry is highly cyclical and severe downturns may adversely affect our business."
+    ]
+
+
 def test_extracts_split_risk_heading_across_repeated_item_1a_page_headers():
     html = """
     <html><body>
@@ -503,6 +518,28 @@ def test_business_context_prefers_identity_and_named_segments_over_summary():
         "NVIDIA is now a data center scale AI infrastructure company.",
         "The Compute & Networking segment includes accelerated computing and networking platforms, AI solutions and software, and Automotive platforms.",
         "The Graphics segment includes GPUs for gaming and PCs and workstation graphics products.",
+    ]
+
+
+def test_business_context_reads_named_segments_from_filing_list():
+    html = """
+    <html><body>
+      <p><strong>ITEM 1. BUSINESS</strong></p>
+      <p>We are a global computing company that develops processors and software platforms for customers.</p>
+      <p>Beginning in fiscal year 2025, we combined two former segments into one reportable segment.</p>
+      <p>Our three reportable segments are:</p>
+      <p>• the Data Center segment, which primarily includes accelerators, server CPUs and networking products;</p>
+      <p>• the Client and Gaming segment, which primarily includes CPUs, chipsets and graphics products; and</p>
+      <p>• the Embedded segment, which primarily includes embedded CPUs and adaptive products.</p>
+      <p>In addition to these reportable segments, we have an All Other category, which is not a reportable segment.</p>
+      <div><strong>ITEM 1A. RISK FACTORS</strong></div>
+    </body></html>
+    """
+
+    assert extract_sec_business_context(html) == [
+        "We are a global computing company that develops processors and software platforms for customers.",
+        "the Data Center segment, which primarily includes accelerators, server CPUs and networking products.",
+        "the Client and Gaming segment, which primarily includes CPUs, chipsets and graphics products.",
     ]
 
 

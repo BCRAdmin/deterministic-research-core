@@ -31,6 +31,7 @@ _GENERIC_RISK_CATEGORY = re.compile(
 _GENERIC_PREFIXES = (
     "our business results are subject",
     "the risks described below",
+    "the following is a summary",
     "risk factors should be read",
     "for a discussion of risk factors",
     "for a more complete discussion",
@@ -144,7 +145,8 @@ _BUSINESS_CONTEXT_NAMED_OFFERING = re.compile(
     r"(?:include|comprise)\b"
 )
 _BUSINESS_CONTEXT_SEGMENT_ACTIVITY = re.compile(
-    r"^(?:the|our)\s+(?:[A-Za-z0-9&.'’()-]+\s+){0,5}segment\s+"
+    r"^(?:the|our)\s+(?:[A-Za-z0-9&.'’()-]+\s+){0,5}segment"
+    r"(?:,\s+which)?\s+(?:primarily\s+)?"
     r"(?:builds|creates|delivers|designs|develops|distributes|helps|"
     r"includes|comprises|consists of|manufactures|offers|operates|provides|"
     r"sells|serves)\b",
@@ -780,6 +782,7 @@ def _business_context_fragments(text: str) -> list[str]:
         fragment = raw_fragment.replace(_PROTECTED_PERIOD, ".").strip()
         fragment = re.sub(r"^[•●▪◦-]\s*", "", fragment).strip()
         fragment = re.sub(r"\b[1-9]\)\s*", "", fragment)
+        fragment = re.sub(r";\s*(?:and)?$", "", fragment).strip()
         if fragment.endswith(":"):
             continue
         if fragment and fragment[-1] not in ".!?":
