@@ -38,6 +38,7 @@ SEC_FINANCIAL_FORMS = {"10-K", "10-Q"}
 SEC_RESULTS_ANNOUNCEMENT_FORM = "8-K"
 SEC_RESULTS_ANNOUNCEMENT_ITEM = "2.02"
 SEC_FINANCIAL_INDUSTRY_SIC_RANGE = range(6000, 6800)
+SEC_REIT_SIC_CODES = {6798}
 SEC_COMPANYFACTS_COVERAGE_METRICS = {
     "revenue",
     "operating_income",
@@ -723,6 +724,17 @@ def _require_supported_sec_industry_profile(
     if sic not in SEC_FINANCIAL_INDUSTRY_SIC_RANGE:
         return
     description = str(submissions.get("sicDescription") or "Finanzunternehmen").strip()
+    if sic in SEC_REIT_SIC_CODES:
+        raise CurrentResearchError(
+            f"{ticker} wurde als SEC-Emittent und als {description} (SIC {sic}) "
+            "eindeutig erkannt. Das vorhandene Analyseprofil ist für operative "
+            "Unternehmen ausgelegt; bei REITs wären klassischer Free Cashflow, "
+            "Enterprise Value und industrielle Verschuldungskennzahlen ohne "
+            "Immobilienkontext fachlich irreführend. Room16 startet deshalb keine "
+            "allgemeine Analyse. Vor einem neuen Lauf wird ein generisches "
+            "REIT-Branchenprofil mit FFO/AFFO, immobiliengerechter Verschuldung, "
+            "Auslastung, Mietlaufzeiten und Ausschüttungsdeckung benötigt."
+        )
     raise CurrentResearchError(
         f"{ticker} wurde als SEC-Emittent und als {description} (SIC {sic}) "
         "eindeutig erkannt. Das vorhandene Analyseprofil ist für operative "

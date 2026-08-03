@@ -276,6 +276,15 @@ class _FakeFinancialSec(_FakeSec):
         }
 
 
+class _FakeReitSec(_FakeSec):
+    def get_submissions(self, cik):
+        return {
+            "sic": "6798",
+            "sicDescription": "Real Estate Investment Trusts",
+            "filings": {"recent": {"filingDate": ["2026-07-20"]}},
+        }
+
+
 class _FakePrices(PriceProviderBase):
     source_type = "trusted_market_data_vendor"
     source_url = "https://prices.example/docs"
@@ -633,6 +642,20 @@ def test_current_runner_names_unsupported_financial_profile_before_pipeline(tmp_
             _request(tmp_path),
             price_provider=_FakePrices(),
             sec_client=_FakeFinancialSec(),
+        )
+
+    _assert_no_run_dirs(tmp_path)
+
+
+def test_current_runner_names_unsupported_reit_profile_before_pipeline(tmp_path):
+    with pytest.raises(
+        CurrentResearchError,
+        match=r"Real Estate Investment Trusts.*SIC 6798.*REIT-Branchenprofil mit FFO/AFFO",
+    ):
+        run_current_research(
+            _request(tmp_path),
+            price_provider=_FakePrices(),
+            sec_client=_FakeReitSec(),
         )
 
     _assert_no_run_dirs(tmp_path)
