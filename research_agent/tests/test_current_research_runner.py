@@ -661,7 +661,7 @@ def test_current_runner_names_unsupported_reit_profile_before_pipeline(tmp_path)
     _assert_no_run_dirs(tmp_path)
 
 
-def test_captive_finance_guard_blocks_current_automotive_finance_activity():
+def test_captive_finance_guard_blocks_current_mixed_finance_activity():
     companyfacts = {
         "facts": {
             "us-gaap": {
@@ -699,12 +699,46 @@ def test_captive_finance_guard_blocks_current_automotive_finance_activity():
         )
 
 
-def test_captive_finance_guard_keeps_automaker_without_finance_activity_supported():
+def test_captive_finance_guard_keeps_operator_without_finance_activity_supported():
     runner._require_supported_sec_captive_finance_profile(
         "GENR",
         "2026-07-31",
         {"sic": "3711", "sicDescription": "Motor Vehicles"},
         {"facts": {"us-gaap": {"Revenues": {"units": {}}}}},
+        max_age_days=550,
+    )
+
+
+def test_captive_finance_guard_requires_origination_and_collection_sides():
+    collection_only = {
+        "facts": {
+            "us-gaap": {
+                concept: {
+                    "units": {
+                        "USD": [
+                            {
+                                "val": 1_000_000_000,
+                                "form": "10-Q",
+                                "filed": "2026-07-21",
+                                "start": "2026-01-01",
+                                "end": "2026-06-30",
+                            }
+                        ]
+                    }
+                }
+                for concept in (
+                    "ProceedsFromCollectionOfFinanceReceivables",
+                    "ProceedsFromSaleOfFinanceReceivables",
+                )
+            }
+        }
+    }
+
+    runner._require_supported_sec_captive_finance_profile(
+        "GENR",
+        "2026-07-31",
+        {"sic": "3711", "sicDescription": "Motor Vehicles"},
+        collection_only,
         max_age_days=550,
     )
 

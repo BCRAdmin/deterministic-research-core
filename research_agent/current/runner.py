@@ -39,13 +39,18 @@ SEC_RESULTS_ANNOUNCEMENT_FORM = "8-K"
 SEC_RESULTS_ANNOUNCEMENT_ITEM = "2.02"
 SEC_FINANCIAL_INDUSTRY_SIC_RANGE = range(6000, 6800)
 SEC_REIT_SIC_CODES = {6798}
-SEC_AUTOMOTIVE_CAPTIVE_FINANCE_SIC_CODES = {3711}
-SEC_CAPTIVE_FINANCE_ACTIVITY_CONCEPTS = {
+SEC_CAPTIVE_FINANCE_ORIGINATION_CONCEPTS = {
     "IncreaseDecreaseInFinanceReceivables",
     "PaymentsToAcquireFinanceReceivables",
+}
+SEC_CAPTIVE_FINANCE_COLLECTION_CONCEPTS = {
     "ProceedsFromCollectionOfFinanceReceivables",
     "ProceedsFromSaleOfFinanceReceivables",
 }
+SEC_CAPTIVE_FINANCE_ACTIVITY_CONCEPTS = (
+    SEC_CAPTIVE_FINANCE_ORIGINATION_CONCEPTS
+    | SEC_CAPTIVE_FINANCE_COLLECTION_CONCEPTS
+)
 SEC_COMPANYFACTS_COVERAGE_METRICS = {
     "revenue",
     "operating_income",
@@ -768,12 +773,6 @@ def _require_supported_sec_captive_finance_profile(
     *,
     max_age_days: int,
 ) -> None:
-    try:
-        sic = int(str(submissions.get("sic") or "").strip())
-    except ValueError:
-        return
-    if sic not in SEC_AUTOMOTIVE_CAPTIVE_FINANCE_SIC_CODES:
-        return
     as_of = date.fromisoformat(as_of_date)
     current_concepts: list[str] = []
     us_gaap = (companyfacts.get("facts") or {}).get("us-gaap") or {}
@@ -800,20 +799,32 @@ def _require_supported_sec_captive_finance_profile(
                 break
         if has_current_fact:
             current_concepts.append(concept)
-    if len(current_concepts) < 2:
+    current_concept_set = set(current_concepts)
+    if not (
+        current_concept_set.intersection(
+            SEC_CAPTIVE_FINANCE_ORIGINATION_CONCEPTS
+        )
+        and current_concept_set.intersection(
+            SEC_CAPTIVE_FINANCE_COLLECTION_CONCEPTS
+        )
+    ):
         return
+    sic_text = str(submissions.get("sic") or "").strip()
     description = str(
-        submissions.get("sicDescription") or "Motor Vehicles"
+        submissions.get("sicDescription") or "operatives Unternehmen"
     ).strip()
+    industry_label = (
+        f"{description} (SIC {sic_text})" if sic_text else description
+    )
     raise CurrentResearchError(
-        f"{ticker} wurde als SEC-Emittent und als {description} (SIC {sic}) "
+        f"{ticker} wurde als SEC-Emittent und als {industry_label} "
         "eindeutig erkannt. Die aktuellen SEC-Fakten weisen zugleich mehrere "
         "Cashflow-Arten für Finanzierungsforderungen aus; das spricht für eine "
         "wesentliche integrierte Finanzdienstleistung. Das vorhandene operative "
         "Analyseprofil würde Finanzierungsschulden, Forderungsfinanzierung und "
-        "konsolidierten Cashflow mit dem Fahrzeuggeschäft vermischen. Room16 "
+        "konsolidierten Cashflow mit dem operativen Kerngeschäft vermischen. Room16 "
         "startet deshalb keine allgemeine Analyse. Vor einem neuen Lauf wird ein "
-        "generisches Captive-Finance-Profil benötigt, das Automotive und "
+        "generisches Captive-Finance-Profil benötigt, das Kerngeschäft und "
         "Finanzdienstleistung bei Ergebnis, Cashflow und Verschuldung trennt."
     )
 
