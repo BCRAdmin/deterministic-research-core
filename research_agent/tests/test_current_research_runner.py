@@ -661,6 +661,83 @@ def test_current_runner_names_unsupported_reit_profile_before_pipeline(tmp_path)
     _assert_no_run_dirs(tmp_path)
 
 
+def test_captive_finance_guard_blocks_current_automotive_finance_activity():
+    companyfacts = {
+        "facts": {
+            "us-gaap": {
+                concept: {
+                    "units": {
+                        "USD": [
+                            {
+                                "val": value,
+                                "form": "10-Q",
+                                "filed": "2026-07-21",
+                                "start": "2026-01-01",
+                                "end": "2026-06-30",
+                            }
+                        ]
+                    }
+                }
+                for concept, value in (
+                    ("PaymentsToAcquireFinanceReceivables", 18_736_000_000),
+                    ("ProceedsFromCollectionOfFinanceReceivables", 17_713_000_000),
+                )
+            }
+        }
+    }
+
+    with pytest.raises(
+        CurrentResearchError,
+        match=r"Motor Vehicles.*SIC 3711.*Captive-Finance-Profil",
+    ):
+        runner._require_supported_sec_captive_finance_profile(
+            "GENR",
+            "2026-07-31",
+            {"sic": "3711", "sicDescription": "Motor Vehicles"},
+            companyfacts,
+            max_age_days=550,
+        )
+
+
+def test_captive_finance_guard_keeps_automaker_without_finance_activity_supported():
+    runner._require_supported_sec_captive_finance_profile(
+        "GENR",
+        "2026-07-31",
+        {"sic": "3711", "sicDescription": "Motor Vehicles"},
+        {"facts": {"us-gaap": {"Revenues": {"units": {}}}}},
+        max_age_days=550,
+    )
+
+
+def test_captive_finance_guard_ignores_stale_finance_activity():
+    stale_row = {
+        "val": 1_000_000_000,
+        "form": "10-K",
+        "filed": "2020-02-01",
+        "start": "2019-01-01",
+        "end": "2019-12-31",
+    }
+    companyfacts = {
+        "facts": {
+            "us-gaap": {
+                concept: {"units": {"USD": [stale_row]}}
+                for concept in (
+                    "PaymentsToAcquireFinanceReceivables",
+                    "ProceedsFromCollectionOfFinanceReceivables",
+                )
+            }
+        }
+    }
+
+    runner._require_supported_sec_captive_finance_profile(
+        "GENR",
+        "2026-07-31",
+        {"sic": "3711", "sicDescription": "Motor Vehicles"},
+        companyfacts,
+        max_age_days=550,
+    )
+
+
 def test_current_runner_names_missing_sec_identity_before_adapter_lookup(tmp_path):
     request = CurrentResearchRequest(
         ticker="RIOT",

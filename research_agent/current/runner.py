@@ -39,6 +39,13 @@ SEC_RESULTS_ANNOUNCEMENT_FORM = "8-K"
 SEC_RESULTS_ANNOUNCEMENT_ITEM = "2.02"
 SEC_FINANCIAL_INDUSTRY_SIC_RANGE = range(6000, 6800)
 SEC_REIT_SIC_CODES = {6798}
+SEC_AUTOMOTIVE_CAPTIVE_FINANCE_SIC_CODES = {3711}
+SEC_CAPTIVE_FINANCE_ACTIVITY_CONCEPTS = {
+    "IncreaseDecreaseInFinanceReceivables",
+    "PaymentsToAcquireFinanceReceivables",
+    "ProceedsFromCollectionOfFinanceReceivables",
+    "ProceedsFromSaleOfFinanceReceivables",
+}
 SEC_COMPANYFACTS_COVERAGE_METRICS = {
     "revenue",
     "operating_income",
@@ -249,6 +256,13 @@ def run_current_research(
             request.as_of_date,
             submissions,
             companyfacts,
+        )
+        _require_supported_sec_captive_finance_profile(
+            symbol,
+            request.as_of_date,
+            submissions,
+            companyfacts,
+            max_age_days=request.lookback_calendar_days,
         )
         companyfacts_path = companyfacts_dir / f"{symbol}.json"
         cik_records_path = source_dir / "cik_records.json"
@@ -743,6 +757,64 @@ def _require_supported_sec_industry_profile(
         "fachlich irreführend. Room16 startet deshalb keine allgemeine Analyse. "
         "Vor einem neuen Lauf wird ein generisches Finanzbranchenprofil mit "
         "bank-, versicherungs- oder investmentgerechten Kennzahlen benötigt."
+    )
+
+
+def _require_supported_sec_captive_finance_profile(
+    ticker: str,
+    as_of_date: str,
+    submissions: dict[str, Any],
+    companyfacts: dict[str, Any],
+    *,
+    max_age_days: int,
+) -> None:
+    try:
+        sic = int(str(submissions.get("sic") or "").strip())
+    except ValueError:
+        return
+    if sic not in SEC_AUTOMOTIVE_CAPTIVE_FINANCE_SIC_CODES:
+        return
+    as_of = date.fromisoformat(as_of_date)
+    current_concepts: list[str] = []
+    us_gaap = (companyfacts.get("facts") or {}).get("us-gaap") or {}
+    for concept in sorted(SEC_CAPTIVE_FINANCE_ACTIVITY_CONCEPTS):
+        record = us_gaap.get(concept)
+        if not isinstance(record, dict):
+            continue
+        has_current_fact = False
+        for rows in (record.get("units") or {}).values():
+            for row in rows:
+                if not isinstance(row, dict) or row.get("form") not in SEC_FINANCIAL_FORMS:
+                    continue
+                try:
+                    end = date.fromisoformat(str(row.get("end") or ""))
+                    filed = date.fromisoformat(str(row.get("filed") or ""))
+                    value = float(row.get("val"))
+                except (TypeError, ValueError):
+                    continue
+                age_days = (as_of - end).days
+                if 0 <= age_days <= max_age_days and filed <= as_of and value != 0:
+                    has_current_fact = True
+                    break
+            if has_current_fact:
+                break
+        if has_current_fact:
+            current_concepts.append(concept)
+    if len(current_concepts) < 2:
+        return
+    description = str(
+        submissions.get("sicDescription") or "Motor Vehicles"
+    ).strip()
+    raise CurrentResearchError(
+        f"{ticker} wurde als SEC-Emittent und als {description} (SIC {sic}) "
+        "eindeutig erkannt. Die aktuellen SEC-Fakten weisen zugleich mehrere "
+        "Cashflow-Arten für Finanzierungsforderungen aus; das spricht für eine "
+        "wesentliche integrierte Finanzdienstleistung. Das vorhandene operative "
+        "Analyseprofil würde Finanzierungsschulden, Forderungsfinanzierung und "
+        "konsolidierten Cashflow mit dem Fahrzeuggeschäft vermischen. Room16 "
+        "startet deshalb keine allgemeine Analyse. Vor einem neuen Lauf wird ein "
+        "generisches Captive-Finance-Profil benötigt, das Automotive und "
+        "Finanzdienstleistung bei Ergebnis, Cashflow und Verschuldung trennt."
     )
 
 
