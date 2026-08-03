@@ -698,6 +698,7 @@ def _load_source_ingestion_inputs(ticker: str, as_of_date: str, config: ReportCo
                 ticker=ticker,
                 cik=cik_mapper.get_cik(ticker),
                 companyfacts_json=raw,
+                as_of_date=as_of_date,
             )
         else:
             if not config.sec_user_agent:
@@ -708,6 +709,7 @@ def _load_source_ingestion_inputs(ticker: str, as_of_date: str, config: ReportCo
                 ticker=ticker,
                 cik=cik_mapper.get_cik(ticker),
                 companyfacts_json=raw,
+                as_of_date=as_of_date,
             )
         evidence_items.extend(sec_evidence_items)
         supplemental_facts = []

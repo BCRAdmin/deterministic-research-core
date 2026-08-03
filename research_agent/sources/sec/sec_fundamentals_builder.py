@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import date, timedelta
 from typing import Any, Iterable, Optional
 
 from research_agent.evidence.evidence_item import EvidenceItem
@@ -38,6 +39,7 @@ SEC_FUNDAMENTAL_METRICS = [
     "listed_share_count",
     "eps_diluted",
 ]
+CURRENT_EVIDENCE_MAX_AGE_DAYS = 550
 
 
 def build_sec_fundamentals(
@@ -55,6 +57,8 @@ def build_sec_fundamentals_from_companyfacts(
     ticker: str,
     cik: str,
     companyfacts_json: dict[str, Any],
+    *,
+    as_of_date: str | None = None,
 ) -> tuple[dict[str, Any], list[EvidenceItem]]:
     parser = CompanyFactsParser(ticker=ticker, cik=cik, companyfacts_json=companyfacts_json)
     metrics: dict[str, Any] = {
@@ -65,9 +69,45 @@ def build_sec_fundamentals_from_companyfacts(
     }
     evidence_items: list[EvidenceItem] = []
     seen_evidence_ids: set[str] = set()
+    reference_date = (
+        date.fromisoformat(as_of_date)
+        if as_of_date is not None
+        else _latest_financial_end(companyfacts_json)
+    )
+    current_cutoff = (
+        reference_date - timedelta(days=CURRENT_EVIDENCE_MAX_AGE_DAYS)
+        if reference_date is not None
+        else None
+    )
 
     for metric in SEC_FUNDAMENTAL_METRICS:
-        annual = parser.latest_annual_fact(metric)
+        current_facts = [
+            fact
+            for fact in parser.get_facts_for_metric(metric)
+            if _fact_is_current(
+                fact,
+                current_cutoff,
+                reference_date,
+                enforce_filed_cutoff=as_of_date is not None,
+            )
+        ]
+        annual_candidates = [
+            fact
+            for fact in current_facts
+            if fact.form == "10-K" and fact.fp in {"FY", "CY"}
+        ]
+        if not annual_candidates:
+            annual_candidates = [
+                fact for fact in current_facts if fact.form == "10-K"
+            ]
+        annual = (
+            sorted(
+                annual_candidates,
+                key=lambda fact: (fact.filed or "", fact.end or ""),
+            )[-1]
+            if annual_candidates
+            else None
+        )
         if annual:
             metrics[f"{metric}_latest_annual"] = annual.value
             _append_evidence_once(
@@ -76,7 +116,15 @@ def build_sec_fundamentals_from_companyfacts(
                 parser.to_evidence_item(annual),
             )
 
-        quarterly = parser.latest_quarterly_facts(metric, n=4)
+        quarterly = sorted(
+            [
+                fact
+                for fact in current_facts
+                if fact.form in {"10-Q", "10-K"}
+                and fact.fp not in {"FY", "CY"}
+            ],
+            key=lambda fact: (fact.end or "", fact.filed or ""),
+        )[-4:]
         if quarterly:
             metrics[f"{metric}_latest_4_quarters"] = [fact.value for fact in quarterly]
             for fact in quarterly:
@@ -93,6 +141,50 @@ def build_sec_fundamentals_from_companyfacts(
             )
 
     return metrics, evidence_items
+
+
+def _latest_financial_end(companyfacts_json: dict[str, Any]) -> date | None:
+    ends: list[date] = []
+    for namespace in (companyfacts_json.get("facts") or {}).values():
+        if not isinstance(namespace, dict):
+            continue
+        for record in namespace.values():
+            if not isinstance(record, dict):
+                continue
+            for rows in (record.get("units") or {}).values():
+                for row in rows:
+                    if not isinstance(row, dict) or row.get("form") not in {
+                        "10-K",
+                        "10-K/A",
+                        "10-Q",
+                        "10-Q/A",
+                    }:
+                        continue
+                    try:
+                        ends.append(date.fromisoformat(str(row.get("end") or "")))
+                    except ValueError:
+                        continue
+    return max(ends) if ends else None
+
+
+def _fact_is_current(
+    fact: Any,
+    cutoff: date | None,
+    reference_date: date | None,
+    *,
+    enforce_filed_cutoff: bool,
+) -> bool:
+    if cutoff is None:
+        return True
+    try:
+        fact_end = date.fromisoformat(str(fact.end or ""))
+        fact_filed = date.fromisoformat(str(fact.filed or ""))
+    except ValueError:
+        return False
+    return (
+        cutoff <= fact_end <= reference_date
+        and (not enforce_filed_cutoff or fact_filed <= reference_date)
+    )
 
 
 def _append_evidence_once(

@@ -60,6 +60,8 @@ _BUSINESS_LANGUAGE = re.compile(
     r"segment|segments|software|subscription|subscriptions|device|devices|"
     r"deliver|delivers|delivery|freight|logistics|network|package|packages|"
     r"supply chain|transport|transportation|"
+    r"explore|explores|exploration|produce|produces|production|crude oil|"
+    r"natural gas|bitumen|liquefied natural gas|lng|"
     r"manufacture|manufactures|distribute|distributes|market|markets|roast|"
     r"roaster|retail|retailer|sell|sells|store|stores|coffee)\b",
     re.IGNORECASE,
@@ -80,7 +82,8 @@ _BUSINESS_CONTEXT_NAMED_IDENTITY = re.compile(
     r"^[A-Z][A-Za-z0-9&.,'’ -]{1,60}\s+(?:is|are)\s+"
     r"(?:(?:one of the|a|an)\s+)?"
     r"(?:collection of businesses|group of companies|holding company|"
-    r"provider|manufacturer|operator|developer|retailer|franchisor)\b"
+    r"provider|manufacturer|operator|developer|retailer|franchisor|"
+    r"(?:(?:[A-Za-z&]+)\s+){1,6}company)\b"
 )
 _BUSINESS_CONTEXT_REVENUE_ACTIVITY = re.compile(
     r"^(?:we|the company|the issuer)\s+"
@@ -116,7 +119,8 @@ _BUSINESS_CONTEXT_ACCOUNTING_LANGUAGE = re.compile(
 )
 _BUSINESS_CONTEXT_UNRESOLVED_REFERENCE = re.compile(
     r"\b(?:this|that|these|those|such) "
-    r"(?:arrangements?|business|customers?|markets?|products?|relationships?|segments?|services?)\b",
+    r"(?:arrangements?|business|customers?|markets?|products?|relationships?|segments?|services?)\b"
+    r"|\b(?:see|refer to)\b",
     re.IGNORECASE,
 )
 _BUSINESS_CONTEXT_ABBREVIATION = re.compile(
@@ -323,7 +327,12 @@ def extract_sec_business_context(html: str) -> list[str]:
         index
         for index, (block, _) in enumerate(blocks)
         if _compact_heading(block)
-        in {"item1business", "businesssummary", "descriptionofthebusiness"}
+        in {
+            "item1business",
+            "items1and2businessandproperties",
+            "businesssummary",
+            "descriptionofthebusiness",
+        }
     ]
     best: list[str] = []
     for start in starts:
@@ -382,7 +391,7 @@ def extract_sec_business_context(html: str) -> list[str]:
                 and _business_context_score(segment) >= 2
             ):
                 selected.append(segment)
-            if len(selected) == 3:
+            if len(selected) == 2:
                 break
         if len(selected) < 3:
             ranked_context = sorted(
@@ -597,7 +606,17 @@ def _is_business_context_paragraph(text: str) -> bool:
     if not minimum_length <= len(stripped) <= 700:
         return False
     if any(character.isdigit() for character in stripped):
-        return False
+        numeric_identity_or_segment = identity_statement or "segment" in lowered
+        numeric_financial_context = bool(
+            re.search(
+                r"(?:\$|%|\b(?:million|billion|assets|employ(?:ed|ees)|"
+                r"production|year ended|as of)\b)",
+                stripped,
+                re.IGNORECASE,
+            )
+        )
+        if not numeric_identity_or_segment or numeric_financial_context:
+            return False
     if lowered.startswith(_BUSINESS_CONTEXT_SKIP_PREFIXES):
         return False
     if _BUSINESS_CONTEXT_ACCOUNTING_LANGUAGE.search(stripped):

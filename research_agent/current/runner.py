@@ -28,6 +28,7 @@ from research_agent.sources.sec.sec_filing_risks import (
 )
 from research_agent.sources.sec.sec_inline_facts import (
     build_sec_inline_fact_supplement_payload,
+    merge_sec_inline_fact_supplement_payloads,
     save_sec_inline_fact_supplement,
 )
 from research_agent.sources.sec.xbrl_concepts import US_GAAP_CONCEPTS
@@ -325,25 +326,45 @@ def run_current_research(
                     ) from exc
                 if inline_facts_payload is not None:
                     inline_facts_path = inline_facts_dir / f"{symbol}.json"
-        if official_news_dir is None:
-            annual_filing = next(
-                (filing for filing in filing_candidates if filing.form == "10-K"),
-                None,
+        annual_filing = next(
+            (filing for filing in filing_candidates if filing.form == "10-K"),
+            None,
+        )
+        if annual_filing is not None:
+            annual_html = filing_html_by_accession.get(
+                annual_filing.accession_number
             )
-            if annual_filing is not None:
-                annual_html = filing_html_by_accession.get(
-                    annual_filing.accession_number
-                )
-                if annual_html is None:
-                    try:
-                        annual_html = sec.get_filing_html(
-                            cik=annual_filing.cik,
-                            accession_number=annual_filing.accession_number,
-                            primary_document=annual_filing.primary_document,
-                        )
-                    except RuntimeError:
+            if annual_html is None:
+                try:
+                    annual_html = sec.get_filing_html(
+                        cik=annual_filing.cik,
+                        accession_number=annual_filing.accession_number,
+                        primary_document=annual_filing.primary_document,
+                    )
+                except RuntimeError:
+                    if official_news_dir is None:
                         business_context_status = "filing_fetch_failed"
-                if annual_html is not None:
+            if annual_html is not None:
+                if (
+                    latest_financial_reference is not None
+                    and annual_filing.accession_number
+                    != latest_financial_reference.accession_number
+                ):
+                    annual_inline_payload = build_sec_inline_fact_supplement_payload(
+                        ticker=symbol,
+                        filing=annual_filing,
+                        html=annual_html,
+                        companyfacts=companyfacts,
+                        retrieved_at=retrieved_at,
+                        allowed_metrics={"capex"},
+                    )
+                    inline_facts_payload = merge_sec_inline_fact_supplement_payloads(
+                        inline_facts_payload,
+                        annual_inline_payload,
+                    )
+                    if inline_facts_payload is not None:
+                        inline_facts_path = inline_facts_dir / f"{symbol}.json"
+                if official_news_dir is None:
                     business_context_payload = build_sec_business_context_payload(
                         ticker=symbol,
                         filing=annual_filing,

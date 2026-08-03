@@ -71,7 +71,10 @@ US_GAAP_CONCEPTS = {
         "TreasuryStockCommonShares",
         "TreasuryStockShares",
     ],
-    "depreciation_and_amortization": ["DepreciationAndAmortization"],
+    "depreciation_and_amortization": [
+        "DepreciationAndAmortization",
+        "DepreciationDepletionAndAmortization",
+    ],
     "interest_expense": ["InterestExpenseNonOperating", "InterestExpense"],
     "shares_diluted": ["WeightedAverageNumberOfDilutedSharesOutstanding"],
     "eps_diluted": ["EarningsPerShareDiluted"],

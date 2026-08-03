@@ -22,6 +22,8 @@ _STOCK_CLASS_AXIS = "us-gaap:StatementClassOfStockAxis"
 _MULTI_CLASS_PRICE_EQUIVALENCE_NOTE = (
     "[MULTI_CLASS_PRICE_EQUIVALENCE_UNVERIFIED]"
 )
+_INLINE_EXACT_CASHFLOW_ROW_NOTE = "[INLINE_EXACT_CASHFLOW_ROW]"
+_CAPEX_ROW_LABEL = "capital expenditures and investments"
 
 
 class _InlineStatementParser(HTMLParser):
@@ -32,6 +34,8 @@ class _InlineStatementParser(HTMLParser):
         self.rows: list[dict[str, Any]] = []
         self._context_id: str | None = None
         self._context_instant_parts: list[str] | None = None
+        self._context_start_parts: list[str] | None = None
+        self._context_end_parts: list[str] | None = None
         self._member_dimension: str | None = None
         self._member_parts: list[str] | None = None
         self._row_parts: list[str] | None = None
@@ -50,6 +54,8 @@ class _InlineStatementParser(HTMLParser):
             if self._context_id:
                 self.contexts[self._context_id] = {
                     "instant": None,
+                    "start": None,
+                    "end": None,
                     "dimensions": {},
                 }
         elif tag == "xbrldi:explicitmember" and self._context_id:
@@ -59,6 +65,10 @@ class _InlineStatementParser(HTMLParser):
                 self._member_parts = []
         elif tag == "xbrli:instant" and self._context_id:
             self._context_instant_parts = []
+        elif tag == "xbrli:startdate" and self._context_id:
+            self._context_start_parts = []
+        elif tag == "xbrli:enddate" and self._context_id:
+            self._context_end_parts = []
         elif tag == "tr":
             self._row_parts = []
             self._row_facts = []
@@ -72,6 +82,14 @@ class _InlineStatementParser(HTMLParser):
             instant = "".join(self._context_instant_parts or []).strip()
             self.contexts[self._context_id]["instant"] = instant
             self._context_instant_parts = None
+        elif tag == "xbrli:startdate" and self._context_id:
+            start = "".join(self._context_start_parts or []).strip()
+            self.contexts[self._context_id]["start"] = start
+            self._context_start_parts = None
+        elif tag == "xbrli:enddate" and self._context_id:
+            end = "".join(self._context_end_parts or []).strip()
+            self.contexts[self._context_id]["end"] = end
+            self._context_end_parts = None
         elif tag == "xbrldi:explicitmember" and self._context_id:
             member = " ".join("".join(self._member_parts or []).split())
             if self._member_dimension and member:
@@ -83,6 +101,8 @@ class _InlineStatementParser(HTMLParser):
         elif tag == "xbrli:context":
             self._context_id = None
             self._context_instant_parts = None
+            self._context_start_parts = None
+            self._context_end_parts = None
         elif tag == "ix:nonfraction" and self._fact_attrs is not None:
             fact = {
                 **self._fact_attrs,
@@ -108,6 +128,10 @@ class _InlineStatementParser(HTMLParser):
     def handle_data(self, data: str) -> None:
         if self._context_instant_parts is not None:
             self._context_instant_parts.append(data)
+        if self._context_start_parts is not None:
+            self._context_start_parts.append(data)
+        if self._context_end_parts is not None:
+            self._context_end_parts.append(data)
         if self._member_parts is not None:
             self._member_parts.append(data)
         if self._row_parts is not None:
@@ -123,6 +147,7 @@ def build_sec_inline_fact_supplement_payload(
     html: str,
     companyfacts: dict[str, Any],
     retrieved_at: str,
+    allowed_metrics: set[str] | None = None,
 ) -> dict[str, Any] | None:
     """Recover narrowly supported current facts omitted by CompanyFacts."""
 
@@ -133,7 +158,15 @@ def build_sec_inline_fact_supplement_payload(
     parser = _InlineStatementParser()
     parser.feed(html)
     facts: list[dict[str, Any]] = []
-    if not _companyfacts_has_current_noncurrent_debt(companyfacts, filing):
+    metrics = (
+        allowed_metrics
+        if allowed_metrics is not None
+        else {"debt_noncurrent", "economic_share_count", "capex"}
+    )
+    if (
+        "debt_noncurrent" in metrics
+        and not _companyfacts_has_current_noncurrent_debt(companyfacts, filing)
+    ):
         debt = _inline_noncurrent_debt_fact(
             ticker=ticker,
             filing=filing,
@@ -142,7 +175,10 @@ def build_sec_inline_fact_supplement_payload(
         )
         if debt is not None:
             facts.append(debt)
-    if not _companyfacts_has_current_share_count(companyfacts, filing):
+    if (
+        "economic_share_count" in metrics
+        and not _companyfacts_has_current_share_count(companyfacts, filing)
+    ):
         shares = _inline_economic_share_count_fact(
             ticker=ticker,
             filing=filing,
@@ -151,6 +187,22 @@ def build_sec_inline_fact_supplement_payload(
         )
         if shares is not None:
             facts.append(shares)
+    if (
+        "capex" in metrics
+        and not _companyfacts_has_current_duration_metric(
+            companyfacts,
+            filing,
+            metric_name="capex",
+        )
+    ):
+        facts.extend(
+            _inline_exact_capex_facts(
+                ticker=ticker,
+                filing=filing,
+                filing_period=filing_period,
+                parser=parser,
+            )
+        )
     if not facts:
         return None
     return {
@@ -158,8 +210,46 @@ def build_sec_inline_fact_supplement_payload(
         "ticker": ticker.strip().upper(),
         "retrieved_at": retrieved_at,
         "filing": filing.to_dict(),
+        "filings": [filing.to_dict()],
         "facts": facts,
     }
+
+
+def merge_sec_inline_fact_supplement_payloads(
+    primary: dict[str, Any] | None,
+    additional: dict[str, Any] | None,
+) -> dict[str, Any] | None:
+    """Merge supplements without losing the filing identity of each fact."""
+
+    if primary is None:
+        return additional
+    if additional is None:
+        return primary
+    if (
+        primary.get("contract_id") != SEC_INLINE_FACT_SUPPLEMENT_CONTRACT
+        or additional.get("contract_id") != SEC_INLINE_FACT_SUPPLEMENT_CONTRACT
+        or str(primary.get("ticker") or "").upper()
+        != str(additional.get("ticker") or "").upper()
+    ):
+        raise ValueError("SEC inline fact supplements cannot be merged")
+
+    merged = dict(primary)
+    filings_by_accession: dict[str, dict[str, Any]] = {}
+    for payload in (primary, additional):
+        filings = payload.get("filings") or [payload.get("filing") or {}]
+        for filing in filings:
+            accession = str(filing.get("accession_number") or "")
+            if accession:
+                filings_by_accession[accession] = dict(filing)
+    facts_by_id: dict[str, dict[str, Any]] = {}
+    for payload in (primary, additional):
+        for fact in payload.get("facts") or []:
+            evidence_id = str(fact.get("evidence_id") or "")
+            if evidence_id:
+                facts_by_id[evidence_id] = dict(fact)
+    merged["filings"] = list(filings_by_accession.values())
+    merged["facts"] = list(facts_by_id.values())
+    return merged
 
 
 def build_sec_inline_debt_supplement_payload(
@@ -364,6 +454,87 @@ def _inline_economic_share_count_fact(
     }
 
 
+def _inline_exact_capex_facts(
+    *,
+    ticker: str,
+    filing: SecFilingReference,
+    filing_period: tuple[int, str],
+    parser: _InlineStatementParser,
+) -> list[dict[str, Any]]:
+    """Recover exact consolidated capex rows when CompanyFacts omits them."""
+
+    candidates: dict[tuple[str, str], list[tuple[float, str]]] = {}
+    for row in parser.rows:
+        if _row_label(str(row.get("text") or "")) != _CAPEX_ROW_LABEL:
+            continue
+        for fact in row.get("facts") or []:
+            context = parser.contexts.get(str(fact.get("contextref") or ""), {})
+            start = str(context.get("start") or "")
+            end = str(context.get("end") or "")
+            if (
+                not start
+                or not end
+                or end > filing.report_date
+                or context.get("dimensions")
+                or str(fact.get("unitref") or "").casefold() != "usd"
+            ):
+                continue
+            concept = str(fact.get("name") or "")
+            if ":" not in concept:
+                continue
+            value = _inline_numeric_value(fact)
+            if value is None:
+                continue
+            candidates.setdefault((start, end), []).append((abs(value), concept))
+
+    fiscal_year, fiscal_period = filing_period
+    facts: list[dict[str, Any]] = []
+    for (start, end), observations in sorted(candidates.items()):
+        values = {value for value, _concept in observations}
+        if len(values) != 1:
+            raise ValueError(
+                "The filed statement reports conflicting undimensioned values "
+                f"for the exact {_CAPEX_ROW_LABEL!r} row in {start}..{end}."
+            )
+        value = next(iter(values))
+        concept = observations[0][1]
+        year_delta = int(end[:4]) - int(filing.report_date[:4])
+        fact_fiscal_year = fiscal_year + year_delta
+        period = f"FY{fact_fiscal_year}_{fiscal_period}"
+        symbol = ticker.strip().upper()
+        accession = filing.accession_number.replace("-", "")
+        evidence_id = (
+            f"{symbol}_SEC_INLINE_capex_{period}_{start}_{end}_"
+            f"{concept.replace(':', '_')}_{accession}"
+        )
+        facts.append(
+            {
+                "metric_name": "capex",
+                "value": value,
+                "unit": "USD",
+                "period": period,
+                "fy": fact_fiscal_year,
+                "fp": fiscal_period,
+                "form": filing.form,
+                "filed": filing.filing_date,
+                "start": start,
+                "end": end,
+                "accession": filing.accession_number,
+                "source_type": "sec_filing",
+                "frame": None,
+                "concept": concept,
+                "raw_value": value,
+                "normalization_note": (
+                    f"{_INLINE_EXACT_CASHFLOW_ROW_NOTE} Recovered from the exact "
+                    f"consolidated {_CAPEX_ROW_LABEL!r} row in the filed inline "
+                    "XBRL because SEC CompanyFacts omitted the current fact."
+                ),
+                "evidence_id": evidence_id,
+            }
+        )
+    return facts
+
+
 def save_sec_inline_fact_supplement(
     path: str | Path,
     payload: dict[str, Any],
@@ -388,13 +559,12 @@ def load_sec_inline_fact_supplement(
         raise ValueError("SEC inline fact supplement contract mismatch")
     if str(payload.get("ticker") or "").upper() != symbol:
         raise ValueError("SEC inline fact supplement ticker mismatch")
-    filing = payload.get("filing") or {}
-    source_id = str(filing.get("source_id") or "")
-    if not source_id:
-        cik = str(filing.get("cik") or "")
-        accession = str(filing.get("accession_number") or "").replace("-", "")
-        if cik and accession:
-            source_id = f"SEC_CIK{str(int(cik)).zfill(10)}_{accession}"
+    filings = payload.get("filings") or [payload.get("filing") or {}]
+    filings_by_accession = {
+        str(filing.get("accession_number") or ""): filing
+        for filing in filings
+        if filing.get("accession_number")
+    }
 
     parsed_facts: list[ParsedFact] = []
     evidence_items: list[EvidenceItem] = []
@@ -404,18 +574,40 @@ def load_sec_inline_fact_supplement(
             "debt_noncurrent": _NONCURRENT_DEBT_CONCEPT,
             "economic_share_count": _OUTSTANDING_SHARES_CONCEPT,
         }.get(metric_name)
-        if expected_concept is None:
+        if metric_name == "capex":
+            expected_concept = str(row.get("concept") or "")
+            if (
+                ":" not in expected_concept
+                or _INLINE_EXACT_CASHFLOW_ROW_NOTE
+                not in str(row.get("normalization_note") or "")
+            ):
+                raise ValueError("SEC inline capex authority mismatch")
+        elif expected_concept is None:
             raise ValueError("SEC inline fact supplement contains unsupported metric")
         fact = ParsedFact(**row)
         if fact.source_type != "sec_filing" or fact.concept != expected_concept:
             raise ValueError("SEC inline fact supplement authority mismatch")
         parsed_facts.append(fact)
+        filing = filings_by_accession.get(str(fact.accession or "")) or (
+            payload.get("filing") or {}
+        )
+        source_id = str(filing.get("source_id") or "")
+        if not source_id:
+            cik = str(filing.get("cik") or "")
+            accession = str(fact.accession or "").replace("-", "")
+            if cik and accession:
+                source_id = f"SEC_CIK{str(int(cik)).zfill(10)}_{accession}"
         statement = (
             f"{symbol} reported debt_noncurrent of {fact.value} USD for "
             f"{fact.period} in the filed Long-term debt row."
             if metric_name == "debt_noncurrent"
-            else f"{symbol} reported {fact.value} economic shares outstanding "
-            f"as of {fact.end} in the filed cover-page inline XBRL."
+            else (
+                f"{symbol} reported capex of {fact.value} USD for {fact.period} "
+                f"in the exact filed {_CAPEX_ROW_LABEL} cash-flow row."
+                if metric_name == "capex"
+                else f"{symbol} reported {fact.value} economic shares outstanding "
+                f"as of {fact.end} in the filed cover-page inline XBRL."
+            )
         )
         evidence_items.append(
             EvidenceItem(
@@ -484,6 +676,25 @@ def _companyfacts_has_current_share_count(
         and float(row["val"]) > 0
     }
     return len(values) == 1
+
+
+def _companyfacts_has_current_duration_metric(
+    companyfacts: dict[str, Any],
+    filing: SecFilingReference,
+    *,
+    metric_name: str,
+) -> bool:
+    us_gaap = companyfacts.get("facts", {}).get("us-gaap", {})
+    return any(
+        row.get("accn") == filing.accession_number
+        and row.get("end") == filing.report_date
+        and row.get("form") == filing.form
+        and row.get("start")
+        for concept in US_GAAP_CONCEPTS[metric_name]
+        for rows in ((us_gaap.get(concept) or {}).get("units") or {}).values()
+        for row in rows
+        if isinstance(row, dict)
+    )
 
 
 def _companyfacts_filing_period(

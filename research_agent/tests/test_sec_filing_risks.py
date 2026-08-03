@@ -399,6 +399,25 @@ def test_business_context_prefers_revenue_activity_over_promotional_puffery():
     ]
 
 
+def test_business_context_supports_combined_resource_company_items():
+    html = """
+    <html><body>
+      <div><strong>ITEMS 1 AND 2. BUSINESS AND PROPERTIES</strong></div>
+      <p>ConocoPhillips is an independent E&amp;P company headquartered in Houston, Texas with operations and activities in 14 countries. On December 31, 2025, we employed approximately 9,900 people and had total assets of $122 billion.</p>
+      <p>We manage our operations through five operating segments, defined by geographic region: Alaska; Lower 48; Canada; Europe, Middle East and North Africa; and Asia Pacific.</p>
+      <p>For operating segment and geographic information, see Note 22.</p>
+      <p>We explore for, produce, transport and market crude oil, bitumen, natural gas, NGLs and LNG on a worldwide basis.</p>
+      <div><strong>ITEM 1A. RISK FACTORS</strong></div>
+    </body></html>
+    """
+
+    assert extract_sec_business_context(html) == [
+        "ConocoPhillips is an independent E&P company headquartered in Houston, Texas with operations and activities in 14 countries.",
+        "We manage our operations through five operating segments, defined by geographic region: Alaska; Lower 48; Canada; Europe, Middle East and North Africa; and Asia Pacific.",
+        "We explore for, produce, transport and market crude oil, bitumen, natural gas, NGLs and LNG on a worldwide basis.",
+    ]
+
+
 def test_builds_primary_risk_evidence_without_inventing_numeric_metrics():
     filing = select_sec_risk_filing_candidates(
         _submissions(), cik="1234", as_of_date="2026-07-24"

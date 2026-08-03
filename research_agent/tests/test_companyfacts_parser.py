@@ -487,6 +487,106 @@ def test_sec_fundamentals_builder_returns_metrics_and_evidence():
     ]
 
 
+def test_recognizes_depreciation_depletion_and_amortization():
+    fixture = {
+        "facts": {
+            "us-gaap": {
+                "DepreciationDepletionAndAmortization": {
+                    "units": {
+                        "USD": [
+                            {
+                                "val": 2_906_000_000,
+                                "fy": 2026,
+                                "fp": "Q1",
+                                "form": "10-Q",
+                                "filed": "2026-04-30",
+                                "start": "2026-01-01",
+                                "end": "2026-03-31",
+                                "accn": "cop-q1",
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    }
+
+    metrics, evidence = build_sec_fundamentals_from_companyfacts("COP", "1163165", fixture)
+
+    assert metrics["quarterly"]["depreciation_and_amortization"] == [
+        2_906_000_000
+    ]
+    assert evidence[0].supports_metrics == [
+        "depreciation_and_amortization",
+        "depreciation_and_amortization_ttm",
+    ]
+
+
+def test_current_evidence_excludes_stale_metric_history():
+    fixture = {
+        "facts": {
+            "us-gaap": {
+                "Revenues": {
+                    "units": {
+                        "USD": [
+                            {
+                                "val": 10_000_000_000,
+                                "fy": 2026,
+                                "fp": "Q1",
+                                "form": "10-Q",
+                                "filed": "2026-04-30",
+                                "start": "2026-01-01",
+                                "end": "2026-03-31",
+                                "accn": "current",
+                            }
+                        ]
+                    }
+                },
+                "CommercialPaper": {
+                    "units": {
+                        "USD": [
+                            {
+                                "val": 1_000_000_000,
+                                "fy": 2013,
+                                "fp": "Q1",
+                                "form": "10-Q",
+                                "filed": "2013-04-30",
+                                "end": "2013-03-31",
+                                "accn": "stale",
+                            }
+                        ]
+                    }
+                },
+                "ShortTermBorrowings": {
+                    "units": {
+                        "USD": [
+                            {
+                                "val": 2_000_000_000,
+                                "fy": 2027,
+                                "fp": "Q1",
+                                "form": "10-Q",
+                                "filed": "2027-04-30",
+                                "end": "2027-03-31",
+                                "accn": "future",
+                            }
+                        ]
+                    }
+                },
+            }
+        }
+    }
+
+    metrics, evidence = build_sec_fundamentals_from_companyfacts(
+        "COP",
+        "1163165",
+        fixture,
+        as_of_date="2026-07-31",
+    )
+
+    assert "short_term_debt_latest_4_quarters" not in metrics
+    assert not any("short_term_debt" in item.supports_metrics for item in evidence)
+
+
 def test_diluted_shares_are_scaled_from_same_period_income_and_eps():
     companyfacts = {
         "facts": {
