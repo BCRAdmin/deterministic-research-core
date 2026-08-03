@@ -21,7 +21,11 @@ US_GAAP_CONCEPTS = {
         "CashAndCashEquivalentsAtCarryingValue",
         "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents",
     ],
-    "short_term_investments": ["ShortTermInvestments", "MarketableSecuritiesCurrent"],
+    "short_term_investments": [
+        "ShortTermInvestments",
+        "MarketableSecuritiesCurrent",
+        "DebtSecuritiesCurrent",
+    ],
     "current_assets": ["AssetsCurrent"],
     "current_liabilities": ["LiabilitiesCurrent"],
     "total_debt": [

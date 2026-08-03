@@ -46,9 +46,7 @@ def _risk_html():
 
 
 def test_selects_latest_filed_report_without_future_leakage_and_keeps_annual_fallback():
-    filings = select_sec_risk_filing_candidates(
-        _submissions(), cik="1234", as_of_date="2026-07-24"
-    )
+    filings = select_sec_risk_filing_candidates(_submissions(), cik="1234", as_of_date="2026-07-24")
 
     assert [filing.form for filing in filings] == ["10-Q", "10-K"]
     assert filings[0].filing_date == "2026-05-07"
@@ -246,9 +244,7 @@ def test_extracts_business_context_only_from_annual_item_1():
         "The issuer develops secure software platforms and cloud services for business customers across several markets.",
         "The business operates through Enterprise Platforms, Cloud Services, and Consumer Products segments.",
     ]
-    assert {event["source_type"] for event in payload["events"]} == {
-        "sec_filing"
-    }
+    assert {event["source_type"] for event in payload["events"]} == {"sec_filing"}
     assert len({event["evidence_id"] for event in payload["events"]}) == 2
 
 
@@ -491,6 +487,25 @@ def test_business_context_keeps_streaming_identity_segment_and_revenue_model():
     ]
 
 
+def test_business_context_prefers_identity_and_named_segments_over_summary():
+    html = """
+    <html><body>
+      <p><strong>ITEM 1. BUSINESS</strong></p>
+      <p>NVIDIA pioneered accelerated computing to help solve difficult computational problems. NVIDIA is now a data center scale AI infrastructure company.</p>
+      <p>We report our business results in two segments.</p>
+      <p>The Compute &amp; Networking segment includes accelerated computing and networking platforms, AI solutions and software, and Automotive platforms.</p>
+      <p>The Graphics segment includes GPUs for gaming and PCs and workstation graphics products.</p>
+      <div><strong>ITEM 1A. RISK FACTORS</strong></div>
+    </body></html>
+    """
+
+    assert extract_sec_business_context(html) == [
+        "NVIDIA is now a data center scale AI infrastructure company.",
+        "The Compute & Networking segment includes accelerated computing and networking platforms, AI solutions and software, and Automotive platforms.",
+        "The Graphics segment includes GPUs for gaming and PCs and workstation graphics products.",
+    ]
+
+
 def test_business_context_supports_combined_resource_company_items():
     html = """
     <html><body>
@@ -511,9 +526,9 @@ def test_business_context_supports_combined_resource_company_items():
 
 
 def test_builds_primary_risk_evidence_without_inventing_numeric_metrics():
-    filing = select_sec_risk_filing_candidates(
-        _submissions(), cik="1234", as_of_date="2026-07-24"
-    )[0]
+    filing = select_sec_risk_filing_candidates(_submissions(), cik="1234", as_of_date="2026-07-24")[
+        0
+    ]
     evidence = build_sec_risk_evidence(
         ticker="TEST",
         filing=filing,

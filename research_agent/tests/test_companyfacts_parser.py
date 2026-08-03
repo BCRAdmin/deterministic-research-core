@@ -132,12 +132,8 @@ def test_companyfacts_parser_maps_utility_standard_concepts():
                 "RegulatedAndUnregulatedOperatingRevenue": {
                     "units": {"USD": [{**common, "val": 9_178_000_000}]}
                 },
-                "PaymentsOfOrdinaryDividends": {
-                    "units": {"USD": [{**common, "val": 846_000_000}]}
-                },
-                "InterestExpenseNonoperating": {
-                    "units": {"USD": [{**common, "val": 968_000_000}]}
-                },
+                "PaymentsOfOrdinaryDividends": {"units": {"USD": [{**common, "val": 846_000_000}]}},
+                "InterestExpenseNonoperating": {"units": {"USD": [{**common, "val": 968_000_000}]}},
             }
         }
     }
@@ -145,14 +141,93 @@ def test_companyfacts_parser_maps_utility_standard_concepts():
     parser = CompanyFactsParser("UTILITY", "1", fixture)
 
     assert parser.get_facts_for_metric("revenue")[0].value == 9_178_000_000
-    assert (
-        parser.get_facts_for_metric("dividends_paid")[0].value
-        == 846_000_000
-    )
-    assert (
-        parser.get_facts_for_metric("interest_expense")[0].value
-        == 968_000_000
-    )
+    assert parser.get_facts_for_metric("dividends_paid")[0].value == 846_000_000
+    assert parser.get_facts_for_metric("interest_expense")[0].value == 968_000_000
+
+
+def test_current_debt_securities_complete_cash_and_investments():
+    def instant_fact(value, *, end, accession, filed):
+        return {
+            "val": value,
+            "fy": 2027,
+            "fp": "Q1",
+            "form": "10-Q",
+            "filed": filed,
+            "end": end,
+            "accn": accession,
+        }
+
+    fixture = {
+        "facts": {
+            "us-gaap": {
+                "CashAndCashEquivalentsAtCarryingValue": {
+                    "units": {
+                        "USD": [
+                            instant_fact(
+                                13_237_000_000,
+                                end="2026-04-26",
+                                accession="current-quarter",
+                                filed="2026-05-20",
+                            )
+                        ]
+                    }
+                },
+                "DebtSecuritiesCurrent": {
+                    "units": {
+                        "USD": [
+                            instant_fact(
+                                37_098_000_000,
+                                end="2026-04-26",
+                                accession="current-quarter",
+                                filed="2026-05-20",
+                            )
+                        ]
+                    }
+                },
+                "MarketableSecuritiesCurrent": {
+                    "units": {
+                        "USD": [
+                            instant_fact(
+                                49_122_000_000,
+                                end="2025-10-26",
+                                accession="older-quarter",
+                                filed="2025-11-19",
+                            )
+                        ]
+                    }
+                },
+                "LongTermDebt": {
+                    "units": {
+                        "USD": [
+                            instant_fact(
+                                8_470_000_000,
+                                end="2026-04-26",
+                                accession="current-quarter",
+                                filed="2026-05-20",
+                            )
+                        ]
+                    }
+                },
+            }
+        }
+    }
+    parser = CompanyFactsParser("BASE", "1", fixture)
+    facts = [
+        fact
+        for metric_name in (
+            "cash_and_equivalents",
+            "short_term_investments",
+            "total_debt",
+        )
+        for fact in parser.get_facts_for_metric(metric_name)
+    ]
+    canonical, _warnings = build_canonical_financials_from_facts("BASE", "2026-07-31", facts)
+    normalized = canonical_financials_to_fundamentals(canonical)
+    metrics = calculate_fundamental_metrics(normalized)
+
+    assert normalized["balance_sheet"]["short_term_investments"] == 37_098_000_000
+    assert metrics.cash_and_investments == 50_335_000_000
+    assert metrics.net_cash == 41_865_000_000
 
 
 def test_treasury_stock_balance_excludes_period_acquisition_cost():
@@ -167,9 +242,7 @@ def test_treasury_stock_balance_excludes_period_acquisition_cost():
     fixture = {
         "facts": {
             "us-gaap": {
-                "TreasuryStockCommonValue": {
-                    "units": {"USD": [{**common, "val": 38_177_000_000}]}
-                },
+                "TreasuryStockCommonValue": {"units": {"USD": [{**common, "val": 38_177_000_000}]}},
                 "TreasuryStockValueAcquiredCostMethod": {
                     "units": {
                         "USD": [
@@ -185,9 +258,7 @@ def test_treasury_stock_balance_excludes_period_acquisition_cost():
         }
     }
 
-    facts = CompanyFactsParser("TEST", "1", fixture).get_facts_for_metric(
-        "treasury_stock_value"
-    )
+    facts = CompanyFactsParser("TEST", "1", fixture).get_facts_for_metric("treasury_stock_value")
 
     assert [fact.value for fact in facts] == [38_177_000_000]
     assert facts[0].concept == "us-gaap:TreasuryStockCommonValue"
@@ -217,16 +288,11 @@ def test_companyfacts_parser_maps_combined_short_and_long_term_debt():
         }
     }
 
-    facts = CompanyFactsParser("TEST", "1", fixture).get_facts_for_metric(
-        "total_debt"
-    )
+    facts = CompanyFactsParser("TEST", "1", fixture).get_facts_for_metric("total_debt")
 
     assert len(facts) == 1
     assert facts[0].value == 129_541_000_000
-    assert (
-        facts[0].concept
-        == "us-gaap:DebtLongtermAndShorttermCombinedAmount"
-    )
+    assert facts[0].concept == "us-gaap:DebtLongtermAndShorttermCombinedAmount"
 
 
 def test_sec_fact_generates_high_authority_evidence():
@@ -275,8 +341,7 @@ def test_comparative_facts_in_one_filing_keep_distinct_evidence_ids():
     }
     parser = CompanyFactsParser("TEST", "1", fixture)
     evidence_ids = {
-        parser.to_evidence_item(fact).evidence_id
-        for fact in parser.get_facts_for_metric("revenue")
+        parser.to_evidence_item(fact).evidence_id for fact in parser.get_facts_for_metric("revenue")
     }
 
     assert len(evidence_ids) == 2
@@ -296,9 +361,7 @@ def test_identical_xbrl_alias_facts_are_materialized_once():
     fixture = {
         "facts": {
             "us-gaap": {
-                "CashAndCashEquivalentsAtCarryingValue": {
-                    "units": {"USD": [row]}
-                },
+                "CashAndCashEquivalentsAtCarryingValue": {"units": {"USD": [row]}},
                 "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents": {
                     "units": {"USD": [dict(row)]}
                 },
@@ -306,12 +369,8 @@ def test_identical_xbrl_alias_facts_are_materialized_once():
         }
     }
 
-    facts = CompanyFactsParser("MCD", "63908", fixture).get_facts_for_metric(
-        "cash_and_equivalents"
-    )
-    evidence = CompanyFactsParser("MCD", "63908", fixture).to_evidence_item(
-        facts[0]
-    )
+    facts = CompanyFactsParser("MCD", "63908", fixture).get_facts_for_metric("cash_and_equivalents")
+    evidence = CompanyFactsParser("MCD", "63908", fixture).to_evidence_item(facts[0])
 
     assert len(facts) == 1
     assert evidence.supports_metrics == ["cash_and_equivalents"]
@@ -350,16 +409,29 @@ def test_productive_asset_capex_and_split_debt_build_complete_current_metrics():
                     "units": {
                         "USD": [
                             duration_fact(
-                                16_325, 2025, "FY", "2025-02-03",
-                                "2026-02-01", "annual", "10-K",
+                                16_325,
+                                2025,
+                                "FY",
+                                "2025-02-03",
+                                "2026-02-01",
+                                "annual",
+                                "10-K",
                             ),
                             duration_fact(
-                                4_325, 2025, "Q1", "2025-02-03",
-                                "2025-05-04", "prior-quarter",
+                                4_325,
+                                2025,
+                                "Q1",
+                                "2025-02-03",
+                                "2025-05-04",
+                                "prior-quarter",
                             ),
                             duration_fact(
-                                6_032, 2026, "Q1", "2026-02-02",
-                                "2026-05-03", "current-quarter",
+                                6_032,
+                                2026,
+                                "Q1",
+                                "2026-02-02",
+                                "2026-05-03",
+                                "current-quarter",
                             ),
                         ]
                     }
@@ -368,16 +440,29 @@ def test_productive_asset_capex_and_split_debt_build_complete_current_metrics():
                     "units": {
                         "USD": [
                             duration_fact(
-                                3_679, 2025, "FY", "2025-02-03",
-                                "2026-02-01", "annual", "10-K",
+                                3_679,
+                                2025,
+                                "FY",
+                                "2025-02-03",
+                                "2026-02-01",
+                                "annual",
+                                "10-K",
                             ),
                             duration_fact(
-                                806, 2025, "Q1", "2025-02-03",
-                                "2025-05-04", "prior-quarter",
+                                806,
+                                2025,
+                                "Q1",
+                                "2025-02-03",
+                                "2025-05-04",
+                                "prior-quarter",
                             ),
                             duration_fact(
-                                844, 2026, "Q1", "2026-02-02",
-                                "2026-05-03", "current-quarter",
+                                844,
+                                2026,
+                                "Q1",
+                                "2026-02-02",
+                                "2026-05-03",
+                                "current-quarter",
                             ),
                         ]
                     }
@@ -398,9 +483,7 @@ def test_productive_asset_capex_and_split_debt_build_complete_current_metrics():
                         ]
                     }
                 },
-                "CommercialPaper": {
-                    "units": {"USD": [instant_fact(3_503)]}
-                },
+                "CommercialPaper": {"units": {"USD": [instant_fact(3_503)]}},
                 "LongTermDebtAndCapitalLeaseObligationsCurrent": {
                     "units": {"USD": [instant_fact(5_178)]}
                 },
@@ -423,9 +506,7 @@ def test_productive_asset_capex_and_split_debt_build_complete_current_metrics():
         )
         for fact in parser.get_facts_for_metric(metric_name)
     ]
-    canonical, _ = build_canonical_financials_from_facts(
-        "BASE", "2026-07-31", facts
-    )
+    canonical, _ = build_canonical_financials_from_facts("BASE", "2026-07-31", facts)
     normalized = canonical_financials_to_fundamentals(canonical)
     metrics = calculate_fundamental_metrics(normalized)
 
@@ -465,9 +546,7 @@ def test_conflicting_xbrl_alias_facts_remain_visible():
     parser = CompanyFactsParser("MCD", "63908", fixture)
     facts = parser.get_facts_for_metric("cash_and_equivalents")
     evidence_ids = [parser.to_evidence_item(fact).evidence_id for fact in facts]
-    canonical, _warnings = build_canonical_financials_from_facts(
-        "MCD", "2026-05-07", facts
-    )
+    canonical, _warnings = build_canonical_financials_from_facts("MCD", "2026-05-07", facts)
     fundamentals = canonical_financials_to_fundamentals(canonical)
 
     assert [fact.value for fact in facts] == [1_170_000_000, 1_180_000_000]
@@ -506,9 +585,7 @@ def test_same_ten_k_q4_fact_is_not_emitted_twice():
         }
     }
 
-    _metrics, evidence = build_sec_fundamentals_from_companyfacts(
-        "COST", "909832", fixture
-    )
+    _metrics, evidence = build_sec_fundamentals_from_companyfacts("COST", "909832", fixture)
 
     assert len(evidence) == 1
     assert len({item.evidence_id for item in evidence}) == 1
@@ -560,9 +637,7 @@ def test_sec_fundamentals_builder_returns_metrics_and_evidence():
         FIXTURE_COMPANYFACTS,
         {"SEC_q1"},
     )
-    assert [(item.value, item.source_lineage) for item in exact] == [
-        (600_000_000.0, ["q1"])
-    ]
+    assert [(item.value, item.source_lineage) for item in exact] == [(600_000_000.0, ["q1"])]
 
 
 def test_recognizes_depreciation_depletion_and_amortization():
@@ -591,9 +666,7 @@ def test_recognizes_depreciation_depletion_and_amortization():
 
     metrics, evidence = build_sec_fundamentals_from_companyfacts("COP", "1163165", fixture)
 
-    assert metrics["quarterly"]["depreciation_and_amortization"] == [
-        2_906_000_000
-    ]
+    assert metrics["quarterly"]["depreciation_and_amortization"] == [2_906_000_000]
     assert evidence[0].supports_metrics == [
         "depreciation_and_amortization",
         "depreciation_and_amortization_ttm",
@@ -1055,22 +1128,15 @@ def test_companyfacts_maps_point_in_time_shares_debt_leases_and_buybacks():
         )
         for fact in parser.get_facts_for_metric(metric)
     ]
-    canonical, _ = build_canonical_financials_from_facts(
-        "MCD", "2026-07-24", facts
-    )
+    canonical, _ = build_canonical_financials_from_facts("MCD", "2026-07-24", facts)
     fundamentals = canonical_financials_to_fundamentals(canonical)
 
     assert fundamentals["share_data"]["listed_share_count"] == 710_505_859
     assert fundamentals["balance_sheet"]["total_debt"] == 40_105_000_000
     assert fundamentals["balance_sheet"]["lease_liability_current"] == 807_000_000
-    assert (
-        fundamentals["balance_sheet"]["lease_liability_noncurrent"]
-        == 15_069_000_000
-    )
+    assert fundamentals["balance_sheet"]["lease_liability_noncurrent"] == 15_069_000_000
     assert fundamentals["balance_sheet"]["total_lease_liabilities"] == 15_876_000_000
-    assert fundamentals["lease_component_bridges"][
-        "lease_liability_current"
-    ]["operands"] == {
+    assert fundamentals["lease_component_bridges"]["lease_liability_current"]["operands"] == {
         "operating_lease_liability_current": 707_000_000,
         "finance_lease_liability_current": 100_000_000,
     }
@@ -1141,9 +1207,7 @@ def test_net_income_uses_financial_filing_fallback_and_ignores_proxy_facts():
     }
     parser = CompanyFactsParser("TEST", "1", companyfacts)
     facts = parser.get_facts_for_metric("net_income")
-    canonical, _ = build_canonical_financials_from_facts(
-        "TEST", "2026-07-31", facts
-    )
+    canonical, _ = build_canonical_financials_from_facts("TEST", "2026-07-31", facts)
     fundamentals = canonical_financials_to_fundamentals(canonical)
 
     assert {fact.form for fact in facts} == {"10-K", "10-Q"}

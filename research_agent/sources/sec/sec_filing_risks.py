@@ -46,9 +46,7 @@ _RISK_SECTION_END = re.compile(
     r"^(?:LEGAL PROCEEDINGS|MINE SAFETY DISCLOSURES|PROPERTIES|"
     r"UNRESOLVED STAFF COMMENTS)(?:[.:]|$)"
 )
-_BUSINESS_ABOUT_HEADING = re.compile(
-    r"^ABOUT [A-Z][A-Z0-9&.,'’ -]{1,80}[.]\s+"
-)
+_BUSINESS_ABOUT_HEADING = re.compile(r"^ABOUT [A-Z][A-Z0-9&.,'’ -]{1,80}[.]\s+")
 _TITLE_CASE_CONNECTORS = {
     "a",
     "an",
@@ -95,6 +93,7 @@ _BUSINESS_CONTEXT_IDENTITY = re.compile(
 )
 _BUSINESS_CONTEXT_NAMED_IDENTITY = re.compile(
     r"^(?!(?:We|Our)\b)[A-Z][A-Za-z0-9&.,'’ -]{1,60}\s+(?:is|are)\s+"
+    r"(?:now\s+)?"
     r"(?:(?:one of the|a|an)\s+)?"
     r"(?:collection of businesses|group of companies|holding company|"
     r"provider|manufacturer|operator|developer|retailer|franchisor|"
@@ -147,7 +146,8 @@ _BUSINESS_CONTEXT_NAMED_OFFERING = re.compile(
 _BUSINESS_CONTEXT_SEGMENT_ACTIVITY = re.compile(
     r"^(?:the|our)\s+(?:[A-Za-z0-9&.'’()-]+\s+){0,5}segment\s+"
     r"(?:builds|creates|delivers|designs|develops|distributes|helps|"
-    r"manufactures|offers|operates|provides|sells|serves)\b",
+    r"includes|comprises|consists of|manufactures|offers|operates|provides|"
+    r"sells|serves)\b",
     re.IGNORECASE,
 )
 _BUSINESS_CONTEXT_PROMOTIONAL_LANGUAGE = re.compile(
@@ -316,9 +316,7 @@ def extract_sec_risk_headings(html: str) -> list[str]:
     parser.feed(html)
     blocks = parser.finish()
     starts = [
-        index
-        for index, (block, _) in enumerate(blocks)
-        if _is_risk_section_start(blocks, index)
+        index for index, (block, _) in enumerate(blocks) if _is_risk_section_start(blocks, index)
     ]
     best: list[str] = []
     for start in starts:
@@ -383,11 +381,7 @@ def extract_sec_business_context(html: str) -> list[str]:
     parser = _SecTextBlocks()
     parser.feed(html)
     blocks = parser.finish()
-    starts = [
-        index
-        for index, (block, _) in enumerate(blocks)
-        if _is_business_section_start(block)
-    ]
+    starts = [index for index, (block, _) in enumerate(blocks) if _is_business_section_start(block)]
     best: list[str] = []
     for start in starts:
         end = next(
@@ -408,17 +402,9 @@ def extract_sec_business_context(html: str) -> list[str]:
         if not candidates:
             continue
         activity = next(
-            (
-                text
-                for _, text in candidates
-                if _is_business_context_identity(text)
-            ),
+            (text for _, text in candidates if _is_business_context_identity(text)),
             next(
-                (
-                    text
-                    for _, text in candidates
-                    if _BUSINESS_CONTEXT_REVENUE_ACTIVITY.search(text)
-                ),
+                (text for _, text in candidates if _BUSINESS_CONTEXT_REVENUE_ACTIVITY.search(text)),
                 next(
                     (
                         text
@@ -439,29 +425,40 @@ def extract_sec_business_context(html: str) -> list[str]:
                             and _business_context_score(text) >= 3
                         ),
                         next(
-                            (
-                                text
-                                for _, text in candidates
-                                if _business_context_score(text) >= 3
-                            ),
+                            (text for _, text in candidates if _business_context_score(text) >= 3),
                             candidates[0][1],
                         ),
                     ),
                 ),
             ),
         )
-        activity_is_core_offering = bool(
-            _BUSINESS_CONTEXT_CORE_OFFERING.search(activity)
-        )
+        activity_is_core_offering = bool(_BUSINESS_CONTEXT_CORE_OFFERING.search(activity))
         selected = [activity]
-        for _, segment in candidates:
-            if (
-                _business_context_is_distinct(segment, selected)
-                and _is_business_context_segment_description(segment)
+        segment_candidates = sorted(
+            (
+                (index, segment)
+                for index, segment in candidates
+                if _is_business_context_segment_description(segment)
+            ),
+            key=lambda item: (
+                bool(_BUSINESS_CONTEXT_SEGMENT_ACTIVITY.search(item[1])),
+                _business_context_score(item[1]),
+                -item[0],
+            ),
+            reverse=True,
+        )
+        selected_segments: list[tuple[int, str]] = []
+        for index, segment in segment_candidates:
+            if _business_context_is_distinct(
+                segment,
+                selected + [item[1] for item in selected_segments],
             ):
-                selected.append(segment)
-            if len(selected) == 2:
+                selected_segments.append((index, segment))
+            if len(selected_segments) == 2:
                 break
+        selected.extend(
+            segment for _, segment in sorted(selected_segments, key=lambda item: item[0])
+        )
         if len(selected) < 3:
             ranked_context = sorted(
                 candidates,
@@ -480,9 +477,7 @@ def extract_sec_business_context(html: str) -> list[str]:
                 reverse=True,
             )
             for _, context in ranked_context:
-                revenue_context = bool(
-                    _BUSINESS_CONTEXT_REVENUE_ACTIVITY.search(context)
-                )
+                revenue_context = bool(_BUSINESS_CONTEXT_REVENUE_ACTIVITY.search(context))
                 segment_context = _is_business_context_segment_description(context)
                 direct_context = bool(
                     _BUSINESS_CONTEXT_DIRECT_ACTIVITY.search(context)
@@ -491,12 +486,7 @@ def extract_sec_business_context(html: str) -> list[str]:
                     or _BUSINESS_CONTEXT_SEGMENT_ACTIVITY.search(context)
                 )
                 core_context = bool(_BUSINESS_CONTEXT_CORE_OFFERING.search(context))
-                if not (
-                    revenue_context
-                    or segment_context
-                    or direct_context
-                    or core_context
-                ):
+                if not (revenue_context or segment_context or direct_context or core_context):
                     continue
                 if (
                     activity_is_core_offering
@@ -523,9 +513,7 @@ def build_sec_business_context_payload(
 ) -> dict[str, Any]:
     """Build the existing official-news contract from a filed annual Item 1."""
 
-    statements = (
-        extract_sec_business_context(html) if filing.form == "10-K" else []
-    )
+    statements = extract_sec_business_context(html) if filing.form == "10-K" else []
     accession = filing.accession_number.replace("-", "")
     symbol = ticker.strip().upper()
     return {
@@ -562,9 +550,7 @@ def build_sec_risk_evidence(
 ) -> list[EvidenceItem]:
     symbol = ticker.strip().upper()
     period = (
-        f"{filing.form} period ended {filing.report_date}"
-        if filing.report_date
-        else filing.form
+        f"{filing.form} period ended {filing.report_date}" if filing.report_date else filing.form
     )
     return [
         EvidenceItem(
@@ -598,10 +584,7 @@ def save_sec_risk_evidence(
     target.parent.mkdir(parents=True, exist_ok=True)
     payload = {
         "filing": filing.to_dict(),
-        "filings": [
-            item.to_dict()
-            for item in (filings or [filing])
-        ],
+        "filings": [item.to_dict() for item in (filings or [filing])],
         "evidence_items": [item.model_dump(mode="json") for item in evidence],
     }
     target.write_text(
@@ -616,9 +599,7 @@ def load_sec_risk_evidence(path: str | Path, *, ticker: str) -> list[EvidenceIte
     items = [EvidenceItem(**row) for row in payload.get("evidence_items") or []]
     symbol = ticker.strip().upper()
     if any(
-        item.ticker != symbol
-        or item.claim_type != "risk"
-        or item.source_type != "sec_filing"
+        item.ticker != symbol or item.claim_type != "risk" or item.source_type != "sec_filing"
         for item in items
     ):
         raise ValueError("SEC risk evidence identity or authority mismatch")
@@ -642,9 +623,7 @@ def _compact_heading(text: str) -> str:
 
 def _is_later_item_heading(text: str) -> bool:
     normalized = _normalized_heading(text)
-    return bool(_ITEM_HEADING.match(normalized)) and not normalized.startswith(
-        "item 1a"
-    )
+    return bool(_ITEM_HEADING.match(normalized)) and not normalized.startswith("item 1a")
 
 
 def _is_risk_section_start(
@@ -665,9 +644,7 @@ def _is_risk_section_start(
 
 def _is_risk_section_start_text(text: str) -> bool:
     stripped = text.strip()
-    return bool(
-        re.match(r"^(?:item\s*1a[.\s:-]*)?risk factors(?:[.:]|$)", stripped, re.IGNORECASE)
-    )
+    return bool(re.match(r"^(?:item\s*1a[.\s:-]*)?risk factors(?:[.:]|$)", stripped, re.IGNORECASE))
 
 
 def _is_business_section_start(text: str) -> bool:
@@ -687,11 +664,15 @@ def _is_risk_heading(text: str, *, emphasized: bool = False) -> bool:
     minimum_length = 20 if emphasized else 40
     if not minimum_length <= len(stripped) <= 320:
         return False
-    if _compact_heading(stripped) in {
-        "riskfactors",
-        "item1a",
-        "item1ariskfactors",
-    } | _GENERIC_RISK_HEADINGS:
+    if (
+        _compact_heading(stripped)
+        in {
+            "riskfactors",
+            "item1a",
+            "item1ariskfactors",
+        }
+        | _GENERIC_RISK_HEADINGS
+    ):
         return False
     if stripped.startswith(("•", "●", "▪", "-")):
         return False
@@ -737,11 +718,7 @@ def _inline_dash_risk_heading(text: str) -> str | None:
 
 def _looks_like_title_case_heading(text: str) -> bool:
     words = re.findall(r"[A-Za-z][A-Za-z’'\-]*", text)
-    meaningful = [
-        word
-        for word in words
-        if word.lower().strip("’'") not in _TITLE_CASE_CONNECTORS
-    ]
+    meaningful = [word for word in words if word.lower().strip("’'") not in _TITLE_CASE_CONNECTORS]
     if len(meaningful) < 4:
         return False
     title_case_count = sum(word[0].isupper() for word in meaningful)
@@ -754,12 +731,9 @@ def _is_business_context_paragraph(text: str) -> bool:
     identity_statement = _is_business_context_identity(stripped)
     revenue_activity = bool(_BUSINESS_CONTEXT_REVENUE_ACTIVITY.search(stripped))
     single_segment = bool(_BUSINESS_CONTEXT_SINGLE_SEGMENT.search(stripped))
+    segment_activity = bool(_BUSINESS_CONTEXT_SEGMENT_ACTIVITY.search(stripped))
     minimum_length = (
-        25
-        if single_segment
-        else 45
-        if identity_statement or "segment" in lowered
-        else 80
+        25 if single_segment else 45 if identity_statement or "segment" in lowered else 80
     )
     if not minimum_length <= len(stripped) <= 700:
         return False
@@ -790,6 +764,7 @@ def _is_business_context_paragraph(text: str) -> bool:
         identity_statement
         or revenue_activity
         or single_segment
+        or segment_activity
         or score >= 3
         or ("segment" in lowered and score >= 2)
     )
@@ -815,12 +790,8 @@ def _business_context_fragments(text: str) -> list[str]:
 
 
 def _business_context_score(text: str) -> int:
-    terms = {
-        match.group(0).lower() for match in _BUSINESS_LANGUAGE.finditer(text)
-    }
-    terms.update(
-        match.group(0).lower() for match in _BUSINESS_MODEL_LANGUAGE.finditer(text)
-    )
+    terms = {match.group(0).lower() for match in _BUSINESS_LANGUAGE.finditer(text)}
+    terms.update(match.group(0).lower() for match in _BUSINESS_MODEL_LANGUAGE.finditer(text))
     return len(terms)
 
 
