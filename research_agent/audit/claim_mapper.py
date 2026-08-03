@@ -139,6 +139,7 @@ METRIC_PATHS = {
     "close": "technical.close",
     "rsi_14": "technical.rsi_14",
     "current_ratio": "fundamentals.current_ratio",
+    "diluted_share_count_yoy": "fundamentals.diluted_share_count_yoy",
     "current_period_revenue_growth_yoy": (
         "fundamentals.current_period_revenue_growth_yoy"
     ),
@@ -160,6 +161,23 @@ class MappedMetric(BaseModel):
 def infer_possible_metric(text: str, unit: Optional[str] = None) -> Optional[str]:
     normalized = _normalize_text(text)
     compact = normalized.replace(" / ", "/")
+    if (
+        str(unit or "").lower() == "percent"
+        and "share count" in normalized
+        and any(
+            marker in normalized
+            for marker in (
+                "share count change",
+                "share count changed",
+                "share count increase",
+                "share count increased",
+                "share count decrease",
+                "share count decreased",
+                "share count unchanged",
+            )
+        )
+    ):
+        return "diluted_share_count_yoy"
     if (
         "distributions-minus-fcf" in normalized
         or "distributions minus fcf" in normalized

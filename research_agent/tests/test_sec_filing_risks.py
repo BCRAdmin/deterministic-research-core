@@ -1,3 +1,5 @@
+import pytest
+
 from research_agent.sources.sec.sec_filing_risks import (
     SecFilingReference,
     build_sec_business_context_payload,
@@ -82,11 +84,13 @@ def test_extracts_emphasized_title_case_risks_without_terminal_periods():
     ]
 
 
-def test_extracts_plain_risk_factor_summary_without_category_titles():
-    html = """
+@pytest.mark.parametrize("summary_heading", ["Risk Factor Summary", "Risk Factors Summary"])
+def test_extracts_plain_risk_factor_summary_without_category_titles(summary_heading):
+    html = f"""
     <html><body>
       <div><strong>Item 1A. Risk Factors</strong></div>
-      <p><strong>Risk Factor Summary</strong></p>
+      <p><strong>{summary_heading}</strong></p>
+      <p>For a more complete discussion of the material risks facing our business, see below.</p>
       <p><strong>Business and Operational Risks</strong></p>
       <p>We may fail to execute our cloud strategy, which could reduce our revenues and profitability.</p>
       <p>Our products may contain errors that could adversely affect customer demand and our reputation.</p>

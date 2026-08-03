@@ -373,6 +373,23 @@ def test_auditor_normalizes_large_percent_ratios():
     assert not audit.has_issue("NUMERIC_MISMATCH", metric="sbc_to_revenue")
 
 
+def test_auditor_separates_sbc_ratio_from_share_count_change_in_same_claim():
+    metrics = simple_metrics(ticker="AVGO")
+    metrics.fundamentals.sbc_to_revenue = 0.1164115815278606
+    metrics.fundamentals.diluted_share_count_yoy = 0.01036
+
+    audit = audit_markdown_report(
+        "SBC/Revenue is 11.6%. The diluted weighted-average share count "
+        "increased by 1.0% against the matching prior-year period.",
+        metrics,
+    )
+
+    assert not audit.has_issue("NUMERIC_MISMATCH", metric="sbc_to_revenue")
+    assert not audit.has_issue(
+        "NUMERIC_MISMATCH", metric="diluted_share_count_yoy"
+    )
+
+
 def test_auditor_treats_clean_sbc_over_revenue_as_true_anomaly_not_period_bug():
     metrics = simple_metrics(ticker="IONQ", revenue_ttm=132_800_000, market_cap=17_600_000_000, enterprise_value=17_580_000_000, ev_to_sales=132.41)
     metrics.fundamentals.sbc_to_revenue = 1.462

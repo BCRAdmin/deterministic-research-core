@@ -33,11 +33,13 @@ _GENERIC_PREFIXES = (
     "the risks described below",
     "risk factors should be read",
     "for a discussion of risk factors",
+    "for a more complete discussion",
 )
 _GENERIC_RISK_HEADINGS = {
     "generalriskfactors",
     "riskfactorsgenerally",
     "riskfactorsummary",
+    "riskfactorssummary",
     "summaryofriskfactors",
 }
 _RISK_SECTION_END = re.compile(
@@ -303,7 +305,7 @@ def extract_sec_risk_headings(html: str) -> list[str]:
         summary_categories: set[str] = set()
         for block, emphasized in blocks[start + 1 : end]:
             compact = _compact_heading(block)
-            if compact == "riskfactorsummary":
+            if compact in {"riskfactorsummary", "riskfactorssummary"}:
                 summary_mode = True
                 summary_categories = set()
                 continue
