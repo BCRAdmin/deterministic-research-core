@@ -30,6 +30,8 @@ from research_agent.sources.sec.xbrl_concepts import US_GAAP_CONCEPTS
 
 
 SEC_FINANCIAL_FORMS = {"10-K", "10-Q"}
+SEC_RESULTS_ANNOUNCEMENT_FORM = "8-K"
+SEC_RESULTS_ANNOUNCEMENT_ITEM = "2.02"
 SEC_FINANCIAL_INDUSTRY_SIC_RANGE = range(6000, 6800)
 SEC_COMPANYFACTS_COVERAGE_METRICS = {
     "revenue",
@@ -690,6 +692,20 @@ def _require_current_sec_financial_filing_coverage(
     companyfacts: dict[str, Any],
 ) -> Optional[dict[str, str]]:
     latest = _latest_sec_financial_filing(submissions, as_of_date)
+    latest_results = _latest_sec_results_announcement(submissions, as_of_date)
+    if latest_results is not None and (
+        latest is None
+        or latest_results["filing_date"] > latest["filing_date"]
+    ):
+        raise CurrentResearchError(
+            f"{ticker} hat mit dem 8-K vom {latest_results['filing_date']} "
+            "neuere Ergebnisse nach SEC Item 2.02 veröffentlicht. Diese Zahlen "
+            "sind noch nicht über den standardisierten CompanyFacts-Pfad "
+            "integriert. Room16 startet keine Analyse mit dem älteren Quartal "
+            "als angeblich aktuellem Finanzstand. Bitte den Lauf nach dem neuen "
+            "10-Q/10-K oder nach Integration des generischen 8-K-Ergebniswegs "
+            "erneut starten."
+        )
     if latest is None:
         return None
     accession = latest["accession_number"]
@@ -726,6 +742,51 @@ def _latest_sec_financial_filing(
         and accessions[index]
         and str(filing_dates[index]) <= as_of_date
     ]
+    if not candidates:
+        return None
+    return max(
+        candidates,
+        key=lambda item: (item["filing_date"], item["accession_number"]),
+    )
+
+
+def _latest_sec_results_announcement(
+    submissions: dict[str, Any], as_of_date: str
+) -> Optional[dict[str, str]]:
+    recent = submissions.get("filings", {}).get("recent", {})
+    forms = recent.get("form") or []
+    filing_dates = recent.get("filingDate") or []
+    accessions = recent.get("accessionNumber") or []
+    items = recent.get("items") or []
+    candidates = []
+    for index, form in enumerate(forms):
+        if (
+            form != SEC_RESULTS_ANNOUNCEMENT_FORM
+            or index >= len(filing_dates)
+            or index >= len(accessions)
+            or index >= len(items)
+        ):
+            continue
+        filing_date = str(filing_dates[index] or "")
+        accession = str(accessions[index] or "")
+        filing_items = {
+            item.strip()
+            for item in str(items[index] or "").replace(" ", "").split(",")
+            if item.strip()
+        }
+        if (
+            filing_date
+            and accession
+            and filing_date <= as_of_date
+            and SEC_RESULTS_ANNOUNCEMENT_ITEM in filing_items
+        ):
+            candidates.append(
+                {
+                    "form": str(form),
+                    "filing_date": filing_date,
+                    "accession_number": accession,
+                }
+            )
     if not candidates:
         return None
     return max(

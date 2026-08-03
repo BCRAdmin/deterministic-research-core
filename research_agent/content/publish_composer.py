@@ -1808,10 +1808,10 @@ def _final_rating_section(
             if value is not None and value < 0
         ]
         decline_text = " and ".join(decline_labels)
-        technical_counterevidence = (
-            " and the bullish technical direction"
+        counterevidence_subject = (
+            "positive FCF and the bullish technical direction are"
             if scores.technical_score > 0
-            else ""
+            else "positive FCF is"
         )
         why_not_constructive = (
             f"Why not more constructive? Current-period {decline_text} declines "
@@ -1822,7 +1822,7 @@ def _final_rating_section(
         )
         why_not_cautious = (
             f"Why not more cautious? The {decline_text} declines are not dismissed, "
-            f"but positive FCF{technical_counterevidence} is measured counterevidence. "
+            f"but {counterevidence_subject} measured counterevidence. "
             "A more cautious rating requires the profit weakness to persist or be "
             "corroborated by weaker cash conversion."
         )

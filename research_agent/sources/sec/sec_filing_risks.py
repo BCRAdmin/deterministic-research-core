@@ -57,6 +57,8 @@ _BUSINESS_LANGUAGE = re.compile(
     r"operation|operations|"
     r"product|products|service|services|solution|solutions|platform|platforms|"
     r"segment|segments|software|subscription|subscriptions|device|devices|"
+    r"deliver|delivers|delivery|freight|logistics|network|package|packages|"
+    r"supply chain|transport|transportation|"
     r"manufacture|manufactures|distribute|distributes|market|markets|roast|"
     r"roaster|retail|retailer|sell|sells|store|stores|coffee)\b",
     re.IGNORECASE,
@@ -517,7 +519,8 @@ def _looks_like_title_case_heading(text: str) -> bool:
 def _is_business_context_paragraph(text: str) -> bool:
     stripped = text.strip()
     lowered = stripped.lower()
-    if not 80 <= len(stripped) <= 700:
+    minimum_length = 50 if "segment" in lowered else 80
+    if not minimum_length <= len(stripped) <= 700:
         return False
     if any(character.isdigit() for character in stripped):
         return False

@@ -488,6 +488,28 @@ class _ClaimBuilder:
                     "and lease obligations together."
                 ),
             )
+        elif lease_context and lease_metric:
+            self.add(
+                "Fundamental Analysis",
+                "lease_obligations",
+                "financial_metric",
+                (
+                    f"In addition to reported debt, {lease_context}. The lease "
+                    "figure remains separately labeled and is not silently merged "
+                    "into total debt."
+                ),
+                [lease_metric],
+                "medium",
+                "medium",
+                counterargument=(
+                    "Lease obligations can support normal operations and are not "
+                    "identical to unsecured borrowing."
+                ),
+                implication=(
+                    "Assess debt, lease obligations, liquidity and cash-flow "
+                    "coverage together."
+                ),
+            )
 
         self.add(
             "Valuation / Multiples",
@@ -1883,14 +1905,35 @@ def _final_rating_claim_text(
         if valuation_status == "unbenchmarked"
         else "No benchmarked valuation signal is present."
     )
-    fundamental_note = (
-        "The measured fundamental signal is cautious and remains part of the "
-        "rating rationale."
-        if decision.signal_scores.fundamental_score < 0
-        else "The measured fundamental signal is constructive."
-        if decision.signal_scores.fundamental_score > 0
-        else "The measured fundamental signal is neutral."
-    )
+    current_profit_declines = [
+        label
+        for label, value in (
+            (
+                "operating-income",
+                metrics.fundamentals.current_period_operating_income_growth_yoy,
+            ),
+            (
+                "net-income",
+                metrics.fundamentals.current_period_net_income_growth_yoy,
+            ),
+        )
+        if value is not None and value < 0
+    ]
+    if decision.signal_scores.fundamental_score > 0 and current_profit_declines:
+        decline_text = " and ".join(current_profit_declines)
+        fundamental_note = (
+            "The measured fundamental picture is mixed: positive scoring inputs "
+            f"do not erase current-period {decline_text} declines."
+        )
+    elif decision.signal_scores.fundamental_score < 0:
+        fundamental_note = (
+            "The measured fundamental signal is cautious and remains part of the "
+            "rating rationale."
+        )
+    elif decision.signal_scores.fundamental_score > 0:
+        fundamental_note = "The measured fundamental signal is constructive."
+    else:
+        fundamental_note = "The measured fundamental signal is neutral."
     return (
         f"We rate {ticker} {preferred} at the validated close of "
         f"{_money(metrics.technical.close, currency)}. {reason} The factual "
@@ -1909,6 +1952,14 @@ def _core_rating_metric_refs(metrics: MetricsPacket) -> list[str]:
         ("sma_50", metrics.technical.sma_50),
         ("sma_200", metrics.technical.sma_200),
         ("rsi_14", metrics.technical.rsi_14),
+        (
+            "current_period_operating_income_growth_yoy",
+            metrics.fundamentals.current_period_operating_income_growth_yoy,
+        ),
+        (
+            "current_period_net_income_growth_yoy",
+            metrics.fundamentals.current_period_net_income_growth_yoy,
+        ),
     ):
         if value is not None:
             metric_refs.append(metric_name)

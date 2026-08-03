@@ -287,6 +287,23 @@ def test_business_context_prefers_complete_segment_subject_over_orphan_detail():
     ]
 
 
+def test_business_context_prefers_core_logistics_activity_over_technology_detail():
+    html = """
+    <html><body>
+      <p><strong>ITEM 1. BUSINESS</strong></p>
+      <p>Our services include transportation and delivery through our integrated air and ground network, distribution, contract logistics, ocean freight, airfreight, customs brokerage and insurance.</p>
+      <p>We develop technologies that help customers enhance their shipping and logistics business processes, lowering costs, improving service and increasing efficiency.</p>
+      <p>We have two reporting segments: U.S. Domestic Package and International Package.</p>
+      <div><strong>ITEM 1A. RISK FACTORS</strong></div>
+    </body></html>
+    """
+
+    assert extract_sec_business_context(html) == [
+        "Our services include transportation and delivery through our integrated air and ground network, distribution, contract logistics, ocean freight, airfreight, customs brokerage and insurance.",
+        "We have two reporting segments: U.S. Domestic Package and International Package.",
+    ]
+
+
 def test_builds_primary_risk_evidence_without_inventing_numeric_metrics():
     filing = select_sec_risk_filing_candidates(
         _submissions(), cik="1234", as_of_date="2026-07-24"

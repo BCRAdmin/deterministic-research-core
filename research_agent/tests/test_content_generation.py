@@ -545,6 +545,25 @@ def test_partial_lease_context_stays_partial_in_liquidity_claim():
     ]
 
 
+def test_complete_lease_obligations_remain_visible_above_one_current_ratio():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    metrics.fundamentals.equity = 15_763_000_000
+    metrics.fundamentals.current_ratio = 1.2126
+    metrics.fundamentals.total_lease_liabilities = 4_276_000_000
+    _add_exact_metric_evidence(data, metrics, ledger)
+
+    claims = generate_research_claims(data, metrics, ledger, decision, validation)
+    lease_claim = next(
+        claim
+        for claim in claims
+        if "not silently merged into total debt" in claim.claim
+    )
+
+    assert "separate lease liabilities total $4.28B" in lease_claim.claim
+    assert lease_claim.metric_refs == ["total_lease_liabilities"]
+    assert "debt, lease obligations, liquidity" in lease_claim.investment_implication
+
+
 def test_aligned_positive_quarter_is_direction_not_durability_or_cause():
     data, metrics, validation, ledger, decision = _load_packet("SNOW")
     metrics.fundamentals.current_period_revenue_growth_yoy = 0.073
@@ -880,6 +899,28 @@ def test_mixed_profit_declines_remain_visible_across_thesis_bear_and_rating():
     assert "positive FCF and the bullish technical direction" in rating
     assert "profit weakness to persist" in rating
     assert "A raw multiple or an isolated price signal" not in rating
+
+    data, _, validation, ledger, _ = _load_packet("SNOW")
+    _add_exact_metric_evidence(data, metrics, ledger)
+    claims = generate_research_claims(
+        data,
+        metrics,
+        ledger,
+        decision,
+        validation,
+    )
+    final_claim = next(
+        claim
+        for claim in claims
+        if claim.claim_type == "rating"
+        and claim.section == "Final Rating & Action Plan"
+    )
+    assert "measured fundamental picture is mixed" in final_claim.claim
+    assert "operating-income and net-income declines" in final_claim.claim
+    assert "fundamental signal is constructive" not in final_claim.claim
+    assert "current_period_operating_income_growth_yoy" in final_claim.metric_refs
+    assert "current_period_net_income_growth_yoy" in final_claim.metric_refs
+    assert "are measured counterevidence" in rating
 
 
 def test_final_rating_names_partial_bullish_price_basis_precisely():
