@@ -74,6 +74,17 @@ _BUSINESS_CONTEXT_IDENTITY = re.compile(
     r"(?:provider|manufacturer|operator|developer|retailer|franchisor)\b",
     re.IGNORECASE,
 )
+_BUSINESS_CONTEXT_REVENUE_ACTIVITY = re.compile(
+    r"^(?:we|the company|the issuer)\s+"
+    r"(?:generate|generates|derive|derives)\b.+\b"
+    r"(?:revenue|revenues)\b.+\b(?:by|from)\b",
+    re.IGNORECASE,
+)
+_BUSINESS_CONTEXT_PROMOTIONAL_LANGUAGE = re.compile(
+    r"\b(?:unmatched combination|unwavering focus|undisputable drive|"
+    r"best possible service|best value|best network)\b",
+    re.IGNORECASE,
+)
 _BUSINESS_CONTEXT_SKIP_PREFIXES = (
     "accordingly",
     "as a result",
@@ -324,9 +335,22 @@ def extract_sec_business_context(html: str) -> list[str]:
                 text
                 for _, text in candidates
                 if _BUSINESS_CONTEXT_IDENTITY.search(text)
-                or _business_context_score(text) >= 3
             ),
-            candidates[0][1],
+            next(
+                (
+                    text
+                    for _, text in candidates
+                    if _BUSINESS_CONTEXT_REVENUE_ACTIVITY.search(text)
+                ),
+                next(
+                    (
+                        text
+                        for _, text in candidates
+                        if _business_context_score(text) >= 3
+                    ),
+                    candidates[0][1],
+                ),
+            ),
         )
         selected = [activity]
         segment = next(
@@ -536,6 +560,8 @@ def _is_business_context_paragraph(text: str) -> bool:
     if lowered.startswith(_BUSINESS_CONTEXT_SKIP_PREFIXES):
         return False
     if _BUSINESS_CONTEXT_ACCOUNTING_LANGUAGE.search(stripped):
+        return False
+    if _BUSINESS_CONTEXT_PROMOTIONAL_LANGUAGE.search(stripped):
         return False
     if _BUSINESS_CONTEXT_UNRESOLVED_REFERENCE.search(stripped):
         return False

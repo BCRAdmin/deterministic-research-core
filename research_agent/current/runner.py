@@ -26,6 +26,10 @@ from research_agent.sources.sec.sec_filing_risks import (
     save_sec_risk_evidence,
     select_sec_risk_filing_candidates,
 )
+from research_agent.sources.sec.sec_inline_facts import (
+    build_sec_inline_debt_supplement_payload,
+    save_sec_inline_fact_supplement,
+)
 from research_agent.sources.sec.xbrl_concepts import US_GAAP_CONCEPTS
 
 
@@ -136,6 +140,7 @@ def run_current_research(
     source_dir = staging_dir / "sources"
     price_dir = source_dir / "prices"
     companyfacts_dir = source_dir / "sec_companyfacts"
+    inline_facts_dir = source_dir / "sec_inline_facts"
     risk_factors_dir = source_dir / "sec_risk_factors"
     business_context_dir = source_dir / "sec_business_context"
     packet_root = staging_dir / "packets"
@@ -198,6 +203,8 @@ def run_current_research(
 
     cik: Optional[str] = None
     companyfacts_path: Optional[Path] = None
+    inline_facts_path: Optional[Path] = None
+    inline_facts_payload: Optional[dict[str, Any]] = None
     risk_factors_path: Optional[Path] = None
     risk_source_status = "not_applicable"
     risk_filing_date: Optional[str] = None
@@ -287,6 +294,37 @@ def run_current_research(
             risk_factor_count = len(risk_evidence_to_save)
             if risk_factor_count >= 4 or len(risk_evidence_to_save) == 30:
                 break
+        latest_financial_reference = next(
+            (
+                filing
+                for filing in filing_candidates
+                if latest_financial_filing is not None
+                and filing.accession_number
+                == latest_financial_filing["accession_number"]
+            ),
+            None,
+        )
+        if latest_financial_reference is not None:
+            latest_financial_html = filing_html_by_accession.get(
+                latest_financial_reference.accession_number
+            )
+            if latest_financial_html is not None:
+                try:
+                    inline_facts_payload = build_sec_inline_debt_supplement_payload(
+                        ticker=symbol,
+                        filing=latest_financial_reference,
+                        html=latest_financial_html,
+                        companyfacts=companyfacts,
+                        retrieved_at=retrieved_at,
+                    )
+                except ValueError as exc:
+                    raise CurrentResearchError(
+                        f"{symbol} weist im aktuellen SEC-Bericht eine getrennte "
+                        "Schuldenstruktur aus, die der enge Inline-XBRL-"
+                        f"Ergänzungsweg nicht sicher konsolidieren kann: {exc}"
+                    ) from exc
+                if inline_facts_payload is not None:
+                    inline_facts_path = inline_facts_dir / f"{symbol}.json"
         if official_news_dir is None:
             annual_filing = next(
                 (filing for filing in filing_candidates if filing.form == "10-K"),
@@ -425,6 +463,11 @@ def run_current_research(
                 business_context_dir / f"{symbol}_news.json",
                 business_context_payload,
             )
+        if inline_facts_path is not None and inline_facts_payload is not None:
+            save_sec_inline_fact_supplement(
+                inline_facts_path,
+                inline_facts_payload,
+            )
     else:
         assert ir_release_dir is not None
         assert bse_financial_payload is not None
@@ -484,6 +527,7 @@ def run_current_research(
         price_retrieved_at=retrieved_at,
         cik_records_path=str(cik_records_path) if cik_records_path else None,
         sec_companyfacts_path=str(companyfacts_path) if companyfacts_path else None,
+        sec_inline_facts_path=str(inline_facts_path) if inline_facts_path else None,
         sec_risk_factors_path=str(risk_factors_path) if risk_factors_path else None,
         sec_user_agent=request.sec_user_agent or None,
         ir_release_dir=str(ir_release_dir) if ir_release_dir else None,
@@ -526,6 +570,9 @@ def run_current_research(
         "business_context_status": business_context_status,
         "business_context_filing_date": business_context_filing_date,
         "business_context_count": business_context_count,
+        "inline_financial_fact_count": len(
+            (inline_facts_payload or {}).get("facts") or []
+        ),
         "price_provider": provider_name,
         "price_source_type": source_type,
         "price_row_count": int(len(prices)),

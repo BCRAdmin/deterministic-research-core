@@ -150,6 +150,26 @@ def quality_relevant_reconciliation_warnings(
         code = str(warning.get("code") or "")
         if code in INFORMATIONAL_RECONCILIATION_CODES:
             continue
+        if code == "BALANCE_SHEET_DATE_MISMATCH_EXCLUDED":
+            metric = str(warning.get("metric") or "")
+            replacement_date = str(
+                (
+                    normalized_fundamentals.get(
+                        "reconciliation_material_dates"
+                    )
+                    or {}
+                ).get(metric)
+                or ""
+            )
+            balance_sheet_date = str(warning.get("balance_sheet_date") or "")
+            balance = normalized_fundamentals.get("balance_sheet") or {}
+            if (
+                metric
+                and metric in balance
+                and replacement_date
+                and replacement_date == balance_sheet_date
+            ):
+                continue
         if code != "TRUE_SOURCE_VALUE_DISAGREEMENT" or not review_starts:
             relevant.append(warning)
             continue
@@ -919,6 +939,9 @@ def _derive_debt_and_lease_totals(
         )
         if use_components:
             balance["total_debt"] = sum(component_values.values())
+            fundamentals["reconciliation_material_dates"]["total_debt"] = (
+                noncurrent.end_date
+            )
             balance["debt_noncurrent"] = noncurrent.value
             if "debt_current" in component_values:
                 balance["debt_current"] = component_values["debt_current"]

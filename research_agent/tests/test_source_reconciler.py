@@ -173,6 +173,30 @@ def test_quality_scope_uses_the_material_window_for_each_metric():
     ]
 
 
+def test_quality_scope_drops_replaced_balance_sheet_mismatch_only():
+    replaced = {
+        "code": "BALANCE_SHEET_DATE_MISMATCH_EXCLUDED",
+        "metric": "total_debt",
+        "metric_end_date": "2025-12-31",
+        "balance_sheet_date": "2026-06-30",
+    }
+    unresolved = {
+        "code": "BALANCE_SHEET_DATE_MISMATCH_EXCLUDED",
+        "metric": "debt_current",
+        "metric_end_date": "2025-12-31",
+        "balance_sheet_date": "2026-06-30",
+    }
+    fundamentals = {
+        "balance_sheet": {"total_debt": 84_621},
+        "reconciliation_material_dates": {"total_debt": "2026-06-30"},
+    }
+
+    assert quality_relevant_reconciliation_warnings(
+        [replaced, unresolved],
+        fundamentals,
+    ) == [unresolved]
+
+
 def test_period_type_variants_are_ignored_not_warned():
     canonical, warnings = reconcile_metric("revenue", [
         _metric(value=100, basis="gaap", source_id="SEC", metric_name="revenue"),

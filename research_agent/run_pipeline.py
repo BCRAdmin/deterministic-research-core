@@ -105,7 +105,7 @@ from research_agent.sources.ir.earnings_release_parser import (
     guidance_range_to_evidence,
 )
 from research_agent.sources.sec.cik_mapper import load_cik_mapper
-from research_agent.sources.sec.companyfacts_parser import CompanyFactsParser
+from research_agent.sources.sec.companyfacts_parser import CompanyFactsParser, ParsedFact
 from research_agent.sources.sec.sec_client import SecClient, SecClientConfig
 from research_agent.sources.sec.sec_filing_risks import load_sec_risk_evidence
 from research_agent.sources.sec.sec_fundamentals_builder import (
@@ -113,6 +113,9 @@ from research_agent.sources.sec.sec_fundamentals_builder import (
     build_sec_evidence_for_source_ids,
     build_sec_fundamentals,
     build_sec_fundamentals_from_companyfacts,
+)
+from research_agent.sources.sec.sec_inline_facts import (
+    load_sec_inline_fact_supplement,
 )
 
 
@@ -707,11 +710,21 @@ def _load_source_ingestion_inputs(ticker: str, as_of_date: str, config: ReportCo
                 companyfacts_json=raw,
             )
         evidence_items.extend(sec_evidence_items)
+        supplemental_facts = []
+        if config.sec_inline_facts_path:
+            supplemental_facts, supplemental_evidence = (
+                load_sec_inline_fact_supplement(
+                    config.sec_inline_facts_path,
+                    ticker=ticker,
+                )
+            )
+            evidence_items.extend(supplemental_evidence)
         canonical_financials, reconciliation_warnings = _build_canonical_from_companyfacts(
             ticker=ticker,
             as_of_date=as_of_date,
             cik=cik_mapper.get_cik(ticker),
             companyfacts_json=raw,
+            supplemental_facts=supplemental_facts,
         )
         fundamentals.update(sec_metrics)
         canonical_fundamentals = canonical_financials_to_fundamentals(
@@ -815,11 +828,18 @@ def _load_source_ingestion_inputs(ticker: str, as_of_date: str, config: ReportCo
     return prices, fundamentals, news, evidence_items, canonical_financials, reconciliation_warnings
 
 
-def _build_canonical_from_companyfacts(ticker: str, as_of_date: str, cik: str, companyfacts_json: dict[str, Any]):
+def _build_canonical_from_companyfacts(
+    ticker: str,
+    as_of_date: str,
+    cik: str,
+    companyfacts_json: dict[str, Any],
+    supplemental_facts: list[ParsedFact] | None = None,
+):
     parser = CompanyFactsParser(ticker=ticker, cik=cik, companyfacts_json=companyfacts_json)
     facts = []
     for metric in SEC_FUNDAMENTAL_METRICS:
         facts.extend(parser.get_facts_for_metric(metric))
+    facts.extend(supplemental_facts or [])
     return build_canonical_financials_from_facts(ticker=ticker, as_of_date=as_of_date, facts=facts)
 
 

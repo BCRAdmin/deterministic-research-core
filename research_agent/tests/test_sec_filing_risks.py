@@ -320,6 +320,21 @@ def test_business_context_keeps_concise_issuer_identity_before_generic_detail():
     ]
 
 
+def test_business_context_prefers_revenue_activity_over_promotional_puffery():
+    html = """
+    <html><body>
+      <p><strong>ITEM 1. BUSINESS</strong></p>
+      <p>Our customers benefit from what we believe is an unmatched combination of the best value and best network, alongside an unwavering focus on offering them the best possible service experience and an undisputable drive for disruptive innovation in wireless and beyond.</p>
+      <p>We generate the majority of our service revenues by providing wireless communications and broadband services to postpaid and prepaid customers.</p>
+      <div><strong>ITEM 1A. RISK FACTORS</strong></div>
+    </body></html>
+    """
+
+    assert extract_sec_business_context(html) == [
+        "We generate the majority of our service revenues by providing wireless communications and broadband services to postpaid and prepaid customers."
+    ]
+
+
 def test_builds_primary_risk_evidence_without_inventing_numeric_metrics():
     filing = select_sec_risk_filing_candidates(
         _submissions(), cik="1234", as_of_date="2026-07-24"
