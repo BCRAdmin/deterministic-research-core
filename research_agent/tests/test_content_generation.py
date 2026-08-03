@@ -6,12 +6,22 @@ from research_agent.content.claim_generator import (
     _ClaimBuilder,
     _bear_case_claim_text,
     _current_period_claim_specs,
+    _money,
     claim_coverage_gaps,
     claim_quality_metrics,
     generate_research_claims,
 )
-from research_agent.content.report_composer import compose_research_report
-from research_agent.content.publish_composer import compose_internal_best_report
+from research_agent.content.report_composer import (
+    _fmt_money as _report_money,
+    compose_research_report,
+)
+from research_agent.content.publish_composer import (
+    _clean_text,
+    _constructive_cash_conversion_trigger,
+    _final_rating_section,
+    _fmt_money as _publish_money,
+    compose_internal_best_report,
+)
 from research_agent.decision.decision_packet import DecisionPacket
 from research_agent.evidence.evidence_item import EvidenceItem
 from research_agent.evidence.evidence_ledger import EvidenceLedger, unit_for_metric
@@ -259,7 +269,7 @@ def test_content_generator_turns_primary_risk_evidence_into_qualitative_claims()
             source_id="SEC_SNOW_10K",
             source_type="sec_filing",
             authority_rank=1,
-            statement="Service interruptions could adversely affect customer demand.",
+            statement="Service interruptions could adversely affect customer demand",
             period="10-K period ended 2026-01-31",
             date="2026-03-20",
             supports_claims=["company_risk_analysis"],
@@ -271,9 +281,19 @@ def test_content_generator_turns_primary_risk_evidence_into_qualitative_claims()
     risk_claim = next(claim for claim in claims if claim.claim_type == "risk")
 
     assert risk_claim.section == "Key Risks"
+    assert (
+        "customer demand. This identifies an exposure" in risk_claim.claim
+    )
     assert risk_claim.metric_refs == []
     assert risk_claim.evidence_ids == ["SNOW_SEC_RISK_001"]
     assert claim_quality_metrics(claims)["risk_specific_claim_count"] == 1
+
+
+def test_money_formatters_place_negative_sign_before_usd_symbol():
+    assert _money(-11_625_000_000, "USD") == "-$11.62B"
+    assert _report_money(-11_625_000_000, "USD") == "-$11.62B"
+    assert _publish_money(-11_625_000_000, "USD") == "-$11.62B"
+    assert _money(-11_625_000_000, "HUF") == "-11.62B HUF"
 
 
 def test_bear_case_distinguishes_bullish_bearish_and_mixed_trends():
@@ -293,6 +313,76 @@ def test_bear_case_distinguishes_bullish_bearish_and_mixed_trends():
     assert "bullish long-term trend state is not current downside evidence" in bullish
     assert "bearish long-term trend state is current downside evidence" in bearish
     assert "mixed long-term trend state is inconclusive" in mixed
+
+
+def test_bear_case_treats_negative_fcf_as_downside_not_counterevidence():
+    _, metrics, _, _, _ = _load_packet("SNOW")
+    metrics.fundamentals.free_cash_flow_ttm = -11_625_000_000
+    metrics.technical.close = 120.0
+    metrics.technical.sma_50 = 110.0
+    metrics.technical.sma_200 = 100.0
+
+    bullish = _bear_case_claim_text("TEST", metrics, "USD")
+
+    assert "bullish long-term trend state is counterevidence" in bullish
+    assert "negative FCF TTM of -$11.62B" in bullish
+    assert "current fundamental downside evidence" in bullish
+    assert "technical trend offsets but does not erase that risk" in bullish
+
+
+def test_bull_case_does_not_present_negative_fcf_as_cash_generation():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    metrics.fundamentals.free_cash_flow_ttm = -11_625_000_000
+    ledger.evidence_items = [
+        item
+        for item in ledger.evidence_items
+        if "free_cash_flow_ttm" not in item.supports_metrics
+    ]
+    _add_exact_metric_evidence(data, metrics, ledger)
+
+    claims = generate_research_claims(data, metrics, ledger, decision, validation)
+    bull_claim = next(
+        claim
+        for claim in claims
+        if claim.section == "Bull Case" and claim.claim_type == "financial_metric"
+    )
+
+    assert "negative FCF is a cash-conversion constraint" in bull_claim.claim
+    assert "scale and cash generation" not in bull_claim.claim
+
+
+def test_final_rating_names_partial_bullish_price_basis_precisely():
+    _, metrics, _, _, decision = _load_packet("SNOW")
+    decision.signal_scores.technical_status = "partial"
+    decision.signal_scores.technical_score = 1
+
+    section = _final_rating_section(
+        "SNOW",
+        "Hold",
+        metrics.fundamentals,
+        metrics.valuation,
+        metrics.technical,
+        decision,
+    )
+
+    assert (
+        "available technical direction is bullish but partial because the price "
+        "series is not confirmed as corporate-action adjusted"
+        in section
+    )
+    assert "neutral or incomplete" not in section
+    assert (
+        _constructive_cash_conversion_trigger(-11_625_000_000)
+        == "Current-period KPIs improve while free-cash-flow conversion improves"
+    )
+    assert (
+        _constructive_cash_conversion_trigger(11_625_000_000)
+        == "Current-period KPIs improve while free-cash-flow conversion holds"
+    )
+    assert (
+        _clean_text("Manual review remains appropriate.")
+        == "Further review remains appropriate."
+    )
 
 
 def test_content_generator_uses_precomputed_distribution_comparison():

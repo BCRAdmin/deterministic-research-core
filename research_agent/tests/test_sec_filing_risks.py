@@ -60,6 +60,28 @@ def test_extracts_only_substantive_risk_headings():
     ]
 
 
+def test_extracts_emphasized_title_case_risks_without_terminal_periods():
+    html = """
+    <html><body>
+      <div><strong>Item 1A. Risk Factors</strong></div>
+      <p><strong>Business and Industry Risks</strong></p>
+      <p><strong>We Face Intense Competition</strong></p>
+      <p>Competition may reduce demand or increase our costs.</p>
+      <p><strong>Our Expansion Subjects Us to Additional Risks</strong></p>
+      <p>Expansion may strain our resources.</p>
+      <p><strong>We Have a Rapidly Evolving Business Model and Our Stock Price Is Highly Volatile</strong></p>
+      <p>Market changes could affect our results.</p>
+      <div><strong>Item 1B. Unresolved Staff Comments</strong></div>
+    </body></html>
+    """
+
+    assert extract_sec_risk_headings(html) == [
+        "We Face Intense Competition",
+        "Our Expansion Subjects Us to Additional Risks",
+        "We Have a Rapidly Evolving Business Model and Our Stock Price Is Highly Volatile",
+    ]
+
+
 def test_extracts_split_risk_heading_across_repeated_item_1a_page_headers():
     html = """
     <html><body>

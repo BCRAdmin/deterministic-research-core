@@ -684,6 +684,9 @@ def _generic_publish_report(
     f = metrics_packet.fundamentals
     v = metrics_packet.valuation
     t = metrics_packet.technical
+    constructive_cash_trigger = _constructive_cash_conversion_trigger(
+        f.free_cash_flow_ttm
+    )
 
     sections = [
         f"# {ticker} Research Report",
@@ -706,7 +709,7 @@ def _generic_publish_report(
         (
             "| Scenario | KPI trigger | Valuation implication | Rating implication |\n"
             "|---|---|---|---|\n"
-            "| Constructive | Current-period KPIs improve while free-cash-flow conversion holds | Benchmark evidence would need to show valuation support | Reassess toward a more constructive rating |\n"
+            f"| Constructive | {constructive_cash_trigger} | Benchmark evidence would need to show valuation support | Reassess toward a more constructive rating |\n"
             "| Current | Measured fundamental and technical signals remain unchanged | Unbenchmarked multiples remain observations only | Retain the current research rating |\n"
             "| Cautious | Fundamentals or the technical trend deteriorate | Benchmark evidence would need to show valuation pressure | Reassess toward a more cautious rating |"
         ),
@@ -1606,20 +1609,35 @@ def _final_rating_section(
     else:
         valuation_text = "Benchmarked valuation evidence is neutral."
 
-    technical_text = (
-        "constructive"
-        if scores.technical_status == "measured" and scores.technical_score > 0
-        else "cautious"
-        if scores.technical_status == "measured" and scores.technical_score < 0
-        else "neutral or incomplete"
-    )
+    if scores.technical_status == "measured":
+        technical_text = (
+            "constructive"
+            if scores.technical_score > 0
+            else "cautious"
+            if scores.technical_score < 0
+            else "neutral"
+        )
+    elif scores.technical_status == "partial":
+        direction = (
+            "bullish"
+            if scores.technical_score > 0
+            else "bearish"
+            if scores.technical_score < 0
+            else "neutral"
+        )
+        technical_text = (
+            f"{direction} but partial because the price series is not confirmed "
+            "as corporate-action adjusted"
+        )
+    else:
+        technical_text = "not measured"
     return "\n\n".join(
         [
             f"Final Rating: {rating}. {rating_reason}",
             (
                 f"Factual anchors are revenue of {_fmt_money(f.revenue_ttm, currency)}, "
                 f"FCF of {_fmt_money(f.free_cash_flow_ttm, currency)} and RSI of "
-                f"{_fmt_number(t.rsi_14)}. The measured technical direction is "
+                f"{_fmt_number(t.rsi_14)}. The available technical direction is "
                 f"{technical_text}."
             ),
             valuation_text,
@@ -1877,7 +1895,6 @@ def _clean_text(text: str) -> str:
         "validated technical trend state": "technical trend state",
         "financial-sanity errors": "financial data concerns",
         "financial-sanity error": "financial data concern",
-        "Manual review": "further review",
         "manual review": "further review",
         "sanity guard": "data-quality check",
         "audit has": "review shows",
@@ -1889,7 +1906,19 @@ def _clean_text(text: str) -> str:
         "source-quality limitations": "source limitations",
     }
     for old, new in replacements.items():
-        cleaned = re.sub(old, new, cleaned, flags=re.IGNORECASE)
+        if old == "manual review":
+            cleaned = re.sub(
+                old,
+                lambda match: (
+                    "Further review"
+                    if match.group(0)[0].isupper()
+                    else "further review"
+                ),
+                cleaned,
+                flags=re.IGNORECASE,
+            )
+        else:
+            cleaned = re.sub(old, new, cleaned, flags=re.IGNORECASE)
     return cleaned
 
 
@@ -1937,13 +1966,30 @@ def _fmt_money(value: float | None, currency: str = "USD") -> str:
     if value is None:
         return "not available"
     normalized_currency = str(currency or "USD").strip().upper()
-    if abs(value) >= 1_000_000_000:
-        amount = f"{value / 1_000_000_000:.2f}B"
-    elif abs(value) >= 1_000_000:
-        amount = f"{value / 1_000_000:.1f}M"
+    magnitude = abs(value)
+    if magnitude >= 1_000_000_000:
+        amount = f"{magnitude / 1_000_000_000:.2f}B"
+    elif magnitude >= 1_000_000:
+        amount = f"{magnitude / 1_000_000:.1f}M"
     else:
-        amount = f"{value:.2f}"
-    return f"${amount}" if normalized_currency == "USD" else f"{amount} {normalized_currency}"
+        amount = f"{magnitude:.2f}"
+    sign = "-" if value < 0 else ""
+    return (
+        f"{sign}${amount}"
+        if normalized_currency == "USD"
+        else f"{sign}{amount} {normalized_currency}"
+    )
+
+
+def _constructive_cash_conversion_trigger(value: float | None) -> str:
+    if value is None:
+        return (
+            "Current-period KPIs improve and free-cash-flow evidence becomes "
+            "available"
+        )
+    if value <= 0:
+        return "Current-period KPIs improve while free-cash-flow conversion improves"
+    return "Current-period KPIs improve while free-cash-flow conversion holds"
 
 
 def _fmt_multiple(value: float | None) -> str:

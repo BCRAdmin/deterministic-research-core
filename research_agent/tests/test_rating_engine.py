@@ -152,6 +152,30 @@ def test_unbenchmarked_strong_setup_is_capped_at_hold():
     )
     assert partial_negative_permission.preferred_rating == Rating.HOLD
     assert partial_negative_permission.allowed_ratings == [Rating.HOLD]
+    assert (
+        "measured core fundamentals and a price series confirmed as "
+        "corporate-action adjusted"
+        in partial_negative_permission.reason
+    )
+
+    partial_technical_permission = determine_rating_permission(
+        SignalScores(
+            fundamental_score=-1,
+            technical_score=1,
+            valuation_score=0,
+            risk_score=0,
+            composite_score=0,
+            fundamental_status="measured",
+            technical_status="partial",
+            valuation_status="unbenchmarked",
+            risk_status="not_measured",
+        )
+    )
+    assert partial_technical_permission.preferred_rating == Rating.HOLD
+    assert (
+        "price series is not confirmed as corporate-action adjusted"
+        in partial_technical_permission.reason
+    )
 
 
 def test_validation_quality_cannot_change_the_company_rating():

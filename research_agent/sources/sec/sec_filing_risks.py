@@ -16,7 +16,13 @@ _BLOCK_TAGS = {"br", "div", "h1", "h2", "h3", "h4", "li", "p", "table", "tr"}
 _ITEM_HEADING = re.compile(r"^item\s+\d+[a-z]?[.\s]", re.IGNORECASE)
 _RISK_LANGUAGE = re.compile(
     r"\b(could|may|might|failure|fail|unable|adverse|adversely|competition|"
-    r"volatility|subject to|subjects us to|presents a number of risks)\b",
+    r"volatility|volatile|risk|risks|harm|harmed|strain|fraudulent|unlawful|"
+    r"fluctuations?|loss|losses|liabilit(?:y|ies)|suffer|suffers|unsuccessful|"
+    r"expose|exposes|subject to|subjects us to|presents a number of risks)\b",
+    re.IGNORECASE,
+)
+_GENERIC_RISK_CATEGORY = re.compile(
+    r"^(?!(?:we|our|the company)\b)[a-z,& -]+ risks?$",
     re.IGNORECASE,
 )
 _GENERIC_PREFIXES = (
@@ -198,7 +204,7 @@ def extract_sec_risk_headings(html: str) -> list[str]:
         candidates: list[tuple[str, bool]] = []
         seen: set[str] = set()
         for block, emphasized in blocks[start + 1 : end]:
-            if not _is_risk_heading(block):
+            if not _is_risk_heading(block, emphasized=emphasized):
                 continue
             key = block.casefold()
             if key in seen:
@@ -403,14 +409,21 @@ def _is_later_item_heading(text: str) -> bool:
     )
 
 
-def _is_risk_heading(text: str) -> bool:
+def _is_risk_heading(text: str, *, emphasized: bool = False) -> bool:
     stripped = text.strip()
     lowered = stripped.lower()
-    if not 40 <= len(stripped) <= 320:
+    minimum_length = 20 if emphasized else 40
+    if not minimum_length <= len(stripped) <= 320:
         return False
-    if stripped.startswith(("•", "●", "▪", "-")) or not stripped.endswith("."):
+    if stripped.startswith(("•", "●", "▪", "-")):
         return False
-    if stripped.isupper() or lowered.startswith(_GENERIC_PREFIXES):
+    if not emphasized and not stripped.endswith("."):
+        return False
+    if (
+        stripped.isupper()
+        or lowered.startswith(_GENERIC_PREFIXES)
+        or _GENERIC_RISK_CATEGORY.fullmatch(stripped)
+    ):
         return False
     if stripped.count(". ") > 1:
         return False

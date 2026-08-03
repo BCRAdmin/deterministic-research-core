@@ -406,13 +406,19 @@ def _fmt_money(value: float, currency: str = "USD") -> str:
     if value is None:
         return "unavailable"
     normalized_currency = str(currency or "USD").strip().upper()
-    if abs(value) >= 1_000_000_000:
-        amount = f"{value / 1_000_000_000:.2f}B"
-    elif abs(value) >= 1_000_000:
-        amount = f"{value / 1_000_000:.1f}M"
+    magnitude = abs(value)
+    if magnitude >= 1_000_000_000:
+        amount = f"{magnitude / 1_000_000_000:.2f}B"
+    elif magnitude >= 1_000_000:
+        amount = f"{magnitude / 1_000_000:.1f}M"
     else:
-        amount = f"{value:.2f}"
-    return f"${amount}" if normalized_currency == "USD" else f"{amount} {normalized_currency}"
+        amount = f"{magnitude:.2f}"
+    sign = "-" if value < 0 else ""
+    return (
+        f"{sign}${amount}"
+        if normalized_currency == "USD"
+        else f"{sign}{amount} {normalized_currency}"
+    )
 
 
 def _fmt_multiple(value: float | None) -> str:

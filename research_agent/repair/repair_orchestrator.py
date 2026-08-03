@@ -247,8 +247,10 @@ def _replace_line(markdown: str, line_number: Optional[int], replacement: str) -
 def _format_usd(value: Optional[float]) -> str:
     if value is None:
         return "Metric unavailable in validated packet"
-    if abs(value) >= 1_000_000_000:
-        return f"${value / 1_000_000_000:.3f}B"
-    if abs(value) >= 1_000_000:
-        return f"${value / 1_000_000:.1f}M"
-    return f"${value:,.0f}"
+    magnitude = abs(value)
+    sign = "-" if value < 0 else ""
+    if magnitude >= 1_000_000_000:
+        return f"{sign}${magnitude / 1_000_000_000:.3f}B"
+    if magnitude >= 1_000_000:
+        return f"{sign}${magnitude / 1_000_000:.1f}M"
+    return f"{sign}${magnitude:,.0f}"

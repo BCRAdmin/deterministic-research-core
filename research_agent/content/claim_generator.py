@@ -532,21 +532,68 @@ class _ClaimBuilder:
                 comparison_label = "Matching-quarter"
             else:
                 comparison_label = "Matching-period"
+            fcf_value = self.metrics.fundamentals.free_cash_flow_ttm
+            if fcf_value is not None and fcf_value < 0:
+                cash_context = (
+                    "this establishes current business direction and scale, but the "
+                    "negative FCF remains evidence of weak cash conversion. A more "
+                    "constructive rating still requires those comparisons to persist, "
+                    "cash conversion to improve and stronger technical or benchmarked "
+                    "valuation support."
+                )
+            elif fcf_value == 0:
+                cash_context = (
+                    "this establishes current business direction and scale, but does "
+                    "not establish positive cash conversion. A more constructive rating "
+                    "still requires those comparisons to persist, cash conversion to "
+                    "improve and stronger technical or benchmarked valuation support."
+                )
+            elif fcf_value is not None:
+                cash_context = (
+                    "this establishes current business direction, scale and positive "
+                    "cash generation. A more constructive rating still requires those "
+                    "comparisons to persist and stronger technical or benchmarked "
+                    "valuation support."
+                )
+            else:
+                cash_context = (
+                    "this establishes current business direction and scale, but FCF "
+                    "is unavailable and cannot support a cash-conversion conclusion. "
+                    "A more constructive rating still requires those comparisons to "
+                    "persist, cash-conversion evidence and stronger technical or "
+                    "benchmarked valuation support."
+                )
             bull_text = (
                 f"{comparison_label} evidence shows {growth_text}. Together with "
                 f"revenue TTM of {self._money(self.metrics.fundamentals.revenue_ttm)} "
-                f"and FCF TTM of {self._money(self.metrics.fundamentals.free_cash_flow_ttm)}, "
-                "this establishes current business direction, scale and cash generation. "
-                "A more constructive rating still requires those comparisons to persist "
-                "and stronger technical or benchmarked valuation support."
+                f"and FCF TTM of {self._money(fcf_value)}, {cash_context}"
             )
         else:
+            fcf_value = self.metrics.fundamentals.free_cash_flow_ttm
+            if fcf_value is not None and fcf_value < 0:
+                cash_context = (
+                    "The revenue total establishes scale, while negative FCF is a "
+                    "cash-conversion constraint rather than bull-case support"
+                )
+            elif fcf_value == 0:
+                cash_context = (
+                    "The revenue total establishes scale, while zero FCF does not "
+                    "establish positive cash conversion"
+                )
+            elif fcf_value is not None:
+                cash_context = (
+                    "These totals establish scale and positive cash generation, not growth"
+                )
+            else:
+                cash_context = (
+                    "The revenue total establishes scale, while unavailable FCF cannot "
+                    "support a cash-conversion conclusion"
+                )
             bull_text = (
                 "The bull case combines revenue of "
-                f"{self._money(self.metrics.fundamentals.revenue_ttm)} with "
-                "available FCF evidence. These totals establish scale and cash "
-                "generation, not growth; a more constructive rating requires "
-                "comparable current-period evidence or technical confirmation."
+                f"{self._money(self.metrics.fundamentals.revenue_ttm)} with FCF of "
+                f"{self._money(fcf_value)}. {cash_context}; a more constructive rating "
+                "requires comparable current-period evidence or technical confirmation."
             )
         self.add(
             "Bull Case",
@@ -699,7 +746,10 @@ class _ClaimBuilder:
     ) -> None:
         self.counter += 1
         claim_id = f"{self.data_packet.ticker}_CLAIM_{self.counter:03d}"
-        text = f"Issuer-disclosed risk: {evidence.statement}"
+        statement = evidence.statement.strip()
+        if statement and statement[-1] not in ".!?":
+            statement = f"{statement}."
+        text = f"Issuer-disclosed risk: {statement}"
         if explain_disclosure:
             text += (
                 " This identifies an exposure; it does not establish that the "
@@ -1001,13 +1051,19 @@ def _money(value: Optional[float], currency: str = "USD") -> str:
     if value is None:
         return "not available in evidence set"
     currency = str(currency or "USD").strip().upper()
-    if abs(value) >= 1_000_000_000:
-        amount = f"{value / 1_000_000_000:.2f}B"
-    elif abs(value) >= 1_000_000:
-        amount = f"{value / 1_000_000:.1f}M"
+    magnitude = abs(value)
+    if magnitude >= 1_000_000_000:
+        amount = f"{magnitude / 1_000_000_000:.2f}B"
+    elif magnitude >= 1_000_000:
+        amount = f"{magnitude / 1_000_000:.1f}M"
     else:
-        amount = f"{value:.2f}"
-    return f"${amount}" if currency == "USD" else f"{amount} {currency}"
+        amount = f"{magnitude:.2f}"
+    sign = "-" if value < 0 else ""
+    return (
+        f"{sign}${amount}"
+        if currency == "USD"
+        else f"{sign}{amount} {currency}"
+    )
 
 
 def _pct(value: Optional[float]) -> str:
@@ -1059,7 +1115,38 @@ def _bear_case_claim_text(
     currency: str,
 ) -> str:
     trend_state = classify_technical_trend(metrics)
-    fcf = _money(metrics.fundamentals.free_cash_flow_ttm, currency)
+    fcf_value = metrics.fundamentals.free_cash_flow_ttm
+    fcf = _money(fcf_value, currency)
+    if fcf_value is not None and fcf_value < 0:
+        if trend_state == "bearish":
+            return (
+                f"{ticker}'s bearish long-term trend state and negative FCF TTM "
+                f"of {fcf} are current downside evidence. They do not by "
+                "themselves explain the cause or durability of the weakness, but "
+                "the current packet contains both technical and cash-conversion "
+                "support for a bear case."
+            )
+        if trend_state == "bullish":
+            return (
+                f"{ticker}'s bullish long-term trend state is counterevidence to "
+                f"the bear case, while negative FCF TTM of {fcf} is current "
+                "fundamental downside evidence. The bear case therefore rests on "
+                "weak cash conversion; the technical trend offsets but does not "
+                "erase that risk."
+            )
+        if trend_state == "mixed":
+            return (
+                f"{ticker}'s mixed long-term trend state neither confirms nor "
+                f"refutes the bear case, while negative FCF TTM of {fcf} is "
+                "current fundamental downside evidence. The current bear case "
+                "rests on weak cash conversion without technical confirmation."
+            )
+        return (
+            f"{ticker}'s long-term technical trend is not fully measured, while "
+            f"negative FCF TTM of {fcf} is current fundamental downside "
+            "evidence. The bear case rests on weak cash conversion without a "
+            "measured technical confirmation or offset."
+        )
     if trend_state == "bearish":
         return (
             f"{ticker}'s bearish long-term trend state is current downside "

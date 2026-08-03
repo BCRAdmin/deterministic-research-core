@@ -55,11 +55,29 @@ def determine_unconstrained_analytical_rating(
         scores.fundamental_status != "measured"
         or scores.technical_status != "measured"
     ):
+        if (
+            scores.fundamental_status != "measured"
+            and scores.technical_status != "measured"
+        ):
+            reason = (
+                "A non-neutral rating requires measured core fundamentals and a "
+                "price series confirmed as corporate-action adjusted; both inputs "
+                "are incomplete."
+            )
+        elif scores.fundamental_status != "measured":
+            reason = (
+                "Core fundamental coverage is incomplete, so technical direction "
+                "alone cannot support a non-neutral rating."
+            )
+        else:
+            reason = (
+                "The available price series is not confirmed as corporate-action "
+                "adjusted, so the technical signal remains partial and cannot "
+                "support a non-neutral rating on its own."
+            )
         return (
             Rating.HOLD,
-            "Directional signals are not enough for a non-neutral rating while "
-            "core fundamental or corporate-action-adjusted technical coverage "
-            "is incomplete.",
+            reason,
         )
     if fundamental <= -1 and technical <= -1:
         return (
