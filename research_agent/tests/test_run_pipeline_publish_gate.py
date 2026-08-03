@@ -34,3 +34,29 @@ def test_manual_review_report_surfaces_active_reason_codes_once():
     assert report.startswith("# Manual Review Required")
     assert report.count("`BALANCE_SHEET_DATE_MISMATCH_EXCLUDED`") == 1
     assert "# CAT Research Report" in report
+
+
+def test_manual_review_report_explains_machine_reason_codes():
+    report = _manual_review_report(
+        "# TSLA Research Report\n",
+        ["TRUE_FINANCIAL_ANOMALY", "EARNINGS_DATE_UNAVAILABLE"],
+        issue_details=[
+            {
+                "code": "TRUE_FINANCIAL_ANOMALY",
+                "message": "P/FCF above 100x requires explicit explanation.",
+            },
+            {
+                "code": "EARNINGS_DATE_UNAVAILABLE",
+                "message": "Next earnings date is unavailable.",
+            },
+        ],
+    )
+
+    assert (
+        "`TRUE_FINANCIAL_ANOMALY`: P/FCF above 100x requires explicit explanation."
+        in report
+    )
+    assert (
+        "`EARNINGS_DATE_UNAVAILABLE`: Next earnings date is unavailable."
+        in report
+    )

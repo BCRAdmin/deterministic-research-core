@@ -451,7 +451,21 @@ def run_research_pipeline(
     if audit_report.has_blocking_errors or not quality_report.publishable:
         manifest_output_dir.mkdir(parents=True, exist_ok=True)
         (manifest_output_dir / "manual_review_required.md").write_text(
-            _manual_review_report(report, quality_report.manual_review_reasons),
+            _manual_review_report(
+                report,
+                quality_report.manual_review_reasons,
+                issue_details=[
+                    *(
+                        {"code": issue.code, "message": issue.message}
+                        for issue in audit_report.issues
+                    ),
+                    *(
+                        {"code": issue.code, "message": issue.message}
+                        for issue in validation_report.issues
+                    ),
+                    *current_reconciliation_warnings,
+                ],
+            ),
             encoding="utf-8",
         )
         if claim_coverage_complete:
@@ -1283,8 +1297,24 @@ def _remove_unapproved_publish_artifacts(output_dir: Path) -> None:
         (output_dir / filename).unlink(missing_ok=True)
 
 
-def _manual_review_report(report: str, reasons: list[str]) -> str:
-    reason_lines = [f"- `{reason}`" for reason in dict.fromkeys(reasons) if reason]
+def _manual_review_report(
+    report: str,
+    reasons: list[str],
+    *,
+    issue_details: Optional[list[dict[str, Any]]] = None,
+) -> str:
+    details_by_code: dict[str, list[str]] = {}
+    for detail in issue_details or []:
+        code = str(detail.get("code") or "")
+        message = str(detail.get("message") or "").strip()
+        if code and message and message not in details_by_code.setdefault(code, []):
+            details_by_code[code].append(message)
+
+    reason_lines = []
+    for reason in dict.fromkeys(reason for reason in reasons if reason):
+        messages = details_by_code.get(reason, [])
+        explanation = f": {'; '.join(messages[:2])}" if messages else ""
+        reason_lines.append(f"- `{reason}`{explanation}")
     if not reason_lines:
         reason_lines = [
             "- No machine-readable reason code was produced; operator review remains required."

@@ -133,17 +133,27 @@ def quality_relevant_reconciliation_warnings(
     historical context.  Undated conflicts stay fail-closed.
     """
 
-    review_start = _material_reconciliation_start_date(normalized_fundamentals)
+    review_starts = _material_reconciliation_start_dates(normalized_fundamentals)
+    global_review_start = min(review_starts.values()) if review_starts else None
     relevant: list[dict] = []
     for warning in warnings:
         code = str(warning.get("code") or "")
         if code in INFORMATIONAL_RECONCILIATION_CODES:
             continue
-        if code != "TRUE_SOURCE_VALUE_DISAGREEMENT" or review_start is None:
+        if code != "TRUE_SOURCE_VALUE_DISAGREEMENT" or not review_starts:
             relevant.append(warning)
             continue
         end_date = _valid_iso_date(warning.get("end_date"))
-        if end_date is None or end_date >= review_start:
+        metric = str(warning.get("metric") or "")
+        if end_date is None:
+            relevant.append(warning)
+            continue
+        if not metric:
+            if global_review_start is not None and end_date >= global_review_start:
+                relevant.append(warning)
+            continue
+        review_start = review_starts.get(metric)
+        if review_start is not None and end_date >= review_start:
             relevant.append(warning)
     return relevant
 
@@ -151,24 +161,47 @@ def quality_relevant_reconciliation_warnings(
 def _material_reconciliation_start_date(
     normalized_fundamentals: dict,
 ) -> Optional[date]:
+    starts = _material_reconciliation_start_dates(normalized_fundamentals)
+    return min(starts.values()) if starts else None
+
+
+def _material_reconciliation_start_dates(
+    normalized_fundamentals: dict,
+) -> dict[str, date]:
+    starts: dict[str, date] = {}
+
+    def record(metric: object, value: object) -> None:
+        metric_name = str(metric or "")
+        parsed = _valid_iso_date(value)
+        if not metric_name or parsed is None:
+            return
+        existing = starts.get(metric_name)
+        if existing is None or parsed < existing:
+            starts[metric_name] = parsed
+
+    explicit_dates = normalized_fundamentals.get("reconciliation_material_dates")
+    if isinstance(explicit_dates, dict):
+        for metric, value in explicit_dates.items():
+            record(metric, value)
+
     bridges = normalized_fundamentals.get("ttm_bridges")
-    candidates = list(bridges.values()) if isinstance(bridges, dict) else []
+    if isinstance(bridges, dict):
+        for metric, bridge in bridges.items():
+            if isinstance(bridge, dict):
+                record(metric, bridge.get("period_start"))
+
     growth_bridge = normalized_fundamentals.get("revenue_growth_yoy_bridge")
     if isinstance(growth_bridge, dict):
-        candidates.append(growth_bridge)
+        record("revenue", growth_bridge.get("period_start"))
+
     current_growth_bridges = normalized_fundamentals.get(
         "current_period_growth_bridges"
     )
     if isinstance(current_growth_bridges, dict):
-        candidates.extend(current_growth_bridges.values())
-    starts = [
-        parsed
-        for bridge in candidates
-        if isinstance(bridge, dict)
-        for parsed in [_valid_iso_date(bridge.get("period_start"))]
-        if parsed is not None
-    ]
-    return min(starts) if starts else None
+        for metric, bridge in current_growth_bridges.items():
+            if isinstance(bridge, dict):
+                record(metric, bridge.get("period_start"))
+    return starts
 
 
 def _valid_iso_date(value: object) -> Optional[date]:
@@ -306,6 +339,7 @@ def canonical_financials_to_fundamentals(canonical: CanonicalFinancials) -> dict
         "annual": {},
         "balance_sheet": {},
         "share_data": {},
+        "reconciliation_material_dates": {},
         "source": "canonical_financials",
         "reconciliation_issues": [],
     }
@@ -337,6 +371,9 @@ def canonical_financials_to_fundamentals(canonical: CanonicalFinancials) -> dict
             annual = _latest_annual_metric(canonical, metric_name)
             if annual is not None:
                 fundamentals["annual"][metric_name] = annual.value
+                fundamentals["reconciliation_material_dates"][metric_name] = (
+                    annual.start_date
+                )
             if issue:
                 fundamentals["reconciliation_issues"].append(issue)
 
@@ -374,6 +411,9 @@ def canonical_financials_to_fundamentals(canonical: CanonicalFinancials) -> dict
                 )
                 continue
             fundamentals["balance_sheet"][metric_name] = selected.value
+            fundamentals["reconciliation_material_dates"][metric_name] = (
+                selected.end_date
+            )
         elif canonical.metrics_for(metric_name):
             fundamentals["reconciliation_issues"].append(_stale_metric_issue(metric_name))
 
@@ -400,6 +440,9 @@ def canonical_financials_to_fundamentals(canonical: CanonicalFinancials) -> dict
         )
         if selected is not None:
             fundamentals["share_data"][output_name] = selected.value
+            fundamentals["reconciliation_material_dates"][metric_name] = (
+                selected.end_date
+            )
         elif canonical.metrics_for(metric_name):
             fundamentals["reconciliation_issues"].append(_stale_metric_issue(metric_name))
     return fundamentals

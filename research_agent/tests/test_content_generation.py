@@ -156,6 +156,34 @@ def test_content_generator_uses_trailing_pe_without_point_in_time_share_count():
     assert "EV/Sales `unavailable`" not in report
 
 
+def test_content_generator_explains_extreme_positive_price_to_fcf():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    metrics.valuation.price_to_fcf = 213.32
+    _add_exact_metric_evidence(data, metrics, ledger)
+
+    claims = generate_research_claims(data, metrics, ledger, decision, validation)
+    valuation_claim = next(
+        claim
+        for claim in claims
+        if claim.section == "Valuation / Multiples"
+        and "P/FCF is 213.32x" in claim.claim
+    )
+
+    assert "highly sensitive to the durability and growth of cash flow" in (
+        valuation_claim.claim
+    )
+    assert "requires explicit manual review before publication" in (
+        valuation_claim.claim
+    )
+    audit = audit_markdown_report(
+        valuation_claim.claim,
+        metrics,
+        decision_packet=decision,
+        ticker=data.ticker,
+    )
+    assert not audit.has_issue("NUMERIC_MISMATCH")
+
+
 def test_compact_claim_set_can_cover_every_required_dimension():
     metrics = {
         "analyst_claim_count": 9,

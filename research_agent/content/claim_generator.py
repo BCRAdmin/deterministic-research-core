@@ -389,16 +389,26 @@ class _ClaimBuilder:
             ),
             implication="Treat EV/Sales as an observation until comparison evidence exists.",
         )
+        price_to_fcf = self.metrics.valuation.price_to_fcf
+        price_to_fcf_context = (
+            " This is an extreme positive-FCF multiple under the validation "
+            "rule, which means the market capitalization is highly sensitive "
+            "to the durability and growth of cash flow and requires explicit "
+            "manual review before publication."
+            if price_to_fcf is not None and price_to_fcf > 100
+            else (
+                " This records the cash-flow valuation level without labeling "
+                "it cheap or expensive."
+            )
+        )
         self.add(
             "Valuation / Multiples",
             "valuation",
             "valuation_metric",
             (
                 f"For {ticker}, P/FCF is "
-                f"{_multiple(self.metrics.valuation.price_to_fcf)}, derived "
-                "from market capitalization and TTM FCF. This records the "
-                "cash-flow valuation level without labeling it cheap or "
-                "expensive."
+                f"{_multiple(price_to_fcf)}, derived from market capitalization "
+                f"and TTM FCF.{price_to_fcf_context}"
             ),
             ["price_to_fcf", "market_cap", "free_cash_flow_ttm"],
             "medium",

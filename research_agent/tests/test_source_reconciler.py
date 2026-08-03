@@ -133,6 +133,46 @@ def test_quality_scope_keeps_dated_conflicts_without_material_period():
     assert quality_relevant_reconciliation_warnings([warning], {}) == [warning]
 
 
+def test_quality_scope_uses_the_material_window_for_each_metric():
+    warnings = [
+        {
+            "code": "TRUE_SOURCE_VALUE_DISAGREEMENT",
+            "metric": "revenue",
+            "end_date": "2025-12-31",
+        },
+        {
+            "code": "TRUE_SOURCE_VALUE_DISAGREEMENT",
+            "metric": "equity",
+            "end_date": "2024-06-30",
+        },
+        {
+            "code": "TRUE_SOURCE_VALUE_DISAGREEMENT",
+            "metric": "equity",
+            "end_date": "2026-06-30",
+        },
+        {
+            "code": "TRUE_SOURCE_VALUE_DISAGREEMENT",
+            "metric": "unused_historical_metric",
+            "end_date": "2025-12-31",
+        },
+    ]
+    fundamentals = {
+        "ttm_bridges": {
+            "revenue": {
+                "period_start": "2025-07-01",
+            }
+        },
+        "reconciliation_material_dates": {
+            "equity": "2026-06-30",
+        },
+    }
+
+    assert quality_relevant_reconciliation_warnings(warnings, fundamentals) == [
+        warnings[0],
+        warnings[2],
+    ]
+
+
 def test_period_type_variants_are_ignored_not_warned():
     canonical, warnings = reconcile_metric("revenue", [
         _metric(value=100, basis="gaap", source_id="SEC", metric_name="revenue"),
