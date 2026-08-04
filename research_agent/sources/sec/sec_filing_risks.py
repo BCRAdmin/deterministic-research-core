@@ -92,6 +92,12 @@ _BUSINESS_CONTEXT_IDENTITY = re.compile(
     r"(?:(?:[a-z]+|&)\s+){1,6}company)\b",
     re.IGNORECASE,
 )
+_BUSINESS_CONTEXT_AS_IDENTITY = re.compile(
+    r"^as\s+(?:an?|one of the)\s+.{0,100}\b"
+    r"(?:airline|company|developer|manufacturer|operator|provider|retailer)\b"
+    r".{0,100},\s+(?:we|the company|the issuer)\b",
+    re.IGNORECASE,
+)
 _BUSINESS_CONTEXT_NAMED_IDENTITY = re.compile(
     r"^(?!(?:We|Our)\b)[A-Z][A-Za-z0-9&.,'’ -]{1,60}\s+(?:is|are)\s+"
     r"(?:now\s+)?"
@@ -875,6 +881,7 @@ def _business_context_score(text: str) -> int:
 def _is_business_context_identity(text: str) -> bool:
     return bool(
         _BUSINESS_CONTEXT_IDENTITY.search(text)
+        or _BUSINESS_CONTEXT_AS_IDENTITY.search(text)
         or _BUSINESS_CONTEXT_NAMED_IDENTITY.search(text)
         or _BUSINESS_CONTEXT_NAMED_LEADER_IDENTITY.search(text)
         or _BUSINESS_CONTEXT_PARENTHETICAL_IDENTITY.search(text)

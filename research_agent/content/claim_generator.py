@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+import re
 from typing import Iterable, Mapping, Optional
 
 from research_agent.decision.decision_packet import DecisionPacket
@@ -35,6 +36,42 @@ _CATALYST_EVENT_TYPES = {
     "product_strategy",
     "strategy",
 }
+_RISK_THEME_PATTERNS = (
+    re.compile(
+        r"\b(?:cyber|information technology|technology|"
+        r"data security|security of (?:our|the) .*systems?)\b",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"\b(?:aircraft fuel|jet fuel|fuel costs?|price of .*fuel|supply of .*fuel|"
+        r"oil prices?)\b",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"\b(?:employee strikes?|labor-related|collective bargaining|workforce)\b",
+        re.IGNORECASE,
+    ),
+    re.compile(r"\b(?:competition|competitive)\b", re.IGNORECASE),
+    re.compile(r"\b(?:regulation|regulatory|legal compliance)\b", re.IGNORECASE),
+    re.compile(r"\b(?:accident|product safety|passenger safety)\b", re.IGNORECASE),
+    re.compile(r"\b(?:supply chain|third parties|suppliers?)\b", re.IGNORECASE),
+    re.compile(r"\b(?:terrorist|geopolitical|war|armed conflict)\b", re.IGNORECASE),
+    re.compile(r"\b(?:disease outbreaks?|public health)\b", re.IGNORECASE),
+    re.compile(r"\b(?:environmental|climate)\b", re.IGNORECASE),
+    re.compile(r"\b(?:debt|credit facilit|liquidity)\b", re.IGNORECASE),
+    re.compile(r"\b(?:reputation|brand)\b", re.IGNORECASE),
+)
+
+
+def _risk_theme(statement: str) -> Optional[int]:
+    return next(
+        (
+            index
+            for index, pattern in enumerate(_RISK_THEME_PATTERNS)
+            if pattern.search(statement)
+        ),
+        None,
+    )
 
 
 def generate_research_claims(
@@ -1154,8 +1191,24 @@ class _ClaimBuilder:
         ]
         candidates = list({item.evidence_id: item for item in candidates}.values())
         # Risk factors are issuer-ordered. Preserve that materiality signal
-        # instead of sampling arbitrary positions from the filing.
-        return candidates[:limit]
+        # while avoiding a short list dominated by repeated versions of one
+        # clearly identifiable theme. If no diverse alternative exists, keep
+        # the issuer-ordered duplicates rather than inventing relevance.
+        selected: list[EvidenceItem] = []
+        deferred: list[EvidenceItem] = []
+        selected_themes: set[int] = set()
+        for candidate in candidates:
+            theme = _risk_theme(candidate.statement)
+            if theme is not None and theme in selected_themes:
+                deferred.append(candidate)
+                continue
+            selected.append(candidate)
+            if theme is not None:
+                selected_themes.add(theme)
+            if len(selected) == limit:
+                return selected
+        selected.extend(deferred[: max(0, limit - len(selected))])
+        return selected
 
     def add(
         self,

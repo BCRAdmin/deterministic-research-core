@@ -39,6 +39,7 @@ SEC_RESULTS_ANNOUNCEMENT_FORM = "8-K"
 SEC_RESULTS_ANNOUNCEMENT_ITEM = "2.02"
 SEC_FINANCIAL_INDUSTRY_SIC_RANGE = range(6000, 6800)
 SEC_REIT_SIC_CODES = {6798}
+SEC_SCHEDULED_AIRLINE_SIC_CODES = {4512}
 SEC_CAPTIVE_FINANCE_ORIGINATION_CONCEPTS = {
     "IncreaseDecreaseInFinanceReceivables",
     "PaymentsToAcquireFinanceReceivables",
@@ -740,9 +741,20 @@ def _require_supported_sec_industry_profile(
         sic = int(sic_text)
     except ValueError:
         return
+    description = str(submissions.get("sicDescription") or "Unternehmen").strip()
+    if sic in SEC_SCHEDULED_AIRLINE_SIC_CODES:
+        raise CurrentResearchError(
+            f"{ticker} wurde als SEC-Emittent und als {description} (SIC {sic}) "
+            "eindeutig erkannt. Das allgemeine Analyseprofil enthält noch keine "
+            "belastbare Airline-Sicht auf Passagier- und sonstige Erlöse, Kapazität, "
+            "Verkehr, Auslastung, Stückerlöse, Treibstoff, Flotte und Leasing. "
+            "Konzernumsatz, Gewinn und klassische Verschuldungskennzahlen allein "
+            "reichen für eine vollständige Fluggesellschaftsanalyse nicht aus. "
+            "Room16 startet deshalb keine allgemeine Analyse. Vor einem neuen Lauf "
+            "wird ein generisches Airline-Branchenprofil aus Primärquellen benötigt."
+        )
     if sic not in SEC_FINANCIAL_INDUSTRY_SIC_RANGE:
         return
-    description = str(submissions.get("sicDescription") or "Finanzunternehmen").strip()
     if sic in SEC_REIT_SIC_CODES:
         raise CurrentResearchError(
             f"{ticker} wurde als SEC-Emittent und als {description} (SIC {sic}) "

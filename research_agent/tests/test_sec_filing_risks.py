@@ -111,6 +111,24 @@ def test_rejoins_wrapped_workiva_business_context():
     ]
 
 
+def test_business_context_prefers_as_identity_over_promotional_network_detail():
+    html = """
+    <html><body>
+      <div><strong>Item 1. Business</strong></div>
+      <p>As a global airline based in the United States, we connect customers across our global network with reliable passenger service. In 2025, we served over 200 million customers.</p>
+      <p>Coastal hubs provide a strong presence in large revenue markets and enable growth in loyalty, premium products and international service.</p>
+      <div><strong>Item 1A. Risk Factors</strong></div>
+    </body></html>
+    """
+
+    contexts = extract_sec_business_context(html)
+
+    assert contexts[0] == (
+        "As a global airline based in the United States, we connect customers "
+        "across our global network with reliable passenger service."
+    )
+
+
 def test_extracts_emphasized_title_case_risks_without_terminal_periods():
     html = """
     <html><body>

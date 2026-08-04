@@ -356,6 +356,48 @@ def test_content_generator_preserves_issuer_risk_order():
     ]
 
 
+def test_content_generator_avoids_repeating_one_risk_theme_when_alternatives_exist():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    _add_exact_metric_evidence(data, metrics, ledger)
+    ledger.evidence_items = [
+        item for item in ledger.evidence_items if item.claim_type != "risk"
+    ]
+    statements = [
+        "A serious aircraft accident could damage our operations and reputation.",
+        "A breach of our technology systems could disrupt operations.",
+        "Information technology infrastructure failures could disrupt operations.",
+        "Failure of the technology we use could materially harm the business.",
+        "Aircraft fuel price increases could reduce profitability.",
+        "Strategic airline investments may not produce the expected returns.",
+    ]
+    ledger.evidence_items.extend(
+        EvidenceItem(
+            evidence_id=f"SNOW_SEC_RISK_{index:03d}",
+            ticker="SNOW",
+            claim_type="risk",
+            source_id="SEC_SNOW_10K",
+            source_type="sec_filing",
+            authority_rank=1,
+            statement=statement,
+            period="10-K period ended 2026-01-31",
+            date="2026-03-20",
+            supports_claims=["company_risk_analysis"],
+            confidence="high",
+        )
+        for index, statement in enumerate(statements, start=1)
+    )
+
+    claims = generate_research_claims(data, metrics, ledger, decision, validation)
+    risk_claims = [claim for claim in claims if claim.claim_type == "risk"]
+
+    assert [claim.evidence_ids[0] for claim in risk_claims] == [
+        "SNOW_SEC_RISK_001",
+        "SNOW_SEC_RISK_002",
+        "SNOW_SEC_RISK_005",
+        "SNOW_SEC_RISK_006",
+    ]
+
+
 def test_positive_fcf_is_qualified_by_sbc_to_fcf():
     data, metrics, validation, ledger, decision = _load_packet("SNOW")
     metrics.fundamentals.free_cash_flow_ttm = 1_169_702_000

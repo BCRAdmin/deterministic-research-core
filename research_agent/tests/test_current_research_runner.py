@@ -285,6 +285,15 @@ class _FakeReitSec(_FakeSec):
         }
 
 
+class _FakeScheduledAirlineSec(_FakeSec):
+    def get_submissions(self, cik):
+        return {
+            "sic": "4512",
+            "sicDescription": "Air Transportation, Scheduled",
+            "filings": {"recent": {"filingDate": ["2026-07-20"]}},
+        }
+
+
 class _FakePrices(PriceProviderBase):
     source_type = "trusted_market_data_vendor"
     source_url = "https://prices.example/docs"
@@ -656,6 +665,23 @@ def test_current_runner_names_unsupported_reit_profile_before_pipeline(tmp_path)
             _request(tmp_path),
             price_provider=_FakePrices(),
             sec_client=_FakeReitSec(),
+        )
+
+    _assert_no_run_dirs(tmp_path)
+
+
+def test_current_runner_names_unsupported_airline_profile_before_pipeline(tmp_path):
+    with pytest.raises(
+        CurrentResearchError,
+        match=(
+            r"Air Transportation, Scheduled.*SIC 4512.*"
+            r"Passagier- und sonstige Erlöse.*Airline-Branchenprofil"
+        ),
+    ):
+        run_current_research(
+            _request(tmp_path),
+            price_provider=_FakePrices(),
+            sec_client=_FakeScheduledAirlineSec(),
         )
 
     _assert_no_run_dirs(tmp_path)
