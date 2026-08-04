@@ -291,6 +291,35 @@ def test_canonical_financials_can_be_built_from_sec_facts():
     assert fundamentals["quarterly"]["revenue"] == [10, 11, 12, 13]
 
 
+def test_canonical_financials_exclude_sec_facts_unavailable_at_cutoff():
+    eligible = _fact(
+        "revenue", 1_000, "Q1", "2026-01-01", "2026-03-31", "q1-current"
+    )
+    eligible.filed = "2026-05-05"
+    future = _fact(
+        "revenue", 2_000, "Q2", "2026-04-01", "2026-06-30", "q2-future"
+    )
+    future.filed = "2026-08-04"
+    future_period = _fact(
+        "revenue", 3_000, "Q3", "2026-07-01", "2026-09-30", "q3-future"
+    )
+    future_period.filed = "2026-07-30"
+
+    canonical, warnings = build_canonical_financials_from_facts(
+        "PLTR", "2026-07-31", [eligible, future, future_period]
+    )
+
+    assert [metric.value for metric in canonical.metrics] == [1_000]
+    cutoff = next(
+        warning
+        for warning in warnings
+        if warning["code"] == "AS_OF_CUTOFF_FACTS_EXCLUDED"
+    )
+    assert cutoff["count"] == 2
+    assert cutoff["accessions"] == ["q2-future", "q3-future"]
+    assert cutoff["latest_filed_date"] == "2026-08-04"
+
+
 def test_stale_duration_metric_is_not_mixed_into_current_ttm():
     stale = _metric(
         value=64_333,

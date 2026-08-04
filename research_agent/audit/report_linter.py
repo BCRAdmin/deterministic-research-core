@@ -56,6 +56,7 @@ EARNINGS_UNAVAILABLE_RE = re.compile(
     r"(?:earnings date unavailable|next earnings date unavailable|unconfirmed|metric unavailable)",
     re.IGNORECASE,
 )
+ISSUER_RISK_RE = re.compile(r"Issuer-disclosed risk:\s*([A-Za-z])")
 
 
 def audit_markdown_report(
@@ -81,6 +82,7 @@ def audit_markdown_report(
     issues.extend(_lint_currency_consistency(claims, evidence_ledger))
     issues.extend(_lint_trade_levels(markdown))
     issues.extend(_lint_rating_action(markdown))
+    issues.extend(_lint_risk_fragments(markdown))
     issues.extend(_lint_news_causality(markdown, validation_report))
     issues.extend(_lint_no_news_claim(markdown, source_registry))
     issues.extend(_lint_evidence_grounding(claims, metrics_packet, evidence_ledger))
@@ -125,6 +127,26 @@ def audit_markdown_report(
     issues.extend(deeptech_assessment.issues)
 
     return AuditReport.from_issues(issues=issues, numeric_claims=claims, ticker=ticker)
+
+
+def _lint_risk_fragments(markdown: str) -> list[AuditIssue]:
+    issues: list[AuditIssue] = []
+    for line_number, line in enumerate(markdown.splitlines(), start=1):
+        match = ISSUER_RISK_RE.search(line)
+        if match and match.group(1).islower():
+            issues.append(
+                AuditIssue(
+                    severity="error",
+                    code="MALFORMED_RISK_FRAGMENT",
+                    message=(
+                        "Issuer risk begins with a lowercase fragment and must be "
+                        "re-extracted from the filing before the report can pass."
+                    ),
+                    line_number=line_number,
+                    raw_text=line.strip(),
+                )
+            )
+    return issues
 
 
 def audit_report_from_files(

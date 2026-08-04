@@ -21,6 +21,7 @@ from research_agent.sources.sec.xbrl_concepts import concept_priority
 
 MAX_CURRENT_FINANCIAL_AGE_DAYS = 550
 INFORMATIONAL_RECONCILIATION_CODES = {
+    "AS_OF_CUTOFF_FACTS_EXCLUDED",
     "SOURCE_FRAME_VARIANT_IGNORED",
     "PERIOD_TYPE_MISMATCH_IGNORED",
 }
@@ -360,9 +361,13 @@ def build_canonical_financials_from_facts(
     as_of_date: str,
     facts: Iterable[ParsedFact],
 ) -> tuple[CanonicalFinancials, list[dict]]:
-    facts = list(facts)
+    facts, cutoff_warnings = _filter_facts_available_as_of(
+        facts,
+        as_of_date=as_of_date,
+    )
     restated = prefer_restatement(facts)
     deduped, warnings = deduplicate_facts(restated)
+    warnings = [*cutoff_warnings, *warnings]
     candidates_by_metric: dict[str, list[CanonicalMetric]] = defaultdict(list)
 
     for fact in deduped:
@@ -385,6 +390,75 @@ def build_canonical_financials_from_facts(
         ),
         _coalesce_share_scale_warnings(warnings),
     )
+
+
+def _filter_facts_available_as_of(
+    facts: Iterable[ParsedFact],
+    *,
+    as_of_date: str,
+) -> tuple[list[ParsedFact], list[dict]]:
+    """Exclude SEC facts that were not knowable at the analysis cutoff."""
+
+    cutoff = _valid_iso_date(as_of_date)
+    if cutoff is None:
+        raise ValueError(f"Invalid canonical financials as_of_date: {as_of_date!r}")
+
+    eligible: list[ParsedFact] = []
+    future: list[ParsedFact] = []
+    invalid_dates: list[ParsedFact] = []
+    for fact in facts:
+        if fact.source_type != "sec_filing":
+            eligible.append(fact)
+            continue
+        filed = _valid_iso_date(fact.filed)
+        period_end = _valid_iso_date(fact.end)
+        if filed is None or period_end is None:
+            invalid_dates.append(fact)
+        elif filed > cutoff or period_end > cutoff:
+            future.append(fact)
+        else:
+            eligible.append(fact)
+
+    warnings: list[dict] = []
+    if future:
+        warnings.append(
+            {
+                "severity": "info",
+                "code": "AS_OF_CUTOFF_FACTS_EXCLUDED",
+                "count": len(future),
+                "metrics": sorted({fact.metric_name for fact in future}),
+                "accessions": sorted(
+                    {fact.accession for fact in future if fact.accession}
+                ),
+                "latest_filed_date": max(
+                    fact.filed for fact in future if fact.filed
+                ),
+                "latest_period_end": max(
+                    fact.end for fact in future if fact.end
+                ),
+                "message": (
+                    f"Excluded {len(future)} SEC facts filed or ending after "
+                    f"the analysis cutoff {as_of_date}."
+                ),
+            }
+        )
+    if invalid_dates:
+        warnings.append(
+            {
+                "severity": "warning",
+                "code": "SEC_FACT_DATE_INVALID_EXCLUDED",
+                "count": len(invalid_dates),
+                "metrics": sorted({fact.metric_name for fact in invalid_dates}),
+                "accessions": sorted(
+                    {fact.accession for fact in invalid_dates if fact.accession}
+                ),
+                "message": (
+                    f"Excluded {len(invalid_dates)} SEC facts without valid filed "
+                    "and period-end dates; point-in-time availability cannot be proven."
+                ),
+            }
+        )
+    return eligible, warnings
 
 
 def _coalesce_share_scale_warnings(warnings: list[dict]) -> list[dict]:

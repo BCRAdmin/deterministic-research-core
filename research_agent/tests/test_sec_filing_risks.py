@@ -60,6 +60,21 @@ def test_extracts_only_substantive_risk_headings():
     ]
 
 
+def test_rejects_lowercase_risk_fragment_from_broken_filing_boundary():
+    html = """
+    <html><body>
+      <div><strong>Item 1A. Risk Factors</strong></div>
+      <p><strong>us, our business and results of operations could be adversely affected by disruptions.</strong></p>
+      <p><strong>Our business could be adversely affected by intense competition.</strong></p>
+      <div><strong>Item 1B. Unresolved Staff Comments</strong></div>
+    </body></html>
+    """
+
+    assert extract_sec_risk_headings(html) == [
+        "Our business could be adversely affected by intense competition."
+    ]
+
+
 def test_extracts_emphasized_title_case_risks_without_terminal_periods():
     html = """
     <html><body>

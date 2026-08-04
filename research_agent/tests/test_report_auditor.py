@@ -204,6 +204,17 @@ def test_current_ratio_threshold_is_not_mapped_to_rsi_or_a_reported_value():
     assert not audit.has_issue("NUMERIC_MISMATCH")
 
 
+def test_auditor_blocks_lowercase_issuer_risk_fragment():
+    audit = audit_markdown_report(
+        "Issuer-disclosed risk: us, our business could be adversely affected.",
+        simple_metrics(ticker="PLTR"),
+        ticker="PLTR",
+    )
+
+    assert audit.has_blocking_errors is True
+    assert audit.has_issue("MALFORMED_RISK_FRAGMENT")
+
+
 def test_auditor_maps_each_matching_quarter_percentage_to_nearest_growth_metric():
     metrics = simple_metrics(ticker="GENERIC")
     metrics.fundamentals.current_period_revenue_growth_yoy = -0.014

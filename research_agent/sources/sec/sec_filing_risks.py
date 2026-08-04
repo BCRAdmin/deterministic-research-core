@@ -669,6 +669,8 @@ def _is_risk_heading(text: str, *, emphasized: bool = False) -> bool:
     minimum_length = 20 if emphasized else 40
     if not minimum_length <= len(stripped) <= 320:
         return False
+    if stripped[0].islower():
+        return False
     if (
         _compact_heading(stripped)
         in {
