@@ -900,16 +900,17 @@ def _require_current_sec_financial_filing_coverage(
     latest_results = _latest_sec_results_announcement(submissions, as_of_date)
     if latest_results is not None and (
         latest is None
-        or latest_results["filing_date"] > latest["filing_date"]
+        or latest_results["filing_date"] >= latest["filing_date"]
     ):
         raise CurrentResearchError(
             f"{ticker} hat mit dem 8-K vom {latest_results['filing_date']} "
-            "neuere Ergebnisse nach SEC Item 2.02 veröffentlicht. Diese Zahlen "
+            "gleichzeitig oder nach dem jüngsten 10-Q/10-K Ergebnisse nach SEC "
+            "Item 2.02 veröffentlicht. Diese Zahlen "
             "sind noch nicht über den standardisierten CompanyFacts-Pfad "
-            "integriert. Room16 startet keine Analyse mit dem älteren Quartal "
-            "als angeblich aktuellem Finanzstand. Bitte den Lauf nach dem neuen "
-            "10-Q/10-K oder nach Integration des generischen 8-K-Ergebniswegs "
-            "erneut starten."
+            "integriert. Room16 startet keine angeblich vollständige Analyse, "
+            "solange diese offizielle Ergebnisquelle fehlt. Bitte den Lauf nach "
+            "einem späteren 10-Q/10-K oder nach Integration des generischen "
+            "8-K-Ergebniswegs erneut starten."
         )
     if latest is None:
         return None

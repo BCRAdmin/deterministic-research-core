@@ -1223,6 +1223,17 @@ def test_mixed_profit_declines_remain_visible_across_thesis_bear_and_rating():
     assert "current_period_operating_income_growth_yoy" in final_claim.metric_refs
     assert "current_period_net_income_growth_yoy" in final_claim.metric_refs
     assert "are measured counterevidence" in rating
+    research_report = compose_research_report(
+        data,
+        metrics,
+        validation,
+        decision,
+        ledger,
+        claims,
+    )
+    assert "Current-period operating-income and net-income declines" in research_report
+    assert "positive FCF and the bullish technical direction" in research_report
+    assert "A raw multiple or an isolated price signal" not in research_report
 
 
 def test_missing_fcf_keeps_profit_declines_visible_across_complete_report_logic():

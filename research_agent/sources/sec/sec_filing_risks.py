@@ -95,7 +95,9 @@ _BUSINESS_CONTEXT_IDENTITY = re.compile(
 _BUSINESS_CONTEXT_AS_IDENTITY = re.compile(
     r"^as\s+(?:an?|one of the)\s+.{0,100}\b"
     r"(?:airline|company|developer|manufacturer|operator|provider|retailer)\b"
-    r".{0,100},\s+(?:we|the company|the issuer)\b",
+    r".{0,100},\s+(?:we|the company|the issuer)\s+"
+    r"(?:build|connect|create|deliver|design|develop|distribute|manufacture|"
+    r"market|offer|operate|provide|sell|serve)\b",
     re.IGNORECASE,
 )
 _BUSINESS_CONTEXT_NAMED_IDENTITY = re.compile(

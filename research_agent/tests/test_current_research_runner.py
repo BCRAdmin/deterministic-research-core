@@ -155,13 +155,15 @@ class _FakeSecWithLaggingCompanyFacts(_FakeSecWithRisks):
 
 
 class _FakeSecWithNewerResults8K(_FakeSecWithQuarterAndAnnualRisks):
+    results_filing_date = "2026-07-24"
+
     def get_submissions(self, cik):
         return {
             "filings": {
                 "recent": {
                     "form": ["8-K", "10-Q", "10-K"],
                     "filingDate": [
-                        "2026-07-24",
+                        self.results_filing_date,
                         "2026-07-20",
                         "2026-02-20",
                     ],
@@ -184,6 +186,10 @@ class _FakeSecWithNewerResults8K(_FakeSecWithQuarterAndAnnualRisks):
                 }
             }
         }
+
+
+class _FakeSecWithSameDayResults8K(_FakeSecWithNewerResults8K):
+    results_filing_date = "2026-07-20"
 
 
 class _FakeIfrsSec(_FakeSec):
@@ -573,14 +579,18 @@ def test_current_runner_blocks_when_latest_sec_financials_are_not_in_companyfact
     _assert_no_run_dirs(tmp_path)
 
 
-def test_current_runner_blocks_newer_sec_results_announcement_before_pipeline(
-    tmp_path,
+@pytest.mark.parametrize(
+    "sec_client",
+    [_FakeSecWithNewerResults8K(), _FakeSecWithSameDayResults8K()],
+)
+def test_current_runner_blocks_same_day_or_newer_sec_results_before_pipeline(
+    tmp_path, sec_client,
 ):
     with pytest.raises(CurrentResearchError, match="Item 2.02"):
         run_current_research(
             _request(tmp_path),
             price_provider=_FakePrices(),
-            sec_client=_FakeSecWithNewerResults8K(),
+            sec_client=sec_client,
         )
 
     _assert_no_run_dirs(tmp_path)

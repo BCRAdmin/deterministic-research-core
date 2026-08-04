@@ -10,6 +10,9 @@ from research_agent.research_core.models.claims import ResearchClaim
 from research_agent.research_core.models.data_packet import DataPacket
 from research_agent.research_core.models.metrics_packet import MetricsPacket
 from research_agent.research_core.models.validation_report import ValidationReport
+from research_agent.research_core.calculations.fundamentals import (
+    current_operating_profit_decline_metrics,
+)
 from research_agent.research_core.reporting.report_builder import render_metric_table
 
 
@@ -320,14 +323,14 @@ def _render_final_rating_logic(
         valuation_line = "- Valuation status: benchmarked evidence is neutral."
     current_profit_declines = [
         label
-        for label, value in (
+        for label, metric_name in (
             (
                 "operating-income",
-                f.current_period_operating_income_growth_yoy,
+                "current_period_operating_income_growth_yoy",
             ),
-            ("net-income", f.current_period_net_income_growth_yoy),
+            ("net-income", "current_period_net_income_growth_yoy"),
         )
-        if value is not None and value < 0
+        if metric_name in current_operating_profit_decline_metrics(f)
     ]
     if current_profit_declines and f.free_cash_flow_ttm is None:
         decline_text = " and ".join(current_profit_declines)
@@ -350,6 +353,30 @@ def _render_final_rating_logic(
             "the cause or durability of the weakness; a more cautious rating "
             "requires persistence or corroborating cash-flow deterioration once "
             "cash conversion is measurable."
+        )
+    elif (
+        current_profit_declines
+        and f.free_cash_flow_ttm is not None
+        and f.free_cash_flow_ttm > 0
+    ):
+        decline_text = " and ".join(current_profit_declines)
+        counterevidence_subject = (
+            "positive FCF and the bullish technical direction are"
+            if scores.technical_score > 0
+            else "positive FCF is"
+        )
+        why_not_constructive = (
+            f"- Why not more constructive? Current-period {decline_text} declines "
+            "are current downside evidence; positive FCF does not erase those "
+            "reported comparisons. A more constructive rating requires profit "
+            "comparisons to improve, that improvement to persist, and benchmarked "
+            "valuation support."
+        )
+        why_not_cautious = (
+            f"- Why not more cautious? The {decline_text} declines are not dismissed, "
+            f"but {counterevidence_subject} measured counterevidence. "
+            "A more cautious rating requires the profit weakness to persist or be "
+            "corroborated by weaker cash conversion."
         )
     else:
         why_not_constructive = (

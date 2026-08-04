@@ -571,6 +571,64 @@ def test_stale_debt_current_does_not_hide_current_short_term_debt():
     assert "debt_current" not in balance
 
 
+def test_stale_current_debt_prevents_noncurrent_debt_becoming_total_debt():
+    def instant_metric(metric_name, value, end_date, source_concept):
+        return CanonicalMetric(
+            metric_name=metric_name,
+            value=value,
+            unit="USD",
+            period=end_date,
+            period_bucket="instant",
+            end_date=end_date,
+            basis="gaap",
+            statement_type="balance_sheet",
+            source_ids=[f"SEC_{metric_name}"],
+            evidence_ids=[f"EVIDENCE_{metric_name}"],
+            confidence="high",
+            source_concept=source_concept,
+        )
+
+    canonical = CanonicalFinancials(
+        ticker="BASE",
+        as_of_date="2026-07-31",
+        metrics=[
+            instant_metric(
+                "total_debt", 7_986, "2025-12-31", "us-gaap:LongTermDebt"
+            ),
+            instant_metric(
+                "debt_current", 1_115, "2025-12-31", "us-gaap:LongTermDebtCurrent"
+            ),
+            instant_metric(
+                "debt_noncurrent",
+                7_823,
+                "2026-06-30",
+                "us-gaap:LongTermDebtNoncurrent",
+            ),
+            instant_metric(
+                "cash_and_equivalents",
+                1_370,
+                "2026-06-30",
+                "us-gaap:CashAndCashEquivalentsAtCarryingValue",
+            ),
+        ],
+    )
+
+    fundamentals = canonical_financials_to_fundamentals(canonical)
+    balance = fundamentals["balance_sheet"]
+    metrics = calculate_fundamental_metrics(fundamentals)
+
+    assert balance["debt_noncurrent"] == 7_823
+    assert "debt_current" not in balance
+    assert "total_debt" not in balance
+    assert metrics.total_debt is None
+    assert metrics.net_cash is None
+    assert fundamentals["reconciliation_resolutions"]["total_debt"] == {
+        "status": "withheld_incomplete_current_components",
+        "period_end": "2026-06-30",
+        "source_concept": "us-gaap:LongTermDebtNoncurrent",
+    }
+
+
 def test_duplicate_short_term_debt_alias_is_not_double_counted():
     def instant_metric(metric_name, value, source_concept):
         return CanonicalMetric(

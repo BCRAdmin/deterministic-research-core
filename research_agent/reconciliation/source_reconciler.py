@@ -1138,18 +1138,39 @@ def _derive_debt_and_lease_totals(
             component_values["short_term_debt"] = short_term.value
         elif _duplicate_debt_component(current, short_term):
             balance.pop("short_term_debt", None)
-        use_components = (
-            aggregate is None
-            or (
-                latest_component_date is not None
-                and (aggregate.end_date or "") < latest_component_date
-            )
-            or (
-                len(component_values) > 1
-                and latest_component_date is not None
-                and (aggregate.end_date or "") == latest_component_date
+        excluded_current_component = (
+            current is None
+            and short_term is None
+            and (
+                bool(canonical.metrics_for("debt_current"))
+                or bool(canonical.metrics_for("short_term_debt"))
             )
         )
+        use_components = (
+            not excluded_current_component
+            and (
+                aggregate is None
+                or (
+                    latest_component_date is not None
+                    and (aggregate.end_date or "") < latest_component_date
+                )
+                or (
+                    len(component_values) > 1
+                    and latest_component_date is not None
+                    and (aggregate.end_date or "") == latest_component_date
+                )
+            )
+        )
+        if excluded_current_component and aggregate is None:
+            balance.pop("total_debt", None)
+            fundamentals["reconciliation_material_dates"].pop("total_debt", None)
+            fundamentals.setdefault("reconciliation_resolutions", {})[
+                "total_debt"
+            ] = {
+                "status": "withheld_incomplete_current_components",
+                "period_end": noncurrent.end_date,
+                "source_concept": noncurrent.source_concept,
+            }
         if use_components:
             balance["total_debt"] = sum(component_values.values())
             fundamentals["reconciliation_material_dates"]["total_debt"] = (
