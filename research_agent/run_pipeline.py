@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from math import isclose
 from pathlib import Path
 from typing import Any, Optional
 
@@ -778,6 +779,11 @@ def _load_source_ingestion_inputs(ticker: str, as_of_date: str, config: ReportCo
     evidence_items = _price_evidence_items(ticker, prices, config)
     canonical_financials = None
     reconciliation_warnings: list[dict] = []
+    results_release_payload = (
+        _read_ir_release_payload(Path(config.sec_results_release_path))
+        if config.sec_results_release_path
+        else None
+    )
     if config.cik_records_path:
         cik_mapper = load_cik_mapper(config.cik_records_path)
         fundamentals["company_name"] = cik_mapper.get_company_name(ticker)
@@ -817,6 +823,14 @@ def _load_source_ingestion_inputs(ticker: str, as_of_date: str, config: ReportCo
             companyfacts_json=raw,
             supplemental_facts=supplemental_facts,
         )
+        if results_release_payload is not None:
+            _exclude_reclassified_operating_income(
+                canonical_financials=canonical_financials,
+                sec_metrics=sec_metrics,
+                evidence_items=evidence_items,
+                results_release_payload=results_release_payload,
+                warnings=reconciliation_warnings,
+            )
         fundamentals.update(sec_metrics)
         canonical_fundamentals = canonical_financials_to_fundamentals(
             canonical_financials
@@ -881,11 +895,11 @@ def _load_source_ingestion_inputs(ticker: str, as_of_date: str, config: ReportCo
             reconciliation_warnings.extend(
                 canonical_fundamentals.get("reconciliation_issues", [])
             )
-    if config.sec_results_release_path:
+    if results_release_payload is not None:
         results_fundamentals, results_evidence, results_canonical = (
             _load_release_payload_inputs(
                 ticker,
-                _read_ir_release_payload(Path(config.sec_results_release_path)),
+                results_release_payload,
             )
         )
         _merge_fundamentals(fundamentals, results_fundamentals)
@@ -960,6 +974,139 @@ def _build_canonical_from_companyfacts(
         facts.extend(parser.get_facts_for_metric(metric))
     facts.extend(supplemental_facts or [])
     return build_canonical_financials_from_facts(ticker=ticker, as_of_date=as_of_date, facts=facts)
+
+
+def _exclude_reclassified_operating_income(
+    *,
+    canonical_financials: CanonicalFinancials,
+    sec_metrics: dict[str, Any],
+    evidence_items: list[EvidenceItem],
+    results_release_payload: dict[str, Any],
+    warnings: list[dict],
+) -> bool:
+    """Exclude a CompanyFacts concept proven to represent segment profit.
+
+    CompanyFacts omits statement context. Some filings therefore expose a
+    note-table ``OperatingIncomeLoss`` fact that is actually the issuer's
+    non-GAAP segment profit. The Item 2.02 summary is used only as a control:
+    exclusion requires the same-period revenue scale to match, the CompanyFacts
+    value to equal segment profit, and a distinct reported operating-income value.
+    """
+
+    contract = results_release_payload.get("result_contract")
+    contract = contract if isinstance(contract, dict) else {}
+    controls = contract.get("companyfacts_controls")
+    controls = controls if isinstance(controls, dict) else {}
+    raw_revenue = controls.get("current_quarter_revenue")
+    raw_operating_income = controls.get("current_quarter_operating_income")
+    raw_segment_profit = controls.get("current_quarter_segment_profit")
+    if not all(
+        isinstance(value, (int, float)) and not isinstance(value, bool)
+        for value in (raw_revenue, raw_operating_income, raw_segment_profit)
+    ):
+        return False
+    period_end = str(contract.get("period_end_date") or "")
+    revenue = next(
+        (
+            metric
+            for metric in canonical_financials.metrics
+            if metric.metric_name == "revenue"
+            and metric.period_bucket == "quarterly"
+            and metric.end_date == period_end
+        ),
+        None,
+    )
+    operating_income = next(
+        (
+            metric
+            for metric in canonical_financials.metrics
+            if metric.metric_name == "operating_income"
+            and metric.period_bucket == "quarterly"
+            and metric.end_date == period_end
+        ),
+        None,
+    )
+    if revenue is None or operating_income is None:
+        return False
+    scale = next(
+        (
+            candidate
+            for candidate in (1.0, 1_000.0, 1_000_000.0, 1_000_000_000.0)
+            if isclose(
+                revenue.value,
+                float(raw_revenue) * candidate,
+                rel_tol=1e-9,
+                abs_tol=1.0,
+            )
+        ),
+        None,
+    )
+    if scale is None:
+        return False
+    segment_profit = float(raw_segment_profit) * scale
+    reported_operating_income = float(raw_operating_income) * scale
+    if (
+        isclose(segment_profit, reported_operating_income, rel_tol=1e-9, abs_tol=1.0)
+        or not isclose(
+            operating_income.value,
+            segment_profit,
+            rel_tol=1e-9,
+            abs_tol=1.0,
+        )
+        or isclose(
+            operating_income.value,
+            reported_operating_income,
+            rel_tol=1e-9,
+            abs_tol=1.0,
+        )
+    ):
+        return False
+
+    source_concept = operating_income.source_concept
+    excluded = [
+        metric
+        for metric in canonical_financials.metrics
+        if metric.metric_name == "operating_income"
+        and metric.source_concept == source_concept
+    ]
+    if not excluded:
+        return False
+    canonical_financials.metrics = [
+        metric for metric in canonical_financials.metrics if metric not in excluded
+    ]
+    for key in list(sec_metrics):
+        if key.startswith("operating_income_"):
+            sec_metrics.pop(key, None)
+    quarterly = sec_metrics.get("quarterly")
+    if isinstance(quarterly, dict):
+        quarterly.pop("operating_income", None)
+    evidence_items[:] = [
+        item
+        for item in evidence_items
+        if not {
+            "operating_income",
+            "operating_income_ttm",
+        }.intersection(item.supports_metrics)
+    ]
+    warnings.append(
+        {
+            "severity": "warning",
+            "code": "SEC_OPERATING_INCOME_CONTEXT_MISMATCH_EXCLUDED",
+            "metric": "operating_income",
+            "end_date": period_end,
+            "source_concept": source_concept,
+            "companyfacts_value": operating_income.value,
+            "issuer_reported_operating_income": reported_operating_income,
+            "issuer_reported_segment_profit": segment_profit,
+            "excluded_fact_count": len(excluded),
+            "message": (
+                "Excluded the SEC CompanyFacts operating-income concept because "
+                "the same-period Item 2.02 summary proves that its value is segment "
+                "profit, not reported operating income."
+            ),
+        }
+    )
+    return True
 
 
 def _price_evidence_items(

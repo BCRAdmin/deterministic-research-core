@@ -28,7 +28,11 @@ def test_manual_review_can_have_high_internal_quality():
         decision_packet=_decision("RKLB", Rating.HOLD),
         final_markdown=_strong_rklb_internal_text(),
         reconciliation_warnings=[
-            {"code": "TRUE_SOURCE_VALUE_DISAGREEMENT", "severity": "warning", "count": 2}
+            {"code": "TRUE_SOURCE_VALUE_DISAGREEMENT", "severity": "warning", "count": 2},
+            {
+                "code": "SEC_OPERATING_INCOME_CONTEXT_MISMATCH_EXCLUDED",
+                "severity": "warning",
+            },
         ],
         analyst_claim_count=24,
         substantive_analyst_claim_count=16,
@@ -65,6 +69,10 @@ def test_manual_review_can_have_high_internal_quality():
     assert 60 <= quality.publish_quality_score <= 70
     assert 75 <= quality.internal_research_quality_score <= 85
     assert quality.external_display_rating == "Manual Review / Hold Pending FCF and Execution Evidence"
+    assert (
+        "SEC_OPERATING_INCOME_CONTEXT_MISMATCH_EXCLUDED"
+        in quality.manual_review_reasons
+    )
 
 
 def test_rgti_vendor_only_low_publish_but_useful_internal():

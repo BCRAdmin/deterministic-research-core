@@ -111,7 +111,7 @@ def run_all_validations(
     if (
         data_packet.price_basis.corporate_action_count > 0
         and data_packet.price_basis.series_adjustment_status
-        != "corporate_action_adjusted"
+        not in {"corporate_action_adjusted", "post_corporate_action_only"}
     ):
         raw_issues.append({
             "severity": "error",

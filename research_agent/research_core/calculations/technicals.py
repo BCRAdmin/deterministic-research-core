@@ -145,10 +145,19 @@ def calculate_technical_metrics(
         key.replace("distance_to_", ""): value for key, value in distances.items()
     }
 
+    price_series_basis = "corporate_action_adjusted" if uses_adjusted else "unadjusted_or_provider_default"
+    if (
+        not uses_adjusted
+        and data_packet is not None
+        and data_packet.price_basis.series_adjustment_status
+        == "post_corporate_action_only"
+    ):
+        price_series_basis = "post_corporate_action_only"
+
     return TechnicalMetrics(
         indicator_date=latest_date,
         close=latest_close,
-        price_series_basis="corporate_action_adjusted" if uses_adjusted else "unadjusted_or_provider_default",
+        price_series_basis=price_series_basis,
         corporate_action_count=(
             data_packet.price_basis.corporate_action_count if data_packet is not None else 0
         ),

@@ -31,6 +31,7 @@ _BUSINESS_CONTEXT_EVENT_TYPES = {"business_context", "business_model"}
 _CATALYST_EVENT_TYPES = {
     "acquisition",
     "company_outlook",
+    "corporate_action",
     "divestiture",
     "leadership",
     "partnership",
@@ -725,6 +726,7 @@ class _ClaimBuilder:
         current_period_loss_phrase = _current_period_loss_phrase(
             current_period_loss_metrics
         )
+        bull_additional_evidence: list[EvidenceItem] = []
         if growth_metrics:
             growth_values = {
                 metric: self._metric_value(metric) for metric in growth_metrics
@@ -757,6 +759,9 @@ class _ClaimBuilder:
                 self.metrics.fundamentals
             )
             if growth_divergence:
+                profit_context = self._nonrecurring_profit_context()
+                if profit_context is not None:
+                    bull_additional_evidence.append(profit_context)
                 divergence_text = " and ".join(
                     _growth_metric_phrase(metric, growth_values[metric])
                     for metric in growth_divergence
@@ -819,14 +824,24 @@ class _ClaimBuilder:
                         "Revenue TTM establishes scale, while unavailable FCF cannot "
                         "support a cash-conversion conclusion."
                     )
+                if profit_context is not None:
+                    review_context = (
+                        "base-effect or one-off review. "
+                        f"{profit_context.statement.strip()} "
+                        f"Accordingly, {guarded_reference} {guarded_verb} not establish "
+                        "operating business direction."
+                    )
+                else:
+                    review_context = (
+                        "base-effect or one-off review; without causal filing evidence "
+                        f"in the current packet, {guarded_reference} {guarded_verb} not "
+                        "establish operating business direction."
+                    )
                 bull_text = (
                     f"{comparison_label} evidence reports {growth_text}. "
                     f"{divergence_subject} {divergence_verb} from revenue growth "
-                    f"and {requirement_verb} "
-                    "base-effect or one-off review; without causal filing evidence "
-                    f"in the current packet, {guarded_reference} {guarded_verb} not establish "
-                    "operating business "
-                    f"direction.{separate_operating_direction} "
+                    f"and {requirement_verb} {review_context}"
+                    f"{separate_operating_direction} "
                     f"Revenue TTM is {self._money(self.metrics.fundamentals.revenue_ttm)} "
                     f"and FCF TTM is {self._money(fcf_value)}. {cash_context} A more "
                     "constructive rating still requires persistence and stronger "
@@ -1026,6 +1041,7 @@ class _ClaimBuilder:
                 "conversion or justify an unbenchmarked valuation."
             ),
             implication="The bull case remains a research scenario, not an action plan.",
+            additional_evidence=bull_additional_evidence,
         )
         self.add(
             "Bull Case",
@@ -1243,12 +1259,19 @@ class _ClaimBuilder:
         importance: str,
         counterargument: Optional[str] = None,
         implication: Optional[str] = None,
+        additional_evidence: Optional[list[EvidenceItem]] = None,
     ) -> None:
         if any(self._metric_value(metric) is None for metric in metrics):
             return
         evidence = self._evidence_for(metrics)
         if not evidence:
             return
+        evidence.extend(
+            item
+            for item in additional_evidence or []
+            if self.evidence_id_counts.get(item.evidence_id) == 1
+        )
+        evidence = list({item.evidence_id: item for item in evidence}.values())
         self.counter += 1
         claim_id = f"{self.data_packet.ticker}_CLAIM_{self.counter:03d}"
         self.claims.append(
@@ -1273,6 +1296,24 @@ class _ClaimBuilder:
                 counterargument=counterargument,
                 investment_implication=implication,
             )
+        )
+
+    def _nonrecurring_profit_context(self) -> Optional[EvidenceItem]:
+        pattern = re.compile(
+            r"\b(?:one[- ]time|non[- ]recurring|deconsolidation|"
+            r"gain on (?:the )?(?:sale|disposal))\b",
+            re.IGNORECASE,
+        )
+        return next(
+            (
+                item
+                for item in self.ledger.evidence_items
+                if item.claim_type in {"event", "news"}
+                and item.authority_rank <= 2
+                and self.evidence_id_counts.get(item.evidence_id) == 1
+                and pattern.search(item.statement)
+            ),
+            None,
         )
 
     def _metric_value(self, metric_name: str) -> Optional[float]:
@@ -2574,6 +2615,10 @@ def _issuer_operating_result_specs(
     )
     adjusted_eps = canonical_financials.get_metric("adjusted_eps_diluted")
     adjusted_eps_growth = canonical_financials.get_metric("adjusted_eps_growth_yoy")
+    segment_margin = canonical_financials.get_metric("current_period_segment_margin")
+    segment_margin_change = canonical_financials.get_metric(
+        "current_period_segment_margin_change_yoy"
+    )
     result_quality_metrics = [
         metric.metric_name
         for metric in (
@@ -2623,6 +2668,47 @@ def _issuer_operating_result_specs(
                 "implication": (
                     "Read the GAAP decline together with the filed margin and adjusted "
                     "EPS bridge before assigning an operating direction."
+                ),
+            }
+        )
+    elif (
+        segment_margin is not None
+        and segment_margin_change is not None
+        and adjusted_eps is not None
+    ):
+        margin_direction = "expanded" if segment_margin_change.value >= 0 else "contracted"
+        eps_clause = f" Adjusted EPS was {_money(adjusted_eps.value, currency)}"
+        if adjusted_eps_growth is not None:
+            eps_clause += f", a year-over-year change of {_pct(adjusted_eps_growth.value)}"
+        eps_clause += "."
+        specs.append(
+            {
+                "section": "Business & Segment Context",
+                "kind": "current_period",
+                "evidence_type": "financial_metric",
+                "text": (
+                    f"{ticker} issuer-filed current-quarter segment margin was "
+                    f"{_pct(segment_margin.value)} and {margin_direction} by "
+                    f"{abs(segment_margin_change.value) * 100:.1f} percentage points "
+                    f"year over year.{eps_clause}"
+                ),
+                "metrics": [
+                    "current_period_segment_margin",
+                    "current_period_segment_margin_change_yoy",
+                    "adjusted_eps_diluted",
+                    *(
+                        ["adjusted_eps_growth_yoy"]
+                        if adjusted_eps_growth is not None
+                        else []
+                    ),
+                ],
+                "counterargument": (
+                    "Segment margin and adjusted results are issuer-defined non-GAAP "
+                    "measures and do not replace the GAAP profit comparison."
+                ),
+                "implication": (
+                    "Read the margin change and adjusted EPS together with the filed "
+                    "GAAP operating result before assigning an operating direction."
                 ),
             }
         )
@@ -2721,11 +2807,15 @@ def _issuer_operating_result_specs(
             )
 
     guidance_ranges = []
-    for base, label in (
-        ("net_sales_growth", "net-sales growth"),
-        ("revenue_growth", "revenue growth"),
-        ("organic_sales_growth", "organic-sales growth"),
-        ("organic_revenue_growth", "organic-revenue growth"),
+    for base, label, formatter in (
+        ("revenue", "sales", lambda value: _money(value, currency)),
+        ("net_sales_growth", "net-sales growth", _pct),
+        ("revenue_growth", "revenue growth", _pct),
+        ("organic_sales_growth", "organic-sales growth", _pct),
+        ("organic_revenue_growth", "organic-revenue growth", _pct),
+        ("segment_margin", "segment margin", _pct),
+        ("adjusted_eps", "adjusted EPS", lambda value: _money(value, currency)),
+        ("adjusted_eps_growth", "adjusted-EPS growth", _pct),
     ):
         low_name = f"guidance_{base}_low"
         high_name = f"guidance_{base}_high"
@@ -2733,18 +2823,14 @@ def _issuer_operating_result_specs(
         high = canonical_financials.get_metric(high_name)
         if low is None or high is None or low.period != high.period:
             continue
-        guidance_ranges.append((low_name, high_name, label, low, high))
+        guidance_ranges.append((low_name, high_name, label, formatter, low, high))
     if guidance_ranges:
         phrases = [
-            f"{label} of {_pct(low.value)} to {_pct(high.value)}"
-            for _, _, label, low, high in guidance_ranges[:2]
+            f"{label} of {formatter(low.value)} to {formatter(high.value)}"
+            for _, _, label, formatter, low, high in guidance_ranges[:4]
         ]
-        guidance_text = (
-            phrases[0]
-            if len(phrases) == 1
-            else f"{phrases[0]} and {phrases[1]}"
-        )
-        guidance_period = guidance_ranges[0][3].period
+        guidance_text = phrases[0] if len(phrases) == 1 else ", ".join(phrases[:-1]) + f" and {phrases[-1]}"
+        guidance_period = guidance_ranges[0][4].period
         specs.append(
             {
                 "section": "Catalysts & Triggers",
@@ -2756,7 +2842,7 @@ def _issuer_operating_result_specs(
                 ),
                 "metrics": [
                     metric_name
-                    for low_name, high_name, _, _, _ in guidance_ranges[:2]
+                    for low_name, high_name, _, _, _, _ in guidance_ranges[:4]
                     for metric_name in (low_name, high_name)
                 ],
                 "counterargument": (

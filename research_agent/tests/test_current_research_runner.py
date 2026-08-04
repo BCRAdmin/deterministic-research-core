@@ -7,10 +7,15 @@ import pytest
 
 from research_agent.current import runner
 from research_agent.current.runner import (
+    _bound_price_history_after_corporate_actions,
     CurrentResearchError,
     CurrentResearchRequest,
     run_current_research,
 )
+from research_agent.research_core.calculations.technicals import (
+    calculate_technical_metrics,
+)
+from research_agent.research_core.models.data_packet import DataPacket, PriceBasis
 from research_agent.evidence.evidence_item import EvidenceItem
 from research_agent.evidence.evidence_ledger import EvidenceLedger
 from research_agent.run_pipeline import (
@@ -52,6 +57,45 @@ class _FakeSec:
 
     def get_submissions(self, cik):
         return {"filings": {"recent": {"filingDate": ["2026-07-20"]}}}
+
+
+def test_corporate_action_bounds_unadjusted_prices_before_technicals():
+    prices = pd.DataFrame(
+        {
+            "date": ["2026-06-27", "2026-06-29", "2026-06-30", "2026-07-01"],
+            "open": [400.0, 250.0, 251.0, 252.0],
+            "high": [401.0, 251.0, 252.0, 253.0],
+            "low": [399.0, 249.0, 250.0, 251.0],
+            "close": [400.0, 250.0, 251.0, 252.0],
+            "volume": [1000, 1100, 1200, 1300],
+        }
+    )
+    payload = {
+        "events": [
+            {"event_type": "corporate_action", "date": "2026-06-29"},
+        ]
+    }
+
+    bounded = _bound_price_history_after_corporate_actions(prices, payload)
+    latest = bounded.iloc[-1]
+    data = DataPacket(
+        ticker="GENR",
+        as_of_date="2026-07-01",
+        price_basis=PriceBasis(
+            close=float(latest["close"]),
+            date=str(latest["date"]),
+            source="TEST_PRICE",
+            series_adjustment_status=str(latest["series_adjustment_status"]),
+            corporate_action_count=int(latest["corporate_action_count"]),
+        ),
+        source_registry_id="GENR_TEST",
+    )
+    technicals = calculate_technical_metrics(bounded, data_packet=data)
+
+    assert list(bounded["date"]) == ["2026-06-29", "2026-06-30", "2026-07-01"]
+    assert technicals.price_series_basis == "post_corporate_action_only"
+    assert technicals.corporate_action_count == 1
+    assert technicals.sma_50 is None
 
 
 class _FakeSecWithRisks(_FakeSec):

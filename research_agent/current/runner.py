@@ -549,6 +549,11 @@ def run_current_research(
         )
     start = (as_of - timedelta(days=request.lookback_calendar_days)).isoformat()
     prices = provider.get_history(symbol, start, request.as_of_date)
+    if results_release_payload is not None:
+        prices = _bound_price_history_after_corporate_actions(
+            prices,
+            results_release_payload,
+        )
 
     for path in (price_dir, packet_root, output_root):
         path.mkdir(parents=True, exist_ok=True)
@@ -741,6 +746,48 @@ def run_current_research(
     }
     _write_json(staging_dir / "current_ingestion_result.json", result)
     return result
+
+
+def _bound_price_history_after_corporate_actions(prices, payload: dict[str, Any]):
+    events = payload.get("events")
+    events = events if isinstance(events, list) else []
+    action_dates = sorted(
+        {
+            str(event.get("date") or "")
+            for event in events
+            if isinstance(event, dict)
+            and event.get("event_type") == "corporate_action"
+            and _is_valid_iso_date(str(event.get("date") or ""))
+        }
+    )
+    if not action_dates or prices.empty or "date" not in prices.columns:
+        return prices
+    bounded = prices.copy()
+    existing_status = str(
+        bounded.iloc[-1].get("series_adjustment_status") or ""
+    )
+    action_count = len(action_dates)
+    if existing_status == "corporate_action_adjusted":
+        bounded["corporate_action_count"] = action_count
+        return bounded
+    boundary = action_dates[-1]
+    bounded = bounded[bounded["date"].astype(str) >= boundary].copy()
+    if bounded.empty:
+        raise CurrentResearchError(
+            "Der offizielle Ergebnisbericht nennt eine Kapitalmaßnahme, aber die "
+            "Kursquelle enthält danach keine Beobachtung. Room16 berechnet keine "
+            "technischen Signale über eine nicht vergleichbare Kursreihe."
+        )
+    bounded["corporate_action_count"] = action_count
+    bounded["series_adjustment_status"] = "post_corporate_action_only"
+    return bounded
+
+
+def _is_valid_iso_date(value: str) -> bool:
+    try:
+        return date.fromisoformat(value).isoformat() == value
+    except ValueError:
+        return False
 
 
 def request_from_environment(

@@ -194,6 +194,15 @@ def _render_data_note(
             "reports multiple stock classes, while the packet has only one "
             "traded-class price and no verified cross-class price equivalence."
         )
+    if any(
+        warning.get("code") == "SEC_OPERATING_INCOME_CONTEXT_MISMATCH_EXCLUDED"
+        for warning in (reconciliation_warnings or [])
+    ):
+        lines.append(
+            "- Operating income and dependent EBITDA/EV multiples are unavailable "
+            "because the issuer filing proves that the SEC CompanyFacts value in "
+            "that context represents segment profit rather than reported operating income."
+        )
     return "\n".join(lines)
 
 

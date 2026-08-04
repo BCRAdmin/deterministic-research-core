@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 import unicodedata
 from collections import Counter
+from datetime import datetime
 from html.parser import HTMLParser
 from pathlib import PurePosixPath
 from typing import Any, Optional
@@ -34,7 +35,8 @@ _QUARTER_PATTERNS = (
 )
 _PERCENT = re.compile(
     r"(?P<leading>[+-]?)\s*(?P<open>\()?\s*"
-    r"(?P<value>[0-9]+(?:\.[0-9]+)?)\s*(?P<close>\))?\s*%"
+    r"(?P<value>[0-9]+(?:\.[0-9]+)?)\s*(?P<close_before>\))?\s*%"
+    r"(?P<close_after>\))?"
 )
 _BARE_PERCENT = re.compile(
     r"^\s*(?P<leading>[+-]?)\s*(?P<open>\()?\s*"
@@ -213,6 +215,7 @@ def build_sec_results_release_payload(
     metric_units: dict[str, str] = {}
     metric_bases: dict[str, str] = {}
     metric_period_buckets: dict[str, str] = {}
+    headline_controls: dict[str, float] = {}
 
     def add_value(
         metric_name: str,
@@ -233,9 +236,18 @@ def build_sec_results_release_payload(
         metric_bases[metric_name] = basis
         metric_period_buckets[metric_name] = period_bucket
 
+    headline_summary_extracted = False
     for table in parser.tables:
+        if not headline_summary_extracted:
+            headline_summary_extracted = _extract_headline_summary_metrics(
+                table,
+                add_value,
+                headline_controls,
+            )
         _extract_headline_operating_metrics(table, add_value)
         _extract_company_bridge_metrics(table, add_value)
+        _extract_sectioned_segment_metrics(table, add_value)
+        _extract_current_guidance_metrics(table, add_value)
     _extract_headline_block_metrics(parser.blocks, add_value)
 
     guidance_years: set[int] = set()
@@ -350,6 +362,15 @@ def build_sec_results_release_payload(
         retrieved_at=retrieved_at,
     )
     events.extend(directional)
+    events.extend(
+        _material_result_context_events(
+            parser.blocks,
+            source_id=source_id,
+            source_url=source_url,
+            filing_date=filing_date,
+            retrieved_at=retrieved_at,
+        )
+    )
     return {
         "source_id": source_id,
         "source_type": "sec_filing",
@@ -373,6 +394,7 @@ def build_sec_results_release_payload(
             "fiscal_period": fiscal_period,
             "period_end_date": period_end_date,
             "gaap_basis": "matching_companyfacts_filing",
+            "companyfacts_controls": headline_controls,
             "operating_metric_count": len(supported_operating),
             "guidance_metric_count": len(supported_guidance),
         },
@@ -446,6 +468,196 @@ def _extract_headline_operating_metrics(table, add_value) -> None:
         )
         if value is not None:
             add_value(metric_name, value)
+
+
+def _extract_headline_summary_metrics(table, add_value, controls: dict[str, float]) -> bool:
+    """Extract the first consolidated current/prior/change summary table.
+
+    Earnings releases can repeat the same layout for a post-separation or other
+    alternative perimeter. Requiring Sales and adjusted EPS, then accepting only
+    the first matching table, keeps those perimeters from being combined.
+    """
+
+    columns = _result_comparison_columns(table)
+    if columns is None:
+        return False
+    current_column, change_column = columns
+    rows = {
+        _clean_result_label(row[0]): row
+        for row in table
+        if row and row[0].strip()
+    }
+    if "sales" not in rows or "adjusted earnings per share" not in rows:
+        return False
+
+    for label, control_name in (
+        ("sales", "current_quarter_revenue"),
+        ("operating income", "current_quarter_operating_income"),
+        ("segment profit", "current_quarter_segment_profit"),
+    ):
+        row = rows.get(label)
+        if row is None or len(row) <= current_column:
+            continue
+        value = _money_value(row[current_column])
+        if value is not None:
+            controls[control_name] = value
+
+    sales_row = rows["sales"]
+    if len(sales_row) > change_column:
+        value = _percent_value(sales_row[change_column])
+        if value is not None:
+            add_value(
+                "reported_sales_growth",
+                value,
+                display_label="reported-sales growth",
+            )
+
+    organic_row = next(
+        (
+            row
+            for label, row in rows.items()
+            if label in {"organic growth", "organic sales growth", "organic revenue growth"}
+        ),
+        None,
+    )
+    if organic_row is not None and len(organic_row) > change_column:
+        value = _percent_value(organic_row[change_column])
+        if value is not None:
+            add_value(
+                "organic_revenue_growth"
+                if "revenue" in _clean_result_label(organic_row[0])
+                else "organic_sales_growth",
+                value,
+            )
+
+    segment_margin_row = rows.get("segment margin")
+    if segment_margin_row is not None:
+        if len(segment_margin_row) > current_column:
+            margin = _percent_value(segment_margin_row[current_column])
+            if margin is not None:
+                add_value(
+                    "current_period_segment_margin",
+                    margin,
+                    display_label="segment margin",
+                    basis="non_gaap",
+                )
+        if len(segment_margin_row) > change_column:
+            change = _basis_point_change(segment_margin_row[change_column])
+            if change is not None:
+                add_value(
+                    "current_period_segment_margin_change_yoy",
+                    change,
+                    display_label="segment-margin change",
+                    basis="non_gaap",
+                )
+
+    adjusted_eps_row = rows["adjusted earnings per share"]
+    if len(adjusted_eps_row) > current_column:
+        adjusted_eps = _money_value(adjusted_eps_row[current_column])
+        if adjusted_eps is not None:
+            add_value(
+                "adjusted_eps_diluted",
+                adjusted_eps,
+                display_label="adjusted diluted EPS",
+                unit="USD_per_share",
+                basis="non_gaap",
+            )
+    if len(adjusted_eps_row) > change_column:
+        eps_change = _percent_value(adjusted_eps_row[change_column])
+        if eps_change is not None:
+            add_value(
+                "adjusted_eps_growth_yoy",
+                eps_change,
+                display_label="adjusted diluted-EPS growth",
+                basis="non_gaap",
+            )
+    return True
+
+
+def _extract_sectioned_segment_metrics(table, add_value) -> None:
+    columns = _result_comparison_columns(table)
+    if columns is None:
+        return
+    _, change_column = columns
+    current_segment = ""
+    for row_index, row in enumerate(table):
+        if not row or not row[0].strip():
+            continue
+        label = _clean_result_label(row[0])
+        if row_index == 0 and len(row) > change_column:
+            current_segment = _clean_segment_label(row[0])
+            continue
+        if all(not cell.strip() for cell in row[1:]):
+            current_segment = _clean_segment_label(row[0])
+            continue
+        if label not in {
+            "organic growth",
+            "organic sales growth",
+            "organic revenue growth",
+        }:
+            continue
+        if not current_segment or len(row) <= change_column:
+            continue
+        value = _percent_value(row[change_column])
+        if value is None:
+            continue
+        metric_name = f"segment_organic_sales_growth_{_slug(current_segment)}"
+        add_value(metric_name, value, display_label=current_segment)
+
+
+def _extract_current_guidance_metrics(table, add_value) -> None:
+    guidance_column = next(
+        (
+            column
+            for row in table[:3]
+            for column, cell in enumerate(row)
+            if _clean_result_label(cell) in {"current guidance", "current outlook"}
+        ),
+        None,
+    )
+    if guidance_column is None:
+        return
+    definitions = {
+        "sales": ("revenue", "USD", "company_defined"),
+        "organic growth": ("organic_sales_growth", "percent", "company_defined"),
+        "organic sales growth": ("organic_sales_growth", "percent", "company_defined"),
+        "organic revenue growth": ("organic_revenue_growth", "percent", "company_defined"),
+        "segment margin": ("segment_margin", "percent", "non_gaap"),
+        "adjusted earnings per share": ("adjusted_eps", "USD_per_share", "non_gaap"),
+        "adjusted earnings growth": ("adjusted_eps_growth", "percent", "non_gaap"),
+    }
+    for row in table:
+        if not row or len(row) <= guidance_column:
+            continue
+        label = _clean_result_label(row[0])
+        definition = definitions.get(label)
+        if definition is None:
+            continue
+        metric_base, unit, basis = definition
+        cell = row[guidance_column]
+        metric_range = (
+            _percentage_range(cell)
+            if unit == "percent"
+            else _money_range(cell, require_scale=metric_base == "revenue")
+        )
+        if metric_range is None:
+            continue
+        low, high = sorted(metric_range)
+        display_label = label.replace("earnings per share", "EPS")
+        add_value(
+            f"guidance_{metric_base}_low",
+            low,
+            display_label=f"{display_label} guidance lower bound",
+            unit=unit,
+            basis=basis,
+        )
+        add_value(
+            f"guidance_{metric_base}_high",
+            high,
+            display_label=f"{display_label} guidance upper bound",
+            unit=unit,
+            basis=basis,
+        )
 
 
 def _extract_headline_block_metrics(blocks, add_value) -> None:
@@ -709,6 +921,38 @@ def _clean_label(value: str) -> str:
     return " ".join(text.casefold().replace("-", " ").split())
 
 
+def _clean_result_label(value: str) -> str:
+    text = re.sub(
+        r"(?<=[A-Za-z])\d+(?:,\d+)*(?=\s|$)",
+        "",
+        str(value or ""),
+    )
+    return _clean_label(text)
+
+
+def _result_comparison_columns(
+    table: list[list[str]],
+) -> Optional[tuple[int, int]]:
+    period_pattern = re.compile(r"^(?:[1-4]q|q[1-4])\s*20[0-9]{2}$", re.IGNORECASE)
+    for row in table[:4]:
+        period_columns = [
+            column
+            for column, cell in enumerate(row)
+            if period_pattern.fullmatch(_clean_result_label(cell))
+        ]
+        change_column = next(
+            (
+                column
+                for column, cell in enumerate(row)
+                if _clean_result_label(cell) == "change"
+            ),
+            None,
+        )
+        if period_columns and change_column is not None:
+            return period_columns[0], change_column
+    return None
+
+
 def _clean_segment_label(value: str) -> str:
     text = re.sub(r"\([0-9]+\)", "", str(value or ""))
     return " ".join(text.replace("*", " ").split()).strip(" ,;:-")
@@ -721,11 +965,66 @@ def _percent_value(value: str, *, allow_bare: bool = False) -> Optional[float]:
     if match is None:
         return None
     number = float(match.group("value")) / 100.0
-    if match.group("leading") == "-" or (
-        match.group("open") and match.group("close")
-    ):
+    groups = match.groupdict()
+    parenthesized = match.group("open") and any(
+        groups.get(name) for name in ("close_before", "close_after", "close")
+    )
+    if match.group("leading") == "-" or parenthesized:
         number = -number
     return number
+
+
+def _basis_point_change(value: str) -> Optional[float]:
+    text = " ".join(str(value or "").split())
+    match = re.search(r"([0-9]+(?:\.[0-9]+)?)\s*(?:basis points|bps)\b", text, re.IGNORECASE)
+    if match is None:
+        return None
+    number = float(match.group(1)) / 10_000.0
+    if text.lstrip().startswith(("-", "(")):
+        number = -number
+    return number
+
+
+def _money_value(value: str, *, scale: float = 1.0) -> Optional[float]:
+    text = " ".join(str(value or "").split())
+    match = re.search(
+        r"\$\s*(?P<open>\()?\s*(?P<value>[0-9][0-9,]*(?:\.[0-9]+)?)",
+        text,
+    )
+    if match is None:
+        return None
+    number = float(match.group("value").replace(",", "")) * scale
+    return -number if match.group("open") else number
+
+
+def _money_range(
+    value: str,
+    *,
+    require_scale: bool = False,
+) -> Optional[tuple[float, float]]:
+    text = " ".join(str(value or "").split())
+    matches = list(
+        re.finditer(
+            r"\$\s*([0-9]+(?:\.[0-9]+)?)\s*([BM])?",
+            text,
+            flags=re.IGNORECASE,
+        )
+    )
+    if len(matches) < 2:
+        return None
+    between = text[matches[0].end() : matches[1].start()].casefold()
+    if not re.search(r"(?:\bto\b|[-–—])", between):
+        return None
+    scales = [str(match.group(2) or "").upper() for match in matches[:2]]
+    inherited_scale = scales[0] or scales[1]
+    if require_scale and not inherited_scale:
+        return None
+    multipliers = {"": 1.0, "M": 1_000_000.0, "B": 1_000_000_000.0}
+    parsed = [
+        float(match.group(1)) * multipliers[scale or inherited_scale]
+        for match, scale in zip(matches[:2], scales)
+    ]
+    return parsed[0], parsed[1]
 
 
 def _percentage_range(value: str) -> Optional[tuple[float, float]]:
@@ -733,10 +1032,22 @@ def _percentage_range(value: str) -> Optional[tuple[float, float]]:
     if len(matches) < 2:
         return None
     between = value[matches[0].end() : matches[1].start()].casefold()
-    if not re.search(r"(?:\bto\b|\band\b|[-–—])", between):
+    hyphen_consumed_as_sign = (
+        not between.strip()
+        and matches[0].group("leading") != "-"
+        and matches[1].group("leading") == "-"
+    )
+    if not hyphen_consumed_as_sign and not re.search(
+        r"(?:\bto\b|\band\b|[-–—])",
+        between,
+    ):
         return None
     low = _percent_value(matches[0].group(0))
-    high = _percent_value(matches[1].group(0))
+    high = (
+        float(matches[1].group("value")) / 100.0
+        if hyphen_consumed_as_sign
+        else _percent_value(matches[1].group(0))
+    )
     if low is None or high is None:
         return None
     return low, high
@@ -832,9 +1143,101 @@ def _directional_guidance_events(
     return events
 
 
-def _metric_label(metric_name: str, segment_label: Optional[str]) -> str:
-    if segment_label:
-        return f"{segment_label} organic-sales growth"
+def _material_result_context_events(
+    blocks: list[str],
+    *,
+    source_id: str,
+    source_url: str,
+    filing_date: str,
+    retrieved_at: str,
+) -> list[dict[str, Any]]:
+    summaries: list[tuple[str, str, str]] = []
+    for block in blocks:
+        normalized = block.casefold()
+        if "spin-off" in normalized or "spin off" in normalized:
+            date_match = re.search(
+                r"\bon\s+(?P<date>(?:January|February|March|April|May|June|July|"
+                r"August|September|October|November|December)\s+[0-9]{1,2},\s+"
+                r"20[0-9]{2})\b",
+                block,
+                flags=re.IGNORECASE,
+            )
+            if date_match is not None:
+                effective_date = datetime.strptime(
+                    date_match.group("date"),
+                    "%B %d, %Y",
+                ).date().isoformat()
+                summaries.append(
+                    (
+                        effective_date,
+                        "corporate_action",
+                        "The issuer completed a spin-off during the reported quarter; "
+                        "pre- and post-transaction prices require an adjusted or "
+                        "date-bounded series.",
+                    )
+                )
+        if (
+            ("eps" in normalized or "earnings" in normalized or "net income" in normalized)
+            and "one-time gain" in normalized
+            and "deconsolidation" in normalized
+        ):
+            subject_match = re.search(
+                r"one-time gain on (?:the )?deconsolidation of "
+                r"(?P<subject>[A-Za-z0-9& .'-]{2,80}?)(?:,|;|\band\b|\.)",
+                block,
+                flags=re.IGNORECASE,
+            )
+            subject = (
+                " ".join(subject_match.group("subject").split())
+                if subject_match is not None
+                else "a former consolidated business"
+            )
+            summaries.append(
+                (
+                    filing_date,
+                    "business_context",
+                    "Management stated that reported earnings reflected a one-time "
+                    f"gain on the deconsolidation of {subject}.",
+                )
+            )
+        if (
+            "results refer to" in normalized
+            and "only" in normalized
+            and "excluding results attributable to" in normalized
+        ):
+            summaries.append(
+                (
+                    filing_date,
+                    "business_context",
+                    "The issuer states that the operating results and guidance use a "
+                    "continuing-company perimeter that excludes the separated business.",
+                )
+            )
+    return [
+        {
+            "event_type": event_type,
+            "date": event_date,
+            "headline": f"Issuer-filed result context {index}",
+            "summary": summary,
+            "material": True,
+            "source_id": source_id,
+            "source_type": "sec_filing",
+            "authority_rank": 1,
+            "url": source_url,
+            "retrieved_at": retrieved_at,
+        }
+        for index, (event_date, event_type, summary) in enumerate(
+            dict.fromkeys(summaries),
+            start=1,
+        )
+    ]
+
+
+def _metric_label(metric_name: str, display_label: Optional[str]) -> str:
+    if display_label:
+        if metric_name.startswith("segment_organic_sales_growth_"):
+            return f"{display_label} organic-sales growth"
+        return display_label
     labels = {
         "organic_sales_growth": "organic-sales growth",
         "organic_revenue_growth": "organic-revenue growth",

@@ -1,6 +1,11 @@
 import pytest
 
 from research_agent.run_pipeline import _load_release_payload_inputs
+from research_agent.run_pipeline import _exclude_reclassified_operating_income
+from research_agent.reconciliation.canonical_financials import (
+    CanonicalFinancials,
+    CanonicalMetric,
+)
 from research_agent.sources.sec.sec_results_release import (
     build_sec_results_release_payload,
     select_sec_results_exhibit,
@@ -43,6 +48,48 @@ KMB_STYLE_RESULT_HTML = """
 <div>2026 Outlook</div>
 <div>Adjusted Operating Profit is expected to grow at a mid-to-high single-digit rate on a constant-currency basis.</div>
 <div>Adjusted Earnings Per Share from Continuing Operations are expected to grow at a double-digit rate on a constant-currency basis.</div>
+</body></html>
+"""
+
+PERIMETER_AND_TABLE_GUIDANCE_HTML = """
+<html><body>
+<div>Second Quarter 2026 Consolidated Results</div>
+<div>The former segment successfully separated in a spin-off on June 29, 2026.</div>
+<div>EPS reflects the impact of a one-time gain on deconsolidation of ExampleCo, and adjusted EPS excludes that gain.</div>
+<div>Results refer to NewCo only, excluding results attributable to the separated business.</div>
+<table>
+  <tr><td></td><td>2Q 2026</td><td>2Q 2025</td><td>Change</td></tr>
+  <tr><td>Sales</td><td>$9,719</td><td>$9,322</td><td>4%</td></tr>
+  <tr><td>Organic1 Growth</td><td></td><td></td><td>4%</td></tr>
+  <tr><td>Operating Income</td><td>$1,737</td><td>$1,843</td><td>(6%)</td></tr>
+  <tr><td>Segment Profit1</td><td>$2,240</td><td>$2,128</td><td>5%</td></tr>
+  <tr><td>Segment Margin1</td><td>23.1%</td><td>22.8%</td><td>30 bps</td></tr>
+  <tr><td>Adjusted Earnings Per Share1</td><td>$4.52</td><td>$4.72</td><td>(4%)</td></tr>
+</table>
+<div>Second Quarter 2026 Alternative Perimeter</div>
+<table>
+  <tr><td></td><td>2Q 2026</td><td>2Q 2025</td><td>Change</td></tr>
+  <tr><td>Sales</td><td>$5,187</td><td>$5,018</td><td>3%</td></tr>
+  <tr><td>Organic1 Growth</td><td></td><td></td><td>4%</td></tr>
+  <tr><td>Segment Margin1</td><td>19.0%</td><td>18.0%</td><td>100 bps</td></tr>
+  <tr><td>Adjusted Earnings Per Share1</td><td>$1.95</td><td>$1.77</td><td>10%</td></tr>
+</table>
+<table>
+  <tr><td>BUILDING AUTOMATION</td><td>2Q 2026</td><td>2Q 2025</td><td>Change</td></tr>
+  <tr><td>Organic1 Growth</td><td></td><td></td><td>9%</td></tr>
+  <tr><td>PROCESS AUTOMATION AND TECHNOLOGY</td><td></td><td></td><td></td></tr>
+  <tr><td>Organic1 Growth</td><td></td><td></td><td>(1%)</td></tr>
+  <tr><td>INDUSTRIAL AUTOMATION</td><td></td><td></td><td></td></tr>
+  <tr><td>Organic1 Growth</td><td></td><td></td><td>4%</td></tr>
+</table>
+<div>Full-Year 2026 Guidance</div>
+<table>
+  <tr><td></td><td>Previous Guidance</td><td>Current Guidance</td></tr>
+  <tr><td>Sales</td><td>$19.9B - $20.2B</td><td>$19.8B - $20.0B</td></tr>
+  <tr><td>Organic Growth</td><td>2% - 3%</td><td>3% - 4%</td></tr>
+  <tr><td>Segment Margin2</td><td>19.8% - 20.3%</td><td>20.1% - 20.5%</td></tr>
+  <tr><td>Adjusted Earnings Per Share2,3</td><td>$7.90 - $8.30</td><td>$8.05 - $8.35</td></tr>
+</table>
 </body></html>
 """
 
@@ -129,6 +176,153 @@ def test_builds_percent_header_bridge_and_value_first_adjusted_results():
     summaries = {event["summary"] for event in payload["events"]}
     assert any("operating profit" in summary for summary in summaries)
     assert any("continuing-operations EPS" in summary for summary in summaries)
+
+
+def test_builds_first_consolidated_summary_segments_and_current_guidance():
+    payload = build_sec_results_release_payload(
+        ticker="GENR",
+        cik="123456",
+        accession_number="0000123456-26-000014",
+        filing_date="2026-07-23",
+        exhibit_document="q2-results.htm",
+        html=PERIMETER_AND_TABLE_GUIDANCE_HTML,
+        expected_fiscal_year=2026,
+        expected_fiscal_period="Q2",
+        period_end_date="2026-06-30",
+        retrieved_at="2026-07-23T12:00:00Z",
+    )
+
+    metrics = {item["metric_name"]: item for item in payload["metrics"]}
+    assert metrics["reported_sales_growth"]["value"] == pytest.approx(0.04)
+    assert metrics["organic_sales_growth"]["value"] == pytest.approx(0.04)
+    assert metrics["current_period_segment_margin"]["value"] == pytest.approx(0.231)
+    assert metrics["current_period_segment_margin_change_yoy"]["value"] == pytest.approx(0.003)
+    assert metrics["adjusted_eps_diluted"]["value"] == pytest.approx(4.52)
+    assert metrics["adjusted_eps_growth_yoy"]["value"] == pytest.approx(-0.04)
+    assert metrics["segment_organic_sales_growth_building_automation"]["value"] == pytest.approx(0.09)
+    assert metrics["segment_organic_sales_growth_process_automation_and_technology"]["value"] == pytest.approx(-0.01)
+    assert metrics["guidance_revenue_low"]["value"] == pytest.approx(19_800_000_000)
+    assert metrics["guidance_revenue_high"]["value"] == pytest.approx(20_000_000_000)
+    assert metrics["guidance_organic_sales_growth_low"]["value"] == pytest.approx(0.03)
+    assert metrics["guidance_organic_sales_growth_high"]["value"] == pytest.approx(0.04)
+    assert metrics["guidance_segment_margin_low"]["value"] == pytest.approx(0.201)
+    assert metrics["guidance_segment_margin_high"]["value"] == pytest.approx(0.205)
+    assert metrics["guidance_adjusted_eps_low"]["value"] == pytest.approx(8.05)
+    assert metrics["guidance_adjusted_eps_high"]["value"] == pytest.approx(8.35)
+    assert "organic-sales growth" not in metrics["adjusted_eps_diluted"]["statement"]
+    assert payload["result_contract"]["operating_metric_count"] == 9
+    assert payload["result_contract"]["guidance_metric_count"] == 8
+    assert payload["result_contract"]["companyfacts_controls"] == {
+        "current_quarter_revenue": 9719.0,
+        "current_quarter_operating_income": 1737.0,
+        "current_quarter_segment_profit": 2240.0,
+    }
+
+
+def test_builds_nonrecurring_gain_and_continuing_perimeter_context():
+    payload = build_sec_results_release_payload(
+        ticker="GENR",
+        cik="123456",
+        accession_number="0000123456-26-000014",
+        filing_date="2026-07-23",
+        exhibit_document="q2-results.htm",
+        html=PERIMETER_AND_TABLE_GUIDANCE_HTML,
+        expected_fiscal_year=2026,
+        expected_fiscal_period="Q2",
+        period_end_date="2026-06-30",
+        retrieved_at="2026-07-23T12:00:00Z",
+    )
+
+    summaries = {event["summary"] for event in payload["events"]}
+    assert any("one-time gain" in summary and "ExampleCo" in summary for summary in summaries)
+    assert any("continuing-company perimeter" in summary for summary in summaries)
+    action = next(event for event in payload["events"] if event["event_type"] == "corporate_action")
+    assert action["date"] == "2026-06-29"
+
+
+def _quarterly_metric(metric_name, value):
+    return CanonicalMetric(
+        metric_name=metric_name,
+        value=value,
+        unit="usd",
+        period="CY2026Q2",
+        fiscal_year=2026,
+        fiscal_period="Q2",
+        period_bucket="quarterly",
+        start_date="2026-04-01",
+        end_date="2026-06-30",
+        duration_days=90,
+        source_concept=f"us-gaap:{metric_name}",
+        statement_type="income_statement",
+        source_ids=["SEC_TEST"],
+        evidence_ids=[f"E_{metric_name}"],
+        confidence="high",
+    )
+
+
+def _control_payload():
+    return {
+        "result_contract": {
+            "period_end_date": "2026-06-30",
+            "companyfacts_controls": {
+                "current_quarter_revenue": 9719.0,
+                "current_quarter_operating_income": 1737.0,
+                "current_quarter_segment_profit": 2240.0,
+            },
+        }
+    }
+
+
+def test_excludes_companyfacts_operating_income_proven_to_be_segment_profit():
+    canonical = CanonicalFinancials(
+        ticker="GENR",
+        as_of_date="2026-08-03",
+        metrics=[
+            _quarterly_metric("revenue", 9_719_000_000.0),
+            _quarterly_metric("operating_income", 2_240_000_000.0),
+        ],
+    )
+    sec_metrics = {
+        "operating_income_latest_annual": 8_127_000_000.0,
+        "operating_income_latest_4_quarters": [2_240_000_000.0],
+        "quarterly": {"operating_income": [2_240_000_000.0]},
+    }
+    warnings = []
+
+    assert _exclude_reclassified_operating_income(
+        canonical_financials=canonical,
+        sec_metrics=sec_metrics,
+        evidence_items=[],
+        results_release_payload=_control_payload(),
+        warnings=warnings,
+    )
+    assert not canonical.metrics_for("operating_income")
+    assert not any(key.startswith("operating_income_") for key in sec_metrics)
+    assert "operating_income" not in sec_metrics["quarterly"]
+    assert warnings[0]["code"] == "SEC_OPERATING_INCOME_CONTEXT_MISMATCH_EXCLUDED"
+
+
+def test_keeps_companyfacts_operating_income_when_it_matches_reported_income():
+    canonical = CanonicalFinancials(
+        ticker="GENR",
+        as_of_date="2026-08-03",
+        metrics=[
+            _quarterly_metric("revenue", 9_719_000_000.0),
+            _quarterly_metric("operating_income", 1_737_000_000.0),
+        ],
+    )
+    sec_metrics = {"quarterly": {"operating_income": [1_737_000_000.0]}}
+    warnings = []
+
+    assert not _exclude_reclassified_operating_income(
+        canonical_financials=canonical,
+        sec_metrics=sec_metrics,
+        evidence_items=[],
+        results_release_payload=_control_payload(),
+        warnings=warnings,
+    )
+    assert canonical.metrics_for("operating_income")
+    assert not warnings
 
 
 def test_does_not_treat_bare_numbers_as_percent_without_table_unit_context():
