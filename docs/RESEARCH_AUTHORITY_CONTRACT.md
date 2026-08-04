@@ -118,6 +118,12 @@ adjusted-result context, market-share disclosures, and explicit guidance; it
 never replaces the matching CompanyFacts GAAP statements. Unsupported,
 ambiguous, annual, or not-yet-CompanyFacts-covered result periods stop the run
 instead of falling back to reconstructed press-release financials.
+Bare numeric bridge cells are accepted only when the issuer explicitly labels
+the table as percentages. For repeated SEC comparative facts, the latest filing
+supersedes an older presentation only when canonical metric, XBRL concept and
+exact measurement dates match. First-quarter cash-flow facts are selected as
+the current year-to-date period rather than allowing an older Q2/Q3 YTD value to
+surface in the report.
 
 For Budapest Stock Exchange equities it uses the official
 BSE issuer profile, issuer-submitted IFRS financial tables and exchange OHLCV.

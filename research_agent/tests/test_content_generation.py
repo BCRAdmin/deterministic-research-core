@@ -6,6 +6,7 @@ from research_agent.content.claim_generator import (
     _ClaimBuilder,
     _bear_case_claim_text,
     _current_period_claim_specs,
+    _issuer_operating_result_specs,
     _money,
     claim_coverage_gaps,
     claim_quality_metrics,
@@ -1798,6 +1799,87 @@ def test_generic_company_gets_latest_reported_period_claim():
         "gross_profit",
         "net_income",
     ]
+
+
+def test_q1_cashflow_claim_uses_current_quarter_as_year_to_date():
+    def cashflow_metric(
+        metric_name,
+        value,
+        *,
+        period,
+        fiscal_period,
+        period_bucket,
+        start_date,
+        end_date,
+    ):
+        return CanonicalMetric(
+            metric_name=metric_name,
+            value=value,
+            unit="USD",
+            period=period,
+            fiscal_year=2026,
+            fiscal_period=fiscal_period,
+            period_bucket=period_bucket,
+            start_date=start_date,
+            end_date=end_date,
+            basis="gaap",
+            statement_type="cash_flow",
+            source_ids=[f"SEC_{period}"],
+            confidence="high",
+        )
+
+    canonical = CanonicalFinancials(
+        ticker="GENERIC",
+        as_of_date="2026-08-03",
+        metrics=[
+            cashflow_metric(
+                "operating_cash_flow",
+                1_800_000_000,
+                period="Q3_FY2025_ytd",
+                fiscal_period="Q3",
+                period_bucket="ytd",
+                start_date="2025-01-01",
+                end_date="2025-09-30",
+            ),
+            cashflow_metric(
+                "capex",
+                741_000_000,
+                period="Q3_FY2025_ytd",
+                fiscal_period="Q3",
+                period_bucket="ytd",
+                start_date="2025-01-01",
+                end_date="2025-09-30",
+            ),
+            cashflow_metric(
+                "operating_cash_flow",
+                745_000_000,
+                period="CY2026Q1",
+                fiscal_period="Q1",
+                period_bucket="quarterly",
+                start_date="2026-01-01",
+                end_date="2026-03-31",
+            ),
+            cashflow_metric(
+                "capex",
+                424_000_000,
+                period="CY2026Q1",
+                fiscal_period="Q1",
+                period_bucket="quarterly",
+                start_date="2026-01-01",
+                end_date="2026-03-31",
+            ),
+        ],
+    )
+
+    spec = next(
+        item
+        for item in _issuer_operating_result_specs("GENERIC", canonical, "USD")
+        if "operating cash flow" in item["text"]
+    )
+
+    assert "$745.0" in spec["text"]
+    assert "$424.0" in spec["text"]
+    assert "$1.80B" not in spec["text"]
 
 
 def test_generic_current_period_claim_uses_evidenced_yoy_comparison():

@@ -81,7 +81,11 @@ It resolves the issuer through the official SEC ticker map, fetches SEC
 CompanyFacts and submissions, and integrates a structurally supported current
 Item 2.02 result exhibit only when the same fiscal quarter is already covered
 by the mapped 10-Q CompanyFacts accession. Result exhibits add operating and
-guidance context; they do not replace GAAP statements. The runner obtains daily
+guidance context; explicitly percent-labelled bridge tables may carry bare
+numeric cells, but unlabelled tables may not. They do not replace GAAP
+statements. Later SEC comparative presentations supersede older values only for
+the same concept and exact measurement dates, and a first-quarter cash-flow
+period is treated as the current year-to-date period. The runner obtains daily
 OHLCV through Nasdaq's public official historical-data surface by default,
 stages temporary inputs below `.runtime/current-research/`, and invokes the
 same deterministic pipeline.

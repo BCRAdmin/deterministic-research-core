@@ -11,23 +11,42 @@ def is_amended_form(form: str | None) -> bool:
 def prefer_restatement(facts):
     grouped = {}
     for fact in facts:
-        key = (
-            fact.metric_name,
-            fact.fy,
-            fact.fp,
-            fact.start,
-            fact.end,
-            fact.unit,
-            getattr(fact, "frame", None),
-            getattr(fact, "concept", None),
-        )
+        if getattr(fact, "source_type", None) == "sec_filing":
+            # SEC comparative facts can be repeated under the newer filing's
+            # fiscal labels or frame even though their real measurement dates
+            # are unchanged.  The latest filing is the authoritative
+            # retrospective presentation for that exact concept and period.
+            key = (
+                fact.source_type,
+                fact.metric_name,
+                fact.start,
+                fact.end,
+                fact.unit,
+                getattr(fact, "concept", None),
+            )
+        else:
+            key = (
+                getattr(fact, "source_type", None),
+                fact.metric_name,
+                fact.fy,
+                fact.fp,
+                fact.start,
+                fact.end,
+                fact.unit,
+                getattr(fact, "frame", None),
+                getattr(fact, "concept", None),
+            )
         grouped.setdefault(key, []).append(fact)
 
     selected = []
     for candidates in grouped.values():
-        amended = [fact for fact in candidates if is_amended_form(fact.form)]
-        if amended:
-            selected.append(sorted(amended, key=lambda fact: fact.filed or "")[-1])
-        else:
-            selected.append(sorted(candidates, key=lambda fact: fact.filed or "")[-1])
+        selected.append(
+            sorted(
+                candidates,
+                key=lambda fact: (
+                    fact.filed or "",
+                    int(is_amended_form(fact.form)),
+                ),
+            )[-1]
+        )
     return selected

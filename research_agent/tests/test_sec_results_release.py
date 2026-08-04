@@ -27,6 +27,25 @@ RESULT_HTML = """
 </body></html>
 """
 
+KMB_STYLE_RESULT_HTML = """
+<html><body>
+<div>Kimberly-Clark Announces First Quarter 2026 Results, Reaffirms 2026 Outlook</div>
+<div>Gross margin was 36.8 percent compared to 37.2 percent in the prior year.</div>
+<div>Adjusted gross margin was 37.9 percent, down 60 basis points versus the prior year.</div>
+<div>Adjusted EPS from continuing operations were $1.60, down 1.2 percent versus the prior year.</div>
+<div>Adjusted EPS attributable to Kimberly-Clark were $1.97, up 2.1 percent.</div>
+<table>
+  <tr><td>Q1 change vs year ago (%)</td><td>Volume</td><td>Mix/Other</td><td>Net Price</td><td>Divestitures and Business Exits(c)</td><td>Currency Translation</td><td>Total(a)</td><td>Organic(b)</td></tr>
+  <tr><td>Consolidated</td><td>2.6</td><td>0.4</td><td>(0.5)</td><td>(1.8)</td><td>2.0</td><td>2.7</td><td>2.5</td></tr>
+  <tr><td>NA</td><td>1.9</td><td>(0.2)</td><td>0.0</td><td>(2.7)</td><td>0.3</td><td>(0.6)</td><td>1.8</td></tr>
+  <tr><td>IPC</td><td>4.1</td><td>1.4</td><td>(1.5)</td><td>0.0</td><td>5.2</td><td>9.1</td><td>4.0</td></tr>
+</table>
+<div>2026 Outlook</div>
+<div>Adjusted Operating Profit is expected to grow at a mid-to-high single-digit rate on a constant-currency basis.</div>
+<div>Adjusted Earnings Per Share from Continuing Operations are expected to grow at a double-digit rate on a constant-currency basis.</div>
+</body></html>
+"""
+
 
 def test_selects_one_item_202_results_exhibit_from_duplicate_links():
     primary = """
@@ -75,6 +94,64 @@ def test_builds_company_operating_segment_and_guidance_inputs():
     assert fundamentals["latest_quarter"] == "FY2026_Q2"
     assert len(evidence) == len(payload["metrics"])
     assert {item.metric_name for item in canonical} == set(values)
+
+
+def test_builds_percent_header_bridge_and_value_first_adjusted_results():
+    payload = build_sec_results_release_payload(
+        ticker="GENR",
+        cik="123456",
+        accession_number="0000123456-26-000012",
+        filing_date="2026-04-28",
+        exhibit_document="q1-results.htm",
+        html=KMB_STYLE_RESULT_HTML,
+        expected_fiscal_year=2026,
+        expected_fiscal_period="Q1",
+        period_end_date="2026-03-31",
+        retrieved_at="2026-04-28T12:00:00Z",
+    )
+
+    values = {item["metric_name"]: item["value"] for item in payload["metrics"]}
+    assert values["organic_sales_growth"] == pytest.approx(0.025)
+    assert values["volume_growth"] == pytest.approx(0.026)
+    assert values["pricing_growth"] == pytest.approx(-0.005)
+    assert values["mix_other_impact"] == pytest.approx(0.004)
+    assert values["business_portfolio_impact"] == pytest.approx(-0.018)
+    assert values["foreign_exchange_impact"] == pytest.approx(0.02)
+    assert values["reported_sales_growth"] == pytest.approx(0.027)
+    assert values["segment_organic_sales_growth_na"] == pytest.approx(0.018)
+    assert values["segment_organic_sales_growth_ipc"] == pytest.approx(0.04)
+    assert values["current_period_gross_margin"] == pytest.approx(0.368)
+    assert values["current_period_gross_margin_change_yoy"] == pytest.approx(-0.004)
+    assert values["adjusted_gross_margin"] == pytest.approx(0.379)
+    assert values["adjusted_gross_margin_change_yoy"] == pytest.approx(-0.006)
+    assert values["adjusted_eps_diluted"] == pytest.approx(1.60)
+    assert values["adjusted_eps_growth_yoy"] == pytest.approx(-0.012)
+    summaries = {event["summary"] for event in payload["events"]}
+    assert any("operating profit" in summary for summary in summaries)
+    assert any("continuing-operations EPS" in summary for summary in summaries)
+
+
+def test_does_not_treat_bare_numbers_as_percent_without_table_unit_context():
+    html = """
+    <div>First Quarter 2026 Results</div>
+    <table>
+      <tr><td></td><td>Volume</td><td>Net Price</td></tr>
+      <tr><td>Consolidated</td><td>2.6</td><td>(0.5)</td></tr>
+    </table>
+    """
+    with pytest.raises(ValueError, match="keine ausreichend strukturierte"):
+        build_sec_results_release_payload(
+            ticker="GENR",
+            cik="123456",
+            accession_number="0000123456-26-000013",
+            filing_date="2026-04-28",
+            exhibit_document="q1-results.htm",
+            html=html,
+            expected_fiscal_year=2026,
+            expected_fiscal_period="Q1",
+            period_end_date="2026-03-31",
+            retrieved_at="2026-04-28T12:00:00Z",
+        )
 
 
 @pytest.mark.parametrize(

@@ -39,6 +39,7 @@ REGISTERED_AUDIT_RULES: tuple[AuditRuleDefinition, ...] = (
     AuditRuleDefinition("EVIDENCE_INCOMPLETE_FOR_GOLD", "warning", "evidence", "incomplete primary-evidence gold fixture", "requires_review"),
     AuditRuleDefinition("PERIOD_MISMATCH", "error", "period", "Q4 versus TTM mismatch fixture", "blocks_publish"),
     AuditRuleDefinition("CURRENT_PERIOD_IR_RECONCILIATION_REQUIRED", "error", "current_period", "current-period IR reconciliation fixture", "blocks_publish"),
+    AuditRuleDefinition("CURRENT_PERIOD_CASH_FLOW_MISMATCH", "error", "current_period", "latest-period OCF and CapEx mismatch fixture", "blocks_publish"),
     AuditRuleDefinition("MISSING_CURRENT_PERIOD_CONTEXT", "warning", "current_period", "missing current-period context fixture", "requires_review"),
     AuditRuleDefinition("MISSING_CURRENT_PERIOD_KPI_CONTEXT", "warning", "current_period", "missing current-period KPI fixture", "requires_review"),
     AuditRuleDefinition("AVGO_CURRENT_KPI_CONTEXT_REQUIRED", "warning", "current_period", "AVGO KPI context fixture", "requires_review"),

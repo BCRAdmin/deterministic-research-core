@@ -422,6 +422,80 @@ def test_auditor_compares_net_debt_with_the_signed_net_cash_position():
     assert false_debt.has_issue("NUMERIC_MISMATCH", metric="net_debt")
 
 
+def test_auditor_blocks_stale_latest_period_cash_flow_pair():
+    def cashflow_metric(metric_name, value, start_date, end_date, period):
+        return CanonicalMetric(
+            metric_name=metric_name,
+            value=value,
+            unit="USD",
+            period=period,
+            fiscal_year=2026,
+            fiscal_period="Q1" if period == "CY2026Q1" else "Q3",
+            period_bucket="quarterly" if period == "CY2026Q1" else "ytd",
+            start_date=start_date,
+            end_date=end_date,
+            basis="gaap",
+            statement_type="cash_flow",
+            source_ids=[f"SEC_{period}"],
+            confidence="high",
+        )
+
+    canonical = CanonicalFinancials(
+        ticker="KMB",
+        as_of_date="2026-08-03",
+        metrics=[
+            cashflow_metric(
+                "operating_cash_flow",
+                1_800_000_000,
+                "2025-01-01",
+                "2025-09-30",
+                "Q3_FY2025_ytd",
+            ),
+            cashflow_metric(
+                "capex",
+                741_000_000,
+                "2025-01-01",
+                "2025-09-30",
+                "Q3_FY2025_ytd",
+            ),
+            cashflow_metric(
+                "operating_cash_flow",
+                745_000_000,
+                "2026-01-01",
+                "2026-03-31",
+                "CY2026Q1",
+            ),
+            cashflow_metric(
+                "capex",
+                424_000_000,
+                "2026-01-01",
+                "2026-03-31",
+                "CY2026Q1",
+            ),
+        ],
+    )
+    stale = audit_markdown_report(
+        "For the latest reported period (year to date), KMB generated $1.80B "
+        "of operating cash flow and reported $741.0M of capital expenditure.",
+        simple_metrics(ticker="KMB"),
+        canonical_financials=canonical,
+    )
+    current = audit_markdown_report(
+        "For the latest reported period (year to date), KMB generated $745.0M "
+        "of operating cash flow and reported $424.0M of capital expenditure.",
+        simple_metrics(ticker="KMB"),
+        canonical_financials=canonical,
+    )
+
+    assert stale.has_issue(
+        "CURRENT_PERIOD_CASH_FLOW_MISMATCH",
+        metric="operating_cash_flow",
+    )
+    assert stale.has_issue("CURRENT_PERIOD_CASH_FLOW_MISMATCH", metric="capex")
+    assert stale.has_blocking_errors
+    assert not current.has_issue("CURRENT_PERIOD_CASH_FLOW_MISMATCH")
+
+
 def test_auditor_catches_nvda_fcf_ttm_mismatch():
     audit = audit_fixture("nvda_2026_05_01")
 

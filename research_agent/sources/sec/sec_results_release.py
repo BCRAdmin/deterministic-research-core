@@ -36,6 +36,10 @@ _PERCENT = re.compile(
     r"(?P<leading>[+-]?)\s*(?P<open>\()?\s*"
     r"(?P<value>[0-9]+(?:\.[0-9]+)?)\s*(?P<close>\))?\s*%"
 )
+_BARE_PERCENT = re.compile(
+    r"^\s*(?P<leading>[+-]?)\s*(?P<open>\()?\s*"
+    r"(?P<value>[0-9]+(?:\.[0-9]+)?)\s*(?P<close>\))?\s*$"
+)
 _GUIDANCE_LABELS = (
     (re.compile(r"\borganic sales growth\b", re.IGNORECASE), "organic_sales_growth"),
     (re.compile(r"\borganic revenue growth\b", re.IGNORECASE), "organic_revenue_growth"),
@@ -464,6 +468,26 @@ def _extract_headline_block_metrics(blocks, add_value) -> None:
         r"(?P<share>[0-9]+(?:\.[0-9]+)?)%",
         re.IGNORECASE,
     )
+    comparative_gaap_margin = re.compile(
+        r"(?<!adjusted )\bgross(?: profit)? margin was\s+"
+        r"(?P<current>[0-9]+(?:\.[0-9]+)?)\s*(?:%|percent)\s+"
+        r"compared to\s+(?P<prior>[0-9]+(?:\.[0-9]+)?)\s*(?:%|percent)",
+        re.IGNORECASE,
+    )
+    adjusted_margin_direct = re.compile(
+        r"\badjusted gross(?: profit)? margin was\s+"
+        r"(?P<margin>[0-9]+(?:\.[0-9]+)?)\s*(?:%|percent).*?"
+        r"(?P<direction>down|decreased|up|increased|a decrease of|an increase of)\s+"
+        r"(?P<bps>[0-9]+(?:\.[0-9]+)?)\s+basis points",
+        re.IGNORECASE,
+    )
+    adjusted_eps_value_first = re.compile(
+        r"\badjusted(?: diluted)? EPS from continuing operations\s+(?:was|were)\s+"
+        r"\$(?P<value>[0-9]+(?:\.[0-9]+)?).*?"
+        r"(?P<direction>down|declined|a decline of|decreased|up|increased|an increase of)\s+"
+        r"(?P<change>[0-9]+(?:\.[0-9]+)?)\s*(?:%|percent)",
+        re.IGNORECASE,
+    )
     for block in blocks:
         if match := adjusted_eps.search(block):
             sign = -1.0 if match.group(1).casefold() == "decreased" else 1.0
@@ -477,6 +501,26 @@ def _extract_headline_block_metrics(blocks, add_value) -> None:
                 "adjusted_eps_diluted",
                 float(match.group(3)),
                 display_label="adjusted diluted EPS",
+                unit="USD_per_share",
+                basis="non_gaap",
+            )
+        if match := adjusted_eps_value_first.search(block):
+            negative = match.group("direction").casefold() in {
+                "down",
+                "declined",
+                "a decline of",
+                "decreased",
+            }
+            add_value(
+                "adjusted_eps_growth_yoy",
+                (-1.0 if negative else 1.0) * float(match.group("change")) / 100.0,
+                display_label="adjusted continuing-operations EPS growth",
+                basis="non_gaap",
+            )
+            add_value(
+                "adjusted_eps_diluted",
+                float(match.group("value")),
+                display_label="adjusted continuing-operations EPS",
                 unit="USD_per_share",
                 basis="non_gaap",
             )
@@ -513,6 +557,36 @@ def _extract_headline_block_metrics(blocks, add_value) -> None:
                     display_label="adjusted gross-margin change",
                     basis="non_gaap",
                 )
+        if match := comparative_gaap_margin.search(block):
+            current = float(match.group("current")) / 100.0
+            prior = float(match.group("prior")) / 100.0
+            add_value(
+                "current_period_gross_margin",
+                current,
+                display_label="GAAP gross margin",
+                basis="gaap",
+            )
+            add_value(
+                "current_period_gross_margin_change_yoy",
+                current - prior,
+                display_label="GAAP gross-margin change",
+                basis="gaap",
+            )
+        if match := adjusted_margin_direct.search(block):
+            direction = match.group("direction").casefold()
+            negative = direction in {"down", "decreased", "a decrease of"}
+            add_value(
+                "adjusted_gross_margin",
+                float(match.group("margin")) / 100.0,
+                display_label="adjusted gross margin",
+                basis="non_gaap",
+            )
+            add_value(
+                "adjusted_gross_margin_change_yoy",
+                (-1.0 if negative else 1.0) * float(match.group("bps")) / 10_000.0,
+                display_label="adjusted gross-margin change",
+                basis="non_gaap",
+            )
         if match := market_share.search(block):
             label = " ".join(match.group("label").split())
             metric_name = f"market_share_{_slug(label)}"
@@ -533,6 +607,11 @@ def _extract_company_bridge_metrics(table, add_value) -> None:
         }
         if len(header_map) < 2:
             continue
+        bare_percent_table = any(
+            re.search(r"(?:%|\bpercent\b)", cell, flags=re.IGNORECASE)
+            for row in table[: header_index + 1]
+            for cell in row
+        )
         total_index = next(
             (
                 index
@@ -551,7 +630,10 @@ def _extract_company_bridge_metrics(table, add_value) -> None:
         if len(total_row) != len(header):
             continue
         for column, metric_name in header_map.items():
-            value = _percent_value(total_row[column])
+            value = _percent_value(
+                total_row[column],
+                allow_bare=bare_percent_table,
+            )
             if value is not None:
                 add_value(metric_name, value)
         segment_metric_column = next(
@@ -569,13 +651,21 @@ def _extract_company_bridge_metrics(table, add_value) -> None:
         )
         if segment_metric_column is None:
             return
-        for row in table[header_index + 1 : total_index]:
+        for row_index, row in enumerate(
+            table[header_index + 1 :],
+            start=header_index + 1,
+        ):
+            if row_index == total_index:
+                continue
             if len(row) != len(header) or not row[0].strip():
                 continue
             label = _clean_segment_label(row[0])
             if not label or label.casefold().startswith("total "):
                 continue
-            value = _percent_value(row[segment_metric_column])
+            value = _percent_value(
+                row[segment_metric_column],
+                allow_bare=bare_percent_table,
+            )
             if value is None:
                 continue
             metric_base = header_map[segment_metric_column]
@@ -595,9 +685,17 @@ def _bridge_metric_name(label: str) -> Optional[str]:
         "comparable sales": "comparable_sales_growth",
         "as reported volume": "reported_volume_growth",
         "reported volume": "reported_volume_growth",
+        "volume": "volume_growth",
         "organic volume": "organic_volume_growth",
         "pricing": "pricing_growth",
         "price": "pricing_growth",
+        "net price": "pricing_growth",
+        "mix/other": "mix_other_impact",
+        "mix other": "mix_other_impact",
+        "divestitures and business exits": "business_portfolio_impact",
+        "currency translation": "foreign_exchange_impact",
+        "total": "reported_sales_growth",
+        "organic": "organic_sales_growth",
         "fx": "foreign_exchange_impact",
         "foreign exchange": "foreign_exchange_impact",
     }
@@ -605,7 +703,7 @@ def _bridge_metric_name(label: str) -> Optional[str]:
 
 
 def _clean_label(value: str) -> str:
-    text = re.sub(r"\([0-9]+\)", "", str(value or ""))
+    text = re.sub(r"\([a-z0-9]{1,3}\)", "", str(value or ""), flags=re.IGNORECASE)
     text = text.replace("*", " ")
     text = re.sub(r"(?<=[a-z])(?=[A-Z])", " ", text)
     return " ".join(text.casefold().replace("-", " ").split())
@@ -616,8 +714,10 @@ def _clean_segment_label(value: str) -> str:
     return " ".join(text.replace("*", " ").split()).strip(" ,;:-")
 
 
-def _percent_value(value: str) -> Optional[float]:
+def _percent_value(value: str, *, allow_bare: bool = False) -> Optional[float]:
     match = _PERCENT.search(str(value or ""))
+    if match is None and allow_bare:
+        match = _BARE_PERCENT.fullmatch(str(value or ""))
     if match is None:
         return None
     number = float(match.group("value")) / 100.0
@@ -660,9 +760,15 @@ def _directional_guidance_events(
     blocks: list[str], *, source_id: str, source_url: str, filing_date: str, retrieved_at: str
 ) -> list[dict[str, Any]]:
     summaries: list[str] = []
-    for block in blocks:
+    candidates = list(blocks)
+    candidates.extend(
+        " ".join(blocks[index : index + 4])
+        for index, block in enumerate(blocks)
+        if "outlook" in block.casefold() or "expect" in block.casefold()
+    )
+    for block in candidates:
         normalized = block.casefold()
-        if "expects" not in normalized:
+        if "expect" not in normalized:
             continue
         gaap_text = normalized.replace("non-gaap", "").replace("non gaap", "")
         if "gaap" in gaap_text and "gross profit margin" in normalized and "roughly flat" in normalized:
@@ -679,6 +785,33 @@ def _directional_guidance_events(
         ):
             summaries.append(
                 "Management now expects mid-single-digit full-year Base Business EPS growth."
+            )
+        if re.search(
+            r"adjusted operating profit is expected to grow at a "
+            r"mid-to-high single-digit rate.*?constant-currency basis",
+            normalized,
+        ):
+            summaries.append(
+                "Management expects adjusted operating profit to grow at a "
+                "mid-to-high single-digit constant-currency rate."
+            )
+        if re.search(
+            r"adjusted earnings per share from continuing operations are expected "
+            r"to grow at a double-digit rate.*?constant-currency basis",
+            normalized,
+        ):
+            summaries.append(
+                "Management expects adjusted continuing-operations EPS to grow at "
+                "a double-digit constant-currency rate."
+            )
+        if re.search(
+            r"adjusted earnings per share attributable to .*? are expected to be "
+            r"flat.*?constant-currency basis",
+            normalized,
+        ):
+            summaries.append(
+                "Management expects adjusted attributable EPS to remain flat on a "
+                "constant-currency basis."
             )
     events = []
     for index, summary in enumerate(dict.fromkeys(summaries), start=1):
@@ -709,8 +842,11 @@ def _metric_label(metric_name: str, segment_label: Optional[str]) -> str:
         "reported_sales_growth": "reported-sales growth",
         "reported_volume_growth": "reported-volume growth",
         "organic_volume_growth": "organic-volume growth",
+        "volume_growth": "volume growth",
         "pricing_growth": "pricing contribution",
         "foreign_exchange_impact": "foreign-exchange contribution",
+        "mix_other_impact": "mix/other contribution",
+        "business_portfolio_impact": "divestiture and business-exit contribution",
     }
     if metric_name.startswith("guidance_"):
         bound = "lower bound" if metric_name.endswith("_low") else "upper bound"

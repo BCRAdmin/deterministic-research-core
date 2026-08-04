@@ -2147,7 +2147,12 @@ def unit_for_metric(
     if (
         "margin" in metric_name
         or "growth" in metric_name
-        or metric_name in {"foreign_exchange_impact"}
+        or metric_name
+        in {
+            "foreign_exchange_impact",
+            "mix_other_impact",
+            "business_portfolio_impact",
+        }
         or metric_name.startswith("market_share_")
         or metric_name.startswith("sbc_to")
     ):

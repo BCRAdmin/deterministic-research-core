@@ -142,11 +142,84 @@ def audit_markdown_report(
     )
     issues.extend(_lint_fcf_unavailable_support(metrics_packet, canonical_financials, ticker))
     issues.extend(_lint_current_period_context(markdown, canonical_financials, ticker))
+    issues.extend(
+        _lint_current_period_cash_flow_claim(markdown, canonical_financials)
+    )
     issues.extend(_lint_avgo_current_kpi_context(markdown, canonical_financials, ticker))
     issues.extend(_mirror_validation_warnings(validation_report, markdown))
     issues.extend(deeptech_assessment.issues)
 
     return AuditReport.from_issues(issues=issues, numeric_claims=claims, ticker=ticker)
+
+
+def _lint_current_period_cash_flow_claim(
+    markdown: str,
+    canonical_financials: Optional[CanonicalFinancials],
+) -> list[AuditIssue]:
+    if canonical_financials is None:
+        return []
+    pairs = [
+        (operating_cash_flow, capex)
+        for operating_cash_flow in canonical_financials.metrics_for(
+            "operating_cash_flow"
+        )
+        for capex in canonical_financials.metrics_for("capex")
+        if operating_cash_flow.start_date == capex.start_date
+        and operating_cash_flow.end_date == capex.end_date
+        and operating_cash_flow.end_date
+    ]
+    if not pairs:
+        return []
+    expected_operating_cash_flow, expected_capex = max(
+        pairs,
+        key=lambda pair: pair[0].end_date or "",
+    )
+    issues: list[AuditIssue] = []
+    for line_number, line in enumerate(markdown.splitlines(), start=1):
+        if line.strip().casefold().startswith("## evidence appendix"):
+            break
+        normalized = line.casefold()
+        if not (
+            "latest reported period" in normalized
+            and "operating cash flow" in normalized
+            and "capital expenditure" in normalized
+        ):
+            continue
+        currency_claims = [
+            claim
+            for claim in extract_numeric_claims(line)
+            if claim.unit in {"usd", "huf"}
+            and claim.normalized_value is not None
+        ]
+        if len(currency_claims) < 2:
+            continue
+        for metric_name, claim, expected in (
+            (
+                "operating_cash_flow",
+                currency_claims[0],
+                expected_operating_cash_flow.value,
+            ),
+            ("capex", currency_claims[1], expected_capex.value),
+        ):
+            reported = float(claim.normalized_value)
+            if _numbers_match(reported, expected, claim.unit):
+                continue
+            issues.append(
+                AuditIssue(
+                    severity="error",
+                    code="CURRENT_PERIOD_CASH_FLOW_MISMATCH",
+                    metric=metric_name,
+                    reported=reported,
+                    validated=expected,
+                    message=(
+                        f"Latest-period {metric_name} in the report does not match "
+                        "the newest same-period canonical OCF/CapEx pair."
+                    ),
+                    line_number=line_number,
+                    raw_text=claim.raw_text,
+                )
+            )
+    return issues
 
 
 def _lint_insurer_operating_kpi_context(

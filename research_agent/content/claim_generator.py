@@ -2492,6 +2492,7 @@ def _issuer_operating_result_specs(
         ("organic_revenue_growth", "organic-revenue growth"),
         ("comparable_sales_growth", "comparable-sales growth"),
         ("organic_volume_growth", "organic-volume growth"),
+        ("volume_growth", "volume growth"),
         ("pricing_growth", "pricing contribution"),
         ("foreign_exchange_impact", "foreign-exchange contribution"),
     )
@@ -2593,12 +2594,12 @@ def _issuer_operating_result_specs(
                 "expanded" if adjusted_margin_change.value >= 0 else "contracted"
             )
             adjusted_clause = (
-                f" Base Business gross margin was {_pct(adjusted_margin.value)} "
+                f" Adjusted gross margin was {_pct(adjusted_margin.value)} "
                 f"and {adjusted_direction} by "
                 f"{abs(adjusted_margin_change.value) * 100:.1f} percentage points."
             )
         eps_clause = (
-            f" Base Business diluted EPS was {_money(adjusted_eps.value, currency)}"
+            f" Adjusted EPS was {_money(adjusted_eps.value, currency)}"
         )
         if adjusted_eps_growth is not None:
             eps_clause += f", a year-over-year change of {_pct(adjusted_eps_growth.value)}"
@@ -2672,7 +2673,14 @@ def _issuer_operating_result_specs(
     operating_cash_flow_candidates = [
         metric
         for metric in canonical_financials.metrics_for("operating_cash_flow")
-        if metric.period_bucket == "ytd" and metric.end_date
+        if (
+            metric.period_bucket == "ytd"
+            or (
+                metric.period_bucket == "quarterly"
+                and metric.fiscal_period == "Q1"
+            )
+        )
+        and metric.end_date
     ]
     if operating_cash_flow_candidates:
         operating_cash_flow = max(
@@ -2683,8 +2691,7 @@ def _issuer_operating_result_specs(
             (
                 metric
                 for metric in canonical_financials.metrics_for("capex")
-                if metric.period_bucket == "ytd"
-                and metric.start_date == operating_cash_flow.start_date
+                if metric.start_date == operating_cash_flow.start_date
                 and metric.end_date == operating_cash_flow.end_date
             ),
             None,
@@ -2785,7 +2792,10 @@ def _latest_canonical_metrics_with_prefix(
 
 def _segment_label_from_metric(metric_name: str) -> str:
     prefix = "segment_organic_sales_growth_"
-    return metric_name.removeprefix(prefix).replace("_", " ").title()
+    slug = metric_name.removeprefix(prefix)
+    if "_" not in slug and 1 < len(slug) <= 4:
+        return slug.upper()
+    return slug.replace("_", " ").title()
 
 
 def _early_commercial_capital_intensive_specs(
