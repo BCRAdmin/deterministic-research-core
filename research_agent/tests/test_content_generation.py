@@ -794,10 +794,12 @@ def test_complete_lease_obligations_remain_visible_above_one_current_ratio():
     lease_claim = next(
         claim
         for claim in claims
-        if "not silently merged into total debt" in claim.claim
+        if "Finance-lease amounts can overlap" in claim.claim
     )
 
-    assert "separate lease liabilities total $4.28B" in lease_claim.claim
+    assert "Separately disclosed lease liabilities total $4.28B" in lease_claim.claim
+    assert "not added to total debt or enterprise value" in lease_claim.claim
+    assert "In addition to reported debt" not in lease_claim.claim
     assert lease_claim.metric_refs == ["total_lease_liabilities"]
     assert "debt, lease obligations, liquidity" in lease_claim.investment_implication
 

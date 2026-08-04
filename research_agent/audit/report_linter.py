@@ -64,6 +64,11 @@ SEC_FRAGMENT_END_RE = re.compile(
     r"the|to|with)\.)(?:\s|$|\|)",
     re.IGNORECASE,
 )
+LEASE_DEBT_ADDITIVE_RE = re.compile(
+    r"(?:in addition to|on top of|zusätzlich zu).{0,100}"
+    r"(?:debt|schulden).{0,120}(?:lease|leasing)",
+    re.IGNORECASE,
+)
 
 
 def audit_markdown_report(
@@ -90,6 +95,7 @@ def audit_markdown_report(
     issues.extend(_lint_trade_levels(markdown))
     issues.extend(_lint_rating_action(markdown))
     issues.extend(_lint_sec_disclosure_fragments(markdown))
+    issues.extend(_lint_lease_debt_double_count_risk(markdown))
     issues.extend(_lint_news_causality(markdown, validation_report))
     issues.extend(_lint_no_news_claim(markdown, source_registry))
     issues.extend(_lint_evidence_grounding(claims, metrics_packet, evidence_ledger))
@@ -134,6 +140,26 @@ def audit_markdown_report(
     issues.extend(deeptech_assessment.issues)
 
     return AuditReport.from_issues(issues=issues, numeric_claims=claims, ticker=ticker)
+
+
+def _lint_lease_debt_double_count_risk(markdown: str) -> list[AuditIssue]:
+    issues: list[AuditIssue] = []
+    for line_number, line in enumerate(markdown.splitlines(), start=1):
+        if not LEASE_DEBT_ADDITIVE_RE.search(line):
+            continue
+        issues.append(
+            AuditIssue(
+                severity="error",
+                code="LEASE_DEBT_DOUBLE_COUNT_RISK",
+                message=(
+                    "Lease liabilities must not be described as additive to debt; "
+                    "finance-lease amounts can overlap with issuer debt concepts."
+                ),
+                line_number=line_number,
+                raw_text=line.strip(),
+            )
+        )
+    return issues
 
 
 def _lint_sec_disclosure_fragments(markdown: str) -> list[AuditIssue]:

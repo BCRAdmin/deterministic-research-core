@@ -158,6 +158,15 @@ def quality_relevant_reconciliation_warnings(
             continue
         if code == "BALANCE_SHEET_DATE_MISMATCH_EXCLUDED":
             metric = str(warning.get("metric") or "")
+            resolution = (
+                normalized_fundamentals.get("reconciliation_resolutions") or {}
+            ).get(metric) or {}
+            balance_sheet_date = str(warning.get("balance_sheet_date") or "")
+            if (
+                resolution.get("status") == "covered_by_current_aggregate"
+                and str(resolution.get("period_end") or "") == balance_sheet_date
+            ):
+                continue
             replacement_date = str(
                 (
                     normalized_fundamentals.get(
@@ -167,7 +176,6 @@ def quality_relevant_reconciliation_warnings(
                 ).get(metric)
                 or ""
             )
-            balance_sheet_date = str(warning.get("balance_sheet_date") or "")
             balance = normalized_fundamentals.get("balance_sheet") or {}
             if (
                 metric
@@ -1113,6 +1121,14 @@ def _derive_debt_and_lease_totals(
             and current.end_date == noncurrent.end_date
             and current.source_concept == "us-gaap:DebtCurrent"
         )
+        if current_is_aggregate:
+            fundamentals.setdefault("reconciliation_resolutions", {})[
+                "short_term_debt"
+            ] = {
+                "status": "covered_by_current_aggregate",
+                "period_end": current.end_date,
+                "source_concept": current.source_concept,
+            }
         if (
             short_term is not None
             and short_term.end_date == noncurrent.end_date

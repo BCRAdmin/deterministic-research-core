@@ -226,15 +226,88 @@ def test_quality_scope_drops_replaced_balance_sheet_mismatch_only():
         "metric_end_date": "2025-12-31",
         "balance_sheet_date": "2026-06-30",
     }
+    covered_short_term = {
+        "code": "BALANCE_SHEET_DATE_MISMATCH_EXCLUDED",
+        "metric": "short_term_debt",
+        "metric_end_date": "2025-12-31",
+        "balance_sheet_date": "2026-06-30",
+    }
     fundamentals = {
         "balance_sheet": {"total_debt": 84_621},
         "reconciliation_material_dates": {"total_debt": "2026-06-30"},
+        "reconciliation_resolutions": {
+            "short_term_debt": {
+                "status": "covered_by_current_aggregate",
+                "period_end": "2026-06-30",
+                "source_concept": "us-gaap:DebtCurrent",
+            }
+        },
     }
 
     assert quality_relevant_reconciliation_warnings(
-        [replaced, unresolved],
+        [replaced, unresolved, covered_short_term],
         fundamentals,
     ) == [unresolved]
+
+
+def test_current_debt_aggregate_resolves_stale_short_term_debt_warning():
+    def instant_metric(metric_name, value, end_date, source_concept):
+        return CanonicalMetric(
+            metric_name=metric_name,
+            value=value,
+            unit="USD",
+            period=end_date,
+            period_bucket="instant",
+            end_date=end_date,
+            basis="gaap",
+            statement_type="balance_sheet",
+            source_ids=[f"SEC_{metric_name}"],
+            evidence_ids=[f"EVIDENCE_{metric_name}"],
+            confidence="high",
+            source_concept=source_concept,
+        )
+
+    canonical = CanonicalFinancials(
+        ticker="MDT",
+        as_of_date="2026-07-31",
+        metrics=[
+            instant_metric(
+                "short_term_debt",
+                0,
+                "2025-04-25",
+                "us-gaap:CommercialPaper",
+            ),
+            instant_metric(
+                "debt_current",
+                1_788,
+                "2026-04-24",
+                "us-gaap:DebtCurrent",
+            ),
+            instant_metric(
+                "debt_noncurrent",
+                26_173,
+                "2026-04-24",
+                "us-gaap:LongTermDebtAndCapitalLeaseObligations",
+            ),
+        ],
+    )
+
+    fundamentals = canonical_financials_to_fundamentals(canonical)
+    relevant = quality_relevant_reconciliation_warnings(
+        fundamentals["reconciliation_issues"],
+        fundamentals,
+    )
+
+    assert fundamentals["balance_sheet"]["total_debt"] == 27_961
+    assert fundamentals["reconciliation_resolutions"]["short_term_debt"] == {
+        "status": "covered_by_current_aggregate",
+        "period_end": "2026-04-24",
+        "source_concept": "us-gaap:DebtCurrent",
+    }
+    assert not any(
+        item.get("code") == "BALANCE_SHEET_DATE_MISMATCH_EXCLUDED"
+        for item in relevant
+    )
 
 
 def test_period_type_variants_are_ignored_not_warned():

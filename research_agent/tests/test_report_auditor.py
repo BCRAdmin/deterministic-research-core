@@ -222,6 +222,17 @@ def test_auditor_blocks_malformed_issuer_disclosure_fragments():
         assert audit.has_issue("MALFORMED_SEC_DISCLOSURE_FRAGMENT")
 
 
+def test_auditor_blocks_additive_debt_and_lease_wording():
+    audit = audit_markdown_report(
+        "In addition to reported debt, separate lease liabilities total $1.25B.",
+        simple_metrics(ticker="MDT"),
+        ticker="MDT",
+    )
+
+    assert audit.has_blocking_errors is True
+    assert audit.has_issue("LEASE_DEBT_DOUBLE_COUNT_RISK")
+
+
 def test_auditor_maps_each_matching_quarter_percentage_to_nearest_growth_metric():
     metrics = simple_metrics(ticker="GENERIC")
     metrics.fundamentals.current_period_revenue_growth_yoy = -0.014

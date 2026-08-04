@@ -447,7 +447,7 @@ class _ClaimBuilder:
         lease_metric = None
         if lease_liabilities is not None:
             lease_context = (
-                "separate lease liabilities total "
+                "lease liabilities total "
                 f"{self._money(lease_liabilities)}"
             )
             lease_metric = "total_lease_liabilities"
@@ -535,9 +535,9 @@ class _ClaimBuilder:
                 "lease_obligations",
                 "financial_metric",
                 (
-                    f"In addition to reported debt, {lease_context}. The lease "
-                    "figure remains separately labeled and is not silently merged "
-                    "into total debt."
+                    f"Separately disclosed {lease_context}. Finance-lease amounts "
+                    "can overlap with issuer debt concepts, so this figure is not "
+                    "added to total debt or enterprise value here."
                 ),
                 [lease_metric],
                 "medium",
