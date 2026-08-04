@@ -881,6 +881,31 @@ def _load_source_ingestion_inputs(ticker: str, as_of_date: str, config: ReportCo
             reconciliation_warnings.extend(
                 canonical_fundamentals.get("reconciliation_issues", [])
             )
+    if config.sec_results_release_path:
+        results_fundamentals, results_evidence, results_canonical = (
+            _load_release_payload_inputs(
+                ticker,
+                _read_ir_release_payload(Path(config.sec_results_release_path)),
+            )
+        )
+        _merge_fundamentals(fundamentals, results_fundamentals)
+        evidence_items.extend(results_evidence)
+        if results_canonical:
+            if canonical_financials is None:
+                canonical_financials = CanonicalFinancials(
+                    ticker=ticker.upper(),
+                    as_of_date=as_of_date,
+                    metrics=results_canonical,
+                )
+            else:
+                canonical_financials.metrics.extend(results_canonical)
+            canonical_fundamentals = canonical_financials_to_fundamentals(
+                canonical_financials
+            )
+            _merge_fundamentals(fundamentals, canonical_fundamentals)
+            reconciliation_warnings.extend(
+                canonical_fundamentals.get("reconciliation_issues", [])
+            )
     news = load_news(
         ticker,
         config.official_news_dir or "research_agent/data/raw",
@@ -978,7 +1003,13 @@ def _load_ir_guidance_inputs(ticker: str, release_dir: str) -> tuple[dict[str, A
     source = _find_ir_release_file(ticker, release_dir)
     if source is None:
         return {}, [], []
-    payload = _read_ir_release_payload(source)
+    return _load_release_payload_inputs(ticker, _read_ir_release_payload(source))
+
+
+def _load_release_payload_inputs(
+    ticker: str,
+    payload: dict[str, Any],
+) -> tuple[dict[str, Any], list[EvidenceItem], list[CanonicalMetric]]:
     text = payload.get("text") or ""
     period = payload.get("period") or "forward"
     source_id = payload.get("source_id") or f"{ticker.upper()}_IR_EARNINGS_RELEASE"

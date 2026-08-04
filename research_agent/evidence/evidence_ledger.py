@@ -2144,9 +2144,13 @@ def unit_for_metric(
 ) -> Optional[str]:
     metric_name = str(metric_name or "").strip().lower()
     currency = str(currency or "USD").strip().upper()
-    if "margin" in metric_name or metric_name.startswith("sbc_to"):
-        return "percent"
-    if metric_name.endswith("_growth_yoy") or metric_name == "growth_rate":
+    if (
+        "margin" in metric_name
+        or "growth" in metric_name
+        or metric_name in {"foreign_exchange_impact"}
+        or metric_name.startswith("market_share_")
+        or metric_name.startswith("sbc_to")
+    ):
         return "percent"
     if metric_name == "fcf_yield":
         return "fraction"

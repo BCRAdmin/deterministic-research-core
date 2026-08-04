@@ -192,6 +192,64 @@ class _FakeSecWithSameDayResults8K(_FakeSecWithNewerResults8K):
     results_filing_date = "2026-07-20"
 
 
+_COVERED_RESULTS_HTML = """
+<div>Second Quarter 2026 Results</div>
+<div>GAAP EPS decreased 5% to $0.86; Base Business EPS increased 8% to $0.99</div>
+<div>GAAP Gross profit margin and Base Business Gross profit margin increased 140 basis points to 61.5%</div>
+<div>The Company's leadership in toothpaste continued with its global market share at 41.3% year to date</div>
+<div>The Company's leadership in manual toothbrushes continued with its global market share at 32.7% year to date</div>
+<table>
+  <tr><td></td><td>Organic Sales</td><td>Organic Volume</td><td>Pricing</td></tr>
+  <tr><td>North America</td><td>-3.0%</td><td>-3.9%</td><td>+0.9%</td></tr>
+  <tr><td>Latin America</td><td>+5.3%</td><td>+2.6%</td><td>+2.8%</td></tr>
+  <tr><td>Total Company</td><td>+2.4%</td><td>+0.8%</td><td>+1.6%</td></tr>
+</table>
+<div>Full Year 2026 Guidance</div>
+<div>The Company expects net sales to be up 2% to 6%.</div>
+<div>The Company expects organic sales growth to be 1% to 4%.</div>
+<div>On a GAAP basis, the Company expects gross profit margin to be roughly flat and double-digit earnings per share growth.</div>
+"""
+
+
+class _FakeSecWithCoveredResults8K(_FakeSecWithQuarterAndAnnualRisks):
+    def get_companyfacts(self, cik):
+        payload = super().get_companyfacts(cik)
+        row = payload["facts"]["us-gaap"]["Revenues"]["units"]["USD"][0]
+        row.update({"fy": 2026, "fp": "Q2", "end": "2026-06-30"})
+        return payload
+
+    def get_submissions(self, cik):
+        return {
+            "filings": {
+                "recent": {
+                    "form": ["10-Q", "8-K", "10-K"],
+                    "filingDate": ["2026-07-20", "2026-07-20", "2026-02-20"],
+                    "reportDate": ["2026-06-30", "2026-07-20", "2025-12-31"],
+                    "acceptanceDateTime": [
+                        "2026-07-20T12:30:00Z",
+                        "2026-07-20T12:00:00Z",
+                        "2026-02-20T12:00:00Z",
+                    ],
+                    "accessionNumber": [
+                        "0000123456-26-000010",
+                        "0000123456-26-000011",
+                        "0000123456-26-000001",
+                    ],
+                    "primaryDocument": ["quarter.htm", "results.htm", "annual.htm"],
+                    "items": ["", "2.02,9.01", ""],
+                }
+            }
+        }
+
+    def get_filing_html(self, **kwargs):
+        if kwargs["accession_number"].endswith("000011"):
+            if kwargs["primary_document"] == "results.htm":
+                return '<a href="q2-results.htm">Press release with quarterly results</a>'
+            if kwargs["primary_document"] == "q2-results.htm":
+                return _COVERED_RESULTS_HTML
+        return super().get_filing_html(**kwargs)
+
+
 class _FakeIfrsSec(_FakeSec):
     def get_companyfacts(self, cik):
         return {
@@ -594,6 +652,49 @@ def test_current_runner_blocks_same_day_or_newer_sec_results_before_pipeline(
         )
 
     _assert_no_run_dirs(tmp_path)
+
+
+def test_current_runner_integrates_results_covered_by_matching_companyfacts(
+    monkeypatch,
+    tmp_path,
+):
+    def fake_pipeline(ticker, as_of_date, config):
+        payload = json.loads(
+            Path(config.sec_results_release_path).read_text(encoding="utf-8")
+        )
+        assert payload["result_contract"]["fiscal_period"] == "Q2"
+        assert len(payload["metrics"]) == 17
+        news = json.loads(
+            Path(config.official_news_dir, "GENR_news.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        assert any(
+            event["event_type"] == "company_outlook"
+            for event in news["events"]
+        )
+        authority = tmp_path / "outputs" / ticker / as_of_date / "authority_bundle"
+        authority.mkdir(parents=True)
+        (authority / "authority_manifest.json").write_text(
+            json.dumps(
+                {
+                    "contract_id": "room16.research_authority_bundle",
+                    "analysis_allowed": True,
+                }
+            ),
+            encoding="utf-8",
+        )
+
+    monkeypatch.setattr(runner, "run_research_pipeline", fake_pipeline)
+    result = run_current_research(
+        _request(tmp_path),
+        price_provider=_FakePrices(),
+        sec_client=_FakeSecWithCoveredResults8K(),
+    )
+
+    assert result["results_release_status"] == "available"
+    assert result["results_release_filing_date"] == "2026-07-20"
+    assert result["results_release_metric_count"] == 17
 
 
 def test_current_runner_rejects_unsupported_official_issuer(tmp_path):

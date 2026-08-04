@@ -30,6 +30,7 @@ _BUSINESS_CONTEXT_SECTIONS = {
 _BUSINESS_CONTEXT_EVENT_TYPES = {"business_context", "business_model"}
 _CATALYST_EVENT_TYPES = {
     "acquisition",
+    "company_outlook",
     "divestiture",
     "leadership",
     "partnership",
@@ -708,6 +709,18 @@ class _ClaimBuilder:
             and str(metric).endswith("_growth_yoy")
         ]
         growth_metrics = list(dict.fromkeys(str(metric) for metric in growth_metrics))
+        result_context_metrics = [
+            metric_name
+            for metric_name in (
+                "current_period_gross_margin",
+                "current_period_gross_margin_change_yoy",
+                "adjusted_gross_margin",
+                "adjusted_gross_margin_change_yoy",
+                "adjusted_eps_diluted",
+                "adjusted_eps_growth_yoy",
+            )
+            if self._metric_value(metric_name) is not None
+        ]
         current_period_loss_metrics = _current_period_loss_metrics(self.canonical)
         current_period_loss_phrase = _current_period_loss_phrase(
             current_period_loss_metrics
@@ -850,10 +863,18 @@ class _ClaimBuilder:
                 )
                 if fcf_value is not None:
                     scale_and_cash += f" and FCF TTM is {self._money(fcf_value)}"
+                context_text = (
+                    "Issuer-filed segment, margin and adjusted-result context is "
+                    "present; it tempers but does not erase the GAAP profit declines."
+                    if result_context_metrics
+                    else (
+                        f"{comparison_summary}; segment, margin or one-off context is "
+                        "needed before treating them as business direction."
+                    )
+                )
                 bull_text = (
                     f"{comparison_label} evidence reports {growth_text}. "
-                    f"{comparison_summary}; segment, margin or one-off context is "
-                    "needed before treating them as business direction. "
+                    f"{context_text} "
                     f"{scale_and_cash}; {cash_context}. A more "
                     "constructive rating requires revenue and profit measures to "
                     "improve together, plus stronger technical or benchmarked "
@@ -991,6 +1012,7 @@ class _ClaimBuilder:
             bull_metrics.append("free_cash_flow_ttm")
         bull_metrics.extend(growth_metrics)
         bull_metrics.extend(current_period_loss_metrics)
+        bull_metrics.extend(result_context_metrics)
         self.add(
             "Bull Case",
             "bull",
@@ -1864,6 +1886,8 @@ def _has_ticker_specific_kpi(claim: ResearchClaim) -> bool:
         "electron", "haste", "launch cadence", "neutron", "space systems",
         "launch services", "service revenue", "execution milestone", "capital intensity",
         "latest reported period", "operating income", "net income",
+        "organic-sales", "organic-volume", "pricing contribution", "gross margin",
+        "base business", "market share",
     }
     return any(term in text for term in terms)
 
@@ -2447,7 +2471,321 @@ def _current_period_claim_specs(
                         ),
                     }
                 )
+    specs.extend(
+        _issuer_operating_result_specs(
+            ticker,
+            canonical_financials,
+            currency,
+        )
+    )
     return specs
+
+
+def _issuer_operating_result_specs(
+    ticker: str,
+    canonical_financials: CanonicalFinancials,
+    currency: str,
+) -> list[dict[str, object]]:
+    specs: list[dict[str, object]] = []
+    current_metric_labels = (
+        ("organic_sales_growth", "organic-sales growth"),
+        ("organic_revenue_growth", "organic-revenue growth"),
+        ("comparable_sales_growth", "comparable-sales growth"),
+        ("organic_volume_growth", "organic-volume growth"),
+        ("pricing_growth", "pricing contribution"),
+        ("foreign_exchange_impact", "foreign-exchange contribution"),
+    )
+    current_metrics = [
+        (metric_name, label, metric)
+        for metric_name, label in current_metric_labels
+        if (metric := canonical_financials.get_metric(metric_name)) is not None
+        and metric.period_bucket == "quarterly"
+    ][:3]
+    if len(current_metrics) >= 2:
+        phrases = [
+            f"{label} of {_pct(metric.value)}"
+            for _, label, metric in current_metrics
+        ]
+        result_text = (
+            ", ".join(phrases[:-1]) + f" and {phrases[-1]}"
+        )
+        specs.append(
+            {
+                "section": "Business & Segment Context",
+                "kind": "current_period",
+                "evidence_type": "financial_metric",
+                "text": (
+                    f"{ticker} issuer-filed operating data for the latest reported "
+                    f"quarter showed {result_text}."
+                ),
+                "metrics": [metric_name for metric_name, _, _ in current_metrics],
+                "counterargument": (
+                    "Organic and bridge metrics are issuer-defined and must remain "
+                    "separate from GAAP revenue and profit."
+                ),
+                "implication": (
+                    "Use the operating bridge to judge the quality of reported sales "
+                    "growth rather than relying on headline revenue alone."
+                ),
+            }
+        )
+
+    segment_metrics = _latest_canonical_metrics_with_prefix(
+        canonical_financials,
+        "segment_organic_sales_growth_",
+    )
+    if len(segment_metrics) >= 2:
+        weakest = min(segment_metrics, key=lambda metric: metric.value)
+        strongest = max(segment_metrics, key=lambda metric: metric.value)
+        if weakest.metric_name != strongest.metric_name:
+            weakest_label = _segment_label_from_metric(weakest.metric_name)
+            strongest_label = _segment_label_from_metric(strongest.metric_name)
+            specs.append(
+                {
+                    "section": "Business & Segment Context",
+                    "kind": "current_period",
+                    "evidence_type": "financial_metric",
+                    "text": (
+                        f"{ticker} division-level organic-sales growth in the latest "
+                        f"reported quarter ranged from {_pct(weakest.value)} in "
+                        f"{weakest_label} to {_pct(strongest.value)} in "
+                        f"{strongest_label}."
+                    ),
+                    "metrics": [weakest.metric_name, strongest.metric_name],
+                    "counterargument": (
+                        "A single quarter's regional spread may reflect pricing, "
+                        "volume, currency and comparison-base effects."
+                    ),
+                    "implication": (
+                        "The divisional spread identifies where aggregate growth is "
+                        "strongest and where execution remains weaker."
+                    ),
+                }
+            )
+
+    margin = canonical_financials.get_metric("current_period_gross_margin")
+    margin_change = canonical_financials.get_metric(
+        "current_period_gross_margin_change_yoy"
+    )
+    adjusted_margin = canonical_financials.get_metric("adjusted_gross_margin")
+    adjusted_margin_change = canonical_financials.get_metric(
+        "adjusted_gross_margin_change_yoy"
+    )
+    adjusted_eps = canonical_financials.get_metric("adjusted_eps_diluted")
+    adjusted_eps_growth = canonical_financials.get_metric("adjusted_eps_growth_yoy")
+    result_quality_metrics = [
+        metric.metric_name
+        for metric in (
+            margin,
+            margin_change,
+            adjusted_margin,
+            adjusted_margin_change,
+            adjusted_eps,
+            adjusted_eps_growth,
+        )
+        if metric is not None
+    ]
+    if margin is not None and margin_change is not None and adjusted_eps is not None:
+        margin_direction = "expanded" if margin_change.value >= 0 else "contracted"
+        adjusted_clause = ""
+        if adjusted_margin is not None and adjusted_margin_change is not None:
+            adjusted_direction = (
+                "expanded" if adjusted_margin_change.value >= 0 else "contracted"
+            )
+            adjusted_clause = (
+                f" Base Business gross margin was {_pct(adjusted_margin.value)} "
+                f"and {adjusted_direction} by "
+                f"{abs(adjusted_margin_change.value) * 100:.1f} percentage points."
+            )
+        eps_clause = (
+            f" Base Business diluted EPS was {_money(adjusted_eps.value, currency)}"
+        )
+        if adjusted_eps_growth is not None:
+            eps_clause += f", a year-over-year change of {_pct(adjusted_eps_growth.value)}"
+        eps_clause += "."
+        specs.append(
+            {
+                "section": "Business & Segment Context",
+                "kind": "current_period",
+                "evidence_type": "financial_metric",
+                "text": (
+                    f"{ticker} issuer-filed current-quarter GAAP gross margin was "
+                    f"{_pct(margin.value)} and {margin_direction} by "
+                    f"{abs(margin_change.value) * 100:.1f} percentage points year over year."
+                    f"{adjusted_clause}{eps_clause}"
+                ),
+                "metrics": result_quality_metrics,
+                "counterargument": (
+                    "Adjusted results exclude issuer-defined items and do not replace "
+                    "the GAAP profit comparison."
+                ),
+                "implication": (
+                    "Read the GAAP decline together with the filed margin and adjusted "
+                    "EPS bridge before assigning an operating direction."
+                ),
+            }
+        )
+
+    market_share_metrics = _latest_canonical_metrics_with_prefix(
+        canonical_financials,
+        "market_share_",
+        period_bucket=None,
+    )
+    if market_share_metrics:
+        selected_market_shares = sorted(
+            market_share_metrics,
+            key=lambda metric: metric.value,
+            reverse=True,
+        )[:2]
+        phrases = [
+            f"{_pct(metric.value)} in "
+            f"{metric.metric_name.removeprefix('market_share_').replace('_', ' ')}"
+            for metric in selected_market_shares
+        ]
+        share_text = (
+            phrases[0]
+            if len(phrases) == 1
+            else f"{phrases[0]} and {phrases[1]}"
+        )
+        specs.append(
+            {
+                "section": "Business & Segment Context",
+                "kind": "current_period",
+                "evidence_type": "financial_metric",
+                "text": (
+                    f"For the latest reported period, {ticker} issuer-filed "
+                    "year-to-date global market share was "
+                    f"{share_text}."
+                ),
+                "metrics": [metric.metric_name for metric in selected_market_shares],
+                "counterargument": (
+                    "Issuer-reported market share can be category-, geography- and "
+                    "measurement-period specific."
+                ),
+                "implication": (
+                    "Track the same share definitions over time before treating the "
+                    "current level as evidence of strengthening or weakening."
+                ),
+            }
+        )
+
+    operating_cash_flow_candidates = [
+        metric
+        for metric in canonical_financials.metrics_for("operating_cash_flow")
+        if metric.period_bucket == "ytd" and metric.end_date
+    ]
+    if operating_cash_flow_candidates:
+        operating_cash_flow = max(
+            operating_cash_flow_candidates,
+            key=lambda metric: metric.end_date or "",
+        )
+        capex = next(
+            (
+                metric
+                for metric in canonical_financials.metrics_for("capex")
+                if metric.period_bucket == "ytd"
+                and metric.start_date == operating_cash_flow.start_date
+                and metric.end_date == operating_cash_flow.end_date
+            ),
+            None,
+        )
+        if capex is not None:
+            specs.append(
+                {
+                    "section": "Fundamental Analysis",
+                    "kind": "current_period",
+                    "evidence_type": "financial_metric",
+                    "text": (
+                        f"For the latest reported period (year to date), {ticker} "
+                        f"generated {_money(operating_cash_flow.value, currency)} of "
+                        f"operating cash flow and reported {_money(capex.value, currency)} "
+                        "of capital expenditure."
+                    ),
+                    "metrics": ["operating_cash_flow", "capex"],
+                    "counterargument": (
+                        "Year-to-date cash flow can be seasonal and is not the same "
+                        "measurement window as TTM free cash flow."
+                    ),
+                    "implication": (
+                        "Keep current cash generation visible while preserving the "
+                        "separate TTM valuation denominator."
+                    ),
+                }
+            )
+
+    guidance_ranges = []
+    for base, label in (
+        ("net_sales_growth", "net-sales growth"),
+        ("revenue_growth", "revenue growth"),
+        ("organic_sales_growth", "organic-sales growth"),
+        ("organic_revenue_growth", "organic-revenue growth"),
+    ):
+        low_name = f"guidance_{base}_low"
+        high_name = f"guidance_{base}_high"
+        low = canonical_financials.get_metric(low_name)
+        high = canonical_financials.get_metric(high_name)
+        if low is None or high is None or low.period != high.period:
+            continue
+        guidance_ranges.append((low_name, high_name, label, low, high))
+    if guidance_ranges:
+        phrases = [
+            f"{label} of {_pct(low.value)} to {_pct(high.value)}"
+            for _, _, label, low, high in guidance_ranges[:2]
+        ]
+        guidance_text = (
+            phrases[0]
+            if len(phrases) == 1
+            else f"{phrases[0]} and {phrases[1]}"
+        )
+        guidance_period = guidance_ranges[0][3].period
+        specs.append(
+            {
+                "section": "Catalysts & Triggers",
+                "kind": "guidance",
+                "evidence_type": "guidance",
+                "text": (
+                    f"{ticker} issuer-filed {guidance_period} guidance calls for "
+                    f"{guidance_text}."
+                ),
+                "metrics": [
+                    metric_name
+                    for low_name, high_name, _, _, _ in guidance_ranges[:2]
+                    for metric_name in (low_name, high_name)
+                ],
+                "counterargument": (
+                    "Guidance is forward-looking and remains exposed to execution, "
+                    "currency and demand changes."
+                ),
+                "implication": (
+                    "Future reported results should be measured against the filed "
+                    "range rather than against an unsourced expectation."
+                ),
+            }
+        )
+    return specs
+
+
+def _latest_canonical_metrics_with_prefix(
+    canonical_financials: CanonicalFinancials,
+    prefix: str,
+    *,
+    period_bucket: Optional[str] = "quarterly",
+) -> list:
+    candidates = [
+        metric
+        for metric in canonical_financials.metrics
+        if metric.metric_name.startswith(prefix)
+        and (period_bucket is None or metric.period_bucket == period_bucket)
+    ]
+    if not candidates:
+        return []
+    latest_end = max(metric.end_date or "" for metric in candidates)
+    return [metric for metric in candidates if (metric.end_date or "") == latest_end]
+
+
+def _segment_label_from_metric(metric_name: str) -> str:
+    prefix = "segment_organic_sales_growth_"
+    return metric_name.removeprefix(prefix).replace("_", " ").title()
 
 
 def _early_commercial_capital_intensive_specs(

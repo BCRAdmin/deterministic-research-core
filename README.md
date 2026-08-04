@@ -78,9 +78,13 @@ python -m research_agent.current \
 ```
 
 It resolves the issuer through the official SEC ticker map, fetches SEC
-CompanyFacts and submissions, obtains daily OHLCV through Nasdaq's public
-official historical-data surface by default, stages temporary inputs below
-`.runtime/current-research/`, and invokes the same deterministic pipeline.
+CompanyFacts and submissions, and integrates a structurally supported current
+Item 2.02 result exhibit only when the same fiscal quarter is already covered
+by the mapped 10-Q CompanyFacts accession. Result exhibits add operating and
+guidance context; they do not replace GAAP statements. The runner obtains daily
+OHLCV through Nasdaq's public official historical-data surface by default,
+stages temporary inputs below `.runtime/current-research/`, and invokes the
+same deterministic pipeline.
 Outputs appear below `research_agent/data/outputs/`, which is intentionally
 Git-ignored except for `.gitkeep`.
 

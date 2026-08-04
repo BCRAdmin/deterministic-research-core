@@ -111,7 +111,15 @@ branch.
 The generic current runner stages sources below `.runtime/current-research`
 and writes only final authority/report outputs below the ignored output root.
 For U.S. SEC filers it uses the official SEC ticker map, CompanyFacts, and
-submissions APIs. For Budapest Stock Exchange equities it uses the official
+submissions APIs. A current Item 2.02 8-K result exhibit is integrated only
+when its fiscal quarter matches the latest mapped 10-Q CompanyFacts accession.
+The exhibit may add issuer-defined operating bridges, segment comparisons,
+adjusted-result context, market-share disclosures, and explicit guidance; it
+never replaces the matching CompanyFacts GAAP statements. Unsupported,
+ambiguous, annual, or not-yet-CompanyFacts-covered result periods stop the run
+instead of falling back to reconstructed press-release financials.
+
+For Budapest Stock Exchange equities it uses the official
 BSE issuer profile, issuer-submitted IFRS financial tables and exchange OHLCV.
 Other jurisdictions require their own official-registry adapter; they must not
 be handled through ticker-specific exceptions.

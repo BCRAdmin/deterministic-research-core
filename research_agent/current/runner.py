@@ -31,12 +31,17 @@ from research_agent.sources.sec.sec_inline_facts import (
     merge_sec_inline_fact_supplement_payloads,
     save_sec_inline_fact_supplement,
 )
+from research_agent.sources.sec.sec_results_release import (
+    build_sec_results_release_payload,
+    select_sec_results_exhibit,
+)
 from research_agent.sources.sec.xbrl_concepts import US_GAAP_CONCEPTS
 
 
 SEC_FINANCIAL_FORMS = {"10-K", "10-Q"}
 SEC_RESULTS_ANNOUNCEMENT_FORM = "8-K"
 SEC_RESULTS_ANNOUNCEMENT_ITEM = "2.02"
+SEC_RESULTS_FILING_MATCH_WINDOW_DAYS = 14
 SEC_FINANCIAL_INDUSTRY_SIC_RANGE = range(6000, 6800)
 SEC_REIT_SIC_CODES = {6798}
 SEC_SCHEDULED_AIRLINE_SIC_CODES = {4512}
@@ -157,7 +162,8 @@ def run_current_research(
     companyfacts_dir = source_dir / "sec_companyfacts"
     inline_facts_dir = source_dir / "sec_inline_facts"
     risk_factors_dir = source_dir / "sec_risk_factors"
-    business_context_dir = source_dir / "sec_business_context"
+    results_release_dir = source_dir / "sec_results_release"
+    official_news_merge_dir = source_dir / "sec_official_news"
     packet_root = staging_dir / "packets"
     output_root = Path(request.output_root).expanduser().resolve()
 
@@ -231,6 +237,11 @@ def run_current_research(
     business_context_filing_date: Optional[str] = None
     business_context_count = 0
     business_context_payload: Optional[dict[str, Any]] = None
+    results_release_status = "not_applicable"
+    results_release_filing_date: Optional[str] = None
+    results_release_metric_count = 0
+    results_release_payload: Optional[dict[str, Any]] = None
+    results_release_path: Optional[Path] = None
     cik_records_path: Optional[Path] = None
     ir_release_dir: Optional[Path] = (
         Path(request.ir_release_dir).expanduser().resolve()
@@ -263,6 +274,68 @@ def run_current_research(
             submissions,
             companyfacts,
         )
+        latest_results_filing = _latest_sec_results_announcement(
+            submissions,
+            request.as_of_date,
+        )
+        if _sec_results_release_is_current_candidate(
+            latest_results_filing,
+            latest_financial_filing,
+        ):
+            if latest_financial_filing is None or latest_results_filing is None:
+                _raise_uncovered_sec_results(symbol, latest_results_filing)
+            filing_period = _companyfacts_filing_period(
+                companyfacts,
+                latest_financial_filing["accession_number"],
+                request.as_of_date,
+            )
+            if filing_period is None or filing_period["fiscal_period"] not in {
+                "Q1",
+                "Q2",
+                "Q3",
+            }:
+                _raise_uncovered_sec_results(symbol, latest_results_filing)
+            try:
+                results_primary_html = sec.get_filing_html(
+                    cik=cik,
+                    accession_number=latest_results_filing["accession_number"],
+                    primary_document=latest_results_filing["primary_document"],
+                )
+                results_document = select_sec_results_exhibit(results_primary_html)
+                results_html = sec.get_filing_html(
+                    cik=cik,
+                    accession_number=latest_results_filing["accession_number"],
+                    primary_document=results_document,
+                )
+                results_release_payload = build_sec_results_release_payload(
+                    ticker=symbol,
+                    cik=cik,
+                    accession_number=latest_results_filing["accession_number"],
+                    filing_date=latest_results_filing["filing_date"],
+                    exhibit_document=results_document,
+                    html=results_html,
+                    expected_fiscal_year=int(filing_period["fiscal_year"]),
+                    expected_fiscal_period=filing_period["fiscal_period"],
+                    period_end_date=filing_period["end_date"],
+                    retrieved_at=retrieved_at,
+                )
+            except (RuntimeError, ValueError) as exc:
+                raise CurrentResearchError(
+                    f"{symbol} hat mit dem 8-K vom "
+                    f"{latest_results_filing['filing_date']} Ergebnisse nach SEC "
+                    "Item 2.02 für den aktuellen Finanzzeitraum veröffentlicht. "
+                    "Der offizielle Ergebnis-Anhang konnte nicht nach dem engen, "
+                    f"strukturierten Room16-Vertrag integriert werden: {exc}. "
+                    "Room16 startet keine angeblich vollständige Analyse."
+                ) from exc
+            results_release_path = results_release_dir / f"{symbol}.json"
+            results_release_status = "available"
+            results_release_filing_date = latest_results_filing["filing_date"]
+            results_release_metric_count = len(
+                results_release_payload.get("metrics") or []
+            )
+        elif latest_results_filing is not None:
+            results_release_status = "superseded_by_later_financial_filing"
         _require_supported_sec_captive_finance_profile(
             symbol,
             request.as_of_date,
@@ -363,8 +436,7 @@ def run_current_research(
                         primary_document=annual_filing.primary_document,
                     )
                 except RuntimeError:
-                    if official_news_dir is None:
-                        business_context_status = "filing_fetch_failed"
+                    business_context_status = "filing_fetch_failed"
             if annual_html is not None:
                 if (
                     latest_financial_reference is not None
@@ -385,22 +457,20 @@ def run_current_research(
                     )
                     if inline_facts_payload is not None:
                         inline_facts_path = inline_facts_dir / f"{symbol}.json"
-                if official_news_dir is None:
-                    business_context_payload = build_sec_business_context_payload(
-                        ticker=symbol,
-                        filing=annual_filing,
-                        html=annual_html,
-                        retrieved_at=retrieved_at,
-                    )
-                    business_context_count = len(
-                        business_context_payload.get("events") or []
-                    )
-                    if business_context_count:
-                        business_context_status = "available"
-                        business_context_filing_date = annual_filing.filing_date
-                        official_news_dir = str(business_context_dir)
-                    else:
-                        business_context_status = "no_extractable_business_context"
+                business_context_payload = build_sec_business_context_payload(
+                    ticker=symbol,
+                    filing=annual_filing,
+                    html=annual_html,
+                    retrieved_at=retrieved_at,
+                )
+                business_context_count = len(
+                    business_context_payload.get("events") or []
+                )
+                if business_context_count:
+                    business_context_status = "available"
+                    business_context_filing_date = annual_filing.filing_date
+                else:
+                    business_context_status = "no_extractable_business_context"
         latest_filing_date = _latest_filing_date(
             submissions, as_of_date=request.as_of_date
         )
@@ -500,11 +570,29 @@ def run_current_research(
                 evidence=risk_evidence_to_save,
                 filings=risk_filings_to_save,
             )
-        if business_context_count and business_context_payload is not None:
-            _write_json(
-                business_context_dir / f"{symbol}_news.json",
-                business_context_payload,
+        if results_release_path is not None and results_release_payload is not None:
+            _write_json(results_release_path, results_release_payload)
+        generated_news_payloads = [
+            payload
+            for payload in (business_context_payload, results_release_payload)
+            if payload is not None
+        ]
+        if generated_news_payloads:
+            external_news_payload = _load_official_news_payload(
+                symbol,
+                request.official_news_dir,
             )
+            if external_news_payload is not None:
+                generated_news_payloads.insert(0, external_news_payload)
+            merged_news_payload = _merge_official_news_payloads(
+                generated_news_payloads,
+                retrieved_at=retrieved_at,
+            )
+            _write_json(
+                official_news_merge_dir / f"{symbol}_news.json",
+                merged_news_payload,
+            )
+            official_news_dir = str(official_news_merge_dir)
         if inline_facts_path is not None and inline_facts_payload is not None:
             save_sec_inline_fact_supplement(
                 inline_facts_path,
@@ -546,6 +634,27 @@ def run_current_research(
     ]
     if financial_source is not None:
         registry_sources.append(financial_source)
+    if results_release_payload is not None:
+        registry_sources.append(
+            SourceRegistryEntry(
+                source_id=str(results_release_payload["source_id"]),
+                ticker=symbol,
+                source_type="sec_filing",
+                authority_rank=1,
+                url=str(results_release_payload["url"]),
+                retrieved_at=retrieved_at,
+                used_for=sorted(
+                    {
+                        str(item["metric_name"])
+                        for item in results_release_payload.get("metrics") or []
+                        if item.get("metric_name")
+                    }
+                ),
+                owner="SEC / issuer-filed Item 2.02 exhibit",
+                source_tier="official_financial_authority",
+                freshness_status="current_ingestion",
+            )
+        )
     registry = SourceRegistry(
         registry_id=registry_id,
         sources=registry_sources,
@@ -573,6 +682,9 @@ def run_current_research(
         sec_risk_factors_path=str(risk_factors_path) if risk_factors_path else None,
         sec_user_agent=request.sec_user_agent or None,
         ir_release_dir=str(ir_release_dir) if ir_release_dir else None,
+        sec_results_release_path=(
+            str(results_release_path) if results_release_path else None
+        ),
         earnings_calendar_path=earnings_calendar_path,
         official_news_dir=official_news_dir,
         price_currency=bse_issuer.currency if bse_issuer else "USD",
@@ -612,6 +724,9 @@ def run_current_research(
         "business_context_status": business_context_status,
         "business_context_filing_date": business_context_filing_date,
         "business_context_count": business_context_count,
+        "results_release_status": results_release_status,
+        "results_release_filing_date": results_release_filing_date,
+        "results_release_metric_count": results_release_metric_count,
         "inline_financial_fact_count": len(
             (inline_facts_payload or {}).get("facts") or []
         ),
@@ -897,21 +1012,6 @@ def _require_current_sec_financial_filing_coverage(
     companyfacts: dict[str, Any],
 ) -> Optional[dict[str, str]]:
     latest = _latest_sec_financial_filing(submissions, as_of_date)
-    latest_results = _latest_sec_results_announcement(submissions, as_of_date)
-    if latest_results is not None and (
-        latest is None
-        or latest_results["filing_date"] >= latest["filing_date"]
-    ):
-        raise CurrentResearchError(
-            f"{ticker} hat mit dem 8-K vom {latest_results['filing_date']} "
-            "gleichzeitig oder nach dem jüngsten 10-Q/10-K Ergebnisse nach SEC "
-            "Item 2.02 veröffentlicht. Diese Zahlen "
-            "sind noch nicht über den standardisierten CompanyFacts-Pfad "
-            "integriert. Room16 startet keine angeblich vollständige Analyse, "
-            "solange diese offizielle Ergebnisquelle fehlt. Bitte den Lauf nach "
-            "einem späteren 10-Q/10-K oder nach Integration des generischen "
-            "8-K-Ergebniswegs erneut starten."
-        )
     if latest is None:
         return None
     accession = latest["accession_number"]
@@ -963,6 +1063,7 @@ def _latest_sec_results_announcement(
     forms = recent.get("form") or []
     filing_dates = recent.get("filingDate") or []
     accessions = recent.get("accessionNumber") or []
+    primary_documents = recent.get("primaryDocument") or []
     items = recent.get("items") or []
     candidates = []
     for index, form in enumerate(forms):
@@ -991,6 +1092,11 @@ def _latest_sec_results_announcement(
                     "form": str(form),
                     "filing_date": filing_date,
                     "accession_number": accession,
+                    "primary_document": (
+                        str(primary_documents[index])
+                        if index < len(primary_documents)
+                        else ""
+                    ),
                 }
             )
     if not candidates:
@@ -1030,6 +1136,153 @@ def _latest_metric_date(payload: dict[str, Any]) -> Optional[str]:
         if item.get("date") or item.get("end_date")
     ]
     return max(dates) if dates else None
+
+
+def _sec_results_release_is_current_candidate(
+    results_filing: Optional[dict[str, str]],
+    financial_filing: Optional[dict[str, str]],
+) -> bool:
+    if results_filing is None:
+        return False
+    if financial_filing is None:
+        return True
+    try:
+        result_date = date.fromisoformat(results_filing["filing_date"])
+        financial_date = date.fromisoformat(financial_filing["filing_date"])
+    except (KeyError, ValueError):
+        return True
+    return (
+        financial_date - result_date
+    ).days <= SEC_RESULTS_FILING_MATCH_WINDOW_DAYS
+
+
+def _companyfacts_filing_period(
+    companyfacts: dict[str, Any],
+    accession_number: str,
+    as_of_date: str,
+) -> Optional[dict[str, Any]]:
+    mapped_concepts = {
+        concept
+        for metric_name in SEC_COMPANYFACTS_COVERAGE_METRICS
+        for concept in US_GAAP_CONCEPTS.get(metric_name, [])
+    }
+    candidates: list[tuple[int, str, str]] = []
+    us_gaap = companyfacts.get("facts", {}).get("us-gaap", {})
+    for concept in mapped_concepts:
+        for rows in ((us_gaap.get(concept) or {}).get("units") or {}).values():
+            for row in rows:
+                if not isinstance(row, dict):
+                    continue
+                if str(row.get("accn") or "") != accession_number:
+                    continue
+                if str(row.get("filed") or "") > as_of_date:
+                    continue
+                fiscal_period = str(row.get("fp") or "").upper()
+                end_date = str(row.get("end") or "")
+                try:
+                    fiscal_year = int(row.get("fy"))
+                    date.fromisoformat(end_date)
+                except (TypeError, ValueError):
+                    continue
+                if fiscal_period not in {"Q1", "Q2", "Q3", "FY"}:
+                    continue
+                candidates.append((fiscal_year, fiscal_period, end_date))
+    if not candidates:
+        return None
+    counts: dict[tuple[int, str, str], int] = {}
+    for candidate in candidates:
+        counts[candidate] = counts.get(candidate, 0) + 1
+    best_count = max(counts.values())
+    best = sorted(candidate for candidate, count in counts.items() if count == best_count)
+    if len(best) != 1:
+        return None
+    fiscal_year, fiscal_period, end_date = best[0]
+    return {
+        "fiscal_year": fiscal_year,
+        "fiscal_period": fiscal_period,
+        "end_date": end_date,
+    }
+
+
+def _raise_uncovered_sec_results(
+    ticker: str,
+    results_filing: Optional[dict[str, str]],
+) -> None:
+    filing_date = (
+        results_filing.get("filing_date")
+        if results_filing is not None
+        else "unbekanntem Datum"
+    )
+    raise CurrentResearchError(
+        f"{ticker} hat mit dem 8-K vom {filing_date} Ergebnisse nach SEC Item "
+        "2.02 veröffentlicht, deren Finanzperiode noch nicht eindeutig durch "
+        "einen standardisierten aktuellen 10-Q/10-K-CompanyFacts-Stand gedeckt "
+        "ist. Room16 baut keine GAAP-Zahlen aus Pressemitteilungstabellen nach "
+        "und startet keine angeblich vollständige Analyse."
+    )
+
+
+def _load_official_news_payload(
+    ticker: str,
+    news_dir: Optional[str],
+) -> Optional[dict[str, Any]]:
+    if not news_dir:
+        return None
+    path = Path(news_dir).expanduser().resolve() / f"{ticker.upper()}_news.json"
+    if not path.exists():
+        return None
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if isinstance(payload, list):
+        return {"coverage_status": "available", "events": payload}
+    if not isinstance(payload, dict):
+        raise CurrentResearchError(
+            f"Die vorhandenen offiziellen News-Eingaben für {ticker} sind kein "
+            "JSON-Objekt oder keine Ereignisliste."
+        )
+    return payload
+
+
+def _merge_official_news_payloads(
+    payloads: list[dict[str, Any]],
+    *,
+    retrieved_at: str,
+) -> dict[str, Any]:
+    events: list[dict[str, Any]] = []
+    sources_checked: list[str] = []
+    seen_events: set[tuple[str, str, str, str]] = set()
+    window_starts: list[str] = []
+    window_ends: list[str] = []
+    for payload in payloads:
+        if payload.get("window_start"):
+            window_starts.append(str(payload["window_start"]))
+        if payload.get("window_end"):
+            window_ends.append(str(payload["window_end"]))
+        sources_checked.extend(
+            str(source)
+            for source in payload.get("sources_checked") or []
+            if source
+        )
+        for event in payload.get("events") or []:
+            if not isinstance(event, dict):
+                continue
+            key = (
+                str(event.get("source_id") or ""),
+                str(event.get("date") or ""),
+                str(event.get("event_type") or ""),
+                str(event.get("summary") or event.get("headline") or ""),
+            )
+            if key in seen_events:
+                continue
+            seen_events.add(key)
+            events.append(event)
+    return {
+        "coverage_status": "available" if payloads else "unavailable",
+        "checked_at": retrieved_at,
+        "window_start": min(window_starts) if window_starts else None,
+        "window_end": max(window_ends) if window_ends else None,
+        "sources_checked": list(dict.fromkeys(sources_checked)),
+        "events": events,
+    }
 
 
 def _write_json(path: Path, payload: Any) -> None:

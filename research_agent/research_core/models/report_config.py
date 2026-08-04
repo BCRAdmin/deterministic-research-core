@@ -36,4 +36,5 @@ class ReportConfig(BaseModel):
     sec_user_agent: Optional[str] = None
     earnings_calendar_path: Optional[str] = None
     ir_release_dir: Optional[str] = None
+    sec_results_release_path: Optional[str] = None
     official_news_dir: Optional[str] = None
