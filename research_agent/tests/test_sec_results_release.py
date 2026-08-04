@@ -98,6 +98,8 @@ def test_selects_one_item_202_results_exhibit_from_duplicate_links():
     primary = """
     <a href="q2-results.htm">99.1</a>
     <a href="q2-results.htm">Press release with quarterly results</a>
+    <a href="q2-infographic.htm">99.2</a>
+    <a href="q2-infographic.htm">Infographic relating to the financial results</a>
     <a href="main-document.htm">Inline XBRL document</a>
     """
 
@@ -238,6 +240,52 @@ def test_builds_nonrecurring_gain_and_continuing_perimeter_context():
     assert any("continuing-company perimeter" in summary for summary in summaries)
     action = next(event for event in payload["events"] if event["event_type"] == "corporate_action")
     assert action["date"] == "2026-06-29"
+
+
+def test_builds_labeled_outlook_bullets_without_rebuilding_gaap_statements():
+    html = """
+    <html><body>
+      <div>LOWE'S REPORTS FIRST QUARTER 2026 SALES AND EARNINGS RESULTS</div>
+      <div>Comparable sales for the quarter increased 0.6%.</div>
+      <div>Adjusted diluted EPS1 increased 3.8% to $3.03.</div>
+      <div>Full Year 2026 Outlook</div>
+      <div>• Total sales of $92.0 to 94.0 billion or an increase of approximately 7% to 9%</div>
+      <div>• Comparable sales expected to be flat to up 2%</div>
+      <div>• Operating income as a percentage of sales (operating margin) of 11.2% to 11.4%</div>
+      <div>• Adjusted operating income as a percentage of sales (adjusted operating margin) of 11.6% to 11.8%</div>
+      <div>• Diluted earnings per share of approximately $11.75 to $12.25</div>
+      <div>• Adjusted diluted earnings per share of approximately $12.25 to $12.75</div>
+      <div>A conference call will follow.</div>
+    </body></html>
+    """
+
+    payload = build_sec_results_release_payload(
+        ticker="GENR",
+        cik="123456",
+        accession_number="0000123456-26-000011",
+        filing_date="2026-05-20",
+        exhibit_document="q1-results.htm",
+        html=html,
+        expected_fiscal_year=2026,
+        expected_fiscal_period="Q1",
+        period_end_date="2026-05-01",
+        retrieved_at="2026-05-20T12:00:00Z",
+    )
+
+    metrics = {item["metric_name"]: item for item in payload["metrics"]}
+    assert metrics["comparable_sales_growth"]["value"] == pytest.approx(0.006)
+    assert metrics["adjusted_eps_diluted"]["value"] == pytest.approx(3.03)
+    assert metrics["adjusted_eps_growth_yoy"]["value"] == pytest.approx(0.038)
+    assert metrics["guidance_revenue_low"]["value"] == 92_000_000_000.0
+    assert metrics["guidance_revenue_high"]["value"] == 94_000_000_000.0
+    assert metrics["guidance_reported_sales_growth_low"]["value"] == pytest.approx(0.07)
+    assert metrics["guidance_reported_sales_growth_high"]["value"] == pytest.approx(0.09)
+    assert metrics["guidance_comparable_sales_growth_low"]["value"] == 0.0
+    assert metrics["guidance_comparable_sales_growth_high"]["value"] == pytest.approx(0.02)
+    assert metrics["guidance_operating_margin_low"]["basis"] == "gaap"
+    assert metrics["guidance_adjusted_operating_margin_high"]["basis"] == "non_gaap"
+    assert metrics["guidance_eps_diluted_low"]["value"] == pytest.approx(11.75)
+    assert metrics["guidance_adjusted_eps_high"]["value"] == pytest.approx(12.75)
 
 
 def _quarterly_metric(metric_name, value):

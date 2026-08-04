@@ -1240,8 +1240,12 @@ def _companyfacts_filing_period(
     for candidate in candidates:
         counts[candidate] = counts.get(candidate, 0) + 1
     best_count = max(counts.values())
-    best = sorted(candidate for candidate, count in counts.items() if count == best_count)
-    if len(best) != 1:
+    best = sorted(
+        (candidate for candidate, count in counts.items() if count == best_count),
+        key=lambda candidate: candidate[2],
+        reverse=True,
+    )
+    if len(best) > 1 and best[0][2] == best[1][2]:
         return None
     fiscal_year, fiscal_period, end_date = best[0]
     return {

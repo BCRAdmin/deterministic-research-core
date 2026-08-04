@@ -253,7 +253,12 @@ class _SecTextBlocks(HTMLParser):
         if tag in _BLOCK_TAGS:
             self._flush()
         style = str(dict(attrs).get("style") or "").lower().replace(" ", "")
-        if tag in {"b", "strong"} or "font-weight:700" in style or "font-weight:bold" in style:
+        if (
+            tag in {"b", "strong", "em", "i"}
+            or "font-weight:700" in style
+            or "font-weight:bold" in style
+            or "font-style:italic" in style
+        ):
             self._bold_tags.append(tag)
 
     def handle_endtag(self, tag: str) -> None:

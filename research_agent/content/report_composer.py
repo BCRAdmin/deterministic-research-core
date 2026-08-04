@@ -343,6 +343,8 @@ def _render_final_rating_logic(
     ]
     if current_profit_declines and f.free_cash_flow_ttm is None:
         decline_text = " and ".join(current_profit_declines)
+        decline_subject = f"{decline_text} {'decline' if len(current_profit_declines) == 1 else 'declines'}"
+        decline_verb = "is" if len(current_profit_declines) == 1 else "are"
         technical_counterevidence = (
             " The bullish technical direction is counterevidence, but does not "
             "erase those declines."
@@ -350,14 +352,14 @@ def _render_final_rating_logic(
             else ""
         )
         why_not_constructive = (
-            f"- Why not more constructive? Current-period {decline_text} declines "
-            "are current downside evidence. FCF is unavailable, so cash conversion "
+            f"- Why not more constructive? Current-period {decline_subject} "
+            f"{decline_verb} current downside evidence. FCF is unavailable, so cash conversion "
             "cannot offset or confirm the reported weakness. A more constructive "
             "rating requires improving profit comparisons and measurable cash-flow "
             "support."
         )
         why_not_cautious = (
-            f"- Why not more cautious? The {decline_text} declines are not dismissed."
+            f"- Why not more cautious? The {decline_subject} {decline_verb} not dismissed."
             f"{technical_counterevidence} One reported period does not establish "
             "the cause or durability of the weakness; a more cautious rating "
             "requires persistence or corroborating cash-flow deterioration once "
@@ -369,20 +371,22 @@ def _render_final_rating_logic(
         and f.free_cash_flow_ttm > 0
     ):
         decline_text = " and ".join(current_profit_declines)
+        decline_subject = f"{decline_text} {'decline' if len(current_profit_declines) == 1 else 'declines'}"
+        decline_verb = "is" if len(current_profit_declines) == 1 else "are"
         counterevidence_subject = (
             "positive FCF and the bullish technical direction are"
             if scores.technical_score > 0
             else "positive FCF is"
         )
         why_not_constructive = (
-            f"- Why not more constructive? Current-period {decline_text} declines "
-            "are current downside evidence; positive FCF does not erase those "
+            f"- Why not more constructive? Current-period {decline_subject} "
+            f"{decline_verb} current downside evidence; positive FCF does not erase those "
             "reported comparisons. A more constructive rating requires profit "
             "comparisons to improve, that improvement to persist, and benchmarked "
             "valuation support."
         )
         why_not_cautious = (
-            f"- Why not more cautious? The {decline_text} declines are not dismissed, "
+            f"- Why not more cautious? The {decline_subject} {decline_verb} not dismissed, "
             f"but {counterevidence_subject} measured counterevidence. "
             "A more cautious rating requires the profit weakness to persist or be "
             "corroborated by weaker cash conversion."

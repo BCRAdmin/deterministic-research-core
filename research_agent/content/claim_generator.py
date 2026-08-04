@@ -710,18 +710,47 @@ class _ClaimBuilder:
             and str(metric).endswith("_growth_yoy")
         ]
         growth_metrics = list(dict.fromkeys(str(metric) for metric in growth_metrics))
-        result_context_metrics = [
+        margin_context_metrics = [
             metric_name
             for metric_name in (
                 "current_period_gross_margin",
                 "current_period_gross_margin_change_yoy",
                 "adjusted_gross_margin",
                 "adjusted_gross_margin_change_yoy",
+            )
+            if self._metric_value(metric_name) is not None
+        ]
+        adjusted_result_context_metrics = [
+            metric_name
+            for metric_name in (
                 "adjusted_eps_diluted",
                 "adjusted_eps_growth_yoy",
             )
             if self._metric_value(metric_name) is not None
         ]
+        segment_context_metrics = sorted(
+            {
+                metric.metric_name
+                for metric in self.canonical.metrics
+                if metric.metric_name.startswith("segment_")
+                and not metric.metric_name.startswith("segment_margin")
+                and not metric.metric_name.startswith("guidance_")
+            }
+        )
+        result_context_metrics = list(
+            dict.fromkeys(
+                segment_context_metrics
+                + margin_context_metrics
+                + adjusted_result_context_metrics
+            )
+        )
+        result_context_labels = []
+        if segment_context_metrics:
+            result_context_labels.append("segment")
+        if margin_context_metrics:
+            result_context_labels.append("margin")
+        if adjusted_result_context_metrics:
+            result_context_labels.append("adjusted-result")
         current_period_loss_metrics = _current_period_loss_metrics(self.canonical)
         current_period_loss_phrase = _current_period_loss_phrase(
             current_period_loss_metrics
@@ -878,15 +907,33 @@ class _ClaimBuilder:
                 )
                 if fcf_value is not None:
                     scale_and_cash += f" and FCF TTM is {self._money(fcf_value)}"
-                context_text = (
-                    "Issuer-filed segment, margin and adjusted-result context is "
-                    "present; it tempers but does not erase the GAAP profit declines."
-                    if result_context_metrics
-                    else (
-                        f"{comparison_summary}; segment, margin or one-off context is "
-                        "needed before treating them as business direction."
-                    )
+                negative_comparison_count = sum(
+                    1
+                    for value in growth_values.values()
+                    if value is not None and value < 0
                 )
+                negative_comparison_reference = (
+                    "the negative GAAP comparison"
+                    if negative_comparison_count == 1
+                    else "the negative GAAP comparisons"
+                )
+                if result_context_metrics:
+                    context_labels = (
+                        result_context_labels[0]
+                        if len(result_context_labels) == 1
+                        else ", ".join(result_context_labels[:-1])
+                        + f" and {result_context_labels[-1]}"
+                    )
+                    context_text = (
+                        f"Issuer-filed {context_labels} context is present; it qualifies "
+                        f"but does not erase {negative_comparison_reference}."
+                    )
+                else:
+                    context_text = (
+                        f"{comparison_summary}; segment, margin or one-off context is "
+                        "needed before treating the negative comparisons as business "
+                        "direction."
+                    )
                 bull_text = (
                     f"{comparison_label} evidence reports {growth_text}. "
                     f"{context_text} "
@@ -1743,24 +1790,30 @@ def _bear_case_claim_text(
         )
     if profit_declines and fcf_value is not None and fcf_value > 0:
         decline_text = " and ".join(profit_declines)
+        decline_subject = (
+            f"{decline_text} decline"
+            if len(profit_declines) == 1
+            else f"{decline_text} declines"
+        )
+        decline_verb = "is" if len(profit_declines) == 1 else "are"
         if trend_state == "bullish":
             return (
-                f"{ticker}'s current-period {decline_text} declines are current "
+                f"{ticker}'s current-period {decline_subject} {decline_verb} current "
                 f"downside evidence. Positive FCF TTM of {fcf} and the bullish "
                 "long-term trend state are counterevidence, but do not erase the "
-                "declines. A durable bear case requires the profit weakness to "
+                "profit weakness. A durable bear case requires that weakness to "
                 "persist or be confirmed by weaker cash conversion; the current "
                 "packet does not establish its cause."
             )
         if trend_state == "bearish":
             return (
-                f"{ticker}'s current-period {decline_text} declines and bearish "
+                f"{ticker}'s current-period {decline_subject} and bearish "
                 "long-term trend state are current downside evidence. Positive FCF "
                 f"TTM of {fcf} is counterevidence; persistence and cause still need "
                 "separate confirmation."
             )
         return (
-            f"{ticker}'s current-period {decline_text} declines are current downside "
+            f"{ticker}'s current-period {decline_subject} {decline_verb} current downside "
             f"evidence. Positive FCF TTM of {fcf} is counterevidence, while the "
             f"{trend_state} technical state does not establish the cause or "
             "durability of the profit weakness."
@@ -2222,21 +2275,29 @@ def _final_rating_claim_text(
     ]
     if current_profit_declines:
         decline_text = " and ".join(current_profit_declines)
+        decline_subject = (
+            f"{decline_text} decline"
+            if len(current_profit_declines) == 1
+            else f"{decline_text} declines"
+        )
         if metrics.fundamentals.free_cash_flow_ttm is None:
             fundamental_note = (
                 "The measured fundamental picture is pressured but incomplete: "
-                f"current-period {decline_text} declines are measured while FCF "
+                f"current-period {decline_subject} "
+                f"{'is' if len(current_profit_declines) == 1 else 'are'} measured while FCF "
                 "is unavailable."
             )
         elif metrics.fundamentals.free_cash_flow_ttm > 0:
             fundamental_note = (
                 "The measured fundamental picture is mixed: positive FCF does "
-                f"not erase current-period {decline_text} declines."
+                f"not erase the current-period {decline_subject}."
             )
         else:
             fundamental_note = (
                 "The measured fundamental picture is cautious: current-period "
-                f"{decline_text} declines lack positive FCF counterevidence."
+                f"{decline_subject} "
+                f"{'lacks' if len(current_profit_declines) == 1 else 'lack'} "
+                "positive FCF counterevidence."
             )
     elif current_profit_growth_divergence_metrics(metrics.fundamentals):
         fundamental_note = (
@@ -2809,12 +2870,17 @@ def _issuer_operating_result_specs(
     guidance_ranges = []
     for base, label, formatter in (
         ("revenue", "sales", lambda value: _money(value, currency)),
+        ("comparable_sales_growth", "comparable-sales growth", _pct),
         ("net_sales_growth", "net-sales growth", _pct),
         ("revenue_growth", "revenue growth", _pct),
         ("organic_sales_growth", "organic-sales growth", _pct),
         ("organic_revenue_growth", "organic-revenue growth", _pct),
+        ("adjusted_operating_margin", "adjusted operating margin", _pct),
         ("segment_margin", "segment margin", _pct),
         ("adjusted_eps", "adjusted EPS", lambda value: _money(value, currency)),
+        ("operating_margin", "operating margin", _pct),
+        ("eps_diluted", "diluted EPS", lambda value: _money(value, currency)),
+        ("reported_sales_growth", "reported-sales growth", _pct),
         ("adjusted_eps_growth", "adjusted-EPS growth", _pct),
     ):
         low_name = f"guidance_{base}_low"

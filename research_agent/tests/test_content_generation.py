@@ -728,7 +728,43 @@ def test_bull_case_calls_mixed_growth_mixed_not_business_direction():
             )
         ],
     )
+    adjusted_eps = CanonicalMetric(
+        metric_name="adjusted_eps_diluted",
+        value=3.03,
+        unit="USD_per_share",
+        period="FY2026",
+        fiscal_year=2026,
+        fiscal_period="FY",
+        period_bucket="annual",
+        start_date="2025-06-01",
+        end_date="2026-05-31",
+        duration_days=364,
+        basis="non_gaap",
+        statement_type="income_statement",
+        source_ids=["GENERIC_SEC_RESULTS"],
+        evidence_ids=["GENERIC_ADJUSTED_EPS"],
+        confidence="high",
+    )
+    canonical.metrics.append(adjusted_eps)
     _add_exact_metric_evidence(data, metrics, ledger)
+    ledger.evidence_items.append(
+        EvidenceItem(
+            evidence_id="GENERIC_ADJUSTED_EPS",
+            ticker=data.ticker,
+            claim_type="financial_metric",
+            source_id="GENERIC_SEC_RESULTS",
+            source_type="sec_filing",
+            authority_rank=1,
+            statement="Adjusted EPS was $3.03.",
+            normalized_value=3.03,
+            value=3.03,
+            unit="USD_per_share",
+            period="FY2026",
+            date="2026-05-31",
+            supports_metrics=["adjusted_eps_diluted"],
+            confidence="high",
+        )
+    )
 
     claims = generate_research_claims(
         data,
@@ -746,9 +782,25 @@ def test_bull_case_calls_mixed_growth_mixed_not_business_direction():
 
     assert "revenue growth 0.2%" in bull_claim.claim
     assert "net-income decline 3.4%" in bull_claim.claim
-    assert "current-period comparisons are mixed" in bull_claim.claim
+    assert "Issuer-filed adjusted-result context is present" in bull_claim.claim
+    assert "the negative GAAP comparison" in bull_claim.claim
+    assert "segment, margin" not in bull_claim.claim
+    assert "profit declines" not in bull_claim.claim
     assert "broad-based operating improvement" in bull_claim.claim
     assert "current business direction" not in bull_claim.claim
+    assert all("net-income declines" not in claim.claim for claim in claims)
+    assert any("net-income decline" in claim.claim for claim in claims)
+    report = compose_research_report(
+        data,
+        metrics,
+        validation,
+        decision,
+        ledger,
+        claims,
+    )
+    assert "Current-period net-income decline is current downside evidence" in report
+    assert "The net-income decline is not dismissed" in report
+    assert "net-income declines" not in report
 
 
 def test_non_positive_equity_is_visible_with_liquidity_and_lease_context():
@@ -2187,6 +2239,69 @@ def test_annual_claim_matches_same_dates_across_sec_period_labels():
         "net_income",
         "current_period_revenue_growth_yoy",
         "current_period_net_income_growth_yoy",
+    ]
+
+
+def test_guidance_claim_prioritizes_comparable_sales_adjusted_margin_and_eps():
+    _, metrics, _, _, _ = _load_packet("SNOW")
+    definitions = {
+        "revenue": (92_000_000_000.0, 94_000_000_000.0, "USD", "company_defined"),
+        "comparable_sales_growth": (0.0, 0.02, "percent", "company_defined"),
+        "operating_margin": (0.112, 0.114, "percent", "gaap"),
+        "adjusted_operating_margin": (0.116, 0.118, "percent", "non_gaap"),
+        "eps_diluted": (11.75, 12.25, "USD_per_share", "gaap"),
+        "adjusted_eps": (12.25, 12.75, "USD_per_share", "non_gaap"),
+    }
+    canonical_metrics = []
+    for base, (low, high, unit, basis) in definitions.items():
+        for bound, value in (("low", low), ("high", high)):
+            canonical_metrics.append(
+                CanonicalMetric(
+                    metric_name=f"guidance_{base}_{bound}",
+                    value=value,
+                    unit=unit,
+                    period="FY2026",
+                    fiscal_year=2026,
+                    fiscal_period="FY",
+                    period_bucket="guidance",
+                    end_date="2026-05-20",
+                    basis=basis,
+                    statement_type="guidance",
+                    source_ids=["GENERIC_SEC_RESULTS"],
+                    confidence="high",
+                )
+            )
+    canonical = CanonicalFinancials(
+        ticker="GENERIC",
+        as_of_date="2026-08-03",
+        metrics=canonical_metrics,
+    )
+
+    guidance = next(
+        spec
+        for spec in _current_period_claim_specs(
+            "GENERIC",
+            metrics,
+            canonical,
+            currency="USD",
+        )
+        if spec["kind"] == "guidance"
+    )
+
+    assert "sales of $92.00B to $94.00B" in guidance["text"]
+    assert "comparable-sales growth of 0.0% to 2.0%" in guidance["text"]
+    assert "adjusted operating margin of 11.6% to 11.8%" in guidance["text"]
+    assert "adjusted EPS of $12.25 to $12.75" in guidance["text"]
+    assert "$11.75" not in guidance["text"]
+    assert guidance["metrics"] == [
+        "guidance_revenue_low",
+        "guidance_revenue_high",
+        "guidance_comparable_sales_growth_low",
+        "guidance_comparable_sales_growth_high",
+        "guidance_adjusted_operating_margin_low",
+        "guidance_adjusted_operating_margin_high",
+        "guidance_adjusted_eps_low",
+        "guidance_adjusted_eps_high",
     ]
 
 

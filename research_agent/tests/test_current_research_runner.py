@@ -59,6 +59,48 @@ class _FakeSec:
         return {"filings": {"recent": {"filingDate": ["2026-07-20"]}}}
 
 
+def test_companyfacts_filing_period_prefers_current_over_equal_weight_comparison():
+    rows = [
+        {
+            "accn": "0000123456-26-000072",
+            "filed": "2026-05-28",
+            "fy": 2026,
+            "fp": "Q1",
+            "start": "2025-02-01",
+            "end": "2025-05-02",
+            "val": 100.0,
+        },
+        {
+            "accn": "0000123456-26-000072",
+            "filed": "2026-05-28",
+            "fy": 2026,
+            "fp": "Q1",
+            "start": "2026-01-31",
+            "end": "2026-05-01",
+            "val": 105.0,
+        },
+    ]
+    companyfacts = {
+        "facts": {
+            "us-gaap": {
+                "RevenueFromContractWithCustomerExcludingAssessedTax": {
+                    "units": {"USD": rows}
+                }
+            }
+        }
+    }
+
+    assert runner._companyfacts_filing_period(
+        companyfacts,
+        "0000123456-26-000072",
+        "2026-08-03",
+    ) == {
+        "fiscal_year": 2026,
+        "fiscal_period": "Q1",
+        "end_date": "2026-05-01",
+    }
+
+
 def test_corporate_action_bounds_unadjusted_prices_before_technicals():
     prices = pd.DataFrame(
         {

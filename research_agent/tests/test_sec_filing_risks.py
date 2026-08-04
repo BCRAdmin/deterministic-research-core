@@ -153,6 +153,23 @@ def test_extracts_emphasized_title_case_risks_without_terminal_periods():
     ]
 
 
+def test_extracts_italic_sentence_headings_but_not_plain_risk_narrative():
+    html = """
+    <html><body>
+      <div><strong>Item 1A. Risk Factors</strong></div>
+      <p><em>We may be unable to adapt our business to changing customer demand.</em></p>
+      <p>Customer preferences change over time and may affect individual categories.</p>
+      <p style="font-style:italic">Cybersecurity incidents could harm our operations and reputation.</p>
+      <div><strong>Item 1B. Unresolved Staff Comments</strong></div>
+    </body></html>
+    """
+
+    assert extract_sec_risk_headings(html) == [
+        "We may be unable to adapt our business to changing customer demand.",
+        "Cybersecurity incidents could harm our operations and reputation.",
+    ]
+
+
 @pytest.mark.parametrize("summary_heading", ["Risk Factor Summary", "Risk Factors Summary"])
 def test_extracts_plain_risk_factor_summary_without_category_titles(summary_heading):
     html = f"""

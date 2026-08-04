@@ -14,6 +14,11 @@ _RESULT_LINK_LANGUAGE = re.compile(
     r"\b(?:earnings|financial results?|press release|quarterly results?)\b",
     re.IGNORECASE,
 )
+_PRIMARY_RESULTS_LINK_LANGUAGE = re.compile(r"\bpress release\b", re.IGNORECASE)
+_SUPPLEMENTAL_RESULTS_LINK_LANGUAGE = re.compile(
+    r"\b(?:infographic|presentation|supplement(?:al)?)\b",
+    re.IGNORECASE,
+)
 _EXHIBIT_99_LABEL = re.compile(
     r"^(?:exhibit\s*)?99(?:[. -]?[0-9]+)?$",
     re.IGNORECASE,
@@ -165,6 +170,10 @@ def select_sec_results_exhibit(primary_html: str) -> str:
         score = 0
         if _RESULT_LINK_LANGUAGE.search(label):
             score += 5
+        if _PRIMARY_RESULTS_LINK_LANGUAGE.search(label):
+            score += 3
+        if _SUPPLEMENTAL_RESULTS_LINK_LANGUAGE.search(label):
+            score -= 2
         if _EXHIBIT_99_LABEL.fullmatch(" ".join(label.split())):
             score += 4
         if _RESULT_LINK_LANGUAGE.search(document.replace("_", " ").replace("-", " ")):
@@ -267,6 +276,9 @@ def build_sec_results_release_payload(
             add_value(f"guidance_{metric_base}_low", low)
             add_value(f"guidance_{metric_base}_high", high)
             break
+    guidance_years.update(
+        _extract_block_guidance_metrics(parser.blocks, add_value, fiscal_year)
+    )
 
     supported_operating = [
         metric_name
@@ -662,9 +674,15 @@ def _extract_current_guidance_metrics(table, add_value) -> None:
 
 def _extract_headline_block_metrics(blocks, add_value) -> None:
     adjusted_eps = re.compile(
-        r"\b(?:Base Business|adjusted|non-GAAP)(?: diluted)? EPS\b.*?"
+        r"\b(?:Base Business|adjusted|non-GAAP)(?: diluted)? EPS(?:\d+)?\b.*?"
         r"\b(increased|decreased)\s+([0-9]+(?:\.[0-9]+)?)%\s+to\s+"
         r"\$([0-9]+(?:\.[0-9]+)?)",
+        re.IGNORECASE,
+    )
+    comparable_sales = re.compile(
+        r"\bcomparable sales(?: for the quarter)?\s+"
+        r"(?P<direction>increased|decreased)\s+"
+        r"(?P<change>[0-9]+(?:\.[0-9]+)?)%",
         re.IGNORECASE,
     )
     margin_result = re.compile(
@@ -701,6 +719,14 @@ def _extract_headline_block_metrics(blocks, add_value) -> None:
         re.IGNORECASE,
     )
     for block in blocks:
+        if match := comparable_sales.search(block):
+            direction = (
+                -1.0 if match.group("direction").casefold() == "decreased" else 1.0
+            )
+            add_value(
+                "comparable_sales_growth",
+                direction * float(match.group("change")) / 100.0,
+            )
         if match := adjusted_eps.search(block):
             sign = -1.0 if match.group(1).casefold() == "decreased" else 1.0
             add_value(
@@ -808,6 +834,88 @@ def _extract_headline_block_metrics(blocks, add_value) -> None:
                 display_label=f"global {label} market share",
                 period_bucket="ytd",
             )
+
+
+def _extract_block_guidance_metrics(blocks, add_value, default_year: int) -> set[int]:
+    """Extract explicit ranges from a labeled full-year outlook block."""
+
+    guidance_years: set[int] = set()
+    active_until = -1
+    for index, block in enumerate(blocks):
+        folded = block.casefold()
+        if re.search(
+            r"\b(?:full[ -]year|fiscal year)\s+20[0-9]{2}\s+"
+            r"(?:outlook|guidance)\b",
+            block,
+            re.IGNORECASE,
+        ):
+            active_until = index + 15
+            guidance_years.add(_nearest_guidance_year(blocks, index, default_year))
+            continue
+        if index > active_until:
+            continue
+        if "conference call" in folded or "forward-looking statements" in folded:
+            active_until = -1
+            continue
+        if not block.lstrip().startswith(("•", "●", "▪", "-")):
+            continue
+
+        guidance_year = _nearest_guidance_year(blocks, index, default_year)
+        definitions: list[tuple[str, str, str, str]] = []
+        if "comparable sales" in folded:
+            definitions.append(
+                ("comparable_sales_growth", "percent", "company_defined", "percent")
+            )
+        elif "operating margin" in folded or "operating income as a percentage" in folded:
+            definitions.append(
+                (
+                    "adjusted_operating_margin" if "adjusted" in folded else "operating_margin",
+                    "percent",
+                    "non_gaap" if "adjusted" in folded else "gaap",
+                    "percent",
+                )
+            )
+        elif "diluted earnings per share" in folded:
+            definitions.append(
+                (
+                    "adjusted_eps" if "adjusted" in folded else "eps_diluted",
+                    "USD_per_share",
+                    "non_gaap" if "adjusted" in folded else "gaap",
+                    "money",
+                )
+            )
+        elif re.search(r"^[^a-z0-9]*(?:total )?sales\b", folded):
+            definitions.append(("revenue", "USD", "company_defined", "money"))
+            definitions.append(
+                ("reported_sales_growth", "percent", "company_defined", "percent")
+            )
+
+        for metric_base, unit, basis, range_type in definitions:
+            metric_range = (
+                _money_range(block, require_scale=metric_base == "revenue")
+                if range_type == "money"
+                else _outlook_percentage_range(block)
+            )
+            if metric_range is None:
+                continue
+            low, high = sorted(metric_range)
+            guidance_years.add(guidance_year)
+            display_label = metric_base.replace("_", " ")
+            add_value(
+                f"guidance_{metric_base}_low",
+                low,
+                display_label=f"{display_label} guidance lower bound",
+                unit=unit,
+                basis=basis,
+            )
+            add_value(
+                f"guidance_{metric_base}_high",
+                high,
+                display_label=f"{display_label} guidance upper bound",
+                unit=unit,
+                basis=basis,
+            )
+    return guidance_years
 
 
 def _extract_company_bridge_metrics(table, add_value) -> None:
@@ -1003,26 +1111,29 @@ def _money_range(
     require_scale: bool = False,
 ) -> Optional[tuple[float, float]]:
     text = " ".join(str(value or "").split())
-    matches = list(
-        re.finditer(
-            r"\$\s*([0-9]+(?:\.[0-9]+)?)\s*([BM])?",
-            text,
-            flags=re.IGNORECASE,
-        )
+    match = re.search(
+        r"\$\s*(?P<first>[0-9]+(?:\.[0-9]+)?)\s*(?P<first_scale>[BM])?"
+        r"\s*(?:\bto\b|[-–—])\s*\$?\s*"
+        r"(?P<second>[0-9]+(?:\.[0-9]+)?)\s*(?P<second_scale>[BM])?",
+        text,
+        flags=re.IGNORECASE,
     )
-    if len(matches) < 2:
+    if match is None:
         return None
-    between = text[matches[0].end() : matches[1].start()].casefold()
-    if not re.search(r"(?:\bto\b|[-–—])", between):
-        return None
-    scales = [str(match.group(2) or "").upper() for match in matches[:2]]
+    scales = [
+        str(match.group("first_scale") or "").upper(),
+        str(match.group("second_scale") or "").upper(),
+    ]
     inherited_scale = scales[0] or scales[1]
     if require_scale and not inherited_scale:
         return None
     multipliers = {"": 1.0, "M": 1_000_000.0, "B": 1_000_000_000.0}
     parsed = [
-        float(match.group(1)) * multipliers[scale or inherited_scale]
-        for match, scale in zip(matches[:2], scales)
+        float(number) * multipliers[scale or inherited_scale]
+        for number, scale in zip(
+            (match.group("first"), match.group("second")),
+            scales,
+        )
     ]
     return parsed[0], parsed[1]
 
@@ -1051,6 +1162,28 @@ def _percentage_range(value: str) -> Optional[tuple[float, float]]:
     if low is None or high is None:
         return None
     return low, high
+
+
+def _outlook_percentage_range(value: str) -> Optional[tuple[float, float]]:
+    metric_range = _percentage_range(value)
+    if metric_range is not None:
+        return metric_range
+    match = re.search(
+        r"\bflat\s+to\s+(?:up|increase(?:d)?)\s+"
+        r"(?P<high>[0-9]+(?:\.[0-9]+)?)%",
+        value,
+        re.IGNORECASE,
+    )
+    if match is not None:
+        return 0.0, float(match.group("high")) / 100.0
+    match = re.search(
+        r"\bdown\s+(?P<low>[0-9]+(?:\.[0-9]+)?)%\s+to\s+flat\b",
+        value,
+        re.IGNORECASE,
+    )
+    if match is not None:
+        return -float(match.group("low")) / 100.0, 0.0
+    return None
 
 
 def _nearest_guidance_year(
