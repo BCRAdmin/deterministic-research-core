@@ -204,15 +204,22 @@ def test_current_ratio_threshold_is_not_mapped_to_rsi_or_a_reported_value():
     assert not audit.has_issue("NUMERIC_MISMATCH")
 
 
-def test_auditor_blocks_lowercase_issuer_risk_fragment():
-    audit = audit_markdown_report(
+def test_auditor_blocks_malformed_issuer_disclosure_fragments():
+    malformed = [
         "Issuer-disclosed risk: us, our business could be adversely affected.",
-        simple_metrics(ticker="PLTR"),
-        ticker="PLTR",
-    )
+        "Issuer-filed business context: We develop transformative medicines for.",
+        "Issuer-disclosed risk: Our business could.",
+        "Issuer-disclosed risk: Pricing pressure could harm our business,.",
+    ]
 
-    assert audit.has_blocking_errors is True
-    assert audit.has_issue("MALFORMED_RISK_FRAGMENT")
+    for markdown in malformed:
+        audit = audit_markdown_report(
+            markdown,
+            simple_metrics(ticker="VRTX"),
+            ticker="VRTX",
+        )
+        assert audit.has_blocking_errors is True
+        assert audit.has_issue("MALFORMED_SEC_DISCLOSURE_FRAGMENT")
 
 
 def test_auditor_maps_each_matching_quarter_percentage_to_nearest_growth_metric():

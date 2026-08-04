@@ -75,6 +75,42 @@ def test_rejects_lowercase_risk_fragment_from_broken_filing_boundary():
     ]
 
 
+def test_rejoins_wrapped_workiva_risk_headings():
+    html = """
+    <html><body>
+      <div><strong>Item 1A. Risk Factors</strong></div>
+      <div><strong>If we cannot commercialize our medicines, our business could</strong></div>
+      <div><strong>be materially harmed.</strong></div>
+      <div><strong>Pricing pressure could adversely affect our business,</strong></div>
+      <div><strong>revenues, and results of operations.</strong></div>
+      <div><strong>Competition may negatively affect our business and market</strong></div>
+      <div><strong>position.</strong></div>
+      <div><strong>Item 1B. Unresolved Staff Comments</strong></div>
+    </body></html>
+    """
+
+    assert extract_sec_risk_headings(html) == [
+        "If we cannot commercialize our medicines, our business could be materially harmed.",
+        "Pricing pressure could adversely affect our business, revenues, and results of operations.",
+        "Competition may negatively affect our business and market position.",
+    ]
+
+
+def test_rejoins_wrapped_workiva_business_context():
+    html = """
+    <html><body>
+      <div><strong>Item 1. Business</strong></div>
+      <div>We are a global biotechnology company that develops medicines for</div>
+      <div>people with serious diseases, with a focus on specialty markets.</div>
+      <div><strong>Item 1A. Risk Factors</strong></div>
+    </body></html>
+    """
+
+    assert extract_sec_business_context(html) == [
+        "We are a global biotechnology company that develops medicines for people with serious diseases, with a focus on specialty markets."
+    ]
+
+
 def test_extracts_emphasized_title_case_risks_without_terminal_periods():
     html = """
     <html><body>

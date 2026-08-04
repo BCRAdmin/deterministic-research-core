@@ -42,7 +42,7 @@ REGISTERED_AUDIT_RULES: tuple[AuditRuleDefinition, ...] = (
     AuditRuleDefinition("MISSING_CURRENT_PERIOD_CONTEXT", "warning", "current_period", "missing current-period context fixture", "requires_review"),
     AuditRuleDefinition("MISSING_CURRENT_PERIOD_KPI_CONTEXT", "warning", "current_period", "missing current-period KPI fixture", "requires_review"),
     AuditRuleDefinition("AVGO_CURRENT_KPI_CONTEXT_REQUIRED", "warning", "current_period", "AVGO KPI context fixture", "requires_review"),
-    AuditRuleDefinition("MALFORMED_RISK_FRAGMENT", "error", "evidence", "lowercase SEC risk fragment fixture", "blocks_publish"),
+    AuditRuleDefinition("MALFORMED_SEC_DISCLOSURE_FRAGMENT", "error", "evidence", "broken SEC disclosure fragment fixture", "blocks_publish"),
     AuditRuleDefinition("INVALID_TRADE_LEVEL", "error", "rating", "invalid stop/entry/take-profit fixture", "blocks_publish"),
     AuditRuleDefinition("RATING_TOO_HARSH_FOR_ACTION", "warning", "rating", "rating/action mismatch fixture", "requires_review"),
     AuditRuleDefinition("RATING_ACTION_MISMATCH", "warning", "rating", "rating/action class fixture", "requires_review"),

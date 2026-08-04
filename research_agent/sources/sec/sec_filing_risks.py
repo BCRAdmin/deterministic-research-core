@@ -188,6 +188,26 @@ _BUSINESS_CONTEXT_ABBREVIATION = re.compile(
     re.IGNORECASE,
 )
 _PROTECTED_PERIOD = "\ue000"
+_WRAPPED_LINE_END_WORDS = {
+    "a",
+    "an",
+    "and",
+    "at",
+    "by",
+    "could",
+    "for",
+    "from",
+    "in",
+    "may",
+    "might",
+    "of",
+    "on",
+    "or",
+    "our",
+    "the",
+    "to",
+    "with",
+}
 
 
 @dataclass(frozen=True)
@@ -319,7 +339,7 @@ def extract_sec_risk_headings(html: str) -> list[str]:
 
     parser = _SecTextBlocks()
     parser.feed(html)
-    blocks = parser.finish()
+    blocks = _join_wrapped_blocks(parser.finish())
     starts = [
         index for index, (block, _) in enumerate(blocks) if _is_risk_section_start(blocks, index)
     ]
@@ -385,7 +405,7 @@ def extract_sec_business_context(html: str) -> list[str]:
 
     parser = _SecTextBlocks()
     parser.feed(html)
-    blocks = parser.finish()
+    blocks = _join_wrapped_blocks(parser.finish())
     starts = [index for index, (block, _) in enumerate(blocks) if _is_business_section_start(block)]
     best: list[str] = []
     for start in starts:
@@ -616,6 +636,53 @@ def _array_value(payload: dict[str, Any], key: str, index: int) -> str:
     if index >= len(values):
         return ""
     return str(values[index] or "").strip()
+
+
+def _join_wrapped_blocks(
+    blocks: list[tuple[str, bool]],
+) -> list[tuple[str, bool]]:
+    """Rejoin visual SEC line wraps without merging separate paragraphs."""
+
+    joined: list[tuple[str, bool]] = []
+    for text, emphasized in blocks:
+        if joined and _is_visual_line_continuation(joined[-1], (text, emphasized)):
+            previous, _ = joined[-1]
+            joined[-1] = (f"{previous.rstrip()} {text.lstrip()}", emphasized)
+        else:
+            joined.append((text, emphasized))
+    return joined
+
+
+def _is_visual_line_continuation(
+    previous: tuple[str, bool],
+    current: tuple[str, bool],
+) -> bool:
+    previous_text, previous_emphasized = previous
+    current_text, current_emphasized = current
+    if previous_emphasized != current_emphasized:
+        return False
+    stripped = previous_text.rstrip()
+    if not stripped or not current_text.strip():
+        return False
+    if (
+        stripped.isupper()
+        or _is_risk_section_start_text(stripped)
+        or _is_business_section_start(stripped)
+        or _is_later_item_heading(stripped)
+        or _GENERIC_RISK_CATEGORY.fullmatch(stripped)
+    ):
+        return False
+    if stripped.endswith((",", ";", "-", "–", "—")):
+        return True
+    final_word = re.search(r"([A-Za-z]+)$", stripped)
+    if final_word and final_word.group(1).lower() in _WRAPPED_LINE_END_WORDS:
+        return True
+    first_letter = re.search(r"[A-Za-z]", current_text)
+    return bool(
+        stripped[-1] not in ".!?"
+        and first_letter
+        and first_letter.group(0).islower()
+    )
 
 
 def _normalized_heading(text: str) -> str:
