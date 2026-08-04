@@ -794,6 +794,7 @@ def _audit_manual_review_reasons(
         "COMPANY_DEFINED_FCF_OCF_INCONSISTENCY",
         "GUARD_THRESHOLD_REVIEW",
         "PER_SHARE_BASIS_MISMATCH_EXCLUDED",
+        "INSURER_OPERATING_KPI_CONTEXT_REQUIRED",
     }
     validation_reason_codes = {
         "EARNINGS_DATE_UNAVAILABLE",

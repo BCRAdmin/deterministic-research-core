@@ -233,6 +233,47 @@ def test_auditor_blocks_additive_debt_and_lease_wording():
     assert audit.has_issue("LEASE_DEBT_DOUBLE_COUNT_RISK")
 
 
+def test_auditor_requires_operating_kpi_for_material_insurance_business():
+    markdown = (
+        "Issuer-filed business context: The Health Care Benefits segment offers "
+        "health insurance products and related services.\n"
+        "Revenue and net income increased against the matching prior-year quarter."
+    )
+
+    audit = audit_markdown_report(markdown, simple_metrics(ticker="CVS"), ticker="CVS")
+
+    assert audit.has_blocking_errors is True
+    assert audit.has_issue("INSURER_OPERATING_KPI_CONTEXT_REQUIRED")
+
+
+def test_auditor_accepts_validated_insurer_operating_kpi_context():
+    markdown = (
+        "Issuer-filed business context: The Health Care Benefits segment offers "
+        "health insurance products and related services.\n"
+        "The validated evidence includes the medical benefit ratio for the period."
+    )
+
+    registry = SourceRegistry(
+        registry_id="CVS_2026_07_31",
+        sources=[
+            SourceRegistryEntry(
+                source_id="CVS_SEC_INSURANCE_KPI",
+                ticker="CVS",
+                source_type="sec_filing",
+                used_for=["medical_benefit_ratio"],
+            )
+        ],
+    )
+    audit = audit_markdown_report(
+        markdown,
+        simple_metrics(ticker="CVS"),
+        ticker="CVS",
+        source_registry=registry,
+    )
+
+    assert not audit.has_issue("INSURER_OPERATING_KPI_CONTEXT_REQUIRED")
+
+
 def test_auditor_maps_each_matching_quarter_percentage_to_nearest_growth_metric():
     metrics = simple_metrics(ticker="GENERIC")
     metrics.fundamentals.current_period_revenue_growth_yoy = -0.014

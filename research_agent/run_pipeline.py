@@ -88,6 +88,9 @@ from research_agent.research_core.models.data_packet import (
 )
 from research_agent.research_core.models.metrics_packet import MetricsPacket, ValuationMetrics
 from research_agent.research_core.models.report_config import ReportConfig
+from research_agent.research_core.models.validation_report import (
+    describe_blocking_validation_errors,
+)
 from research_agent.research_core.normalization.normalize_events import normalize_events
 from research_agent.research_core.normalization.normalize_fundamentals import normalize_fundamentals
 from research_agent.research_core.normalization.normalize_prices import normalize_prices
@@ -261,7 +264,10 @@ def run_research_pipeline(
     )
 
     if validation_report.has_blocking_errors and config.block_on_validation_errors:
-        raise RuntimeError("Blocking validation errors. Final report generation stopped.")
+        raise RuntimeError(
+            "Blocking validation errors. Final report generation stopped. "
+            + describe_blocking_validation_errors(validation_report)
+        )
 
     decision_packet = build_decision_packet(
         metrics_packet=metrics_packet,

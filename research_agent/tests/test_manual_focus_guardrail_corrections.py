@@ -151,6 +151,11 @@ def test_internal_quality_score_caps_when_manual_review_reasons_exist():
         audit_report=AuditReport.from_issues(
             [
                 AuditIssue(severity="warning", code="TRUE_FINANCIAL_ANOMALY", message="Manual financial anomaly review."),
+                AuditIssue(
+                    severity="error",
+                    code="INSURER_OPERATING_KPI_CONTEXT_REQUIRED",
+                    message="Insurance operating KPI evidence is incomplete.",
+                ),
             ],
             ticker="NVDA",
         ),
@@ -192,6 +197,7 @@ def test_internal_quality_score_caps_when_manual_review_reasons_exist():
     )
 
     assert "TRUE_FINANCIAL_ANOMALY" in quality.manual_review_reasons
+    assert "INSURER_OPERATING_KPI_CONTEXT_REQUIRED" in quality.manual_review_reasons
     assert "TRUE_SOURCE_VALUE_DISAGREEMENT" in quality.manual_review_reasons
     assert "BALANCE_SHEET_DATE_MISMATCH_EXCLUDED" in quality.manual_review_reasons
     assert quality.internal_research_quality_score <= 90

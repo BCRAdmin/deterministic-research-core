@@ -16,7 +16,10 @@ from research_agent.research_core.ingestion.source_registry import SourceRegistr
 from research_agent.research_core.models.claims import ResearchClaim
 from research_agent.research_core.models.data_packet import DataPacket
 from research_agent.research_core.models.metrics_packet import MetricsPacket
-from research_agent.research_core.models.validation_report import ValidationReport
+from research_agent.research_core.models.validation_report import (
+    ValidationReport,
+    describe_blocking_validation_errors,
+)
 
 
 def render_metric_table(metrics: MetricsPacket, currency: str = "USD") -> str:
@@ -50,7 +53,10 @@ def render_markdown_report(
     repair_client=None,
 ) -> str:
     if validation_report.has_blocking_errors:
-        raise RuntimeError("Blocking validation errors. Final report generation stopped.")
+        raise RuntimeError(
+            "Blocking validation errors. Final report generation stopped. "
+            + describe_blocking_validation_errors(validation_report)
+        )
     claims = list(claims or [])
     if evidence_ledger is not None:
         _enforce_evidence_grounding(evidence_ledger, claims, metrics_packet)

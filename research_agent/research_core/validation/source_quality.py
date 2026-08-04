@@ -7,6 +7,19 @@ from research_agent.research_core.ingestion.source_registry import (
     SourceRegistry,
     get_source_authority_rank,
 )
+from research_agent.research_core.models.data_packet import DataPacket
+
+
+INSURER_OPERATING_METRICS = {
+    "benefit_ratio",
+    "combined_ratio",
+    "loss_ratio",
+    "medical_benefit_ratio",
+    "member_months",
+    "membership",
+    "premiums_earned",
+    "premiums_written",
+}
 
 
 def validate_news_price_causality(
@@ -69,3 +82,43 @@ def validate_primary_financial_source(registry: SourceRegistry):
             "message": "Hard financial metrics require at least one company IR or SEC filing source.",
         }
     return None
+
+
+def validate_insurer_operating_kpi_coverage(
+    data_packet: DataPacket,
+    registry: SourceRegistry,
+):
+    business_context = " ".join(
+        event.summary or ""
+        for event in data_packet.news_coverage.material_events
+        if event.event_type == "business_context"
+    ).lower()
+    identifies_insurer = any(
+        phrase in business_context
+        for phrase in (
+            "health insurance product",
+            "health care benefits segment",
+            "insurance underwriting",
+            "insurance business",
+        )
+    )
+    if not identifies_insurer:
+        return None
+    primary_source_metrics = {
+        metric
+        for source in registry.sources
+        if source.source_type in {"company_ir", "sec_filing"}
+        for metric in source.used_for
+    }
+    if primary_source_metrics.intersection(INSURER_OPERATING_METRICS):
+        return None
+    return {
+        "severity": "error",
+        "code": "INSURER_OPERATING_KPI_CONTEXT_REQUIRED",
+        "message": (
+            "A material insurance business was identified, but no validated "
+            "insurer operating KPI is integrated. Room16 requires a benefit/loss "
+            "ratio, premiums, membership, or an equivalent primary-source KPI "
+            "before starting the analysis."
+        ),
+    }

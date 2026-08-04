@@ -7,7 +7,10 @@ from research_agent.decision.decision_packet import DecisionPacket
 from research_agent.research_core.ingestion.source_registry import SourceRegistry
 from research_agent.research_core.models.data_packet import DataPacket
 from research_agent.research_core.models.metrics_packet import MetricsPacket
-from research_agent.research_core.models.validation_report import ValidationReport
+from research_agent.research_core.models.validation_report import (
+    ValidationReport,
+    describe_blocking_validation_errors,
+)
 
 
 ALLOWED_AGENT_PACKET_KEYS = {
@@ -29,7 +32,10 @@ def build_agent_payload(
     decision_packet: Optional[DecisionPacket] = None,
 ) -> dict:
     if validation_report.has_blocking_errors:
-        raise RuntimeError("Blocking validation errors. LLM agent payload was not created.")
+        raise RuntimeError(
+            "Blocking validation errors. LLM agent payload was not created. "
+            + describe_blocking_validation_errors(validation_report)
+        )
     if audit_report is not None and audit_report.has_blocking_errors:
         raise RuntimeError("Blocking audit errors. LLM agent payload was not created.")
 

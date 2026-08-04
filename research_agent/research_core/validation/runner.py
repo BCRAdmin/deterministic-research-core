@@ -15,6 +15,7 @@ from research_agent.research_core.validation.metric_consistency import (
 )
 from research_agent.research_core.validation.rating_consistency import validate_rating_vs_actions
 from research_agent.research_core.validation.source_quality import (
+    validate_insurer_operating_kpi_coverage,
     validate_primary_financial_source,
     validate_source_authority,
 )
@@ -65,6 +66,12 @@ def run_all_validations(
         primary_issue = validate_primary_financial_source(source_registry)
         if primary_issue:
             raw_issues.append(primary_issue)
+        insurer_issue = validate_insurer_operating_kpi_coverage(
+            data_packet,
+            source_registry,
+        )
+        if insurer_issue:
+            raw_issues.append(insurer_issue)
         for source in source_registry.sources:
             for metric_name in source.used_for:
                 if metric_name not in {"price", "volume", "technical_indicators", "news"}:

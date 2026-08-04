@@ -9,6 +9,8 @@ from research_agent.research_core.models.data_packet import (
     DataPacket,
     EventInfo,
     FiscalContext,
+    MaterialNewsEvent,
+    NewsCoverage,
     PriceBasis,
 )
 from research_agent.research_core.models.metrics_packet import (
@@ -16,6 +18,9 @@ from research_agent.research_core.models.metrics_packet import (
     MetricsPacket,
     TechnicalMetrics,
     ValuationMetrics,
+)
+from research_agent.research_core.models.validation_report import (
+    describe_blocking_validation_errors,
 )
 from research_agent.research_core.reporting.report_builder import render_markdown_report
 from research_agent.research_core.validation.data_quality import (
@@ -99,8 +104,90 @@ def test_validation_report_blocks_critical_errors_and_report_generation():
 
     assert validation.has_blocking_errors
     assert any(issue.code == "LONG_STOP_ABOVE_ENTRY" for issue in validation.issues)
-    with pytest.raises(RuntimeError):
+    with pytest.raises(RuntimeError, match="LONG_STOP_ABOVE_ENTRY"):
         render_markdown_report(_packet(), _metrics(), validation)
+
+
+def test_validation_blocks_insurer_without_primary_operating_kpi():
+    packet = _packet().model_copy(
+        update={
+            "ticker": "CVS",
+            "news_coverage": NewsCoverage(
+                status="partial",
+                material_events=[
+                    MaterialNewsEvent(
+                        date="2026-02-10",
+                        headline="SEC Item 1 describes CVS's business",
+                        event_type="business_context",
+                        source_id="CVS_SEC_BUSINESS",
+                        source_type="sec_filing",
+                        summary=(
+                            "The Health Care Benefits segment offers health "
+                            "insurance products and related services."
+                        ),
+                    )
+                ],
+            ),
+        }
+    )
+    registry = SourceRegistry(
+        registry_id="CVS_2026_05_01",
+        sources=[
+            SourceRegistryEntry(
+                source_id="CVS_SEC",
+                ticker="CVS",
+                source_type="sec_filing",
+                used_for=["revenue", "operating_income", "net_income"],
+            )
+        ],
+    )
+
+    blocked = run_all_validations(packet, _metrics(), registry)
+    complete_registry = registry.model_copy(
+        update={
+            "sources": [
+                registry.sources[0].model_copy(
+                    update={
+                        "used_for": [
+                            *registry.sources[0].used_for,
+                            "medical_benefit_ratio",
+                        ]
+                    }
+                )
+            ]
+        }
+    )
+    complete = run_all_validations(packet, _metrics(), complete_registry)
+    vendor_only_registry = registry.model_copy(
+        update={
+            "sources": [
+                registry.sources[0].model_copy(
+                    update={
+                        "source_type": "yahoo_finance",
+                        "used_for": ["medical_benefit_ratio"],
+                    }
+                )
+            ]
+        }
+    )
+    vendor_only = run_all_validations(packet, _metrics(), vendor_only_registry)
+
+    assert blocked.has_blocking_errors is True
+    assert any(
+        issue.code == "INSURER_OPERATING_KPI_CONTEXT_REQUIRED"
+        for issue in blocked.issues
+    )
+    assert describe_blocking_validation_errors(blocked).startswith(
+        "INSURER_OPERATING_KPI_CONTEXT_REQUIRED: A material insurance business"
+    )
+    assert not any(
+        issue.code == "INSURER_OPERATING_KPI_CONTEXT_REQUIRED"
+        for issue in complete.issues
+    )
+    assert any(
+        issue.code == "INSURER_OPERATING_KPI_CONTEXT_REQUIRED"
+        for issue in vendor_only.issues
+    )
 
 
 def test_report_discloses_prior_close_when_not_same_as_as_of_date():

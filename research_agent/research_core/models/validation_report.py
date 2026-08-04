@@ -46,3 +46,14 @@ class ValidationReport(BaseModel):
             has_blocking_errors=has_blocking,
             issues=issues,
         )
+
+
+def describe_blocking_validation_errors(validation_report: ValidationReport) -> str:
+    blockers = [
+        issue
+        for issue in validation_report.issues
+        if issue.severity == "error" or issue.code in BLOCKING_ERROR_CODES
+    ]
+    if not blockers:
+        return "No blocking validation details were recorded."
+    return "; ".join(f"{issue.code}: {issue.message}" for issue in blockers)

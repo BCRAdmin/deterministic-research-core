@@ -22,6 +22,9 @@ from research_agent.reconciliation.canonical_financials import CanonicalFinancia
 from research_agent.research_core.ingestion.source_registry import SourceRegistry
 from research_agent.research_core.models.metrics_packet import MetricsPacket
 from research_agent.research_core.models.validation_report import ValidationReport
+from research_agent.research_core.validation.source_quality import (
+    INSURER_OPERATING_METRICS,
+)
 from research_agent.research_core.calculations.fundamentals import (
     current_profit_growth_divergence_metrics,
 )
@@ -69,8 +72,11 @@ LEASE_DEBT_ADDITIVE_RE = re.compile(
     r"(?:debt|schulden).{0,120}(?:lease|leasing)",
     re.IGNORECASE,
 )
-
-
+INSURANCE_BUSINESS_CONTEXT_RE = re.compile(
+    r"Issuer-filed business context:.*(?:health insurance products?|"
+    r"health care benefits segment|insurance underwriting|insurance business)",
+    re.IGNORECASE,
+)
 def audit_markdown_report(
     markdown: str,
     metrics_packet: MetricsPacket,
@@ -96,6 +102,7 @@ def audit_markdown_report(
     issues.extend(_lint_rating_action(markdown))
     issues.extend(_lint_sec_disclosure_fragments(markdown))
     issues.extend(_lint_lease_debt_double_count_risk(markdown))
+    issues.extend(_lint_insurer_operating_kpi_context(markdown, source_registry))
     issues.extend(_lint_news_causality(markdown, validation_report))
     issues.extend(_lint_no_news_claim(markdown, source_registry))
     issues.extend(_lint_evidence_grounding(claims, metrics_packet, evidence_ledger))
@@ -140,6 +147,35 @@ def audit_markdown_report(
     issues.extend(deeptech_assessment.issues)
 
     return AuditReport.from_issues(issues=issues, numeric_claims=claims, ticker=ticker)
+
+
+def _lint_insurer_operating_kpi_context(
+    markdown: str,
+    source_registry: Optional[SourceRegistry],
+) -> list[AuditIssue]:
+    for line_number, line in enumerate(markdown.splitlines(), start=1):
+        if not INSURANCE_BUSINESS_CONTEXT_RE.search(line):
+            continue
+        if source_registry is not None and any(
+            source.source_type in {"company_ir", "sec_filing"}
+            and bool(set(source.used_for).intersection(INSURER_OPERATING_METRICS))
+            for source in source_registry.sources
+        ):
+            return []
+        return [
+            AuditIssue(
+                severity="error",
+                code="INSURER_OPERATING_KPI_CONTEXT_REQUIRED",
+                message=(
+                    "A material insurance business requires at least one primary-source "
+                    "insurer operating KPI in the source registry, such as a benefit/loss "
+                    "ratio, premiums, or membership; report wording alone is insufficient."
+                ),
+                line_number=line_number,
+                raw_text=line.strip(),
+            )
+        ]
+    return []
 
 
 def _lint_lease_debt_double_count_risk(markdown: str) -> list[AuditIssue]:
