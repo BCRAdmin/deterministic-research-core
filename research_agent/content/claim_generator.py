@@ -259,6 +259,13 @@ class _ClaimBuilder:
             fcf_claim_metrics.extend(
                 ["capex_ttm", "operating_cash_flow_ttm"]
             )
+        elif (
+            self.metrics.fundamentals.free_cash_flow_ttm is not None
+            and self.metrics.fundamentals.free_cash_flow_ttm > 0
+            and self.metrics.fundamentals.sbc_to_fcf is not None
+            and self.metrics.fundamentals.sbc_to_fcf >= 0
+        ):
+            fcf_claim_metrics.append("sbc_to_fcf")
         self.add(
             "Fundamental Analysis",
             "fundamental",
@@ -1146,13 +1153,9 @@ class _ClaimBuilder:
             and item.statement.strip()
         ]
         candidates = list({item.evidence_id: item for item in candidates}.values())
-        if len(candidates) <= limit:
-            return candidates
-        positions = {
-            round(index * (len(candidates) - 1) / (limit - 1))
-            for index in range(limit)
-        }
-        return [candidates[index] for index in sorted(positions)]
+        # Risk factors are issuer-ordered. Preserve that materiality signal
+        # instead of sampling arbitrary positions from the filing.
+        return candidates[:limit]
 
     def add(
         self,
@@ -1517,6 +1520,17 @@ def _fundamental_fcf_claim_text(
             "This measures an investment funding gap; without a validated "
             "maintenance-versus-growth split, it does not by itself establish weak "
             f"operations at {ticker}."
+        )
+    if (
+        fundamentals.free_cash_flow_ttm is not None
+        and fundamentals.free_cash_flow_ttm > 0
+        and fundamentals.sbc_to_fcf is not None
+        and fundamentals.sbc_to_fcf >= 0
+    ):
+        return (
+            f"FCF TTM is {fcf}. SBC equals {_pct(fundamentals.sbc_to_fcf)} "
+            "of that FCF, an arithmetic comparison that qualifies rather than "
+            "invalidates the reported cash generation."
         )
     return (
         f"FCF TTM is {fcf}, making cash conversion a direct rating input for "

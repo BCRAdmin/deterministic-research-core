@@ -25,6 +25,12 @@ US_GAAP_CONCEPTS = {
         "ShortTermInvestments",
         "MarketableSecuritiesCurrent",
         "DebtSecuritiesCurrent",
+        "AvailableForSaleSecuritiesDebtSecuritiesCurrent",
+    ],
+    "marketable_securities": [
+        "MarketableSecuritiesNoncurrent",
+        "DebtSecuritiesNoncurrent",
+        "AvailableForSaleSecuritiesDebtSecuritiesNoncurrent",
     ],
     "current_assets": ["AssetsCurrent"],
     "current_liabilities": ["LiabilitiesCurrent"],
@@ -43,6 +49,7 @@ US_GAAP_CONCEPTS = {
     "debt_noncurrent": [
         "LongTermDebtNoncurrent",
         "LongTermDebtAndCapitalLeaseObligations",
+        "ConvertibleDebtNoncurrent",
     ],
     "lease_liability_current": [
         "OperatingLeaseLiabilityCurrent",

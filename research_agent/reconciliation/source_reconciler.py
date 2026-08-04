@@ -464,6 +464,7 @@ def canonical_financials_to_fundamentals(canonical: CanonicalFinancials) -> dict
     balance_sheet_metrics = {
         "cash_and_equivalents",
         "short_term_investments",
+        "marketable_securities",
         "current_assets",
         "current_liabilities",
         "equity",
@@ -1445,6 +1446,7 @@ def _statement_type(metric_name: str):
     if metric_name in {
         "cash_and_equivalents",
         "short_term_investments",
+        "marketable_securities",
         "total_assets",
         "total_liabilities",
         "stockholders_equity",

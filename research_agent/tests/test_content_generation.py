@@ -16,6 +16,7 @@ from research_agent.content.report_composer import (
     compose_research_report,
 )
 from research_agent.content.publish_composer import (
+    _cash_and_marketable_securities,
     _clean_text,
     _constructive_cash_conversion_trigger,
     _final_rating_section,
@@ -319,6 +320,71 @@ def test_content_generator_turns_primary_risk_evidence_into_qualitative_claims()
     assert risk_claim.metric_refs == []
     assert risk_claim.evidence_ids == ["SNOW_SEC_RISK_001"]
     assert claim_quality_metrics(claims)["risk_specific_claim_count"] == 1
+
+
+def test_content_generator_preserves_issuer_risk_order():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    _add_exact_metric_evidence(data, metrics, ledger)
+    ledger.evidence_items = [
+        item for item in ledger.evidence_items if item.claim_type != "risk"
+    ]
+    ledger.evidence_items.extend(
+        EvidenceItem(
+            evidence_id=f"SNOW_SEC_RISK_{index:03d}",
+            ticker="SNOW",
+            claim_type="risk",
+            source_id="SEC_SNOW_10K",
+            source_type="sec_filing",
+            authority_rank=1,
+            statement=f"Issuer-ordered risk {index}",
+            period="10-K period ended 2026-01-31",
+            date="2026-03-20",
+            supports_claims=["company_risk_analysis"],
+            confidence="high",
+        )
+        for index in range(1, 7)
+    )
+
+    claims = generate_research_claims(data, metrics, ledger, decision, validation)
+    risk_claims = [claim for claim in claims if claim.claim_type == "risk"]
+
+    assert [claim.evidence_ids[0] for claim in risk_claims] == [
+        "SNOW_SEC_RISK_001",
+        "SNOW_SEC_RISK_002",
+        "SNOW_SEC_RISK_003",
+        "SNOW_SEC_RISK_004",
+    ]
+
+
+def test_positive_fcf_is_qualified_by_sbc_to_fcf():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    metrics.fundamentals.free_cash_flow_ttm = 1_169_702_000
+    metrics.fundamentals.sbc_to_fcf = 1.387
+    _add_exact_metric_evidence(data, metrics, ledger)
+
+    claims = generate_research_claims(data, metrics, ledger, decision, validation)
+    fcf_claim = next(
+        claim
+        for claim in claims
+        if claim.section == "Fundamental Analysis"
+        and claim.claim.startswith("FCF TTM is")
+    )
+    thesis = _generic_investment_thesis("SNOW", "Hold", metrics, decision)
+
+    assert "SBC equals 138.7% of that FCF" in fcf_claim.claim
+    assert "sbc_to_fcf" in fcf_claim.metric_refs
+    assert "SBC equals 138.7% of FCF" in thesis
+    assert "qualifies shareholder-level cash conversion" in thesis
+
+
+def test_cash_and_marketable_helper_includes_current_and_noncurrent_securities():
+    _data, metrics, _validation, _ledger, _decision = _load_packet("SNOW")
+    metrics.fundamentals.cash_and_investments = None
+    metrics.fundamentals.cash_and_equivalents = 2_084_715_000
+    metrics.fundamentals.short_term_investments = 870_283_000
+    metrics.fundamentals.marketable_securities = 1_432_494_000
+
+    assert _cash_and_marketable_securities(metrics.fundamentals) == 4_387_492_000
 
 
 def test_money_formatters_place_negative_sign_before_usd_symbol():

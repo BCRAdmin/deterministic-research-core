@@ -184,6 +184,18 @@ def test_current_debt_securities_complete_cash_and_investments():
                         ]
                     }
                 },
+                "AvailableForSaleSecuritiesDebtSecuritiesNoncurrent": {
+                    "units": {
+                        "USD": [
+                            instant_fact(
+                                12_000_000_000,
+                                end="2026-04-26",
+                                accession="current-quarter",
+                                filed="2026-05-20",
+                            )
+                        ]
+                    }
+                },
                 "MarketableSecuritiesCurrent": {
                     "units": {
                         "USD": [
@@ -217,6 +229,7 @@ def test_current_debt_securities_complete_cash_and_investments():
         for metric_name in (
             "cash_and_equivalents",
             "short_term_investments",
+            "marketable_securities",
             "total_debt",
         )
         for fact in parser.get_facts_for_metric(metric_name)
@@ -226,8 +239,43 @@ def test_current_debt_securities_complete_cash_and_investments():
     metrics = calculate_fundamental_metrics(normalized)
 
     assert normalized["balance_sheet"]["short_term_investments"] == 37_098_000_000
-    assert metrics.cash_and_investments == 50_335_000_000
-    assert metrics.net_cash == 41_865_000_000
+    assert normalized["balance_sheet"]["marketable_securities"] == 12_000_000_000
+    assert metrics.cash_and_investments == 62_335_000_000
+    assert metrics.net_cash == 53_865_000_000
+
+
+def test_convertible_debt_noncurrent_completes_total_debt():
+    fixture = {
+        "facts": {
+            "us-gaap": {
+                "ConvertibleDebtNoncurrent": {
+                    "units": {
+                        "USD": [
+                            {
+                                "val": 2_281_903_000,
+                                "fy": 2027,
+                                "fp": "Q1",
+                                "form": "10-Q",
+                                "filed": "2026-05-29",
+                                "end": "2026-04-30",
+                                "accn": "snow-q1",
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    }
+    parser = CompanyFactsParser("BASE", "1", fixture)
+    facts = parser.get_facts_for_metric("debt_noncurrent")
+    canonical, _warnings = build_canonical_financials_from_facts(
+        "BASE", "2026-07-31", facts
+    )
+    normalized = canonical_financials_to_fundamentals(canonical)
+    metrics = calculate_fundamental_metrics(normalized)
+
+    assert normalized["balance_sheet"]["debt_noncurrent"] == 2_281_903_000
+    assert metrics.total_debt == 2_281_903_000
 
 
 def test_treasury_stock_balance_excludes_period_acquisition_cost():

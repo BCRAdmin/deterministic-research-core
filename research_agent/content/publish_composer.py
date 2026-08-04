@@ -951,10 +951,20 @@ def _generic_investment_thesis(
             "cash conversion as a fundamental constraint"
         )
     elif fundamentals.free_cash_flow_ttm is not None:
-        cash_text = (
-            f"positive FCF of {_fmt_money(fundamentals.free_cash_flow_ttm, currency)} "
-            "provides measured cash-conversion support"
-        )
+        if (
+            fundamentals.sbc_to_fcf is not None
+            and fundamentals.sbc_to_fcf >= 1
+        ):
+            cash_text = (
+                f"positive FCF of {_fmt_money(fundamentals.free_cash_flow_ttm, currency)} "
+                f"is measured, but SBC equals {_fmt_pct(fundamentals.sbc_to_fcf)} "
+                "of FCF and therefore qualifies shareholder-level cash conversion"
+            )
+        else:
+            cash_text = (
+                f"positive FCF of {_fmt_money(fundamentals.free_cash_flow_ttm, currency)} "
+                "provides measured cash-conversion support"
+            )
     else:
         cash_text = "FCF is unavailable and cannot support the thesis"
     current_profit_decline = bool(
@@ -1489,11 +1499,16 @@ def _fmt_pct(value: float | None) -> str:
 
 
 def _cash_and_marketable_securities(fundamentals) -> float | None:
-    if fundamentals.cash_and_equivalents is not None and fundamentals.marketable_securities is not None:
-        return fundamentals.cash_and_equivalents + fundamentals.marketable_securities
     if fundamentals.cash_and_investments is not None:
         return fundamentals.cash_and_investments
-    return fundamentals.cash_and_equivalents
+    components = (
+        fundamentals.cash_and_equivalents,
+        fundamentals.short_term_investments,
+        fundamentals.marketable_securities,
+    )
+    if all(value is None for value in components):
+        return None
+    return sum(value or 0.0 for value in components)
 
 
 def _section_metric(grouped: dict[str, list[ResearchClaim]], section: str, keyword: str) -> str:

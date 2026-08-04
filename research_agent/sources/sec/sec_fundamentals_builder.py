@@ -19,6 +19,7 @@ SEC_FUNDAMENTAL_METRICS = [
     "capex",
     "cash_and_equivalents",
     "short_term_investments",
+    "marketable_securities",
     "current_assets",
     "current_liabilities",
     "total_debt",
@@ -256,6 +257,7 @@ def _assign_normalized_metric(
     elif metric in {
         "cash_and_equivalents",
         "short_term_investments",
+        "marketable_securities",
         "current_assets",
         "current_liabilities",
         "total_debt",

@@ -25,6 +25,7 @@ class ResolvedPeriod(BaseModel):
 INSTANT_METRICS = {
     "cash_and_equivalents",
     "short_term_investments",
+    "marketable_securities",
     "current_assets",
     "current_liabilities",
     "total_assets",
