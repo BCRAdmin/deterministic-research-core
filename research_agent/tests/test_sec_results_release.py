@@ -116,6 +116,38 @@ AOS_STYLE_RESULT_HTML = """
 </body></html>
 """
 
+ROK_STYLE_RESULT_HTML = """
+<html><body>
+<div>Rockwell Automation Reports Third Quarter 2026 Results</div>
+<table>
+  <tr><td></td><td>Updated Guidance (1)</td><td></td><td>Prior Guidance (1)</td></tr>
+  <tr><td>Reported sales growth</td><td>7.5% - 9.5%</td><td></td><td>5% - 9%</td></tr>
+  <tr><td>Organic sales growth (2)</td><td>7.5% - 9.5%</td><td></td><td>5% - 9%</td></tr>
+  <tr><td>Diluted EPS</td><td>$12.72 - $13.02</td><td></td><td>$11.88 - $12.48</td></tr>
+  <tr><td>Adjusted EPS (2)</td><td>$13.00 - $13.30</td><td></td><td>$12.50 - $13.10</td></tr>
+</table>
+<table>
+  <tr><td></td><td></td><td>Nine Months Ended June 30, 2026</td></tr>
+  <tr><td></td><td></td><td>Reported Sales Growth</td><td></td><td></td><td></td><td>Effect ofChanges inCurrency</td><td></td><td></td><td></td><td></td><td></td><td>Effect of Divestiture</td><td></td><td>Organic Sales Growth</td></tr>
+  <tr><td>Total</td><td></td><td>10</td><td>%</td><td></td><td></td><td></td><td>2</td><td>%</td><td></td><td></td><td></td><td></td><td></td><td>(1)</td><td>%</td><td></td><td>9</td><td>%</td></tr>
+</table>
+<table>
+  <tr><td></td><td></td><td>Three Months Ended June 30, 2026</td></tr>
+  <tr><td></td><td></td><td>Reported Sales Growth</td><td></td><td></td><td></td><td>Effect ofChanges inCurrency</td><td></td><td></td><td></td><td></td><td></td><td>Effect of Divestiture</td><td></td><td>Organic Sales Growth</td></tr>
+  <tr><td>North America</td><td></td><td>9</td><td>%</td><td></td><td></td><td></td><td>—</td><td>%</td><td></td><td></td><td></td><td></td><td></td><td>(3)</td><td>%</td><td></td><td>12</td><td>%</td></tr>
+  <tr><td>EMEA</td><td></td><td>3</td><td>%</td><td></td><td></td><td></td><td>3</td><td>%</td><td></td><td></td><td></td><td></td><td></td><td>(7)</td><td>%</td><td></td><td>7</td><td>%</td></tr>
+  <tr><td>Total</td><td></td><td>8</td><td>%</td><td></td><td></td><td></td><td>1</td><td>%</td><td></td><td></td><td></td><td></td><td></td><td>(3)</td><td>%</td><td></td><td>10</td><td>%</td></tr>
+</table>
+<table>
+  <tr><td></td><td></td><td>Three Months Ended June 30, 2026</td></tr>
+  <tr><td></td><td></td><td>Reported Sales Growth</td><td></td><td></td><td></td><td></td><td>Effect ofChanges inCurrency</td><td></td><td></td><td></td><td></td><td></td><td></td><td>Effect of Divestiture</td><td></td><td>Organic Sales Growth</td></tr>
+  <tr><td>Intelligent Devices</td><td></td><td>12</td><td>%</td><td></td><td></td><td></td><td></td><td>2</td><td>%</td><td></td><td></td><td></td><td></td><td></td><td></td><td>—</td><td>%</td><td></td><td>10</td><td>%</td></tr>
+  <tr><td>Lifecycle Services</td><td></td><td>(12)</td><td>%</td><td></td><td></td><td></td><td></td><td>1</td><td>%</td><td></td><td></td><td></td><td></td><td></td><td></td><td>(11)</td><td>%</td><td></td><td>(2)</td><td>%</td></tr>
+  <tr><td>Total</td><td></td><td>8</td><td>%</td><td></td><td></td><td></td><td></td><td>1</td><td>%</td><td></td><td></td><td></td><td></td><td></td><td></td><td>(3)</td><td>%</td><td></td><td>10</td><td>%</td></tr>
+</table>
+</body></html>
+"""
+
 
 def test_selects_one_item_202_results_exhibit_from_duplicate_links():
     primary = """
@@ -282,6 +314,42 @@ def test_builds_net_sales_transposed_segment_bridge_and_bullet_guidance():
     assert values["guidance_eps_diluted_high"] == pytest.approx(3.75)
     assert values["guidance_adjusted_eps_low"] == pytest.approx(3.70)
     assert values["guidance_adjusted_eps_high"] == pytest.approx(3.85)
+
+
+def test_builds_sparse_current_quarter_bridge_and_updated_guidance():
+    payload = build_sec_results_release_payload(
+        ticker="ROK",
+        cik="1024478",
+        accession_number="0001024478-26-000028",
+        filing_date="2026-08-04",
+        exhibit_document="q3fy26ex99.htm",
+        html=ROK_STYLE_RESULT_HTML,
+        expected_fiscal_year=2026,
+        expected_fiscal_period="Q3",
+        period_end_date="2026-06-30",
+        retrieved_at="2026-08-04T12:00:00Z",
+    )
+
+    values = {item["metric_name"]: item["value"] for item in payload["metrics"]}
+    assert values["reported_sales_growth"] == pytest.approx(0.08)
+    assert values["foreign_exchange_impact"] == pytest.approx(0.01)
+    assert values["business_portfolio_impact"] == pytest.approx(-0.03)
+    assert values["organic_sales_growth"] == pytest.approx(0.10)
+    assert values["segment_organic_sales_growth_north_america"] == pytest.approx(0.12)
+    assert values["segment_organic_sales_growth_emea"] == pytest.approx(0.07)
+    assert values["segment_organic_sales_growth_intelligent_devices"] == pytest.approx(0.10)
+    assert values["segment_organic_sales_growth_lifecycle_services"] == pytest.approx(-0.02)
+    assert values["guidance_reported_sales_growth_low"] == pytest.approx(0.075)
+    assert values["guidance_reported_sales_growth_high"] == pytest.approx(0.095)
+    assert values["guidance_organic_sales_growth_low"] == pytest.approx(0.075)
+    assert values["guidance_organic_sales_growth_high"] == pytest.approx(0.095)
+    assert values["guidance_eps_diluted_low"] == pytest.approx(12.72)
+    assert values["guidance_eps_diluted_high"] == pytest.approx(13.02)
+    assert values["guidance_adjusted_eps_low"] == pytest.approx(13.00)
+    assert values["guidance_adjusted_eps_high"] == pytest.approx(13.30)
+    assert not any(
+        metric_name.startswith("segment_reported_sales_growth_effect") for metric_name in values
+    )
 
 
 def test_builds_nonrecurring_gain_and_continuing_perimeter_context():

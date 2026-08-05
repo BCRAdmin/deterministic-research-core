@@ -1780,6 +1780,44 @@ def test_material_company_events_create_real_context_not_generic_finance_padding
     assert claim_quality_metrics(claims)["company_specific_claim_count"] >= 2
 
 
+def test_issuer_operating_spread_keeps_segments_and_regions_taxonomically_distinct():
+    canonical = CanonicalFinancials(
+        ticker="ROK",
+        as_of_date="2026-08-04",
+        metrics=[
+            CanonicalMetric(
+                metric_name=metric_name,
+                value=value,
+                unit="percent",
+                period="FY2026_Q3",
+                fiscal_year=2026,
+                fiscal_period="Q3",
+                period_bucket="quarterly",
+                end_date="2026-06-30",
+                basis="company_defined",
+                statement_type="income_statement",
+                source_ids=["ROK_SEC_RESULTS"],
+                evidence_ids=[f"ROK_{metric_name.upper()}"],
+                confidence="high",
+            )
+            for metric_name, value in (
+                ("segment_organic_sales_growth_latin_america", -0.03),
+                ("segment_organic_sales_growth_software_control", 0.18),
+            )
+        ],
+    )
+
+    specs = _issuer_operating_result_specs("ROK", canonical, "USD")
+    spread = next(spec for spec in specs if len(spec["metrics"]) == 2)
+
+    assert "across reported segments and regions" in spread["text"]
+    assert "division-level" not in spread["text"]
+    assert (
+        "without treating unlike reporting dimensions as one taxonomy"
+        in spread["implication"]
+    )
+
+
 def test_generic_company_gets_latest_reported_period_claim():
     data, metrics, validation, ledger, decision = _load_packet("SNOW")
     data.ticker = "GENERIC"

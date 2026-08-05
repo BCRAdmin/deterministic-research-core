@@ -356,10 +356,10 @@ def build_sec_results_release_payload(
             {
                 "event_type": "business_context",
                 "date": filing_date,
-                "headline": "Issuer filed division-level operating results",
+                "headline": "Issuer filed segment- or region-level operating results",
                 "summary": (
-                    "The issuer disclosed division-level organic-sales performance "
-                    "for the latest reported quarter."
+                    "The issuer disclosed segment- or region-level organic-sales "
+                    "performance for the latest reported quarter."
                 ),
                 "material": True,
                 "source_id": source_id,
@@ -459,6 +459,8 @@ def _detect_release_period(
 
 
 def _extract_headline_operating_metrics(table, add_value) -> None:
+    if _is_guidance_table(table):
+        return
     for row in table:
         if len(row) < 2:
             continue
@@ -642,7 +644,8 @@ def _extract_current_guidance_metrics(table, add_value) -> None:
             column
             for row in table[:3]
             for column, cell in enumerate(row)
-            if _clean_result_label(cell) in {"current guidance", "current outlook"}
+            if _clean_result_label(cell)
+            in {"current guidance", "current outlook", "updated guidance"}
         ),
         None,
     )
@@ -650,11 +653,18 @@ def _extract_current_guidance_metrics(table, add_value) -> None:
         return
     definitions = {
         "sales": ("revenue", "USD", "company_defined"),
+        "reported sales growth": (
+            "reported_sales_growth",
+            "percent",
+            "company_defined",
+        ),
         "organic growth": ("organic_sales_growth", "percent", "company_defined"),
         "organic sales growth": ("organic_sales_growth", "percent", "company_defined"),
         "organic revenue growth": ("organic_revenue_growth", "percent", "company_defined"),
         "segment margin": ("segment_margin", "percent", "non_gaap"),
+        "diluted eps": ("eps_diluted", "USD_per_share", "gaap"),
         "adjusted earnings per share": ("adjusted_eps", "USD_per_share", "non_gaap"),
+        "adjusted eps": ("adjusted_eps", "USD_per_share", "non_gaap"),
         "adjusted earnings growth": ("adjusted_eps_growth", "percent", "non_gaap"),
     }
     for row in table:
@@ -974,6 +984,14 @@ def _extract_company_bridge_metrics(table, add_value) -> None:
             continue
         total_row = table[total_index]
         if len(total_row) != len(header):
+            if _extract_sparse_quarter_bridge_metrics(
+                table,
+                header_index,
+                header_map,
+                total_index,
+                add_value,
+            ):
+                return
             continue
         for column, metric_name in header_map.items():
             value = _percent_value(
@@ -1038,6 +1056,8 @@ def _extract_transposed_segment_bridge_metrics(table, add_value) -> None:
     segments = [_clean_segment_label(cell) for cell in header[1:] if cell.strip()]
     if len(segments) < 2:
         return
+    if sum(_bridge_metric_name(segment) is not None for segment in segments) >= 2:
+        return
 
     for row in table[2:]:
         if not row or not row[0].strip():
@@ -1084,6 +1104,7 @@ def _bridge_metric_name(label: str) -> Optional[str]:
     aliases = {
         "net sales": "reported_sales_growth",
         "sales growth": "reported_sales_growth",
+        "reported sales growth": "reported_sales_growth",
         "sales change as reported": "reported_sales_growth",
         "organic sales": "organic_sales_growth",
         "organic sales change": "organic_sales_growth",
@@ -1100,8 +1121,11 @@ def _bridge_metric_name(label: str) -> Optional[str]:
         "mix/other": "mix_other_impact",
         "mix other": "mix_other_impact",
         "divestitures and business exits": "business_portfolio_impact",
+        "divestiture": "business_portfolio_impact",
+        "effect of divestiture": "business_portfolio_impact",
         "acquisition impact": "acquisition_impact",
         "currency translation": "foreign_exchange_impact",
+        "effect of changes in currency": "foreign_exchange_impact",
         "total": "reported_sales_growth",
         "organic": "organic_sales_growth",
         "fx": "foreign_exchange_impact",
@@ -1109,6 +1133,99 @@ def _bridge_metric_name(label: str) -> Optional[str]:
         "foreign exchange impact": "foreign_exchange_impact",
     }
     return aliases.get(normalized)
+
+
+def _is_guidance_table(table: list[list[str]]) -> bool:
+    heading = " ".join(cell for row in table[:3] for cell in row)
+    return bool(re.search(r"\b(?:guidance|outlook)\b", heading, re.IGNORECASE))
+
+
+def _is_current_quarter_bridge(table: list[list[str]], header_index: int) -> bool:
+    heading = " ".join(
+        cell for row in table[: header_index + 1] for cell in row
+    ).casefold()
+    return "three months ended" in heading and "nine months ended" not in heading
+
+
+def _ordered_percent_cells(row: list[str]) -> list[Optional[float]]:
+    """Read visual percent groups when HTML colspans shift physical columns."""
+
+    values: list[Optional[float]] = []
+    pending = ""
+    for cell in row[1:]:
+        text = " ".join(str(cell or "").split())
+        if not text:
+            continue
+        if text == "%":
+            values.append(_percent_value(f"{pending}%") if pending else None)
+            pending = ""
+            continue
+        if "%" in text:
+            values.append(_percent_value(text))
+            pending = ""
+            continue
+        pending = text
+    return values
+
+
+def _extract_sparse_quarter_bridge_metrics(
+    table: list[list[str]],
+    header_index: int,
+    header_map: dict[int, str],
+    total_index: int,
+    add_value,
+) -> bool:
+    """Extract a current-quarter bridge whose HTML uses uneven colspans."""
+
+    if not _is_current_quarter_bridge(table, header_index):
+        return False
+    metric_names = [header_map[column] for column in sorted(header_map)]
+    if len(metric_names) < 2:
+        return False
+    total_values = _ordered_percent_cells(table[total_index])
+    if len(total_values) != len(metric_names):
+        return False
+    for metric_name, value in zip(metric_names, total_values):
+        if value is not None:
+            add_value(metric_name, value)
+
+    segment_metric_index = next(
+        (
+            index
+            for index, metric_name in enumerate(metric_names)
+            if metric_name
+            in {
+                "organic_sales_growth",
+                "organic_revenue_growth",
+                "comparable_sales_growth",
+            }
+        ),
+        None,
+    )
+    if segment_metric_index is None:
+        return True
+    metric_base = metric_names[segment_metric_index]
+    for row_index, row in enumerate(
+        table[header_index + 1 :],
+        start=header_index + 1,
+    ):
+        if row_index == total_index or not row or not row[0].strip():
+            continue
+        label = _clean_segment_label(row[0])
+        if not label or label.casefold().startswith("total "):
+            continue
+        row_values = _ordered_percent_cells(row)
+        if len(row_values) != len(metric_names):
+            continue
+        value = row_values[segment_metric_index]
+        if value is None:
+            continue
+        add_value(
+            f"segment_{metric_base}_{_slug(label)}",
+            value,
+            display_label=label,
+        )
+    return True
 
 
 def _clean_label(value: str) -> str:

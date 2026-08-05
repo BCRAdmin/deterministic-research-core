@@ -2649,19 +2649,21 @@ def _issuer_operating_result_specs(
                     "kind": "current_period",
                     "evidence_type": "financial_metric",
                     "text": (
-                        f"{ticker} division-level organic-sales growth in the latest "
-                        f"reported quarter ranged from {_pct(weakest.value)} in "
+                        f"{ticker} issuer-disclosed organic-sales growth across "
+                        f"reported segments and regions in the latest quarter ranged "
+                        f"from {_pct(weakest.value)} in "
                         f"{weakest_label} to {_pct(strongest.value)} in "
                         f"{strongest_label}."
                     ),
                     "metrics": [weakest.metric_name, strongest.metric_name],
                     "counterargument": (
-                        "A single quarter's regional spread may reflect pricing, "
-                        "volume, currency and comparison-base effects."
+                        "A single quarter's segment and regional spread may reflect "
+                        "pricing, volume, currency and comparison-base effects."
                     ),
                     "implication": (
-                        "The divisional spread identifies where aggregate growth is "
-                        "strongest and where execution remains weaker."
+                        "The reported spread identifies where aggregate growth is "
+                        "strongest and where execution remains weaker, without "
+                        "treating unlike reporting dimensions as one taxonomy."
                     ),
                 }
             )
