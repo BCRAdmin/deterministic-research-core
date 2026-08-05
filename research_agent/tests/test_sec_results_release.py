@@ -167,6 +167,7 @@ QCOM_STYLE_GUIDANCE_HTML = """
 PFE_STYLE_GUIDANCE_HTML = """
 <html><body>
 <div>Pfizer Reports Second Quarter 2026 Results</div>
+<div>Non-GAAP EPS in the second quarter of 2025 excludes certain prior-year items.</div>
 <div>Reported Loss Per Share Reflects $4.3 Billion in Non-Cash Intangible Asset Impairments</div>
 <table>
   <tr><td>($ in millions, except per share amounts)</td><td>Second-Quarter</td><td></td><td>Six Months</td></tr>
@@ -649,7 +650,7 @@ def test_does_not_treat_bare_numbers_as_percent_without_table_unit_context():
 @pytest.mark.parametrize(
     ("expected_period", "html", "message"),
     [
-        ("Q3", RESULT_HTML, "stimmt nicht"),
+        ("Q3", RESULT_HTML, "meldet FY2026_Q2"),
         (
             "Q2",
             "<div>Second Quarter 2026 Results</div><table><tr><td>Organic Sales Growth</td><td>2.4%</td></tr></table>",

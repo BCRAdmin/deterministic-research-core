@@ -214,11 +214,17 @@ def build_sec_results_release_payload(
 
     parser = _ReleaseParser()
     parser.feed(html)
-    fiscal_year, fiscal_period = _detect_release_period(parser.blocks, parser.tables)
+    fiscal_year, fiscal_period = _detect_release_period(
+        parser.blocks,
+        parser.tables,
+        expected_fiscal_year=int(expected_fiscal_year),
+    )
     expected_period = str(expected_fiscal_period or "").upper()
     if (fiscal_year, fiscal_period) != (int(expected_fiscal_year), expected_period):
         raise ValueError(
-            "Ergebnisperiode stimmt nicht mit dem aktuellen CompanyFacts-Bericht überein"
+            f"Ergebnis-Anhang meldet FY{fiscal_year}_{fiscal_period}, der aktuelle "
+            f"CompanyFacts-Bericht endet jedoch bei FY{int(expected_fiscal_year)}_"
+            f"{expected_period}"
         )
 
     values: dict[str, float] = {}
@@ -450,7 +456,10 @@ def _safe_html_document(href: str) -> Optional[str]:
 
 
 def _detect_release_period(
-    blocks: list[str], tables: list[list[list[str]]]
+    blocks: list[str],
+    tables: list[list[list[str]]],
+    *,
+    expected_fiscal_year: Optional[int] = None,
 ) -> tuple[int, str]:
     candidates: list[tuple[int, str]] = []
     sources = [*blocks[:80]]
@@ -470,6 +479,13 @@ def _detect_release_period(
                 candidates.append((fiscal_year, fiscal_period))
     if not candidates:
         raise ValueError("Quartalsperiode des Ergebnis-Anhangs nicht eindeutig erkannt")
+    expected_year_candidates = [
+        candidate
+        for candidate in candidates
+        if expected_fiscal_year is not None and candidate[0] == expected_fiscal_year
+    ]
+    if expected_year_candidates:
+        candidates = expected_year_candidates
     counts = Counter(candidates)
     best_count = max(counts.values())
     best = sorted(period for period, count in counts.items() if count == best_count)
