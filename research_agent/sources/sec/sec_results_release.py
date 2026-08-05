@@ -11,10 +11,12 @@ from urllib.parse import unquote, urlsplit
 
 
 _RESULT_LINK_LANGUAGE = re.compile(
-    r"\b(?:earnings|financial results?|press release|quarterly results?)\b",
+    r"\b(?:earnings|financial results?|press release|news release|quarterly results?)\b",
     re.IGNORECASE,
 )
-_PRIMARY_RESULTS_LINK_LANGUAGE = re.compile(r"\bpress release\b", re.IGNORECASE)
+_PRIMARY_RESULTS_LINK_LANGUAGE = re.compile(
+    r"\b(?:press|news) release\b", re.IGNORECASE
+)
 _SUPPLEMENTAL_RESULTS_LINK_LANGUAGE = re.compile(
     r"\b(?:infographic|presentation|supplement(?:al)?)\b",
     re.IGNORECASE,
@@ -255,6 +257,7 @@ def build_sec_results_release_payload(
             )
         _extract_headline_operating_metrics(table, add_value)
         _extract_company_bridge_metrics(table, add_value)
+        _extract_transposed_segment_bridge_metrics(table, add_value)
         _extract_sectioned_segment_metrics(table, add_value)
         _extract_current_guidance_metrics(table, add_value)
     _extract_headline_block_metrics(parser.blocks, add_value)
@@ -499,11 +502,29 @@ def _extract_headline_summary_metrics(table, add_value, controls: dict[str, floa
         for row in table
         if row and row[0].strip()
     }
-    if "sales" not in rows or "adjusted earnings per share" not in rows:
+    sales_row = next(
+        (rows[label] for label in ("sales", "net sales", "revenue") if label in rows),
+        None,
+    )
+    adjusted_eps_row = next(
+        (
+            rows[label]
+            for label in (
+                "adjusted earnings per share",
+                "adjusted diluted earnings per share",
+                "adjusted eps",
+            )
+            if label in rows
+        ),
+        None,
+    )
+    if sales_row is None or adjusted_eps_row is None:
         return False
 
     for label, control_name in (
         ("sales", "current_quarter_revenue"),
+        ("net sales", "current_quarter_revenue"),
+        ("revenue", "current_quarter_revenue"),
         ("operating income", "current_quarter_operating_income"),
         ("segment profit", "current_quarter_segment_profit"),
     ):
@@ -514,7 +535,6 @@ def _extract_headline_summary_metrics(table, add_value, controls: dict[str, floa
         if value is not None:
             controls[control_name] = value
 
-    sales_row = rows["sales"]
     if len(sales_row) > change_column:
         value = _percent_value(sales_row[change_column])
         if value is not None:
@@ -563,7 +583,6 @@ def _extract_headline_summary_metrics(table, add_value, controls: dict[str, floa
                     basis="non_gaap",
                 )
 
-    adjusted_eps_row = rows["adjusted earnings per share"]
     if len(adjusted_eps_row) > current_column:
         adjusted_eps = _money_value(adjusted_eps_row[current_column])
         if adjusted_eps is not None:
@@ -844,8 +863,12 @@ def _extract_block_guidance_metrics(blocks, add_value, default_year: int) -> set
     for index, block in enumerate(blocks):
         folded = block.casefold()
         if re.search(
-            r"\b(?:full[ -]year|fiscal year)\s+20[0-9]{2}\s+"
-            r"(?:outlook|guidance)\b",
+            r"\b(?:"
+            r"(?:full[ -]year|fiscal year)\s+20[0-9]{2}.{0,80}?"
+            r"(?:outlook|guidance)|"
+            r"20[0-9]{2}\s+full[ -]year.{0,80}?(?:outlook|guidance)|"
+            r"20[0-9]{2}\s+(?:outlook|guidance)"
+            r")\b",
             block,
             re.IGNORECASE,
         ):
@@ -857,7 +880,7 @@ def _extract_block_guidance_metrics(blocks, add_value, default_year: int) -> set
         if "conference call" in folded or "forward-looking statements" in folded:
             active_until = -1
             continue
-        if not block.lstrip().startswith(("•", "●", "▪", "-")):
+        if not block.lstrip().startswith(("•", "●", "▪", "◦", "-")):
             continue
 
         guidance_year = _nearest_guidance_year(blocks, index, default_year)
@@ -875,7 +898,10 @@ def _extract_block_guidance_metrics(blocks, add_value, default_year: int) -> set
                     "percent",
                 )
             )
-        elif "diluted earnings per share" in folded:
+        elif re.search(
+            r"\b(?:diluted (?:earnings per share|eps)|adjusted eps)\b",
+            folded,
+        ):
             definitions.append(
                 (
                     "adjusted_eps" if "adjusted" in folded else "eps_diluted",
@@ -994,13 +1020,74 @@ def _extract_company_bridge_metrics(table, add_value) -> None:
         return
 
 
+def _extract_transposed_segment_bridge_metrics(table, add_value) -> None:
+    """Extract quarter bridge tables with metrics in rows and segments in columns."""
+
+    if not table or "three months ended" not in " ".join(table[0]).casefold():
+        return
+    header = next(
+        (
+            row
+            for row in table[1:3]
+            if len([cell for cell in row[1:] if cell.strip()]) >= 2
+        ),
+        None,
+    )
+    if header is None:
+        return
+    segments = [_clean_segment_label(cell) for cell in header[1:] if cell.strip()]
+    if len(segments) < 2:
+        return
+
+    for row in table[2:]:
+        if not row or not row[0].strip():
+            continue
+        metric_base = _bridge_metric_name(row[0])
+        if metric_base is None:
+            continue
+        groups: list[list[str]] = []
+        group: list[str] = []
+        for cell in row[1:]:
+            if cell.strip():
+                group.append(cell)
+            elif group:
+                groups.append(group)
+                group = []
+        if group:
+            groups.append(group)
+        if len(groups) != len(segments):
+            continue
+        for segment, cells in zip(segments, groups):
+            value = _percent_value(" ".join(cells))
+            if value is None:
+                continue
+            if segment.casefold() in {"total", "total company", "consolidated"}:
+                add_value(metric_base, value)
+                continue
+            label = f"{segment} {_metric_label(metric_base, None)}"
+            add_value(
+                f"segment_{metric_base}_{_slug(segment)}",
+                value,
+                display_label=label,
+            )
+
+
 def _bridge_metric_name(label: str) -> Optional[str]:
     normalized = _clean_label(label)
+    normalized = re.sub(
+        r"\s*\((?:growth|decline|non gaap)\)\s*",
+        " ",
+        normalized,
+        flags=re.IGNORECASE,
+    )
+    normalized = " ".join(normalized.split())
     aliases = {
         "net sales": "reported_sales_growth",
+        "sales growth": "reported_sales_growth",
         "sales change as reported": "reported_sales_growth",
         "organic sales": "organic_sales_growth",
         "organic sales change": "organic_sales_growth",
+        "organic sales growth": "organic_sales_growth",
         "organic revenue": "organic_revenue_growth",
         "comparable sales": "comparable_sales_growth",
         "as reported volume": "reported_volume_growth",
@@ -1013,11 +1100,13 @@ def _bridge_metric_name(label: str) -> Optional[str]:
         "mix/other": "mix_other_impact",
         "mix other": "mix_other_impact",
         "divestitures and business exits": "business_portfolio_impact",
+        "acquisition impact": "acquisition_impact",
         "currency translation": "foreign_exchange_impact",
         "total": "reported_sales_growth",
         "organic": "organic_sales_growth",
         "fx": "foreign_exchange_impact",
         "foreign exchange": "foreign_exchange_impact",
+        "foreign exchange impact": "foreign_exchange_impact",
     }
     return aliases.get(normalized)
 
@@ -1031,7 +1120,7 @@ def _clean_label(value: str) -> str:
 
 def _clean_result_label(value: str) -> str:
     text = re.sub(
-        r"(?<=[A-Za-z])\d+(?:,\d+)*(?=\s|$)",
+        r"(?<![Qq])(?<=[A-Za-z])\d+(?:,\d+)*(?=\s|$)",
         "",
         str(value or ""),
     )
@@ -1052,7 +1141,8 @@ def _result_comparison_columns(
             (
                 column
                 for column, cell in enumerate(row)
-                if _clean_result_label(cell) == "change"
+                if _clean_result_label(cell).strip("% ").replace(" ", "")
+                in {"change", "changeyoy", "yoychange"}
             ),
             None,
         )
@@ -1113,7 +1203,7 @@ def _money_range(
     text = " ".join(str(value or "").split())
     match = re.search(
         r"\$\s*(?P<first>[0-9]+(?:\.[0-9]+)?)\s*(?P<first_scale>[BM])?"
-        r"\s*(?:\bto\b|[-–—])\s*\$?\s*"
+        r"\s*(?:\bto\b|\band\b|[-–—])\s*\$?\s*"
         r"(?P<second>[0-9]+(?:\.[0-9]+)?)\s*(?P<second_scale>[BM])?",
         text,
         flags=re.IGNORECASE,

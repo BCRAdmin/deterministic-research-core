@@ -731,7 +731,7 @@ class _ClaimBuilder:
         segment_context_metrics = sorted(
             {
                 metric.metric_name
-                for metric in self.canonical.metrics
+                for metric in (self.canonical.metrics if self.canonical else [])
                 if metric.metric_name.startswith("segment_")
                 and not metric.metric_name.startswith("segment_margin")
                 and not metric.metric_name.startswith("guidance_")

@@ -93,6 +93,29 @@ PERIMETER_AND_TABLE_GUIDANCE_HTML = """
 </body></html>
 """
 
+AOS_STYLE_RESULT_HTML = """
+<html><body>
+<div>A. O. Smith Reports Second Quarter 2026 Results</div>
+<table>
+  <tr><td></td><td>Q2 2026</td><td>Q2 2025</td><td>% Change YoY</td></tr>
+  <tr><td>Net sales</td><td>$1,004.3</td><td>$1,011.3</td><td>-1%</td></tr>
+  <tr><td>Adjusted earnings per share</td><td>$1.03</td><td>$1.07</td><td>-4%</td></tr>
+</table>
+<table>
+  <tr><td></td><td>Three Months Ended June 30, 2026</td></tr>
+  <tr><td></td><td>North America</td><td></td><td>Rest of World</td><td></td><td>Total</td></tr>
+  <tr><td>Sales Growth (Decline)</td><td>5</td><td>%</td><td></td><td>(19)</td><td>%</td><td></td><td>(1)</td><td>%</td></tr>
+  <tr><td>Acquisition Impact(1)</td><td>2</td><td>%</td><td></td><td>—</td><td>%</td><td></td><td>1</td><td>%</td></tr>
+  <tr><td>Foreign Exchange Impact</td><td>—</td><td>%</td><td></td><td>3</td><td>%</td><td></td><td>1</td><td>%</td></tr>
+  <tr><td>Organic Sales Growth (Decline) (non-GAAP)</td><td>3</td><td>%</td><td></td><td>(22)</td><td>%</td><td></td><td>(3)</td><td>%</td></tr>
+</table>
+<div>2026 full year sales EPS guidance updated to</div>
+<div>◦Sales growth of between 2% and 3%</div>
+<div>◦Diluted EPS of between $3.60 and $3.75</div>
+<div>◦Adjusted EPS of between $3.70 and $3.85</div>
+</body></html>
+"""
+
 
 def test_selects_one_item_202_results_exhibit_from_duplicate_links():
     primary = """
@@ -104,6 +127,17 @@ def test_selects_one_item_202_results_exhibit_from_duplicate_links():
     """
 
     assert select_sec_results_exhibit(primary) == "q2-results.htm"
+
+
+def test_selects_item_202_news_release_without_results_in_link_label():
+    primary = """
+    <a href="a6302026exhibit991.htm">
+      News Release of Example Corporation, dated July 30, 2026
+    </a>
+    <a href="main-document.htm">Inline XBRL document</a>
+    """
+
+    assert select_sec_results_exhibit(primary) == "a6302026exhibit991.htm"
 
 
 def test_builds_company_operating_segment_and_guidance_inputs():
@@ -219,6 +253,35 @@ def test_builds_first_consolidated_summary_segments_and_current_guidance():
         "current_quarter_operating_income": 1737.0,
         "current_quarter_segment_profit": 2240.0,
     }
+
+
+def test_builds_net_sales_transposed_segment_bridge_and_bullet_guidance():
+    payload = build_sec_results_release_payload(
+        ticker="GENR",
+        cik="123456",
+        accession_number="0000123456-26-000015",
+        filing_date="2026-07-30",
+        exhibit_document="q2-news-release.htm",
+        html=AOS_STYLE_RESULT_HTML,
+        expected_fiscal_year=2026,
+        expected_fiscal_period="Q2",
+        period_end_date="2026-06-30",
+        retrieved_at="2026-07-30T12:00:00Z",
+    )
+
+    values = {item["metric_name"]: item["value"] for item in payload["metrics"]}
+    assert values["reported_sales_growth"] == pytest.approx(-0.01)
+    assert values["organic_sales_growth"] == pytest.approx(-0.03)
+    assert values["adjusted_eps_diluted"] == pytest.approx(1.03)
+    assert values["adjusted_eps_growth_yoy"] == pytest.approx(-0.04)
+    assert values["segment_organic_sales_growth_north_america"] == pytest.approx(0.03)
+    assert values["segment_organic_sales_growth_rest_of_world"] == pytest.approx(-0.22)
+    assert values["guidance_reported_sales_growth_low"] == pytest.approx(0.02)
+    assert values["guidance_reported_sales_growth_high"] == pytest.approx(0.03)
+    assert values["guidance_eps_diluted_low"] == pytest.approx(3.60)
+    assert values["guidance_eps_diluted_high"] == pytest.approx(3.75)
+    assert values["guidance_adjusted_eps_low"] == pytest.approx(3.70)
+    assert values["guidance_adjusted_eps_high"] == pytest.approx(3.85)
 
 
 def test_builds_nonrecurring_gain_and_continuing_perimeter_context():

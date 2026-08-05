@@ -60,6 +60,21 @@ def test_extracts_only_substantive_risk_headings():
     ]
 
 
+def test_cleans_decorative_square_from_emphasized_risk_heading():
+    html = """
+    <html><body>
+      <div><strong>Item 1A. Risk Factors</strong></div>
+      <p><strong>■ The effects of global economic conditions may adversely affect our business.</strong></p>
+      <p>• A litigation bullet could create noise but is not a risk heading.</p>
+      <div><strong>Item 1B. Unresolved Staff Comments</strong></div>
+    </body></html>
+    """
+
+    assert extract_sec_risk_headings(html) == [
+        "The effects of global economic conditions may adversely affect our business."
+    ]
+
+
 def test_rejects_lowercase_risk_fragment_from_broken_filing_boundary():
     html = """
     <html><body>

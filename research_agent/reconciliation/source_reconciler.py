@@ -1013,8 +1013,8 @@ def _derive_ttm_from_matching_interims(
     prior_candidates = [
         metric
         for metric in interims
-        if metric.fiscal_year == annual.fiscal_year
-        and metric.fiscal_period == current.fiscal_period
+        if metric.fiscal_period == current.fiscal_period
+        and (metric.start_date or "") >= (annual.start_date or "")
         and (metric.end_date or "") <= (annual.end_date or "")
         and abs((metric.duration_days or 0) - (current.duration_days or 0)) <= 7
     ]

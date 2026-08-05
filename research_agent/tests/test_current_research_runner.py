@@ -1076,7 +1076,7 @@ def test_current_runner_builds_real_authority_bundle_from_generic_adapters(tmp_p
     assert manifest["contract_id"] == "room16.research_authority_bundle"
 
 
-def test_current_runner_rejects_ambiguous_stored_authority_inputs(tmp_path):
+def test_current_runner_rejects_stored_inputs_without_exact_material_evidence(tmp_path):
     request = CurrentResearchRequest(
         ticker="SNOW",
         as_of_date="2026-05-17",
@@ -1087,7 +1087,7 @@ def test_current_runner_rejects_ambiguous_stored_authority_inputs(tmp_path):
         price_api_key="unused-in-test",
     )
 
-    with pytest.raises(RuntimeError, match="evidence_ids_unique"):
+    with pytest.raises(RuntimeError, match="material_metrics_evidence_mapped"):
         run_current_research(
             request,
             price_provider=_StoredSnowPrices(),

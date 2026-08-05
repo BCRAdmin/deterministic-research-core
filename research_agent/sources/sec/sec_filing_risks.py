@@ -398,6 +398,7 @@ def extract_sec_risk_headings(html: str) -> list[str]:
                     explicit_inline_heading = True
                 elif not summary_mode:
                     continue
+            candidate = _clean_risk_heading_marker(candidate)
             if not explicit_inline_heading and not _is_risk_heading(
                 candidate,
                 emphasized=candidate_emphasized,
@@ -675,7 +676,10 @@ def _is_visual_line_continuation(
     if previous_emphasized != current_emphasized:
         return False
     stripped = previous_text.rstrip()
-    if not stripped or not current_text.strip():
+    current_stripped = current_text.strip()
+    if not stripped or not current_stripped:
+        return False
+    if current_stripped.startswith(("•", "●", "▪", "◦", "■")):
         return False
     if (
         stripped.isupper()
@@ -774,6 +778,12 @@ def _is_risk_heading(text: str, *, emphasized: bool = False) -> bool:
     if stripped.count(". ") > 1:
         return False
     return bool(_RISK_LANGUAGE.search(stripped))
+
+
+def _clean_risk_heading_marker(text: str) -> str:
+    """Remove an issuer's decorative square from an otherwise valid heading."""
+
+    return re.sub(r"^\s*■\s*", "", text).strip()
 
 
 def _inline_title_case_risk_heading(text: str) -> str | None:

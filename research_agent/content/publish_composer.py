@@ -1148,6 +1148,7 @@ def _final_rating_section(
         and f.equity <= 0
         and f.free_cash_flow_ttm is not None
         and f.free_cash_flow_ttm > 0
+        and not current_operating_profit_decline_metrics(f)
     ):
         why_not_constructive = (
             "Why not more constructive? Non-positive book equity is a material "

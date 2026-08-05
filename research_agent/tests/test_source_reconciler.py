@@ -1004,6 +1004,62 @@ def test_ttm_bridge_subtracts_matching_prior_interim_for_current_q2():
     assert fundamentals["fiscal_period"] == "TTM through FY2026_Q2"
 
 
+def test_ttm_bridge_accepts_comparative_interim_with_current_filing_fiscal_year():
+    facts = [
+        ParsedFact(
+            metric_name="eps_diluted",
+            value=3.85,
+            unit="USD_per_share",
+            period="FY2025",
+            fy=2025,
+            fp="FY",
+            form="10-K",
+            filed="2026-02-13",
+            start="2025-01-01",
+            end="2025-12-31",
+            accession="fy-2025",
+        ),
+        ParsedFact(
+            metric_name="eps_diluted",
+            value=2.01,
+            unit="USD_per_share",
+            period="FY2026_Q2_comparative",
+            fy=2026,
+            fp="Q2",
+            form="10-Q",
+            filed="2026-07-30",
+            start="2025-01-01",
+            end="2025-06-30",
+            accession="q2-2026",
+        ),
+        ParsedFact(
+            metric_name="eps_diluted",
+            value=1.75,
+            unit="USD_per_share",
+            period="FY2026_Q2",
+            fy=2026,
+            fp="Q2",
+            form="10-Q",
+            filed="2026-07-30",
+            start="2026-01-01",
+            end="2026-06-30",
+            accession="q2-2026",
+        ),
+    ]
+
+    canonical, _ = build_canonical_financials_from_facts(
+        "GENERIC", "2026-08-04", facts
+    )
+    fundamentals = canonical_financials_to_fundamentals(canonical)
+
+    assert round(fundamentals["ttm"]["eps_diluted"], 2) == 3.59
+    assert fundamentals["ttm_bridges"]["eps_diluted"]["operands"] == {
+        "annual": 3.85,
+        "prior_interim": 2.01,
+        "current_interim": 1.75,
+    }
+
+
 def test_ttm_bridge_uses_matching_ytd_for_non_calendar_year():
     facts = [
         ParsedFact(

@@ -40,6 +40,7 @@ DEFAULT_RULE_WEIGHTS = RuleWeightConfig(
         "FCF_MARGIN_NEGATIVE": RuleWeight(rule_id="FCF_MARGIN_NEGATIVE", base_weight=-1.0),
         "OPERATING_MARGIN_NEGATIVE": RuleWeight(rule_id="OPERATING_MARGIN_NEGATIVE", base_weight=-1.0),
         "EQUITY_NON_POSITIVE": RuleWeight(rule_id="EQUITY_NON_POSITIVE", base_weight=-1.0),
+        "DEATH_CROSS": RuleWeight(rule_id="DEATH_CROSS", base_weight=-1.0),
         "TREND_STATE_BULLISH": RuleWeight(rule_id="TREND_STATE_BULLISH", base_weight=1.0),
         "TREND_STATE_BEARISH": RuleWeight(rule_id="TREND_STATE_BEARISH", base_weight=-1.0),
     },

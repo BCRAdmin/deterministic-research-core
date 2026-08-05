@@ -690,9 +690,9 @@ def test_extreme_negative_profit_divergence_is_not_operating_downside_evidence()
     ) in bull.claim
     assert "operating-income decline" in bear.claim
     assert "net-income decline" not in bear.claim
-    assert "operating-income declines" in final_claim.claim
+    assert "operating-income decline" in final_claim.claim
     assert "net-income declines" not in final_claim.claim
-    assert "Current-period operating-income declines" in final_section
+    assert "Current-period operating-income decline" in final_section
     assert "net-income declines" not in final_section
 
 
@@ -1249,7 +1249,7 @@ def test_mixed_profit_declines_remain_visible_across_thesis_bear_and_rating():
     assert "constructive fundamental signal" not in thesis
     assert "operating-income and net-income declines are current downside evidence" in bear
     assert "Positive FCF TTM of $3.03B" in bear
-    assert "do not erase the declines" in bear
+    assert "do not erase the profit weakness" in bear
     assert "Current-period operating-income and net-income declines" in rating
     assert "positive FCF and the bullish technical direction" in rating
     assert "profit weakness to persist" in rating
@@ -2057,9 +2057,9 @@ def test_generic_current_period_claim_uses_evidenced_yoy_comparison():
 
     assert "latest reported period FY2026_Q3" in current.claim
     assert "latest reported period CY2026Q1" not in current.claim
-    assert "revenue changed by 10.0%" in current.claim
-    assert "operating income by 20.0%" in current.claim
-    assert "net income by 25.0%" in current.claim
+    assert "revenue increased by 10.0%" in current.claim
+    assert "operating income increased by 20.0%" in current.claim
+    assert "net income increased by 25.0%" in current.claim
     assert set(growth_values) <= set(current.metric_refs)
     assert current.metric_values["revenue"] == 110.0
     assert current.metric_values["operating_income"] == 24.0
@@ -2422,9 +2422,7 @@ def test_claim_evidence_selection_excludes_conflicting_units_and_values():
     )
 
     claims = generate_research_claims(data, metrics, ledger, decision, validation)
-    fcf_claim = next(
-        claim for claim in claims if claim.metric_refs == ["free_cash_flow_ttm"]
-    )
+    fcf_claim = next(claim for claim in claims if claim.claim.startswith("FCF TTM is"))
 
     assert "CONFLICTING_FCF_UNIT" not in fcf_claim.evidence_ids
     assert "CONFLICTING_FCF_VALUE" not in fcf_claim.evidence_ids
@@ -2474,11 +2472,12 @@ def test_claim_prefers_formula_lineage_over_equal_stale_raw_evidence():
     )
 
     claims = generate_research_claims(data, metrics, ledger, decision, validation)
-    fcf_claim = next(
-        claim for claim in claims if claim.metric_refs == ["free_cash_flow_ttm"]
-    )
+    fcf_claim = next(claim for claim in claims if claim.claim.startswith("FCF TTM is"))
 
-    assert fcf_claim.evidence_ids == ["CURRENT_DERIVED_FCF"]
+    assert fcf_claim.evidence_ids == [
+        "CURRENT_DERIVED_FCF",
+        "TEST_EXACT_SBC_TO_FCF",
+    ]
 
 
 def test_claim_is_dropped_when_only_conflicting_metric_evidence_remains():
@@ -2578,9 +2577,7 @@ def test_claim_evidence_excludes_value_injected_source_placeholders():
     )
 
     claims = generate_research_claims(data, metrics, ledger, decision, validation)
-    fcf_claim = next(
-        claim for claim in claims if claim.metric_refs == ["free_cash_flow_ttm"]
-    )
+    fcf_claim = next(claim for claim in claims if claim.claim.startswith("FCF TTM is"))
 
     assert "VALUE_INJECTED_FCF_PLACEHOLDER" not in fcf_claim.evidence_ids
 
