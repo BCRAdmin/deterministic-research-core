@@ -188,7 +188,7 @@ _BUSINESS_CONTEXT_ACCOUNTING_LANGUAGE = re.compile(
 _BUSINESS_CONTEXT_UNRESOLVED_REFERENCE = re.compile(
     r"\b(?:this|that|these|those|such) "
     r"(?:arrangements?|business|capabilities|customers?|markets?|products?|relationships?|segments?|services?)\b"
-    r"|\b(?:see|refer to)\b",
+    r"|\b(?:see|refer to|under the heading)\b",
     re.IGNORECASE,
 )
 _BUSINESS_CONTEXT_ABBREVIATION = re.compile(

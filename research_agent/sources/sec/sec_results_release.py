@@ -226,6 +226,7 @@ def build_sec_results_release_payload(
     metric_units: dict[str, str] = {}
     metric_bases: dict[str, str] = {}
     metric_period_buckets: dict[str, str] = {}
+    metric_guidance_periods: dict[str, tuple[str, int, str]] = {}
     headline_controls: dict[str, float] = {}
 
     def add_value(
@@ -236,6 +237,7 @@ def build_sec_results_release_payload(
         unit: str = "percent",
         basis: str = "company_defined",
         period_bucket: str = "quarterly",
+        guidance_period: Optional[tuple[str, int, str]] = None,
     ) -> None:
         previous = values.get(metric_name)
         if previous is not None and abs(previous - value) > 1e-9:
@@ -246,6 +248,14 @@ def build_sec_results_release_payload(
         metric_units[metric_name] = unit
         metric_bases[metric_name] = basis
         metric_period_buckets[metric_name] = period_bucket
+        if guidance_period is not None:
+            previous_guidance_period = metric_guidance_periods.get(metric_name)
+            if (
+                previous_guidance_period is not None
+                and previous_guidance_period != guidance_period
+            ):
+                raise ValueError(f"widersprüchliche Guidance-Periode für {metric_name}")
+            metric_guidance_periods[metric_name] = guidance_period
 
     headline_summary_extracted = False
     for table in parser.tables:
@@ -315,7 +325,17 @@ def build_sec_results_release_payload(
     metrics: list[dict[str, Any]] = []
     for metric_name, value in sorted(values.items()):
         is_guidance = metric_name.startswith("guidance_")
-        period = f"FY{guidance_year}" if is_guidance else result_period
+        guidance_period = metric_guidance_periods.get(metric_name)
+        if is_guidance and guidance_period is not None:
+            period, metric_fiscal_year, metric_fiscal_period = guidance_period
+        elif is_guidance:
+            period = f"FY{guidance_year}"
+            metric_fiscal_year = guidance_year
+            metric_fiscal_period = "FY"
+        else:
+            period = result_period
+            metric_fiscal_year = fiscal_year
+            metric_fiscal_period = fiscal_period
         period_bucket = metric_period_buckets.get(metric_name, "quarterly")
         label = _metric_label(metric_name, metric_labels.get(metric_name))
         metric_period = (
@@ -330,8 +350,8 @@ def build_sec_results_release_payload(
                 "unit": metric_units.get(metric_name, "percent"),
                 "period": metric_period,
                 "period_bucket": "guidance" if is_guidance else period_bucket,
-                "fiscal_year": guidance_year if is_guidance else fiscal_year,
-                "fiscal_period": "FY" if is_guidance else fiscal_period,
+                "fiscal_year": metric_fiscal_year if is_guidance else fiscal_year,
+                "fiscal_period": metric_fiscal_period if is_guidance else fiscal_period,
                 "end_date": filing_date if is_guidance else period_end_date,
                 "date": filing_date if is_guidance else period_end_date,
                 "basis": metric_bases.get(metric_name, "company_defined"),
@@ -644,15 +664,21 @@ def _extract_current_guidance_metrics(table, add_value) -> None:
             column
             for row in table[:3]
             for column, cell in enumerate(row)
-            if _clean_result_label(cell)
-            in {"current guidance", "current outlook", "updated guidance"}
+            if re.match(
+                r"^(?:current guidance|current outlook|updated guidance)\b",
+                _clean_result_label(cell),
+            )
         ),
         None,
     )
     if guidance_column is None:
         return
+    guidance_period = _quarterly_guidance_period(table)
     definitions = {
         "sales": ("revenue", "USD", "company_defined"),
+        "revenues": ("revenue", "USD", "company_defined"),
+        "qct revenues": ("qct_revenue", "USD", "company_defined"),
+        "qtl revenues": ("qtl_revenue", "USD", "company_defined"),
         "reported sales growth": (
             "reported_sales_growth",
             "percent",
@@ -663,14 +689,23 @@ def _extract_current_guidance_metrics(table, add_value) -> None:
         "organic revenue growth": ("organic_revenue_growth", "percent", "company_defined"),
         "segment margin": ("segment_margin", "percent", "non_gaap"),
         "diluted eps": ("eps_diluted", "USD_per_share", "gaap"),
+        "gaap diluted eps": ("eps_diluted", "USD_per_share", "gaap"),
         "adjusted earnings per share": ("adjusted_eps", "USD_per_share", "non_gaap"),
         "adjusted eps": ("adjusted_eps", "USD_per_share", "non_gaap"),
+        "non gaap diluted eps": ("adjusted_eps", "USD_per_share", "non_gaap"),
         "adjusted earnings growth": ("adjusted_eps_growth", "percent", "non_gaap"),
     }
     for row in table:
         if not row or len(row) <= guidance_column:
             continue
-        label = _clean_result_label(row[0])
+        label = next(
+            (
+                _clean_result_label(cell)
+                for cell in row[:guidance_column]
+                if _clean_result_label(cell) in definitions
+            ),
+            "",
+        )
         definition = definitions.get(label)
         if definition is None:
             continue
@@ -691,6 +726,7 @@ def _extract_current_guidance_metrics(table, add_value) -> None:
             display_label=f"{display_label} guidance lower bound",
             unit=unit,
             basis=basis,
+            guidance_period=guidance_period,
         )
         add_value(
             f"guidance_{metric_base}_high",
@@ -698,7 +734,35 @@ def _extract_current_guidance_metrics(table, add_value) -> None:
             display_label=f"{display_label} guidance upper bound",
             unit=unit,
             basis=basis,
+            guidance_period=guidance_period,
         )
+
+
+def _quarterly_guidance_period(
+    table: list[list[str]],
+) -> Optional[tuple[str, int, str]]:
+    heading = " ".join(cell for row in table[:3] for cell in row)
+    match = re.search(
+        r"\bQ(?P<quarter>[1-4])\s*(?:(?:fiscal|FY)\s*)?"
+        r"(?P<year>20[0-9]{2}|[0-9]{2})\b",
+        heading,
+        re.IGNORECASE,
+    )
+    if match is None:
+        match = re.search(
+            r"\b(?P<quarter>first|second|third|fourth)\s+(?:fiscal\s+)?quarter"
+            r".{0,30}?\b(?P<year>20[0-9]{2}|[0-9]{2})\b",
+            heading,
+            re.IGNORECASE,
+        )
+    if match is None:
+        return None
+    quarter_value = match.group("quarter").casefold()
+    quarter = _QUARTER_WORDS.get(quarter_value, f"Q{quarter_value}")
+    year = int(match.group("year"))
+    if year < 100:
+        year += 2000
+    return f"FY{year}_{quarter}", year, quarter
 
 
 def _extract_headline_block_metrics(blocks, add_value) -> None:

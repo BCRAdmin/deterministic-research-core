@@ -148,6 +148,22 @@ ROK_STYLE_RESULT_HTML = """
 </body></html>
 """
 
+QCOM_STYLE_GUIDANCE_HTML = """
+<html><body>
+<div>Qualcomm Announces Third Quarter Fiscal 2026 Results</div>
+<table>
+  <tr><td></td><td></td><td></td><td>Current Guidance Q4 FY26 Estimates1</td></tr>
+  <tr><td></td><td>Revenues</td><td></td><td>$9.7B - $10.5B</td><td></td></tr>
+  <tr><td></td><td>Supplemental Revenue Information</td><td></td><td></td></tr>
+  <tr><td></td><td>QCT revenues</td><td></td><td>$8.4B - $9.0B</td></tr>
+  <tr><td></td><td>QTL revenues</td><td></td><td>$1.2B - $1.4B</td></tr>
+  <tr><td></td><td>GAAP diluted EPS</td><td></td><td>$1.22 - $1.42</td></tr>
+  <tr><td></td><td>Less diluted EPS attributable to QSI</td><td></td><td>$—</td></tr>
+  <tr><td></td><td>Non-GAAP diluted EPS</td><td></td><td>$2.05 - $2.25</td></tr>
+</table>
+</body></html>
+"""
+
 
 def test_selects_one_item_202_results_exhibit_from_duplicate_links():
     primary = """
@@ -350,6 +366,37 @@ def test_builds_sparse_current_quarter_bridge_and_updated_guidance():
     assert not any(
         metric_name.startswith("segment_reported_sales_growth_effect") for metric_name in values
     )
+
+
+def test_builds_indented_current_guidance_with_segment_revenue_ranges():
+    payload = build_sec_results_release_payload(
+        ticker="QCOM",
+        cik="804328",
+        accession_number="0000804328-26-000085",
+        filing_date="2026-07-29",
+        exhibit_document="qcom062826erex991.htm",
+        html=QCOM_STYLE_GUIDANCE_HTML,
+        expected_fiscal_year=2026,
+        expected_fiscal_period="Q3",
+        period_end_date="2026-06-28",
+        retrieved_at="2026-07-29T12:00:00Z",
+    )
+
+    values = {item["metric_name"]: item["value"] for item in payload["metrics"]}
+    assert values == {
+        "guidance_adjusted_eps_high": pytest.approx(2.25),
+        "guidance_adjusted_eps_low": pytest.approx(2.05),
+        "guidance_eps_diluted_high": pytest.approx(1.42),
+        "guidance_eps_diluted_low": pytest.approx(1.22),
+        "guidance_qct_revenue_high": pytest.approx(9_000_000_000),
+        "guidance_qct_revenue_low": pytest.approx(8_400_000_000),
+        "guidance_qtl_revenue_high": pytest.approx(1_400_000_000),
+        "guidance_qtl_revenue_low": pytest.approx(1_200_000_000),
+        "guidance_revenue_high": pytest.approx(10_500_000_000),
+        "guidance_revenue_low": pytest.approx(9_700_000_000),
+    }
+    assert {item["period"] for item in payload["metrics"]} == {"FY2026_Q4"}
+    assert {item["fiscal_period"] for item in payload["metrics"]} == {"Q4"}
 
 
 def test_builds_nonrecurring_gain_and_continuing_perimeter_context():

@@ -493,6 +493,7 @@ def test_business_context_skips_fragments_with_unresolved_references():
       <p>Our products are primarily brought to market through direct-store delivery, customer warehouse and distributor networks.</p>
       <p>One customer represented 14 percent of sales. The loss of this customer would have a material adverse effect on our food and beverage segments.</p>
       <p>The reportable business segments are North America Foods, North America Beverages and International Markets.</p>
+      <p>Management’s Discussion and Analysis of Financial Condition and Results of Operations” in the “Our Business and Operating Segments” section under the heading “Seasonality.”</p>
       <div><strong>ITEM 1A. RISK FACTORS</strong></div>
     </body></html>
     """
