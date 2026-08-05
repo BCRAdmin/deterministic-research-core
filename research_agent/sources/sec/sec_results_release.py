@@ -543,7 +543,14 @@ def _extract_headline_summary_metrics(table, add_value, controls: dict[str, floa
     sales_row = next(
         (
             rows[label]
-            for label in ("sales", "net sales", "revenue", "revenues")
+            for label in (
+                "sales",
+                "net sales",
+                "revenue",
+                "revenues",
+                "total revenue",
+                "total revenues",
+            )
             if label in rows
         ),
         None,
@@ -556,6 +563,7 @@ def _extract_headline_summary_metrics(table, add_value, controls: dict[str, floa
                 "adjusted diluted earnings per share",
                 "adjusted diluted eps",
                 "adjusted eps",
+                "earnings/(loss) per share non gaap",
             )
             if label in rows
         ),
@@ -569,6 +577,8 @@ def _extract_headline_summary_metrics(table, add_value, controls: dict[str, floa
         ("net sales", "current_quarter_revenue"),
         ("revenue", "current_quarter_revenue"),
         ("revenues", "current_quarter_revenue"),
+        ("total revenue", "current_quarter_revenue"),
+        ("total revenues", "current_quarter_revenue"),
         ("operating income", "current_quarter_operating_income"),
         ("segment profit", "current_quarter_segment_profit"),
     ):
@@ -584,7 +594,7 @@ def _extract_headline_summary_metrics(table, add_value, controls: dict[str, floa
         sales_label = _clean_result_label(sales_row[0])
         metric_name = (
             "reported_revenue_growth"
-            if sales_label in {"revenue", "revenues"}
+            if sales_label in {"revenue", "revenues", "total revenue", "total revenues"}
             else "reported_sales_growth"
         )
         add_value(
@@ -692,24 +702,57 @@ def _extract_sectioned_segment_metrics(table, add_value) -> None:
 
 
 def _extract_current_guidance_metrics(table, add_value) -> None:
+    guidance_table = _is_guidance_table(table)
+    table_heading = " ".join(
+        _clean_result_label(cell) for row in table[:2] for cell in row
+    )
+    table_non_gaap = "non gaap" in table_heading
     guidance_column = next(
         (
             column
             for row in table[:3]
             for column, cell in enumerate(row)
-            if re.match(
-                r"^(?:current|updated|revised)\b.{0,40}\b(?:guidance|outlook)\b",
-                _clean_result_label(cell),
+            if (
+                re.match(
+                    r"^(?:current|updated|revised)\b.{0,40}\b(?:guidance|outlook)\b",
+                    _clean_result_label(cell),
+                )
+                or (
+                    guidance_table
+                    and re.search(
+                        r"\b(?:current|updated|revised)\b",
+                        _clean_result_label(cell),
+                    )
+                )
             )
         ),
         None,
     )
     if guidance_column is None:
         return
+    prior_column = next(
+        (
+            column
+            for row in table[:3]
+            for column, cell in enumerate(row)
+            if re.search(
+                r"\b(?:prior|previous)\b",
+                _clean_result_label(cell),
+            )
+        ),
+        None,
+    )
+    value_column = (
+        guidance_column + 1
+        if prior_column == 0 and guidance_column == 1
+        else guidance_column
+    )
     guidance_period = _quarterly_guidance_period(table)
     definitions = {
         "sales": ("revenue", "USD", "company_defined"),
         "revenues": ("revenue", "USD", "company_defined"),
+        "total revenues (reported & ex fx)": ("revenue", "USD", "company_defined"),
+        "total revenues(reported & ex fx)": ("revenue", "USD", "company_defined"),
         "revenues ($ in billions) midpoint": ("revenue", "USD", "company_defined"),
         "qct revenues": ("qct_revenue", "USD", "company_defined"),
         "qtl revenues": ("qtl_revenue", "USD", "company_defined"),
@@ -741,12 +784,12 @@ def _extract_current_guidance_metrics(table, add_value) -> None:
         ),
     }
     for row in table:
-        if not row or len(row) <= guidance_column:
+        if not row or len(row) <= value_column:
             continue
         label = next(
             (
                 _clean_result_label(cell)
-                for cell in row[:guidance_column]
+                for cell in row[:value_column]
                 if _clean_result_label(cell) in definitions
             ),
             "",
@@ -754,8 +797,10 @@ def _extract_current_guidance_metrics(table, add_value) -> None:
         definition = definitions.get(label)
         if definition is None:
             continue
+        if label == "diluted eps" and table_non_gaap:
+            definition = ("adjusted_eps", "USD_per_share", "non_gaap")
         metric_base, unit, basis = definition
-        cell = row[guidance_column]
+        cell = row[value_column]
         range_parser = (
             _percentage_range
             if unit == "percent"
@@ -770,7 +815,7 @@ def _extract_current_guidance_metrics(table, add_value) -> None:
             metric_range = next(
                 (
                     parsed
-                    for column in (guidance_column - 1, guidance_column + 1)
+                    for column in (value_column - 1, value_column + 1)
                     if 0 <= column < len(row)
                     and (parsed := range_parser(row[column])) is not None
                 ),
@@ -1497,9 +1542,16 @@ def _percent_value(value: str, *, allow_bare: bool = False) -> Optional[float]:
 def _result_change_percent(row: list[str], change_column: int) -> Optional[float]:
     """Read the first disclosed change at or after a sparse HTML header column."""
 
-    for cell in row[change_column : change_column + 3]:
+    window = row[change_column : change_column + 4]
+    for index, cell in enumerate(window):
         parsed = _percent_value(cell)
         if parsed is not None:
+            return parsed
+        if (
+            index + 1 < len(window)
+            and str(window[index + 1] or "").strip() == "%"
+            and (parsed := _percent_value(cell, allow_bare=True)) is not None
+        ):
             return parsed
         if re.fullmatch(r"\s*[–—-]\s*%\s*", str(cell or "")):
             return 0.0
@@ -1547,19 +1599,18 @@ def _money_range(
 ) -> Optional[tuple[float, float]]:
     text = " ".join(str(value or "").split())
     matches = list(re.finditer(
-        r"\$\s*(?P<first>[0-9]+(?:\.[0-9]+)?)\s*(?P<first_scale>[BM])?"
+        r"\$\s*(?P<first>[0-9]+(?:\.[0-9]+)?)\s*"
+        r"(?P<first_scale>[BM]|million|billion)?"
         r"\s*(?:\bto\b|\band\b|[-–—])\s*\$?\s*"
-        r"(?P<second>[0-9]+(?:\.[0-9]+)?)\s*(?P<second_scale>[BM])?",
+        r"(?P<second>[0-9]+(?:\.[0-9]+)?)\s*"
+        r"(?P<second_scale>[BM]|million|billion)?",
         text,
         flags=re.IGNORECASE,
     ))
     if not matches:
         return None
     match = matches[-1] if prefer_last else matches[0]
-    scales = [
-        str(match.group("first_scale") or "").upper(),
-        str(match.group("second_scale") or "").upper(),
-    ]
+    scales = [_money_scale(match.group(name)) for name in ("first_scale", "second_scale")]
     inherited_scale = scales[0] or scales[1]
     if require_scale and not inherited_scale:
         return None
@@ -1574,6 +1625,15 @@ def _money_range(
     return parsed[0], parsed[1]
 
 
+def _money_scale(value: Optional[str]) -> str:
+    folded = str(value or "").casefold()
+    if folded in {"b", "billion"}:
+        return "B"
+    if folded in {"m", "million"}:
+        return "M"
+    return ""
+
+
 def _labeled_money_range(
     value: str,
     *,
@@ -1585,7 +1645,9 @@ def _labeled_money_range(
         label_scale = 1_000_000_000.0
     elif re.search(r"\b(?:in\s+)?millions?\b", label, re.IGNORECASE):
         label_scale = 1_000_000.0
-    cell_has_scale = bool(re.search(r"[0-9]\s*[BM]\b", value, re.IGNORECASE))
+    cell_has_scale = bool(
+        re.search(r"[0-9]\s*(?:[BM]\b|million\b|billion\b)", value, re.IGNORECASE)
+    )
     metric_range = _money_range(
         value,
         require_scale=require_scale and label_scale == 1.0,

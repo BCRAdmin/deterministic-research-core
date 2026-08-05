@@ -596,6 +596,22 @@ def test_business_context_prefers_business_and_segments_over_transition_or_accou
     ]
 
 
+def test_business_context_prefers_single_segment_activity_over_patent_definition():
+    html = """
+    <html><body>
+      <p><strong>ITEM 1. BUSINESS</strong></p>
+      <p>We operate as a single reportable segment engaged in the discovery, development, manufacturing, marketing and sale of innovative medicines for serious diseases.</p>
+      <p>Patents may cover active ingredients, uses, formulations, delivery mechanisms and manufacturing processes for products.</p>
+      <p>Our marketed chemical products include ExampleOne, ExampleTwo and ExampleThree.</p>
+      <div><strong>ITEM 1A. RISK FACTORS</strong></div>
+    </body></html>
+    """
+
+    assert extract_sec_business_context(html) == [
+        "We operate as a single reportable segment engaged in the discovery, development, manufacturing, marketing and sale of innovative medicines for serious diseases.",
+    ]
+
+
 def test_business_context_prefers_complete_segment_subject_over_orphan_detail():
     html = """
     <html><body>

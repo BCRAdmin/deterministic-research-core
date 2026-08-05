@@ -199,6 +199,25 @@ ABBV_STYLE_RESULT_HTML = """
 </body></html>
 """
 
+BMY_STYLE_RESULT_HTML = """
+<html><body>
+<div>Bristol Myers Squibb Reports Second Quarter 2026 Financial Results</div>
+<table>
+  <tr><td></td><td>Second Quarter Results</td></tr>
+  <tr><td>$ in millions, except per share amounts</td><td>2026</td><td></td><td>2025</td><td></td><td>Change</td><td></td><td>Change Excl. FX</td></tr>
+  <tr><td>Total Revenues</td><td>$12,973</td><td></td><td></td><td>$12,269</td><td></td><td></td><td>6</td><td>%</td><td></td><td>5</td><td>%</td></tr>
+  <tr><td>Earnings/(Loss) Per Share - GAAP</td><td>1.62</td><td></td><td></td><td>0.64</td><td></td><td></td><td>153</td><td>%</td></tr>
+  <tr><td>Earnings/(Loss) Per Share - Non-GAAP</td><td>2.04</td><td></td><td></td><td>1.46</td><td></td><td></td><td>40</td><td>%</td></tr>
+</table>
+<table>
+  <tr><td></td><td>2026 Non-GAAP Line-Item Guidance</td></tr>
+  <tr><td>April (Prior)</td><td>July (Updated)</td></tr>
+  <tr><td>Total Revenues (Reported &amp; Ex-FX)</td><td>~$46.0 - $47.5 billion</td><td>~$49.0 - $50.0 billion</td></tr>
+  <tr><td>Diluted EPS</td><td>$6.05 - $6.35</td><td>$6.75 - $7.00</td></tr>
+</table>
+</body></html>
+"""
+
 
 def test_selects_one_item_202_results_exhibit_from_duplicate_links():
     primary = """
@@ -508,6 +527,35 @@ def test_builds_prose_results_and_selects_updated_guidance_range():
     }
     assert payload["result_contract"]["companyfacts_controls"] == {
         "current_quarter_revenue": 16_990_000_000.0,
+    }
+
+
+def test_builds_sparse_percent_summary_and_month_labeled_updated_guidance():
+    payload = build_sec_results_release_payload(
+        ticker="BMY",
+        cik="14272",
+        accession_number="0000014272-26-000018",
+        filing_date="2026-07-30",
+        exhibit_document="a2026q2ex991-filing.htm",
+        html=BMY_STYLE_RESULT_HTML,
+        expected_fiscal_year=2026,
+        expected_fiscal_period="Q2",
+        period_end_date="2026-06-30",
+        retrieved_at="2026-07-30T12:00:00Z",
+    )
+
+    values = {item["metric_name"]: item["value"] for item in payload["metrics"]}
+    assert values == {
+        "adjusted_eps_diluted": pytest.approx(2.04),
+        "adjusted_eps_growth_yoy": pytest.approx(0.40),
+        "guidance_adjusted_eps_high": pytest.approx(7.00),
+        "guidance_adjusted_eps_low": pytest.approx(6.75),
+        "guidance_revenue_high": pytest.approx(50_000_000_000),
+        "guidance_revenue_low": pytest.approx(49_000_000_000),
+        "reported_revenue_growth": pytest.approx(0.06),
+    }
+    assert payload["result_contract"]["companyfacts_controls"] == {
+        "current_quarter_revenue": 12_973.0,
     }
 
 

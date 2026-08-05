@@ -6,6 +6,7 @@ from research_agent.content.claim_generator import (
     _ClaimBuilder,
     _bear_case_claim_text,
     _current_period_claim_specs,
+    _evidence_unit_is_compatible,
     _issuer_operating_result_specs,
     _money,
     claim_coverage_gaps,
@@ -49,6 +50,10 @@ def _load_packet(ticker: str):
         EvidenceLedger(**json.loads((base / "evidence_ledger.json").read_text(encoding="utf-8"))),
         DecisionPacket(**json.loads((base / "decision_packet.json").read_text(encoding="utf-8"))),
     )
+
+
+def test_per_share_unit_normalization_accepts_sec_plural_form():
+    assert _evidence_unit_is_compatible("USD/shares", "USD_per_share")
 
 
 def _add_exact_metric_evidence(data, metrics, ledger):

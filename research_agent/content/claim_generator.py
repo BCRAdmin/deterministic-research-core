@@ -1568,7 +1568,8 @@ def _evidence_provenance_is_compatible(item: EvidenceItem) -> bool:
 
 def _normalize_unit(unit: str) -> str:
     normalized = str(unit).strip().lower().replace("/", "_per_")
-    return "_".join(normalized.replace("-", "_").split())
+    normalized = "_".join(normalized.replace("-", "_").split())
+    return normalized.replace("_per_shares", "_per_share")
 
 
 def _evidence_date_is_compatible(

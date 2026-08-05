@@ -130,8 +130,10 @@ _BUSINESS_CONTEXT_REVENUE_ACTIVITY = re.compile(
     re.IGNORECASE,
 )
 _BUSINESS_CONTEXT_SINGLE_SEGMENT = re.compile(
-    r"^(?:we|the company|the issuer)\s+operate(?:s)?\s+as\s+"
-    r"(?:one|a single)\s+(?:operating|reportable)\s+segment[.]?$",
+    r"^(?:we|the company|the issuer)\s+operate(?:s)?\s+"
+    r"(?:(?:as\s+(?:one|a single)\s+(?:operating|reportable)\s+segment)|"
+    r"(?:in\s+a single\s+segment))"
+    r"(?:\s+engaged in\b.{20,240})?[.]?$",
     re.IGNORECASE,
 )
 _BUSINESS_CONTEXT_DIRECT_ACTIVITY = re.compile(
@@ -178,6 +180,7 @@ _BUSINESS_CONTEXT_SKIP_PREFIXES = (
     "this report includes",
     "the following discussion",
     "information contained",
+    "patents may cover",
     "see part",
     "additional information",
     "therefore",
@@ -977,6 +980,7 @@ def _is_business_context_identity(text: str) -> bool:
         or _BUSINESS_CONTEXT_NAMED_IDENTITY.search(text)
         or _BUSINESS_CONTEXT_NAMED_LEADER_IDENTITY.search(text)
         or _BUSINESS_CONTEXT_PARENTHETICAL_IDENTITY.search(text)
+        or _BUSINESS_CONTEXT_SINGLE_SEGMENT.search(text)
     )
 
 
