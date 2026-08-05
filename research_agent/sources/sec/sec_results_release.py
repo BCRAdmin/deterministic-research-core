@@ -525,7 +525,11 @@ def _extract_headline_summary_metrics(table, add_value, controls: dict[str, floa
         if row and row[0].strip()
     }
     sales_row = next(
-        (rows[label] for label in ("sales", "net sales", "revenue") if label in rows),
+        (
+            rows[label]
+            for label in ("sales", "net sales", "revenue", "revenues")
+            if label in rows
+        ),
         None,
     )
     adjusted_eps_row = next(
@@ -534,6 +538,7 @@ def _extract_headline_summary_metrics(table, add_value, controls: dict[str, floa
             for label in (
                 "adjusted earnings per share",
                 "adjusted diluted earnings per share",
+                "adjusted diluted eps",
                 "adjusted eps",
             )
             if label in rows
@@ -547,6 +552,7 @@ def _extract_headline_summary_metrics(table, add_value, controls: dict[str, floa
         ("sales", "current_quarter_revenue"),
         ("net sales", "current_quarter_revenue"),
         ("revenue", "current_quarter_revenue"),
+        ("revenues", "current_quarter_revenue"),
         ("operating income", "current_quarter_operating_income"),
         ("segment profit", "current_quarter_segment_profit"),
     ):
@@ -557,14 +563,23 @@ def _extract_headline_summary_metrics(table, add_value, controls: dict[str, floa
         if value is not None:
             controls[control_name] = value
 
-    if len(sales_row) > change_column:
-        value = _percent_value(sales_row[change_column])
-        if value is not None:
-            add_value(
-                "reported_sales_growth",
-                value,
-                display_label="reported-sales growth",
-            )
+    value = _result_change_percent(sales_row, change_column)
+    if value is not None:
+        sales_label = _clean_result_label(sales_row[0])
+        metric_name = (
+            "reported_revenue_growth"
+            if sales_label in {"revenue", "revenues"}
+            else "reported_sales_growth"
+        )
+        add_value(
+            metric_name,
+            value,
+            display_label=(
+                "reported-revenue growth"
+                if metric_name == "reported_revenue_growth"
+                else "reported-sales growth"
+            ),
+        )
 
     organic_row = next(
         (
@@ -606,7 +621,10 @@ def _extract_headline_summary_metrics(table, add_value, controls: dict[str, floa
                 )
 
     if len(adjusted_eps_row) > current_column:
-        adjusted_eps = _money_value(adjusted_eps_row[current_column])
+        adjusted_eps = _money_value(
+            adjusted_eps_row[current_column],
+            allow_bare=True,
+        )
         if adjusted_eps is not None:
             add_value(
                 "adjusted_eps_diluted",
@@ -615,15 +633,14 @@ def _extract_headline_summary_metrics(table, add_value, controls: dict[str, floa
                 unit="USD_per_share",
                 basis="non_gaap",
             )
-    if len(adjusted_eps_row) > change_column:
-        eps_change = _percent_value(adjusted_eps_row[change_column])
-        if eps_change is not None:
-            add_value(
-                "adjusted_eps_growth_yoy",
-                eps_change,
-                display_label="adjusted diluted-EPS growth",
-                basis="non_gaap",
-            )
+    eps_change = _result_change_percent(adjusted_eps_row, change_column)
+    if eps_change is not None:
+        add_value(
+            "adjusted_eps_growth_yoy",
+            eps_change,
+            display_label="adjusted diluted-EPS growth",
+            basis="non_gaap",
+        )
     return True
 
 
@@ -665,7 +682,7 @@ def _extract_current_guidance_metrics(table, add_value) -> None:
             for row in table[:3]
             for column, cell in enumerate(row)
             if re.match(
-                r"^(?:current guidance|current outlook|updated guidance)\b",
+                r"^(?:current|updated|revised)\b.{0,40}\b(?:guidance|outlook)\b",
                 _clean_result_label(cell),
             )
         ),
@@ -677,6 +694,7 @@ def _extract_current_guidance_metrics(table, add_value) -> None:
     definitions = {
         "sales": ("revenue", "USD", "company_defined"),
         "revenues": ("revenue", "USD", "company_defined"),
+        "revenues ($ in billions) midpoint": ("revenue", "USD", "company_defined"),
         "qct revenues": ("qct_revenue", "USD", "company_defined"),
         "qtl revenues": ("qtl_revenue", "USD", "company_defined"),
         "reported sales growth": (
@@ -691,9 +709,20 @@ def _extract_current_guidance_metrics(table, add_value) -> None:
         "diluted eps": ("eps_diluted", "USD_per_share", "gaap"),
         "gaap diluted eps": ("eps_diluted", "USD_per_share", "gaap"),
         "adjusted earnings per share": ("adjusted_eps", "USD_per_share", "non_gaap"),
+        "adjusted diluted eps": ("adjusted_eps", "USD_per_share", "non_gaap"),
         "adjusted eps": ("adjusted_eps", "USD_per_share", "non_gaap"),
         "non gaap diluted eps": ("adjusted_eps", "USD_per_share", "non_gaap"),
         "adjusted earnings growth": ("adjusted_eps_growth", "percent", "non_gaap"),
+        "adjusted si&a expenses ($ in billions)": (
+            "adjusted_sia_expense",
+            "USD",
+            "non_gaap",
+        ),
+        "adjusted r&d expenses ($ in billions)": (
+            "adjusted_research_and_development_expense",
+            "USD",
+            "non_gaap",
+        ),
     }
     for row in table:
         if not row or len(row) <= guidance_column:
@@ -711,11 +740,26 @@ def _extract_current_guidance_metrics(table, add_value) -> None:
             continue
         metric_base, unit, basis = definition
         cell = row[guidance_column]
-        metric_range = (
-            _percentage_range(cell)
+        range_parser = (
+            _percentage_range
             if unit == "percent"
-            else _money_range(cell, require_scale=metric_base == "revenue")
+            else lambda value: _labeled_money_range(
+                value,
+                label=label,
+                require_scale=metric_base == "revenue",
+            )
         )
+        metric_range = range_parser(cell)
+        if metric_range is None:
+            metric_range = next(
+                (
+                    parsed
+                    for column in (guidance_column - 1, guidance_column + 1)
+                    if 0 <= column < len(row)
+                    and (parsed := range_parser(row[column])) is not None
+                ),
+                None,
+            )
         if metric_range is None:
             continue
         low, high = sorted(metric_range)
@@ -1312,7 +1356,7 @@ def _result_comparison_columns(
     table: list[list[str]],
 ) -> Optional[tuple[int, int]]:
     period_pattern = re.compile(r"^(?:[1-4]q|q[1-4])\s*20[0-9]{2}$", re.IGNORECASE)
-    for row in table[:4]:
+    for row_index, row in enumerate(table[:4]):
         period_columns = [
             column
             for column, cell in enumerate(row)
@@ -1329,6 +1373,22 @@ def _result_comparison_columns(
         )
         if period_columns and change_column is not None:
             return period_columns[0], change_column
+        year_columns = [
+            column
+            for column, cell in enumerate(row)
+            if re.fullmatch(r"20[0-9]{2}", _clean_result_label(cell))
+        ]
+        heading = " ".join(
+            _clean_result_label(cell)
+            for header_row in table[: row_index + 1]
+            for cell in header_row
+        )
+        if (
+            len(year_columns) >= 2
+            and change_column is not None
+            and re.search(r"\b(?:[1-4]q|q[1-4]|quarter)\b", heading)
+        ):
+            return year_columns[0], change_column
     return None
 
 
@@ -1353,6 +1413,18 @@ def _percent_value(value: str, *, allow_bare: bool = False) -> Optional[float]:
     return number
 
 
+def _result_change_percent(row: list[str], change_column: int) -> Optional[float]:
+    """Read the first disclosed change at or after a sparse HTML header column."""
+
+    for cell in row[change_column : change_column + 3]:
+        parsed = _percent_value(cell)
+        if parsed is not None:
+            return parsed
+        if re.fullmatch(r"\s*[–—-]\s*%\s*", str(cell or "")):
+            return 0.0
+    return None
+
+
 def _basis_point_change(value: str) -> Optional[float]:
     text = " ".join(str(value or "").split())
     match = re.search(r"([0-9]+(?:\.[0-9]+)?)\s*(?:basis points|bps)\b", text, re.IGNORECASE)
@@ -1364,12 +1436,22 @@ def _basis_point_change(value: str) -> Optional[float]:
     return number
 
 
-def _money_value(value: str, *, scale: float = 1.0) -> Optional[float]:
+def _money_value(
+    value: str,
+    *,
+    scale: float = 1.0,
+    allow_bare: bool = False,
+) -> Optional[float]:
     text = " ".join(str(value or "").split())
     match = re.search(
         r"\$\s*(?P<open>\()?\s*(?P<value>[0-9][0-9,]*(?:\.[0-9]+)?)",
         text,
     )
+    if match is None and allow_bare:
+        match = re.fullmatch(
+            r"(?P<open>\()?\s*(?P<value>[0-9][0-9,]*(?:\.[0-9]+)?)\s*\)?",
+            text,
+        )
     if match is None:
         return None
     number = float(match.group("value").replace(",", "")) * scale
@@ -1407,6 +1489,29 @@ def _money_range(
         )
     ]
     return parsed[0], parsed[1]
+
+
+def _labeled_money_range(
+    value: str,
+    *,
+    label: str,
+    require_scale: bool = False,
+) -> Optional[tuple[float, float]]:
+    label_scale = 1.0
+    if re.search(r"\b(?:in\s+)?billions?\b", label, re.IGNORECASE):
+        label_scale = 1_000_000_000.0
+    elif re.search(r"\b(?:in\s+)?millions?\b", label, re.IGNORECASE):
+        label_scale = 1_000_000.0
+    cell_has_scale = bool(re.search(r"[0-9]\s*[BM]\b", value, re.IGNORECASE))
+    metric_range = _money_range(
+        value,
+        require_scale=require_scale and label_scale == 1.0,
+    )
+    if metric_range is None:
+        return None
+    if label_scale != 1.0 and not cell_has_scale:
+        return metric_range[0] * label_scale, metric_range[1] * label_scale
+    return metric_range
 
 
 def _percentage_range(value: str) -> Optional[tuple[float, float]]:
@@ -1602,6 +1707,23 @@ def _material_result_context_events(
                     "business_context",
                     "Management stated that reported earnings reflected a one-time "
                     f"gain on the deconsolidation of {subject}.",
+                )
+            )
+        impairment_match = re.search(
+            r"reported.{0,80}(?:loss per share|earnings|net income).{0,80}"
+            r"reflects?.{0,80}(?P<amount>\$[0-9]+(?:\.[0-9]+)?\s+"
+            r"(?:million|billion)).{0,80}(?:asset\s+)?impairments?",
+            block,
+            flags=re.IGNORECASE,
+        )
+        if impairment_match is not None:
+            amount = " ".join(impairment_match.group("amount").split()).lower()
+            summaries.append(
+                (
+                    filing_date,
+                    "business_context",
+                    "Management stated that reported loss per share reflected "
+                    f"{amount} in non-cash intangible asset impairments.",
                 )
             )
         if (

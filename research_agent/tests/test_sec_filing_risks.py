@@ -75,6 +75,46 @@ def test_cleans_decorative_square_from_emphasized_risk_heading():
     ]
 
 
+def test_resolves_emphasized_uppercase_topic_to_substantive_risk_sentence():
+    html = """
+    <html><body>
+      <div><strong>Item 1A. Risk Factors</strong></div>
+      <p><strong>RISKS RELATED TO OUR OPERATIONS:</strong></p>
+      <p><strong>COMPETITIVE PRODUCTS</strong></p>
+      <p>Competitive product launches have and may erode future sales of our products or result in product obsolescence. Additional background follows.</p>
+      <p><strong>INFORMATION TECHNOLOGY AND CYBERSECURITY</strong></p>
+      <p>Significant disruptions of IT systems or breaches of information security could adversely affect our business.</p>
+      <div><strong>Item 1B. Unresolved Staff Comments</strong></div>
+    </body></html>
+    """
+
+    assert extract_sec_risk_headings(html) == [
+        "Competitive product launches have and may erode future sales of our products or result in product obsolescence.",
+        "Significant disruptions of IT systems or breaches of information security could adversely affect our business.",
+    ]
+
+
+def test_skips_context_dependent_topic_sentences_and_strips_discourse_marker():
+    html = """
+    <html><body>
+      <div><strong>Item 1A. Risk Factors</strong></div>
+      <p><strong>DEVELOPMENT AND APPROVAL</strong></p>
+      <p>The discovery and development of products are time consuming, costly and unpredictable. The outcome is inherently uncertain and involves a high degree of risk due to the following factors:</p>
+      <p><strong>BUSINESS DEVELOPMENT</strong></p>
+      <p>To achieve expected benefits, we may make payments as part of these transactions, which may negatively affect cash flows. Further, our revenues may be adversely affected by the termination of collaboration agreements.</p>
+      <p><strong>LEGAL MATTERS</strong></p>
+      <p>Litigation is inherently unpredictable, and excessive verdicts do occur. There can be no assurance as to the outcome of these matters.</p>
+      <div><strong>Item 1B. Unresolved Staff Comments</strong></div>
+    </body></html>
+    """
+
+    assert extract_sec_risk_headings(html) == [
+        "The discovery and development of products are time consuming, costly and unpredictable.",
+        "Our revenues may be adversely affected by the termination of collaboration agreements.",
+        "Litigation is inherently unpredictable, and excessive verdicts do occur.",
+    ]
+
+
 def test_rejects_lowercase_risk_fragment_from_broken_filing_boundary():
     html = """
     <html><body>

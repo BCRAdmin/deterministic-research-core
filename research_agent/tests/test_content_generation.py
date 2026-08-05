@@ -1818,6 +1818,59 @@ def test_issuer_operating_spread_keeps_segments_and_regions_taxonomically_distin
     )
 
 
+def test_issuer_results_claim_counts_reported_growth_and_adjusted_eps_as_current_context():
+    canonical = CanonicalFinancials(
+        ticker="PFE",
+        as_of_date="2026-08-04",
+        metrics=[
+            CanonicalMetric(
+                metric_name=metric_name,
+                value=value,
+                unit="USD_per_share" if "eps" in metric_name else "percent",
+                period="FY2026_Q2",
+                fiscal_year=2026,
+                fiscal_period="Q2",
+                period_bucket="quarterly",
+                end_date="2026-06-28",
+                basis="non_gaap" if "eps" in metric_name else "company_defined",
+                statement_type="income_statement",
+                source_ids=["PFE_SEC_RESULTS"],
+                evidence_ids=[f"PFE_{metric_name.upper()}"],
+                confidence="high",
+            )
+            for metric_name, value in (
+                ("reported_revenue_growth", 0.03),
+                ("adjusted_eps_diluted", 0.77),
+                ("adjusted_eps_growth_yoy", 0.0),
+            )
+        ],
+    )
+
+    spec = next(
+        item
+        for item in _issuer_operating_result_specs("PFE", canonical, "USD")
+        if "reported-revenue growth" in item["text"]
+    )
+    claim = ResearchClaim(
+        agent="deterministic",
+        claim=spec["text"],
+        claim_text=spec["text"],
+        claim_type="financial_metric",
+        section=spec["section"],
+        evidence_metrics=spec["metrics"],
+        metric_refs=spec["metrics"],
+        metric_values={metric.metric_name: metric.value for metric in canonical.metrics},
+        evidence_ids=["PFE_RESULTS"],
+        source_ids=["PFE_SEC_RESULTS"],
+        confidence="high",
+    )
+
+    assert "3.0%" in spec["text"]
+    assert "$0.77" in spec["text"]
+    assert "approximately flat" in spec["text"]
+    assert claim_quality_metrics([claim])["current_period_kpi_metric_count"] == 3
+
+
 def test_generic_company_gets_latest_reported_period_claim():
     data, metrics, validation, ledger, decision = _load_packet("SNOW")
     data.ticker = "GENERIC"

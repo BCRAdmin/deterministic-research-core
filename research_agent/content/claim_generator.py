@@ -1348,7 +1348,8 @@ class _ClaimBuilder:
     def _nonrecurring_profit_context(self) -> Optional[EvidenceItem]:
         pattern = re.compile(
             r"\b(?:one[- ]time|non[- ]recurring|deconsolidation|"
-            r"gain on (?:the )?(?:sale|disposal))\b",
+            r"gain (?:on|from) (?:the )?(?:sale|disposal)|"
+            r"reported.{0,100}reflect(?:ed|s).{0,100}impairments?)\b",
             re.IGNORECASE,
         )
         return next(
@@ -1980,7 +1981,9 @@ def _has_ticker_specific_kpi(claim: ResearchClaim) -> bool:
         "electron", "haste", "launch cadence", "neutron", "space systems",
         "launch services", "service revenue", "execution milestone", "capital intensity",
         "latest reported period", "operating income", "net income",
-        "organic-sales", "organic-volume", "pricing contribution", "gross margin",
+        "reported-sales", "reported-revenue", "organic-sales", "organic-volume",
+        "pricing contribution",
+        "adjusted eps", "gross margin",
         "base business", "market share",
     }
     return any(term in text for term in terms)
@@ -2006,8 +2009,9 @@ def _is_current_period_kpi_claim(claim: ResearchClaim) -> bool:
     return _has_ticker_specific_kpi(claim) and _has_validated_number(claim) and any(
         term in text
         for term in {
-            "q1", "q2", "q3", "q4", "latest-quarter", "current-period", "fy2025", "fy2026",
-            "fy2027", "quarter", "guide", "guidance", "revenue of", "fcf of",
+            "q1", "q2", "q3", "q4", "latest-quarter", "current-period",
+            "year to date", "year-to-date", "fy2025", "fy2026", "fy2027",
+            "quarter", "guide", "guidance", "revenue of", "fcf of",
         }
     )
 
@@ -2590,6 +2594,8 @@ def _issuer_operating_result_specs(
 ) -> list[dict[str, object]]:
     specs: list[dict[str, object]] = []
     current_metric_labels = (
+        ("reported_sales_growth", "reported-sales growth"),
+        ("reported_revenue_growth", "reported-revenue growth"),
         ("organic_sales_growth", "organic-sales growth"),
         ("organic_revenue_growth", "organic-revenue growth"),
         ("comparable_sales_growth", "comparable-sales growth"),
@@ -2772,6 +2778,57 @@ def _issuer_operating_result_specs(
                 "implication": (
                     "Read the margin change and adjusted EPS together with the filed "
                     "GAAP operating result before assigning an operating direction."
+                ),
+            }
+        )
+    elif (
+        adjusted_eps is not None
+        and (
+            reported_growth := (
+                canonical_financials.get_metric("reported_revenue_growth")
+                or canonical_financials.get_metric("reported_sales_growth")
+            )
+        ) is not None
+    ):
+        eps_clause = f"Adjusted EPS was {_money(adjusted_eps.value, currency)}"
+        if adjusted_eps_growth is not None:
+            eps_clause += (
+                ", shown as approximately flat year over year"
+                if adjusted_eps_growth.value == 0
+                else ", a year-over-year change of "
+                f"{_pct(adjusted_eps_growth.value)}"
+            )
+        growth_label = (
+            "reported-revenue growth"
+            if reported_growth.metric_name == "reported_revenue_growth"
+            else "reported-sales growth"
+        )
+        specs.append(
+            {
+                "section": "Business & Segment Context",
+                "kind": "current_period",
+                "evidence_type": "financial_metric",
+                "text": (
+                    f"{ticker} issuer-filed current-quarter {growth_label} "
+                    f"was {_pct(reported_growth.value)}. {eps_clause}."
+                ),
+                "metrics": [
+                    reported_growth.metric_name,
+                    "adjusted_eps_diluted",
+                    *(
+                        ["adjusted_eps_growth_yoy"]
+                        if adjusted_eps_growth is not None
+                        else []
+                    ),
+                ],
+                "counterargument": (
+                    "Issuer-disclosed growth rates are rounded, and adjusted results "
+                    "exclude issuer-defined items rather than replacing the GAAP "
+                    "profit comparison."
+                ),
+                "implication": (
+                    f"Read {growth_label} and adjusted EPS together with the "
+                    "filed GAAP result before assigning an operating direction."
                 ),
             }
         )

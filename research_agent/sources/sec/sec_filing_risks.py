@@ -16,7 +16,8 @@ _BLOCK_TAGS = {"br", "div", "h1", "h2", "h3", "h4", "li", "p", "table", "tr"}
 _ITEM_HEADING = re.compile(r"^item\s+\d+[a-z]?(?:[.\s]|$)", re.IGNORECASE)
 _RISK_LANGUAGE = re.compile(
     r"\b(could|may|might|failure|fail|unable|adverse|adversely|competition|"
-    r"volatility|volatile|risk|risks|harm|harmed|strain|fraudulent|unlawful|"
+    r"volatility|volatile|uncertain|uncertainty|unpredictable|risk|risks|"
+    r"harm|harmed|strain|fraudulent|unlawful|"
     r"fluctuations?|loss|losses|liabilit(?:y|ies)|suffer|suffers|unsuccessful|"
     r"expose|exposes|subject to|subjects us to|presents a number of risks)\b",
     re.IGNORECASE,
@@ -371,7 +372,8 @@ def extract_sec_risk_headings(html: str) -> list[str]:
         seen: set[str] = set()
         summary_mode = False
         summary_categories: set[str] = set()
-        for block, emphasized in blocks[start + 1 : end]:
+        section_blocks = blocks[start + 1 : end]
+        for block_index, (block, emphasized) in enumerate(section_blocks):
             compact = _compact_heading(block)
             if compact in {"riskfactorsummary", "riskfactorssummary"}:
                 summary_mode = True
@@ -388,6 +390,13 @@ def extract_sec_risk_headings(html: str) -> list[str]:
             candidate = block
             candidate_emphasized = emphasized
             explicit_inline_heading = False
+            if emphasized:
+                topic_statement = _risk_statement_from_topic_heading(
+                    section_blocks,
+                    block_index,
+                )
+                if topic_statement is not None:
+                    candidate = topic_statement
             if not emphasized:
                 inline_heading = _inline_title_case_risk_heading(block)
                 if inline_heading:
@@ -778,6 +787,70 @@ def _is_risk_heading(text: str, *, emphasized: bool = False) -> bool:
     if stripped.count(". ") > 1:
         return False
     return bool(_RISK_LANGUAGE.search(stripped))
+
+
+def _risk_statement_from_topic_heading(
+    blocks: list[tuple[str, bool]],
+    index: int,
+) -> str | None:
+    """Resolve an emphasized all-caps topic to its first substantive risk sentence."""
+
+    heading, emphasized = blocks[index]
+    stripped = heading.strip()
+    if (
+        not emphasized
+        or not stripped.isupper()
+        or not 4 <= len(stripped) <= 120
+        or _GENERIC_RISK_CATEGORY.fullmatch(stripped)
+        or _compact_heading(stripped) in _GENERIC_RISK_HEADINGS
+    ):
+        return None
+    for narrative, narrative_emphasized in blocks[index + 1 : index + 5]:
+        if narrative_emphasized:
+            break
+        protected = _BUSINESS_CONTEXT_ABBREVIATION.sub(
+            lambda match: match.group(0).replace(".", _PROTECTED_PERIOD),
+            narrative,
+        )
+        for raw_sentence in re.split(r"(?<=[.!?])\s+", protected):
+            sentence = raw_sentence.replace(_PROTECTED_PERIOD, ".").strip()
+            standalone = _standalone_topic_risk_sentence(sentence)
+            if standalone is not None:
+                return standalone
+    return None
+
+
+def _standalone_topic_risk_sentence(sentence: str) -> str | None:
+    """Keep topic-linked risk text only when it remains clear without its paragraph."""
+
+    stripped = re.sub(
+        r"^(?:Additionally|Also|Further|Similarly|For instance),\s+",
+        "",
+        sentence.strip(),
+        flags=re.IGNORECASE,
+    )
+    stripped = stripped[:1].upper() + stripped[1:]
+    if not 20 <= len(stripped) <= 320 or stripped.endswith(":"):
+        return None
+    if re.match(
+        r"^(?:Accordingly\b|In particular\b|It\b|The outcome\b|They\b|"
+        r"This\b|That\b|These\b|Those\b|To achieve\b|To the extent\b)",
+        stripped,
+        re.IGNORECASE,
+    ):
+        return None
+    if re.search(
+        r"\b(?:these|those|such)\s+(?:arrangements|developments|factors|"
+        r"initiatives|matters|risks|transactions)\b",
+        stripped,
+        re.IGNORECASE,
+    ):
+        return None
+    if _is_risk_heading(stripped, emphasized=True):
+        return stripped
+    if re.search(r"\b(?:uncertain|uncertainty|unpredictable)\b", stripped, re.I):
+        return stripped
+    return None
 
 
 def _clean_risk_heading_marker(text: str) -> str:

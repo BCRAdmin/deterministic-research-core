@@ -164,6 +164,28 @@ QCOM_STYLE_GUIDANCE_HTML = """
 </body></html>
 """
 
+PFE_STYLE_GUIDANCE_HTML = """
+<html><body>
+<div>Pfizer Reports Second Quarter 2026 Results</div>
+<div>Reported Loss Per Share Reflects $4.3 Billion in Non-Cash Intangible Asset Impairments</div>
+<table>
+  <tr><td>($ in millions, except per share amounts)</td><td>Second-Quarter</td><td></td><td>Six Months</td></tr>
+  <tr><td></td><td>2026</td><td>2025</td><td>% Change</td><td></td><td>2026</td><td>2025</td><td>% Change</td></tr>
+  <tr><td>Revenues</td><td>$ 15,034</td><td></td><td>$ 14,653</td><td></td><td>3%</td><td></td><td>$ 29,484</td><td></td><td>$ 28,367</td><td></td><td>4%</td></tr>
+  <tr><td>Reported(4) Net Income/(Loss)</td><td>(248)</td><td></td><td>2,910</td><td></td><td>*</td><td></td><td>2,440</td><td></td><td>5,877</td><td></td><td>(58%)</td></tr>
+  <tr><td>Adjusted(3) Income</td><td>4,440</td><td></td><td>4,434</td><td></td><td>—%</td><td></td><td>8,730</td><td></td><td>9,671</td><td></td><td>(10%)</td></tr>
+  <tr><td>Adjusted(3) Diluted EPS</td><td>0.77</td><td></td><td>0.78</td><td></td><td>—%</td><td></td><td>1.52</td><td></td><td>1.69</td><td></td><td>(10%)</td></tr>
+</table>
+<table>
+  <tr><td></td><td>Previous 2026 Financial Guidance</td><td>Anticipated Impact of Non COVID-19 Products</td><td>Anticipated Impact of COVID-19 Products</td><td></td><td>Anticipated Impact of Transaction</td><td>Revised 2026 Financial Guidance(2)</td></tr>
+  <tr><td>Revenues ($ in billions) Midpoint</td><td>$59.5 to $62.5</td><td>+$1.5</td><td>-$1.0</td><td></td><td>-</td><td>$60.5 to $62.5</td></tr>
+  <tr><td>Adjusted(3) SI&A Expenses ($ in billions)</td><td>$12.5 to $13.5</td><td></td><td></td><td></td><td></td><td>$12.5 to $13.5</td></tr>
+  <tr><td>Adjusted(3) R&D Expenses ($ in billions)</td><td>$10.5 to $11.5</td><td></td><td></td><td></td><td></td><td>$10.5 to $11.5</td></tr>
+  <tr><td>Adjusted(3) Diluted EPS</td><td>$2.80 to $3.00</td><td>+$0.10</td><td></td><td>-$0.10</td><td>$2.80 to $3.00</td><td></td></tr>
+</table>
+</body></html>
+"""
+
 
 def test_selects_one_item_202_results_exhibit_from_duplicate_links():
     primary = """
@@ -397,6 +419,56 @@ def test_builds_indented_current_guidance_with_segment_revenue_ranges():
     }
     assert {item["period"] for item in payload["metrics"]} == {"FY2026_Q4"}
     assert {item["fiscal_period"] for item in payload["metrics"]} == {"Q4"}
+
+
+def test_builds_revised_full_year_guidance_with_shifted_range_cell():
+    payload = build_sec_results_release_payload(
+        ticker="PFE",
+        cik="78003",
+        accession_number="0000078003-26-000094",
+        filing_date="2026-08-04",
+        exhibit_document="pfe-6282026xex99.htm",
+        html=PFE_STYLE_GUIDANCE_HTML,
+        expected_fiscal_year=2026,
+        expected_fiscal_period="Q2",
+        period_end_date="2026-06-28",
+        retrieved_at="2026-08-04T12:00:00Z",
+    )
+
+    values = {item["metric_name"]: item["value"] for item in payload["metrics"]}
+    assert values == {
+        "adjusted_eps_diluted": pytest.approx(0.77),
+        "adjusted_eps_growth_yoy": pytest.approx(0.0),
+        "guidance_adjusted_eps_high": pytest.approx(3.00),
+        "guidance_adjusted_eps_low": pytest.approx(2.80),
+        "guidance_adjusted_research_and_development_expense_high": pytest.approx(
+            11_500_000_000
+        ),
+        "guidance_adjusted_research_and_development_expense_low": pytest.approx(
+            10_500_000_000
+        ),
+        "guidance_adjusted_sia_expense_high": pytest.approx(13_500_000_000),
+        "guidance_adjusted_sia_expense_low": pytest.approx(12_500_000_000),
+        "guidance_revenue_high": pytest.approx(62_500_000_000),
+        "guidance_revenue_low": pytest.approx(60_500_000_000),
+        "reported_revenue_growth": pytest.approx(0.03),
+    }
+    guidance = [
+        item for item in payload["metrics"] if item["metric_name"].startswith("guidance_")
+    ]
+    assert {item["period"] for item in guidance} == {"FY2026"}
+    assert {item["fiscal_period"] for item in guidance} == {"FY"}
+    assert payload["result_contract"]["operating_metric_count"] == 3
+    assert payload["result_contract"]["guidance_metric_count"] == 8
+    assert payload["result_contract"]["companyfacts_controls"] == {
+        "current_quarter_revenue": 15_034.0,
+    }
+    summaries = {event["summary"] for event in payload["events"]}
+    assert (
+        "Management stated that reported loss per share reflected $4.3 billion "
+        "in non-cash intangible asset impairments."
+        in summaries
+    )
 
 
 def test_builds_nonrecurring_gain_and_continuing_perimeter_context():
