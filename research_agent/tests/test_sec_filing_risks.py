@@ -324,6 +324,21 @@ def test_risk_summary_intro_is_not_a_concrete_risk():
     ]
 
 
+def test_risk_outcome_boilerplate_is_not_a_concrete_risk():
+    html = """
+    <html><body>
+      <div><strong>ITEM 1A. RISK FACTORS</strong></div>
+      <p><strong>If any of the following risks and uncertainties develops into actual events, these events could have a material adverse effect on our business, results of operations, financial condition or cash flows.</strong></p>
+      <p><strong>The expiration or loss of patent protection may adversely affect our revenues and operating earnings.</strong></p>
+      <div><strong>ITEM 1B. UNRESOLVED STAFF COMMENTS</strong></div>
+    </body></html>
+    """
+
+    assert extract_sec_risk_headings(html) == [
+        "The expiration or loss of patent protection may adversely affect our revenues and operating earnings."
+    ]
+
+
 def test_extracts_split_risk_heading_across_repeated_item_1a_page_headers():
     html = """
     <html><body>

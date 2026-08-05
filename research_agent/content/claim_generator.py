@@ -40,6 +40,11 @@ _CATALYST_EVENT_TYPES = {
 }
 _RISK_THEME_PATTERNS = (
     re.compile(
+        r"\b(?:patents?|intellectual property|loss of exclusivity|"
+        r"generics?|biosimilars?|proprietary rights?)\b",
+        re.IGNORECASE,
+    ),
+    re.compile(
         r"\b(?:cyber|information technology|technology|"
         r"data security|security of (?:our|the) .*systems?)\b",
         re.IGNORECASE,
@@ -288,9 +293,8 @@ class _ClaimBuilder:
             elif event.event_type in _CATALYST_EVENT_TYPES:
                 self.add_event(event, section="Catalysts & Triggers")
 
-        for index, risk_evidence in enumerate(
-            self._selected_risk_evidence(limit=4)
-        ):
+        selected_risk_evidence = self._selected_risk_evidence(limit=4)
+        for index, risk_evidence in enumerate(selected_risk_evidence):
             self.add_risk(risk_evidence, explain_disclosure=index == 0)
 
         fcf_claim_metrics = ["free_cash_flow_ttm"]
@@ -1109,6 +1113,40 @@ class _ClaimBuilder:
                 self.metrics.fundamentals
             )
         )
+        bear_context: list[str] = []
+        bear_additional_evidence: list[EvidenceItem] = []
+        equity = self.metrics.fundamentals.equity
+        current_ratio = self.metrics.fundamentals.current_ratio
+        if equity is not None and equity <= 0:
+            balance_context = (
+                f"Book equity of {self._money(equity)} is a material "
+                "balance-sheet constraint"
+            )
+            bear_metrics.append("equity")
+            if current_ratio is not None:
+                balance_context += (
+                    f", alongside a current ratio of {_multiple(current_ratio)}"
+                )
+                bear_metrics.append("current_ratio")
+            bear_context.append(
+                f"{balance_context}; this does not by itself establish insolvency."
+            )
+        elif current_ratio is not None and current_ratio < 1.0:
+            bear_metrics.append("current_ratio")
+            bear_context.append(
+                f"A current ratio of {_multiple(current_ratio)} is material liquidity "
+                "context, but does not by itself establish an inability to meet obligations."
+            )
+        if selected_risk_evidence:
+            issuer_risk = selected_risk_evidence[0]
+            risk_statement = issuer_risk.statement.strip()
+            if risk_statement and risk_statement[-1] not in ".!?":
+                risk_statement = f"{risk_statement}."
+            bear_context.append(
+                f"Issuer disclosure identifies a separate exposure: {risk_statement} "
+                "This identifies a risk, not evidence that the adverse outcome has occurred."
+            )
+            bear_additional_evidence.append(issuer_risk)
         if bear_metrics:
             bear_metrics.extend(
                 metric
@@ -1120,15 +1158,19 @@ class _ClaimBuilder:
                 )
                 if value is not None
             )
+            bear_text = _bear_case_claim_text(
+                ticker,
+                self.metrics,
+                self.data_packet.price_basis.currency,
+                has_separate_downside_evidence=bool(bear_context),
+            )
+            if bear_context:
+                bear_text = f"{bear_text} {' '.join(bear_context)}"
             self.add(
                 "Bear Case",
                 "bear",
                 "financial_metric",
-                _bear_case_claim_text(
-                    ticker,
-                    self.metrics,
-                    self.data_packet.price_basis.currency,
-                ),
+                bear_text,
                 bear_metrics,
                 "medium",
                 "high",
@@ -1136,6 +1178,7 @@ class _ClaimBuilder:
                     "Treat the bear case as evidence to monitor, not as proof of "
                     "permanent business deterioration."
                 ),
+                additional_evidence=bear_additional_evidence,
             )
         self.add(
             "Catalysts & Triggers",
@@ -1706,6 +1749,8 @@ def _bear_case_claim_text(
     ticker: str,
     metrics: MetricsPacket,
     currency: str,
+    *,
+    has_separate_downside_evidence: bool = False,
 ) -> str:
     trend_state = classify_technical_trend(metrics)
     fcf_value = metrics.fundamentals.free_cash_flow_ttm
@@ -1827,6 +1872,14 @@ def _bear_case_claim_text(
             "establish company-specific deterioration."
         )
     if trend_state == "bullish":
+        if has_separate_downside_evidence:
+            return (
+                f"{ticker}'s bullish long-term trend state and positive FCF TTM "
+                f"of {fcf} are counterevidence, but do not erase separate "
+                "balance-sheet or issuer-disclosed downside evidence. That "
+                "evidence anchors a bear case without proving current operating "
+                "deterioration or weaker cash generation."
+            )
         return (
             f"{ticker}'s bullish long-term trend state is not current downside "
             f"evidence. FCF TTM of {fcf} is also counterevidence. A bear case "
@@ -1835,11 +1888,25 @@ def _bear_case_claim_text(
             "packet."
         )
     if trend_state == "mixed":
+        if has_separate_downside_evidence:
+            return (
+                f"{ticker}'s mixed long-term trend state is inconclusive and FCF "
+                f"TTM of {fcf} is counterevidence. Separate balance-sheet or "
+                "issuer-disclosed downside evidence nevertheless anchors the bear "
+                "case without proving current operating deterioration."
+            )
         return (
             f"{ticker}'s mixed long-term trend state is inconclusive rather than "
             f"current downside evidence. FCF TTM of {fcf} is the counterweight. "
             "A bear case requires downside confirmation or separate evidence "
             "of weaker cash generation."
+        )
+    if has_separate_downside_evidence:
+        return (
+            f"{ticker}'s long-term technical trend is not fully measured and FCF "
+            f"TTM of {fcf} is counterevidence. Separate balance-sheet or "
+            "issuer-disclosed downside evidence nevertheless anchors the bear "
+            "case without proving current operating deterioration."
         )
     return (
         f"{ticker}'s long-term technical trend is not fully measured and therefore "

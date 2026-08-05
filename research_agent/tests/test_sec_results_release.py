@@ -187,6 +187,18 @@ PFE_STYLE_GUIDANCE_HTML = """
 </body></html>
 """
 
+ABBV_STYLE_RESULT_HTML = """
+<html><body>
+<div>AbbVie Reports Second-Quarter 2026 Financial Results</div>
+<div>Second-quarter 2025 comparisons are included below.</div>
+<div>Reports Second-Quarter Diluted EPS of $2.03 on a GAAP Basis, an Increase of 290.4 Percent; Adjusted Diluted EPS of $3.65, an Increase of 22.9 Percent</div>
+<div>Delivers Second-Quarter Net Revenues of $16.990 Billion, an Increase of 10.2 Percent on a Reported Basis or 9.5 Percent on an Operational Basis</div>
+<div>Updates 2026 Adjusted Diluted EPS Guidance Range from $13.91 - $14.11 to $13.87 - $14.07</div>
+<div>Full-Year 2026 Outlook</div>
+<div>AbbVie is updating its adjusted diluted EPS guidance range for the full year 2026 from $13.91 - $14.11 to $13.87 - $14.07.</div>
+</body></html>
+"""
+
 
 def test_selects_one_item_202_results_exhibit_from_duplicate_links():
     primary = """
@@ -470,6 +482,33 @@ def test_builds_revised_full_year_guidance_with_shifted_range_cell():
         "in non-cash intangible asset impairments."
         in summaries
     )
+
+
+def test_builds_prose_results_and_selects_updated_guidance_range():
+    payload = build_sec_results_release_payload(
+        ticker="ABBV",
+        cik="1551152",
+        accession_number="0001551152-26-000023",
+        filing_date="2026-07-31",
+        exhibit_document="abbv-20260630xexhibit991.htm",
+        html=ABBV_STYLE_RESULT_HTML,
+        expected_fiscal_year=2026,
+        expected_fiscal_period="Q2",
+        period_end_date="2026-06-30",
+        retrieved_at="2026-07-31T12:00:00Z",
+    )
+
+    values = {item["metric_name"]: item["value"] for item in payload["metrics"]}
+    assert values == {
+        "adjusted_eps_diluted": pytest.approx(3.65),
+        "adjusted_eps_growth_yoy": pytest.approx(0.229),
+        "guidance_adjusted_eps_high": pytest.approx(14.07),
+        "guidance_adjusted_eps_low": pytest.approx(13.87),
+        "reported_revenue_growth": pytest.approx(0.102),
+    }
+    assert payload["result_contract"]["companyfacts_controls"] == {
+        "current_quarter_revenue": 16_990_000_000.0,
+    }
 
 
 def test_builds_nonrecurring_gain_and_continuing_perimeter_context():

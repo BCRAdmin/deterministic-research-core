@@ -399,6 +399,90 @@ def test_content_generator_avoids_repeating_one_risk_theme_when_alternatives_exi
     ]
 
 
+def test_content_generator_avoids_repeating_pharma_ip_risks():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    _add_exact_metric_evidence(data, metrics, ledger)
+    ledger.evidence_items = [
+        item for item in ledger.evidence_items if item.claim_type != "risk"
+    ]
+    statements = [
+        "Loss of patent protection and competition from generics may reduce revenues.",
+        "Major products could lose patent protection earlier than expected.",
+        "Third-party intellectual property may prevent sales of our products.",
+        "Research and development efforts may not produce commercial products.",
+        "Regulatory approvals may be delayed or denied.",
+        "Supply chain failures could disrupt product availability.",
+    ]
+    ledger.evidence_items.extend(
+        EvidenceItem(
+            evidence_id=f"SNOW_SEC_RISK_{index:03d}",
+            ticker="SNOW",
+            claim_type="risk",
+            source_id="SEC_SNOW_10K",
+            source_type="sec_filing",
+            authority_rank=1,
+            statement=statement,
+            period="10-K period ended 2026-01-31",
+            date="2026-03-20",
+            supports_claims=["company_risk_analysis"],
+            confidence="high",
+        )
+        for index, statement in enumerate(statements, start=1)
+    )
+
+    claims = generate_research_claims(data, metrics, ledger, decision, validation)
+    risk_claims = [claim for claim in claims if claim.claim_type == "risk"]
+
+    assert [claim.evidence_ids[0] for claim in risk_claims] == [
+        "SNOW_SEC_RISK_001",
+        "SNOW_SEC_RISK_004",
+        "SNOW_SEC_RISK_005",
+        "SNOW_SEC_RISK_006",
+    ]
+
+
+def test_bear_case_uses_balance_sheet_constraint_and_primary_risk_evidence():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    metrics.fundamentals.equity = -5_935_000_000
+    metrics.fundamentals.current_ratio = 0.81
+    metrics.fundamentals.free_cash_flow_ttm = 18_210_000_000
+    metrics.technical.close = 243.80
+    metrics.technical.sma_50 = 239.32
+    metrics.technical.sma_200 = 224.86
+    ledger.evidence_items = [
+        item for item in ledger.evidence_items if item.claim_type != "risk"
+    ]
+    ledger.evidence_items.append(
+        EvidenceItem(
+            evidence_id="SNOW_SEC_RISK_PATENT",
+            ticker="SNOW",
+            claim_type="risk",
+            source_id="SEC_SNOW_10K",
+            source_type="sec_filing",
+            authority_rank=1,
+            statement=(
+                "The expiration or loss of patent protection may adversely affect "
+                "revenues and operating earnings."
+            ),
+            period="10-K period ended 2026-01-31",
+            date="2026-03-20",
+            supports_claims=["company_risk_analysis"],
+            confidence="high",
+        )
+    )
+    _add_exact_metric_evidence(data, metrics, ledger)
+
+    claims = generate_research_claims(data, metrics, ledger, decision, validation)
+    bear = next(claim for claim in claims if claim.section == "Bear Case")
+
+    assert "do not erase separate balance-sheet or issuer-disclosed downside evidence" in bear.claim
+    assert "Book equity of -$5.93B" in bear.claim
+    assert "current ratio of 0.81x" in bear.claim
+    assert "expiration or loss of patent protection" in bear.claim
+    assert {"equity", "current_ratio"}.issubset(set(bear.metric_refs))
+    assert "SNOW_SEC_RISK_PATENT" in bear.evidence_ids
+
+
 def test_positive_fcf_is_qualified_by_sbc_to_fcf():
     data, metrics, validation, ledger, decision = _load_packet("SNOW")
     metrics.fundamentals.free_cash_flow_ttm = 1_169_702_000

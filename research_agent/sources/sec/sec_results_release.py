@@ -33,7 +33,7 @@ _QUARTER_WORDS = {
 }
 _QUARTER_PATTERNS = (
     re.compile(
-        r"\b(first|second|third|fourth)\s+(?:fiscal\s+)?quarter"
+        r"\b(first|second|third|fourth)[ -]+(?:fiscal[ -]+)?quarter"
         r".{0,100}?\b(20[0-9]{2})\b",
         re.IGNORECASE,
     ),
@@ -276,7 +276,7 @@ def build_sec_results_release_payload(
         _extract_transposed_segment_bridge_metrics(table, add_value)
         _extract_sectioned_segment_metrics(table, add_value)
         _extract_current_guidance_metrics(table, add_value)
-    _extract_headline_block_metrics(parser.blocks, add_value)
+    _extract_headline_block_metrics(parser.blocks, add_value, headline_controls)
 
     guidance_years: set[int] = set()
     for index, block in enumerate(parser.blocks):
@@ -825,7 +825,11 @@ def _quarterly_guidance_period(
     return f"FY{year}_{quarter}", year, quarter
 
 
-def _extract_headline_block_metrics(blocks, add_value) -> None:
+def _extract_headline_block_metrics(
+    blocks,
+    add_value,
+    controls: dict[str, float],
+) -> None:
     adjusted_eps = re.compile(
         r"\b(?:Base Business|adjusted|non-GAAP)(?: diluted)? EPS(?:\d+)?\b.*?"
         r"\b(increased|decreased)\s+([0-9]+(?:\.[0-9]+)?)%\s+to\s+"
@@ -871,6 +875,24 @@ def _extract_headline_block_metrics(blocks, add_value) -> None:
         r"(?P<change>[0-9]+(?:\.[0-9]+)?)\s*(?:%|percent)",
         re.IGNORECASE,
     )
+    adjusted_eps_value_then_change = re.compile(
+        r"\badjusted(?: diluted)? (?:earnings per share|EPS)\b.{0,40}?"
+        r"(?:of|was|were)\s+\$(?P<value>[0-9]+(?:\.[0-9]+)?).*?"
+        r"(?P<direction>increase|decrease)(?:d)?(?:\s+of)?\s+"
+        r"(?P<change>[0-9]+(?:\.[0-9]+)?)\s*(?:%|percent)",
+        re.IGNORECASE,
+    )
+    reported_revenue_result = re.compile(
+        r"^[^A-Za-z0-9]*(?:(?:delivers|reports)\s+"
+        r"(?:first|second|third|fourth)[ -]+quarter\s+)?"
+        r"(?:worldwide\s+)?(?:net\s+)?revenues?\s+(?:of|was|were)\s+"
+        r"\$(?P<value>[0-9][0-9,]*(?:\.[0-9]+)?)\s*"
+        r"(?P<scale>million|billion)\b.*?"
+        r"(?P<direction>increase|decrease)(?:d)?(?:\s+of)?\s+"
+        r"(?P<change>[0-9]+(?:\.[0-9]+)?)\s*(?:%|percent)\s+"
+        r"on\s+(?:a\s+)?reported\s+basis",
+        re.IGNORECASE,
+    )
     for block in blocks:
         if match := comparable_sales.search(block):
             direction = (
@@ -914,6 +936,36 @@ def _extract_headline_block_metrics(blocks, add_value) -> None:
                 display_label="adjusted continuing-operations EPS",
                 unit="USD_per_share",
                 basis="non_gaap",
+            )
+        if match := adjusted_eps_value_then_change.search(block):
+            negative = match.group("direction").casefold().startswith("decrease")
+            add_value(
+                "adjusted_eps_growth_yoy",
+                (-1.0 if negative else 1.0) * float(match.group("change")) / 100.0,
+                display_label="adjusted diluted-EPS growth",
+                basis="non_gaap",
+            )
+            add_value(
+                "adjusted_eps_diluted",
+                float(match.group("value")),
+                display_label="adjusted diluted EPS",
+                unit="USD_per_share",
+                basis="non_gaap",
+            )
+        if match := reported_revenue_result.search(block):
+            negative = match.group("direction").casefold().startswith("decrease")
+            add_value(
+                "reported_revenue_growth",
+                (-1.0 if negative else 1.0) * float(match.group("change")) / 100.0,
+                display_label="reported-revenue growth",
+            )
+            scale = (
+                1_000_000_000.0
+                if match.group("scale").casefold() == "billion"
+                else 1_000_000.0
+            )
+            controls["current_quarter_revenue"] = (
+                round(float(match.group("value").replace(",", "")) * scale, 2)
             )
         if match := margin_result.search(block):
             direction = -1.0 if match.group("direction").casefold() == "decreased" else 1.0
@@ -996,6 +1048,11 @@ def _extract_block_guidance_metrics(blocks, add_value, default_year: int) -> set
     active_until = -1
     for index, block in enumerate(blocks):
         folded = block.casefold()
+        explicit_guidance_range = bool(
+            "guidance" in folded
+            and "range" in folded
+            and re.search(r"\b20[0-9]{2}\b", block)
+        )
         if re.search(
             r"\b(?:"
             r"(?:full[ -]year|fiscal year)\s+20[0-9]{2}.{0,80}?"
@@ -1009,12 +1066,15 @@ def _extract_block_guidance_metrics(blocks, add_value, default_year: int) -> set
             active_until = index + 15
             guidance_years.add(_nearest_guidance_year(blocks, index, default_year))
             continue
-        if index > active_until:
+        if index > active_until and not explicit_guidance_range:
             continue
         if "conference call" in folded or "forward-looking statements" in folded:
             active_until = -1
             continue
-        if not block.lstrip().startswith(("•", "●", "▪", "◦", "-")):
+        if (
+            not block.lstrip().startswith(("•", "●", "▪", "◦", "-"))
+            and not explicit_guidance_range
+        ):
             continue
 
         guidance_year = _nearest_guidance_year(blocks, index, default_year)
@@ -1033,7 +1093,8 @@ def _extract_block_guidance_metrics(blocks, add_value, default_year: int) -> set
                 )
             )
         elif re.search(
-            r"\b(?:diluted (?:earnings per share|eps)|adjusted eps)\b",
+            r"\b(?:diluted (?:earnings per share|eps)|"
+            r"adjusted(?: diluted)? (?:earnings per share|eps))\b",
             folded,
         ):
             definitions.append(
@@ -1052,7 +1113,11 @@ def _extract_block_guidance_metrics(blocks, add_value, default_year: int) -> set
 
         for metric_base, unit, basis, range_type in definitions:
             metric_range = (
-                _money_range(block, require_scale=metric_base == "revenue")
+                _money_range(
+                    block,
+                    require_scale=metric_base == "revenue",
+                    prefer_last=explicit_guidance_range,
+                )
                 if range_type == "money"
                 else _outlook_percentage_range(block)
             )
@@ -1478,17 +1543,19 @@ def _money_range(
     value: str,
     *,
     require_scale: bool = False,
+    prefer_last: bool = False,
 ) -> Optional[tuple[float, float]]:
     text = " ".join(str(value or "").split())
-    match = re.search(
+    matches = list(re.finditer(
         r"\$\s*(?P<first>[0-9]+(?:\.[0-9]+)?)\s*(?P<first_scale>[BM])?"
         r"\s*(?:\bto\b|\band\b|[-–—])\s*\$?\s*"
         r"(?P<second>[0-9]+(?:\.[0-9]+)?)\s*(?P<second_scale>[BM])?",
         text,
         flags=re.IGNORECASE,
-    )
-    if match is None:
+    ))
+    if not matches:
         return None
+    match = matches[-1] if prefer_last else matches[0]
     scales = [
         str(match.group("first_scale") or "").upper(),
         str(match.group("second_scale") or "").upper(),

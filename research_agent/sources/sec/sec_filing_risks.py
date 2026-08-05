@@ -30,6 +30,8 @@ _GENERIC_RISK_CATEGORY = re.compile(
     re.IGNORECASE,
 )
 _GENERIC_PREFIXES = (
+    "if any of the following risks",
+    "if any of the risks described",
     "our business results are subject",
     "the risks described below",
     "the following is a summary",
