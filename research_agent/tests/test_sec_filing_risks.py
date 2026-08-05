@@ -339,6 +339,21 @@ def test_risk_outcome_boilerplate_is_not_a_concrete_risk():
     ]
 
 
+def test_cross_reference_section_heading_is_not_a_risk():
+    html = """
+    <html><body>
+      <div><strong>ITEM 1A. RISK FACTORS</strong></div>
+      <p>Analysis of Financial Condition and Results of Operations - Overview - Clinical Development Programs - EYLEA HD, there can be no assurance that these enhancements will help accelerate future growth.</p>
+      <p><strong>Competition may adversely affect our operating results.</strong></p>
+      <div><strong>ITEM 1B. UNRESOLVED STAFF COMMENTS</strong></div>
+    </body></html>
+    """
+
+    assert extract_sec_risk_headings(html) == [
+        "Competition may adversely affect our operating results."
+    ]
+
+
 def test_extracts_split_risk_heading_across_repeated_item_1a_page_headers():
     html = """
     <html><body>

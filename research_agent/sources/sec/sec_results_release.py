@@ -564,6 +564,7 @@ def _extract_headline_summary_metrics(table, add_value, controls: dict[str, floa
                 "adjusted diluted eps",
                 "adjusted eps",
                 "earnings/(loss) per share non gaap",
+                "non gaap net income per share diluted",
             )
             if label in rows
         ),
@@ -585,7 +586,7 @@ def _extract_headline_summary_metrics(table, add_value, controls: dict[str, floa
         row = rows.get(label)
         if row is None or len(row) <= current_column:
             continue
-        value = _money_value(row[current_column])
+        value = _result_current_money_value(row, current_column)
         if value is not None:
             controls[control_name] = value
 
@@ -647,8 +648,9 @@ def _extract_headline_summary_metrics(table, add_value, controls: dict[str, floa
                 )
 
     if len(adjusted_eps_row) > current_column:
-        adjusted_eps = _money_value(
-            adjusted_eps_row[current_column],
+        adjusted_eps = _result_current_money_value(
+            adjusted_eps_row,
+            current_column,
             allow_bare=True,
         )
         if adjusted_eps is not None:
@@ -1390,8 +1392,8 @@ def _ordered_percent_cells(row: list[str]) -> list[Optional[float]]:
         text = " ".join(str(cell or "").split())
         if not text:
             continue
-        if text == "%":
-            values.append(_percent_value(f"{pending}%") if pending else None)
+        if text in {"%", "%)"}:
+            values.append(_percent_value(f"{pending}{text}") if pending else None)
             pending = ""
             continue
         if "%" in text:
@@ -1542,19 +1544,61 @@ def _percent_value(value: str, *, allow_bare: bool = False) -> Optional[float]:
 def _result_change_percent(row: list[str], change_column: int) -> Optional[float]:
     """Read the first disclosed change at or after a sparse HTML header column."""
 
-    window = row[change_column : change_column + 4]
+    window = row[change_column:]
     for index, cell in enumerate(window):
         parsed = _percent_value(cell)
         if parsed is not None:
             return parsed
         if (
             index + 1 < len(window)
-            and str(window[index + 1] or "").strip() == "%"
-            and (parsed := _percent_value(cell, allow_bare=True)) is not None
+            and str(window[index + 1] or "").strip() in {"%", "%)"}
+            and (
+                parsed := _percent_value(
+                    f"{str(cell or '').strip()}"
+                    f"{str(window[index + 1] or '').strip()}"
+                )
+            )
+            is not None
         ):
             return parsed
         if re.fullmatch(r"\s*[–—-]\s*%\s*", str(cell or "")):
             return 0.0
+    return None
+
+
+def _result_current_money_value(
+    row: list[str],
+    current_column: int,
+    *,
+    allow_bare: bool = False,
+) -> Optional[float]:
+    """Read the current-period value when currency cells split table columns.
+
+    SEC exhibits often render a visual ``$ 4,291`` cell as two physical HTML
+    cells. The quarter header then points at ``$`` rather than the number. Only
+    the first populated value at or after the current-period header is accepted;
+    scanning stops at a second currency marker so a prior-period value cannot be
+    mistaken for the current result.
+    """
+
+    currency_seen = False
+    for cell in row[current_column:]:
+        text = " ".join(str(cell or "").split())
+        if not text:
+            continue
+        if text == "$":
+            if currency_seen:
+                return None
+            currency_seen = True
+            continue
+        value = _money_value(
+            f"${text}" if currency_seen else text,
+            allow_bare=allow_bare,
+        )
+        if value is not None:
+            return value
+        if currency_seen:
+            return None
     return None
 
 

@@ -46,6 +46,14 @@ _GENERIC_RISK_HEADINGS = {
     "riskfactorssummary",
     "summaryofriskfactors",
 }
+_NON_RISK_DOCUMENT_HEADINGS = {
+    "analysisoffinancialconditionandresultsofoperations",
+    "criticalaccountingestimates",
+    "liquidityandcapitalresources",
+    "managementsdiscussionandanalysisoffinancialconditionandresultsofoperations",
+    "quantitativeandqualitativedisclosuresaboutmarketrisk",
+    "resultsofoperations",
+}
 _RISK_SECTION_END = re.compile(
     r"^(?:LEGAL PROCEEDINGS|MINE SAFETY DISCLOSURES|PROPERTIES|"
     r"UNRESOLVED STAFF COMMENTS)(?:[.:]|$)"
@@ -777,6 +785,7 @@ def _is_risk_heading(text: str, *, emphasized: bool = False) -> bool:
             "item1ariskfactors",
         }
         | _GENERIC_RISK_HEADINGS
+        | _NON_RISK_DOCUMENT_HEADINGS
     ):
         return False
     if stripped.startswith(("•", "●", "▪", "-")):
@@ -882,6 +891,8 @@ def _inline_dash_risk_heading(text: str) -> str | None:
     if not separator or not 4 <= len(prefix) <= 120 or len(narrative.strip()) < 40:
         return None
     if prefix.isupper() or any(character.isdigit() for character in prefix):
+        return None
+    if _compact_heading(prefix) in _NON_RISK_DOCUMENT_HEADINGS:
         return None
     words = re.findall(r"[A-Za-z][A-Za-z&/'’\-]*", prefix)
     if not 1 <= len(words) <= 12:

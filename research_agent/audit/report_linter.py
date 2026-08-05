@@ -500,7 +500,11 @@ def _lint_news_causality(
     markdown: str,
     validation_report: Optional[ValidationReport],
 ) -> list[AuditIssue]:
-    if not (CAUSALITY_RE.search(markdown) and PRICE_NEWS_RE.search(markdown)):
+    claim_spans = re.split(r"(?<=[.!?])(?:[ \t]+|$)|\n+", markdown)
+    if not any(
+        CAUSALITY_RE.search(span) and PRICE_NEWS_RE.search(span)
+        for span in claim_spans
+    ):
         return []
     codes = {issue.code for issue in validation_report.issues} if validation_report else set()
     if "NEWS_PRICE_CAUSALITY_CONFIRMED" in codes:

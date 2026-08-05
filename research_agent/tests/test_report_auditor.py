@@ -708,6 +708,22 @@ def test_auditor_catches_overstated_news_causality():
     assert audit.has_issue("OVERSTATED_CAUSALITY")
 
 
+def test_auditor_does_not_join_unrelated_causality_and_price_sentences():
+    audit = audit_markdown_report(
+        """
+## Data / Source Quality Note
+- Price basis: 2026-08-04 official exchange close.
+
+## Risks
+Pricing regulations could change due to factors beyond management's control.
+""",
+        simple_metrics(ticker="BASE"),
+        ticker="BASE",
+    )
+
+    assert not audit.has_issue("OVERSTATED_CAUSALITY")
+
+
 def test_auditor_catches_forward_eps_guidance_mismatch():
     audit = audit_fixture("mdb_2026_05_01")
 

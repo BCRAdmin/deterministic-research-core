@@ -218,6 +218,20 @@ BMY_STYLE_RESULT_HTML = """
 </body></html>
 """
 
+REGN_STYLE_RESULT_HTML = """
+<html><body>
+<div>Regeneron Reports Second Quarter 2026 Financial and Operating Results</div>
+<table>
+  <tr><td>($ in millions, except per share data)</td><td></td><td>Q2 2026</td><td></td><td>Q2 2025</td><td></td><td>% Change</td></tr>
+  <tr><td>Total revenues</td><td></td><td>$</td><td>4,291</td><td></td><td></td><td>$</td><td>3,676</td><td></td><td></td><td>17</td><td>%</td></tr>
+  <tr><td>GAAP net income</td><td></td><td>$</td><td>1,297</td><td></td><td></td><td>$</td><td>1,392</td><td></td><td></td><td>(7</td><td>%)</td></tr>
+  <tr><td>GAAP net income per share - diluted</td><td></td><td>$</td><td>12.23</td><td></td><td></td><td>$</td><td>12.81</td><td></td><td></td><td>(5</td><td>%)</td></tr>
+  <tr><td>Non-GAAP net income</td><td></td><td>$</td><td>1,543</td><td></td><td></td><td>$</td><td>1,424</td><td></td><td></td><td>8</td><td>%</td></tr>
+  <tr><td>Non-GAAP net income per share - diluted(a)</td><td></td><td>$</td><td>14.29</td><td></td><td></td><td>$</td><td>12.89</td><td></td><td></td><td>(11</td><td>%)</td></tr>
+</table>
+</body></html>
+"""
+
 
 def test_selects_one_item_202_results_exhibit_from_duplicate_links():
     primary = """
@@ -557,6 +571,32 @@ def test_builds_sparse_percent_summary_and_month_labeled_updated_guidance():
     assert payload["result_contract"]["companyfacts_controls"] == {
         "current_quarter_revenue": 12_973.0,
     }
+
+
+def test_builds_split_currency_summary_without_guidance():
+    payload = build_sec_results_release_payload(
+        ticker="REGN",
+        cik="872589",
+        accession_number="0000872589-26-000023",
+        filing_date="2026-07-30",
+        exhibit_document="exhibit991q22026.htm",
+        html=REGN_STYLE_RESULT_HTML,
+        expected_fiscal_year=2026,
+        expected_fiscal_period="Q2",
+        period_end_date="2026-06-30",
+        retrieved_at="2026-07-30T12:00:00Z",
+    )
+
+    values = {item["metric_name"]: item["value"] for item in payload["metrics"]}
+    assert values == {
+        "adjusted_eps_diluted": pytest.approx(14.29),
+        "adjusted_eps_growth_yoy": pytest.approx(-0.11),
+        "reported_revenue_growth": pytest.approx(0.17),
+    }
+    assert payload["result_contract"]["companyfacts_controls"] == {
+        "current_quarter_revenue": 4_291.0,
+    }
+    assert payload["result_contract"]["guidance_metric_count"] == 0
 
 
 def test_builds_nonrecurring_gain_and_continuing_perimeter_context():
