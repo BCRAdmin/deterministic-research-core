@@ -111,6 +111,11 @@ class ValuationMetrics(BaseModel):
     forward_pe_guidance: Optional[float] = None
     peg_ratio: Optional[float] = None
     market_cap_share_basis: Optional[str] = None
+    scenario_market_cap: Optional[float] = None
+    scenario_price_to_fcf: Optional[float] = None
+    scenario_fcf_yield: Optional[float] = None
+    scenario_share_basis: Optional[str] = None
+    scenario_limitation: Optional[str] = None
 
 
 class MetricsPacket(BaseModel):

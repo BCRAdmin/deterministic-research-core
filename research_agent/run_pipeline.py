@@ -79,6 +79,7 @@ from research_agent.research_core.ingestion.source_registry import (
 )
 from research_agent.research_core.models.data_packet import (
     CompanyGuidanceEPS,
+    CompanyGuidanceMetric,
     DataPacket,
     EventInfo,
     FiscalContext,
@@ -755,6 +756,10 @@ def build_data_packet(
         source_registry_id=fundamentals.get("source_registry_id", f"{ticker.upper()}_{as_of_date}"),
         forward_eps=ForwardEPS(**fundamentals["forward_eps"]) if fundamentals.get("forward_eps") else None,
         company_guidance_eps=CompanyGuidanceEPS(**fundamentals["company_guidance_eps"]) if fundamentals.get("company_guidance_eps") else None,
+        company_guidance=[
+            CompanyGuidanceMetric(**item)
+            for item in fundamentals.get("company_guidance_metrics") or []
+        ],
     )
 
 
@@ -1180,6 +1185,11 @@ def _load_release_payload_inputs(
     if payload.get("company_name"):
         fundamentals["company_name"] = str(payload["company_name"])
     metrics = payload.get("metrics") or []
+    fundamentals["company_guidance_metrics"] = _structured_guidance_metrics(
+        payload,
+        source_id=str(source_id),
+        source_type=str(source_type),
+    )
     annual_periods = [
         row
         for row in metrics
@@ -1245,6 +1255,61 @@ def _load_release_payload_inputs(
             "basis": basis,
         }
     return fundamentals, evidence, canonical_metrics
+
+
+def _structured_guidance_metrics(
+    payload: dict[str, Any],
+    *,
+    source_id: str,
+    source_type: str,
+) -> list[dict[str, Any]]:
+    rows = [
+        row
+        for row in payload.get("metrics") or []
+        if str(row.get("metric_name") or "").startswith("guidance_")
+    ]
+    by_name = {str(row["metric_name"]): row for row in rows}
+    bases = sorted(
+        {
+            name.removeprefix("guidance_").removesuffix("_low").removesuffix("_high")
+            for name in by_name
+        }
+    )
+    event_text = " ".join(
+        str(event.get("headline") or "") + " " + str(event.get("summary") or "")
+        for event in payload.get("events") or []
+    ).casefold()
+    direction = "updated"
+    if " raised " in f" {event_text} ":
+        direction = "raised"
+    elif " lowered " in f" {event_text} ":
+        direction = "lowered"
+    elif " maintained " in f" {event_text} ":
+        direction = "maintained"
+    result: list[dict[str, Any]] = []
+    for base in bases:
+        low = by_name.get(f"guidance_{base}_low")
+        high = by_name.get(f"guidance_{base}_high")
+        if low is None and high is None:
+            continue
+        low = low or high
+        high = high or low
+        assert low is not None and high is not None
+        result.append(
+            {
+                "metric_name": base,
+                "low": float(low["value"]),
+                "high": float(high["value"]),
+                "unit": str(low.get("unit") or high.get("unit") or "unknown"),
+                "period": str(low.get("period") or high.get("period") or "forward"),
+                "basis": str(low.get("basis") or high.get("basis") or "company_defined"),
+                "direction": direction,
+                "source_id": source_id,
+                "source_type": source_type,
+                "url": payload.get("url"),
+            }
+        )
+    return result
 
 
 def _ir_current_metric_inputs(

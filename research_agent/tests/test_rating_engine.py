@@ -134,6 +134,8 @@ def test_unbenchmarked_strong_setup_is_capped_at_hold():
 
     assert packet.analytical_rating_unconstrained == Rating.HOLD
     assert packet.rating_permission.preferred_rating == Rating.HOLD
+    assert packet.conclusion_status == "not_rated"
+    assert "incomplete" in packet.conclusion_status_reason
     assert Rating.ACCUMULATE in packet.rating_permission.blocked_ratings
     assert Rating.STRONG_BUY in packet.rating_permission.blocked_ratings
     assert Rating.SELL in packet.rating_permission.blocked_ratings
@@ -222,3 +224,18 @@ def test_validation_quality_cannot_change_the_company_rating():
     assert scores.composite_score == 2
     assert Rating.STRONG_BUY in permission.blocked_ratings
     assert Rating.ACCUMULATE in permission.blocked_ratings
+
+
+def test_blocking_validation_marks_conclusion_blocked_without_rewriting_rating():
+    validation = ValidationReport(
+        ticker="TEST",
+        as_of_date="2026-05-01",
+        has_blocking_errors=True,
+        issues=[],
+    )
+
+    packet = build_decision_packet(_strong_metrics(), validation_report=validation)
+
+    assert packet.analytical_rating_unconstrained == Rating.HOLD
+    assert packet.conclusion_status == "blocked"
+    assert "validation" in packet.conclusion_status_reason.lower()

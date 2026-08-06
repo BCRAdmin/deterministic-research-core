@@ -104,6 +104,34 @@ def calculate_valuation_metrics(
     forward_pe_consensus = pe_ratio(close_price, forward_eps.value) if forward_eps else None
     forward_pe_guidance = pe_ratio(close_price, guidance_midpoint)
     trailing_pe = pe_ratio(close_price, trailing_eps or fundamentals.trailing_eps)
+    scenario_market_value = None
+    scenario_price_fcf = None
+    scenario_fcf_return = None
+    scenario_share_basis = None
+    scenario_limitation = None
+    if (
+        fundamentals.economic_share_count is not None
+        and not economic_share_count_eligible
+    ):
+        scenario_market_value = market_cap(
+            close_price,
+            fundamentals.economic_share_count,
+        )
+        if fundamentals.free_cash_flow_ttm is not None:
+            scenario_price_fcf = price_to_fcf(
+                scenario_market_value,
+                fundamentals.free_cash_flow_ttm,
+            )
+            if scenario_market_value:
+                scenario_fcf_return = (
+                    fundamentals.free_cash_flow_ttm / scenario_market_value
+                )
+        scenario_share_basis = "economic_share_count_at_listed_class_price"
+        scenario_limitation = (
+            "Illustrative scenario only: applies the listed-class close to all "
+            "filed economic shares although cross-class market-price equivalence "
+            "is not independently observable."
+        )
 
     return ValuationMetrics(
         market_cap=market_value,
@@ -128,4 +156,9 @@ def calculate_valuation_metrics(
         if forward_pe_consensus is not None and growth_rate not in (None, 0)
         else None,
         market_cap_share_basis=share_basis,
+        scenario_market_cap=scenario_market_value,
+        scenario_price_to_fcf=scenario_price_fcf,
+        scenario_fcf_yield=scenario_fcf_return,
+        scenario_share_basis=scenario_share_basis,
+        scenario_limitation=scenario_limitation,
     )

@@ -61,6 +61,19 @@ class CompanyGuidanceEPS(BaseModel):
     basis: Optional[str] = None
 
 
+class CompanyGuidanceMetric(BaseModel):
+    metric_name: str
+    low: float
+    high: float
+    unit: str
+    period: str
+    basis: str = "company_defined"
+    direction: str = "updated"
+    source_id: str
+    source_type: str
+    url: Optional[str] = None
+
+
 class DataPacket(BaseModel):
     ticker: str
     company_name: Optional[str] = None
@@ -72,3 +85,4 @@ class DataPacket(BaseModel):
     source_registry_id: str
     forward_eps: Optional[ForwardEPS] = None
     company_guidance_eps: Optional[CompanyGuidanceEPS] = None
+    company_guidance: List[CompanyGuidanceMetric] = Field(default_factory=list)

@@ -417,6 +417,16 @@ def build_sec_results_release_payload(
         retrieved_at=retrieved_at,
     )
     events.extend(directional)
+    structured_guidance = _structured_guidance_event(
+        metrics,
+        parser.blocks,
+        source_id=source_id,
+        source_url=source_url,
+        filing_date=filing_date,
+        retrieved_at=retrieved_at,
+    )
+    if structured_guidance is not None:
+        events.append(structured_guidance)
     events.extend(
         _material_result_context_events(
             parser.blocks,
@@ -789,6 +799,14 @@ def _extract_current_guidance_metrics(table, add_value) -> None:
         "organic growth": ("organic_sales_growth", "percent", "company_defined"),
         "organic sales growth": ("organic_sales_growth", "percent", "company_defined"),
         "organic revenue growth": ("organic_revenue_growth", "percent", "company_defined"),
+        "organic revenues (non gaap)": ("organic_revenue_growth", "percent", "non_gaap"),
+        "comparable eps (non gaap)": ("adjusted_eps_growth", "percent", "non_gaap"),
+        "comparable currency neutral eps excluding acquisitions and divestitures (non gaap)": (
+            "adjusted_currency_neutral_eps_growth",
+            "percent",
+            "non_gaap",
+        ),
+        "free cash flow (non gaap)": ("free_cash_flow", "USD", "non_gaap"),
         "segment margin": ("segment_margin", "percent", "non_gaap"),
         "diluted eps": ("eps_diluted", "USD_per_share", "gaap"),
         "gaap diluted eps": ("eps_diluted", "USD_per_share", "gaap"),
@@ -836,6 +854,16 @@ def _extract_current_guidance_metrics(table, add_value) -> None:
             )
         )
         metric_range = range_parser(cell)
+        if metric_range is None:
+            metric_range = (
+                _single_percentage_range(cell)
+                if unit == "percent"
+                else _single_money_range(
+                    cell,
+                    label=label,
+                    require_scale=metric_base in {"revenue", "free_cash_flow"},
+                )
+            )
         if metric_range is None:
             metric_range = next(
                 (
@@ -1120,8 +1148,20 @@ def _extract_block_guidance_metrics(blocks, add_value, default_year: int) -> set
         folded = block.casefold()
         explicit_guidance_range = bool(
             "guidance" in folded
-            and "range" in folded
-            and re.search(r"\b20[0-9]{2}\b", block)
+            and (
+                (
+                    "range" in folded
+                    and re.search(r"\b20[0-9]{2}\b", block)
+                )
+                or (
+                    block.lstrip().startswith(("•", "●", "▪", "◦", "-"))
+                    and (
+                        "$" in block
+                        or "%" in block
+                        or "growth" in folded
+                    )
+                )
+            )
         )
         if re.search(
             r"\b(?:"
@@ -1175,7 +1215,19 @@ def _extract_block_guidance_metrics(blocks, add_value, default_year: int) -> set
                     "money",
                 )
             )
-        elif re.search(r"^[^a-z0-9]*(?:total )?sales\b", folded):
+        elif "free cash flow" in folded:
+            definitions.append(("free_cash_flow", "USD", "non_gaap", "money"))
+        elif "adjusted income from operations" in folded:
+            definitions.append(
+                ("adjusted_operating_income", "USD", "non_gaap", "money")
+            )
+        elif "commercial revenue" in folded:
+            definitions.append(
+                ("commercial_revenue", "USD", "company_defined", "money")
+            )
+        elif "revenue guidance" in folded:
+            definitions.append(("revenue", "USD", "company_defined", "money"))
+        elif re.search(r"^[^a-z0-9]*(?:(?:total )?sales|(?:total )?revenue)\b", folded):
             definitions.append(("revenue", "USD", "company_defined", "money"))
             definitions.append(
                 ("reported_sales_growth", "percent", "company_defined", "percent")
@@ -1185,12 +1237,32 @@ def _extract_block_guidance_metrics(blocks, add_value, default_year: int) -> set
             metric_range = (
                 _money_range(
                     block,
-                    require_scale=metric_base == "revenue",
+                    require_scale=metric_base in {
+                        "revenue",
+                        "commercial_revenue",
+                        "adjusted_operating_income",
+                        "free_cash_flow",
+                    },
                     prefer_last=explicit_guidance_range,
                 )
                 if range_type == "money"
                 else _outlook_percentage_range(block)
             )
+            if metric_range is None:
+                metric_range = (
+                    _single_money_range(
+                        block,
+                        label=block,
+                        require_scale=metric_base in {
+                            "revenue",
+                            "commercial_revenue",
+                            "adjusted_operating_income",
+                            "free_cash_flow",
+                        },
+                    )
+                    if range_type == "money"
+                    else _single_percentage_range(block)
+                )
             if metric_range is None:
                 continue
             low, high = sorted(metric_range)
@@ -1396,7 +1468,33 @@ def _bridge_metric_name(label: str) -> Optional[str]:
 
 def _is_guidance_table(table: list[list[str]]) -> bool:
     heading = " ".join(cell for row in table[:3] for cell in row)
-    return bool(re.search(r"\b(?:guidance|outlook)\b", heading, re.IGNORECASE))
+    if re.search(r"\b(?:guidance|outlook)\b", heading, re.IGNORECASE):
+        return True
+    # Some issuer releases put the "Full Year Guidance" heading in a separate
+    # one-row table. The following table is still unambiguous when it has a
+    # Current/Prior header and several forward-looking financial labels.
+    normalized_rows = [_clean_result_label(row[0]) for row in table if row]
+    has_current_prior = bool(
+        re.search(r"\bcurrent\b", heading, re.IGNORECASE)
+        and re.search(r"\bprior\b", heading, re.IGNORECASE)
+    )
+    forward_labels = sum(
+        1
+        for label in normalized_rows
+        if any(
+            token in label
+            for token in (
+                "organic revenue",
+                "organic sales",
+                "comparable eps",
+                "diluted eps",
+                "free cash flow",
+                "operating margin",
+                "revenue",
+            )
+        )
+    )
+    return has_current_prior and forward_labels >= 2
 
 
 def _is_current_quarter_bridge(table: list[list[str]], header_index: int) -> bool:
@@ -1726,6 +1824,37 @@ def _labeled_money_range(
     return metric_range
 
 
+def _single_money_range(
+    value: str,
+    *,
+    label: str = "",
+    require_scale: bool = False,
+) -> Optional[tuple[float, float]]:
+    """Read one explicitly scaled guidance amount as an equal low/high range."""
+
+    text = " ".join(str(value or "").split())
+    match = re.search(
+        r"\$\s*(?P<number>[0-9][0-9,]*(?:\.[0-9]+)?)\s*"
+        r"(?P<scale>[BM]|million|billion)?\b",
+        text,
+        flags=re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    explicit_scale = _money_scale(match.group("scale"))
+    label_scale = ""
+    if re.search(r"\b(?:in\s+)?billions?\b", label, re.IGNORECASE):
+        label_scale = "B"
+    elif re.search(r"\b(?:in\s+)?millions?\b", label, re.IGNORECASE):
+        label_scale = "M"
+    scale = explicit_scale or label_scale
+    if require_scale and not scale:
+        return None
+    multiplier = {"": 1.0, "M": 1_000_000.0, "B": 1_000_000_000.0}[scale]
+    number = float(match.group("number").replace(",", "")) * multiplier
+    return number, number
+
+
 def _percentage_range(value: str) -> Optional[tuple[float, float]]:
     matches = list(_PERCENT.finditer(value))
     if len(matches) < 2:
@@ -1750,6 +1879,16 @@ def _percentage_range(value: str) -> Optional[tuple[float, float]]:
     if low is None or high is None:
         return None
     return low, high
+
+
+def _single_percentage_range(value: str) -> Optional[tuple[float, float]]:
+    """Read one clearly labelled forward percentage as an equal range."""
+
+    matches = list(_PERCENT.finditer(str(value or "")))
+    if len(matches) != 1:
+        return None
+    parsed = _percent_value(matches[0].group(0))
+    return (parsed, parsed) if parsed is not None else None
 
 
 def _outlook_percentage_range(value: str) -> Optional[tuple[float, float]]:
@@ -1862,6 +2001,76 @@ def _directional_guidance_events(
             }
         )
     return events
+
+
+def _structured_guidance_event(
+    metrics: list[dict[str, Any]],
+    blocks: list[str],
+    *,
+    source_id: str,
+    source_url: str,
+    filing_date: str,
+    retrieved_at: str,
+) -> Optional[dict[str, Any]]:
+    guidance = {
+        str(item.get("metric_name")): item
+        for item in metrics
+        if str(item.get("metric_name") or "").startswith("guidance_")
+    }
+    if not guidance:
+        return None
+    text = " ".join(blocks[:120]).casefold()
+    direction = "updated"
+    if re.search(r"\b(?:raises?|raising|increases?|increasing)\b", text):
+        direction = "raised"
+    elif re.search(r"\b(?:lowers?|lowering|reduces?|reducing)\b", text):
+        direction = "lowered"
+    elif re.search(r"\b(?:maintains?|maintaining|reaffirms?|reaffirming)\b", text):
+        direction = "maintained"
+
+    details: list[str] = []
+    bases = sorted(
+        {
+            name.removeprefix("guidance_").removesuffix("_low").removesuffix("_high")
+            for name in guidance
+        }
+    )
+    for base in bases[:6]:
+        low = guidance.get(f"guidance_{base}_low")
+        high = guidance.get(f"guidance_{base}_high")
+        if low is None and high is None:
+            continue
+        low = low or high
+        high = high or low
+        assert low is not None and high is not None
+        low_value = float(low["value"])
+        high_value = float(high["value"])
+        unit = str(low.get("unit") or high.get("unit") or "")
+        label = base.replace("_", " ")
+        if abs(low_value - high_value) <= 1e-12:
+            rendered = _format_metric_value(low_value, unit)
+        else:
+            rendered = (
+                f"{_format_metric_value(low_value, unit)} to "
+                f"{_format_metric_value(high_value, unit)}"
+            )
+        details.append(f"{label}: {rendered}")
+    summary = f"Management {direction} guidance"
+    if details:
+        summary += ": " + "; ".join(details)
+    summary += ". Forward-looking non-GAAP measures remain separate from GAAP results."
+    return {
+        "event_type": "company_outlook",
+        "date": filing_date,
+        "headline": f"Issuer {direction} full-year guidance",
+        "summary": summary,
+        "material": True,
+        "source_id": source_id,
+        "source_type": "sec_filing",
+        "authority_rank": 1,
+        "url": source_url,
+        "retrieved_at": retrieved_at,
+    }
 
 
 def _material_result_context_events(

@@ -19,6 +19,10 @@ from research_agent.sources.bse.bse_provider import BseIssuerProvider
 from research_agent.sources.prices.massive_price_provider import MassivePriceProvider
 from research_agent.sources.prices.nasdaq_price_provider import NasdaqPriceProvider
 from research_agent.sources.prices.price_provider_base import PriceProviderBase
+from research_agent.sources.ir.official_news_feed import (
+    build_official_ir_feed_payload,
+    registered_official_ir_feeds,
+)
 from research_agent.sources.sec.sec_client import SecClient, SecClientConfig
 from research_agent.sources.sec.sec_filing_risks import (
     build_sec_business_context_payload,
@@ -31,6 +35,10 @@ from research_agent.sources.sec.sec_inline_facts import (
     merge_sec_inline_fact_supplement_payloads,
     merge_sec_inline_filing_into_companyfacts,
     save_sec_inline_fact_supplement,
+)
+from research_agent.sources.sec.sec_material_events import (
+    build_material_event_payload,
+    select_material_event_filings,
 )
 from research_agent.sources.sec.sec_results_release import (
     build_sec_results_release_payload,
@@ -164,6 +172,8 @@ def run_current_research(
     inline_facts_dir = source_dir / "sec_inline_facts"
     risk_factors_dir = source_dir / "sec_risk_factors"
     results_release_dir = source_dir / "sec_results_release"
+    material_events_dir = source_dir / "sec_material_events"
+    official_ir_dir = source_dir / "official_ir_news"
     official_news_merge_dir = source_dir / "sec_official_news"
     packet_root = staging_dir / "packets"
     output_root = Path(request.output_root).expanduser().resolve()
@@ -243,6 +253,10 @@ def run_current_research(
     results_release_metric_count = 0
     results_release_payload: Optional[dict[str, Any]] = None
     results_release_path: Optional[Path] = None
+    material_events_payload: Optional[dict[str, Any]] = None
+    material_events_path: Optional[Path] = None
+    official_ir_payload: Optional[dict[str, Any]] = None
+    official_ir_path: Optional[Path] = None
     cik_records_path: Optional[Path] = None
     ir_release_dir: Optional[Path] = (
         Path(request.ir_release_dir).expanduser().resolve()
@@ -382,6 +396,45 @@ def run_current_research(
             )
         elif latest_results_filing is not None:
             results_release_status = "superseded_by_later_financial_filing"
+        material_filing_html: list[tuple[dict[str, str], str]] = []
+        for event_filing in select_material_event_filings(
+            submissions,
+            as_of_date=request.as_of_date,
+        ):
+            try:
+                event_html = sec.get_filing_html(
+                    cik=cik,
+                    accession_number=event_filing["accession_number"],
+                    primary_document=event_filing["primary_document"],
+                )
+            except RuntimeError:
+                continue
+            material_filing_html.append((event_filing, event_html))
+        if material_filing_html:
+            material_events_payload = build_material_event_payload(
+                ticker=symbol,
+                cik=cik,
+                filings=material_filing_html,
+                retrieved_at=retrieved_at,
+            )
+            material_events_path = material_events_dir / f"{symbol}.json"
+        registered_feeds = registered_official_ir_feeds(cik=cik)
+        if registered_feeds:
+            try:
+                official_ir_payload = build_official_ir_feed_payload(
+                    ticker=symbol,
+                    feed_urls=registered_feeds,
+                    as_of_date=request.as_of_date,
+                    retrieved_at=retrieved_at,
+                    user_agent=request.sec_user_agent,
+                )
+            except Exception as exc:
+                raise CurrentResearchError(
+                    f"Der registrierte offizielle IR-Newsfeed für {symbol} "
+                    f"konnte nicht vollständig geprüft werden: {exc}. Room16 "
+                    "startet keine angeblich vollständige aktuelle Analyse."
+                ) from exc
+            official_ir_path = official_ir_dir / f"{symbol}_news.json"
         _require_supported_sec_captive_finance_profile(
             symbol,
             request.as_of_date,
@@ -619,9 +672,18 @@ def run_current_research(
             )
         if results_release_path is not None and results_release_payload is not None:
             _write_json(results_release_path, results_release_payload)
+        if material_events_path is not None and material_events_payload is not None:
+            _write_json(material_events_path, material_events_payload)
+        if official_ir_path is not None and official_ir_payload is not None:
+            _write_json(official_ir_path, official_ir_payload)
         generated_news_payloads = [
             payload
-            for payload in (business_context_payload, results_release_payload)
+            for payload in (
+                business_context_payload,
+                material_events_payload,
+                official_ir_payload,
+                results_release_payload,
+            )
             if payload is not None
         ]
         if generated_news_payloads:

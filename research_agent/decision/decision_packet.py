@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional
+from typing import Dict, List, Literal, Optional
 
 from pydantic import BaseModel, Field
 
@@ -31,6 +31,10 @@ class DecisionPacket(BaseModel):
     signal_scores: SignalScores
     analytical_rating_unconstrained: Optional[Rating] = None
     analytical_rating_reason: Optional[str] = None
+    conclusion_status: Literal["rated", "provisional", "not_rated", "blocked"] = (
+        "rated"
+    )
+    conclusion_status_reason: Optional[str] = None
     rating_permission: RatingPermission
     action_policy: Dict[str, object] = Field(default_factory=dict)
     key_reasons: List[str] = Field(default_factory=list)

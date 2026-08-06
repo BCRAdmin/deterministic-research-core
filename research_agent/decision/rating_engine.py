@@ -124,12 +124,19 @@ def build_decision_packet(
     analytical_rating, analytical_reason = (
         determine_unconstrained_analytical_rating(scores)
     )
+    conclusion_status, conclusion_status_reason = _conclusion_status(
+        scores=scores,
+        validation_report=validation_report,
+        audit_report=audit_report,
+    )
     return DecisionPacket(
         ticker=metrics_packet.ticker,
         as_of_date=metrics_packet.as_of_date,
         signal_scores=scores,
         analytical_rating_unconstrained=analytical_rating,
         analytical_rating_reason=analytical_reason,
+        conclusion_status=conclusion_status,
+        conclusion_status_reason=conclusion_status_reason,
         rating_permission=permission,
         action_policy=build_action_policy(permission.preferred_rating, metrics_packet),
         key_reasons=_build_key_reasons(scores),
@@ -138,6 +145,33 @@ def build_decision_packet(
         score_version=score_version,
         calibration_mode=mode,
     )
+
+
+def _conclusion_status(
+    *,
+    scores: SignalScores,
+    validation_report: Optional[ValidationReport],
+    audit_report: Optional[AuditReport],
+) -> tuple[str, str]:
+    """Separate an analytical direction from its review/publication maturity."""
+
+    if validation_report and validation_report.has_blocking_errors:
+        return "blocked", "Blocking validation errors prevent a usable conclusion."
+    if audit_report and audit_report.has_blocking_errors:
+        return "blocked", "Blocking audit errors prevent a usable conclusion."
+
+    evidence_status = _evidence_status(scores)
+    if evidence_status == "incomplete":
+        return (
+            "not_rated",
+            "Core evidence is incomplete; the neutral rating is only a safety fallback.",
+        )
+    if evidence_status == "partial":
+        return (
+            "provisional",
+            "The analytical direction is provisional because one or more evidence dimensions are partial, unbenchmarked, or not measured.",
+        )
+    return "rated", "All decision-model evidence dimensions are measured."
 
 
 def _evidence_status(scores: SignalScores) -> str:

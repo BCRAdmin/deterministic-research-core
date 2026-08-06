@@ -1,3 +1,5 @@
+import pytest
+
 from research_agent.research_core.calculations.valuation import (
     calculate_valuation_metrics,
 )
@@ -87,3 +89,8 @@ def test_market_cap_rejects_unverified_multi_class_price_equivalence():
     assert valuation.ev_to_sales is None
     assert valuation.price_to_fcf is None
     assert valuation.trailing_pe is not None
+    assert valuation.scenario_market_cap == 317_712_000_000
+    assert valuation.scenario_price_to_fcf == pytest.approx(44.126666666666665)
+    assert valuation.scenario_fcf_yield == pytest.approx(0.02266203353980964)
+    assert valuation.scenario_share_basis == "economic_share_count_at_listed_class_price"
+    assert "illustrative" in valuation.scenario_limitation.lower()

@@ -813,3 +813,68 @@ def test_historical_growth_before_guidance_is_not_misread_as_guidance_range():
 
     assert payload["metrics"] == []
     assert payload["events"][0]["event_type"] == "earnings_release"
+
+
+def test_extracts_raised_full_year_guidance_from_palantir_style_bullets():
+    html = """
+    <div>Palantir Reports Second Quarter 2026 Results</div>
+    <div>Revenue Growth of 93% Y/Y; Raises FY 2026 Revenue Guidance.</div>
+    <div>•We are raising our revenue guidance to between $8.150 – $8.158 billion.</div>
+    <div>•We are raising our U.S. commercial revenue guidance to in excess of $3.424 billion.</div>
+    <div>•We are raising our adjusted income from operations guidance to between $4.889 – $4.897 billion.</div>
+    <div>•We are raising our adjusted free cash flow guidance to between $4.5 – $4.7 billion.</div>
+    """
+    payload = build_sec_results_release_payload(
+        ticker="GENR",
+        cik="123456",
+        accession_number="0000123456-26-000099",
+        filing_date="2026-08-03",
+        exhibit_document="q2-results.htm",
+        html=html,
+        expected_fiscal_year=2026,
+        expected_fiscal_period="Q2",
+        period_end_date="2026-06-30",
+        retrieved_at="2026-08-03T12:00:00Z",
+    )
+
+    values = {item["metric_name"]: item["value"] for item in payload["metrics"]}
+    assert values["guidance_revenue_low"] == pytest.approx(8_150_000_000)
+    assert values["guidance_revenue_high"] == pytest.approx(8_158_000_000)
+    assert values["guidance_commercial_revenue_low"] == pytest.approx(3_424_000_000)
+    assert values["guidance_free_cash_flow_low"] == pytest.approx(4_500_000_000)
+    assert values["guidance_free_cash_flow_high"] == pytest.approx(4_700_000_000)
+    outlook = next(event for event in payload["events"] if event["event_type"] == "company_outlook")
+    assert outlook["headline"] == "Issuer raised full-year guidance"
+    assert "8150000000.00 USD" in outlook["summary"]
+
+
+def test_extracts_current_column_from_coca_cola_style_guidance_table():
+    html = """
+    <div>Coca-Cola Reports Second Quarter 2026 Results and Raises Full Year Guidance</div>
+    <table>
+      <tr><td></td><td>Current</td><td>Prior</td></tr>
+      <tr><td>Organic revenues (non-GAAP)</td><td>Approx. 5% growth</td><td>4% to 5% growth</td></tr>
+      <tr><td>Comparable EPS (non-GAAP)</td><td>9% to 10% growth</td><td>8% to 9% growth</td></tr>
+      <tr><td>Free cash flow (non-GAAP)</td><td>Approx. $12.4 billion</td><td>Approx. $12.2 billion</td></tr>
+    </table>
+    """
+    payload = build_sec_results_release_payload(
+        ticker="GENR",
+        cik="123456",
+        accession_number="0000123456-26-000100",
+        filing_date="2026-07-28",
+        exhibit_document="q2-results.htm",
+        html=html,
+        expected_fiscal_year=2026,
+        expected_fiscal_period="Q2",
+        period_end_date="2026-07-03",
+        retrieved_at="2026-07-28T12:00:00Z",
+    )
+
+    values = {item["metric_name"]: item["value"] for item in payload["metrics"]}
+    assert values["guidance_organic_revenue_growth_low"] == pytest.approx(0.05)
+    assert values["guidance_organic_revenue_growth_high"] == pytest.approx(0.05)
+    assert values["guidance_adjusted_eps_growth_low"] == pytest.approx(0.09)
+    assert values["guidance_adjusted_eps_growth_high"] == pytest.approx(0.10)
+    assert values["guidance_free_cash_flow_low"] == pytest.approx(12_400_000_000)
+    assert values["guidance_free_cash_flow_high"] == pytest.approx(12_400_000_000)

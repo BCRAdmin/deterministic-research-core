@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "issuers": [
+    {
+      "cik": "0000021344",
+      "ticker": "KO",
+      "feeds": [
+        "https://investors.coca-colacompany.com/news-events/press-releases/rss"
+      ],
+      "verified_at": "2026-08-06",
+      "purpose": "Official issuer press releases that may not be filed with the SEC"
+    }
+  ]
+}
