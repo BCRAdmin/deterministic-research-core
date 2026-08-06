@@ -29,6 +29,7 @@ from research_agent.sources.sec.sec_filing_risks import (
 from research_agent.sources.sec.sec_inline_facts import (
     build_sec_inline_fact_supplement_payload,
     merge_sec_inline_fact_supplement_payloads,
+    merge_sec_inline_filing_into_companyfacts,
     save_sec_inline_fact_supplement,
 )
 from research_agent.sources.sec.sec_results_release import (
@@ -260,6 +261,7 @@ def run_current_research(
     bse_news_payload: Optional[dict[str, Any]] = None
     bse_calendar_path: Optional[Path] = None
     bse_calendar_payload: Optional[dict[str, Any]] = None
+    inline_companyfacts_backfill_count = 0
     if issuer is not None:
         assert sec is not None
         cik = str(issuer["cik"])
@@ -268,6 +270,50 @@ def run_current_research(
         submissions = sec.get_submissions(cik)
         _require_supported_sec_industry_profile(symbol, submissions)
         _require_supported_sec_reporting_profile(symbol, companyfacts)
+        filing_candidates = select_sec_risk_filing_candidates(
+            submissions,
+            cik=cik,
+            as_of_date=request.as_of_date,
+        )
+        filing_html_by_accession: dict[str, str] = {}
+        current_filing = _latest_sec_financial_filing(
+            submissions,
+            request.as_of_date,
+        )
+        if (
+            current_filing is not None
+            and current_filing["accession_number"]
+            not in _mapped_companyfacts_accessions(companyfacts, request.as_of_date)
+        ):
+            current_reference = next(
+                (
+                    filing
+                    for filing in filing_candidates
+                    if filing.accession_number
+                    == current_filing["accession_number"]
+                ),
+                None,
+            )
+            if current_reference is not None:
+                try:
+                    current_html = sec.get_filing_html(
+                        cik=current_reference.cik,
+                        accession_number=current_reference.accession_number,
+                        primary_document=current_reference.primary_document,
+                    )
+                    companyfacts, inline_companyfacts_backfill_count = (
+                        merge_sec_inline_filing_into_companyfacts(
+                            filing=current_reference,
+                            html=current_html,
+                            companyfacts=companyfacts,
+                            required_metrics=SEC_COMPANYFACTS_COVERAGE_METRICS,
+                        )
+                    )
+                    filing_html_by_accession[
+                        current_reference.accession_number
+                    ] = current_html
+                except (RuntimeError, ValueError):
+                    pass
         latest_financial_filing = _require_current_sec_financial_filing_coverage(
             symbol,
             request.as_of_date,
@@ -346,24 +392,20 @@ def run_current_research(
         companyfacts_path = companyfacts_dir / f"{symbol}.json"
         cik_records_path = source_dir / "cik_records.json"
         risk_source_status = "no_extractable_risk_factors"
-        filing_candidates = select_sec_risk_filing_candidates(
-            submissions,
-            cik=cik,
-            as_of_date=request.as_of_date,
-        )
-        filing_html_by_accession: dict[str, str] = {}
         seen_risk_statements: set[str] = set()
         for filing in filing_candidates:
-            try:
-                filing_html = sec.get_filing_html(
-                    cik=filing.cik,
-                    accession_number=filing.accession_number,
-                    primary_document=filing.primary_document,
-                )
-            except RuntimeError:
-                risk_source_status = "filing_fetch_failed"
-                continue
-            filing_html_by_accession[filing.accession_number] = filing_html
+            filing_html = filing_html_by_accession.get(filing.accession_number)
+            if filing_html is None:
+                try:
+                    filing_html = sec.get_filing_html(
+                        cik=filing.cik,
+                        accession_number=filing.accession_number,
+                        primary_document=filing.primary_document,
+                    )
+                except RuntimeError:
+                    risk_source_status = "filing_fetch_failed"
+                    continue
+                filing_html_by_accession[filing.accession_number] = filing_html
             risk_evidence = build_sec_risk_evidence(
                 ticker=symbol,
                 filing=filing,
@@ -735,6 +777,7 @@ def run_current_research(
         "inline_financial_fact_count": len(
             (inline_facts_payload or {}).get("facts") or []
         ),
+        "inline_companyfacts_backfill_count": inline_companyfacts_backfill_count,
         "price_provider": provider_name,
         "price_source_type": source_type,
         "price_row_count": int(len(prices)),

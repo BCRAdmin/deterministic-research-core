@@ -50,6 +50,13 @@ METRIC_ALIASES = {
         "sbc zu umsatz",
         "sbc-to-revenue",
     ],
+    "sbc_to_fcf": [
+        "sbc / fcf",
+        "sbc/fcf",
+        "sbc to fcf",
+        "sbc-to-fcf",
+        "sbc of fcf",
+    ],
     "net_cash": [
         "net cash",
         "netto-cash",
@@ -128,6 +135,7 @@ METRIC_PATHS = {
     "operating_income_ttm": "fundamentals.operating_income_ttm",
     "operating_margin_ttm": "fundamentals.operating_margin_ttm",
     "sbc_to_revenue": "fundamentals.sbc_to_revenue",
+    "sbc_to_fcf": "fundamentals.sbc_to_fcf",
     "net_cash": "fundamentals.net_cash",
     "net_debt": "fundamentals.net_cash",
     "sma_200": "technical.sma_200",
@@ -187,6 +195,17 @@ def infer_possible_metric(text: str, unit: Optional[str] = None) -> Optional[str
         return "shareholder_distributions_ttm"
     if "sbc/revenue" in compact or "sbc to revenue" in normalized or "sbc-to-revenue" in normalized:
         return "sbc_to_revenue"
+    if str(unit or "").lower() == "percent" and (
+        "sbc/fcf" in compact
+        or "sbc to fcf" in normalized
+        or "sbc-to-fcf" in normalized
+        or (
+            "sbc" in normalized
+            and "fcf" in normalized
+            and any(marker in normalized for marker in ("equals", "of that", "of fcf"))
+        )
+    ):
+        return "sbc_to_fcf"
     if "ev/sales" in compact or "ev to sales" in normalized or "ev-to-sales" in normalized:
         return "ev_to_sales"
     if "p/fcf" in compact or "price to fcf" in normalized or "price-to-fcf" in normalized:

@@ -5,9 +5,73 @@ from research_agent.sources.sec.sec_inline_facts import (
     build_sec_inline_debt_supplement_payload,
     build_sec_inline_fact_supplement_payload,
     load_sec_inline_fact_supplement,
+    merge_sec_inline_filing_into_companyfacts,
     merge_sec_inline_fact_supplement_payloads,
     save_sec_inline_fact_supplement,
 )
+
+
+def _current_statement_html():
+    duration = """
+      <xbrli:context id="duration"><xbrli:entity><xbrli:identifier>1283699</xbrli:identifier></xbrli:entity><xbrli:period><xbrli:startDate>2026-04-01</xbrli:startDate><xbrli:endDate>2026-06-30</xbrli:endDate></xbrli:period></xbrli:context>
+    """
+    instant = """
+      <xbrli:context id="instant"><xbrli:entity><xbrli:identifier>1283699</xbrli:identifier></xbrli:entity><xbrli:period><xbrli:instant>2026-06-30</xbrli:instant></xbrli:period></xbrli:context>
+    """
+    return f"""
+    <html><body>{duration}{instant}
+      <ix:nonNumeric name="dei:DocumentFiscalYearFocus">2026</ix:nonNumeric>
+      <ix:nonNumeric name="dei:DocumentFiscalPeriodFocus">Q2</ix:nonNumeric>
+      <ix:nonFraction unitRef="usd" contextRef="duration" name="us-gaap:Revenues" scale="6">1,200</ix:nonFraction>
+      <ix:nonFraction unitRef="usd" contextRef="duration" name="us-gaap:OperatingIncomeLoss" scale="6">240</ix:nonFraction>
+      <ix:nonFraction unitRef="usd" contextRef="duration" name="us-gaap:NetIncomeLoss" scale="6">180</ix:nonFraction>
+      <ix:nonFraction unitRef="usd" contextRef="duration" name="us-gaap:NetCashProvidedByUsedInOperatingActivities" scale="6">210</ix:nonFraction>
+      <ix:nonFraction unitRef="usd" contextRef="instant" name="us-gaap:AssetsCurrent" scale="6">3,100</ix:nonFraction>
+      <ix:nonFraction unitRef="usd" contextRef="instant" name="us-gaap:LiabilitiesCurrent" scale="6">1,000</ix:nonFraction>
+      <ix:nonFraction unitRef="usd" contextRef="instant" name="us-gaap:StockholdersEquity" scale="6">4,200</ix:nonFraction>
+    </body></html>
+    """
+
+
+def test_backfills_current_companyfacts_from_exact_inline_filing():
+    required = {
+        "revenue",
+        "operating_income",
+        "net_income",
+        "operating_cash_flow",
+        "current_assets",
+        "current_liabilities",
+        "equity",
+    }
+    merged, count = merge_sec_inline_filing_into_companyfacts(
+        filing=_filing(),
+        html=_current_statement_html(),
+        companyfacts={"facts": {"us-gaap": {}}},
+        required_metrics=required,
+    )
+
+    assert count == 7
+    revenue = merged["facts"]["us-gaap"]["Revenues"]["units"]["USD"][0]
+    assert revenue["val"] == 1_200_000_000
+    assert revenue["accn"] == _filing().accession_number
+    assert revenue["fp"] == "Q2"
+    assert merged["room16_inline_filing_backfills"][0]["fact_count"] == 7
+
+
+def test_inline_companyfacts_backfill_fails_closed_when_core_metric_is_missing():
+    html = _current_statement_html().replace("us-gaap:LiabilitiesCurrent", "example:Other")
+
+    try:
+        merge_sec_inline_filing_into_companyfacts(
+            filing=_filing(),
+            html=html,
+            companyfacts={"facts": {"us-gaap": {}}},
+            required_metrics={"revenue", "current_liabilities"},
+        )
+    except ValueError as exc:
+        assert "current_liabilities" in str(exc)
+    else:
+        raise AssertionError("missing core metric must block inline backfill")
 
 
 def _filing():

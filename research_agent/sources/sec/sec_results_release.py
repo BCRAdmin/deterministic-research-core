@@ -282,12 +282,15 @@ def build_sec_results_release_payload(
     for index, block in enumerate(parser.blocks):
         if "expect" not in block.casefold() and "guid" not in block.casefold():
             continue
+        guidance_scope = _forward_guidance_scope(block)
+        if not guidance_scope:
+            continue
         guidance_year = _nearest_guidance_year(parser.blocks, index, fiscal_year)
         for label_pattern, metric_base in _GUIDANCE_LABELS:
-            label_match = label_pattern.search(block)
+            label_match = label_pattern.search(guidance_scope)
             if label_match is None:
                 continue
-            range_match = _percentage_range(block[label_match.end() :])
+            range_match = _percentage_range(guidance_scope[label_match.end() :])
             if range_match is None:
                 continue
             low, high = sorted(range_match)
@@ -307,12 +310,6 @@ def build_sec_results_release_payload(
     supported_guidance = [
         metric_name for metric_name in values if metric_name.startswith("guidance_")
     ]
-    if len(supported_operating) < 2 and len(supported_guidance) < 2:
-        raise ValueError(
-            "Ergebnis-Anhang enthält keine ausreichend strukturierte operative "
-            "Brücke oder explizite Guidance-Spanne"
-        )
-
     cik_digits = str(int(cik))
     accession_digits = accession_number.replace("-", "")
     document = _safe_html_document(exhibit_document)
@@ -376,7 +373,24 @@ def build_sec_results_release_payload(
             }
         )
 
-    events: list[dict[str, Any]] = []
+    events: list[dict[str, Any]] = [
+        {
+            "event_type": "earnings_release",
+            "date": filing_date,
+            "headline": f"Issuer filed {result_period} financial results",
+            "summary": (
+                f"The issuer filed results for {result_period} through SEC Form "
+                "8-K Item 2.02. GAAP statement figures remain sourced from the "
+                "matching 10-Q/10-K filing."
+            ),
+            "material": True,
+            "source_id": source_id,
+            "source_type": "sec_filing",
+            "authority_rank": 1,
+            "url": source_url,
+            "retrieved_at": retrieved_at,
+        }
+    ]
     if any(metric_name.startswith("segment_") for metric_name in values):
         events.append(
             {
@@ -440,6 +454,15 @@ def build_sec_results_release_payload(
             "guidance_metric_count": len(supported_guidance),
         },
     }
+
+
+def _forward_guidance_scope(block: str) -> str:
+    """Ignore historical percentages that appear before forward guidance text."""
+
+    matches = list(re.finditer(r"\b(?:guidance|expect(?:s|ed|ing)?)\b", block, re.IGNORECASE))
+    if not matches:
+        return ""
+    return block[matches[0].start() :]
 
 
 def _safe_html_document(href: str) -> Optional[str]:

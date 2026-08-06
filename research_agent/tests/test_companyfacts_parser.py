@@ -352,6 +352,9 @@ def test_sec_fact_generates_high_authority_evidence():
     assert item.authority_rank == 1
     assert "revenue" in item.supports_metrics
     assert "revenue_ttm" in item.supports_metrics
+    assert item.url == (
+        "https://www.sec.gov/Archives/edgar/data/1/000144181626000010/"
+    )
 
 
 def test_comparative_facts_in_one_filing_keep_distinct_evidence_ids():

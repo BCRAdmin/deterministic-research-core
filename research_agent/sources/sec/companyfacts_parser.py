@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import re
 from typing import Any, Dict, List, Optional
 
 from research_agent.evidence.evidence_item import EvidenceItem
@@ -200,6 +201,7 @@ class CompanyFactsParser:
     def to_evidence_item(self, fact: ParsedFact) -> EvidenceItem:
         normalization_suffix = f" {fact.normalization_note}" if fact.normalization_note else ""
         supports_metrics = [fact.metric_name, _metrics_packet_name(fact.metric_name)]
+        source_url = _sec_filing_archive_url(self.cik, fact.accession)
         return EvidenceItem(
             evidence_id=fact.evidence_id or self._evidence_id(fact),
             ticker=self.ticker,
@@ -207,6 +209,7 @@ class CompanyFactsParser:
             source_id=f"SEC_{self.cik}_{fact.accession or fact.filed}",
             source_type="sec_filing",
             authority_rank=rank_source("sec_filing"),
+            url=source_url,
             statement=(
                 f"{self.ticker} reported {fact.metric_name} of {fact.value} "
                 f"{fact.unit} for {fact.period}.{normalization_suffix}"
@@ -254,6 +257,16 @@ def _metrics_packet_name(metric_name: str) -> str:
     }:
         return f"{metric_name}_ttm"
     return metric_name
+
+
+def _sec_filing_archive_url(cik: str, accession: str | None) -> str | None:
+    normalized_accession = str(accession or "").strip()
+    if not re.fullmatch(r"\d{10}-\d{2}-\d{6}", normalized_accession):
+        return None
+    return (
+        "https://www.sec.gov/Archives/edgar/data/"
+        f"{int(cik)}/{normalized_accession.replace('-', '')}/"
+    )
 
 
 def _duration_days(start: Optional[str], end: Optional[str]) -> Optional[int]:

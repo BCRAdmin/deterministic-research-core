@@ -759,47 +759,57 @@ def test_does_not_treat_bare_numbers_as_percent_without_table_unit_context():
       <tr><td>Consolidated</td><td>2.6</td><td>(0.5)</td></tr>
     </table>
     """
-    with pytest.raises(ValueError, match="keine ausreichend strukturierte"):
-        build_sec_results_release_payload(
-            ticker="GENR",
-            cik="123456",
-            accession_number="0000123456-26-000013",
-            filing_date="2026-04-28",
-            exhibit_document="q1-results.htm",
-            html=html,
-            expected_fiscal_year=2026,
-            expected_fiscal_period="Q1",
-            period_end_date="2026-03-31",
-            retrieved_at="2026-04-28T12:00:00Z",
-        )
+    payload = build_sec_results_release_payload(
+        ticker="GENR",
+        cik="123456",
+        accession_number="0000123456-26-000013",
+        filing_date="2026-04-28",
+        exhibit_document="q1-results.htm",
+        html=html,
+        expected_fiscal_year=2026,
+        expected_fiscal_period="Q1",
+        period_end_date="2026-03-31",
+        retrieved_at="2026-04-28T12:00:00Z",
+    )
+
+    assert payload["metrics"] == []
+    assert payload["events"][0]["event_type"] == "earnings_release"
 
 
-@pytest.mark.parametrize(
-    ("expected_period", "html", "message"),
-    [
-        ("Q3", RESULT_HTML, "meldet FY2026_Q2"),
-        (
-            "Q2",
-            "<div>Second Quarter 2026 Results</div><table><tr><td>Organic Sales Growth</td><td>2.4%</td></tr></table>",
-            "keine ausreichend strukturierte",
-        ),
-    ],
-)
-def test_rejects_mismatched_or_structurally_thin_results(
-    expected_period,
-    html,
-    message,
-):
-    with pytest.raises(ValueError, match=message):
+def test_rejects_mismatched_result_period():
+    with pytest.raises(ValueError, match="meldet FY2026_Q2"):
         build_sec_results_release_payload(
             ticker="GENR",
             cik="123456",
             accession_number="0000123456-26-000011",
             filing_date="2026-07-20",
             exhibit_document="q2-results.htm",
-            html=html,
+            html=RESULT_HTML,
             expected_fiscal_year=2026,
-            expected_fiscal_period=expected_period,
+            expected_fiscal_period="Q3",
             period_end_date="2026-06-30",
             retrieved_at="2026-07-20T12:00:00Z",
         )
+
+
+def test_historical_growth_before_guidance_is_not_misread_as_guidance_range():
+    html = """
+    <div>Second Quarter 2026 Results</div>
+    <div>Revenue Growth of 93% Y/Y; Raises FY 2026 Revenue Guidance to 82% Y/Y Growth.</div>
+    """
+
+    payload = build_sec_results_release_payload(
+        ticker="GENR",
+        cik="123456",
+        accession_number="0000123456-26-000011",
+        filing_date="2026-07-20",
+        exhibit_document="q2-results.htm",
+        html=html,
+        expected_fiscal_year=2026,
+        expected_fiscal_period="Q2",
+        period_end_date="2026-06-30",
+        retrieved_at="2026-07-20T12:00:00Z",
+    )
+
+    assert payload["metrics"] == []
+    assert payload["events"][0]["event_type"] == "earnings_release"

@@ -787,3 +787,25 @@ def test_builds_primary_risk_evidence_without_inventing_numeric_metrics():
     assert evidence[0].source_type == "sec_filing"
     assert evidence[0].supports_metrics == []
     assert evidence[0].supports_claims == ["company_risk_analysis"]
+
+
+def test_risk_selection_keeps_late_governance_risk_beyond_first_thirty():
+    routine = "".join(
+        f"<p><strong>If operating condition {index} changes, our business may be harmed.</strong></p>"
+        for index in range(35)
+    )
+    governance = (
+        "<p><strong>Our multiple class structure and Founder Voting Agreement "
+        "concentrate voting power with our Founders.</strong></p>"
+    )
+    html = (
+        "<html><body><div><strong>ITEM 1A. RISK FACTORS</strong></div>"
+        + routine
+        + governance
+        + "<div>ITEM 2. PROPERTIES</div></body></html>"
+    )
+
+    headings = extract_sec_risk_headings(html)
+
+    assert len(headings) == 30
+    assert any("multiple class structure" in heading for heading in headings)

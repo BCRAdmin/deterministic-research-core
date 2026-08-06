@@ -18,6 +18,7 @@ _RISK_LANGUAGE = re.compile(
     r"\b(could|may|might|failure|fail|unable|adverse|adversely|competition|"
     r"volatility|volatile|uncertain|uncertainty|unpredictable|risk|risks|"
     r"harm|harmed|strain|fraudulent|unlawful|"
+    r"voting|concentrat(?:e|es|ed|ing|ion)|founders?|"
     r"fluctuations?|loss|losses|liabilit(?:y|ies)|suffer|suffers|unsuccessful|"
     r"expose|exposes|subject to|subjects us to|presents a number of risks)\b",
     re.IGNORECASE,
@@ -46,6 +47,20 @@ _GENERIC_RISK_HEADINGS = {
     "riskfactorssummary",
     "summaryofriskfactors",
 }
+_RISK_DIVERSITY_PATTERNS = (
+    re.compile(
+        r"\b(?:multi(?:ple)?[- ]class|founder voting|voting power|controlled company|"
+        r"corporate governance|stockholder approval)\b",
+        re.IGNORECASE,
+    ),
+    re.compile(r"\b(?:cyber|security breach|privacy|personal data)\b", re.IGNORECASE),
+    re.compile(r"\b(?:regulat|legal proceedings|compliance|government polic)\w*\b", re.IGNORECASE),
+    re.compile(r"\b(?:customer concentration|customer contracts?|sales cycle|deal value)\b", re.IGNORECASE),
+    re.compile(r"\b(?:competition|competitive position|new technolog|artificial intelligence|\bAI\b)\b", re.IGNORECASE),
+    re.compile(r"\b(?:personnel|employee|management|key person|retain|recruit)\w*\b", re.IGNORECASE),
+    re.compile(r"\b(?:debt|financ|liquidity|capital resources|cash flow)\w*\b", re.IGNORECASE),
+    re.compile(r"\b(?:international|foreign|geopolit|supply chain|third part|vendor)\w*\b", re.IGNORECASE),
+)
 _NON_RISK_DOCUMENT_HEADINGS = {
     "analysisoffinancialconditionandresultsofoperations",
     "criticalaccountingestimates",
@@ -433,7 +448,40 @@ def extract_sec_risk_headings(html: str) -> list[str]:
             candidates.append(candidate)
         if len(candidates) > len(best):
             best = candidates
-    return best[:30]
+    return _diverse_risk_headings(best, limit=30)
+
+
+def _diverse_risk_headings(headings: list[str], *, limit: int) -> list[str]:
+    """Keep material risk families visible before filling by filing order."""
+
+    if len(headings) <= limit:
+        return headings
+    selected_indices = set(range(limit))
+    protected_indices: set[int] = set()
+    for pattern in _RISK_DIVERSITY_PATTERNS:
+        candidate_index = next(
+            (index for index, heading in enumerate(headings) if pattern.search(heading)),
+            None,
+        )
+        if candidate_index is None:
+            continue
+        if candidate_index in selected_indices:
+            protected_indices.add(candidate_index)
+            continue
+        replacement = next(
+            (
+                index
+                for index in sorted(selected_indices, reverse=True)
+                if index not in protected_indices
+            ),
+            None,
+        )
+        if replacement is None:
+            break
+        selected_indices.remove(replacement)
+        selected_indices.add(candidate_index)
+        protected_indices.add(candidate_index)
+    return [heading for index, heading in enumerate(headings) if index in selected_indices]
 
 
 def extract_sec_business_context(html: str) -> list[str]:

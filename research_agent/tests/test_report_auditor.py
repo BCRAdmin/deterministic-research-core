@@ -517,6 +517,20 @@ def test_auditor_normalizes_large_percent_ratios():
     assert not audit.has_issue("NUMERIC_MISMATCH", metric="sbc_to_revenue")
 
 
+def test_auditor_maps_sbc_percent_of_fcf_to_ratio_not_fcf_amount():
+    metrics = simple_metrics(ticker="KO")
+    metrics.fundamentals.free_cash_flow_ttm = 14_297_000_000
+    metrics.fundamentals.sbc_to_fcf = 0.0186053
+
+    audit = audit_markdown_report(
+        "FCF TTM is $14.30B. SBC equals 1.9% of that FCF.",
+        metrics,
+    )
+
+    assert not audit.has_issue("NUMERIC_MISMATCH", metric="free_cash_flow_ttm")
+    assert not audit.has_issue("NUMERIC_MISMATCH", metric="sbc_to_fcf")
+
+
 def test_auditor_separates_sbc_ratio_from_share_count_change_in_same_claim():
     metrics = simple_metrics(ticker="AVGO")
     metrics.fundamentals.sbc_to_revenue = 0.1164115815278606

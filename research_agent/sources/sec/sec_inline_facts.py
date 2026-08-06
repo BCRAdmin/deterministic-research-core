@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import re
 from collections import Counter
+from copy import deepcopy
 from decimal import Decimal, InvalidOperation
 from html.parser import HTMLParser
 from pathlib import Path
@@ -12,7 +13,7 @@ from research_agent.evidence.evidence_item import EvidenceItem
 from research_agent.evidence.source_ranker import rank_source
 from research_agent.sources.sec.companyfacts_parser import ParsedFact
 from research_agent.sources.sec.sec_filing_risks import SecFilingReference
-from research_agent.sources.sec.xbrl_concepts import US_GAAP_CONCEPTS
+from research_agent.sources.sec.xbrl_concepts import DEI_CONCEPTS, US_GAAP_CONCEPTS
 
 
 SEC_INLINE_FACT_SUPPLEMENT_CONTRACT = "room16.sec_inline_fact_supplement.v1"
@@ -72,8 +73,9 @@ class _InlineStatementParser(HTMLParser):
         elif tag == "tr":
             self._row_parts = []
             self._row_facts = []
-        elif tag == "ix:nonfraction":
+        elif tag in {"ix:nonfraction", "ix:nonnumeric"}:
             self._fact_attrs = attributes
+            self._fact_attrs["_tag"] = tag
             self._fact_parts = []
 
     def handle_endtag(self, tag: str) -> None:
@@ -103,7 +105,7 @@ class _InlineStatementParser(HTMLParser):
             self._context_instant_parts = None
             self._context_start_parts = None
             self._context_end_parts = None
-        elif tag == "ix:nonfraction" and self._fact_attrs is not None:
+        elif tag in {"ix:nonfraction", "ix:nonnumeric"} and self._fact_attrs is not None:
             fact = {
                 **self._fact_attrs,
                 "text": " ".join("".join(self._fact_parts or []).split()),
@@ -213,6 +215,147 @@ def build_sec_inline_fact_supplement_payload(
         "filings": [filing.to_dict()],
         "facts": facts,
     }
+
+
+def merge_sec_inline_filing_into_companyfacts(
+    *,
+    filing: SecFilingReference,
+    html: str,
+    companyfacts: dict[str, Any],
+    required_metrics: set[str],
+) -> tuple[dict[str, Any], int]:
+    """Backfill one current 10-Q/10-K from its filed inline XBRL.
+
+    The SEC CompanyFacts endpoint can lag behind a newly filed report. This
+    adapter reads only canonical US-GAAP/DEI concepts from the exact filing,
+    rejects dimensional facts, and requires every caller-declared coverage
+    metric before the merged payload can satisfy the current-filing gate.
+    """
+
+    parser = _InlineStatementParser()
+    parser.feed(html)
+    fiscal_year = _inline_document_focus(parser, "dei:DocumentFiscalYearFocus")
+    fiscal_period = _inline_document_focus(parser, "dei:DocumentFiscalPeriodFocus").upper()
+    try:
+        fiscal_year_number = int(fiscal_year)
+    except ValueError as exc:
+        raise ValueError("inline filing has no unique fiscal-year focus") from exc
+    if fiscal_period not in {"Q1", "Q2", "Q3", "FY"}:
+        raise ValueError("inline filing has no supported fiscal-period focus")
+
+    concept_metrics: dict[tuple[str, str], set[str]] = {}
+    for metric_name, concepts in US_GAAP_CONCEPTS.items():
+        for concept in concepts:
+            concept_metrics.setdefault(("us-gaap", concept), set()).add(metric_name)
+    for metric_name, concepts in DEI_CONCEPTS.items():
+        for concept in concepts:
+            concept_metrics.setdefault(("dei", concept), set()).add(metric_name)
+
+    rows: list[tuple[str, str, str, dict[str, Any], set[str]]] = []
+    seen: set[tuple[Any, ...]] = set()
+    covered_metrics: set[str] = set()
+    for fact in parser.facts:
+        if fact.get("_tag") != "ix:nonfraction":
+            continue
+        namespace, separator, concept = str(fact.get("name") or "").partition(":")
+        if not separator:
+            continue
+        metrics = concept_metrics.get((namespace.casefold(), concept))
+        if not metrics:
+            continue
+        context = parser.contexts.get(str(fact.get("contextref") or ""), {})
+        if context.get("dimensions"):
+            continue
+        start = str(context.get("start") or "") or None
+        end = str(context.get("end") or context.get("instant") or "") or None
+        if end != filing.report_date:
+            continue
+        value = _inline_numeric_value(fact)
+        unit = _companyfacts_unit(str(fact.get("unitref") or ""))
+        if value is None or unit is None:
+            continue
+        row = {
+            "start": start,
+            "end": end,
+            "val": value,
+            "accn": filing.accession_number,
+            "fy": fiscal_year_number,
+            "fp": fiscal_period,
+            "form": filing.form,
+            "filed": filing.filing_date,
+        }
+        identity = (
+            namespace.casefold(),
+            concept,
+            unit,
+            start,
+            end,
+            value,
+            filing.accession_number,
+        )
+        if identity in seen:
+            continue
+        seen.add(identity)
+        rows.append((namespace.casefold(), concept, unit, row, metrics))
+        covered_metrics.update(metrics)
+
+    missing = sorted(required_metrics - covered_metrics)
+    if missing:
+        raise ValueError(
+            "inline filing does not cover required canonical metrics: "
+            + ", ".join(missing)
+        )
+
+    merged = deepcopy(companyfacts)
+    facts_root = merged.setdefault("facts", {})
+    for namespace, concept, unit, row, _metrics in rows:
+        namespace_root = facts_root.setdefault(namespace, {})
+        concept_root = namespace_root.setdefault(
+            concept,
+            {"label": concept, "description": "Room16 inline-XBRL backfill"},
+        )
+        unit_rows = concept_root.setdefault("units", {}).setdefault(unit, [])
+        if not any(
+            existing.get("accn") == row["accn"]
+            and existing.get("start") == row["start"]
+            and existing.get("end") == row["end"]
+            and existing.get("val") == row["val"]
+            for existing in unit_rows
+            if isinstance(existing, dict)
+        ):
+            unit_rows.append(row)
+    merged.setdefault("room16_inline_filing_backfills", []).append(
+        {
+            "accession_number": filing.accession_number,
+            "filing_date": filing.filing_date,
+            "report_date": filing.report_date,
+            "form": filing.form,
+            "fact_count": len(rows),
+            "required_metrics": sorted(required_metrics),
+        }
+    )
+    return merged, len(rows)
+
+
+def _inline_document_focus(parser: _InlineStatementParser, concept: str) -> str:
+    values = {
+        " ".join(str(fact.get("text") or "").split())
+        for fact in parser.facts
+        if str(fact.get("name") or "").casefold() == concept.casefold()
+        and str(fact.get("text") or "").strip()
+    }
+    if len(values) != 1:
+        raise ValueError(f"inline filing has ambiguous {concept}")
+    return next(iter(values))
+
+
+def _companyfacts_unit(unit_ref: str) -> str | None:
+    normalized = re.sub(r"[^a-z]", "", unit_ref.casefold())
+    return {
+        "usd": "USD",
+        "shares": "shares",
+        "usdshares": "USD/shares",
+    }.get(normalized)
 
 
 def merge_sec_inline_fact_supplement_payloads(
