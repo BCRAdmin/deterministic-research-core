@@ -69,6 +69,8 @@ class CompanyGuidanceMetric(BaseModel):
     period: str
     basis: str = "company_defined"
     direction: str = "updated"
+    lower_bound: str = "inclusive"
+    upper_bound: str = "inclusive"
     source_id: str
     source_type: str
     url: Optional[str] = None

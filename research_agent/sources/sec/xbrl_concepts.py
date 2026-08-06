@@ -22,12 +22,14 @@ US_GAAP_CONCEPTS = {
         "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents",
     ],
     "short_term_investments": [
+        "OtherShortTermInvestments",
         "ShortTermInvestments",
         "MarketableSecuritiesCurrent",
         "DebtSecuritiesCurrent",
         "AvailableForSaleSecuritiesDebtSecuritiesCurrent",
     ],
     "marketable_securities": [
+        "MarketableSecurities",
         "MarketableSecuritiesNoncurrent",
         "DebtSecuritiesNoncurrent",
         "AvailableForSaleSecuritiesDebtSecuritiesNoncurrent",

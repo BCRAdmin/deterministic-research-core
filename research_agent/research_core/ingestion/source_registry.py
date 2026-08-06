@@ -25,6 +25,14 @@ SOURCE_AUTHORITY = {
     "social_media": 7,
 }
 
+SOURCE_TIERS = {
+    "company_ir": "official_financial_authority",
+    "sec_filing": "official_financial_authority",
+    "official_press_release": "official_financial_authority",
+    "exchange_ohlcv": "market_authority",
+    "trusted_market_data_vendor": "market_authority",
+}
+
 
 class SourceRegistryEntry(BaseModel):
     source_id: str
@@ -120,6 +128,14 @@ def merge_evidence_sources(
                 retrieved_at=getattr(evidence, "retrieved_at", None),
                 used_for=sorted(metrics),
                 owner="deterministic_research_pipeline",
+                source_tier=SOURCE_TIERS.get(
+                    str(getattr(evidence, "source_type", "") or "unknown")
+                ),
+                freshness_status=(
+                    "current_ingestion"
+                    if getattr(evidence, "retrieved_at", None)
+                    else "retrieval_time_unavailable"
+                ),
             )
             registry.sources.append(existing)
             by_id[source_id] = existing
@@ -138,6 +154,34 @@ def merge_evidence_sources(
             existing.url = getattr(evidence, "url", None)
         if not existing.retrieved_at:
             existing.retrieved_at = getattr(evidence, "retrieved_at", None)
+        if not existing.source_tier:
+            existing.source_tier = SOURCE_TIERS.get(existing.source_type)
+        if not existing.freshness_status:
+            existing.freshness_status = (
+                "current_ingestion"
+                if existing.retrieved_at
+                else "retrieval_time_unavailable"
+            )
+    return registry
+
+
+def bind_registry_claims(
+    registry: SourceRegistry,
+    fact_ledger: dict,
+) -> SourceRegistry:
+    """Bind registered sources to the exact research claims they support."""
+
+    by_id = {source.source_id: source for source in registry.sources}
+    for fact in fact_ledger.get("claims") or []:
+        claim_ids = {
+            str(claim_id)
+            for claim_id in fact.get("research_claim_ids") or []
+            if str(claim_id)
+        }
+        for source_id in fact.get("source_ids") or [fact.get("source_id")]:
+            source = by_id.get(str(source_id or ""))
+            if source is not None:
+                source.claim_ids = sorted(set(source.claim_ids) | claim_ids)
     return registry
 
 

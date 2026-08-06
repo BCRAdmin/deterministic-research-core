@@ -235,6 +235,48 @@ def test_fact_ledger_binds_exact_values_formulas_and_sources():
     }
 
 
+def test_fact_ledger_preserves_duration_periods_and_ratio_units():
+    data_packet, claims, evidence, registry = _fact_inputs()
+    claims[0].metric_values["diluted_share_count_yoy"] = 0.02
+    evidence.evidence_items.append(
+        EvidenceItem(
+            evidence_id="GENERIC_SHARE_CHANGE",
+            ticker="GENERIC",
+            claim_type="financial_metric",
+            source_id="SEC_GENERIC_DERIVED_TTM",
+            source_type="sec_filing",
+            authority_rank=1,
+            statement="Diluted shares increased two percent.",
+            value=0.02,
+            unit="shares",
+            period="FY2026_Q2",
+            date="2026-06-30",
+            period_start="2026-01-01",
+            period_end="2026-06-30",
+            duration_days=180,
+            supports_metrics=["diluted_share_count_yoy"],
+            raw_value=0.02,
+        )
+    )
+
+    payload = build_fact_ledger(
+        data_packet=data_packet,
+        claims=claims,
+        evidence_ledger=evidence,
+        source_registry=registry,
+    )
+
+    fact = next(
+        item for item in payload["claims"]
+        if item["metric"] == "diluted_share_count_yoy"
+    )
+    assert fact["unit"] == "ratio"
+    assert fact["period_kind"] == "duration"
+    assert fact["period_type"] == "ytd"
+    assert fact["presentation_basis"] == "year_to_date"
+    assert fact["period_start"] == "2026-01-01"
+
+
 def test_fact_ledger_fails_when_claim_value_has_no_exact_evidence():
     data_packet, claims, evidence, registry = _fact_inputs()
     claims[0].metric_values["close"] = 101.0

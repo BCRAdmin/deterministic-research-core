@@ -31,6 +31,8 @@ class EvidenceItem(BaseModel):
     unit: Optional[str] = None
     period: Optional[str] = None
     date: Optional[str] = None
+    period_start: Optional[str] = None
+    period_end: Optional[str] = None
     url: Optional[str] = None
     retrieved_at: Optional[str] = None
     supports_metrics: List[str] = Field(default_factory=list)

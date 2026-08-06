@@ -840,7 +840,10 @@ def test_extracts_raised_full_year_guidance_from_palantir_style_bullets():
     values = {item["metric_name"]: item["value"] for item in payload["metrics"]}
     assert values["guidance_revenue_low"] == pytest.approx(8_150_000_000)
     assert values["guidance_revenue_high"] == pytest.approx(8_158_000_000)
-    assert values["guidance_commercial_revenue_low"] == pytest.approx(3_424_000_000)
+    assert values["guidance_us_commercial_revenue_low"] == pytest.approx(3_424_000_000)
+    guidance = {item["metric_name"]: item for item in payload["metrics"]}
+    assert guidance["guidance_us_commercial_revenue_low"]["bound_type"] == "exclusive"
+    assert guidance["guidance_us_commercial_revenue_high"]["bound_type"] == "unbounded"
     assert values["guidance_free_cash_flow_low"] == pytest.approx(4_500_000_000)
     assert values["guidance_free_cash_flow_high"] == pytest.approx(4_700_000_000)
     outlook = next(event for event in payload["events"] if event["event_type"] == "company_outlook")

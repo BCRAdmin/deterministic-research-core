@@ -233,6 +233,7 @@ def build_sec_results_release_payload(
     metric_bases: dict[str, str] = {}
     metric_period_buckets: dict[str, str] = {}
     metric_guidance_periods: dict[str, tuple[str, int, str]] = {}
+    metric_bound_types: dict[str, str] = {}
     headline_controls: dict[str, float] = {}
 
     def add_value(
@@ -244,6 +245,7 @@ def build_sec_results_release_payload(
         basis: str = "company_defined",
         period_bucket: str = "quarterly",
         guidance_period: Optional[tuple[str, int, str]] = None,
+        bound_type: Optional[str] = None,
     ) -> None:
         previous = values.get(metric_name)
         if previous is not None and abs(previous - value) > 1e-9:
@@ -262,6 +264,8 @@ def build_sec_results_release_payload(
             ):
                 raise ValueError(f"widersprüchliche Guidance-Periode für {metric_name}")
             metric_guidance_periods[metric_name] = guidance_period
+        if bound_type is not None:
+            metric_bound_types[metric_name] = bound_type
 
     headline_summary_extracted = False
     for table in parser.tables:
@@ -370,6 +374,7 @@ def build_sec_results_release_payload(
                     "Issuer-defined SEC Item 2.02 result metric; GAAP statement "
                     "figures remain sourced from the matching CompanyFacts filing."
                 ),
+                "bound_type": metric_bound_types.get(metric_name),
             }
         )
 
@@ -1221,6 +1226,10 @@ def _extract_block_guidance_metrics(blocks, add_value, default_year: int) -> set
             definitions.append(
                 ("adjusted_operating_income", "USD", "non_gaap", "money")
             )
+        elif "u.s. commercial revenue" in folded or "us commercial revenue" in folded:
+            definitions.append(
+                ("us_commercial_revenue", "USD", "company_defined", "money")
+            )
         elif "commercial revenue" in folded:
             definitions.append(
                 ("commercial_revenue", "USD", "company_defined", "money")
@@ -1240,6 +1249,7 @@ def _extract_block_guidance_metrics(blocks, add_value, default_year: int) -> set
                     require_scale=metric_base in {
                         "revenue",
                         "commercial_revenue",
+                        "us_commercial_revenue",
                         "adjusted_operating_income",
                         "free_cash_flow",
                     },
@@ -1256,6 +1266,7 @@ def _extract_block_guidance_metrics(blocks, add_value, default_year: int) -> set
                         require_scale=metric_base in {
                             "revenue",
                             "commercial_revenue",
+                            "us_commercial_revenue",
                             "adjusted_operating_income",
                             "free_cash_flow",
                         },
@@ -1266,6 +1277,13 @@ def _extract_block_guidance_metrics(blocks, add_value, default_year: int) -> set
             if metric_range is None:
                 continue
             low, high = sorted(metric_range)
+            lower_bound = "inclusive"
+            upper_bound = "inclusive"
+            if range_type == "money" and abs(low - high) <= 1e-12:
+                if re.search(r"\b(?:in excess of|more than|greater than|over)\b", folded):
+                    lower_bound, upper_bound = "exclusive", "unbounded"
+                elif re.search(r"\b(?:at least|minimum of|no less than)\b", folded):
+                    lower_bound, upper_bound = "inclusive", "unbounded"
             guidance_years.add(guidance_year)
             display_label = metric_base.replace("_", " ")
             add_value(
@@ -1274,6 +1292,7 @@ def _extract_block_guidance_metrics(blocks, add_value, default_year: int) -> set
                 display_label=f"{display_label} guidance lower bound",
                 unit=unit,
                 basis=basis,
+                bound_type=lower_bound,
             )
             add_value(
                 f"guidance_{metric_base}_high",
@@ -1281,6 +1300,7 @@ def _extract_block_guidance_metrics(blocks, add_value, default_year: int) -> set
                 display_label=f"{display_label} guidance upper bound",
                 unit=unit,
                 basis=basis,
+                bound_type=upper_bound,
             )
     return guidance_years
 

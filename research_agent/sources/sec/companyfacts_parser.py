@@ -218,6 +218,8 @@ class CompanyFactsParser:
             unit=fact.unit,
             period=fact.period,
             date=fact.end,
+            period_start=fact.start,
+            period_end=fact.end,
             supports_metrics=list(dict.fromkeys(supports_metrics)),
             confidence="high",
             formula_id=None,

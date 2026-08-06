@@ -72,6 +72,7 @@ from research_agent.research_core.ingestion.news_loader import (
 )
 from research_agent.research_core.ingestion.price_loader import load_price_history
 from research_agent.research_core.ingestion.source_registry import (
+    bind_registry_claims,
     SourceRegistry,
     load_source_registry,
     merge_evidence_sources,
@@ -294,13 +295,16 @@ def run_research_pipeline(
         claims,
         manifest_output_dir / "analyst_claims.json",
     )
+    fact_ledger_payload = build_fact_ledger(
+        data_packet=data_packet,
+        claims=claims,
+        evidence_ledger=evidence_ledger,
+        source_registry=source_registry,
+    )
+    bind_registry_claims(source_registry, fact_ledger_payload)
+    save_source_registry(source_registry, source_registry_path)
     fact_ledger_path = save_fact_ledger(
-        build_fact_ledger(
-            data_packet=data_packet,
-            claims=claims,
-            evidence_ledger=evidence_ledger,
-            source_registry=source_registry,
-        ),
+        fact_ledger_payload,
         manifest_output_dir / "fact_ledger.json",
     )
     authority_bundle_dir = manifest_output_dir / "authority_bundle"
@@ -799,6 +803,7 @@ def _load_source_ingestion_inputs(ticker: str, as_of_date: str, config: ReportCo
                 cik=cik_mapper.get_cik(ticker),
                 companyfacts_json=raw,
                 as_of_date=as_of_date,
+                retrieved_at=config.price_retrieved_at,
             )
         else:
             if not config.sec_user_agent:
@@ -810,6 +815,7 @@ def _load_source_ingestion_inputs(ticker: str, as_of_date: str, config: ReportCo
                 cik=cik_mapper.get_cik(ticker),
                 companyfacts_json=raw,
                 as_of_date=as_of_date,
+                retrieved_at=config.price_retrieved_at,
             )
         evidence_items.extend(sec_evidence_items)
         supplemental_facts = []
@@ -1304,6 +1310,8 @@ def _structured_guidance_metrics(
                 "period": str(low.get("period") or high.get("period") or "forward"),
                 "basis": str(low.get("basis") or high.get("basis") or "company_defined"),
                 "direction": direction,
+                "lower_bound": str(low.get("bound_type") or "inclusive"),
+                "upper_bound": str(high.get("bound_type") or "inclusive"),
                 "source_id": source_id,
                 "source_type": source_type,
                 "url": payload.get("url"),
@@ -1476,8 +1484,6 @@ def _merge_fundamentals(target: dict[str, Any], update: dict[str, Any]) -> None:
             if key == "annual" and isinstance(target.get("quarterly"), dict):
                 for metric_name in value:
                     target["quarterly"].pop(metric_name, None)
-            if key == "balance_sheet" and "marketable_securities" in value:
-                target[key].pop("short_term_investments", None)
         else:
             target[key] = value
 

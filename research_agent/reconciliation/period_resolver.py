@@ -36,6 +36,7 @@ INSTANT_METRICS = {
     "short_term_debt",
     "debt_current",
     "debt_noncurrent",
+    "credit_facility_borrowings",
     "lease_liability_current",
     "lease_liability_noncurrent",
     "cash_and_investments",

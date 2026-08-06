@@ -15,7 +15,7 @@ from research_agent.research_core.models.data_packet import DataPacket
 
 
 FACT_LEDGER_CONTRACT_ID = "room16-canonical-fact-ledger"
-FACT_LEDGER_CONTRACT_VERSION = 1
+FACT_LEDGER_CONTRACT_VERSION = 2
 
 
 class FactLedgerError(ValueError):
@@ -96,6 +96,11 @@ def build_fact_ledger(
                 data_packet.price_basis.currency,
             ),
             "period_type": _period_type(metric_name, evidence),
+            "period_kind": _period_kind(evidence),
+            "period_start": evidence.period_start,
+            "period_end": evidence.period_end or evidence.date,
+            "fiscal_label": evidence.period,
+            "presentation_basis": _presentation_basis(metric_name, evidence),
             "asof": evidence.date or data_packet.as_of_date,
             "source_id": evidence.source_id,
             "source_ids": source_ids,
@@ -198,9 +203,36 @@ def _period_type(metric_name: str, evidence: EvidenceItem) -> str:
         return "range"
     if "run_rate" in metric_name:
         return "run_rate"
+    if evidence.duration_days is not None:
+        if 70 <= evidence.duration_days <= 110:
+            return "quarterly"
+        if 111 <= evidence.duration_days < 330:
+            return "ytd"
+        if 330 <= evidence.duration_days <= 380:
+            return "annual"
+        return "duration"
     if metric_name.startswith("current_q_") or "quarter" in lowered_period:
         return "quarterly"
     return "spot"
+
+
+def _period_kind(evidence: EvidenceItem) -> str:
+    return "duration" if evidence.period_start or evidence.duration_days is not None else "instant"
+
+
+def _presentation_basis(metric_name: str, evidence: EvidenceItem) -> str:
+    lowered_period = str(evidence.period or "").lower()
+    if metric_name.endswith("_ttm") or "ttm" in lowered_period:
+        return "trailing_twelve_months"
+    if evidence.duration_days is not None:
+        if 70 <= evidence.duration_days <= 110:
+            return "quarter"
+        if 111 <= evidence.duration_days < 330:
+            return "year_to_date"
+        if 330 <= evidence.duration_days <= 380:
+            return "full_year"
+        return "duration_unknown"
+    return "point_in_time"
 
 
 def _canonical_unit(
@@ -231,6 +263,8 @@ def _canonical_unit(
         return "multiple"
     if metric_name == "rsi_14":
         return "index"
+    if metric_name.endswith("share_count_yoy"):
+        return "ratio"
     if "share_count" in metric_name or "volume" in metric_name or metric_name.startswith("customers_"):
         return "shares" if "customers_" not in metric_name else "count"
     if metric_name == "close" or metric_name.startswith(("sma_", "ema_")):

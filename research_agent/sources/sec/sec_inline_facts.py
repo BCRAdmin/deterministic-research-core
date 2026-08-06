@@ -33,6 +33,7 @@ class _InlineStatementParser(HTMLParser):
         self.contexts: dict[str, dict[str, Any]] = {}
         self.facts: list[dict[str, Any]] = []
         self.rows: list[dict[str, Any]] = []
+        self.text_parts: list[str] = []
         self._context_id: str | None = None
         self._context_instant_parts: list[str] | None = None
         self._context_start_parts: list[str] | None = None
@@ -128,6 +129,7 @@ class _InlineStatementParser(HTMLParser):
             self._fact_parts = None
 
     def handle_data(self, data: str) -> None:
+        self.text_parts.append(data)
         if self._context_instant_parts is not None:
             self._context_instant_parts.append(data)
         if self._context_start_parts is not None:
@@ -163,7 +165,14 @@ def build_sec_inline_fact_supplement_payload(
     metrics = (
         allowed_metrics
         if allowed_metrics is not None
-        else {"debt_noncurrent", "economic_share_count", "capex"}
+        else {
+            "debt_noncurrent",
+            "economic_share_count",
+            "capex",
+            "short_term_investments",
+            "marketable_securities",
+            "credit_facility_borrowings",
+        }
     )
     if (
         "debt_noncurrent" in metrics
@@ -177,6 +186,31 @@ def build_sec_inline_fact_supplement_payload(
         )
         if debt is not None:
             facts.append(debt)
+    for metric_name in ("short_term_investments", "marketable_securities"):
+        if metric_name not in metrics or _companyfacts_has_current_instant_metric(
+            companyfacts, filing, metric_name=metric_name
+        ):
+            continue
+        instant_fact = _inline_instant_metric_fact(
+            ticker=ticker,
+            filing=filing,
+            filing_period=filing_period,
+            parser=parser,
+            metric_name=metric_name,
+        )
+        if instant_fact is not None:
+            facts.append(instant_fact)
+    if (
+        "credit_facility_borrowings" in metrics
+    ):
+        explicit_zero_debt = _inline_explicit_zero_debt_fact(
+            ticker=ticker,
+            filing=filing,
+            filing_period=filing_period,
+            parser=parser,
+        )
+        if explicit_zero_debt is not None:
+            facts.append(explicit_zero_debt)
     if (
         "economic_share_count" in metrics
         and not _companyfacts_has_current_share_count(companyfacts, filing)
@@ -490,6 +524,132 @@ def _inline_noncurrent_debt_fact(
     }
 
 
+def _inline_instant_metric_fact(
+    *,
+    ticker: str,
+    filing: SecFilingReference,
+    filing_period: tuple[int, str],
+    parser: _InlineStatementParser,
+    metric_name: str,
+) -> dict[str, Any] | None:
+    concepts = {
+        concept.casefold(): concept
+        for concept in US_GAAP_CONCEPTS[metric_name]
+    }
+    candidates: list[tuple[int, float, str]] = []
+    for fact in parser.facts:
+        namespace, separator, concept = str(fact.get("name") or "").partition(":")
+        if not separator or namespace.casefold() != "us-gaap":
+            continue
+        canonical_concept = concepts.get(concept.casefold())
+        if canonical_concept is None:
+            continue
+        context = parser.contexts.get(str(fact.get("contextref") or ""), {})
+        if context.get("instant") != filing.report_date or context.get("dimensions"):
+            continue
+        if str(fact.get("unitref") or "").casefold() != "usd":
+            continue
+        value = _inline_numeric_value(fact)
+        if value is None:
+            continue
+        priority = len(US_GAAP_CONCEPTS[metric_name]) - US_GAAP_CONCEPTS[
+            metric_name
+        ].index(canonical_concept)
+        candidates.append((priority, value, canonical_concept))
+    if not candidates:
+        return None
+    best_priority = max(item[0] for item in candidates)
+    best = {(value, concept) for priority, value, concept in candidates if priority == best_priority}
+    if len(best) != 1:
+        raise ValueError(f"conflicting current inline values for {metric_name}")
+    value, concept = next(iter(best))
+    fiscal_year, fiscal_period = filing_period
+    symbol = ticker.strip().upper()
+    period = f"FY{fiscal_year}_{fiscal_period}"
+    accession = filing.accession_number.replace("-", "")
+    return {
+        "metric_name": metric_name,
+        "value": value,
+        "unit": "USD",
+        "period": period,
+        "fy": fiscal_year,
+        "fp": fiscal_period,
+        "form": filing.form,
+        "filed": filing.filing_date,
+        "start": None,
+        "end": filing.report_date,
+        "accession": filing.accession_number,
+        "source_type": "sec_filing",
+        "frame": None,
+        "concept": f"us-gaap:{concept}",
+        "raw_value": value,
+        "normalization_note": (
+            "Recovered an undimensioned current balance-sheet fact from the exact "
+            "filed inline XBRL because SEC CompanyFacts omitted the filing value."
+        ),
+        "evidence_id": (
+            f"{symbol}_SEC_INLINE_{metric_name}_{period}_instant_"
+            f"{filing.report_date}_us-gaap_{concept}_{accession}"
+        ),
+    }
+
+
+def _inline_explicit_zero_debt_fact(
+    *,
+    ticker: str,
+    filing: SecFilingReference,
+    filing_period: tuple[int, str],
+    parser: _InlineStatementParser,
+) -> dict[str, Any] | None:
+    document_text = " ".join(" ".join(parser.text_parts).split()).casefold()
+    if re.search(r"\bno\b.{0,80}\bborrowings\b", document_text) is None:
+        return None
+    candidates: list[dict[str, Any]] = []
+    for fact in parser.facts:
+        if str(fact.get("name") or "").casefold() != "us-gaap:debtinstrumentcarryingamount":
+            continue
+        context = parser.contexts.get(str(fact.get("contextref") or ""), {})
+        if context.get("instant") != filing.report_date:
+            continue
+        dimensions = context.get("dimensions") or {}
+        if not any("creditfacility" in str(key).casefold() for key in dimensions):
+            continue
+        value = _inline_numeric_value(fact)
+        if value == 0:
+            candidates.append(fact)
+    if len(candidates) != 1:
+        return None
+    fiscal_year, fiscal_period = filing_period
+    symbol = ticker.strip().upper()
+    period = f"FY{fiscal_year}_{fiscal_period}"
+    accession = filing.accession_number.replace("-", "")
+    return {
+        "metric_name": "credit_facility_borrowings",
+        "value": 0.0,
+        "unit": "USD",
+        "period": period,
+        "fy": fiscal_year,
+        "fp": fiscal_period,
+        "form": filing.form,
+        "filed": filing.filing_date,
+        "start": None,
+        "end": filing.report_date,
+        "accession": filing.accession_number,
+        "source_type": "sec_filing",
+        "frame": None,
+        "concept": "us-gaap:DebtInstrumentCarryingAmount",
+        "raw_value": 0.0,
+        "normalization_note": (
+            "Reported zero: the filing explicitly states no outstanding borrowings "
+            "and tags the debt carrying amount with ixt:fixed-zero."
+        ),
+        "evidence_id": (
+            f"{symbol}_SEC_INLINE_credit_facility_borrowings_{period}_instant_"
+            f"{filing.report_date}_us-gaap_DebtInstrumentCarryingAmount_{accession}"
+        ),
+    }
+
+
 def _inline_economic_share_count_fact(
     *,
     ticker: str,
@@ -716,7 +876,17 @@ def load_sec_inline_fact_supplement(
         expected_concept = {
             "debt_noncurrent": _NONCURRENT_DEBT_CONCEPT,
             "economic_share_count": _OUTSTANDING_SHARES_CONCEPT,
+            "credit_facility_borrowings": "us-gaap:DebtInstrumentCarryingAmount",
         }.get(metric_name)
+        if metric_name in {"short_term_investments", "marketable_securities"}:
+            candidate = str(row.get("concept") or "")
+            allowed = {
+                f"us-gaap:{concept}"
+                for concept in US_GAAP_CONCEPTS[metric_name]
+            }
+            if candidate not in allowed:
+                raise ValueError("SEC inline instant fact authority mismatch")
+            expected_concept = candidate
         if metric_name == "capex":
             expected_concept = str(row.get("concept") or "")
             if (
@@ -743,7 +913,7 @@ def load_sec_inline_fact_supplement(
         statement = (
             f"{symbol} reported debt_noncurrent of {fact.value} USD for "
             f"{fact.period} in the filed Long-term debt row."
-            if metric_name == "debt_noncurrent"
+            if metric_name in {"debt_noncurrent", "credit_facility_borrowings"}
             else (
                 f"{symbol} reported capex of {fact.value} USD for {fact.period} "
                 f"in the exact filed {_CAPEX_ROW_LABEL} cash-flow row."
@@ -765,6 +935,8 @@ def load_sec_inline_fact_supplement(
                 unit=fact.unit,
                 period=fact.period,
                 date=fact.end,
+                period_start=fact.start,
+                period_end=fact.end,
                 url=filing.get("url"),
                 retrieved_at=payload.get("retrieved_at"),
                 supports_metrics=[metric_name],
@@ -779,6 +951,25 @@ def load_sec_inline_fact_supplement(
             )
         )
     return parsed_facts, evidence_items
+
+
+def _companyfacts_has_current_instant_metric(
+    companyfacts: dict[str, Any],
+    filing: SecFilingReference,
+    *,
+    metric_name: str,
+) -> bool:
+    us_gaap = companyfacts.get("facts", {}).get("us-gaap", {})
+    return any(
+        row.get("accn") == filing.accession_number
+        and row.get("end") == filing.report_date
+        and row.get("form") == filing.form
+        and not row.get("start")
+        for concept in US_GAAP_CONCEPTS.get(metric_name, [])
+        for rows in ((us_gaap.get(concept) or {}).get("units") or {}).values()
+        for row in rows
+        if isinstance(row, dict)
+    )
 
 
 def _companyfacts_has_current_noncurrent_debt(

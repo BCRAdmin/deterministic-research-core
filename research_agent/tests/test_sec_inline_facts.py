@@ -140,6 +140,40 @@ def _html():
     """
 
 
+def test_recovers_current_liquidity_and_explicit_zero_debt_from_inline_filing():
+    html = _current_statement_html().replace(
+        "</body>",
+        """
+        <xbrli:context id="credit"><xbrli:entity><xbrli:identifier>1283699</xbrli:identifier><xbrli:segment><xbrldi:explicitMember dimension="us-gaap:CreditFacilityAxis">us-gaap:RevolvingCreditFacilityMember</xbrldi:explicitMember></xbrli:segment></xbrli:entity><xbrli:period><xbrli:instant>2026-06-30</xbrli:instant></xbrli:period></xbrli:context>
+        <ix:nonFraction unitRef="usd" contextRef="instant" name="us-gaap:OtherShortTermInvestments" scale="6">622</ix:nonFraction>
+        <ix:nonFraction unitRef="usd" contextRef="instant" name="us-gaap:MarketableSecurities" scale="6">2,842</ix:nonFraction>
+        <p>There were no outstanding borrowings under the credit facility.
+        <ix:nonFraction unitRef="usd" contextRef="credit" name="us-gaap:DebtInstrumentCarryingAmount" format="ixt:fixed-zero" scale="6">no</ix:nonFraction></p>
+        </body>
+        """,
+    )
+    payload = build_sec_inline_fact_supplement_payload(
+        ticker="GENR",
+        filing=_filing(),
+        html=html,
+        companyfacts=_companyfacts(),
+        retrieved_at="2026-07-24T00:00:00Z",
+        allowed_metrics={
+            "short_term_investments",
+            "marketable_securities",
+            "credit_facility_borrowings",
+        },
+    )
+
+    assert payload is not None
+    values = {item["metric_name"]: item["value"] for item in payload["facts"]}
+    assert values == {
+        "short_term_investments": 622_000_000.0,
+        "marketable_securities": 2_842_000_000.0,
+        "credit_facility_borrowings": 0.0,
+    }
+
+
 def test_recovers_first_current_statement_debt_and_preserves_filing_authority(tmp_path):
     payload = build_sec_inline_debt_supplement_payload(
         ticker="TMUS",

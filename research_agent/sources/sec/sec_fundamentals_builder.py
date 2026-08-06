@@ -60,6 +60,7 @@ def build_sec_fundamentals_from_companyfacts(
     companyfacts_json: dict[str, Any],
     *,
     as_of_date: str | None = None,
+    retrieved_at: str | None = None,
 ) -> tuple[dict[str, Any], list[EvidenceItem]]:
     parser = CompanyFactsParser(ticker=ticker, cik=cik, companyfacts_json=companyfacts_json)
     metrics: dict[str, Any] = {
@@ -114,7 +115,9 @@ def build_sec_fundamentals_from_companyfacts(
             _append_evidence_once(
                 evidence_items,
                 seen_evidence_ids,
-                parser.to_evidence_item(annual),
+                parser.to_evidence_item(annual).model_copy(
+                    update={"retrieved_at": retrieved_at}
+                ),
             )
 
         quarterly = sorted(
@@ -132,7 +135,9 @@ def build_sec_fundamentals_from_companyfacts(
                 _append_evidence_once(
                     evidence_items,
                     seen_evidence_ids,
-                    parser.to_evidence_item(fact),
+                    parser.to_evidence_item(fact).model_copy(
+                        update={"retrieved_at": retrieved_at}
+                    ),
                 )
             _assign_normalized_metric(
                 metrics,

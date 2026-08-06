@@ -66,10 +66,14 @@ class FundamentalMetrics(BaseModel):
     short_term_investments: Optional[float] = None
     marketable_securities: Optional[float] = None
     cash_and_investments: Optional[float] = None
+    cash_and_short_term_investments: Optional[float] = None
+    liquidity_basis: Optional[str] = None
+    balance_sheet_metric_statuses: Dict[str, str] = Field(default_factory=dict)
     total_debt: Optional[float] = None
     short_term_debt: Optional[float] = None
     debt_current: Optional[float] = None
     debt_noncurrent: Optional[float] = None
+    credit_facility_borrowings: Optional[float] = None
     lease_liability_current: Optional[float] = None
     lease_liability_noncurrent: Optional[float] = None
     total_lease_liabilities: Optional[float] = None
@@ -77,6 +81,7 @@ class FundamentalMetrics(BaseModel):
     current_liabilities: Optional[float] = None
     equity: Optional[float] = None
     net_cash: Optional[float] = None
+    net_cash_basis: Optional[str] = None
     current_ratio: Optional[float] = None
     debt_to_equity: Optional[float] = None
     deferred_revenue: Optional[float] = None

@@ -250,6 +250,9 @@ def calculate_fundamental_metrics(
     short_term_debt = _optional_float(balance_sheet.get("short_term_debt"))
     debt_current = _optional_float(balance_sheet.get("debt_current"))
     debt_noncurrent = _optional_float(balance_sheet.get("debt_noncurrent"))
+    credit_facility_borrowings = _optional_float(
+        balance_sheet.get("credit_facility_borrowings")
+    )
     lease_liability_current = _optional_float(
         balance_sheet.get("lease_liability_current")
     )
@@ -271,6 +274,30 @@ def calculate_fundamental_metrics(
         None
         if all(value is None for value in liquid_values)
         else sum(value or 0.0 for value in liquid_values)
+    )
+    cash_and_short_term_investments = (
+        None
+        if cash_and_equivalents is None and short_term_investments is None
+        else (cash_and_equivalents or 0.0) + (short_term_investments or 0.0)
+    )
+    balance_sheet_metric_statuses = {
+        metric_name: _reported_value_status(value)
+        for metric_name, value in {
+            "cash_and_equivalents": cash_and_equivalents,
+            "short_term_investments": short_term_investments,
+            "marketable_securities": marketable_securities,
+            "total_debt": total_debt,
+            "credit_facility_borrowings": credit_facility_borrowings,
+            "lease_liability_current": lease_liability_current,
+            "lease_liability_noncurrent": lease_liability_noncurrent,
+        }.items()
+    }
+    balance_sheet_metric_statuses["total_lease_liabilities"] = (
+        _reported_value_status(total_lease_liabilities)
+        if total_lease_liabilities is not None
+        else "not_separately_disclosed"
+        if lease_liability_current is not None or lease_liability_noncurrent is not None
+        else "not_retrieved"
     )
     current_assets = _optional_float(balance_sheet.get("current_assets"))
     current_liabilities = _optional_float(balance_sheet.get("current_liabilities"))
@@ -350,10 +377,18 @@ def calculate_fundamental_metrics(
         short_term_investments=short_term_investments,
         marketable_securities=marketable_securities,
         cash_and_investments=cash_and_investments,
+        cash_and_short_term_investments=cash_and_short_term_investments,
+        liquidity_basis=(
+            "cash_and_equivalents_plus_short_term_investments_plus_marketable_securities"
+            if marketable_securities is not None
+            else "cash_and_equivalents_plus_short_term_investments"
+        ),
+        balance_sheet_metric_statuses=balance_sheet_metric_statuses,
         total_debt=total_debt,
         short_term_debt=short_term_debt,
         debt_current=debt_current,
         debt_noncurrent=debt_noncurrent,
+        credit_facility_borrowings=credit_facility_borrowings,
         lease_liability_current=lease_liability_current,
         lease_liability_noncurrent=lease_liability_noncurrent,
         total_lease_liabilities=total_lease_liabilities,
@@ -361,6 +396,11 @@ def calculate_fundamental_metrics(
         current_liabilities=current_liabilities,
         equity=equity,
         net_cash=net_cash(cash_and_equivalents, short_term_investments, marketable_securities, total_debt),
+        net_cash_basis=(
+            "cash_and_equivalents_short_term_investments_and_marketable_securities_minus_total_debt"
+            if total_debt is not None
+            else None
+        ),
         current_ratio=current_ratio(current_assets, current_liabilities) if current_assets is not None and current_liabilities is not None else None,
         debt_to_equity=debt_to_equity(total_debt, equity) if total_debt is not None and equity is not None else None,
         deferred_revenue=_optional_float(balance_sheet.get("deferred_revenue")),
@@ -542,6 +582,12 @@ def _optional_float(value: Any) -> Optional[float]:
     if value is None:
         return None
     return float(value)
+
+
+def _reported_value_status(value: Optional[float]) -> str:
+    if value is None:
+        return "not_retrieved"
+    return "reported_zero" if value == 0 else "reported_nonzero"
 
 
 def _yoy_change(current: Optional[float], prior: Optional[float]) -> Optional[float]:

@@ -40,6 +40,33 @@ The manifest records each artifact's relative path, SHA-256 hash, and size.
 The consumer rejects missing files, path escapes, hash changes, identity
 mismatches, unsupported contract versions, and blocked analysis permission.
 
+## Fact and Source Semantics
+
+Every fact-ledger entry records whether it is an instant or duration fact. A
+duration fact additionally carries its exact start and end dates, duration
+class (`quarterly`, `ytd`, `annual`, or generic `duration`), fiscal label, and
+presentation basis. A ratio stays a ratio; it must not inherit the unit of the
+underlying share-count facts.
+
+Missing values remain distinguishable from reported zero. Balance-sheet
+metrics expose statuses such as `reported_zero`, `reported_nonzero`,
+`not_retrieved`, and `not_separately_disclosed`. A component-level zero, for
+example unused borrowings under a named credit facility, must not be upgraded
+to zero consolidated debt. A lease total must remain partial when only one
+current/noncurrent component was retrieved.
+
+Liquidity categories are additive only when they are separately disclosed.
+Cash, other short-term investments, and marketable securities retain separate
+fields, and every displayed aggregate records its calculation basis. Guidance
+for a named geography or segment retains that qualifier. Phrases such as
+"more than" or "at least" are represented as one-sided bounds rather than as
+false point estimates.
+
+Registered external sources carry a source tier, retrieval time or an explicit
+retrieval-time-unavailable status, freshness state, and the identifiers of the
+claims that use them. Registry entries with no claim linkage do not establish
+evidence for a report statement.
+
 ## Blocking Producer Checks
 
 - ticker and as-of identity agree across every packet
