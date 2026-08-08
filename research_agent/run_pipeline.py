@@ -1344,6 +1344,14 @@ def _ir_current_metric_inputs(
         if metric_name is None or value is None:
             continue
         value = float(value)
+        signed_capex_normalized = metric_name == "capex" and value < 0
+        if metric_name == "capex":
+            # Providers expose capital expenditure either as a positive
+            # spending magnitude or as a negative cash-flow line. The
+            # canonical Room16 metric is always the positive outflow
+            # magnitude; FCF therefore has one stable CFO-minus-CapEx
+            # convention across jurisdictions.
+            value = abs(value)
         values[metric_name] = value
         period = row.get("period") or "current_period"
         unit = row.get("unit") or "usd"
@@ -1353,6 +1361,11 @@ def _ir_current_metric_inputs(
         supports_metrics = row.get("supports_metrics") or _ir_supports_metrics(metric_name)
         evidence_id = f"{ticker.upper()}_{source_id}_{metric_name}_{period}".replace(" ", "_")
         statement = row.get("statement") or f"{ticker.upper()} reported {metric_name} of {value} {unit} for {period}."
+        if signed_capex_normalized:
+            statement = (
+                f"{ticker.upper()} reported capital expenditure cash outflow of "
+                f"{value} {unit} for {period}."
+            )
         evidence.append(
             EvidenceItem(
                 evidence_id=evidence_id,
@@ -1389,7 +1402,14 @@ def _ir_current_metric_inputs(
                 source_ids=[source_id],
                 evidence_ids=[evidence_id],
                 confidence="high",
-                reconciliation_notes=[row.get("reconciliation_note") or "Current-period IR/Earnings Release metric ingested explicitly."],
+                reconciliation_notes=[
+                    row.get("reconciliation_note")
+                    or (
+                        "Signed cash-flow CapEx normalized to a positive expenditure magnitude."
+                        if signed_capex_normalized
+                        else "Current-period IR/Earnings Release metric ingested explicitly."
+                    )
+                ],
             )
         )
         if metric_name in {

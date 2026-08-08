@@ -52,6 +52,44 @@ def test_markdown_auditor_blocks_guidance_claim_without_company_guidance():
     assert audit.has_issue("UNSUPPORTED_GUIDANCE_CLAIM")
 
 
+def test_markdown_auditor_accepts_explicit_non_guidance_scenario_disclaimer():
+    metrics = MetricsPacket(**_load_json("nvda_2026_05_01", "metrics_packet.json"))
+    validation = ValidationReport(**_load_json("nvda_2026_05_01", "validation_report.json"))
+    ledger = EvidenceLedger(ticker="NVDA", as_of_date="2026-05-01", evidence_items=[])
+
+    audit = audit_markdown_report(
+        markdown=(
+            "Standardized DCF sensitivity, not a company forecast.\n"
+            "These scenarios are not management guidance or price targets."
+        ),
+        metrics_packet=metrics,
+        validation_report=validation,
+        evidence_ledger=ledger,
+        ticker="NVDA",
+    )
+
+    assert not audit.has_issue("UNSUPPORTED_GUIDANCE_CLAIM")
+
+
+def test_guidance_disclaimer_does_not_mask_separate_unsupported_forecast():
+    metrics = MetricsPacket(**_load_json("nvda_2026_05_01", "metrics_packet.json"))
+    validation = ValidationReport(**_load_json("nvda_2026_05_01", "validation_report.json"))
+    ledger = EvidenceLedger(ticker="NVDA", as_of_date="2026-05-01", evidence_items=[])
+
+    audit = audit_markdown_report(
+        markdown=(
+            "The DCF scenarios are not management guidance.\n"
+            "The company forecasts materially stronger FY2027 revenue."
+        ),
+        metrics_packet=metrics,
+        validation_report=validation,
+        evidence_ledger=ledger,
+        ticker="NVDA",
+    )
+
+    assert audit.has_issue("UNSUPPORTED_GUIDANCE_CLAIM")
+
+
 def test_markdown_auditor_blocks_event_risk_without_confirmed_earnings():
     metrics = MetricsPacket(**_load_json("nvda_2026_05_01", "metrics_packet.json"))
     validation = ValidationReport(

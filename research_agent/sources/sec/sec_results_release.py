@@ -11,11 +11,11 @@ from urllib.parse import unquote, urlsplit
 
 
 _RESULT_LINK_LANGUAGE = re.compile(
-    r"\b(?:earnings|financial results?|press release|news release|quarterly results?)\b",
+    r"\b(?:earnings|financial results?|press release|news release|investor release|quarterly results?)\b",
     re.IGNORECASE,
 )
 _PRIMARY_RESULTS_LINK_LANGUAGE = re.compile(
-    r"\b(?:press|news) release\b", re.IGNORECASE
+    r"\b(?:press|news|investor) release\b", re.IGNORECASE
 )
 _SUPPLEMENTAL_RESULTS_LINK_LANGUAGE = re.compile(
     r"\b(?:infographic|presentation|supplement(?:al)?)\b",
@@ -164,24 +164,35 @@ def select_sec_results_exhibit(primary_html: str) -> str:
 
     parser = _LinkParser()
     parser.feed(primary_html)
-    candidates: dict[str, int] = {}
+    labels_by_document: dict[str, list[str]] = {}
     for href, label in parser.links:
         document = _safe_html_document(href)
         if document is None:
             continue
+        labels_by_document.setdefault(document, []).append(label)
+
+    candidates: dict[str, int] = {}
+    for document, labels in labels_by_document.items():
+        # SEC inline-XBRL filing bodies may split one visible exhibit
+        # description across many anchors that all target the same document.
+        # Score the complete visible description per target rather than the
+        # strongest isolated fragment. This preserves the distinction between
+        # a primary investor release and a supplemental exhibit without using
+        # issuer- or filename-specific exceptions.
+        combined_label = " ".join(" ".join(labels).split())
         score = 0
-        if _RESULT_LINK_LANGUAGE.search(label):
+        if _RESULT_LINK_LANGUAGE.search(combined_label):
             score += 5
-        if _PRIMARY_RESULTS_LINK_LANGUAGE.search(label):
+        if _PRIMARY_RESULTS_LINK_LANGUAGE.search(combined_label):
             score += 3
-        if _SUPPLEMENTAL_RESULTS_LINK_LANGUAGE.search(label):
+        if _SUPPLEMENTAL_RESULTS_LINK_LANGUAGE.search(combined_label):
             score -= 2
-        if _EXHIBIT_99_LABEL.fullmatch(" ".join(label.split())):
+        if any(_EXHIBIT_99_LABEL.fullmatch(" ".join(label.split())) for label in labels):
             score += 4
         if _RESULT_LINK_LANGUAGE.search(document.replace("_", " ").replace("-", " ")):
             score += 2
         if score:
-            candidates[document] = max(candidates.get(document, 0), score)
+            candidates[document] = score
     if not candidates:
         raise ValueError("kein eindeutig verlinkter Ergebnis-Anhang gefunden")
     best_score = max(candidates.values())

@@ -31,6 +31,13 @@ sensitivity. It uses operating cash flow minus capital expenditure as an
 equity cash-flow proxy. It is not an FCFF enterprise valuation and is not a
 company forecast.
 
+Capital expenditure has one canonical cross-jurisdiction meaning: a positive
+cash-outflow magnitude. Providers that publish cash-flow outflows with a
+negative accounting sign are normalized before reconciliation, evidence
+generation and FCF calculation. The original filing remains the source of
+record; Room16 must not expose one sign in the report while calculating with
+another.
+
 The deterministic scenarios are:
 
 | Scenario | FCF-growth anchor | Discount rate | Terminal growth |
@@ -99,6 +106,16 @@ must not be mistaken for reported FCF, price or growth facts.
 
 Human review remains bound to the exact report, fact ledger, quality report,
 PDF and DOCX hashes. A later edit invalidates that review.
+
+For SEC Item 2.02 filings, Room16 selects the primary results exhibit from the
+complete visible link description per target document. Supplemental exhibits
+remain secondary even when SEC inline markup splits their labels across
+several anchors. An unresolved tie still fails closed.
+
+The report auditor distinguishes an issuer guidance claim from an explicit
+disclaimer such as “not management guidance”. A disclaimer can clear only its
+own sentence fragment; it cannot mask a separate unsupported forecast in the
+same report.
 
 ## Current limits
 

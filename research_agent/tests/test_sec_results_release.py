@@ -256,6 +256,21 @@ def test_selects_item_202_news_release_without_results_in_link_label():
     assert select_sec_results_exhibit(primary) == "a6302026exhibit991.htm"
 
 
+def test_selects_primary_release_when_sec_splits_visible_labels_across_links():
+    primary = """
+    <a href="exhibit991-33126xq1.htm">99.1</a>
+    <a href="exhibit991-33126xq1.htm">Investor Release of Example Corporation issued</a>
+    <a href="exhibit991-33126xq1.htm">May</a>
+    <a href="exhibit991-33126xq1.htm">7</a>
+    <a href="exhibit991-33126xq1.htm">: Example Reports First Quarter Results</a>
+    <a href="exhibit992-33126xq1.htm">99.2</a>
+    <a href="exhibit992-33126xq1.htm">Example Corporation: Supplemental Information</a>
+    <a href="exhibit992-33126xq1.htm">Quarter Ended March 31</a>
+    """
+
+    assert select_sec_results_exhibit(primary) == "exhibit991-33126xq1.htm"
+
+
 def test_builds_company_operating_segment_and_guidance_inputs():
     payload = build_sec_results_release_payload(
         ticker="GENR",

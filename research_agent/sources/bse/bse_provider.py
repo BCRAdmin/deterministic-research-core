@@ -886,7 +886,8 @@ def _extract_report_metrics(
         return values[1] if is_quarter and len(values) >= 2 else values[0]
 
     add("operating_cash_flow", row_value("Net cash provided by operating activities"), "cash_flow")
-    add("capex", row_value("Purchase of property, plant and equipment"), "cash_flow")
+    capex = row_value("Purchase of property, plant and equipment")
+    add("capex", abs(capex) if capex is not None else None, "cash_flow")
 
     ebitda = re.search(
         r"EBITDA(?:\s+is|\s+amounted\s+to)?\s+HUF\s+([\d,]+)\s+million",

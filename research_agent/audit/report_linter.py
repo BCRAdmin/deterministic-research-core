@@ -46,9 +46,18 @@ HARD_METRIC_RE = re.compile(
     r"(?:fcf|free cash|cashflow|margin|marge|sbc|revenue|umsatz|kgv|p/e|sma|debt|cash|eps)",
     re.IGNORECASE,
 )
-GUIDANCE_CLAIM_RE = re.compile(r"\b(?:guidance|outlook|guided|expects|erwartet|prognose)\b", re.IGNORECASE)
+GUIDANCE_CLAIM_RE = re.compile(
+    r"\b(?:guidance|outlook|guided|expects|erwartet|prognose)\b|"
+    r"\b(?:company|management|issuer)\s+forecasts?\b",
+    re.IGNORECASE,
+)
 GUIDANCE_UNAVAILABLE_RE = re.compile(
-    r"(?:guidance unavailable|company guidance unavailable|missing company guidance|no company guidance|metric unavailable)",
+    r"(?:"
+    r"guidance unavailable|company guidance unavailable|missing company guidance|"
+    r"no (?:company|management) guidance|metric unavailable|"
+    r"not (?:a )?company forecast|not (?:company|management) guidance|"
+    r"does not (?:represent|constitute).{0,40}(?:guidance|outlook|forecast)"
+    r")",
     re.IGNORECASE,
 )
 EARNINGS_EVENT_RISK_RE = re.compile(
@@ -780,7 +789,18 @@ def _lint_unsupported_guidance_claims(
     markdown: str,
     evidence_ledger: Optional[EvidenceLedger],
 ) -> list[AuditIssue]:
-    if evidence_ledger is None or not GUIDANCE_CLAIM_RE.search(markdown) or GUIDANCE_UNAVAILABLE_RE.search(markdown):
+    if evidence_ledger is None:
+        return []
+    unsupported_lines: list[tuple[int, str]] = []
+    for line_number, line in enumerate(markdown.splitlines(), start=1):
+        # A report may explicitly distinguish standardized Room16 scenarios
+        # from management guidance. Remove only that disclaimer fragment and
+        # still inspect the rest of the same line, so a global disclaimer can
+        # never hide a separate unsupported issuer forecast.
+        remaining = GUIDANCE_UNAVAILABLE_RE.sub("", line)
+        if GUIDANCE_CLAIM_RE.search(remaining):
+            unsupported_lines.append((line_number, line.strip()))
+    if not unsupported_lines:
         return []
     guidance_items = [
         item
@@ -799,12 +819,15 @@ def _lint_unsupported_guidance_claims(
     ]
     if primary_guidance:
         return []
+    line_number, raw_text = unsupported_lines[0]
     return [
         AuditIssue(
             severity="error",
             code="UNSUPPORTED_GUIDANCE_CLAIM",
             metric="company_guidance_eps",
             message="Report makes a guidance claim, but no company guidance evidence is available.",
+            line_number=line_number,
+            raw_text=raw_text,
         )
     ]
 

@@ -21,6 +21,7 @@ from research_agent.research_core.models.metrics_packet import (
     ValuationMetrics,
 )
 from research_agent.research_core.validation.runner import run_all_validations
+from research_agent.run_pipeline import _ir_current_metric_inputs
 from research_agent.sources.bse.bse_provider import (
     BseIssuer,
     _back_adjust_dividends,
@@ -121,12 +122,40 @@ def test_any_full_report_metrics_unlock_cashflow_balance_sheet_and_valuation():
     })
     valuation = calculate_valuation_metrics(6_950, fundamentals)
 
+    assert annual_values["capex"] == 3_629_101_000
+    assert values["capex"] == 152_940_000
     assert values["total_debt"] == 13_455_567_000
     assert fundamentals.free_cash_flow_ttm == 8_561_476_000
     assert fundamentals.trailing_eps is not None
     assert valuation.market_cap is not None
     assert valuation.ev_to_ebitda is not None
     assert valuation.market_cap_share_basis == "listed_share_count"
+
+
+def test_signed_ir_capex_is_canonicalized_as_positive_cash_outflow():
+    evidence, fundamentals, canonical = _ir_current_metric_inputs(
+        "ANY",
+        [
+            {
+                "metric_name": "capex",
+                "value": -152_940_000,
+                "unit": "HUF",
+                "period": "FY2026_Q1",
+                "period_bucket": "annual",
+                "statement_type": "cash_flow",
+            }
+        ],
+        "BSE_ANY_OFFICIAL_FINANCIALS",
+        "company_ir",
+        "https://example.invalid/any",
+        "2026-07-27T00:00:00+00:00",
+    )
+
+    assert evidence[0].value == 152_940_000
+    assert "cash outflow" in evidence[0].statement
+    assert fundamentals["annual"]["capex"] == 152_940_000
+    assert canonical[0].value == 152_940_000
+    assert "positive expenditure magnitude" in canonical[0].reconciliation_notes[0]
 
 
 def test_any_bearish_alignment_is_not_falsely_called_death_cross():
