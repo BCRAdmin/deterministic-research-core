@@ -480,7 +480,8 @@ def test_bear_case_uses_balance_sheet_constraint_and_primary_risk_evidence():
     claims = generate_research_claims(data, metrics, ledger, decision, validation)
     bear = next(claim for claim in claims if claim.section == "Bear Case")
 
-    assert "do not erase separate balance-sheet or issuer-disclosed downside evidence" in bear.claim
+    assert "Separate balance-sheet or issuer-disclosed downside evidence anchors" in bear.claim
+    assert "does not by itself prove current operating deterioration" in bear.claim
     assert "Book equity of -$5.93B" in bear.claim
     assert "current ratio of 0.81x" in bear.claim
     assert "expiration or loss of patent protection" in bear.claim
@@ -526,7 +527,7 @@ def test_money_formatters_place_negative_sign_before_usd_symbol():
     assert _money(-11_625_000_000, "HUF") == "-11.62B HUF"
 
 
-def test_bear_case_distinguishes_bullish_bearish_and_mixed_trends():
+def test_bear_case_keeps_bullish_bearish_and_mixed_trends_as_timing_only():
     _, metrics, _, _, _ = _load_packet("SNOW")
     metrics.technical.close = 120.0
     metrics.technical.sma_50 = 110.0
@@ -540,9 +541,12 @@ def test_bear_case_distinguishes_bullish_bearish_and_mixed_trends():
     metrics.technical.close = 105.0
     mixed = _bear_case_claim_text("TEST", metrics, "USD")
 
-    assert "bullish long-term trend state is not current downside evidence" in bullish
-    assert "bearish long-term trend state is current downside evidence" in bearish
-    assert "mixed long-term trend state is inconclusive" in mixed
+    assert "provisional bullish long-term trend state" in bullish
+    assert "provisional bearish long-term trend state" in bearish
+    assert "provisional mixed long-term trend state" in mixed
+    for text in (bullish, bearish, mixed):
+        assert "does not establish operating deterioration" in text
+        assert "fundamental, valuation or issuer-risk evidence" in text
 
 
 def test_bear_case_treats_negative_fcf_as_downside_not_counterevidence():
@@ -554,10 +558,10 @@ def test_bear_case_treats_negative_fcf_as_downside_not_counterevidence():
 
     bullish = _bear_case_claim_text("TEST", metrics, "USD")
 
-    assert "bullish long-term trend state is counterevidence" in bullish
-    assert "negative FCF TTM of -$11.62B" in bullish
+    assert "Negative FCF TTM of -$11.62B" in bullish
     assert "current fundamental downside evidence" in bullish
-    assert "technical trend offsets but does not erase that risk" in bullish
+    assert "does not establish operating deterioration" in bullish
+    assert "counterevidence" not in bullish
 
 
 def test_bull_case_does_not_present_negative_fcf_as_cash_generation():
@@ -633,7 +637,8 @@ def test_capex_driven_negative_fcf_is_not_called_weak_operations():
     }
     assert "funding requirement rather than proving weak operations" in bull.claim
     assert "does not by itself establish weak operations" in bear.claim
-    assert "The technical picture for SNOW is" in bear.claim
+    assert "Technical timing context is" in bear.claim
+    assert "does not establish operating deterioration" in bear.claim
     assert all(
         "weak cash conversion" not in claim.claim
         for claim in (fundamental, bull, bear)
@@ -1231,7 +1236,8 @@ def test_final_rating_acknowledges_negative_fcf_before_defending_hold():
     assert "Negative FCF and the cautious measured fundamental signal" in section
     assert "Negative FCF is already fundamental downside evidence" in section
     assert "valuation is unbenchmarked" in section
-    assert "the technical basis is partial" in section
+    assert "technical timing overlay" in section
+    assert "does not enter the long-term composite score" in section
     assert "A raw multiple or an isolated price signal" not in section
 
 
@@ -1278,7 +1284,7 @@ def test_final_rating_balances_non_positive_equity_against_positive_fcf():
     assert "A raw multiple or an isolated price signal" not in section
 
 
-def test_final_rating_balances_bearish_technical_state_against_positive_fcf():
+def test_final_rating_keeps_bearish_technical_state_outside_company_rating():
     _, metrics, _, _, decision = _load_packet("SNOW")
     metrics.fundamentals.equity = 94_330_000_000
     metrics.fundamentals.free_cash_flow_ttm = 12_552_000_000
@@ -1297,10 +1303,10 @@ def test_final_rating_balances_bearish_technical_state_against_positive_fcf():
         decision,
     )
 
-    assert "do not override the observed bearish technical direction" in section
-    assert "bearish technical state is not dismissed" in section
-    assert "positive FCF and the constructive fundamental signal" in section
-    assert "corroborating fundamental deterioration" in section
+    assert "not enough without calibrated valuation support" in section
+    assert "Technical direction can affect timing confidence" in section
+    assert "Positive FCF and the constructive fundamental signal" in section
+    assert "fundamental, valuation or issuer-risk deterioration" in section
     assert "A raw multiple or an isolated price signal" not in section
 
 
@@ -1338,9 +1344,9 @@ def test_mixed_profit_declines_remain_visible_across_thesis_bear_and_rating():
     assert "constructive fundamental signal" not in thesis
     assert "operating-income and net-income declines are current downside evidence" in bear
     assert "Positive FCF TTM of $3.03B" in bear
-    assert "do not erase the profit weakness" in bear
+    assert "does not erase the profit weakness" in bear
     assert "Current-period operating-income and net-income declines" in rating
-    assert "positive FCF and the bullish technical direction" in rating
+    assert "positive FCF is measured counterevidence" in rating
     assert "profit weakness to persist" in rating
     assert "A raw multiple or an isolated price signal" not in rating
 
@@ -1364,7 +1370,7 @@ def test_mixed_profit_declines_remain_visible_across_thesis_bear_and_rating():
     assert "fundamental signal is constructive" not in final_claim.claim
     assert "current_period_operating_income_growth_yoy" in final_claim.metric_refs
     assert "current_period_net_income_growth_yoy" in final_claim.metric_refs
-    assert "are measured counterevidence" in rating
+    assert "is measured counterevidence" in rating
     research_report = compose_research_report(
         data,
         metrics,
@@ -1374,7 +1380,8 @@ def test_mixed_profit_declines_remain_visible_across_thesis_bear_and_rating():
         claims,
     )
     assert "Current-period operating-income and net-income declines" in research_report
-    assert "positive FCF and the bullish technical direction" in research_report
+    assert "positive FCF does not erase" in research_report
+    assert "technical timing evidence" in research_report
     assert "A raw multiple or an isolated price signal" not in research_report
 
 
@@ -1434,7 +1441,8 @@ def test_missing_fcf_keeps_profit_declines_visible_across_complete_report_logic(
     assert "free_cash_flow_ttm" not in financial_bull.metric_refs
     assert "operating-income and net-income declines" in bear.claim
     assert "FCF is unavailable" in bear.claim
-    assert "bullish long-term trend state is counterevidence" in bear.claim
+    assert "Technical timing context is" in bear.claim
+    assert "does not establish operating deterioration" in bear.claim
     assert "pressured but incomplete" in thesis
     assert "weaker current-period profit comparisons" in thesis
     assert "pressured but incomplete" in final_claim.claim
@@ -1443,11 +1451,11 @@ def test_missing_fcf_keeps_profit_declines_visible_across_complete_report_logic(
     assert "FCF is unavailable" in rating
     assert "FCF of not available" not in rating
     assert "P/FCF of not available" not in rating
-    assert "bullish technical direction is counterevidence" in rating
+    assert "technical timing overlay" in rating
     assert "A raw multiple or an isolated price signal" not in rating
     assert "Current-period operating-income and net-income declines" in research_report
     assert "FCF is unavailable" in research_report
-    assert "bullish technical direction is counterevidence" in research_report
+    assert "technical timing evidence" in research_report
     assert "A raw multiple or an isolated price signal" not in research_report
 
 
@@ -1501,11 +1509,13 @@ def test_final_rating_names_partial_bullish_price_basis_precisely():
         decision,
     )
 
+    assert "technical timing overlay has RSI" in section
     assert (
-        "available technical direction is bullish but partial because the price "
-        "series is not confirmed as corporate-action adjusted"
+        "direction bullish but partial because the price series is not confirmed "
+        "as corporate-action adjusted"
         in section
     )
+    assert "does not enter the long-term composite score" in section
     assert "neutral or incomplete" not in section
     assert (
         _constructive_cash_conversion_trigger(-11_625_000_000)

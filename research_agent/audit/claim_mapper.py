@@ -147,6 +147,14 @@ METRIC_PATHS = {
     "close": "technical.close",
     "rsi_14": "technical.rsi_14",
     "current_ratio": "fundamentals.current_ratio",
+    "dcf_base_discount_rate": "valuation.sensitivity.scenarios.1.discount_rate",
+    "dcf_base_terminal_growth_rate": (
+        "valuation.sensitivity.scenarios.1.terminal_growth_rate"
+    ),
+    "reverse_dcf_implied_fcf_growth": (
+        "valuation.sensitivity.reverse_dcf_implied_fcf_growth"
+    ),
+    "financial_risk_coverage": "risk.coverage_ratio",
     "diluted_share_count_yoy": "fundamentals.diluted_share_count_yoy",
     "current_period_revenue_growth_yoy": (
         "fundamentals.current_period_revenue_growth_yoy"
@@ -169,6 +177,23 @@ class MappedMetric(BaseModel):
 def infer_possible_metric(text: str, unit: Optional[str] = None) -> Optional[str]:
     normalized = _normalize_text(text)
     compact = normalized.replace(" / ", "/")
+    if str(unit or "").lower() == "percent":
+        assumption_metric = _nearest_labeled_metric(
+            normalized,
+            {
+                "financial input coverage": "financial_risk_coverage",
+                "financial-input coverage": "financial_risk_coverage",
+                "terminal growth": "dcf_base_terminal_growth_rate",
+                "discount rate": "dcf_base_discount_rate",
+                **(
+                    {"fcf growth rate": "reverse_dcf_implied_fcf_growth"}
+                    if "reverse dcf" in normalized
+                    else {}
+                ),
+            },
+        )
+        if assumption_metric is not None:
+            return assumption_metric
     if (
         str(unit or "").lower() == "percent"
         and "share count" in normalized
@@ -261,7 +286,10 @@ def map_claim_to_metric(
 def _get_nested_value(payload: Any, path: str) -> Optional[float]:
     value = payload
     for part in path.split("."):
-        if isinstance(value, dict):
+        if isinstance(value, (list, tuple)) and part.isdigit():
+            index = int(part)
+            value = value[index] if index < len(value) else None
+        elif isinstance(value, dict):
             value = value.get(part)
         else:
             value = getattr(value, part, None)
@@ -308,10 +336,48 @@ def _nearest_growth_metric(text: str) -> Optional[str]:
             "net income by",
         ),
     }
-    candidates = [
-        (semantic.rfind(marker), metric_name)
-        for metric_name, metric_markers in markers.items()
-        for marker in metric_markers
-        if semantic.rfind(marker) >= 0
-    ]
-    return max(candidates)[1] if candidates else None
+    return _nearest_labeled_metric(
+        semantic,
+        {
+            marker: metric_name
+            for metric_name, metric_markers in markers.items()
+            for marker in metric_markers
+        },
+        prefer_preceding=True,
+    )
+
+
+def _nearest_labeled_metric(
+    text: str,
+    markers: dict[str, str],
+    *,
+    prefer_preceding: bool = False,
+) -> Optional[str]:
+    anchor = text.find("metricvalueanchor")
+    anchor_end = anchor + len("metricvalueanchor") if anchor >= 0 else anchor
+    candidates: list[tuple[int, int, str]] = []
+    for marker, metric_name in markers.items():
+        start = text.find(marker)
+        while start >= 0:
+            end = start + len(marker)
+            if anchor < 0:
+                distance = start
+            elif end <= anchor:
+                distance = anchor - end
+            elif start >= anchor_end:
+                distance = start - anchor_end
+            else:
+                distance = 0
+            # Prefer a preceding label on an exact tie.
+            follows_value = int(anchor >= 0 and start >= anchor_end)
+            candidates.append((distance, follows_value, metric_name))
+            start = text.find(marker, start + 1)
+    if not candidates:
+        return None
+    if prefer_preceding:
+        nearby_preceding = [
+            item for item in candidates if item[1] == 0 and item[0] <= 32
+        ]
+        if nearby_preceding:
+            return min(nearby_preceding)[2]
+    return min(candidates)[2]

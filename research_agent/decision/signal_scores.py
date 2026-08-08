@@ -108,13 +108,22 @@ def score_risk(
     triggered_rules: Optional[list[str]] = None,
     calibration_mode: str = "live",
 ) -> float:
-    """Return no company-risk score until a real risk model exists.
+    """Apply only the deterministic financial-risk screen as downside weight.
 
-    Validation and audit findings remain hard quality and publication gates.
-    They describe evidence integrity, not the issuer's economic risk, so they
-    must not be converted into a market or company score.
+    Validation and audit findings remain separate quality/publication gates.
+    Qualitative business risks remain human-review evidence and cannot create a
+    positive score or be inferred from disclosure volume.
     """
 
+    score = metrics.risk.financial_risk_score
+    if score is None:
+        return 0.0
+    if score >= 75:
+        return -2.0
+    if score >= 50:
+        return -1.0
+    if score >= 25:
+        return -0.5
     return 0.0
 
 
@@ -148,7 +157,9 @@ def calculate_signal_scores_with_rules(
     technical = score_technicals(metrics, weights, triggered_rules, calibration_mode)
     valuation = score_valuation(metrics, weights, triggered_rules, calibration_mode)
     risk = score_risk(metrics, validation_report, audit_report, weights, triggered_rules, calibration_mode)
-    composite = _clamp(fundamental + technical + valuation)
+    # The composite is the long-term analytical score. Technicals remain a
+    # separate timing overlay and must not rewrite the company conclusion.
+    composite = _clamp(fundamental + valuation + risk)
     scores = SignalScores(
         fundamental_score=fundamental,
         technical_score=technical,
@@ -170,7 +181,7 @@ def calculate_signal_scores_with_rules(
             else "not_measured"
         ),
         valuation_status=_valuation_status(metrics),
-        risk_status="not_measured",
+        risk_status=metrics.risk.status,
     )
     return scores, _ordered_unique(triggered_rules), weights.version, calibration_mode
 
@@ -208,6 +219,11 @@ def _coverage_status(values: list[object]) -> str:
 
 
 def _valuation_status(metrics: MetricsPacket) -> str:
+    sensitivity_status = metrics.valuation.sensitivity.status
+    if sensitivity_status == "measured":
+        return "scenario_measured"
+    if sensitivity_status == "illustrative_only":
+        return "illustrative_only"
     values = [
         metrics.valuation.market_cap,
         metrics.valuation.trailing_pe,

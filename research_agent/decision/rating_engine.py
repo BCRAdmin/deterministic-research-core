@@ -47,56 +47,50 @@ def determine_rating_permission(
 def determine_unconstrained_analytical_rating(
     scores: SignalScores,
 ) -> tuple[Rating, str]:
-    """Reach the research conclusion before any action or publication policy."""
+    """Reach the long-term research conclusion before publication policy.
+
+    Fundamentals, valuation and issuer risk form the conclusion. Technicals
+    remain an explicitly separate timing overlay and therefore neither unlock
+    nor block a long-term rating.
+    """
 
     fundamental = scores.fundamental_score
-    technical = scores.technical_score
-    if (
-        scores.fundamental_status != "measured"
-        or scores.technical_status != "measured"
-    ):
-        if (
-            scores.fundamental_status != "measured"
-            and scores.technical_status != "measured"
-        ):
-            reason = (
-                "A non-neutral rating requires measured core fundamentals and a "
-                "price series confirmed as corporate-action adjusted; both inputs "
-                "are incomplete."
-            )
-        elif scores.fundamental_status != "measured":
-            reason = (
-                "Core fundamental coverage is incomplete, so technical direction "
-                "alone cannot support a non-neutral rating."
-            )
-        else:
-            reason = (
-                "The available price series is not confirmed as corporate-action "
-                "adjusted, so the technical signal remains partial and cannot "
-                "support a non-neutral rating on its own."
-            )
+    if scores.fundamental_status != "measured":
         return (
             Rating.HOLD,
-            reason,
+            "Core fundamental coverage is incomplete. The neutral label is a "
+            "safety fallback, while technical direction remains timing context only.",
         )
-    if fundamental <= -1 and technical <= -1:
+    if fundamental <= -1 and (
+        scores.risk_score <= -1 or scores.valuation_score <= -1
+    ):
         return (
             Rating.UNDERWEIGHT,
-            "Negative fundamental direction and a bearish long-term trend support an underweight analytical stance.",
+            "Negative fundamental direction is confirmed by measured valuation "
+            "or financial-risk downside; technical evidence remains a timing overlay.",
         )
-    if fundamental >= 1 and technical <= -1:
+    if fundamental >= 1 and scores.valuation_score >= 1:
+        return (
+            Rating.ACCUMULATE,
+            "Constructive fundamentals and calibrated valuation evidence support "
+            "an accumulate analytical stance; technical evidence only affects timing.",
+        )
+    if fundamental >= 1 and scores.valuation_status in {
+        "unbenchmarked",
+        "scenario_measured",
+        "illustrative_only",
+        "not_measured",
+    }:
         return (
             Rating.HOLD,
-            "Positive cash-flow direction is offset by a bearish long-term trend.",
-        )
-    if fundamental >= 1 and technical >= 1:
-        return (
-            Rating.HOLD,
-            "Constructive directional evidence is not enough for an overweight rating without benchmarked valuation evidence.",
+            "Constructive fundamentals are not enough for an overweight rating "
+            "without calibrated valuation evidence. Technical evidence remains "
+            "a timing overlay.",
         )
     return (
         Rating.HOLD,
-        "Mixed evidence supports a neutral analytical stance.",
+        "The measured long-term evidence supports a neutral analytical stance; "
+        "technical evidence remains a timing overlay.",
     )
 
 
@@ -140,7 +134,7 @@ def build_decision_packet(
         rating_permission=permission,
         action_policy=build_action_policy(permission.preferred_rating, metrics_packet),
         key_reasons=_build_key_reasons(scores),
-        key_risks=_build_key_risks(),
+        key_risks=_build_key_risks(metrics_packet),
         triggered_rules=triggered_rules,
         score_version=score_version,
         calibration_mode=mode,
@@ -175,11 +169,21 @@ def _conclusion_status(
 
 
 def _evidence_status(scores: SignalScores) -> str:
-    core_states = {scores.fundamental_status, scores.technical_status}
-    all_states = core_states | {scores.valuation_status, scores.risk_status}
-    if "not_measured" in core_states:
+    if scores.fundamental_status == "not_measured":
         return "incomplete"
-    if all_states & {"partial", "unbenchmarked", "not_measured"}:
+    all_states = {
+        scores.fundamental_status,
+        scores.technical_status,
+        scores.valuation_status,
+        scores.risk_status,
+    }
+    if all_states & {
+        "partial",
+        "unbenchmarked",
+        "scenario_measured",
+        "illustrative_only",
+        "not_measured",
+    }:
         return "partial"
     return "complete"
 
@@ -192,9 +196,26 @@ def _build_key_reasons(scores: SignalScores) -> list[str]:
             f"Valuation score: {scores.valuation_score} "
             f"(measurement status: {scores.valuation_status})"
         ),
+        (
+            f"Risk score: {scores.risk_score} "
+            f"(measurement status: {scores.risk_status})"
+        ),
     ]
     return reasons
 
 
-def _build_key_risks() -> list[str]:
-    return ["Company risk score: not measured by the current decision model."]
+def _build_key_risks(metrics: MetricsPacket) -> list[str]:
+    assessment = metrics.risk
+    if assessment.financial_risk_score is None:
+        return ["Company risk score: not measured by the current decision model."]
+    risks = [
+        (
+            f"Financial risk screen: {assessment.financial_risk_score:.2f}/100 "
+            f"({assessment.financial_risk_band}; coverage {assessment.coverage_ratio:.0%})."
+        )
+    ]
+    risks.extend(f"Risk flag: {flag}." for flag in assessment.risk_flags)
+    risks.append(
+        "Qualitative business-risk severity remains subject to independent human review."
+    )
+    return risks

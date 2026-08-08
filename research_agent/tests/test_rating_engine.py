@@ -121,7 +121,7 @@ def test_non_positive_equity_offsets_positive_fcf_without_inventing_a_ratio():
 
     assert score_fundamentals(metrics) == 0
     assert packet.signal_scores.fundamental_score == 0
-    assert packet.signal_scores.composite_score == 1
+    assert packet.signal_scores.composite_score == 0
     assert packet.triggered_rules == [
         "FCF_TTM_POSITIVE",
         "EQUITY_NON_POSITIVE",
@@ -170,11 +170,8 @@ def test_unbenchmarked_strong_setup_is_capped_at_hold():
     )
     assert partial_negative_permission.preferred_rating == Rating.HOLD
     assert partial_negative_permission.allowed_ratings == [Rating.HOLD]
-    assert (
-        "measured core fundamentals and a price series confirmed as "
-        "corporate-action adjusted"
-        in partial_negative_permission.reason
-    )
+    assert "Core fundamental coverage is incomplete" in partial_negative_permission.reason
+    assert "timing context only" in partial_negative_permission.reason
 
     partial_technical_permission = determine_rating_permission(
         SignalScores(
@@ -190,10 +187,8 @@ def test_unbenchmarked_strong_setup_is_capped_at_hold():
         )
     )
     assert partial_technical_permission.preferred_rating == Rating.HOLD
-    assert (
-        "price series is not confirmed as corporate-action adjusted"
-        in partial_technical_permission.reason
-    )
+    assert "neutral analytical stance" in partial_technical_permission.reason
+    assert "timing overlay" in partial_technical_permission.reason
 
 
 def test_validation_quality_cannot_change_the_company_rating():
@@ -221,7 +216,7 @@ def test_validation_quality_cannot_change_the_company_rating():
     assert permission.allowed_ratings == [Rating.HOLD]
     assert scores.risk_score == 0
     assert scores.risk_status == "not_measured"
-    assert scores.composite_score == 2
+    assert scores.composite_score == 1
     assert Rating.STRONG_BUY in permission.blocked_ratings
     assert Rating.ACCUMULATE in permission.blocked_ratings
 

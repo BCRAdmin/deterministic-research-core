@@ -296,6 +296,33 @@ class _ClaimBuilder:
         selected_risk_evidence = self._selected_risk_evidence(limit=4)
         for index, risk_evidence in enumerate(selected_risk_evidence):
             self.add_risk(risk_evidence, explain_disclosure=index == 0)
+        risk = self.metrics.risk
+        if risk.financial_risk_score is not None:
+            self.add(
+                "Key Risks",
+                "risk",
+                "risk",
+                (
+                    f"The deterministic financial-risk screen is "
+                    f"{risk.financial_risk_score:.1f}/100 "
+                    f"({risk.financial_risk_band}) with {risk.coverage_ratio:.0%} "
+                    "financial-input coverage. "
+                    f"{_risk_coverage_sentence(risk.coverage_ratio)} "
+                    "This is not a probability of loss; "
+                    "qualitative business-risk severity remains a human-review item."
+                ),
+                ["financial_risk_score"],
+                "medium",
+                "high",
+                counterargument=(
+                    "A financial-statement screen cannot quantify competitive, "
+                    "regulatory, governance or execution severity."
+                ),
+                implication=(
+                    "Use the score as a comparable downside screen and review the "
+                    "issuer-disclosed risk factors separately."
+                ),
+            )
 
         fcf_claim_metrics = ["free_cash_flow_ttm"]
         if _negative_fcf_is_capex_funding_gap(self.metrics):
@@ -644,6 +671,47 @@ class _ClaimBuilder:
                 "cash-flow durability evidence."
             ),
         )
+        sensitivity = self.metrics.valuation.sensitivity
+        if sensitivity.scenarios:
+            scenario_metrics = [
+                f"dcf_{scenario.name}_equity_value"
+                for scenario in sensitivity.scenarios
+            ]
+            if sensitivity.reverse_dcf_implied_fcf_growth is not None:
+                scenario_metrics.append("reverse_dcf_implied_fcf_growth")
+            scenario_values = {
+                scenario.name: scenario for scenario in sensitivity.scenarios
+            }
+            reverse_text = (
+                " The standardized reverse DCF implies a five-year FCF growth "
+                f"rate of {sensitivity.reverse_dcf_implied_fcf_growth:.1%} "
+                "at a 10% discount rate and 2% terminal growth."
+                if sensitivity.reverse_dcf_implied_fcf_growth is not None
+                else ""
+            )
+            self.add(
+                "Valuation / Multiples",
+                "valuation",
+                "valuation_metric",
+                (
+                    "Standardized equity-DCF sensitivity, not a company forecast: "
+                    f"bear {_money(scenario_values['bear'].equity_value, self.data_packet.price_basis.currency)}, "
+                    f"base {_money(scenario_values['base'].equity_value, self.data_packet.price_basis.currency)} and "
+                    f"bull {_money(scenario_values['bull'].equity_value, self.data_packet.price_basis.currency)}."
+                    f"{reverse_text}"
+                ),
+                scenario_metrics,
+                "medium",
+                "high",
+                counterargument=(
+                    "DCF results are highly sensitive to growth, discount-rate and "
+                    "terminal assumptions and require business-model review."
+                ),
+                implication=(
+                    "Compare the current equity value with the whole range; do not "
+                    "treat the base case as a precise price target."
+                ),
+            )
         if (
             self.metrics.valuation.ev_to_sales is None
             and self.metrics.valuation.price_to_fcf is None
@@ -681,7 +749,8 @@ class _ClaimBuilder:
                 f"{self._money(self.metrics.technical.sma_200)} and RSI "
                 f"{_number(self.metrics.technical.rsi_14)}. The combined "
                 "long-term trend state is "
-                f"{classify_technical_trend(self.metrics)}."
+                f"{classify_technical_trend(self.metrics)}. "
+                f"{_technical_basis_sentence(self.metrics)}"
             ),
             ["close", "sma_50", "sma_200", "rsi_14"],
             "high",
@@ -1414,6 +1483,25 @@ class _ClaimBuilder:
                 value = getattr(section, metric_name)
                 if isinstance(value, (int, float)):
                     return float(value)
+        if metric_name == "financial_risk_score":
+            value = self.metrics.risk.financial_risk_score
+            return float(value) if value is not None else None
+        if metric_name == "reverse_dcf_implied_fcf_growth":
+            value = self.metrics.valuation.sensitivity.reverse_dcf_implied_fcf_growth
+            return float(value) if value is not None else None
+        if metric_name.startswith("dcf_") and metric_name.endswith("_equity_value"):
+            scenario_name = metric_name.removeprefix("dcf_").removesuffix(
+                "_equity_value"
+            )
+            scenario = next(
+                (
+                    item
+                    for item in self.metrics.valuation.sensitivity.scenarios
+                    if item.name == scenario_name
+                ),
+                None,
+            )
+            return float(scenario.equity_value) if scenario is not None else None
         return _canonical_value(self.canonical, metric_name)
 
     def _money(self, value: Optional[float]) -> str:
@@ -1692,6 +1780,15 @@ def _yoy_change_phrase(label: str, value: float) -> str:
 
 def _technical_interpretation(metrics: MetricsPacket) -> str:
     trend_state = classify_technical_trend(metrics)
+    verified_basis = metrics.technical.price_series_basis in {
+        "corporate_action_adjusted",
+        "post_corporate_action_only",
+    }
+    if not verified_basis and trend_state != "not_measured":
+        return (
+            f"a provisional {trend_state} long-term trend state from a price "
+            "series whose corporate-action adjustment is not confirmed"
+        )
     if trend_state == "bullish":
         return "a bullish long-term trend state"
     if trend_state == "bearish":
@@ -1699,6 +1796,30 @@ def _technical_interpretation(metrics: MetricsPacket) -> str:
     if trend_state == "mixed":
         return "a mixed long-term trend state"
     return "an unavailable long-term trend state"
+
+
+def _technical_basis_sentence(metrics: MetricsPacket) -> str:
+    basis = metrics.technical.price_series_basis
+    if basis == "corporate_action_adjusted":
+        return "The price series is confirmed as corporate-action adjusted."
+    if basis == "post_corporate_action_only":
+        return (
+            "The series begins after the latest identified corporate action; "
+            "longer-horizon comparisons remain limited."
+        )
+    return (
+        "Corporate-action adjustment is not confirmed, so the direction is "
+        "provisional timing context only."
+    )
+
+
+def _risk_coverage_sentence(coverage_ratio: float) -> str:
+    if coverage_ratio < 1:
+        return (
+            "Because coverage is incomplete, the observed score cannot support "
+            "a low-risk conclusion."
+        )
+    return "The financial-input screen is complete."
 
 
 def _negative_fcf_is_capex_funding_gap(metrics: MetricsPacket) -> bool:
@@ -1753,47 +1874,24 @@ def _bear_case_claim_text(
     *,
     has_separate_downside_evidence: bool = False,
 ) -> str:
-    trend_state = classify_technical_trend(metrics)
     fcf_value = metrics.fundamentals.free_cash_flow_ttm
     fcf = _money(fcf_value, currency)
+    timing_context = (
+        f"Technical timing context is {_technical_interpretation(metrics)}; "
+        "it does not establish operating deterioration or change the company rating."
+    )
     if fcf_value is not None and fcf_value < 0:
         if _negative_fcf_is_capex_funding_gap(metrics):
             return (
-                f"The technical picture for {ticker} is "
-                f"{_technical_interpretation(metrics)} and remains timing evidence. "
                 f"Negative FCF TTM of {fcf} reflects capital expenditure exceeding "
                 "positive operating cash flow. This is a capital-intensity and "
                 "funding risk, but without a maintenance-versus-growth split it does "
-                "not by itself establish weak operations."
-            )
-        if trend_state == "bearish":
-            return (
-                f"{ticker}'s bearish long-term trend state and negative FCF TTM "
-                f"of {fcf} are current downside evidence. They do not by "
-                "themselves explain the cause or durability of the weakness, but "
-                "the current packet contains both technical and cash-conversion "
-                "support for a bear case."
-            )
-        if trend_state == "bullish":
-            return (
-                f"{ticker}'s bullish long-term trend state is counterevidence to "
-                f"the bear case, while negative FCF TTM of {fcf} is current "
-                "fundamental downside evidence. The bear case therefore rests on "
-                "weak cash conversion; the technical trend offsets but does not "
-                "erase that risk."
-            )
-        if trend_state == "mixed":
-            return (
-                f"{ticker}'s mixed long-term trend state neither confirms nor "
-                f"refutes the bear case, while negative FCF TTM of {fcf} is "
-                "current fundamental downside evidence. The current bear case "
-                "rests on weak cash conversion without technical confirmation."
+                f"not by itself establish weak operations. {timing_context}"
             )
         return (
-            f"{ticker}'s long-term technical trend is not fully measured, while "
-            f"negative FCF TTM of {fcf} is current fundamental downside "
-            "evidence. The bear case rests on weak cash conversion without a "
-            "measured technical confirmation or offset."
+            f"Negative FCF TTM of {fcf} is current fundamental downside evidence "
+            f"for {ticker}. The bear case rests on weak cash conversion; cause and "
+            f"durability still require business-model evidence. {timing_context}"
         )
     profit_declines = [
         {
@@ -1811,29 +1909,12 @@ def _bear_case_claim_text(
             if len(profit_declines) == 1
             else f"{decline_text} declines"
         )
-        trend_context = {
-            "bullish": (
-                "The bullish long-term trend state is counterevidence, but does "
-                "not erase the reported weakness."
-            ),
-            "bearish": (
-                "The bearish long-term trend state adds technical confirmation, "
-                "but does not establish the cause or durability of the weakness."
-            ),
-            "mixed": (
-                "The mixed long-term trend state neither confirms nor offsets "
-                "the reported weakness."
-            ),
-        }.get(
-            trend_state,
-            "The long-term technical trend is unavailable and adds no confirmation.",
-        )
         return (
             f"{ticker}'s current-period {decline_subject} "
             f"{'is' if len(profit_declines) == 1 else 'are'} current downside "
             f"evidence. FCF is unavailable, so the current packet cannot confirm "
-            f"or offset that weakness through cash conversion. {trend_context} "
-            "Persistence and cause still require separate confirmation."
+            "or offset that weakness through cash conversion. Persistence and "
+            f"cause still require separate confirmation. {timing_context}"
         )
     if profit_declines and fcf_value is not None and fcf_value > 0:
         decline_text = " and ".join(profit_declines)
@@ -1843,77 +1924,23 @@ def _bear_case_claim_text(
             else f"{decline_text} declines"
         )
         decline_verb = "is" if len(profit_declines) == 1 else "are"
-        if trend_state == "bullish":
-            return (
-                f"{ticker}'s current-period {decline_subject} {decline_verb} current "
-                f"downside evidence. Positive FCF TTM of {fcf} and the bullish "
-                "long-term trend state are counterevidence, but do not erase the "
-                "profit weakness. A durable bear case requires that weakness to "
-                "persist or be confirmed by weaker cash conversion; the current "
-                "packet does not establish its cause."
-            )
-        if trend_state == "bearish":
-            return (
-                f"{ticker}'s current-period {decline_subject} and bearish "
-                "long-term trend state are current downside evidence. Positive FCF "
-                f"TTM of {fcf} is counterevidence; persistence and cause still need "
-                "separate confirmation."
-            )
         return (
             f"{ticker}'s current-period {decline_subject} {decline_verb} current downside "
-            f"evidence. Positive FCF TTM of {fcf} is counterevidence, while the "
-            f"{trend_state} technical state does not establish the cause or "
-            "durability of the profit weakness."
-        )
-    if trend_state == "bearish":
-        return (
-            f"{ticker}'s bearish long-term trend state is current downside "
-            f"evidence. FCF TTM of {fcf} is the counterweight; without "
-            "separate operating evidence, the technical state alone does not "
-            "establish company-specific deterioration."
-        )
-    if trend_state == "bullish":
-        if has_separate_downside_evidence:
-            return (
-                f"{ticker}'s bullish long-term trend state and positive FCF TTM "
-                f"of {fcf} are counterevidence, but do not erase separate "
-                "balance-sheet or issuer-disclosed downside evidence. That "
-                "evidence anchors a bear case without proving current operating "
-                "deterioration or weaker cash generation."
-            )
-        return (
-            f"{ticker}'s bullish long-term trend state is not current downside "
-            f"evidence. FCF TTM of {fcf} is also counterevidence. A bear case "
-            "requires a future technical reversal or separate evidence of "
-            "weaker cash generation; neither is established by the current "
-            "packet."
-        )
-    if trend_state == "mixed":
-        if has_separate_downside_evidence:
-            return (
-                f"{ticker}'s mixed long-term trend state is inconclusive and FCF "
-                f"TTM of {fcf} is counterevidence. Separate balance-sheet or "
-                "issuer-disclosed downside evidence nevertheless anchors the bear "
-                "case without proving current operating deterioration."
-            )
-        return (
-            f"{ticker}'s mixed long-term trend state is inconclusive rather than "
-            f"current downside evidence. FCF TTM of {fcf} is the counterweight. "
-            "A bear case requires downside confirmation or separate evidence "
-            "of weaker cash generation."
+            f"evidence. Positive FCF TTM of {fcf} is counterevidence, but does not "
+            "erase the profit weakness. A durable bear case requires persistence "
+            f"or weaker cash conversion. {timing_context}"
         )
     if has_separate_downside_evidence:
         return (
-            f"{ticker}'s long-term technical trend is not fully measured and FCF "
-            f"TTM of {fcf} is counterevidence. Separate balance-sheet or "
-            "issuer-disclosed downside evidence nevertheless anchors the bear "
-            "case without proving current operating deterioration."
+            f"Separate balance-sheet or issuer-disclosed downside evidence anchors "
+            f"the bear case for {ticker}. FCF TTM of {fcf} is counterevidence and "
+            "the available evidence does not by itself prove current operating "
+            f"deterioration. {timing_context}"
         )
     return (
-        f"{ticker}'s long-term technical trend is not fully measured and therefore "
-        f"is not current downside evidence. FCF TTM of {fcf} is the available "
-        "counterweight; a bear case requires separate evidence of weaker cash "
-        "generation."
+        f"FCF TTM of {fcf} provides no current cash-conversion support for a bear "
+        f"case on {ticker}. A durable bear case requires separate fundamental, "
+        f"valuation or issuer-risk evidence. {timing_context}"
     )
 
 
@@ -2334,7 +2361,17 @@ def _final_rating_claim_text(
         "Valuation multiples are unbenchmarked and therefore add neither a "
         "positive nor a negative rating signal."
         if valuation_status == "unbenchmarked"
-        else "No benchmarked valuation signal is present."
+        else (
+            "The standardized DCF is measured sensitivity evidence but remains "
+            "uncalibrated and therefore does not move the rating."
+            if valuation_status == "scenario_measured"
+            else (
+                "The standardized DCF is illustrative because share-class price "
+                "equivalence is unverified and therefore does not move the rating."
+                if valuation_status == "illustrative_only"
+                else "No calibrated valuation signal is present."
+            )
+        )
     )
     current_profit_declines = [
         {
@@ -2389,9 +2426,10 @@ def _final_rating_claim_text(
     return (
         f"We rate {ticker} {preferred} at the validated close of "
         f"{_money(metrics.technical.close, currency)}. {reason} The factual "
-        f"anchors are {evidence_anchor}; the technical evidence indicates "
-        f"{_technical_interpretation(metrics)}. {fundamental_note} "
-        f"{valuation_note}"
+        f"anchors are {evidence_anchor}. {fundamental_note} {valuation_note} "
+        f"Separately, technical timing evidence indicates "
+        f"{_technical_interpretation(metrics)} and does not enter the long-term "
+        "composite score."
     )
 
 

@@ -102,6 +102,12 @@ to the registered OHLCV source.
 - Treat `action_policy` as a neutral research stance. Current packets must not
   contain personal position sizing, holding, entry, exit, or new-money
   instructions.
+- Treat technical scores as a timing overlay. They are excluded from the
+  long-term composite score and cannot create or block the company rating.
+- Preserve valuation states (`scenario_measured`, `illustrative_only`, and
+  `not_measured`) without upgrading a sensitivity to calibrated fair value.
+- Preserve financial-risk coverage. An incomplete financial screen must never
+  be rendered as a low-risk conclusion.
 
 Room16 maps its research taxonomy to the product taxonomy without upgrading
 conviction:

@@ -21,9 +21,12 @@ from research_agent.research_core.models.data_packet import (
 )
 from research_agent.research_core.models.metrics_packet import (
     FundamentalMetrics,
+    IssuerRiskAssessment,
     MetricsPacket,
     TechnicalMetrics,
     ValuationMetrics,
+    ValuationScenario,
+    ValuationSensitivity,
 )
 from research_agent.research_core.models.validation_report import ValidationReport
 from research_agent.research_core.reporting.report_builder import render_markdown_report
@@ -117,6 +120,55 @@ def test_markdown_numeric_extractor_normalizes_german_cash_claim():
     huf_claim = extract_numeric_claims("Revenue TTM is 65.51B HUF.")[0]
     assert huf_claim.normalized_value == pytest.approx(65_510_000_000)
     assert huf_claim.unit == "huf"
+
+
+def test_dcf_assumptions_and_risk_coverage_map_to_their_own_metrics():
+    markdown = (
+        "The standardized reverse DCF implies a five-year FCF growth rate of "
+        "19.9% at a 10% discount rate and 2% terminal growth.\n"
+        "The financial-risk screen has 100% financial-input coverage."
+    )
+    metrics = simple_metrics()
+    scenarios = [
+        ValuationScenario(
+            name=name,
+            starting_free_cash_flow=100,
+            free_cash_flow_growth_rate=growth,
+            discount_rate=discount,
+            terminal_growth_rate=terminal,
+            present_value_explicit_cash_flows=100,
+            present_value_terminal_value=100,
+            equity_value=200,
+        )
+        for name, growth, discount, terminal in (
+            ("bear", 0.0, 0.12, 0.01),
+            ("base", 0.05, 0.10, 0.02),
+            ("bull", 0.10, 0.08, 0.03),
+        )
+    ]
+    metrics.valuation.sensitivity = ValuationSensitivity(
+        status="measured",
+        reverse_dcf_implied_fcf_growth=0.199,
+        scenarios=scenarios,
+    )
+    metrics.risk = IssuerRiskAssessment(
+        status="partial",
+        financial_risk_score=20,
+        financial_risk_band="low_financial_risk",
+        measured_weight=1,
+        coverage_ratio=1,
+    )
+
+    claims = [claim for claim in extract_numeric_claims(markdown) if claim.unit == "percent"]
+    assert {claim.raw_text: claim.possible_metric for claim in claims} == {
+        "19.9%": "reverse_dcf_implied_fcf_growth",
+        "10%": "dcf_base_discount_rate",
+        "2%": "dcf_base_terminal_growth_rate",
+        "100%": "financial_risk_coverage",
+    }
+
+    audit = audit_markdown_report(markdown=markdown, metrics_packet=metrics)
+    assert not any(issue.code == "NUMERIC_MISMATCH" for issue in audit.issues)
 
     distribution_claims = extract_numeric_claims(
         "TTM shareholder distributions are $97.87B; FCF exceeds shareholder "

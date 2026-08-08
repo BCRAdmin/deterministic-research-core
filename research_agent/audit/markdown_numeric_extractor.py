@@ -138,7 +138,12 @@ def _claim(
 
 
 def _metric_context(line: str, start: int, end: int) -> str:
-    return line[max(0, start - 48) : end]
+    # Include the label after a value (for example ``10% discount rate``) as
+    # well as the lead-in before it. A one-sided window misclassified DCF
+    # assumptions as the nearest earlier FCF or price metric.
+    left = line[max(0, start - 56) : start]
+    right = line[end : min(len(line), end + 28)]
+    return f"{left} metricvalueanchor {right}"
 
 
 def _normalize_number(number_text: str, scale_text: Optional[str]) -> float:
@@ -172,8 +177,10 @@ def _normalize_plain_number(number_text: str) -> float:
 def _normalize_directional_percent(value: float, context: str) -> float:
     if value < 0:
         return value
+    anchor = context.casefold().find("metricvalueanchor")
+    anchor_end = anchor + len("metricvalueanchor") if anchor >= 0 else anchor
     direction_markers = [
-        (match.start(), -1.0)
+        (_span_distance(match.start(), match.end(), anchor, anchor_end), -1.0)
         for match in re.finditer(
             r"\b(?:decline|declined|decrease|decreased|fell)\b",
             context,
@@ -181,7 +188,7 @@ def _normalize_directional_percent(value: float, context: str) -> float:
         )
     ]
     direction_markers.extend(
-        (match.start(), 1.0)
+        (_span_distance(match.start(), match.end(), anchor, anchor_end), 1.0)
         for match in re.finditer(
             r"\b(?:growth|increase|increased|rose)\b",
             context,
@@ -190,7 +197,17 @@ def _normalize_directional_percent(value: float, context: str) -> float:
     )
     if not direction_markers:
         return value
-    return abs(value) * max(direction_markers)[1]
+    return abs(value) * min(direction_markers, key=lambda item: item[0])[1]
+
+
+def _span_distance(start: int, end: int, anchor_start: int, anchor_end: int) -> int:
+    if anchor_start < 0:
+        return start
+    if end <= anchor_start:
+        return anchor_start - end
+    if start >= anchor_end:
+        return start - anchor_end
+    return 0
 
 
 def _infer_period_hint(text: str) -> str:

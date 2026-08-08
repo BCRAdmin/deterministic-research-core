@@ -1,4 +1,4 @@
-from typing import Dict, Optional
+from typing import Dict, List, Literal, Optional
 
 from pydantic import BaseModel, Field
 
@@ -121,6 +121,73 @@ class ValuationMetrics(BaseModel):
     scenario_fcf_yield: Optional[float] = None
     scenario_share_basis: Optional[str] = None
     scenario_limitation: Optional[str] = None
+    sensitivity: "ValuationSensitivity" = Field(
+        default_factory=lambda: ValuationSensitivity()
+    )
+
+
+class ValuationScenario(BaseModel):
+    name: Literal["bear", "base", "bull"]
+    forecast_years: int = 5
+    starting_free_cash_flow: float
+    free_cash_flow_growth_rate: float
+    discount_rate: float
+    terminal_growth_rate: float
+    present_value_explicit_cash_flows: float
+    present_value_terminal_value: float
+    equity_value: float
+    implied_price: Optional[float] = None
+    upside_to_current_price: Optional[float] = None
+    assumption_basis: str = "standardized_sensitivity_not_forecast"
+
+
+class ValuationSensitivity(BaseModel):
+    method_id: str = "equity_dcf_sensitivity_v1"
+    policy_version: str = "room16_analytical_core_v0_2"
+    status: Literal["measured", "illustrative_only", "not_measured"] = (
+        "not_measured"
+    )
+    anchor_growth_rate: Optional[float] = None
+    anchor_growth_basis: Optional[str] = None
+    current_market_cap: Optional[float] = None
+    current_price: Optional[float] = None
+    share_basis: Optional[str] = None
+    reverse_dcf_implied_fcf_growth: Optional[float] = None
+    reverse_dcf_status: str = "not_measured"
+    model_range_low: Optional[float] = None
+    model_range_base: Optional[float] = None
+    model_range_high: Optional[float] = None
+    current_value_position: str = "not_measured"
+    scenarios: List[ValuationScenario] = Field(default_factory=list)
+    limitations: List[str] = Field(default_factory=list)
+
+
+class RiskComponent(BaseModel):
+    component_id: str
+    label: str
+    weight: float
+    status: Literal["measured", "partial", "not_measured"]
+    score: Optional[float] = None
+    coverage_ratio: float = 0.0
+    effective_weight: float = 0.0
+    observations: List[str] = Field(default_factory=list)
+    missing_inputs: List[str] = Field(default_factory=list)
+
+
+class IssuerRiskAssessment(BaseModel):
+    method_id: str = "issuer_financial_risk_v1"
+    policy_version: str = "room16_analytical_core_v0_2"
+    status: Literal["partial", "not_measured"] = "not_measured"
+    financial_risk_score: Optional[float] = None
+    financial_risk_band: str = "not_measured"
+    measured_weight: float = 0.0
+    total_weight: float = 1.0
+    coverage_ratio: float = 0.0
+    components: List[RiskComponent] = Field(default_factory=list)
+    risk_flags: List[str] = Field(default_factory=list)
+    disclosed_business_risk_categories: List[str] = Field(default_factory=list)
+    qualitative_business_risk_status: str = "human_review_required"
+    limitations: List[str] = Field(default_factory=list)
 
 
 class MetricsPacket(BaseModel):
@@ -129,3 +196,4 @@ class MetricsPacket(BaseModel):
     technical: TechnicalMetrics
     fundamentals: FundamentalMetrics
     valuation: ValuationMetrics
+    risk: IssuerRiskAssessment = Field(default_factory=IssuerRiskAssessment)

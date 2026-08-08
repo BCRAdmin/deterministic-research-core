@@ -63,6 +63,7 @@ from research_agent.reconciliation.source_reconciler import (
     quality_relevant_reconciliation_warnings,
 )
 from research_agent.research_core.calculations.fundamentals import calculate_fundamental_metrics
+from research_agent.research_core.calculations.issuer_risk import calculate_issuer_risk
 from research_agent.research_core.calculations.technicals import calculate_technical_metrics
 from research_agent.research_core.calculations.valuation import calculate_valuation_metrics
 from research_agent.research_core.ingestion.fundamentals_loader import load_fundamentals
@@ -178,6 +179,10 @@ def run_research_pipeline(
         trailing_eps=normalized_fundamentals.get("trailing_eps"),
         growth_rate=normalized_fundamentals.get("growth_rate"),
     )
+    issuer_risk = calculate_issuer_risk(
+        fundamental_metrics,
+        risk_evidence=source_evidence_items,
+    )
 
     metrics_packet = MetricsPacket(
         ticker=data_packet.ticker,
@@ -185,6 +190,7 @@ def run_research_pipeline(
         technical=technical_metrics,
         fundamentals=fundamental_metrics,
         valuation=valuation_metrics or ValuationMetrics(),
+        risk=issuer_risk,
     )
     metrics_packet_path = save_json_packet(
         metrics_packet, "metrics_packet", ticker, as_of_date, packet_root=packet_root

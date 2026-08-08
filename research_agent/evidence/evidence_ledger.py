@@ -1726,6 +1726,227 @@ def build_fundamental_derivation_evidence(
                 ),
             )
         )
+    sensitivity = valuation.sensitivity
+    sensitivity_lineage = list(
+        dict.fromkeys(
+            item.source_id
+            for item in [*runtime_items, *evidence]
+            if set(item.supports_metrics)
+            & {"free_cash_flow_ttm", "revenue_growth_yoy", "market_cap", "close"}
+        )
+    )
+    for scenario in sensitivity.scenarios:
+        metric_name = f"dcf_{scenario.name}_equity_value"
+        evidence.append(
+            EvidenceItem(
+                evidence_id=(
+                    f"{ticker.upper()}_DETERMINISTIC_{metric_name.upper()}_"
+                    f"{as_of_date}"
+                ),
+                ticker=ticker.upper(),
+                claim_type="valuation_metric",
+                source_id=source_id,
+                source_type="deterministic_calculation",
+                authority_rank=1,
+                statement=(
+                    f"{metric_name}={scenario.equity_value:g} is a standardized "
+                    "equity-DCF sensitivity result, not a company forecast."
+                ),
+                value=float(scenario.equity_value),
+                unit=currency,
+                period=f"{scenario.forecast_years}-year sensitivity as of {as_of_date}",
+                date=as_of_date,
+                supports_metrics=[metric_name],
+                confidence="medium",
+                formula_id="equity_dcf_sensitivity_v1",
+                formula_operands={
+                    "starting_free_cash_flow": float(
+                        scenario.starting_free_cash_flow
+                    ),
+                    "free_cash_flow_growth_rate": float(
+                        scenario.free_cash_flow_growth_rate
+                    ),
+                    "discount_rate": float(scenario.discount_rate),
+                    "terminal_growth_rate": float(
+                        scenario.terminal_growth_rate
+                    ),
+                    "forecast_years": float(scenario.forecast_years),
+                },
+                normalized_value=float(scenario.equity_value),
+                source_lineage=sensitivity_lineage,
+            )
+        )
+    base_scenario = next(
+        (scenario for scenario in sensitivity.scenarios if scenario.name == "base"),
+        None,
+    )
+    if base_scenario is not None:
+        for metric_name, value, label in (
+            (
+                "dcf_base_discount_rate",
+                base_scenario.discount_rate,
+                "standardized base-case discount rate",
+            ),
+            (
+                "dcf_base_terminal_growth_rate",
+                base_scenario.terminal_growth_rate,
+                "standardized base-case terminal growth rate",
+            ),
+        ):
+            evidence.append(
+                EvidenceItem(
+                    evidence_id=(
+                        f"{ticker.upper()}_DETERMINISTIC_{metric_name.upper()}_"
+                        f"{as_of_date}"
+                    ),
+                    ticker=ticker.upper(),
+                    claim_type="valuation_metric",
+                    source_id=source_id,
+                    source_type="deterministic_calculation",
+                    authority_rank=1,
+                    statement=(
+                        f"{metric_name}={value:g} is the {label} defined by "
+                        "Room16 policy; it is an assumption, not issuer guidance."
+                    ),
+                    value=float(value),
+                    unit="percent",
+                    period=f"5-year sensitivity as of {as_of_date}",
+                    date=as_of_date,
+                    supports_metrics=[metric_name],
+                    confidence="high",
+                    formula_id="equity_dcf_sensitivity_policy_v1",
+                    formula_operands={metric_name: float(value)},
+                    normalized_value=float(value),
+                    source_lineage=sensitivity_lineage,
+                )
+            )
+    if sensitivity.reverse_dcf_implied_fcf_growth is not None:
+        evidence.append(
+            EvidenceItem(
+                evidence_id=(
+                    f"{ticker.upper()}_DETERMINISTIC_REVERSE_DCF_GROWTH_"
+                    f"{as_of_date}"
+                ),
+                ticker=ticker.upper(),
+                claim_type="valuation_metric",
+                source_id=source_id,
+                source_type="deterministic_calculation",
+                authority_rank=1,
+                statement=(
+                    "reverse_dcf_implied_fcf_growth="
+                    f"{sensitivity.reverse_dcf_implied_fcf_growth:g} solves the "
+                    "standardized base-case DCF against the current equity-value "
+                    "anchor; it is an implied market expectation, not guidance."
+                ),
+                value=float(sensitivity.reverse_dcf_implied_fcf_growth),
+                unit="percent",
+                period=f"5-year implied growth as of {as_of_date}",
+                date=as_of_date,
+                supports_metrics=["reverse_dcf_implied_fcf_growth"],
+                confidence=(
+                    "high" if sensitivity.status == "measured" else "medium"
+                ),
+                formula_id="reverse_equity_dcf_growth_solver_v1",
+                formula_operands={
+                    "starting_free_cash_flow": float(
+                        fundamentals.free_cash_flow_ttm
+                    ),
+                    "target_equity_value": float(
+                        sensitivity.current_market_cap
+                        or valuation.scenario_market_cap
+                    ),
+                    "discount_rate": 0.10,
+                    "terminal_growth_rate": 0.02,
+                    "forecast_years": 5.0,
+                },
+                normalized_value=float(
+                    sensitivity.reverse_dcf_implied_fcf_growth
+                ),
+                source_lineage=sensitivity_lineage,
+            )
+        )
+    risk = metrics_packet.risk
+    if risk.financial_risk_score is not None:
+        evidence.append(
+            EvidenceItem(
+                evidence_id=(
+                    f"{ticker.upper()}_DETERMINISTIC_FINANCIAL_RISK_SCORE_"
+                    f"{as_of_date}"
+                ),
+                ticker=ticker.upper(),
+                claim_type="risk",
+                source_id=source_id,
+                source_type="deterministic_calculation",
+                authority_rank=1,
+                statement=(
+                    f"financial_risk_score={risk.financial_risk_score:g}/100 "
+                    "summarizes only measured financial-statement risk components; "
+                    "qualitative issuer risk remains subject to human review."
+                ),
+                value=float(risk.financial_risk_score),
+                unit="score_0_100",
+                period=f"TTM and point-in-time evidence through {as_of_date}",
+                date=as_of_date,
+                supports_metrics=["financial_risk_score"],
+                confidence="medium",
+                formula_id="issuer_financial_risk_v1",
+                formula_operands={
+                    component.component_id: float(component.score)
+                    for component in risk.components
+                    if component.score is not None
+                },
+                normalized_value=float(risk.financial_risk_score),
+                source_lineage=list(
+                    dict.fromkeys(
+                        item.source_id
+                        for item in [*runtime_items, *evidence]
+                        if item.source_type
+                        in {"sec_filing", "company_ir", "deterministic_calculation"}
+                    )
+                ),
+            )
+        )
+        evidence.append(
+            EvidenceItem(
+                evidence_id=(
+                    f"{ticker.upper()}_DETERMINISTIC_FINANCIAL_RISK_COVERAGE_"
+                    f"{as_of_date}"
+                ),
+                ticker=ticker.upper(),
+                claim_type="risk",
+                source_id=source_id,
+                source_type="deterministic_calculation",
+                authority_rank=1,
+                statement=(
+                    f"financial_risk_coverage={risk.coverage_ratio:g} measures "
+                    "the effective weight of available financial-screen inputs."
+                ),
+                value=float(risk.coverage_ratio),
+                unit="percent",
+                period=f"TTM and point-in-time evidence through {as_of_date}",
+                date=as_of_date,
+                supports_metrics=["financial_risk_coverage"],
+                confidence="high",
+                formula_id="issuer_financial_risk_coverage_v1",
+                formula_operands={
+                    component.component_id: float(component.coverage_ratio)
+                    for component in risk.components
+                },
+                normalized_value=float(risk.coverage_ratio),
+                source_lineage=list(
+                    dict.fromkeys(
+                        item.source_id
+                        for item in [*runtime_items, *evidence]
+                        if item.source_type
+                        in {
+                            "sec_filing",
+                            "company_ir",
+                            "deterministic_calculation",
+                        }
+                    )
+                ),
+            )
+        )
     return evidence
 
 
@@ -2117,6 +2338,47 @@ def _metric_value(metrics_packet: Optional[MetricsPacket], metric_name: str) -> 
         if hasattr(section, metric_name):
             value = getattr(section, metric_name)
             return float(value) if isinstance(value, (int, float)) else None
+    if metric_name == "financial_risk_score":
+        value = metrics_packet.risk.financial_risk_score
+        return float(value) if value is not None else None
+    if metric_name == "financial_risk_coverage":
+        return float(metrics_packet.risk.coverage_ratio)
+    if metric_name in {
+        "dcf_base_discount_rate",
+        "dcf_base_terminal_growth_rate",
+    }:
+        base_scenario = next(
+            (
+                item
+                for item in metrics_packet.valuation.sensitivity.scenarios
+                if item.name == "base"
+            ),
+            None,
+        )
+        if base_scenario is None:
+            return None
+        attribute = (
+            "discount_rate"
+            if metric_name == "dcf_base_discount_rate"
+            else "terminal_growth_rate"
+        )
+        return float(getattr(base_scenario, attribute))
+    if metric_name == "reverse_dcf_implied_fcf_growth":
+        value = metrics_packet.valuation.sensitivity.reverse_dcf_implied_fcf_growth
+        return float(value) if value is not None else None
+    if metric_name.startswith("dcf_") and metric_name.endswith("_equity_value"):
+        scenario_name = metric_name.removeprefix("dcf_").removesuffix(
+            "_equity_value"
+        )
+        scenario = next(
+            (
+                item
+                for item in metrics_packet.valuation.sensitivity.scenarios
+                if item.name == scenario_name
+            ),
+            None,
+        )
+        return float(scenario.equity_value) if scenario is not None else None
     return None
 
 
@@ -2130,8 +2392,14 @@ def _claim_type_for_metric(metric_name: str, source_type: str):
         return "price_data"
     if metric_name.startswith("sma") or metric_name.startswith("ema") or metric_name in {"rsi_14", "macd_histogram"}:
         return "technical_metric"
-    if metric_name in {"forward_pe_consensus", "price_to_fcf", "ev_to_sales", "peg_ratio"}:
+    if (
+        metric_name
+        in {"forward_pe_consensus", "price_to_fcf", "ev_to_sales", "peg_ratio"}
+        or metric_name.startswith("dcf_")
+    ):
         return "valuation_metric"
+    if metric_name.startswith("financial_risk"):
+        return "risk"
     if source_type in {"reuters", "barrons", "wsj", "marketwatch", "official_press_release"}:
         return "news"
     return "financial_metric"
@@ -2159,6 +2427,14 @@ def unit_for_metric(
         return "percent"
     if metric_name == "fcf_yield":
         return "fraction"
+    if metric_name == "financial_risk_score":
+        return "score_0_100"
+    if metric_name in {
+        "dcf_base_discount_rate",
+        "dcf_base_terminal_growth_rate",
+        "financial_risk_coverage",
+    }:
+        return "percent"
     if "eps" in metric_name:
         return f"{currency}_per_share"
     if metric_name in {"close", "price", "price_basis", "price_data"} or metric_name.startswith(
@@ -2242,6 +2518,9 @@ def unit_for_metric(
         "total_assets",
         "treasury_stock_value",
         "net_cash",
+        "dcf_bear_equity_value",
+        "dcf_base_equity_value",
+        "dcf_bull_equity_value",
     }:
         return currency
     return None

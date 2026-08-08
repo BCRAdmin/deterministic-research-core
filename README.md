@@ -48,6 +48,10 @@ Core rule:
   confirmation/risk markers. It does not prescribe personal position sizes,
   holdings, entries, exits, or new-money actions.
 
+Valuation sensitivity, the financial-risk screen, the separation of company
+rating from technical timing, and their limitations are specified in
+[`docs/ANALYTICAL_CORE_V02.md`](docs/ANALYTICAL_CORE_V02.md).
+
 The initial build includes Pydantic packet schemas, technical/fundamental/valuation calculations, source-authority checks, trade/rating/news validation rules, regression tests for known failures, and a pipeline skeleton that stops report generation on blocking validation errors.
 
 ## Mandatory Room16 Handoff

@@ -694,9 +694,6 @@ def _generic_publish_report(
     f = metrics_packet.fundamentals
     v = metrics_packet.valuation
     t = metrics_packet.technical
-    constructive_cash_trigger = _constructive_cash_conversion_trigger(
-        f.free_cash_flow_ttm
-    )
     current_kpi_claims = _current_kpi_claims(claim_list)
     current_kpi_ids = {claim.claim_id for claim in current_kpi_claims}
     fundamental_claims = [
@@ -740,13 +737,7 @@ def _generic_publish_report(
         _paragraphs(grouped.get("Valuation / Multiples", []), limit=3),
         "",
         "## Scenario / Sensitivity",
-        (
-            "| Scenario | KPI trigger | Valuation implication | Rating implication |\n"
-            "|---|---|---|---|\n"
-            f"| Constructive | {constructive_cash_trigger} | Benchmark evidence would need to show valuation support | Reassess toward a more constructive rating |\n"
-            "| Current | Measured fundamental and technical signals remain unchanged | Unbenchmarked multiples remain observations only | Retain the current research rating |\n"
-            "| Cautious | Fundamentals or the technical trend deteriorate | Benchmark evidence would need to show valuation pressure | Reassess toward a more cautious rating |"
-        ),
+        _valuation_scenario_table(v, rating, currency=currency),
         "",
         "## Technical Setup",
         _paragraphs(grouped.get("Technical Setup", []), limit=3),
@@ -758,7 +749,7 @@ def _generic_publish_report(
         _paragraphs(grouped.get("Bear Case", []), limit=3),
         "",
         "## Risks",
-        _paragraphs(grouped.get("Key Risks", []), limit=4),
+        _paragraphs(grouped.get("Key Risks", []), limit=5),
         "",
         "## Catalysts",
         _paragraphs(grouped.get("Catalysts & Triggers", []), limit=4),
@@ -1045,6 +1036,19 @@ def _final_rating_section(
                 "No measured valuation multiple is available; unbenchmarked "
                 "valuation cannot move the rating."
             )
+    elif scores.valuation_status in {"scenario_measured", "illustrative_only"}:
+        sensitivity = v.sensitivity
+        qualifier = (
+            "measured scenario evidence that is not yet calibrated"
+            if scores.valuation_status == "scenario_measured"
+            else "illustrative scenario evidence because share-class price equivalence is unverified"
+        )
+        valuation_text = (
+            "The standardized equity-DCF range is "
+            f"{_fmt_money(sensitivity.model_range_low, currency)} to "
+            f"{_fmt_money(sensitivity.model_range_high, currency)}. It is "
+            f"{qualifier} and does not create an automatic rating signal."
+        )
     elif scores.valuation_status != "measured":
         valuation_text = (
             "Valuation is not sufficiently measured and therefore cannot move "
@@ -1085,9 +1089,9 @@ def _final_rating_section(
             confirmation_limits.append(
                 f"valuation is {scores.valuation_status}"
             )
-        if scores.technical_status != "measured":
+        if scores.risk_status != "measured":
             confirmation_limits.append(
-                f"the technical basis is {scores.technical_status}"
+                f"the issuer-risk basis is {scores.risk_status}"
             )
         confirmation_text = (
             " and ".join(confirmation_limits)
@@ -1123,12 +1127,6 @@ def _final_rating_section(
         decline_text = " and ".join(decline_labels)
         decline_subject = f"{decline_text} {'decline' if len(decline_labels) == 1 else 'declines'}"
         decline_verb = "is" if len(decline_labels) == 1 else "are"
-        technical_counterevidence = (
-            " The bullish technical direction is counterevidence, but does not "
-            "erase those declines."
-            if scores.technical_score > 0
-            else ""
-        )
         why_not_constructive = (
             f"Why not more constructive? Current-period {decline_subject} "
             f"{decline_verb} current downside evidence. FCF is unavailable, so cash conversion "
@@ -1138,7 +1136,7 @@ def _final_rating_section(
         )
         why_not_cautious = (
             f"Why not more cautious? The {decline_subject} {decline_verb} not dismissed."
-            f"{technical_counterevidence} One reported period does not establish "
+            " One reported period does not establish "
             "the cause or durability of the weakness; a more cautious rating "
             "requires persistence or corroborating cash-flow deterioration once "
             "cash conversion is measurable."
@@ -1181,11 +1179,6 @@ def _final_rating_section(
         decline_text = " and ".join(decline_labels)
         decline_subject = f"{decline_text} {'decline' if len(decline_labels) == 1 else 'declines'}"
         decline_verb = "is" if len(decline_labels) == 1 else "are"
-        counterevidence_subject = (
-            "positive FCF and the bullish technical direction are"
-            if scores.technical_score > 0
-            else "positive FCF is"
-        )
         why_not_constructive = (
             f"Why not more constructive? Current-period {decline_subject} "
             f"{decline_verb} current downside evidence; positive FCF does not erase those "
@@ -1195,7 +1188,7 @@ def _final_rating_section(
         )
         why_not_cautious = (
             f"Why not more cautious? The {decline_subject} {decline_verb} not dismissed, "
-            f"but {counterevidence_subject} measured counterevidence. "
+            "but positive FCF is measured counterevidence. "
             "A more cautious rating requires the profit weakness to persist or be "
             "corroborated by weaker cash conversion."
         )
@@ -1203,26 +1196,22 @@ def _final_rating_section(
         f.free_cash_flow_ttm is not None
         and f.free_cash_flow_ttm > 0
         and scores.fundamental_score > 0
-        and scores.technical_score < 0
-        and scores.technical_status in {"measured", "partial"}
     ):
         why_not_constructive = (
             "Why not more constructive? Constructive fundamentals and positive FCF "
-            "do not override the observed bearish technical direction. A more "
-            "constructive rating requires technical confirmation and benchmarked "
-            "valuation support."
+            "are not enough without calibrated valuation support. Technical "
+            "direction can affect timing confidence but not the company rating."
         )
         why_not_cautious = (
-            "Why not more cautious? The bearish technical state is not dismissed, "
-            "but positive FCF and the constructive fundamental signal are measured "
-            "counterevidence. A more cautious rating requires corroborating "
-            "fundamental deterioration."
+            "Why not more cautious? Positive FCF and the constructive fundamental "
+            "signal are measured counterevidence. A more cautious rating requires "
+            "corroborating fundamental, valuation or issuer-risk deterioration."
         )
     else:
         why_not_constructive = (
             "Why not more constructive? A rating change requires stronger measured "
-            "fundamentals or technical confirmation and, where valuation is relevant, "
-            "benchmark evidence."
+            "fundamentals and calibrated valuation support. Technical confirmation "
+            "can improve timing confidence but cannot change the company rating."
         )
         why_not_cautious = (
             "Why not more cautious? A raw multiple or an isolated price signal cannot "
@@ -1238,9 +1227,9 @@ def _final_rating_section(
             f"Final Rating: {rating}. {rating_reason}",
             (
                 f"Factual anchors are revenue of {_fmt_money(f.revenue_ttm, currency)}, "
-                f"{fcf_anchor} and RSI of "
-                f"{_fmt_number(t.rsi_14)}. The available technical direction is "
-                f"{technical_text}."
+                f"{fcf_anchor}. Separately, the technical timing overlay has RSI "
+                f"of {_fmt_number(t.rsi_14)} and direction {technical_text}; it "
+                "does not enter the long-term composite score."
             ),
             valuation_text,
             why_not_constructive,
@@ -1248,11 +1237,44 @@ def _final_rating_section(
             (
                 f"Review condition: retain the {ticker} research rating while "
                 "the measured evidence state is unchanged. Reassess only when "
-                "new primary evidence changes fundamentals, benchmarked valuation "
-                "or the technical trend."
+                "new primary evidence changes fundamentals, calibrated valuation "
+                "or issuer risk; reassess timing separately when the technical "
+                "trend changes."
             ),
         ]
     )
+
+
+def _valuation_scenario_table(v, rating: str, *, currency: str) -> str:
+    scenarios = v.sensitivity.scenarios
+    if not scenarios:
+        return (
+            "| Scenario | KPI trigger | Valuation implication | Rating implication |\n"
+            "|---|---|---|---|\n"
+            "| Constructive | Cash-flow evidence improves | Benchmark evidence would need to show valuation support | The rating would become more constructive if primary evidence supports the change |\n"
+            "| Current | Measured evidence remains unchanged | Unbenchmarked multiples remain observations only | Retain the current research rating |\n"
+            "| Cautious | Fundamentals deteriorate | Missing valuation support would weaken the case | Reassess toward a more cautious rating |"
+        )
+    rating_implications = {
+        "bear": "Would weaken the case only if primary evidence supports the adverse assumptions",
+        "base": f"No automatic change to the current {rating} research rating",
+        "bull": "The rating would become more constructive if primary evidence supports the assumptions",
+    }
+    lines = [
+        "| Scenario | FCF growth | Discount rate | Terminal growth | Valuation implication | Rating implication |",
+        "|---|---:|---:|---:|---:|---|",
+    ]
+    for scenario in scenarios:
+        lines.append(
+            f"| {scenario.name.title()} | {scenario.free_cash_flow_growth_rate:.1%} | "
+            f"{scenario.discount_rate:.1%} | {scenario.terminal_growth_rate:.1%} | "
+            f"Equity value {_fmt_money(scenario.equity_value, currency)} | "
+            f"{rating_implications[scenario.name]} |"
+        )
+    lines.append(
+        "\nThe table is a standardized sensitivity, not management guidance or a precise price target."
+    )
+    return "\n".join(lines)
 
 
 def _evidence_appendix(claims: list[ResearchClaim], evidence_ledger: EvidenceLedger) -> str:

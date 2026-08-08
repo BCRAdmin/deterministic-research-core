@@ -103,7 +103,7 @@ def compose_research_report(
         _render_event_limit(data_packet),
         "",
         "## Scenario View",
-        _render_scenario_view(decision_packet),
+        _render_scenario_view(data_packet, metrics_packet, decision_packet),
         "",
         "## Final Rating & Action Plan",
         f"Final Rating: {preferred}",
@@ -217,8 +217,11 @@ def _render_investment_thesis(
     ev_sales = metrics_packet.valuation.ev_to_sales
     currency = data_packet.price_basis.currency
     valuation_status = decision_packet.signal_scores.valuation_status
+    technical_status = decision_packet.signal_scores.technical_status
     parts = [
-        f"- Thesis anchor: `{preferred}` follows the measured fundamental and technical evidence plus the explicit valuation measurement status.",
+        f"- Thesis anchor: `{preferred}` follows the measured fundamentals, "
+        "valuation status and financial-risk screen. Technical evidence is a "
+        "separate timing overlay.",
     ]
     if revenue is not None:
         parts.append(f"- Fundamental basis: revenue scale is `{_fmt_money(revenue, currency)}`.")
@@ -232,6 +235,23 @@ def _render_investment_thesis(
                 f"- Valuation observation: EV/Sales is `{ev_sales:.2f}x`; "
                 "without benchmark evidence it is neutral for the rating."
             )
+        elif valuation_status == "scenario_measured":
+            sensitivity = metrics_packet.valuation.sensitivity
+            parts.append(
+                f"- Valuation sensitivity: the standardized equity-DCF range is "
+                f"`{_fmt_money(sensitivity.model_range_low, currency)}` to "
+                f"`{_fmt_money(sensitivity.model_range_high, currency)}`. It is "
+                "measured scenario evidence, not a calibrated fair-value claim."
+            )
+        elif valuation_status == "illustrative_only":
+            sensitivity = metrics_packet.valuation.sensitivity
+            parts.append(
+                f"- Valuation sensitivity: the standardized equity-DCF range is "
+                f"`{_fmt_money(sensitivity.model_range_low, currency)}` to "
+                f"`{_fmt_money(sensitivity.model_range_high, currency)}`, but the "
+                "current-value comparison remains illustrative because share-class "
+                "price equivalence is unverified."
+            )
         elif valuation_status == "measured":
             parts.append(
                 f"- Benchmarked valuation evidence includes EV/Sales of "
@@ -243,7 +263,12 @@ def _render_investment_thesis(
                 "valuation is not sufficiently measured to affect the rating."
             )
     parts.append(
-        f"- Research implication: the stance for `{data_packet.ticker}` remains conditional on the business, valuation and technical evidence."
+        f"- Technical boundary: status is `{technical_status}` and may inform "
+        "timing, but it cannot create or block the long-term company rating."
+    )
+    parts.append(
+        f"- Research implication: the stance for `{data_packet.ticker}` remains "
+        "conditional on business evidence, valuation calibration and issuer risk."
     )
     return "\n".join(parts)
 
@@ -255,8 +280,32 @@ def _render_event_limit(data_packet: DataPacket) -> str:
     return f"\n- Confirmed earnings date: `{event.next_earnings_date}` via `{event.source}`."
 
 
-def _render_scenario_view(decision_packet: DecisionPacket) -> str:
+def _render_scenario_view(
+    data_packet: DataPacket,
+    metrics_packet: MetricsPacket,
+    decision_packet: DecisionPacket,
+) -> str:
     preferred = decision_packet.rating_permission.preferred_rating.value
+    scenarios = metrics_packet.valuation.sensitivity.scenarios
+    if scenarios:
+        lines = [
+            "| Scenario | FCF growth | Discount rate | Terminal growth | Equity value |",
+            "| --- | ---: | ---: | ---: | ---: |",
+        ]
+        for scenario in scenarios:
+            lines.append(
+                f"| {scenario.name.title()} | {scenario.free_cash_flow_growth_rate:.1%} | "
+                f"{scenario.discount_rate:.1%} | {scenario.terminal_growth_rate:.1%} | "
+                f"{_fmt_money(scenario.equity_value, data_packet.price_basis.currency)} |"
+            )
+        lines.extend(
+            [
+                "",
+                "These are standardized sensitivities, not management guidance or price targets.",
+                f"The current `{preferred}` stance does not change automatically with one model cell.",
+            ]
+        )
+        return "\n".join(lines)
     return "\n".join(
         [
             f"- Base case: `{preferred}` is the appropriate current stance.",
@@ -319,6 +368,19 @@ def _render_final_rating_logic(
                 "- Valuation status: no measured multiple is available; "
                 "valuation cannot move the rating."
             )
+    elif scores.valuation_status in {"scenario_measured", "illustrative_only"}:
+        sensitivity = v.sensitivity
+        qualifier = (
+            "measured but not calibrated"
+            if scores.valuation_status == "scenario_measured"
+            else "illustrative because share-class price equivalence is unverified"
+        )
+        valuation_line = (
+            f"- Valuation status: standardized equity-DCF range "
+            f"`{_fmt_money(sensitivity.model_range_low, currency)}` to "
+            f"`{_fmt_money(sensitivity.model_range_high, currency)}`; {qualifier}. "
+            "The range informs review but does not create an automatic rating signal."
+        )
     elif scores.valuation_status != "measured":
         valuation_line = (
             "- Valuation status: insufficiently measured; valuation cannot move "
@@ -405,10 +467,14 @@ def _render_final_rating_logic(
         f"- Why this rating? `{preferred}`: {rating_reason}",
         f"- Fundamental anchors: revenue is `{_fmt_money(f.revenue_ttm, currency)}` and FCF is `{_fmt_money(f.free_cash_flow_ttm, currency)}`.",
         valuation_line,
-        f"- Technical context: RSI is `{_fmt_number(t.rsi_14)}`; its directional role is limited to the measured technical score.",
+        f"- Technical context: RSI is `{_fmt_number(t.rsi_14)}`; technicals are "
+        "a separate timing overlay and do not enter the long-term composite score.",
         why_not_constructive,
         why_not_cautious,
-        f"- Review condition: retain `{data_packet.ticker}` at `{preferred}` while the measured evidence state is unchanged; reassess only when new primary evidence changes fundamentals, benchmarked valuation or the technical trend.",
+        f"- Review condition: retain `{data_packet.ticker}` at `{preferred}` while "
+        "the measured evidence state is unchanged; reassess the company rating "
+        "only when new primary evidence changes fundamentals, calibrated valuation "
+        "or issuer risk, and reassess timing separately when the technical trend changes.",
     ]
     return "\n".join(lines)
 
