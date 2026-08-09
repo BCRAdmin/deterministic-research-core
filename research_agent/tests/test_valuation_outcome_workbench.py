@@ -1,4 +1,5 @@
 import csv
+import hashlib
 import json
 from datetime import date, timedelta
 from pathlib import Path
@@ -13,6 +14,9 @@ from research_agent.calibration.valuation_outcome_workbench import (
     build_valuation_outcome_workbench,
     load_normalized_price_csv,
     main,
+)
+from research_agent.sources.prices.provider_price_candidate import (
+    ProviderPriceCandidateReceipt,
 )
 
 
@@ -64,10 +68,57 @@ def _write_prices(path: Path, *, count: int = 253) -> Path:
     return path
 
 
+def _write_receipt(
+    path: Path,
+    series: Path,
+    *,
+    ticker: str,
+    created_at: str,
+    provider_id: str = "TEST_PROVIDER",
+    provider_dataset_id: str = "TOTAL_RETURN_DAILY_V1",
+) -> Path:
+    with series.open("r", encoding="utf-8", newline="") as handle:
+        rows = list(csv.DictReader(handle))
+    receipt = ProviderPriceCandidateReceipt(
+        created_at=created_at,
+        provider_id=provider_id,
+        provider_dataset_id=provider_dataset_id,
+        ticker=ticker,
+        requested_start=rows[0]["date"],
+        requested_end="2025-12-31",
+        rows=len(rows),
+        first_date=rows[0]["date"],
+        last_date=rows[-1]["date"],
+        series_basis="total_return_adjusted",
+        cash_distributions_included=True,
+        corporate_actions_included=True,
+        data_file=series.name,
+        data_sha256="sha256:" + hashlib.sha256(series.read_bytes()).hexdigest(),
+        source_url="https://prices.example/eod",
+        methodology_url="https://prices.example/methodology",
+        license_url="https://prices.example/license",
+        pricing_url="https://prices.example/pricing",
+    )
+    path.write_text(receipt.model_dump_json(indent=2) + "\n", encoding="utf-8")
+    return path
+
+
 def _verified_inputs(tmp_path: Path) -> dict:
     snapshot = _write_snapshot(tmp_path / "snapshot.json")
     instrument = _write_prices(tmp_path / "instrument.csv")
     benchmark = _write_prices(tmp_path / "benchmark.csv")
+    instrument_receipt = _write_receipt(
+        tmp_path / "instrument_receipt.json",
+        instrument,
+        ticker="TST",
+        created_at="2025-12-31T11:59:00+00:00",
+    )
+    benchmark_receipt = _write_receipt(
+        tmp_path / "benchmark_receipt.json",
+        benchmark,
+        ticker="TEST_TR_INDEX",
+        created_at="2025-12-31T12:00:00+00:00",
+    )
     methodology = tmp_path / "methodology.txt"
     rights = tmp_path / "rights.txt"
     verification = tmp_path / "verification.txt"
@@ -79,6 +130,8 @@ def _verified_inputs(tmp_path: Path) -> dict:
         "snapshot_path": snapshot,
         "instrument_series_path": instrument,
         "benchmark_series_path": benchmark,
+        "instrument_provider_receipt_path": instrument_receipt,
+        "benchmark_provider_receipt_path": benchmark_receipt,
         "provider_id": "TEST_PROVIDER",
         "provider_dataset_id": "TOTAL_RETURN_DAILY_V1",
         "benchmark": "TEST_TR_INDEX",
@@ -114,6 +167,8 @@ def test_draft_materializes_review_packet_but_never_claims_verified_source(tmp_p
         snapshot_path=snapshot,
         instrument_series_path=instrument,
         benchmark_series_path=benchmark,
+        instrument_provider_receipt_path=None,
+        benchmark_provider_receipt_path=None,
         provider_id="candidate-provider",
         provider_dataset_id="visible-close-candidate",
         benchmark="candidate-benchmark",
@@ -152,6 +207,8 @@ def test_draft_materializes_review_packet_but_never_claims_verified_source(tmp_p
             snapshot_path=snapshot,
             instrument_series_path=instrument,
             benchmark_series_path=benchmark,
+            instrument_provider_receipt_path=None,
+            benchmark_provider_receipt_path=None,
             provider_id="candidate-provider",
             provider_dataset_id="visible-close-candidate",
             benchmark="candidate-benchmark",
@@ -190,8 +247,11 @@ def test_verified_workbench_builds_self_contained_matured_source_bundle(tmp_path
     assert source_bundles[0].schema_id == "room16.valuation_calibration_source_bundle@2"
     assert source_bundles[0].verification_independent_from_preparation is True
     assert (inputs["output_dir"] / "evidence" / "human_verification.txt").is_file()
+    assert (
+        inputs["output_dir"] / "evidence" / "instrument_candidate" / "provider_receipt.json"
+    ).is_file()
 
-    (inputs["output_dir"] / "evidence" / "instrument_series.csv").write_text(
+    (inputs["output_dir"] / "evidence" / "instrument_candidate" / "instrument.csv").write_text(
         "date,close\n2025-01-02,999\n", encoding="utf-8"
     )
     with pytest.raises(ValueError, match="instrument_source_artifact_hash_mismatch"):
@@ -211,7 +271,7 @@ def test_verified_workbench_builds_self_contained_matured_source_bundle(tmp_path
         ({"retrieved_at": "2025-12-31T12:00:00"}, "include a timezone"),
         (
             {"instrument_price_series_basis": "split_adjusted"},
-            "must be total_return_adjusted",
+            "does not prove the declared series basis",
         ),
     ],
 )
@@ -222,6 +282,69 @@ def test_verified_workbench_rejects_unproven_gate_claims(tmp_path, override, mes
     with pytest.raises(ValueError, match=message):
         build_valuation_outcome_workbench(**inputs)
 
+    assert not inputs["output_dir"].exists()
+
+
+@pytest.mark.parametrize(
+    ("receipt_key", "field", "value", "message"),
+    [
+        (
+            "instrument_provider_receipt_path",
+            "provider_id",
+            "OTHER_PROVIDER",
+            "instrument receipt provider",
+        ),
+        (
+            "benchmark_provider_receipt_path",
+            "ticker",
+            "WRONG",
+            "benchmark receipt ticker",
+        ),
+        (
+            "instrument_provider_receipt_path",
+            "series_basis",
+            "raw_close",
+            "instrument receipt does not prove the declared series basis",
+        ),
+        (
+            "benchmark_provider_receipt_path",
+            "methodology_url",
+            "https://other.example/methodology",
+            "do not share one provenance contract",
+        ),
+    ],
+)
+def test_verified_workbench_rejects_provider_receipt_claim_mismatches(
+    tmp_path, receipt_key, field, value, message
+):
+    inputs = _verified_inputs(tmp_path)
+    receipt_path = inputs[receipt_key]
+    payload = json.loads(receipt_path.read_text(encoding="utf-8"))
+    payload[field] = value
+    receipt_path.write_text(json.dumps(payload), encoding="utf-8")
+
+    with pytest.raises(ValueError, match=message):
+        build_valuation_outcome_workbench(**inputs)
+
+    assert not inputs["output_dir"].exists()
+
+
+def test_verified_workbench_rejects_missing_or_hash_mismatched_provider_receipt(
+    tmp_path,
+):
+    inputs = _verified_inputs(tmp_path)
+    inputs["instrument_provider_receipt_path"] = None
+    with pytest.raises(ValueError, match="instrument and benchmark provider receipts"):
+        build_valuation_outcome_workbench(**inputs)
+    assert not inputs["output_dir"].exists()
+
+    inputs = _verified_inputs(tmp_path)
+    inputs["instrument_series_path"].write_text(
+        "date,close\n2025-01-02,999\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="data hash does not match"):
+        build_valuation_outcome_workbench(**inputs)
     assert not inputs["output_dir"].exists()
 
 
@@ -239,15 +362,13 @@ def test_verified_workbench_rejects_ineligible_snapshot_and_reused_verification_
         build_valuation_outcome_workbench(**inputs)
 
 
-def test_verified_workbench_rejects_observations_after_retrieval_without_partial_output(
+def test_verified_workbench_rejects_receipt_timestamp_mismatch_without_partial_output(
     tmp_path,
 ):
     inputs = _verified_inputs(tmp_path)
-    inputs["retrieved_at"] = "2025-02-01T12:00:00+00:00"
-    inputs["rights_approved_at"] = "2025-02-01T13:00:00+00:00"
-    inputs["verified_at"] = "2025-02-02T12:00:00+00:00"
+    inputs["retrieved_at"] = "2025-12-31T12:01:00+00:00"
 
-    with pytest.raises(ValueError, match="source_bundle_observation_after_retrieval"):
+    with pytest.raises(ValueError, match="latest provider receipt timestamp"):
         build_valuation_outcome_workbench(**inputs)
 
     assert not inputs["output_dir"].exists()
@@ -310,4 +431,68 @@ def test_cli_materializes_draft_and_returns_machine_readable_status(tmp_path, mo
     payload = json.loads(capsys.readouterr().out)
     assert payload["mode"] == "draft"
     assert payload["source_contract_valid"] is False
+    assert payload["live_activation_allowed"] is False
+
+
+def test_cli_materializes_verified_bundle_only_with_bound_receipts(tmp_path, monkeypatch, capsys):
+    inputs = _verified_inputs(tmp_path)
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "valuation_outcome_workbench",
+            "--mode",
+            "verified",
+            "--snapshot",
+            str(inputs["snapshot_path"]),
+            "--instrument-series",
+            str(inputs["instrument_series_path"]),
+            "--benchmark-series",
+            str(inputs["benchmark_series_path"]),
+            "--instrument-provider-receipt",
+            str(inputs["instrument_provider_receipt_path"]),
+            "--benchmark-provider-receipt",
+            str(inputs["benchmark_provider_receipt_path"]),
+            "--provider-id",
+            inputs["provider_id"],
+            "--provider-dataset-id",
+            inputs["provider_dataset_id"],
+            "--benchmark",
+            inputs["benchmark"],
+            "--retrieved-at",
+            inputs["retrieved_at"],
+            "--instrument-series-basis",
+            "total_return_adjusted",
+            "--benchmark-series-basis",
+            "total_return_adjusted",
+            "--instrument-cash-distributions-included",
+            "--benchmark-cash-distributions-included",
+            "--instrument-corporate-actions-included",
+            "--benchmark-corporate-actions-included",
+            "--provider-methodology-evidence",
+            str(inputs["provider_methodology_path"]),
+            "--usage-rights-evidence",
+            str(inputs["usage_rights_evidence_path"]),
+            "--verification-evidence",
+            str(inputs["verification_evidence_path"]),
+            "--prepared-by",
+            inputs["prepared_by"],
+            "--rights-approved-by",
+            inputs["rights_approved_by"],
+            "--rights-approved-at",
+            inputs["rights_approved_at"],
+            "--verified-by",
+            inputs["verified_by"],
+            "--verified-at",
+            inputs["verified_at"],
+            "--approve-internal-calibration-rights",
+            "--confirm-independent-review",
+            "--output-dir",
+            str(inputs["output_dir"]),
+        ],
+    )
+
+    assert main() == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["source_contract_valid"] is True
+    assert payload["outcome_status"] == "matured"
     assert payload["live_activation_allowed"] is False

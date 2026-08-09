@@ -28,6 +28,9 @@ from research_agent.research_core.models.metrics_packet import (
     MetricsPacket,
     TechnicalMetrics,
 )
+from research_agent.sources.prices.provider_price_candidate import (
+    ProviderPriceCandidateReceipt,
+)
 
 
 HASH = "sha256:" + hashlib.sha256(b"fixture").hexdigest()
@@ -139,6 +142,10 @@ def _source_bundle(
         "instrument_source_path": "evidence/instrument_series.csv",
         "benchmark_source_sha256": HASH,
         "benchmark_source_path": "evidence/benchmark_series.csv",
+        "instrument_provider_receipt_sha256": HASH,
+        "instrument_provider_receipt_path": "evidence/instrument_provider_receipt.json",
+        "benchmark_provider_receipt_sha256": HASH,
+        "benchmark_provider_receipt_path": "evidence/benchmark_provider_receipt.json",
         "prepared_by": "Room16 preparation workbench",
         "verification_status": "human_verified",
         "verified_by": "independent_test_reviewer",
@@ -153,6 +160,75 @@ def _source_bundle(
     source_bundle = ValuationCalibrationSourceBundle(**payload)
     return source_bundle.model_copy(
         update={"source_bundle_sha256": calculate_source_bundle_sha256(source_bundle)}
+    )
+
+
+def _materialize_source_bundle_evidence(bundle_root, source_bundle):
+    evidence_root = bundle_root / "evidence"
+    evidence_root.mkdir(parents=True)
+    for filename in [
+        "provider_methodology.txt",
+        "usage_rights.txt",
+        "human_verification.txt",
+    ]:
+        (evidence_root / filename).write_bytes(b"fixture")
+
+    def write_series(filename, prices):
+        path = evidence_root / filename
+        lines = ["date,close", *[f"{point.date},{point.close}" for point in prices]]
+        path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+        return path
+
+    instrument_path = write_series("instrument_series.csv", source_bundle.instrument_prices)
+    benchmark_path = write_series("benchmark_series.csv", source_bundle.benchmark_prices)
+
+    def write_receipt(filename, series_path, ticker, prices):
+        receipt = ProviderPriceCandidateReceipt(
+            created_at=source_bundle.retrieved_at,
+            provider_id=source_bundle.provider_id,
+            provider_dataset_id=source_bundle.provider_dataset_id,
+            ticker=ticker,
+            requested_start=prices[0].date,
+            requested_end=prices[-1].date,
+            rows=len(prices),
+            first_date=prices[0].date,
+            last_date=prices[-1].date,
+            series_basis="total_return_adjusted",
+            cash_distributions_included=True,
+            corporate_actions_included=True,
+            data_file=series_path.name,
+            data_sha256=file_sha256(series_path),
+            source_url="https://prices.example/eod",
+            methodology_url="https://prices.example/methodology",
+            license_url="https://prices.example/license",
+            pricing_url="https://prices.example/pricing",
+        )
+        path = evidence_root / filename
+        path.write_text(receipt.model_dump_json(indent=2) + "\n", encoding="utf-8")
+        return path
+
+    instrument_receipt = write_receipt(
+        "instrument_provider_receipt.json",
+        instrument_path,
+        source_bundle.instrument,
+        source_bundle.instrument_prices,
+    )
+    benchmark_receipt = write_receipt(
+        "benchmark_provider_receipt.json",
+        benchmark_path,
+        source_bundle.benchmark,
+        source_bundle.benchmark_prices,
+    )
+    updated = source_bundle.model_copy(
+        update={
+            "instrument_source_sha256": file_sha256(instrument_path),
+            "benchmark_source_sha256": file_sha256(benchmark_path),
+            "instrument_provider_receipt_sha256": file_sha256(instrument_receipt),
+            "benchmark_provider_receipt_sha256": file_sha256(benchmark_receipt),
+        }
+    )
+    return updated.model_copy(
+        update={"source_bundle_sha256": calculate_source_bundle_sha256(updated)}
     )
 
 
@@ -545,20 +621,16 @@ def test_orphan_source_bundle_builds_visible_invalid_outcome():
 
 def test_source_bundle_loader_is_strict_and_missing_root_is_not_silent(tmp_path):
     snapshot = _snapshot()
-    prices = [ValuationCalibrationPricePoint(date="2025-01-02", close=100)]
-    source_bundle = _source_bundle(snapshot, prices, prices)
+    prices = [
+        ValuationCalibrationPricePoint(date="2025-01-02", close=100),
+        ValuationCalibrationPricePoint(date="2025-01-03", close=101),
+    ]
     source_root = tmp_path / "sources"
     bundle_root = source_root / "test"
-    evidence_root = bundle_root / "evidence"
-    evidence_root.mkdir(parents=True)
-    for filename in [
-        "provider_methodology.txt",
-        "usage_rights.txt",
-        "instrument_series.csv",
-        "benchmark_series.csv",
-        "human_verification.txt",
-    ]:
-        (evidence_root / filename).write_bytes(b"fixture")
+    source_bundle = _materialize_source_bundle_evidence(
+        bundle_root,
+        _source_bundle(snapshot, prices, prices),
+    )
     bundle_path = bundle_root / "valuation_calibration_source_bundle.json"
     bundle_path.write_text(
         json.dumps(source_bundle.model_dump(mode="json")),
@@ -586,19 +658,16 @@ def test_source_bundle_loader_is_strict_and_missing_root_is_not_silent(tmp_path)
 
 def test_source_bundle_loader_rejects_missing_tampered_and_traversal_artifacts(tmp_path):
     snapshot = _snapshot()
-    prices = [ValuationCalibrationPricePoint(date="2025-01-02", close=100)]
-    source_bundle = _source_bundle(snapshot, prices, prices)
+    prices = [
+        ValuationCalibrationPricePoint(date="2025-01-02", close=100),
+        ValuationCalibrationPricePoint(date="2025-01-03", close=101),
+    ]
     bundle_root = tmp_path / "sources" / "test"
+    source_bundle = _materialize_source_bundle_evidence(
+        bundle_root,
+        _source_bundle(snapshot, prices, prices),
+    )
     evidence_root = bundle_root / "evidence"
-    evidence_root.mkdir(parents=True)
-    for filename in [
-        "provider_methodology.txt",
-        "usage_rights.txt",
-        "instrument_series.csv",
-        "benchmark_series.csv",
-        "human_verification.txt",
-    ]:
-        (evidence_root / filename).write_bytes(b"fixture")
     bundle_path = bundle_root / "valuation_calibration_source_bundle.json"
     bundle_path.write_text(source_bundle.model_dump_json(), encoding="utf-8")
 
@@ -606,7 +675,10 @@ def test_source_bundle_loader_rejects_missing_tampered_and_traversal_artifacts(t
     with pytest.raises(ValueError, match="instrument_source_artifact_hash_mismatch"):
         load_valuation_source_bundles(tmp_path / "sources")
 
-    (evidence_root / "instrument_series.csv").write_bytes(b"fixture")
+    (evidence_root / "instrument_series.csv").write_text(
+        "date,close\n2025-01-02,100.0\n2025-01-03,101.0\n",
+        encoding="utf-8",
+    )
     tampered_bundle = source_bundle.model_copy(update={"provider_dataset_id": "CHANGED"})
     bundle_path.write_text(tampered_bundle.model_dump_json(), encoding="utf-8")
     with pytest.raises(ValueError, match="source_bundle_hash_mismatch"):
@@ -629,3 +701,54 @@ def test_source_bundle_loader_rejects_missing_tampered_and_traversal_artifacts(t
     bundle_path.write_text(traversal.model_dump_json(), encoding="utf-8")
     with pytest.raises(ValueError, match="instrument_source_artifact_path_invalid"):
         load_valuation_source_bundles(tmp_path / "sources")
+
+
+def test_source_bundle_loader_rejects_rehashed_false_provider_claim(tmp_path):
+    snapshot = _snapshot()
+    prices = [
+        ValuationCalibrationPricePoint(date="2025-01-02", close=100),
+        ValuationCalibrationPricePoint(date="2025-01-03", close=101),
+    ]
+    bundle_root = tmp_path / "sources" / "test"
+    source_bundle = _materialize_source_bundle_evidence(
+        bundle_root,
+        _source_bundle(snapshot, prices, prices),
+    )
+    receipt_path = bundle_root / "evidence" / "instrument_provider_receipt.json"
+    receipt_payload = json.loads(receipt_path.read_text(encoding="utf-8"))
+    receipt_payload["provider_id"] = "FALSE_PROVIDER"
+    receipt_path.write_text(json.dumps(receipt_payload), encoding="utf-8")
+    source_bundle = source_bundle.model_copy(
+        update={"instrument_provider_receipt_sha256": file_sha256(receipt_path)}
+    )
+    source_bundle = source_bundle.model_copy(
+        update={"source_bundle_sha256": calculate_source_bundle_sha256(source_bundle)}
+    )
+    (bundle_root / "valuation_calibration_source_bundle.json").write_text(
+        source_bundle.model_dump_json(),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ValueError, match="instrument_provider_receipt_provider_mismatch"):
+        load_valuation_source_bundles(tmp_path / "sources")
+
+
+def test_source_bundle_hash_remains_compatible_with_pre_receipt_v2_drafts():
+    snapshot = _snapshot()
+    prices = [ValuationCalibrationPricePoint(date="2025-01-02", close=100)]
+    payload = _source_bundle(snapshot, prices, prices).model_dump(mode="json")
+    for field in (
+        "instrument_provider_receipt_sha256",
+        "instrument_provider_receipt_path",
+        "benchmark_provider_receipt_sha256",
+        "benchmark_provider_receipt_path",
+    ):
+        payload.pop(field)
+    payload.pop("source_bundle_sha256")
+    normalized = json.dumps(payload, sort_keys=True, separators=(",", ":"))
+    old_hash = "sha256:" + hashlib.sha256(normalized.encode("utf-8")).hexdigest()
+    payload["source_bundle_sha256"] = old_hash
+
+    loaded = ValuationCalibrationSourceBundle(**payload)
+
+    assert calculate_source_bundle_sha256(loaded) == old_hash

@@ -59,7 +59,8 @@ require hash-bound, corporate-action-adjusted 252-trading-day outcomes and
 never activate a valuation score automatically. The provider-neutral outcome
 workbench creates either an explicitly unverified draft or a self-contained
 `room16.valuation_calibration_source_bundle@2`; verified mode additionally
-requires evidence-bound usage rights and an independent human review.
+requires receipt-bound provider identity and Total-Return semantics for both
+price series, evidence-bound usage rights and an independent human review.
 The current no-purchase provider decision and dormant Tiingo EOD candidate are
 documented in
 [`docs/VALUATION_DATA_PROVIDER_DECISION_2026-08-09.md`](docs/VALUATION_DATA_PROVIDER_DECISION_2026-08-09.md).

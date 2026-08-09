@@ -82,7 +82,12 @@ outcome deterministically. Each source bundle binds:
 - separate total-return assurances for instrument and benchmark, each covering
   cash distributions and corporate actions;
 - local relative paths and hashes for provider methodology, instrument data,
-  benchmark data, usage-rights evidence and human-verification evidence;
+  benchmark data, both provider receipts, usage-rights evidence and
+  human-verification evidence;
+- one strict `room16.provider_price_candidate@1` receipt per price series. Each
+  receipt binds the exact CSV hash, row count, first/last observation,
+  requested range, provider/dataset identity, symbol, total-return basis,
+  distribution/corporate-action semantics and official provenance URLs;
 - a timezone-aware bundle-creation timestamp; retrieval, rights approval and
   verification may not be dated after the package that claims to contain them;
 - an explicit `internal_calibration_allowed` decision with a human rights
@@ -94,12 +99,17 @@ outcome deterministically. Each source bundle binds:
 
 A changed observation, conflicting duplicate date, missing distribution or
 corporate-action assurance, unverified methodology, missing/tampered artifact,
-path traversal, nonhuman approval identity, self-review or stale bundle hash
-invalidates the outcome before it can enter readiness. Version-1 source bundles
-are deliberately rejected because they did not make the evidence artifacts,
-rights approver and review independence machine-verifiable. This contract is
-provider-neutral: a public source may qualify if it proves the same semantics;
-an expensive vendor does not qualify merely because it is paid.
+receipt/CSV substitution, provider or ticker mismatch, path traversal,
+nonhuman approval identity, self-review or stale bundle hash invalidates the
+outcome before it can enter readiness. The declared retrieval timestamp must
+equal the later of the two receipt timestamps; it is no longer a manually
+transferable claim. Version-1 source bundles are deliberately rejected because
+they did not make the evidence artifacts, rights approver and review
+independence machine-verifiable. The strengthened v2 loader remains
+hash-compatible with pre-receipt v2 draft packages, but no receipt-free package
+can satisfy verified mode. This contract is provider-neutral: a public source
+may qualify if it proves the same semantics; an expensive vendor does not
+qualify merely because it is paid.
 
 ## Outcome workbench
 
@@ -109,9 +119,10 @@ The workbench has two modes, but only one outcome methodology:
   calculates a preview and lists every missing semantic, rights or review gate.
   It never claims that the source contract is valid.
 - `verified` refuses ineligible snapshots, raw or merely split-adjusted prices,
-  incomplete distribution/corporate-action assurances, absent evidence,
-  automation identities, self-review, naive timestamps and observations after
-  retrieval. It writes no partial output on failure.
+  missing or contradictory provider receipts, incomplete
+  distribution/corporate-action assurances, absent evidence, automation
+  identities, self-review, naive timestamps and observations after retrieval.
+  It writes no partial output on failure.
 
 Draft example:
 
@@ -136,6 +147,8 @@ Verified mode uses the same command with `--mode verified`, both bases set to
 flags and these evidence/review arguments:
 
 ```text
+--instrument-provider-receipt <INSTRUMENT_CANDIDATE/provider_receipt.json>
+--benchmark-provider-receipt <BENCHMARK_CANDIDATE/provider_receipt.json>
 --provider-methodology-evidence <FILE>
 --usage-rights-evidence <FILE>
 --verification-evidence <SEPARATE_FILE>
@@ -147,6 +160,10 @@ flags and these evidence/review arguments:
 --approve-internal-calibration-rights
 --confirm-independent-review
 ```
+
+`--retrieved-at` must exactly equal the later `created_at` value from the two
+provider receipts. The workbench copies each receipt beside its bound CSV and
+revalidates the relationship after materialization.
 
 The generated packet remains calibration evidence only. Even a valid matured
 outcome keeps `live_activation_allowed: false`; publication and paid-product

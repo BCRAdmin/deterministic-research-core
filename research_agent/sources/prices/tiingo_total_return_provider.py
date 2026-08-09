@@ -17,6 +17,10 @@ from pathlib import Path
 import pandas as pd
 
 from research_agent.sources.prices.price_provider_base import PriceProviderBase
+from research_agent.sources.prices.provider_price_candidate import (
+    ProviderPriceCandidateReceipt,
+    load_provider_price_candidate,
+)
 
 
 class TiingoTotalReturnProvider(PriceProviderBase):
@@ -288,34 +292,34 @@ def main() -> int:
             frame.to_csv(handle, index=False)
         with prices_path.open("rb") as handle:
             digest = "sha256:" + hashlib.sha256(handle.read()).hexdigest()
-        receipt = {
-            "schema_version": "room16.provider_price_candidate@1",
-            "created_at": datetime.now(timezone.utc).isoformat(),
-            "status": "candidate_downloaded",
-            "provider_id": TiingoTotalReturnProvider.provider_id,
-            "provider_dataset_id": TiingoTotalReturnProvider.provider_dataset_id,
-            "ticker": args.ticker.strip().upper(),
-            "requested_start": args.start,
-            "requested_end": args.end,
-            "rows": len(frame),
-            "first_date": str(frame.iloc[0]["date"]),
-            "last_date": str(frame.iloc[-1]["date"]),
-            "series_basis": TiingoTotalReturnProvider.series_basis,
-            "cash_distributions_included": (TiingoTotalReturnProvider.cash_distributions_included),
-            "corporate_actions_included": (TiingoTotalReturnProvider.corporate_actions_included),
-            "data_file": "prices.csv",
-            "data_sha256": digest,
-            "source_url": TiingoTotalReturnProvider.source_url,
-            "methodology_url": TiingoTotalReturnProvider.methodology_url,
-            "license_url": TiingoTotalReturnProvider.license_url,
-            "pricing_url": TiingoTotalReturnProvider.pricing_url,
-            "rights_verification_status": "operator_evidence_still_required",
-            "live_activation_allowed": False,
-        }
+        receipt = ProviderPriceCandidateReceipt(
+            created_at=datetime.now(timezone.utc).isoformat(),
+            provider_id=TiingoTotalReturnProvider.provider_id,
+            provider_dataset_id=TiingoTotalReturnProvider.provider_dataset_id,
+            ticker=args.ticker.strip().upper(),
+            requested_start=args.start,
+            requested_end=args.end,
+            rows=len(frame),
+            first_date=str(frame.iloc[0]["date"]),
+            last_date=str(frame.iloc[-1]["date"]),
+            series_basis=TiingoTotalReturnProvider.series_basis,
+            cash_distributions_included=(TiingoTotalReturnProvider.cash_distributions_included),
+            corporate_actions_included=(TiingoTotalReturnProvider.corporate_actions_included),
+            data_file="prices.csv",
+            data_sha256=digest,
+            source_url=TiingoTotalReturnProvider.source_url,
+            methodology_url=TiingoTotalReturnProvider.methodology_url,
+            license_url=TiingoTotalReturnProvider.license_url,
+            pricing_url=TiingoTotalReturnProvider.pricing_url,
+        )
         receipt_path = temporary_dir / "provider_receipt.json"
         receipt_path.write_text(
-            json.dumps(receipt, indent=2, sort_keys=True) + "\n",
+            receipt.model_dump_json(indent=2) + "\n",
             encoding="utf-8",
+        )
+        load_provider_price_candidate(
+            receipt_path,
+            expected_series_path=prices_path,
         )
         os.replace(temporary_dir, target)
         temporary_dir = None
@@ -324,8 +328,9 @@ def main() -> int:
             shutil.rmtree(temporary_dir)
         print(json.dumps({"status": "blocked", "error": str(error)}), file=sys.stderr)
         return 2
-    receipt["output_dir"] = str(target)
-    print(json.dumps(receipt, indent=2, sort_keys=True))
+    output = receipt.model_dump(mode="json")
+    output["output_dir"] = str(target)
+    print(json.dumps(output, indent=2, sort_keys=True))
     return 0
 
 

@@ -24,6 +24,10 @@ from research_agent.calibration.valuation_calibration import (
     file_sha256,
     source_bundle_invalid_reasons,
 )
+from research_agent.sources.prices.provider_price_candidate import (
+    ProviderPriceCandidateReceipt,
+    load_provider_price_candidate,
+)
 
 
 OUTCOME_WORKBENCH_SCHEMA = "room16.valuation_outcome_workbench@1"
@@ -88,6 +92,8 @@ def build_valuation_outcome_workbench(
     snapshot_path: Union[str, Path],
     instrument_series_path: Union[str, Path],
     benchmark_series_path: Union[str, Path],
+    instrument_provider_receipt_path: Optional[Union[str, Path]],
+    benchmark_provider_receipt_path: Optional[Union[str, Path]],
     provider_id: str,
     provider_dataset_id: str,
     benchmark: str,
@@ -123,7 +129,30 @@ def build_valuation_outcome_workbench(
     snapshot = ValuationCalibrationSnapshot(**json.loads(snapshot_file.read_text(encoding="utf-8")))
     instrument_prices = load_normalized_price_csv(instrument_file)
     benchmark_prices = load_normalized_price_csv(benchmark_file)
+    instrument_receipt = _load_optional_provider_receipt(
+        instrument_provider_receipt_path,
+        instrument_file,
+    )
+    benchmark_receipt = _load_optional_provider_receipt(
+        benchmark_provider_receipt_path,
+        benchmark_file,
+    )
     if mode == "verified":
+        _validate_verified_provider_receipts(
+            snapshot=snapshot,
+            benchmark=benchmark,
+            provider_id=provider_id,
+            provider_dataset_id=provider_dataset_id,
+            retrieved_at=retrieved_at,
+            instrument_receipt=instrument_receipt,
+            benchmark_receipt=benchmark_receipt,
+            instrument_price_series_basis=instrument_price_series_basis,
+            benchmark_price_series_basis=benchmark_price_series_basis,
+            instrument_cash_distributions_included=(instrument_cash_distributions_included),
+            benchmark_cash_distributions_included=benchmark_cash_distributions_included,
+            instrument_corporate_actions_included=(instrument_corporate_actions_included),
+            benchmark_corporate_actions_included=(benchmark_corporate_actions_included),
+        )
         _validate_verified_gate(
             snapshot=snapshot,
             retrieved_at=retrieved_at,
@@ -155,10 +184,30 @@ def build_valuation_outcome_workbench(
         staging = Path(temporary)
         evidence_dir = staging / "evidence"
         evidence_dir.mkdir()
-        instrument_artifact = _copy_artifact(
-            instrument_file, evidence_dir / "instrument_series.csv"
-        )
-        benchmark_artifact = _copy_artifact(benchmark_file, evidence_dir / "benchmark_series.csv")
+        instrument_receipt_artifact = None
+        benchmark_receipt_artifact = None
+        if instrument_receipt is not None:
+            instrument_artifact, instrument_receipt_artifact = _copy_provider_candidate(
+                series_path=instrument_file,
+                receipt_path=Path(str(instrument_provider_receipt_path)).resolve(),
+                receipt=instrument_receipt,
+                target_dir=evidence_dir / "instrument_candidate",
+            )
+        else:
+            instrument_artifact = _copy_artifact(
+                instrument_file, evidence_dir / "instrument_series.csv"
+            )
+        if benchmark_receipt is not None:
+            benchmark_artifact, benchmark_receipt_artifact = _copy_provider_candidate(
+                series_path=benchmark_file,
+                receipt_path=Path(str(benchmark_provider_receipt_path)).resolve(),
+                receipt=benchmark_receipt,
+                target_dir=evidence_dir / "benchmark_candidate",
+            )
+        else:
+            benchmark_artifact = _copy_artifact(
+                benchmark_file, evidence_dir / "benchmark_series.csv"
+            )
         methodology_artifact = _copy_optional_artifact(
             provider_methodology_path,
             evidence_dir / _artifact_name("provider_methodology", provider_methodology_path),
@@ -206,6 +255,14 @@ def build_valuation_outcome_workbench(
             instrument_source_path=_relative_artifact_path(instrument_artifact, staging),
             benchmark_source_sha256=file_sha256(benchmark_artifact),
             benchmark_source_path=_relative_artifact_path(benchmark_artifact, staging),
+            instrument_provider_receipt_sha256=_optional_file_sha256(instrument_receipt_artifact),
+            instrument_provider_receipt_path=_relative_artifact_path(
+                instrument_receipt_artifact, staging
+            ),
+            benchmark_provider_receipt_sha256=_optional_file_sha256(benchmark_receipt_artifact),
+            benchmark_provider_receipt_path=_relative_artifact_path(
+                benchmark_receipt_artifact, staging
+            ),
             prepared_by=str(prepared_by).strip() if prepared_by else None,
             verification_status="human_verified" if mode == "verified" else "unverified",
             verified_by=(str(verified_by).strip() if mode == "verified" and verified_by else None),
@@ -294,6 +351,8 @@ def render_outcome_review_packet(
             f"- Bewertungsstichtag: `{snapshot.price_basis_date}`",
             f"- Benchmark: `{bundle.benchmark}`",
             f"- Anbieter: `{bundle.provider_id}` / `{bundle.provider_dataset_id}`",
+            f"- Instrument-Providerbeleg: `{bundle.instrument_provider_receipt_sha256 or 'fehlt'}`",
+            f"- Benchmark-Providerbeleg: `{bundle.benchmark_provider_receipt_sha256 or 'fehlt'}`",
             f"- Aufbereitet durch: `{bundle.prepared_by or 'nicht angegeben'}`",
             f"- Rechte freigegeben durch: `{bundle.usage_rights_approved_by or 'nicht freigegeben'}`",
             f"- Geprüft durch: `{bundle.verified_by or 'nicht geprüft'}`",
@@ -349,6 +408,11 @@ def _summarize_blockers(reasons: list[str]) -> list[str]:
         {"provider_methodology_artifact_path_invalid", "provider_methodology_hash_invalid"}
     ):
         summaries.append("Die Methodik des Datenanbieters ist nicht belegt.")
+    if any("provider_receipt" in reason for reason in reason_set):
+        summaries.append(
+            "Die Providerbelege sind nicht vollständig oder stimmen nicht mit Kursdateien, "
+            "Anbieter, Zeitraum und Total-Return-Deklaration überein."
+        )
     if any("usage_rights" in reason for reason in reason_set):
         summaries.append(
             "Nutzungsrecht, Nachweis, menschliche Freigabe oder Freigabezeitpunkt fehlen."
@@ -369,6 +433,7 @@ def _summarize_blockers(reasons: list[str]) -> list[str]:
         "cash_distributions",
         "corporate_actions",
         "provider_methodology",
+        "provider_receipt",
         "usage_rights",
         "human_verification",
         "independent_verification",
@@ -379,6 +444,105 @@ def _summarize_blockers(reasons: list[str]) -> list[str]:
     if any(not any(token in reason for token in covered_tokens) for reason in reason_set):
         summaries.append("Weitere technische Quellenvertragsfehler stehen in der Codeliste.")
     return summaries
+
+
+def _load_optional_provider_receipt(
+    receipt_path: Optional[Union[str, Path]],
+    series_path: Path,
+) -> Optional[ProviderPriceCandidateReceipt]:
+    if receipt_path is None:
+        return None
+    return load_provider_price_candidate(
+        receipt_path,
+        expected_series_path=series_path,
+    )
+
+
+def _validate_verified_provider_receipts(
+    *,
+    snapshot: ValuationCalibrationSnapshot,
+    benchmark: str,
+    provider_id: str,
+    provider_dataset_id: str,
+    retrieved_at: str,
+    instrument_receipt: Optional[ProviderPriceCandidateReceipt],
+    benchmark_receipt: Optional[ProviderPriceCandidateReceipt],
+    instrument_price_series_basis: str,
+    benchmark_price_series_basis: str,
+    instrument_cash_distributions_included: bool,
+    benchmark_cash_distributions_included: bool,
+    instrument_corporate_actions_included: bool,
+    benchmark_corporate_actions_included: bool,
+) -> None:
+    if instrument_receipt is None or benchmark_receipt is None:
+        raise ValueError("verified mode requires instrument and benchmark provider receipts")
+    specs = (
+        (
+            "instrument",
+            instrument_receipt,
+            snapshot.ticker,
+            instrument_price_series_basis,
+            instrument_cash_distributions_included,
+            instrument_corporate_actions_included,
+        ),
+        (
+            "benchmark",
+            benchmark_receipt,
+            benchmark,
+            benchmark_price_series_basis,
+            benchmark_cash_distributions_included,
+            benchmark_corporate_actions_included,
+        ),
+    )
+    basis_date = datetime.strptime(snapshot.price_basis_date, "%Y-%m-%d").date()
+    for (
+        label,
+        receipt,
+        expected_ticker,
+        expected_basis,
+        expected_distributions,
+        expected_corporate_actions,
+    ) in specs:
+        if receipt.provider_id != provider_id.strip():
+            raise ValueError(f"verified {label} receipt provider does not match provider_id")
+        if receipt.provider_dataset_id != provider_dataset_id.strip():
+            raise ValueError(f"verified {label} receipt dataset does not match provider_dataset_id")
+        if receipt.ticker.strip().upper() != expected_ticker.strip().upper():
+            raise ValueError(f"verified {label} receipt ticker does not match the source role")
+        if receipt.series_basis != expected_basis:
+            raise ValueError(f"verified {label} receipt does not prove the declared series basis")
+        if receipt.cash_distributions_included is not expected_distributions:
+            raise ValueError(
+                f"verified {label} receipt does not prove the distribution declaration"
+            )
+        if receipt.corporate_actions_included is not expected_corporate_actions:
+            raise ValueError(
+                f"verified {label} receipt does not prove the corporate-action declaration"
+            )
+        if not (
+            datetime.strptime(receipt.first_date, "%Y-%m-%d").date()
+            <= basis_date
+            < datetime.strptime(receipt.last_date, "%Y-%m-%d").date()
+        ):
+            raise ValueError(f"verified {label} receipt does not cover the valuation basis date")
+
+    provenance_fields = (
+        "source_url",
+        "methodology_url",
+        "license_url",
+        "pricing_url",
+    )
+    if any(
+        getattr(instrument_receipt, field) != getattr(benchmark_receipt, field)
+        for field in provenance_fields
+    ):
+        raise ValueError("verified provider receipts do not share one provenance contract")
+    latest_receipt = max(
+        _aware_datetime(instrument_receipt.created_at, "instrument receipt created_at"),
+        _aware_datetime(benchmark_receipt.created_at, "benchmark receipt created_at"),
+    )
+    if _aware_datetime(retrieved_at, "retrieved_at") != latest_receipt:
+        raise ValueError("retrieved_at must equal the latest provider receipt timestamp")
 
 
 def _validate_verified_gate(
@@ -483,6 +647,23 @@ def _copy_artifact(source: Union[str, Path], target: Path) -> Path:
     return target
 
 
+def _copy_provider_candidate(
+    *,
+    series_path: Path,
+    receipt_path: Path,
+    receipt: ProviderPriceCandidateReceipt,
+    target_dir: Path,
+) -> tuple[Path, Path]:
+    target_dir.mkdir()
+    series_artifact = _copy_artifact(series_path, target_dir / receipt.data_file)
+    receipt_artifact = _copy_artifact(receipt_path, target_dir / "provider_receipt.json")
+    load_provider_price_candidate(
+        receipt_artifact,
+        expected_series_path=series_artifact,
+    )
+    return series_artifact, receipt_artifact
+
+
 def _copy_optional_artifact(source: Optional[Union[str, Path]], target: Path) -> Optional[Path]:
     return _copy_artifact(source, target) if source is not None else None
 
@@ -529,6 +710,8 @@ def main() -> int:
     parser.add_argument("--snapshot", required=True)
     parser.add_argument("--instrument-series", required=True)
     parser.add_argument("--benchmark-series", required=True)
+    parser.add_argument("--instrument-provider-receipt")
+    parser.add_argument("--benchmark-provider-receipt")
     parser.add_argument("--provider-id", required=True)
     parser.add_argument("--provider-dataset-id", required=True)
     parser.add_argument("--benchmark", required=True)
@@ -581,6 +764,8 @@ def main() -> int:
             snapshot_path=args.snapshot,
             instrument_series_path=args.instrument_series,
             benchmark_series_path=args.benchmark_series,
+            instrument_provider_receipt_path=args.instrument_provider_receipt,
+            benchmark_provider_receipt_path=args.benchmark_provider_receipt,
             provider_id=args.provider_id,
             provider_dataset_id=args.provider_dataset_id,
             benchmark=args.benchmark,

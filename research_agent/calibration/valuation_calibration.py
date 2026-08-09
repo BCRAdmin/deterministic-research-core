@@ -14,6 +14,10 @@ from typing import Literal, Optional, Union
 from pydantic import BaseModel, ConfigDict, Field
 
 from research_agent.research_core.models.metrics_packet import MetricsPacket
+from research_agent.sources.prices.provider_price_candidate import (
+    ProviderPriceCandidateReceipt,
+    load_provider_price_candidate,
+)
 
 
 VALUATION_CALIBRATION_SCHEMA = "room16.valuation_calibration_snapshot@1"
@@ -120,6 +124,10 @@ class ValuationCalibrationSourceBundle(BaseModel):
     instrument_source_path: Optional[str] = None
     benchmark_source_sha256: Optional[str] = None
     benchmark_source_path: Optional[str] = None
+    instrument_provider_receipt_sha256: Optional[str] = None
+    instrument_provider_receipt_path: Optional[str] = None
+    benchmark_provider_receipt_sha256: Optional[str] = None
+    benchmark_provider_receipt_path: Optional[str] = None
     prepared_by: Optional[str] = None
     verification_status: Literal["unverified", "human_verified"] = "unverified"
     verified_by: Optional[str] = None
@@ -594,6 +602,14 @@ def calculate_source_bundle_sha256(
 ) -> str:
     payload = source_bundle.model_dump(mode="json")
     payload.pop("source_bundle_sha256", None)
+    for field in (
+        "instrument_provider_receipt_sha256",
+        "instrument_provider_receipt_path",
+        "benchmark_provider_receipt_sha256",
+        "benchmark_provider_receipt_path",
+    ):
+        if payload.get(field) is None:
+            payload.pop(field, None)
     normalized = json.dumps(payload, sort_keys=True, separators=(",", ":"))
     return "sha256:" + hashlib.sha256(normalized.encode("utf-8")).hexdigest()
 
@@ -838,6 +854,17 @@ def _source_bundle_invalid_reasons(
         "benchmark_source_hash_invalid": source_bundle.benchmark_source_sha256,
         "verification_evidence_hash_invalid": (source_bundle.verification_evidence_sha256),
     }
+    if source_bundle.verification_status == "human_verified":
+        required_hashes.update(
+            {
+                "instrument_provider_receipt_hash_invalid": (
+                    source_bundle.instrument_provider_receipt_sha256
+                ),
+                "benchmark_provider_receipt_hash_invalid": (
+                    source_bundle.benchmark_provider_receipt_sha256
+                ),
+            }
+        )
     reasons.extend(reason for reason, value in required_hashes.items() if not _is_sha256(value))
     required_paths = {
         "provider_methodology_artifact_path_invalid": source_bundle.provider_methodology_path,
@@ -846,6 +873,17 @@ def _source_bundle_invalid_reasons(
         "benchmark_source_artifact_path_invalid": source_bundle.benchmark_source_path,
         "verification_evidence_artifact_path_invalid": (source_bundle.verification_evidence_path),
     }
+    if source_bundle.verification_status == "human_verified":
+        required_paths.update(
+            {
+                "instrument_provider_receipt_artifact_path_invalid": (
+                    source_bundle.instrument_provider_receipt_path
+                ),
+                "benchmark_provider_receipt_artifact_path_invalid": (
+                    source_bundle.benchmark_provider_receipt_path
+                ),
+            }
+        )
     reasons.extend(
         reason
         for reason, value in required_paths.items()
@@ -955,6 +993,23 @@ def source_bundle_artifact_invalid_reasons(
             source_bundle.verification_evidence_sha256,
         ),
     }
+    receipt_artifacts = {
+        "instrument_provider_receipt": (
+            source_bundle.instrument_provider_receipt_path,
+            source_bundle.instrument_provider_receipt_sha256,
+        ),
+        "benchmark_provider_receipt": (
+            source_bundle.benchmark_provider_receipt_path,
+            source_bundle.benchmark_provider_receipt_sha256,
+        ),
+    }
+    for label, artifact in receipt_artifacts.items():
+        if (
+            source_bundle.verification_status == "human_verified"
+            or artifact[0] is not None
+            or artifact[1] is not None
+        ):
+            artifacts[label] = artifact
     reasons: list[str] = []
     for label, (relative_path, expected_hash) in artifacts.items():
         if not _is_safe_relative_artifact_path(relative_path):
@@ -971,7 +1026,103 @@ def source_bundle_artifact_invalid_reasons(
             continue
         if not _is_sha256(expected_hash) or file_sha256(artifact_path) != expected_hash:
             reasons.append(f"{label}_artifact_hash_mismatch")
+    reasons.extend(_provider_receipt_contract_invalid_reasons(source_bundle, root))
     return sorted(set(reasons))
+
+
+def _provider_receipt_contract_invalid_reasons(
+    source_bundle: ValuationCalibrationSourceBundle,
+    root: Path,
+) -> list[str]:
+    specs = {
+        "instrument": (
+            source_bundle.instrument_provider_receipt_path,
+            source_bundle.instrument_source_path,
+            source_bundle.instrument,
+            source_bundle.instrument_price_series_basis,
+            source_bundle.instrument_cash_distributions_included,
+            source_bundle.instrument_corporate_actions_included,
+        ),
+        "benchmark": (
+            source_bundle.benchmark_provider_receipt_path,
+            source_bundle.benchmark_source_path,
+            source_bundle.benchmark,
+            source_bundle.benchmark_price_series_basis,
+            source_bundle.benchmark_cash_distributions_included,
+            source_bundle.benchmark_corporate_actions_included,
+        ),
+    }
+    reasons: list[str] = []
+    loaded: dict[str, ProviderPriceCandidateReceipt] = {}
+    for label, (
+        receipt_relative,
+        series_relative,
+        expected_ticker,
+        expected_basis,
+        expected_distributions,
+        expected_corporate_actions,
+    ) in specs.items():
+        if receipt_relative is None and source_bundle.verification_status != "human_verified":
+            continue
+        if not _is_safe_relative_artifact_path(
+            receipt_relative
+        ) or not _is_safe_relative_artifact_path(series_relative):
+            continue
+        receipt_path = (root / str(receipt_relative)).resolve()
+        series_path = (root / str(series_relative)).resolve()
+        try:
+            receipt = load_provider_price_candidate(
+                receipt_path,
+                expected_series_path=series_path,
+            )
+        except (OSError, ValueError):
+            reasons.append(f"{label}_provider_receipt_contract_invalid")
+            continue
+        loaded[label] = receipt
+        if receipt.provider_id != source_bundle.provider_id:
+            reasons.append(f"{label}_provider_receipt_provider_mismatch")
+        if receipt.provider_dataset_id != source_bundle.provider_dataset_id:
+            reasons.append(f"{label}_provider_receipt_dataset_mismatch")
+        if receipt.ticker.strip().upper() != expected_ticker.strip().upper():
+            reasons.append(f"{label}_provider_receipt_ticker_mismatch")
+        if receipt.series_basis != expected_basis:
+            reasons.append(f"{label}_provider_receipt_series_basis_mismatch")
+        if receipt.cash_distributions_included is not expected_distributions:
+            reasons.append(f"{label}_provider_receipt_distribution_claim_mismatch")
+        if receipt.corporate_actions_included is not expected_corporate_actions:
+            reasons.append(f"{label}_provider_receipt_corporate_action_claim_mismatch")
+        try:
+            basis_date = date.fromisoformat(source_bundle.basis_date)
+            if not (
+                date.fromisoformat(receipt.first_date)
+                <= basis_date
+                < date.fromisoformat(receipt.last_date)
+            ):
+                reasons.append(f"{label}_provider_receipt_basis_coverage_invalid")
+        except ValueError:
+            reasons.append(f"{label}_provider_receipt_basis_coverage_invalid")
+
+    if set(loaded) == {"instrument", "benchmark"}:
+        instrument_receipt = loaded["instrument"]
+        benchmark_receipt = loaded["benchmark"]
+        latest_receipt = max(
+            _parse_aware_timestamp(instrument_receipt.created_at),
+            _parse_aware_timestamp(benchmark_receipt.created_at),
+        )
+        if latest_receipt != _parse_aware_timestamp(source_bundle.retrieved_at):
+            reasons.append("source_bundle_provider_receipt_retrieved_at_mismatch")
+        provenance_fields = (
+            "source_url",
+            "methodology_url",
+            "license_url",
+            "pricing_url",
+        )
+        if any(
+            getattr(instrument_receipt, field) != getattr(benchmark_receipt, field)
+            for field in provenance_fields
+        ):
+            reasons.append("source_bundle_provider_receipt_provenance_mismatch")
+    return reasons
 
 
 def _is_safe_relative_artifact_path(value: Optional[str]) -> bool:

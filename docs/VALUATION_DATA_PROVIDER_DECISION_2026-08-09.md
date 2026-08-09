@@ -114,6 +114,15 @@ aber weder Token noch eine behauptete Rechtefreigabe. Auch ein erfolgreicher
 Download bleibt `operator_evidence_still_required` und
 `live_activation_allowed=false`.
 
+Der Providerbeleg ist inzwischen verbindlich an die v2-Outcome-Workbench
+angeschlossen. Ein verifizierter Lauf benötigt getrennte Belege für Instrument
+und Benchmark. Die Workbench prüft jeweils CSV-Hash, Zeilen und Zeitraum sowie
+Ticker, Anbieter, Datensatz und Total-Return-Eigenschaften. Beide Belege müssen
+denselben Provenienzvertrag ausweisen; `retrieved_at` muss exakt dem späteren
+Belegzeitpunkt entsprechen. Die Belege werden gemeinsam mit ihren Kursdateien
+in das selbstständige Evidence-Paket kopiert und erneut validiert. Manuell
+eingetragene Providerbehauptungen reichen damit nicht mehr aus.
+
 ## Schriftlich zu klärende Punkte
 
 Vor dem Kauf sollte Tiingo folgende Verwendung schriftlich einordnen:
