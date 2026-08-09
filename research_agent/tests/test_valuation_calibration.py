@@ -121,6 +121,7 @@ def _source_bundle(
         "benchmark": "BENCH",
         "basis_date": snapshot.price_basis_date,
         "retrieved_at": f"{retrieval_date.isoformat()}T12:00:00+00:00",
+        "bundle_created_at": (f"{(retrieval_date + timedelta(days=2)).isoformat()}T12:00:00+00:00"),
         "instrument_price_series_basis": "total_return_adjusted",
         "benchmark_price_series_basis": "total_return_adjusted",
         "instrument_cash_distributions_included": True,
@@ -128,14 +129,23 @@ def _source_bundle(
         "instrument_corporate_actions_included": True,
         "benchmark_corporate_actions_included": True,
         "provider_methodology_sha256": HASH,
+        "provider_methodology_path": "evidence/provider_methodology.txt",
         "usage_rights_status": "internal_calibration_allowed",
         "usage_rights_evidence_sha256": HASH,
+        "usage_rights_evidence_path": "evidence/usage_rights.txt",
+        "usage_rights_approved_by": "rights_test_reviewer",
+        "usage_rights_approved_at": f"{retrieval_date.isoformat()}T12:00:00+00:00",
         "instrument_source_sha256": HASH,
+        "instrument_source_path": "evidence/instrument_series.csv",
         "benchmark_source_sha256": HASH,
+        "benchmark_source_path": "evidence/benchmark_series.csv",
+        "prepared_by": "Room16 preparation workbench",
         "verification_status": "human_verified",
         "verified_by": "independent_test_reviewer",
         "verified_at": f"{(retrieval_date + timedelta(days=1)).isoformat()}T12:00:00+00:00",
+        "verification_independent_from_preparation": True,
         "verification_evidence_sha256": HASH,
+        "verification_evidence_path": "evidence/human_verification.txt",
         "instrument_prices": instrument_prices,
         "benchmark_prices": benchmark_prices,
     }
@@ -392,6 +402,9 @@ def test_source_bundle_requires_distributions_actions_and_human_evidence():
         verification_evidence_sha256=None,
         usage_rights_status="unverified",
         usage_rights_evidence_sha256=None,
+        usage_rights_approved_by=None,
+        usage_rights_approved_at=None,
+        verification_independent_from_preparation=False,
     )
 
     outcome = build_valuation_calibration_outcome(snapshot, source_bundle)
@@ -405,6 +418,35 @@ def test_source_bundle_requires_distributions_actions_and_human_evidence():
     assert "verification_evidence_hash_invalid" in outcome.notes
     assert "source_bundle_usage_rights_not_approved" in outcome.notes
     assert "usage_rights_evidence_hash_invalid" in outcome.notes
+    assert "source_bundle_usage_rights_approver_missing" in outcome.notes
+    assert "source_bundle_usage_rights_approved_at_invalid" in outcome.notes
+    assert "source_bundle_independent_verification_missing" in outcome.notes
+
+
+def test_source_bundle_rejects_legacy_schema_and_nonhuman_or_nonindependent_review():
+    snapshot = _snapshot()
+    prices = [ValuationCalibrationPricePoint(date="2025-01-02", close=100)]
+    source_bundle = _source_bundle(
+        snapshot,
+        prices,
+        prices,
+        schema_id="room16.valuation_calibration_source_bundle@1",
+        prepared_by="same reviewer",
+        verified_by="same-reviewer",
+        usage_rights_approved_by="Codex rights agent",
+        verification_evidence_path="evidence/usage_rights.txt",
+        usage_rights_approved_at="2026-01-10T12:00:00+00:00",
+        verified_at="2026-01-09T12:00:00+00:00",
+    )
+
+    outcome = build_valuation_calibration_outcome(snapshot, source_bundle)
+
+    assert outcome.status == "invalidated"
+    assert "source_bundle_schema_invalid" in outcome.notes
+    assert "source_bundle_reviewer_matches_preparer" in outcome.notes
+    assert "source_bundle_usage_rights_approver_not_human" in outcome.notes
+    assert "source_bundle_verification_evidence_not_separate" in outcome.notes
+    assert "source_bundle_verified_before_rights_approval" in outcome.notes
 
 
 def test_source_bundle_tampering_is_detected_before_outcome_calculation():
@@ -425,6 +467,24 @@ def test_source_bundle_tampering_is_detected_before_outcome_calculation():
 
     assert outcome.status == "invalidated"
     assert "source_bundle_hash_mismatch" in outcome.notes
+
+
+def test_source_bundle_rejects_events_recorded_after_bundle_creation():
+    snapshot = _snapshot()
+    prices = [ValuationCalibrationPricePoint(date="2025-01-02", close=100)]
+    source_bundle = _source_bundle(
+        snapshot,
+        prices,
+        prices,
+        bundle_created_at="2025-01-03T12:00:00+00:00",
+    )
+
+    outcome = build_valuation_calibration_outcome(snapshot, source_bundle)
+
+    assert outcome.status == "invalidated"
+    assert "source_bundle_retrieved_after_bundle_creation" in outcome.notes
+    assert "source_bundle_rights_approved_after_bundle_creation" in outcome.notes
+    assert "source_bundle_verified_after_bundle_creation" in outcome.notes
 
 
 def test_conflicting_duplicate_price_observation_is_invalidated():
@@ -488,8 +548,19 @@ def test_source_bundle_loader_is_strict_and_missing_root_is_not_silent(tmp_path)
     prices = [ValuationCalibrationPricePoint(date="2025-01-02", close=100)]
     source_bundle = _source_bundle(snapshot, prices, prices)
     source_root = tmp_path / "sources"
-    source_root.mkdir()
-    (source_root / "test.json").write_text(
+    bundle_root = source_root / "test"
+    evidence_root = bundle_root / "evidence"
+    evidence_root.mkdir(parents=True)
+    for filename in [
+        "provider_methodology.txt",
+        "usage_rights.txt",
+        "instrument_series.csv",
+        "benchmark_series.csv",
+        "human_verification.txt",
+    ]:
+        (evidence_root / filename).write_bytes(b"fixture")
+    bundle_path = bundle_root / "valuation_calibration_source_bundle.json"
+    bundle_path.write_text(
         json.dumps(source_bundle.model_dump(mode="json")),
         encoding="utf-8",
     )
@@ -499,9 +570,62 @@ def test_source_bundle_loader_is_strict_and_missing_root_is_not_silent(tmp_path)
     assert loaded == [source_bundle]
     with pytest.raises(FileNotFoundError, match="source root does not exist"):
         load_valuation_source_bundles(tmp_path / "missing")
+    empty_root = tmp_path / "empty"
+    empty_root.mkdir()
+    with pytest.raises(ValueError, match="contains no bundles"):
+        load_valuation_source_bundles(empty_root)
+    with pytest.raises(NotADirectoryError, match="is not a directory"):
+        load_valuation_source_bundles(bundle_path)
 
     payload = source_bundle.model_dump(mode="json")
     payload["unsupported_assertion"] = True
-    (source_root / "test.json").write_text(json.dumps(payload), encoding="utf-8")
+    bundle_path.write_text(json.dumps(payload), encoding="utf-8")
     with pytest.raises(ValueError, match="Extra inputs are not permitted"):
         load_valuation_source_bundles(source_root)
+
+
+def test_source_bundle_loader_rejects_missing_tampered_and_traversal_artifacts(tmp_path):
+    snapshot = _snapshot()
+    prices = [ValuationCalibrationPricePoint(date="2025-01-02", close=100)]
+    source_bundle = _source_bundle(snapshot, prices, prices)
+    bundle_root = tmp_path / "sources" / "test"
+    evidence_root = bundle_root / "evidence"
+    evidence_root.mkdir(parents=True)
+    for filename in [
+        "provider_methodology.txt",
+        "usage_rights.txt",
+        "instrument_series.csv",
+        "benchmark_series.csv",
+        "human_verification.txt",
+    ]:
+        (evidence_root / filename).write_bytes(b"fixture")
+    bundle_path = bundle_root / "valuation_calibration_source_bundle.json"
+    bundle_path.write_text(source_bundle.model_dump_json(), encoding="utf-8")
+
+    (evidence_root / "instrument_series.csv").write_bytes(b"tampered")
+    with pytest.raises(ValueError, match="instrument_source_artifact_hash_mismatch"):
+        load_valuation_source_bundles(tmp_path / "sources")
+
+    (evidence_root / "instrument_series.csv").write_bytes(b"fixture")
+    tampered_bundle = source_bundle.model_copy(update={"provider_dataset_id": "CHANGED"})
+    bundle_path.write_text(tampered_bundle.model_dump_json(), encoding="utf-8")
+    with pytest.raises(ValueError, match="source_bundle_hash_mismatch"):
+        load_valuation_source_bundles(tmp_path / "sources")
+
+    legacy = source_bundle.model_copy(
+        update={"schema_id": "room16.valuation_calibration_source_bundle@1"}
+    )
+    legacy = legacy.model_copy(
+        update={"source_bundle_sha256": calculate_source_bundle_sha256(legacy)}
+    )
+    bundle_path.write_text(legacy.model_dump_json(), encoding="utf-8")
+    with pytest.raises(ValueError, match="source_bundle_schema_invalid"):
+        load_valuation_source_bundles(tmp_path / "sources")
+
+    traversal = source_bundle.model_copy(update={"instrument_source_path": "../../outside.csv"})
+    traversal = traversal.model_copy(
+        update={"source_bundle_sha256": calculate_source_bundle_sha256(traversal)}
+    )
+    bundle_path.write_text(traversal.model_dump_json(), encoding="utf-8")
+    with pytest.raises(ValueError, match="instrument_source_artifact_path_invalid"):
+        load_valuation_source_bundles(tmp_path / "sources")

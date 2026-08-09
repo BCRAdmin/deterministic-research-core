@@ -4,6 +4,8 @@ import argparse
 import hashlib
 import json
 import math
+import re
+import unicodedata
 from collections import Counter, defaultdict
 from datetime import date, datetime
 from pathlib import Path
@@ -15,7 +17,7 @@ from research_agent.research_core.models.metrics_packet import MetricsPacket
 
 
 VALUATION_CALIBRATION_SCHEMA = "room16.valuation_calibration_snapshot@1"
-VALUATION_SOURCE_BUNDLE_SCHEMA = "room16.valuation_calibration_source_bundle@1"
+VALUATION_SOURCE_BUNDLE_SCHEMA = "room16.valuation_calibration_source_bundle@2"
 VALUATION_OUTCOME_SCHEMA = "room16.valuation_calibration_outcome@1"
 VALUATION_READINESS_SCHEMA = "room16.valuation_calibration_readiness@1"
 VALUATION_REPLAY_SCHEMA = "room16.valuation_calibration_replay@1"
@@ -25,6 +27,11 @@ MIN_EFFECTIVE_SAMPLES = 75
 MIN_UNIQUE_ISSUERS = 25
 MIN_SECTORS = 5
 MAX_OBSERVATIONS_PER_ISSUER = 3
+AUTOMATION_IDENTITY_PATTERN = re.compile(
+    r"^(?:ai|agent|automation|bot|chatgpt|claude|codex|deepseek|gemini|llm|"
+    r"model|openai|room\s*16|system|vega|vivi)(?:\b|[-_])",
+    re.IGNORECASE,
+)
 
 
 class ValuationCalibrationSnapshot(BaseModel):
@@ -95,6 +102,7 @@ class ValuationCalibrationSourceBundle(BaseModel):
     benchmark: str
     basis_date: str
     retrieved_at: str
+    bundle_created_at: str
     instrument_price_series_basis: str
     benchmark_price_series_basis: str
     instrument_cash_distributions_included: bool = False
@@ -102,14 +110,23 @@ class ValuationCalibrationSourceBundle(BaseModel):
     instrument_corporate_actions_included: bool = False
     benchmark_corporate_actions_included: bool = False
     provider_methodology_sha256: Optional[str] = None
+    provider_methodology_path: Optional[str] = None
     usage_rights_status: Literal["unverified", "internal_calibration_allowed"] = "unverified"
     usage_rights_evidence_sha256: Optional[str] = None
+    usage_rights_evidence_path: Optional[str] = None
+    usage_rights_approved_by: Optional[str] = None
+    usage_rights_approved_at: Optional[str] = None
     instrument_source_sha256: Optional[str] = None
+    instrument_source_path: Optional[str] = None
     benchmark_source_sha256: Optional[str] = None
+    benchmark_source_path: Optional[str] = None
+    prepared_by: Optional[str] = None
     verification_status: Literal["unverified", "human_verified"] = "unverified"
     verified_by: Optional[str] = None
     verified_at: Optional[str] = None
+    verification_independent_from_preparation: bool = False
     verification_evidence_sha256: Optional[str] = None
+    verification_evidence_path: Optional[str] = None
     instrument_prices: list[ValuationCalibrationPricePoint] = Field(default_factory=list)
     benchmark_prices: list[ValuationCalibrationPricePoint] = Field(default_factory=list)
     source_bundle_sha256: Optional[str] = None
@@ -589,10 +606,30 @@ def load_valuation_source_bundles(
     target = Path(path)
     if not target.exists():
         raise FileNotFoundError(f"valuation calibration source root does not exist: {target}")
-    return [
-        ValuationCalibrationSourceBundle(**json.loads(bundle_path.read_text(encoding="utf-8")))
-        for bundle_path in sorted(target.glob("**/*.json"))
-    ]
+    if not target.is_dir():
+        raise NotADirectoryError(f"valuation calibration source root is not a directory: {target}")
+    bundles: list[ValuationCalibrationSourceBundle] = []
+    for bundle_path in sorted(target.glob("**/valuation_calibration_source_bundle.json")):
+        bundle = ValuationCalibrationSourceBundle(
+            **json.loads(bundle_path.read_text(encoding="utf-8"))
+        )
+        integrity_reasons: list[str] = []
+        if bundle.schema_id != VALUATION_SOURCE_BUNDLE_SCHEMA:
+            integrity_reasons.append("source_bundle_schema_invalid")
+        if not _is_sha256(bundle.source_bundle_sha256):
+            integrity_reasons.append("source_bundle_hash_invalid")
+        elif bundle.source_bundle_sha256 != calculate_source_bundle_sha256(bundle):
+            integrity_reasons.append("source_bundle_hash_mismatch")
+        integrity_reasons.extend(source_bundle_artifact_invalid_reasons(bundle, bundle_path))
+        if integrity_reasons:
+            raise ValueError(
+                f"valuation source bundle invalid: {bundle_path}: "
+                + ", ".join(sorted(set(integrity_reasons)))
+            )
+        bundles.append(bundle)
+    if not bundles:
+        raise ValueError(f"valuation calibration source root contains no bundles: {target}")
+    return bundles
 
 
 def build_valuation_calibration_outcomes(
@@ -768,6 +805,13 @@ def _source_bundle_invalid_reasons(
         reasons.append("source_bundle_dataset_missing")
     if source_bundle.usage_rights_status != "internal_calibration_allowed":
         reasons.append("source_bundle_usage_rights_not_approved")
+    rights_approved_at = _parse_aware_timestamp(source_bundle.usage_rights_approved_at)
+    if not str(source_bundle.usage_rights_approved_by or "").strip():
+        reasons.append("source_bundle_usage_rights_approver_missing")
+    elif _appears_automation_identity(source_bundle.usage_rights_approved_by):
+        reasons.append("source_bundle_usage_rights_approver_not_human")
+    if rights_approved_at is None:
+        reasons.append("source_bundle_usage_rights_approved_at_invalid")
     if source_bundle.basis_date != snapshot.price_basis_date:
         reasons.append("source_bundle_basis_date_mismatch")
     else:
@@ -795,10 +839,32 @@ def _source_bundle_invalid_reasons(
         "verification_evidence_hash_invalid": (source_bundle.verification_evidence_sha256),
     }
     reasons.extend(reason for reason, value in required_hashes.items() if not _is_sha256(value))
+    required_paths = {
+        "provider_methodology_artifact_path_invalid": source_bundle.provider_methodology_path,
+        "usage_rights_evidence_artifact_path_invalid": (source_bundle.usage_rights_evidence_path),
+        "instrument_source_artifact_path_invalid": source_bundle.instrument_source_path,
+        "benchmark_source_artifact_path_invalid": source_bundle.benchmark_source_path,
+        "verification_evidence_artifact_path_invalid": (source_bundle.verification_evidence_path),
+    }
+    reasons.extend(
+        reason
+        for reason, value in required_paths.items()
+        if not _is_safe_relative_artifact_path(value)
+    )
+    if source_bundle.verification_evidence_path and source_bundle.verification_evidence_path in {
+        source_bundle.provider_methodology_path,
+        source_bundle.usage_rights_evidence_path,
+    }:
+        reasons.append("source_bundle_verification_evidence_not_separate")
     retrieved_at = _parse_aware_timestamp(source_bundle.retrieved_at)
+    bundle_created_at = _parse_aware_timestamp(source_bundle.bundle_created_at)
+    if bundle_created_at is None:
+        reasons.append("source_bundle_created_at_invalid")
     if retrieved_at is None:
         reasons.append("source_bundle_retrieved_at_invalid")
     else:
+        if bundle_created_at is not None and retrieved_at > bundle_created_at:
+            reasons.append("source_bundle_retrieved_after_bundle_creation")
         try:
             if retrieved_at.date() < date.fromisoformat(snapshot.price_basis_date):
                 reasons.append("source_bundle_retrieved_before_basis_date")
@@ -818,17 +884,116 @@ def _source_bundle_invalid_reasons(
     verified_at = _parse_aware_timestamp(source_bundle.verified_at)
     if source_bundle.verification_status != "human_verified":
         reasons.append("source_bundle_human_verification_missing")
+    if not str(source_bundle.prepared_by or "").strip():
+        reasons.append("source_bundle_prepared_by_missing")
     if not str(source_bundle.verified_by or "").strip():
         reasons.append("source_bundle_verified_by_missing")
+    elif _appears_automation_identity(source_bundle.verified_by):
+        reasons.append("source_bundle_verified_by_not_human")
+    if not source_bundle.verification_independent_from_preparation:
+        reasons.append("source_bundle_independent_verification_missing")
+    elif _same_identity(source_bundle.prepared_by, source_bundle.verified_by):
+        reasons.append("source_bundle_reviewer_matches_preparer")
     if verified_at is None:
         reasons.append("source_bundle_verified_at_invalid")
     elif retrieved_at is not None and verified_at < retrieved_at:
         reasons.append("source_bundle_verified_before_retrieval")
+    elif rights_approved_at is not None and verified_at < rights_approved_at:
+        reasons.append("source_bundle_verified_before_rights_approval")
+    if rights_approved_at is not None and bundle_created_at is not None:
+        if rights_approved_at > bundle_created_at:
+            reasons.append("source_bundle_rights_approved_after_bundle_creation")
+    if verified_at is not None and bundle_created_at is not None:
+        if verified_at > bundle_created_at:
+            reasons.append("source_bundle_verified_after_bundle_creation")
     if not _is_sha256(source_bundle.source_bundle_sha256):
         reasons.append("source_bundle_hash_invalid")
     elif source_bundle.source_bundle_sha256 != calculate_source_bundle_sha256(source_bundle):
         reasons.append("source_bundle_hash_mismatch")
     return reasons
+
+
+def source_bundle_invalid_reasons(
+    snapshot: ValuationCalibrationSnapshot,
+    source_bundle: ValuationCalibrationSourceBundle,
+    bundle_path: Optional[Union[str, Path]] = None,
+) -> list[str]:
+    """Return the canonical fail-closed source reasons for operator workbenches."""
+
+    reasons = _source_bundle_invalid_reasons(snapshot, source_bundle)
+    if bundle_path is not None:
+        reasons.extend(source_bundle_artifact_invalid_reasons(source_bundle, bundle_path))
+    return sorted(set(reasons))
+
+
+def source_bundle_artifact_invalid_reasons(
+    source_bundle: ValuationCalibrationSourceBundle,
+    bundle_path: Union[str, Path],
+) -> list[str]:
+    """Verify that every hash-bound source artifact is present beside the bundle."""
+
+    root = Path(bundle_path).resolve().parent
+    artifacts = {
+        "provider_methodology": (
+            source_bundle.provider_methodology_path,
+            source_bundle.provider_methodology_sha256,
+        ),
+        "usage_rights_evidence": (
+            source_bundle.usage_rights_evidence_path,
+            source_bundle.usage_rights_evidence_sha256,
+        ),
+        "instrument_source": (
+            source_bundle.instrument_source_path,
+            source_bundle.instrument_source_sha256,
+        ),
+        "benchmark_source": (
+            source_bundle.benchmark_source_path,
+            source_bundle.benchmark_source_sha256,
+        ),
+        "verification_evidence": (
+            source_bundle.verification_evidence_path,
+            source_bundle.verification_evidence_sha256,
+        ),
+    }
+    reasons: list[str] = []
+    for label, (relative_path, expected_hash) in artifacts.items():
+        if not _is_safe_relative_artifact_path(relative_path):
+            reasons.append(f"{label}_artifact_path_invalid")
+            continue
+        artifact_path = (root / str(relative_path)).resolve()
+        try:
+            artifact_path.relative_to(root)
+        except ValueError:
+            reasons.append(f"{label}_artifact_path_invalid")
+            continue
+        if not artifact_path.is_file():
+            reasons.append(f"{label}_artifact_missing")
+            continue
+        if not _is_sha256(expected_hash) or file_sha256(artifact_path) != expected_hash:
+            reasons.append(f"{label}_artifact_hash_mismatch")
+    return sorted(set(reasons))
+
+
+def _is_safe_relative_artifact_path(value: Optional[str]) -> bool:
+    if not str(value or "").strip():
+        return False
+    path = Path(str(value))
+    return not path.is_absolute() and ".." not in path.parts and path != Path(".")
+
+
+def _appears_automation_identity(value: Optional[str]) -> bool:
+    return bool(AUTOMATION_IDENTITY_PATTERN.search(str(value or "").strip()))
+
+
+def _same_identity(left: Optional[str], right: Optional[str]) -> bool:
+    normalized_left = _normalized_identity(left)
+    normalized_right = _normalized_identity(right)
+    return bool(normalized_left and normalized_left == normalized_right)
+
+
+def _normalized_identity(value: Optional[str]) -> str:
+    decomposed = unicodedata.normalize("NFKD", str(value or "").casefold())
+    return re.sub(r"[^a-z0-9]+", "", decomposed.encode("ascii", "ignore").decode())
 
 
 def _is_sha256(value: Optional[str]) -> bool:

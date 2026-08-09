@@ -6,6 +6,7 @@ import re
 import urllib.parse
 import urllib.request
 from datetime import datetime
+from typing import Literal
 
 import pandas as pd
 
@@ -24,9 +25,13 @@ class NasdaqPriceProvider(PriceProviderBase):
         *,
         base_url: str = "https://api.nasdaq.com",
         timeout_seconds: int = 30,
+        asset_class: Literal["stocks", "etf"] = "stocks",
     ):
+        if asset_class not in {"stocks", "etf"}:
+            raise ValueError("Nasdaq asset class must be stocks or etf.")
         self.base_url = base_url.rstrip("/")
         self.timeout_seconds = timeout_seconds
+        self.asset_class = asset_class
 
     def get_history(self, ticker: str, start: str, end: str) -> pd.DataFrame:
         symbol = ticker.strip().upper()
@@ -39,23 +44,24 @@ class NasdaqPriceProvider(PriceProviderBase):
 
         query = urllib.parse.urlencode(
             {
-                "assetclass": "stocks",
+                "assetclass": self.asset_class,
                 "fromdate": start_date.isoformat(),
                 "todate": end_date.isoformat(),
                 "limit": "5000",
             }
         )
-        api_url = (
-            f"{self.base_url}/api/quote/{urllib.parse.quote(symbol)}/historical"
-            f"?{query}"
-        )
+        api_url = f"{self.base_url}/api/quote/{urllib.parse.quote(symbol)}/historical?{query}"
         request = urllib.request.Request(
             api_url,
             headers={
                 "Accept": "application/json, text/plain, */*",
                 "Accept-Encoding": "gzip, deflate",
                 "Origin": "https://www.nasdaq.com",
-                "Referer": f"https://www.nasdaq.com/market-activity/stocks/{symbol.lower()}/historical",
+                "Referer": (
+                    "https://www.nasdaq.com/market-activity/"
+                    f"{'etf' if self.asset_class == 'etf' else 'stocks'}/"
+                    f"{symbol.lower()}/historical"
+                ),
                 "User-Agent": "Mozilla/5.0 Room16Research/1.0",
             },
         )
@@ -67,12 +73,10 @@ class NasdaqPriceProvider(PriceProviderBase):
 
         status = payload.get("status") or {}
         data = payload.get("data") or {}
-        rows = ((data.get("tradesTable") or {}).get("rows") or [])
+        rows = (data.get("tradesTable") or {}).get("rows") or []
         if status.get("rCode") not in {None, 200} or not rows:
             messages = status.get("bCodeMessage") or []
-            detail = "; ".join(
-                str(item.get("errorMessage") or item) for item in messages
-            )
+            detail = "; ".join(str(item.get("errorMessage") or item) for item in messages)
             raise RuntimeError(
                 f"Nasdaq returned no usable OHLCV rows for {symbol}"
                 + (f": {detail}" if detail else ".")
@@ -105,7 +109,9 @@ class NasdaqPriceProvider(PriceProviderBase):
         if not normalized:
             raise RuntimeError(f"Nasdaq returned no usable OHLCV rows for {symbol}.")
         self.source_url = (
-            f"https://www.nasdaq.com/market-activity/stocks/{symbol.lower()}/historical"
+            "https://www.nasdaq.com/market-activity/"
+            f"{'etf' if self.asset_class == 'etf' else 'stocks'}/"
+            f"{symbol.lower()}/historical"
         )
         return (
             pd.DataFrame(normalized)

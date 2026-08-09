@@ -56,7 +56,10 @@ The separate shadow-only valuation calibration contract and readiness runner
 are documented in
 [`docs/VALUATION_CALIBRATION_V1.md`](docs/VALUATION_CALIBRATION_V1.md). They
 require hash-bound, corporate-action-adjusted 252-trading-day outcomes and
-never activate a valuation score automatically.
+never activate a valuation score automatically. The provider-neutral outcome
+workbench creates either an explicitly unverified draft or a self-contained
+`room16.valuation_calibration_source_bundle@2`; verified mode additionally
+requires evidence-bound usage rights and an independent human review.
 
 The initial build includes Pydantic packet schemas, technical/fundamental/valuation calculations, source-authority checks, trade/rating/news validation rules, regression tests for known failures, and a pipeline skeleton that stops report generation on blocking validation errors.
 

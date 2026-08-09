@@ -69,25 +69,83 @@ Missing, duplicate, immature, unadjusted or arithmetically inconsistent
 outcomes do not enter the sample.
 
 Outcome values are never accepted as free-form JSONL. The active runner loads
-only `room16.valuation_calibration_source_bundle@1` files and rebuilds every
+only `room16.valuation_calibration_source_bundle@2` files and rebuilds every
 outcome deterministically. Each source bundle binds:
 
 - the exact snapshot, instrument, benchmark and basis date;
 - provider and dataset identity;
 - separate total-return assurances for instrument and benchmark, each covering
   cash distributions and corporate actions;
-- hashes of provider methodology, instrument data and benchmark data plus an
-  explicit `internal_calibration_allowed` usage-rights decision bound to its
-  evidence;
-- an independent human-verification record with reviewer, timestamp and
-  evidence hash; and
+- local relative paths and hashes for provider methodology, instrument data,
+  benchmark data, usage-rights evidence and human-verification evidence;
+- a timezone-aware bundle-creation timestamp; retrieval, rights approval and
+  verification may not be dated after the package that claims to contain them;
+- an explicit `internal_calibration_allowed` decision with a human rights
+  approver and timezone-aware decision timestamp;
+- identified data preparation plus a different, non-automation human reviewer,
+  a timezone-aware verification timestamp, an explicit independence assertion
+  and a separate verification-evidence artifact; and
 - the complete normalized price series under one bundle hash.
 
 A changed observation, conflicting duplicate date, missing distribution or
-corporate-action assurance, unverified methodology or stale bundle hash
-invalidates the outcome before it can enter readiness. This contract is
+corporate-action assurance, unverified methodology, missing/tampered artifact,
+path traversal, nonhuman approval identity, self-review or stale bundle hash
+invalidates the outcome before it can enter readiness. Version-1 source bundles
+are deliberately rejected because they did not make the evidence artifacts,
+rights approver and review independence machine-verifiable. This contract is
 provider-neutral: a public source may qualify if it proves the same semantics;
 an expensive vendor does not qualify merely because it is paid.
+
+## Outcome workbench
+
+The workbench has two modes, but only one outcome methodology:
+
+- `draft` copies the supplied price files into a self-contained review packet,
+  calculates a preview and lists every missing semantic, rights or review gate.
+  It never claims that the source contract is valid.
+- `verified` refuses ineligible snapshots, raw or merely split-adjusted prices,
+  incomplete distribution/corporate-action assurances, absent evidence,
+  automation identities, self-review, naive timestamps and observations after
+  retrieval. It writes no partial output on failure.
+
+Draft example:
+
+```bash
+python -m research_agent.calibration.valuation_outcome_workbench \
+  --mode draft \
+  --snapshot <VALUATION_SNAPSHOT_JSON> \
+  --instrument-series <NORMALIZED_INSTRUMENT_DATE_CLOSE_CSV> \
+  --benchmark-series <NORMALIZED_BENCHMARK_DATE_CLOSE_CSV> \
+  --provider-id <CANDIDATE_PROVIDER> \
+  --provider-dataset-id <CANDIDATE_DATASET> \
+  --benchmark <BENCHMARK_ID> \
+  --retrieved-at <TIMEZONE_AWARE_TIMESTAMP> \
+  --instrument-series-basis <KNOWN_OR_UNVERIFIED_BASIS> \
+  --benchmark-series-basis <KNOWN_OR_UNVERIFIED_BASIS> \
+  --prepared-by <PREPARER_IDENTITY> \
+  --output-dir <NEW_EMPTY_OUTPUT_DIR>
+```
+
+Verified mode uses the same command with `--mode verified`, both bases set to
+`total_return_adjusted`, all four distribution/corporate-action confirmation
+flags and these evidence/review arguments:
+
+```text
+--provider-methodology-evidence <FILE>
+--usage-rights-evidence <FILE>
+--verification-evidence <SEPARATE_FILE>
+--prepared-by <IDENTITY>
+--rights-approved-by <HUMAN_IDENTITY>
+--rights-approved-at <TIMEZONE_AWARE_TIMESTAMP>
+--verified-by <DIFFERENT_HUMAN_IDENTITY>
+--verified-at <TIMEZONE_AWARE_TIMESTAMP>
+--approve-internal-calibration-rights
+--confirm-independent-review
+```
+
+The generated packet remains calibration evidence only. Even a valid matured
+outcome keeps `live_activation_allowed: false`; publication and paid-product
+rights are not inferred from the narrower internal-calibration approval.
 
 ## Readiness policy
 

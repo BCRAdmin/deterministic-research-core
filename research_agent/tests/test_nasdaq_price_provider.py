@@ -101,7 +101,46 @@ def test_nasdaq_provider_skips_unusable_rows(monkeypatch):
         "research_agent.sources.prices.nasdaq_price_provider.urllib.request.urlopen",
         lambda request, timeout: _Response(payload),
     )
-    frame = NasdaqPriceProvider().get_history(
-        "RIOT", "2026-07-01", "2026-07-24"
-    )
+    frame = NasdaqPriceProvider().get_history("RIOT", "2026-07-01", "2026-07-24")
     assert list(frame["date"]) == ["2026-07-23"]
+
+
+def test_nasdaq_provider_uses_the_official_etf_surface_for_benchmarks(monkeypatch):
+    payload = {
+        "status": {"rCode": 200},
+        "data": {
+            "tradesTable": {
+                "rows": [
+                    {
+                        "date": "07/24/2026",
+                        "close": "$650",
+                        "volume": "1,000",
+                        "open": "$649",
+                        "high": "$651",
+                        "low": "$648",
+                    }
+                ]
+            }
+        },
+    }
+    captured = {}
+
+    def fake_urlopen(request, timeout):
+        captured["url"] = request.full_url
+        captured["referer"] = request.get_header("Referer")
+        return _Response(payload)
+
+    monkeypatch.setattr(
+        "research_agent.sources.prices.nasdaq_price_provider.urllib.request.urlopen",
+        fake_urlopen,
+    )
+    provider = NasdaqPriceProvider(
+        base_url="https://prices.example",
+        asset_class="etf",
+    )
+    frame = provider.get_history("SPY", "2026-07-01", "2026-07-24")
+
+    assert list(frame["date"]) == ["2026-07-24"]
+    assert "assetclass=etf" in captured["url"]
+    assert captured["referer"].endswith("/etf/spy/historical")
+    assert provider.source_url.endswith("/etf/spy/historical")
