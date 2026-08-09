@@ -52,6 +52,12 @@ Valuation sensitivity, the financial-risk screen, the separation of company
 rating from technical timing, and their limitations are specified in
 [`docs/ANALYTICAL_CORE_V02.md`](docs/ANALYTICAL_CORE_V02.md).
 
+The separate shadow-only valuation calibration contract and readiness runner
+are documented in
+[`docs/VALUATION_CALIBRATION_V1.md`](docs/VALUATION_CALIBRATION_V1.md). They
+require hash-bound, corporate-action-adjusted 252-trading-day outcomes and
+never activate a valuation score automatically.
+
 The initial build includes Pydantic packet schemas, technical/fundamental/valuation calculations, source-authority checks, trade/rating/news validation rules, regression tests for known failures, and a pipeline skeleton that stops report generation on blocking validation errors.
 
 ## Mandatory Room16 Handoff

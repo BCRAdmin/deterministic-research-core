@@ -62,6 +62,10 @@ separately validated calibration set supports that use. It may explain market
 expectations and scenario dependence, but it must not be described as precise
 fair value.
 
+The admission and maturity rules for that future calibration set are defined
+in [`VALUATION_CALIBRATION_V1.md`](VALUATION_CALIBRATION_V1.md). The readiness
+runner is shadow-only and cannot activate a valuation score.
+
 ## Financial-risk screen
 
 The numeric screen uses only reproducible financial-statement inputs:
