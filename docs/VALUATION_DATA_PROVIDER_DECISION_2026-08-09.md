@@ -2,12 +2,18 @@
 
 Stand: 9. August 2026
 
+Aktueller Operatorentscheid: **pausiert ohne Kosten**. Die Auswahl bleibt eine
+technische Reserve für eine spätere Qualitätskalibrierung. Sie ist kein
+offener Kernblock, keine Voraussetzung für normale Room16-Berichte und löst
+weder Anbieteranfrage noch Kauf, Token oder Abruf aus.
+
 ## Ergebnis
 
-Für den ersten verifizierten US-/ETF-Kalibrationspfad ist **Tiingo EOD** der
-bevorzugte Kandidat. Der Adapter ist lokal vorbereitet, aber vollständig
-deaktiviert: Es wurde kein Konto eröffnet, kein Tarif gekauft, kein Token
-gespeichert und kein aktiver Room16-Datenweg umgestellt.
+Falls der verifizierte US-/ETF-Kalibrationspfad später bewusst wieder geöffnet
+wird, ist **Tiingo EOD** der bevorzugte erste Kandidat. Der Adapter ist lokal
+vorbereitet, aber vollständig deaktiviert: Es wurde kein Konto eröffnet, kein
+Tarif gekauft, kein Token gespeichert und kein aktiver Room16-Datenweg
+umgestellt.
 
 Die Entscheidung ist keine rechtliche Freigabe. Vor einem echten Lauf müssen
 Tarif, Nutzungsumfang und Evidence vom Operator bestätigt werden.
@@ -136,9 +142,10 @@ Belegzeitpunkt entsprechen. Die Belege werden gemeinsam mit ihren Kursdateien
 in das selbstständige Evidence-Paket kopiert und erneut validiert. Manuell
 eingetragene Providerbehauptungen reichen damit nicht mehr aus.
 
-## Schriftlich zu klärende Punkte
+## Bei späterer Wiederaufnahme schriftlich zu klärende Punkte
 
-Vor dem Kauf sollte Tiingo folgende Verwendung schriftlich einordnen:
+Vor einem späteren Kauf müsste Tiingo folgende Verwendung schriftlich
+einordnen. Aktuell wird diese Anfrage nicht versendet:
 
 1. BCR Ventures UG nutzt EOD-Daten intern zur Erstellung und Prüfung eigener
    Unternehmensanalysen.
@@ -192,9 +199,10 @@ Die Anfrage wurde nur vorbereitet und nicht versendet.
 
 ## Kostenarchitektur
 
-1. **Jetzt ohne Kauf:** Adapter, Vertragsprüfung und Fixtures bleiben lokal;
-   Bewertung bleibt unkalibriert und neutral.
-2. **Interner Pilot nach Operator-Go:** voraussichtlich `50 USD/Monat` für
+1. **Aktueller Zustand:** Adapter, Vertragsprüfung und Fixtures bleiben lokal;
+   Anbieteranfrage, Kauf und Abruf sind pausiert. Normale Room16-Berichte und
+   deren interne Qualitätsprüfung laufen davon unabhängig weiter.
+2. **Möglicher späterer Pilot nach neuem Operator-Go:** voraussichtlich `50 USD/Monat` für
    Tiingo Commercial Internal Use. Zuerst nur MCD und SPY verifizieren.
 3. **Öffentliche Gratisberichte:** erst nach schriftlicher Antwort, ob
    abgeleitete Werte im internen Tarif zulässig sind. Kein automatisches
