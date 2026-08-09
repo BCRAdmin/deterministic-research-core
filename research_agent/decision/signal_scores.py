@@ -9,6 +9,11 @@ from research_agent.research_core.models.metrics_packet import MetricsPacket
 from research_agent.research_core.models.validation_report import ValidationReport
 
 
+TECHNICAL_SCORING_BASES = frozenset(
+    {"corporate_action_adjusted", "post_corporate_action_only"}
+)
+
+
 def score_fundamentals(
     metrics: MetricsPacket,
     weights: Optional[RuleWeightConfig] = None,
@@ -53,6 +58,11 @@ def score_technicals(
     calibration_mode: str = "live",
 ) -> float:
     weights = weights or DEFAULT_RULE_WEIGHTS
+    if metrics.technical.price_series_basis not in TECHNICAL_SCORING_BASES:
+        # Raw/provider-default history can contain dividend or split gaps. Keep
+        # its indicators as provisional observations, but never turn them into
+        # a directional score or a triggered decision rule.
+        return 0.0
     score = 0.0
     trend_state = classify_technical_trend(metrics)
     score = _apply_rule(

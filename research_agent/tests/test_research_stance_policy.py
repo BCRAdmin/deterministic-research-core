@@ -18,6 +18,7 @@ def _metrics() -> MetricsPacket:
             sma_50=95.0,
             sma_200=80.0,
             bollinger_lower=90.0,
+            price_series_basis="corporate_action_adjusted",
         ),
         fundamentals=FundamentalMetrics(fiscal_period="FY2026"),
         valuation=ValuationMetrics(),
@@ -40,6 +41,10 @@ def test_generated_policies_are_research_views_not_personal_position_instruction
         assert forbidden_keys.isdisjoint(policy)
         assert "%" not in str(policy)
 
+    accumulate = build_action_policy(Rating.ACCUMULATE, _metrics())
+    assert "risk_markers" in accumulate
+    assert "Pullback to support" in accumulate["confirmation_conditions"]
+
 
 def test_rating_definitions_do_not_prescribe_personal_trades():
     forbidden_phrases = (
@@ -53,3 +58,13 @@ def test_rating_definitions_do_not_prescribe_personal_trades():
     for definition in RATING_DEFINITIONS.values():
         normalized = definition.lower()
         assert all(phrase not in normalized for phrase in forbidden_phrases)
+
+
+def test_unadjusted_series_withholds_numeric_policy_levels():
+    metrics = _metrics()
+    metrics.technical.price_series_basis = "unadjusted_or_provider_default"
+
+    policy = build_action_policy(Rating.HOLD, metrics)
+
+    assert "risk_markers" not in policy
+    assert "technical_boundary" in policy

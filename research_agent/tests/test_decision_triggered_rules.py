@@ -26,7 +26,9 @@ def test_decision_packet_records_triggered_rules():
     assert "FCF_MARGIN_GT_25" not in packet.triggered_rules
     assert "OPERATING_MARGIN_GT_10" not in packet.triggered_rules
     assert "NET_CASH_POSITIVE" not in packet.triggered_rules
-    assert "TREND_STATE_BEARISH" in packet.triggered_rules
+    assert "TREND_STATE_BEARISH" not in packet.triggered_rules
+    assert packet.signal_scores.technical_score == 0
+    assert packet.signal_scores.technical_status == "partial"
     assert "PRICE_BELOW_200SMA" not in packet.triggered_rules
     assert "BEARISH_MA_ALIGNMENT" not in packet.triggered_rules
     assert "DEATH_CROSS" not in packet.triggered_rules

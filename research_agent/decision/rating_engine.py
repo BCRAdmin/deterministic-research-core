@@ -191,14 +191,19 @@ def _evidence_status(scores: SignalScores) -> str:
 def _build_key_reasons(scores: SignalScores) -> list[str]:
     reasons = [
         f"Fundamental score: {scores.fundamental_score}",
-        f"Technical score: {scores.technical_score}",
+        (
+            f"Technical timing score: {scores.technical_score} "
+            f"(measurement status: {scores.technical_status}; excluded from "
+            "the long-term rating)"
+        ),
         (
             f"Valuation score: {scores.valuation_score} "
             f"(measurement status: {scores.valuation_status})"
         ),
         (
-            f"Risk score: {scores.risk_score} "
-            f"(measurement status: {scores.risk_status})"
+            f"Financial-risk downside contribution: {scores.risk_score} "
+            f"(measurement status: {scores.risk_status}; zero is not a "
+            "low-risk conclusion)"
         ),
     ]
     return reasons

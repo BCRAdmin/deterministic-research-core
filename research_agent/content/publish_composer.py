@@ -1070,17 +1070,23 @@ def _final_rating_section(
             else "neutral"
         )
     elif scores.technical_status == "partial":
-        direction = (
-            "bullish"
-            if scores.technical_score > 0
-            else "bearish"
-            if scores.technical_score < 0
-            else "neutral"
-        )
-        technical_text = (
-            f"{direction} but partial because the price series is not confirmed "
-            "as corporate-action adjusted"
-        )
+        if t.price_series_basis == "post_corporate_action_only":
+            direction = (
+                "bullish"
+                if scores.technical_score > 0
+                else "bearish"
+                if scores.technical_score < 0
+                else "neutral"
+            )
+            technical_text = (
+                f"{direction} on a series bounded after the latest identified "
+                "corporate action; longer-horizon comparisons remain limited"
+            )
+        else:
+            technical_text = (
+                "not activated because corporate-action adjustment is not "
+                "confirmed; raw indicators remain provisional observations"
+            )
     else:
         technical_text = "not measured"
     if f.free_cash_flow_ttm is not None and f.free_cash_flow_ttm < 0:

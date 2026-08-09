@@ -1495,7 +1495,7 @@ def test_missing_fcf_never_enters_bull_case_as_a_formatted_value():
         assert "unavailable" in bull_claim.claim
 
 
-def test_final_rating_names_partial_bullish_price_basis_precisely():
+def test_final_rating_does_not_promote_direction_from_unadjusted_price_basis():
     _, metrics, _, _, decision = _load_packet("SNOW")
     decision.signal_scores.technical_status = "partial"
     decision.signal_scores.technical_score = 1
@@ -1511,10 +1511,11 @@ def test_final_rating_names_partial_bullish_price_basis_precisely():
 
     assert "technical timing overlay has RSI" in section
     assert (
-        "direction bullish but partial because the price series is not confirmed "
-        "as corporate-action adjusted"
+        "direction not activated because corporate-action adjustment is not "
+        "confirmed"
         in section
     )
+    assert "raw indicators remain provisional observations" in section
     assert "does not enter the long-term composite score" in section
     assert "neutral or incomplete" not in section
     assert (

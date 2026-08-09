@@ -30,6 +30,7 @@ def _strong_metrics():
             rsi_14=55,
             macd_histogram=1,
             atr_14=3,
+            price_series_basis="corporate_action_adjusted",
         ),
         fundamentals=FundamentalMetrics(
             fiscal_period="FY2026",
@@ -111,6 +112,20 @@ def test_momentum_and_volatility_observations_do_not_stack_rating_scores():
         "FCF_TTM_POSITIVE",
         "TREND_STATE_BULLISH",
     ]
+
+
+def test_unadjusted_price_series_cannot_create_technical_score_or_rule():
+    metrics = _strong_metrics()
+    metrics.technical.price_series_basis = "unadjusted_or_provider_default"
+
+    packet = build_decision_packet(metrics)
+
+    assert packet.signal_scores.technical_score == 0
+    assert packet.signal_scores.technical_status == "partial"
+    assert "TREND_STATE_BULLISH" not in packet.triggered_rules
+    assert "risk_markers" not in packet.action_policy
+    assert "technical_boundary" in packet.action_policy
+    assert "zero is not a low-risk conclusion" in packet.key_reasons[-1]
 
 
 def test_non_positive_equity_offsets_positive_fcf_without_inventing_a_ratio():
