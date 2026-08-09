@@ -3,19 +3,22 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 from collections import Counter, defaultdict
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 from typing import Literal, Optional, Union
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from research_agent.research_core.models.metrics_packet import MetricsPacket
 
 
 VALUATION_CALIBRATION_SCHEMA = "room16.valuation_calibration_snapshot@1"
+VALUATION_SOURCE_BUNDLE_SCHEMA = "room16.valuation_calibration_source_bundle@1"
 VALUATION_OUTCOME_SCHEMA = "room16.valuation_calibration_outcome@1"
 VALUATION_READINESS_SCHEMA = "room16.valuation_calibration_readiness@1"
+VALUATION_OUTCOME_CALC_VERSION = "valuation-calibration-outcome-v1"
 VALUATION_CALIBRATION_HORIZON_TRADING_DAYS = 252
 MIN_EFFECTIVE_SAMPLES = 75
 MIN_UNIQUE_ISSUERS = 25
@@ -66,12 +69,46 @@ class ValuationCalibrationOutcome(BaseModel):
     instrument_price_series_basis: str = "unknown"
     benchmark_price_series_basis: str = "unknown"
     source_hash: Optional[str] = None
+    calc_version: str = VALUATION_OUTCOME_CALC_VERSION
     notes: list[str] = Field(default_factory=list)
 
 
 class ValuationCalibrationPricePoint(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+
     date: str
     close: float
+
+
+class ValuationCalibrationSourceBundle(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+
+    schema_id: str = VALUATION_SOURCE_BUNDLE_SCHEMA
+    snapshot_id: str
+    provider_id: str
+    provider_dataset_id: str
+    instrument: str
+    benchmark: str
+    basis_date: str
+    retrieved_at: str
+    instrument_price_series_basis: str
+    benchmark_price_series_basis: str
+    instrument_cash_distributions_included: bool = False
+    benchmark_cash_distributions_included: bool = False
+    instrument_corporate_actions_included: bool = False
+    benchmark_corporate_actions_included: bool = False
+    provider_methodology_sha256: Optional[str] = None
+    usage_rights_status: Literal["unverified", "internal_calibration_allowed"] = "unverified"
+    usage_rights_evidence_sha256: Optional[str] = None
+    instrument_source_sha256: Optional[str] = None
+    benchmark_source_sha256: Optional[str] = None
+    verification_status: Literal["unverified", "human_verified"] = "unverified"
+    verified_by: Optional[str] = None
+    verified_at: Optional[str] = None
+    verification_evidence_sha256: Optional[str] = None
+    instrument_prices: list[ValuationCalibrationPricePoint] = Field(default_factory=list)
+    benchmark_prices: list[ValuationCalibrationPricePoint] = Field(default_factory=list)
+    source_bundle_sha256: Optional[str] = None
 
 
 class ValuationCalibrationReadiness(BaseModel):
@@ -150,11 +187,12 @@ def build_valuation_calibration_snapshot(
         "metrics_packet_sha256": metrics_packet_sha256,
         "authority_manifest_sha256": authority_manifest_sha256,
     }
-    snapshot_id = "sha256:" + hashlib.sha256(
-        json.dumps(identity_payload, sort_keys=True, separators=(",", ":")).encode(
-            "utf-8"
-        )
-    ).hexdigest()
+    snapshot_id = (
+        "sha256:"
+        + hashlib.sha256(
+            json.dumps(identity_payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        ).hexdigest()
+    )
     return ValuationCalibrationSnapshot(
         snapshot_id=snapshot_id,
         ticker=metrics.ticker,
@@ -192,14 +230,10 @@ def assess_valuation_calibration_readiness(
 ) -> ValuationCalibrationReadiness:
     eligible = [snapshot for snapshot in snapshots if snapshot.eligible]
     excluded_reasons = Counter(
-        reason
-        for snapshot in snapshots
-        for reason in snapshot.exclusion_reasons
+        reason for snapshot in snapshots for reason in snapshot.exclusion_reasons
     )
     snapshot_id_counts = Counter(snapshot.snapshot_id for snapshot in snapshots)
-    duplicate_snapshot_count = sum(
-        count for count in snapshot_id_counts.values() if count > 1
-    )
+    duplicate_snapshot_count = sum(count for count in snapshot_id_counts.values() if count > 1)
     if duplicate_snapshot_count:
         excluded_reasons["duplicate_snapshot_id"] += duplicate_snapshot_count
     snapshots_by_id = {
@@ -211,9 +245,7 @@ def assess_valuation_calibration_readiness(
     for outcome in outcomes:
         outcomes_by_snapshot[outcome.snapshot_id].append(outcome)
 
-    valid_pairs: list[
-        tuple[ValuationCalibrationSnapshot, ValuationCalibrationOutcome]
-    ] = []
+    valid_pairs: list[tuple[ValuationCalibrationSnapshot, ValuationCalibrationOutcome]] = []
     invalid_outcome_reasons: Counter[str] = Counter()
     all_snapshot_ids = set(snapshot_id_counts)
     for outcome in outcomes:
@@ -291,10 +323,7 @@ def render_valuation_calibration_readiness(
             "",
             "## Policy",
             "",
-            *[
-                f"- `{key}`: `{value}`"
-                for key, value in readiness.policy.items()
-            ],
+            *[f"- `{key}`: `{value}`" for key, value in readiness.policy.items()],
             "",
             "A shadow-ready dataset is not proof of valuation alpha and never "
             "changes Room16 ratings automatically.",
@@ -316,19 +345,11 @@ def scan_authority_root(
         metrics = MetricsPacket(**json.loads(metrics_bytes))
         manifest_path = metrics_path.parent / "authority_manifest.json"
         manifest_payload = (
-            json.loads(manifest_path.read_text(encoding="utf-8"))
-            if manifest_path.exists()
-            else {}
+            json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.exists() else {}
         )
-        manifest_hash = (
-            file_sha256(manifest_path)
-            if manifest_path.exists()
-            else None
-        )
+        manifest_hash = file_sha256(manifest_path) if manifest_path.exists() else None
         metrics_hash = "sha256:" + hashlib.sha256(metrics_bytes).hexdigest()
-        saved_snapshot_path = (
-            metrics_path.parent.parent / "valuation_calibration_snapshot.json"
-        )
+        saved_snapshot_path = metrics_path.parent.parent / "valuation_calibration_snapshot.json"
         if saved_snapshot_path.exists():
             snapshot = ValuationCalibrationSnapshot(
                 **json.loads(saved_snapshot_path.read_text(encoding="utf-8"))
@@ -337,9 +358,7 @@ def scan_authority_root(
                 metrics,
                 metrics_packet_sha256=metrics_hash,
                 authority_manifest_sha256=manifest_hash,
-                authority_analysis_allowed=(
-                    manifest_payload.get("analysis_allowed") is True
-                ),
+                authority_analysis_allowed=(manifest_payload.get("analysis_allowed") is True),
             )
             if snapshot.model_dump(mode="json") != expected.model_dump(mode="json"):
                 raise ValueError(
@@ -357,9 +376,7 @@ def scan_authority_root(
                 metrics,
                 metrics_packet_sha256=metrics_hash,
                 authority_manifest_sha256=manifest_hash,
-                authority_analysis_allowed=(
-                    manifest_payload.get("analysis_allowed") is True
-                ),
+                authority_analysis_allowed=(manifest_payload.get("analysis_allowed") is True),
                 sector=(sectors or {}).get(metrics.ticker),
                 sector_source_sha256=sector_source_sha256,
             )
@@ -384,15 +401,17 @@ def file_sha256(path: Union[str, Path]) -> str:
 
 def build_valuation_calibration_outcome(
     snapshot: ValuationCalibrationSnapshot,
-    *,
-    benchmark: str,
-    instrument_prices: list[ValuationCalibrationPricePoint],
-    benchmark_prices: list[ValuationCalibrationPricePoint],
-    instrument_price_series_basis: str,
-    benchmark_price_series_basis: str,
+    source_bundle: ValuationCalibrationSourceBundle,
 ) -> ValuationCalibrationOutcome:
-    normalized_instrument = _price_map(instrument_prices)
-    normalized_benchmark = _price_map(benchmark_prices)
+    source_hash = calculate_source_bundle_sha256(source_bundle)
+    source_reasons = _source_bundle_invalid_reasons(snapshot, source_bundle)
+    try:
+        normalized_instrument = _price_map(source_bundle.instrument_prices)
+        normalized_benchmark = _price_map(source_bundle.benchmark_prices)
+    except ValueError as error:
+        normalized_instrument = {}
+        normalized_benchmark = {}
+        source_reasons.append(str(error))
     basis_date = snapshot.price_basis_date
     future_common_dates = sorted(
         day
@@ -401,50 +420,34 @@ def build_valuation_calibration_outcome(
     )
     instrument_basis_price = normalized_instrument.get(basis_date)
     benchmark_basis_price = normalized_benchmark.get(basis_date)
-    source_payload = {
-        "snapshot_id": snapshot.snapshot_id,
-        "benchmark": benchmark,
-        "basis_date": basis_date,
-        "benchmark_basis_price": benchmark_basis_price,
-        "instrument_price_series_basis": instrument_price_series_basis,
-        "benchmark_price_series_basis": benchmark_price_series_basis,
-        "instrument_prices": [
-            [day, normalized_instrument[day]] for day in sorted(normalized_instrument)
-        ],
-        "benchmark_prices": [
-            [day, normalized_benchmark[day]] for day in sorted(normalized_benchmark)
-        ],
-    }
-    source_hash = "sha256:" + hashlib.sha256(
-        json.dumps(source_payload, sort_keys=True, separators=(",", ":")).encode(
-            "utf-8"
-        )
-    ).hexdigest()
     base = {
         "snapshot_id": snapshot.snapshot_id,
         "horizon_trading_days": VALUATION_CALIBRATION_HORIZON_TRADING_DAYS,
         "trading_observation_count": min(
             len(future_common_dates), VALUATION_CALIBRATION_HORIZON_TRADING_DAYS
         ),
-        "benchmark": benchmark,
+        "benchmark": source_bundle.benchmark,
         "basis_date": basis_date,
         "instrument_basis_price": instrument_basis_price,
         "benchmark_basis_price": benchmark_basis_price,
-        "first_observation_date": (
-            future_common_dates[0] if future_common_dates else None
-        ),
+        "first_observation_date": (future_common_dates[0] if future_common_dates else None),
         "observed_through": (
             future_common_dates[VALUATION_CALIBRATION_HORIZON_TRADING_DAYS - 1]
-            if len(future_common_dates)
-            >= VALUATION_CALIBRATION_HORIZON_TRADING_DAYS
+            if len(future_common_dates) >= VALUATION_CALIBRATION_HORIZON_TRADING_DAYS
             else future_common_dates[-1]
             if future_common_dates
             else None
         ),
-        "instrument_price_series_basis": instrument_price_series_basis,
-        "benchmark_price_series_basis": benchmark_price_series_basis,
+        "instrument_price_series_basis": source_bundle.instrument_price_series_basis,
+        "benchmark_price_series_basis": source_bundle.benchmark_price_series_basis,
         "source_hash": source_hash,
     }
+    if source_reasons:
+        return ValuationCalibrationOutcome(
+            **base,
+            status="invalidated",
+            notes=sorted(set(source_reasons)),
+        )
     if instrument_basis_price is None or instrument_basis_price <= 0:
         return ValuationCalibrationOutcome(
             **base,
@@ -456,15 +459,6 @@ def build_valuation_calibration_outcome(
             **base,
             status="data_unavailable",
             notes=["benchmark_total_return_basis_price_unavailable"],
-        )
-    if (
-        instrument_price_series_basis != "total_return_adjusted"
-        or benchmark_price_series_basis != "total_return_adjusted"
-    ):
-        return ValuationCalibrationOutcome(
-            **base,
-            status="invalidated",
-            notes=["total_return_adjustment_not_verified"],
         )
     if len(future_common_dates) < VALUATION_CALIBRATION_HORIZON_TRADING_DAYS:
         return ValuationCalibrationOutcome(
@@ -489,19 +483,53 @@ def build_valuation_calibration_outcome(
     )
 
 
-def load_valuation_outcomes(
+def calculate_source_bundle_sha256(
+    source_bundle: ValuationCalibrationSourceBundle,
+) -> str:
+    payload = source_bundle.model_dump(mode="json")
+    payload.pop("source_bundle_sha256", None)
+    normalized = json.dumps(payload, sort_keys=True, separators=(",", ":"))
+    return "sha256:" + hashlib.sha256(normalized.encode("utf-8")).hexdigest()
+
+
+def load_valuation_source_bundles(
     path: Optional[Union[str, Path]],
-) -> list[ValuationCalibrationOutcome]:
+) -> list[ValuationCalibrationSourceBundle]:
     if path is None:
         return []
     target = Path(path)
     if not target.exists():
-        return []
+        raise FileNotFoundError(f"valuation calibration source root does not exist: {target}")
     return [
-        ValuationCalibrationOutcome(**json.loads(line))
-        for line in target.read_text(encoding="utf-8").splitlines()
-        if line.strip()
+        ValuationCalibrationSourceBundle(**json.loads(bundle_path.read_text(encoding="utf-8")))
+        for bundle_path in sorted(target.glob("**/*.json"))
     ]
+
+
+def build_valuation_calibration_outcomes(
+    snapshots: list[ValuationCalibrationSnapshot],
+    source_bundles: list[ValuationCalibrationSourceBundle],
+) -> list[ValuationCalibrationOutcome]:
+    snapshots_by_id = {snapshot.snapshot_id: snapshot for snapshot in snapshots}
+    outcomes: list[ValuationCalibrationOutcome] = []
+    for source_bundle in source_bundles:
+        snapshot = snapshots_by_id.get(source_bundle.snapshot_id)
+        if snapshot is None:
+            outcomes.append(
+                ValuationCalibrationOutcome(
+                    snapshot_id=source_bundle.snapshot_id,
+                    status="invalidated",
+                    benchmark=source_bundle.benchmark,
+                    basis_date=source_bundle.basis_date,
+                    instrument_price_series_basis=(source_bundle.instrument_price_series_basis),
+                    benchmark_price_series_basis=(source_bundle.benchmark_price_series_basis),
+                    source_hash=calculate_source_bundle_sha256(source_bundle),
+                    notes=["source_bundle_snapshot_missing"],
+                )
+            )
+            continue
+        outcomes.append(build_valuation_calibration_outcome(snapshot, source_bundle))
+    return outcomes
 
 
 def main() -> int:
@@ -509,7 +537,13 @@ def main() -> int:
         description="Build fail-closed Room16 valuation calibration readiness evidence."
     )
     parser.add_argument("--authority-root", required=True)
-    parser.add_argument("--outcomes-jsonl")
+    parser.add_argument(
+        "--outcome-source-root",
+        help=(
+            "Optional directory containing evidence-bound total-return source "
+            "bundles. Free-form outcome JSONL is not accepted."
+        ),
+    )
     parser.add_argument("--sectors-json")
     parser.add_argument("--output-dir", required=True)
     args = parser.parse_args()
@@ -530,13 +564,18 @@ def main() -> int:
         sectors=sectors,
         sector_source_sha256=sector_source_sha256,
     )
-    outcomes = load_valuation_outcomes(args.outcomes_jsonl)
+    source_bundles = load_valuation_source_bundles(args.outcome_source_root)
+    outcomes = build_valuation_calibration_outcomes(snapshots, source_bundles)
     readiness = assess_valuation_calibration_readiness(snapshots, outcomes)
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     _write_json(
         output_dir / "valuation_calibration_snapshots.json",
         [snapshot.model_dump(mode="json") for snapshot in snapshots],
+    )
+    _write_json(
+        output_dir / "valuation_calibration_outcomes.json",
+        [outcome.model_dump(mode="json") for outcome in outcomes],
     )
     _write_json(
         output_dir / "valuation_calibration_readiness.json",
@@ -565,8 +604,24 @@ def _outcome_invalid_reasons(
         reasons.append("outcome_instrument_series_not_total_return_adjusted")
     if outcome.benchmark_price_series_basis != "total_return_adjusted":
         reasons.append("outcome_benchmark_series_not_total_return_adjusted")
+    if outcome.calc_version != VALUATION_OUTCOME_CALC_VERSION:
+        reasons.append("outcome_calc_version_invalid")
     if outcome.basis_date != snapshot.price_basis_date:
         reasons.append("outcome_basis_date_mismatch")
+    if outcome.instrument_basis_price is None or outcome.instrument_basis_price <= 0:
+        reasons.append("outcome_instrument_basis_price_invalid")
+    if outcome.benchmark_basis_price is None or outcome.benchmark_basis_price <= 0:
+        reasons.append("outcome_benchmark_basis_price_invalid")
+    if outcome.first_observation_date is None:
+        reasons.append("outcome_first_observation_date_missing")
+    else:
+        try:
+            if date.fromisoformat(outcome.first_observation_date) <= date.fromisoformat(
+                snapshot.price_basis_date
+            ):
+                reasons.append("outcome_first_observation_date_invalid")
+        except ValueError:
+            reasons.append("outcome_first_observation_date_invalid")
     if outcome.observed_through is None:
         reasons.append("outcome_observed_through_missing")
     else:
@@ -586,12 +641,99 @@ def _outcome_invalid_reasons(
     )
     if any(value is None for value in returns):
         reasons.append("outcome_returns_incomplete")
-    elif abs(
-        float(outcome.instrument_return)
-        - float(outcome.benchmark_return)
-        - float(outcome.excess_return)
-    ) > 1e-9:
+    elif not all(math.isfinite(float(value)) for value in returns):
+        reasons.append("outcome_return_not_finite")
+    elif (
+        abs(
+            float(outcome.instrument_return)
+            - float(outcome.benchmark_return)
+            - float(outcome.excess_return)
+        )
+        > 1e-9
+    ):
         reasons.append("outcome_excess_return_mismatch")
+    return reasons
+
+
+def _source_bundle_invalid_reasons(
+    snapshot: ValuationCalibrationSnapshot,
+    source_bundle: ValuationCalibrationSourceBundle,
+) -> list[str]:
+    reasons: list[str] = []
+    if source_bundle.schema_id != VALUATION_SOURCE_BUNDLE_SCHEMA:
+        reasons.append("source_bundle_schema_invalid")
+    if source_bundle.snapshot_id != snapshot.snapshot_id:
+        reasons.append("source_bundle_snapshot_mismatch")
+    if source_bundle.instrument.strip().upper() != snapshot.ticker.strip().upper():
+        reasons.append("source_bundle_instrument_mismatch")
+    if not source_bundle.benchmark.strip():
+        reasons.append("source_bundle_benchmark_missing")
+    if not source_bundle.provider_id.strip():
+        reasons.append("source_bundle_provider_missing")
+    if not source_bundle.provider_dataset_id.strip():
+        reasons.append("source_bundle_dataset_missing")
+    if source_bundle.usage_rights_status != "internal_calibration_allowed":
+        reasons.append("source_bundle_usage_rights_not_approved")
+    if source_bundle.basis_date != snapshot.price_basis_date:
+        reasons.append("source_bundle_basis_date_mismatch")
+    else:
+        try:
+            date.fromisoformat(source_bundle.basis_date)
+        except ValueError:
+            reasons.append("source_bundle_basis_date_invalid")
+    if source_bundle.instrument_price_series_basis != "total_return_adjusted":
+        reasons.append("instrument_total_return_adjustment_not_verified")
+    if source_bundle.benchmark_price_series_basis != "total_return_adjusted":
+        reasons.append("benchmark_total_return_adjustment_not_verified")
+    if not source_bundle.instrument_cash_distributions_included:
+        reasons.append("instrument_cash_distributions_not_verified")
+    if not source_bundle.benchmark_cash_distributions_included:
+        reasons.append("benchmark_cash_distributions_not_verified")
+    if not source_bundle.instrument_corporate_actions_included:
+        reasons.append("instrument_corporate_actions_not_verified")
+    if not source_bundle.benchmark_corporate_actions_included:
+        reasons.append("benchmark_corporate_actions_not_verified")
+    required_hashes = {
+        "provider_methodology_hash_invalid": (source_bundle.provider_methodology_sha256),
+        "usage_rights_evidence_hash_invalid": (source_bundle.usage_rights_evidence_sha256),
+        "instrument_source_hash_invalid": source_bundle.instrument_source_sha256,
+        "benchmark_source_hash_invalid": source_bundle.benchmark_source_sha256,
+        "verification_evidence_hash_invalid": (source_bundle.verification_evidence_sha256),
+    }
+    reasons.extend(reason for reason, value in required_hashes.items() if not _is_sha256(value))
+    retrieved_at = _parse_aware_timestamp(source_bundle.retrieved_at)
+    if retrieved_at is None:
+        reasons.append("source_bundle_retrieved_at_invalid")
+    else:
+        try:
+            if retrieved_at.date() < date.fromisoformat(snapshot.price_basis_date):
+                reasons.append("source_bundle_retrieved_before_basis_date")
+        except ValueError:
+            reasons.append("source_bundle_basis_date_invalid")
+        observation_dates: list[date] = []
+        for point in [
+            *source_bundle.instrument_prices,
+            *source_bundle.benchmark_prices,
+        ]:
+            try:
+                observation_dates.append(date.fromisoformat(point.date))
+            except ValueError:
+                reasons.append("source_bundle_observation_date_invalid")
+        if observation_dates and max(observation_dates) > retrieved_at.date():
+            reasons.append("source_bundle_observation_after_retrieval")
+    verified_at = _parse_aware_timestamp(source_bundle.verified_at)
+    if source_bundle.verification_status != "human_verified":
+        reasons.append("source_bundle_human_verification_missing")
+    if not str(source_bundle.verified_by or "").strip():
+        reasons.append("source_bundle_verified_by_missing")
+    if verified_at is None:
+        reasons.append("source_bundle_verified_at_invalid")
+    elif retrieved_at is not None and verified_at < retrieved_at:
+        reasons.append("source_bundle_verified_before_retrieval")
+    if not _is_sha256(source_bundle.source_bundle_sha256):
+        reasons.append("source_bundle_hash_invalid")
+    elif source_bundle.source_bundle_sha256 != calculate_source_bundle_sha256(source_bundle):
+        reasons.append("source_bundle_hash_mismatch")
     return reasons
 
 
@@ -604,15 +746,32 @@ def _is_sha256(value: Optional[str]) -> bool:
     )
 
 
+def _parse_aware_timestamp(value: Optional[str]) -> Optional[datetime]:
+    if value is None:
+        return None
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    return parsed if parsed.tzinfo is not None else None
+
+
 def _price_map(
     prices: list[ValuationCalibrationPricePoint],
 ) -> dict[str, float]:
     normalized: dict[str, float] = {}
     for point in prices:
-        point_date = date.fromisoformat(point.date)
-        if point.close <= 0:
-            continue
-        normalized[point_date.isoformat()] = float(point.close)
+        try:
+            point_date = date.fromisoformat(point.date)
+        except ValueError as error:
+            raise ValueError("invalid_price_observation_date") from error
+        if not math.isfinite(point.close) or point.close <= 0:
+            raise ValueError("nonpositive_or_nonfinite_price_observation")
+        key = point_date.isoformat()
+        close = float(point.close)
+        if key in normalized and normalized[key] != close:
+            raise ValueError("conflicting_duplicate_price_observation")
+        normalized[key] = close
     return normalized
 
 

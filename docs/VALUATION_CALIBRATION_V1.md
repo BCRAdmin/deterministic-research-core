@@ -44,6 +44,27 @@ Valuation is tested at a minimum 252-trading-day horizon. Each outcome must:
 Missing, duplicate, immature, unadjusted or arithmetically inconsistent
 outcomes do not enter the sample.
 
+Outcome values are never accepted as free-form JSONL. The active runner loads
+only `room16.valuation_calibration_source_bundle@1` files and rebuilds every
+outcome deterministically. Each source bundle binds:
+
+- the exact snapshot, instrument, benchmark and basis date;
+- provider and dataset identity;
+- separate total-return assurances for instrument and benchmark, each covering
+  cash distributions and corporate actions;
+- hashes of provider methodology, instrument data and benchmark data plus an
+  explicit `internal_calibration_allowed` usage-rights decision bound to its
+  evidence;
+- an independent human-verification record with reviewer, timestamp and
+  evidence hash; and
+- the complete normalized price series under one bundle hash.
+
+A changed observation, conflicting duplicate date, missing distribution or
+corporate-action assurance, unverified methodology or stale bundle hash
+invalidates the outcome before it can enter readiness. This contract is
+provider-neutral: a public source may qualify if it proves the same semantics;
+an expensive vendor does not qualify merely because it is paid.
+
 ## Readiness policy
 
 The initial conservative governance floor is:
@@ -64,10 +85,10 @@ changes ratings automatically.
 ```bash
 python -m research_agent.calibration.valuation_calibration \
   --authority-root <ROOT_WITH_TICKER_DATE_BUNDLES> \
+  --outcome-source-root <OPTIONAL_VERIFIED_SOURCE_BUNDLES> \
   --output-dir <RUNTIME_OUTPUT_DIR>
 ```
 
-Optional hashed 252D outcomes may be supplied as JSONL and sector identities
-as a ticker-to-sector JSON object. Until those real observations mature, the
-correct result is `not_ready` and valuation remains neutral in the decision
-engine.
+Optional sector identities may be supplied as a ticker-to-sector JSON object.
+Until verified source bundles contain real matured observations, the correct
+result is `not_ready` and valuation remains neutral in the decision engine.

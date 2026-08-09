@@ -9,10 +9,14 @@ from research_agent.calibration.valuation_calibration import (
     MIN_EFFECTIVE_SAMPLES,
     ValuationCalibrationOutcome,
     ValuationCalibrationPricePoint,
+    ValuationCalibrationSourceBundle,
     assess_valuation_calibration_readiness,
     build_valuation_calibration_outcome,
+    build_valuation_calibration_outcomes,
     build_valuation_calibration_snapshot,
+    calculate_source_bundle_sha256,
     file_sha256,
+    load_valuation_source_bundles,
     save_valuation_calibration_snapshot,
     scan_authority_root,
 )
@@ -83,7 +87,14 @@ def _outcome(snapshot, **overrides):
         "trading_observation_count": 252,
         "benchmark": "BENCH",
         "basis_date": snapshot.price_basis_date,
-        "observed_through": (date.fromisoformat(snapshot.as_of_date) + timedelta(days=370)).isoformat(),
+        "instrument_basis_price": 100.0,
+        "benchmark_basis_price": 100.0,
+        "first_observation_date": (
+            date.fromisoformat(snapshot.price_basis_date) + timedelta(days=1)
+        ).isoformat(),
+        "observed_through": (
+            date.fromisoformat(snapshot.as_of_date) + timedelta(days=370)
+        ).isoformat(),
         "instrument_return": 0.12,
         "benchmark_return": 0.07,
         "excess_return": 0.05,
@@ -93,6 +104,46 @@ def _outcome(snapshot, **overrides):
     }
     payload.update(overrides)
     return ValuationCalibrationOutcome(**payload)
+
+
+def _source_bundle(
+    snapshot,
+    instrument_prices,
+    benchmark_prices,
+    **overrides,
+):
+    retrieval_date = date.fromisoformat(snapshot.price_basis_date) + timedelta(days=370)
+    payload = {
+        "snapshot_id": snapshot.snapshot_id,
+        "provider_id": "TEST_PROVIDER",
+        "provider_dataset_id": "TEST_TOTAL_RETURN_DAILY_V1",
+        "instrument": snapshot.ticker,
+        "benchmark": "BENCH",
+        "basis_date": snapshot.price_basis_date,
+        "retrieved_at": f"{retrieval_date.isoformat()}T12:00:00+00:00",
+        "instrument_price_series_basis": "total_return_adjusted",
+        "benchmark_price_series_basis": "total_return_adjusted",
+        "instrument_cash_distributions_included": True,
+        "benchmark_cash_distributions_included": True,
+        "instrument_corporate_actions_included": True,
+        "benchmark_corporate_actions_included": True,
+        "provider_methodology_sha256": HASH,
+        "usage_rights_status": "internal_calibration_allowed",
+        "usage_rights_evidence_sha256": HASH,
+        "instrument_source_sha256": HASH,
+        "benchmark_source_sha256": HASH,
+        "verification_status": "human_verified",
+        "verified_by": "independent_test_reviewer",
+        "verified_at": f"{(retrieval_date + timedelta(days=1)).isoformat()}T12:00:00+00:00",
+        "verification_evidence_sha256": HASH,
+        "instrument_prices": instrument_prices,
+        "benchmark_prices": benchmark_prices,
+    }
+    payload.update(overrides)
+    source_bundle = ValuationCalibrationSourceBundle(**payload)
+    return source_bundle.model_copy(
+        update={"source_bundle_sha256": calculate_source_bundle_sha256(source_bundle)}
+    )
 
 
 def test_snapshot_requires_measured_dcf_but_not_adjusted_historical_technicals():
@@ -206,9 +257,10 @@ def test_invalid_outcome_cannot_enter_calibration_sample():
     readiness = assess_valuation_calibration_readiness([snapshot], [invalid])
 
     assert readiness.valid_matured_outcome_count == 0
-    assert readiness.invalid_outcome_reasons[
-        "outcome_instrument_series_not_total_return_adjusted"
-    ] == 1
+    assert (
+        readiness.invalid_outcome_reasons["outcome_instrument_series_not_total_return_adjusted"]
+        == 1
+    )
     assert readiness.invalid_outcome_reasons["outcome_excess_return_mismatch"] == 1
 
 
@@ -262,14 +314,8 @@ def test_outcome_builder_uses_only_common_future_adjusted_observations():
         for index in range(0, 370)
     ]
 
-    outcome = build_valuation_calibration_outcome(
-        snapshot,
-        benchmark="BENCH",
-        instrument_prices=instrument,
-        benchmark_prices=benchmark,
-        instrument_price_series_basis="total_return_adjusted",
-        benchmark_price_series_basis="total_return_adjusted",
-    )
+    source_bundle = _source_bundle(snapshot, instrument, benchmark)
+    outcome = build_valuation_calibration_outcome(snapshot, source_bundle)
 
     assert outcome.status == "matured"
     assert outcome.trading_observation_count == 252
@@ -294,13 +340,144 @@ def test_outcome_builder_stays_pending_before_252_common_observations():
 
     outcome = build_valuation_calibration_outcome(
         snapshot,
-        benchmark="BENCH",
-        instrument_prices=prices,
-        benchmark_prices=prices,
-        instrument_price_series_basis="total_return_adjusted",
-        benchmark_price_series_basis="total_return_adjusted",
+        _source_bundle(snapshot, prices, prices),
     )
 
     assert outcome.status == "pending"
     assert outcome.trading_observation_count == 99
     assert outcome.instrument_return is None
+
+
+def test_source_bundle_requires_distributions_actions_and_human_evidence():
+    snapshot = _snapshot()
+    prices = [
+        ValuationCalibrationPricePoint(date="2025-01-02", close=100),
+        ValuationCalibrationPricePoint(date="2025-01-03", close=101),
+    ]
+    source_bundle = _source_bundle(
+        snapshot,
+        prices,
+        prices,
+        instrument_cash_distributions_included=False,
+        benchmark_cash_distributions_included=False,
+        instrument_corporate_actions_included=False,
+        benchmark_corporate_actions_included=False,
+        verification_status="unverified",
+        verified_by=None,
+        verified_at=None,
+        verification_evidence_sha256=None,
+        usage_rights_status="unverified",
+        usage_rights_evidence_sha256=None,
+    )
+
+    outcome = build_valuation_calibration_outcome(snapshot, source_bundle)
+
+    assert outcome.status == "invalidated"
+    assert "instrument_cash_distributions_not_verified" in outcome.notes
+    assert "benchmark_cash_distributions_not_verified" in outcome.notes
+    assert "instrument_corporate_actions_not_verified" in outcome.notes
+    assert "benchmark_corporate_actions_not_verified" in outcome.notes
+    assert "source_bundle_human_verification_missing" in outcome.notes
+    assert "verification_evidence_hash_invalid" in outcome.notes
+    assert "source_bundle_usage_rights_not_approved" in outcome.notes
+    assert "usage_rights_evidence_hash_invalid" in outcome.notes
+
+
+def test_source_bundle_tampering_is_detected_before_outcome_calculation():
+    snapshot = _snapshot()
+    prices = [
+        ValuationCalibrationPricePoint(date="2025-01-02", close=100),
+        ValuationCalibrationPricePoint(date="2025-01-03", close=101),
+    ]
+    source_bundle = _source_bundle(snapshot, prices, prices)
+    tampered_prices = list(source_bundle.instrument_prices)
+    tampered_prices[-1] = ValuationCalibrationPricePoint(
+        date="2025-01-03",
+        close=999,
+    )
+    tampered = source_bundle.model_copy(update={"instrument_prices": tampered_prices})
+
+    outcome = build_valuation_calibration_outcome(snapshot, tampered)
+
+    assert outcome.status == "invalidated"
+    assert "source_bundle_hash_mismatch" in outcome.notes
+
+
+def test_conflicting_duplicate_price_observation_is_invalidated():
+    snapshot = _snapshot()
+    instrument = [
+        ValuationCalibrationPricePoint(date="2025-01-02", close=100),
+        ValuationCalibrationPricePoint(date="2025-01-03", close=101),
+        ValuationCalibrationPricePoint(date="2025-01-03", close=102),
+    ]
+    benchmark = [
+        ValuationCalibrationPricePoint(date="2025-01-02", close=200),
+        ValuationCalibrationPricePoint(date="2025-01-03", close=201),
+    ]
+
+    outcome = build_valuation_calibration_outcome(
+        snapshot,
+        _source_bundle(snapshot, instrument, benchmark),
+    )
+
+    assert outcome.status == "invalidated"
+    assert "conflicting_duplicate_price_observation" in outcome.notes
+
+
+def test_future_dated_and_nonpositive_source_observations_are_invalidated():
+    snapshot = _snapshot()
+    prices = [
+        ValuationCalibrationPricePoint(date="2025-01-02", close=100),
+        ValuationCalibrationPricePoint(date="2027-01-10", close=0),
+    ]
+
+    outcome = build_valuation_calibration_outcome(
+        snapshot,
+        _source_bundle(snapshot, prices, prices),
+    )
+
+    assert outcome.status == "invalidated"
+    assert "source_bundle_observation_after_retrieval" in outcome.notes
+    assert "nonpositive_or_nonfinite_price_observation" in outcome.notes
+
+
+def test_orphan_source_bundle_builds_visible_invalid_outcome():
+    snapshot = _snapshot()
+    prices = [ValuationCalibrationPricePoint(date="2025-01-02", close=100)]
+    source_bundle = _source_bundle(snapshot, prices, prices).model_copy(
+        update={"snapshot_id": "sha256:" + "f" * 64}
+    )
+    source_bundle = source_bundle.model_copy(
+        update={"source_bundle_sha256": calculate_source_bundle_sha256(source_bundle)}
+    )
+
+    outcomes = build_valuation_calibration_outcomes([snapshot], [source_bundle])
+    readiness = assess_valuation_calibration_readiness([snapshot], outcomes)
+
+    assert outcomes[0].status == "invalidated"
+    assert outcomes[0].notes == ["source_bundle_snapshot_missing"]
+    assert readiness.invalid_outcome_reasons["outcome_snapshot_missing"] == 1
+
+
+def test_source_bundle_loader_is_strict_and_missing_root_is_not_silent(tmp_path):
+    snapshot = _snapshot()
+    prices = [ValuationCalibrationPricePoint(date="2025-01-02", close=100)]
+    source_bundle = _source_bundle(snapshot, prices, prices)
+    source_root = tmp_path / "sources"
+    source_root.mkdir()
+    (source_root / "test.json").write_text(
+        json.dumps(source_bundle.model_dump(mode="json")),
+        encoding="utf-8",
+    )
+
+    loaded = load_valuation_source_bundles(source_root)
+
+    assert loaded == [source_bundle]
+    with pytest.raises(FileNotFoundError, match="source root does not exist"):
+        load_valuation_source_bundles(tmp_path / "missing")
+
+    payload = source_bundle.model_dump(mode="json")
+    payload["unsupported_assertion"] = True
+    (source_root / "test.json").write_text(json.dumps(payload), encoding="utf-8")
+    with pytest.raises(ValueError, match="Extra inputs are not permitted"):
+        load_valuation_source_bundles(source_root)
