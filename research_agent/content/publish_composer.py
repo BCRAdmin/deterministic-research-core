@@ -123,6 +123,8 @@ def compose_internal_best_report(
     publish_quality_score: float | None = None,
     internal_research_quality_score: float | None = None,
     data_confidence_score: float | None = None,
+    manual_review_reasons: Iterable[str] | None = None,
+    review_issue_details: Iterable[dict] | None = None,
 ) -> str:
     """Render the readable internal surface for manual-review cases.
 
@@ -136,7 +138,7 @@ def compose_internal_best_report(
     ticker = data_packet.ticker.upper()
     rating = decision_packet.rating_permission.preferred_rating.value
     if company_archetype == "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH" or _is_early_commercial_capital_intensive_report(grouped, metrics_packet):
-        return _early_commercial_capital_intensive_internal_best_report(
+        report = _early_commercial_capital_intensive_internal_best_report(
             company_name=data_packet.company_name,
             ticker=ticker,
             rating=rating,
@@ -152,9 +154,9 @@ def compose_internal_best_report(
             publish_quality_score=publish_quality_score,
             internal_research_quality_score=internal_research_quality_score,
             data_confidence_score=data_confidence_score,
-        ).strip() + "\n"
-    if company_archetype == "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL" or _is_speculative_deep_tech_report(metrics_packet):
-        return _speculative_deep_tech_internal_best_report(
+        )
+    elif company_archetype == "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL" or _is_speculative_deep_tech_report(metrics_packet):
+        report = _speculative_deep_tech_internal_best_report(
             company_name=data_packet.company_name,
             ticker=ticker,
             rating=rating,
@@ -170,9 +172,9 @@ def compose_internal_best_report(
             publish_quality_score=publish_quality_score,
             internal_research_quality_score=internal_research_quality_score,
             data_confidence_score=data_confidence_score,
-        ).strip() + "\n"
-    if external_display_rating == "Hold Pending FCF Support":
-        return _missing_fcf_support_internal_best_report(
+        )
+    elif external_display_rating == "Hold Pending FCF Support":
+        report = _missing_fcf_support_internal_best_report(
             company_name=data_packet.company_name,
             ticker=ticker,
             rating=rating,
@@ -188,8 +190,56 @@ def compose_internal_best_report(
             publish_quality_score=publish_quality_score,
             internal_research_quality_score=internal_research_quality_score,
             data_confidence_score=data_confidence_score,
-        ).strip() + "\n"
-    return compose_publish_report(data_packet, metrics_packet, decision_packet, evidence_ledger, claim_list)
+        )
+    else:
+        report = compose_publish_report(data_packet, metrics_packet, decision_packet, evidence_ledger, claim_list)
+    return _attach_data_limits_and_review_status(
+        report,
+        status=status,
+        publishable=publishable,
+        manual_review_reasons=manual_review_reasons,
+        review_issue_details=review_issue_details,
+    ).strip() + "\n"
+
+
+def _attach_data_limits_and_review_status(
+    markdown: str,
+    *,
+    status: str,
+    publishable: bool,
+    manual_review_reasons: Iterable[str] | None,
+    review_issue_details: Iterable[dict] | None,
+) -> str:
+    """Make every active review limitation visible in the reading copy."""
+
+    reasons = list(dict.fromkeys(str(reason) for reason in (manual_review_reasons or []) if reason))
+    if not reasons and publishable:
+        return markdown
+    detail_by_code: dict[str, str] = {}
+    for detail in review_issue_details or []:
+        code = str(detail.get("code") or "")
+        message = str(detail.get("message") or "").strip()
+        if code and message and code not in detail_by_code:
+            detail_by_code[code] = message
+    lines = [
+        "## Data Limits & Review Status",
+        "",
+        f"- Internal status: `{status}`.",
+        f"- Public release: `{'allowed' if publishable else 'blocked'}`.",
+    ]
+    if reasons:
+        lines.append("- Active review points:")
+        for reason in reasons:
+            message = detail_by_code.get(reason) or "Independent review is still required for this point."
+            lines.append(f"  - `{reason}`: {message}")
+    else:
+        lines.append("- No coded data limitation is active; independent human review remains open.")
+    section = "\n".join(lines)
+    marker = "## Evidence Appendix"
+    if marker in markdown:
+        main, appendix = markdown.split(marker, 1)
+        return f"{main.rstrip()}\n\n{section}\n\n{marker}{appendix}"
+    return f"{markdown.rstrip()}\n\n{section}\n"
 
 
 def _is_early_commercial_capital_intensive_report(

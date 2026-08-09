@@ -310,6 +310,48 @@ def test_current_debt_aggregate_resolves_stale_short_term_debt_warning():
     )
 
 
+def test_current_debt_bridge_resolves_stale_optional_commercial_paper_warning():
+    def instant_metric(metric_name, value, end_date, source_concept):
+        return CanonicalMetric(
+            metric_name=metric_name,
+            value=value,
+            unit="USD",
+            period=end_date,
+            period_bucket="instant",
+            end_date=end_date,
+            basis="gaap",
+            statement_type="balance_sheet",
+            source_ids=[f"SEC_{metric_name}"],
+            evidence_ids=[f"EVIDENCE_{metric_name}"],
+            confidence="high",
+            source_concept=source_concept,
+        )
+
+    canonical = CanonicalFinancials(
+        ticker="MSFT",
+        as_of_date="2026-08-07",
+        metrics=[
+            instant_metric("short_term_debt", 0, "2025-06-30", "us-gaap:CommercialPaper"),
+            instant_metric("debt_current", 9_227, "2026-06-30", "us-gaap:LongTermDebtCurrent"),
+            instant_metric("debt_noncurrent", 31_067, "2026-06-30", "us-gaap:LongTermDebtNoncurrent"),
+            instant_metric("total_debt", 40_294, "2026-06-30", "us-gaap:LongTermDebt"),
+        ],
+    )
+
+    fundamentals = canonical_financials_to_fundamentals(canonical)
+    relevant = quality_relevant_reconciliation_warnings(
+        fundamentals["reconciliation_issues"],
+        fundamentals,
+    )
+
+    assert fundamentals["balance_sheet"]["total_debt"] == 40_294
+    assert fundamentals["reconciliation_resolutions"]["short_term_debt"]["status"] == "covered_by_current_aggregate"
+    assert not any(
+        item.get("code") == "BALANCE_SHEET_DATE_MISMATCH_EXCLUDED"
+        for item in relevant
+    )
+
+
 def test_period_type_variants_are_ignored_not_warned():
     canonical, warnings = reconcile_metric("revenue", [
         _metric(value=100, basis="gaap", source_id="SEC", metric_name="revenue"),

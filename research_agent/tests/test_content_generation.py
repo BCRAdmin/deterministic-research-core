@@ -1897,6 +1897,11 @@ def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():
         claims,
         status="manual_review",
         publishable=False,
+        manual_review_reasons=["EARNINGS_DATE_UNAVAILABLE"],
+        review_issue_details=[{
+            "code": "EARNINGS_DATE_UNAVAILABLE",
+            "message": "Next earnings date is unavailable; no event-risk claim is made.",
+        }],
     )
     monetary_claims = [
         claim
@@ -1933,6 +1938,10 @@ def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():
     assert "raw moving-average observations" in catalyst_text
     assert "not validated support, resistance, risk or trigger levels" in catalyst_text
     assert "$" not in research_report
+    assert "## Data Limits & Review Status" in internal_report
+    assert "`EARNINGS_DATE_UNAVAILABLE`" in internal_report
+    assert "Next earnings date is unavailable" in internal_report
+    assert internal_report.index("## Data Limits & Review Status") < internal_report.index("## Evidence Appendix")
     assert "$" not in internal_report
     assert "4.34B HUF" in research_report
     assert "4.34B HUF" in internal_report

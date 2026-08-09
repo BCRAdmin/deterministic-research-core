@@ -539,6 +539,17 @@ def run_research_pipeline(
             encoding="utf-8",
         )
         if claim_coverage_complete:
+            review_issue_details = [
+                *(
+                    {"code": issue.code, "message": issue.message}
+                    for issue in audit_report.issues
+                ),
+                *(
+                    {"code": issue.code, "message": issue.message}
+                    for issue in validation_report.issues
+                ),
+                *current_reconciliation_warnings,
+            ]
             internal_best_report = compose_internal_best_report(
                 data_packet=data_packet,
                 metrics_packet=metrics_packet,
@@ -553,6 +564,8 @@ def run_research_pipeline(
                 publish_quality_score=quality_report.publish_quality_score,
                 internal_research_quality_score=quality_report.internal_research_quality_score,
                 data_confidence_score=quality_report.data_confidence_score,
+                manual_review_reasons=quality_report.manual_review_reasons,
+                review_issue_details=review_issue_details,
             )
         else:
             internal_best_report = report
@@ -579,6 +592,8 @@ def run_research_pipeline(
                     publish_quality_score=quality_report.publish_quality_score,
                     internal_research_quality_score=quality_report.internal_research_quality_score,
                     data_confidence_score=quality_report.data_confidence_score,
+                    manual_review_reasons=quality_report.manual_review_reasons,
+                    review_issue_details=review_issue_details,
                 )
         internal_best_audit = audit_markdown_report(
             markdown=internal_best_report,

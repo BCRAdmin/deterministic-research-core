@@ -1122,13 +1122,28 @@ def _derive_debt_and_lease_totals(
             and current.end_date == noncurrent.end_date
             and current.source_concept == "us-gaap:DebtCurrent"
         )
-        if current_is_aggregate:
+        current_bridge_reconciles_to_total = (
+            aggregate is not None
+            and current is not None
+            and aggregate.end_date == noncurrent.end_date == current.end_date
+            and isclose(
+                aggregate.value,
+                current.value + noncurrent.value,
+                rel_tol=1e-6,
+                abs_tol=1.0,
+            )
+        )
+        if current_is_aggregate or current_bridge_reconciles_to_total:
             fundamentals.setdefault("reconciliation_resolutions", {})[
                 "short_term_debt"
             ] = {
                 "status": "covered_by_current_aggregate",
                 "period_end": current.end_date,
-                "source_concept": current.source_concept,
+                "source_concept": (
+                    current.source_concept
+                    if current_is_aggregate
+                    else f"{aggregate.source_concept}={current.source_concept}+{noncurrent.source_concept}"
+                ),
             }
         if (
             short_term is not None
