@@ -1,3 +1,4 @@
+import hashlib
 import json
 from datetime import date, timedelta
 from pathlib import Path
@@ -1060,20 +1061,29 @@ def test_current_runner_builds_real_authority_bundle_from_generic_adapters(tmp_p
         sec_client=_StoredAaplSec(),
     )
 
-    manifest = json.loads(
-        (
-            tmp_path
-            / "outputs"
-            / "AAPL"
-            / "2026-05-17"
-            / "authority_bundle"
-            / "authority_manifest.json"
-        ).read_text(encoding="utf-8")
+    output_dir = tmp_path / "outputs" / "AAPL" / "2026-05-17"
+    authority_dir = output_dir / "authority_bundle"
+    authority_manifest_path = authority_dir / "authority_manifest.json"
+    metrics_path = authority_dir / "metrics_packet.json"
+    snapshot_path = output_dir / "valuation_calibration_snapshot.json"
+    manifest = json.loads(authority_manifest_path.read_text(encoding="utf-8"))
+    snapshot = json.loads(snapshot_path.read_text(encoding="utf-8"))
+    report_manifest = json.loads(
+        (output_dir / "report_manifest.json").read_text(encoding="utf-8")
     )
     assert result["status"] == "authority_ready"
     assert result["analysis_allowed"] is True
     assert manifest["analysis_allowed"] is True
     assert manifest["contract_id"] == "room16.research_authority_bundle"
+    assert snapshot["metrics_packet_sha256"] == (
+        "sha256:" + hashlib.sha256(metrics_path.read_bytes()).hexdigest()
+    )
+    assert snapshot["authority_manifest_sha256"] == (
+        "sha256:" + hashlib.sha256(authority_manifest_path.read_bytes()).hexdigest()
+    )
+    assert report_manifest["metadata"]["valuation_calibration_snapshot_path"] == str(
+        snapshot_path
+    )
 
 
 def test_current_runner_rejects_stored_inputs_without_exact_material_evidence(tmp_path):

@@ -1,6 +1,9 @@
 import hashlib
+import json
 from datetime import date, timedelta
 from typing import Optional
+
+import pytest
 
 from research_agent.calibration.valuation_calibration import (
     MIN_EFFECTIVE_SAMPLES,
@@ -9,6 +12,9 @@ from research_agent.calibration.valuation_calibration import (
     assess_valuation_calibration_readiness,
     build_valuation_calibration_outcome,
     build_valuation_calibration_snapshot,
+    file_sha256,
+    save_valuation_calibration_snapshot,
+    scan_authority_root,
 )
 from research_agent.research_core.calculations.valuation import (
     calculate_valuation_metrics,
@@ -63,6 +69,7 @@ def _snapshot(
         _metrics(ticker=ticker, as_of_date=as_of_date),
         metrics_packet_sha256=HASH,
         authority_manifest_sha256=HASH,
+        authority_analysis_allowed=True,
         sector=sector,
         sector_source_sha256=HASH,
     )
@@ -94,12 +101,89 @@ def test_snapshot_requires_measured_dcf_but_not_adjusted_historical_technicals()
         _metrics(price_series_basis="unadjusted_or_provider_default"),
         metrics_packet_sha256=HASH,
         authority_manifest_sha256=HASH,
+        authority_analysis_allowed=True,
     )
 
     assert eligible.eligible
     assert eligible.base_upside is not None
     assert unadjusted_technicals.eligible
     assert unadjusted_technicals.price_series_basis == "unadjusted_or_provider_default"
+
+
+def test_sector_overlay_does_not_rewrite_immutable_snapshot_id():
+    metrics = _metrics()
+    first = build_valuation_calibration_snapshot(
+        metrics,
+        metrics_packet_sha256=HASH,
+        authority_manifest_sha256=HASH,
+        authority_analysis_allowed=True,
+        sector="Technology",
+        sector_source_sha256=HASH,
+    )
+    second = build_valuation_calibration_snapshot(
+        metrics,
+        metrics_packet_sha256=HASH,
+        authority_manifest_sha256=HASH,
+        authority_analysis_allowed=True,
+        sector="Industrials",
+        sector_source_sha256="sha256:" + "a" * 64,
+    )
+
+    assert first.snapshot_id == second.snapshot_id
+
+
+def test_scanner_reuses_and_verifies_saved_snapshot(tmp_path):
+    bundle = tmp_path / "TEST" / "2025-01-02" / "authority_bundle"
+    bundle.mkdir(parents=True)
+    metrics_path = bundle / "metrics_packet.json"
+    manifest_path = bundle / "authority_manifest.json"
+    metrics_path.write_text(
+        json.dumps(_metrics().model_dump(mode="json"), sort_keys=True),
+        encoding="utf-8",
+    )
+    manifest_path.write_text('{"analysis_allowed": true}', encoding="utf-8")
+    snapshot = build_valuation_calibration_snapshot(
+        _metrics(),
+        metrics_packet_sha256=file_sha256(metrics_path),
+        authority_manifest_sha256=file_sha256(manifest_path),
+        authority_analysis_allowed=True,
+    )
+    snapshot_path = bundle.parent / "valuation_calibration_snapshot.json"
+    save_valuation_calibration_snapshot(snapshot, snapshot_path)
+
+    scanned = scan_authority_root(
+        tmp_path,
+        sectors={"TEST": "Technology"},
+        sector_source_sha256=HASH,
+    )
+
+    assert scanned[0].snapshot_id == snapshot.snapshot_id
+    assert scanned[0].sector == "Technology"
+
+    payload = json.loads(snapshot_path.read_text(encoding="utf-8"))
+    payload["base_upside"] = 99.0
+    snapshot_path.write_text(json.dumps(payload), encoding="utf-8")
+    with pytest.raises(ValueError, match="does not match its authority bundle"):
+        scan_authority_root(tmp_path)
+
+
+def test_snapshot_stays_ineligible_without_approved_authority_bundle():
+    missing = build_valuation_calibration_snapshot(
+        _metrics(),
+        metrics_packet_sha256=HASH,
+    )
+    rejected = build_valuation_calibration_snapshot(
+        _metrics(),
+        metrics_packet_sha256=HASH,
+        authority_manifest_sha256=HASH,
+        authority_analysis_allowed=False,
+    )
+
+    assert not missing.eligible
+    assert "authority_manifest_hash_missing" in missing.exclusion_reasons
+    assert "authority_bundle_not_approved" in missing.exclusion_reasons
+    assert not rejected.eligible
+    assert rejected.exclusion_reasons == ["authority_bundle_not_approved"]
 
 
 def test_readiness_stays_closed_without_matured_252d_outcomes():

@@ -107,6 +107,7 @@ def build_valuation_calibration_snapshot(
     *,
     metrics_packet_sha256: str,
     authority_manifest_sha256: Optional[str] = None,
+    authority_analysis_allowed: Optional[bool] = None,
     sector: Optional[str] = None,
     sector_source_sha256: Optional[str] = None,
 ) -> ValuationCalibrationSnapshot:
@@ -125,10 +126,12 @@ def build_valuation_calibration_snapshot(
         reasons.append("scenario_upside_incomplete")
     if not _is_sha256(metrics_packet_sha256):
         reasons.append("metrics_packet_hash_invalid")
-    if authority_manifest_sha256 is not None and not _is_sha256(
-        authority_manifest_sha256
-    ):
+    if authority_manifest_sha256 is None:
+        reasons.append("authority_manifest_hash_missing")
+    elif not _is_sha256(authority_manifest_sha256):
         reasons.append("authority_manifest_hash_invalid")
+    if authority_analysis_allowed is not True:
+        reasons.append("authority_bundle_not_approved")
     if sensitivity.current_price is None or sensitivity.current_price <= 0:
         reasons.append("point_in_time_price_unavailable")
     try:
@@ -146,8 +149,6 @@ def build_valuation_calibration_snapshot(
         "policy_version": sensitivity.policy_version,
         "metrics_packet_sha256": metrics_packet_sha256,
         "authority_manifest_sha256": authority_manifest_sha256,
-        "sector": sector.strip() if sector and sector.strip() else None,
-        "sector_source_sha256": sector_source_sha256,
     }
     snapshot_id = "sha256:" + hashlib.sha256(
         json.dumps(identity_payload, sort_keys=True, separators=(",", ":")).encode(
@@ -314,23 +315,71 @@ def scan_authority_root(
         metrics_bytes = metrics_path.read_bytes()
         metrics = MetricsPacket(**json.loads(metrics_bytes))
         manifest_path = metrics_path.parent / "authority_manifest.json"
+        manifest_payload = (
+            json.loads(manifest_path.read_text(encoding="utf-8"))
+            if manifest_path.exists()
+            else {}
+        )
         manifest_hash = (
-            "sha256:" + hashlib.sha256(manifest_path.read_bytes()).hexdigest()
+            file_sha256(manifest_path)
             if manifest_path.exists()
             else None
         )
-        snapshots.append(
-            build_valuation_calibration_snapshot(
+        metrics_hash = "sha256:" + hashlib.sha256(metrics_bytes).hexdigest()
+        saved_snapshot_path = (
+            metrics_path.parent.parent / "valuation_calibration_snapshot.json"
+        )
+        if saved_snapshot_path.exists():
+            snapshot = ValuationCalibrationSnapshot(
+                **json.loads(saved_snapshot_path.read_text(encoding="utf-8"))
+            )
+            expected = build_valuation_calibration_snapshot(
                 metrics,
-                metrics_packet_sha256=(
-                    "sha256:" + hashlib.sha256(metrics_bytes).hexdigest()
-                ),
+                metrics_packet_sha256=metrics_hash,
                 authority_manifest_sha256=manifest_hash,
+                authority_analysis_allowed=(
+                    manifest_payload.get("analysis_allowed") is True
+                ),
+            )
+            if snapshot.model_dump(mode="json") != expected.model_dump(mode="json"):
+                raise ValueError(
+                    "saved valuation calibration snapshot does not match its "
+                    f"authority bundle: {saved_snapshot_path}"
+                )
+            snapshot = snapshot.model_copy(
+                update={
+                    "sector": (sectors or {}).get(metrics.ticker),
+                    "sector_source_sha256": sector_source_sha256,
+                }
+            )
+        else:
+            snapshot = build_valuation_calibration_snapshot(
+                metrics,
+                metrics_packet_sha256=metrics_hash,
+                authority_manifest_sha256=manifest_hash,
+                authority_analysis_allowed=(
+                    manifest_payload.get("analysis_allowed") is True
+                ),
                 sector=(sectors or {}).get(metrics.ticker),
                 sector_source_sha256=sector_source_sha256,
             )
-        )
+        snapshots.append(snapshot)
     return snapshots
+
+
+def save_valuation_calibration_snapshot(
+    snapshot: ValuationCalibrationSnapshot,
+    path: Union[str, Path],
+) -> Path:
+    target = Path(path)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    _write_json(target, snapshot.model_dump(mode="json"))
+    return target
+
+
+def file_sha256(path: Union[str, Path]) -> str:
+    digest = hashlib.sha256(Path(path).read_bytes()).hexdigest()
+    return "sha256:" + digest
 
 
 def build_valuation_calibration_outcome(

@@ -21,6 +21,11 @@ uses the point-in-time equity value, not past technical returns. An
 illustrative multi-class value or an incomplete scenario remains excluded. A
 green report audit cannot waive these requirements.
 
+Every completed research run stores the immutable snapshot next to its
+Authority Bundle. Its ID binds the exact metrics and Authority Manifest
+hashes. Sector classification is a separately hash-bound calibration overlay
+and therefore does not rewrite the valuation snapshot ID.
+
 ## Outcome contract
 
 Valuation is tested at a minimum 252-trading-day horizon. Each outcome must:
@@ -30,7 +35,7 @@ Valuation is tested at a minimum 252-trading-day horizon. Each outcome must:
 - carry a source hash;
 - use total-return-adjusted instrument and benchmark series from the same
   basis date, including cash distributions rather than merely split-adjusted
-  closes; and
+  closes;
 - contain exactly 252 common future trading observations, calculated by the
   deterministic outcome builder rather than asserted by report prose; and
 - reconcile instrument return minus benchmark return exactly to excess

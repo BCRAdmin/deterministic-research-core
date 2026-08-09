@@ -6,6 +6,11 @@ from pathlib import Path
 from typing import Any, Optional
 
 from research_agent.batch.freshness import evaluate_price_freshness
+from research_agent.calibration.valuation_calibration import (
+    build_valuation_calibration_snapshot,
+    file_sha256,
+    save_valuation_calibration_snapshot,
+)
 from research_agent.content.claim_generator import (
     claim_coverage_gaps,
     claim_quality_metrics,
@@ -326,6 +331,20 @@ def run_research_pipeline(
             "Research authority bundle rejected report generation: "
             f"{failures or 'unknown authority failure'}"
         )
+    valuation_calibration_snapshot = build_valuation_calibration_snapshot(
+        metrics_packet,
+        metrics_packet_sha256=file_sha256(
+            authority_bundle_dir / "metrics_packet.json"
+        ),
+        authority_manifest_sha256=file_sha256(
+            authority_bundle_dir / "authority_manifest.json"
+        ),
+        authority_analysis_allowed=authority_manifest["analysis_allowed"],
+    )
+    valuation_calibration_snapshot_path = save_valuation_calibration_snapshot(
+        valuation_calibration_snapshot,
+        manifest_output_dir / "valuation_calibration_snapshot.json",
+    )
 
     current_reconciliation_warnings = quality_relevant_reconciliation_warnings(
         reconciliation_warnings,
@@ -671,6 +690,9 @@ def run_research_pipeline(
             "authority_bundle_path": str(authority_bundle_dir),
             "authority_contract_id": authority_manifest["contract_id"],
             "authority_contract_version": authority_manifest["contract_version"],
+            "valuation_calibration_snapshot_path": str(
+                valuation_calibration_snapshot_path
+            ),
             **reconciliation_paths,
         },
     )
