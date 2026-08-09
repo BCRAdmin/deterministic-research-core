@@ -690,6 +690,23 @@ def run_research_pipeline(
             "authority_bundle_path": str(authority_bundle_dir),
             "authority_contract_id": authority_manifest["contract_id"],
             "authority_contract_version": authority_manifest["contract_version"],
+            "authority_manifest_sha256": file_sha256(
+                authority_bundle_dir / "authority_manifest.json"
+            ),
+            "final_report_sha256": file_sha256(final_report_path),
+            "internal_best_report_sha256": (
+                file_sha256(internal_best_report_path)
+                if internal_best_report_path
+                else ""
+            ),
+            "internal_best_audit_report_sha256": (
+                file_sha256(internal_best_audit_report_path)
+                if internal_best_audit_report_path
+                else ""
+            ),
+            "audit_report_sha256": file_sha256(audit_report_path),
+            "quality_score_sha256": file_sha256(quality_report_path),
+            "deterministic_report_mode": True,
             "valuation_calibration_snapshot_path": str(
                 valuation_calibration_snapshot_path
             ),

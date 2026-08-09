@@ -55,11 +55,16 @@ def determine_unconstrained_analytical_rating(
     """
 
     fundamental = scores.fundamental_score
+    technical_boundary = (
+        "verified technical evidence remains a separate timing overlay"
+        if scores.technical_status == "measured"
+        else "unverified technical inputs are excluded from rating and timing"
+    )
     if scores.fundamental_status != "measured":
         return (
             Rating.HOLD,
             "Core fundamental coverage is incomplete. The neutral label is a "
-            "safety fallback, while technical direction remains timing context only.",
+            f"safety fallback, while {technical_boundary}.",
         )
     if fundamental <= -1 and (
         scores.risk_score <= -1 or scores.valuation_score <= -1
@@ -67,13 +72,13 @@ def determine_unconstrained_analytical_rating(
         return (
             Rating.UNDERWEIGHT,
             "Negative fundamental direction is confirmed by measured valuation "
-            "or financial-risk downside; technical evidence remains a timing overlay.",
+            f"or financial-risk downside; {technical_boundary}.",
         )
     if fundamental >= 1 and scores.valuation_score >= 1:
         return (
             Rating.ACCUMULATE,
             "Constructive fundamentals and calibrated valuation evidence support "
-            "an accumulate analytical stance; technical evidence only affects timing.",
+            f"an accumulate analytical stance; {technical_boundary}.",
         )
     if fundamental >= 1 and scores.valuation_status in {
         "unbenchmarked",
@@ -84,13 +89,12 @@ def determine_unconstrained_analytical_rating(
         return (
             Rating.HOLD,
             "Constructive fundamentals are not enough for an overweight rating "
-            "without calibrated valuation evidence. Technical evidence remains "
-            "a timing overlay.",
+            f"without calibrated valuation evidence; {technical_boundary}.",
         )
     return (
         Rating.HOLD,
         "The measured long-term evidence supports a neutral analytical stance; "
-        "technical evidence remains a timing overlay.",
+        f"{technical_boundary}.",
     )
 
 

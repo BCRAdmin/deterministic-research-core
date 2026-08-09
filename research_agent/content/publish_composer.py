@@ -901,11 +901,28 @@ def _executive_summary(
             ),
             limit=1,
         )
-    technical = (
-        f"Technically, {ticker} carries an RSI of {_fmt_number(metrics.technical.rsi_14)} with price at "
-        f"{_fmt_number(metrics.technical.close)}, so timing remains part of the rating debate."
+    technical_basis_verified = (
+        metrics.technical.price_series_basis in TECHNICAL_SCORING_BASES
     )
-    return f"{current}\n\nThe resulting stance is {rating}: the report weighs current fundamentals against valuation, cash-flow conversion and timing risk. {technical}"
+    if technical_basis_verified:
+        technical = (
+            f"Technically, {ticker} carries an RSI of "
+            f"{_fmt_number(metrics.technical.rsi_14)} with price at "
+            f"{_fmt_number(metrics.technical.close)}, so verified timing remains "
+            "a separate review overlay."
+        )
+        debate = "valuation, cash-flow conversion and verified timing risk"
+    else:
+        technical = (
+            "Technical inputs are unscored raw observations. They do not enter "
+            "the rating or timing until corporate-action adjustment of the price "
+            "series is confirmed."
+        )
+        debate = "valuation and cash-flow conversion"
+    return (
+        f"{current}\n\nThe resulting stance is {rating}: the report weighs "
+        f"current fundamentals against {debate}. {technical}"
+    )
 
 
 def _current_kpi_claims(claims: list[ResearchClaim]) -> list[ResearchClaim]:
@@ -987,13 +1004,26 @@ def _generic_investment_thesis(
             else "neutral"
         )
         fundamental_text = f"{fundamental_direction} fundamental signal"
+    technical_basis_verified = (
+        metrics.technical.price_series_basis in TECHNICAL_SCORING_BASES
+    )
+    valuation_text = _valuation_status_label(scores.valuation_status)
+    if technical_basis_verified:
+        evidence_mix = (
+            f"The {rating} stance combines a {fundamental_text} with "
+            f"{scores.technical_status} verified technical evidence and "
+            f"{valuation_text} valuation evidence."
+        )
+    else:
+        evidence_mix = (
+            f"The {rating} stance combines a {fundamental_text} with "
+            f"{valuation_text} valuation evidence. Technical inputs are excluded "
+            "from rating and timing because the price-series adjustment is unconfirmed."
+        )
     return (
         f"{ticker}'s central investment debate is whether revenue scale of "
         f"{_fmt_money(fundamentals.revenue_ttm, currency)} can translate into durable cash "
-        f"generation; {cash_text}. The {rating} stance combines a "
-        f"{fundamental_text} with "
-        f"{scores.technical_status} technical evidence and "
-        f"{scores.valuation_status} valuation evidence."
+        f"generation; {cash_text}. {evidence_mix}"
     )
 
 
@@ -1535,6 +1565,17 @@ def _fmt_number(value: float | None) -> str:
 
 def _fmt_score(value: float | None) -> str:
     return "not available" if value is None else f"{value:.1f}".rstrip("0").rstrip(".")
+
+
+def _valuation_status_label(status: str) -> str:
+    labels = {
+        "measured": "calibrated",
+        "scenario_measured": "scenario-measured but uncalibrated",
+        "illustrative_only": "illustrative-only",
+        "unbenchmarked": "unbenchmarked",
+        "not_measured": "not-sufficiently-measured",
+    }
+    return labels.get(status, "review-pending")
 
 
 def _status_slug(value: str | None) -> str:

@@ -1084,6 +1084,22 @@ def test_current_runner_builds_real_authority_bundle_from_generic_adapters(tmp_p
     assert report_manifest["metadata"]["valuation_calibration_snapshot_path"] == str(
         snapshot_path
     )
+    assert report_manifest["metadata"]["authority_manifest_sha256"] == (
+        "sha256:" + hashlib.sha256(authority_manifest_path.read_bytes()).hexdigest()
+    )
+    assert report_manifest["metadata"]["final_report_sha256"] == (
+        "sha256:"
+        + hashlib.sha256((output_dir / "final_report.md").read_bytes()).hexdigest()
+    )
+    assert report_manifest["metadata"]["quality_score_sha256"] == (
+        "sha256:"
+        + hashlib.sha256((output_dir / "quality_score.json").read_bytes()).hexdigest()
+    )
+    assert report_manifest["metadata"]["audit_report_sha256"] == (
+        "sha256:"
+        + hashlib.sha256((output_dir / "audit_report.json").read_bytes()).hexdigest()
+    )
+    assert report_manifest["metadata"]["deterministic_report_mode"] is True
 
 
 def test_current_runner_rejects_stored_inputs_without_exact_material_evidence(tmp_path):

@@ -595,6 +595,25 @@ def test_unadjusted_claim_surfaces_withhold_direction_and_numeric_reference_leve
     assert "no bullish or bearish technical conclusion is activated" in technical_surfaces
     assert "not validated support, resistance, risk or trigger levels" in technical_surfaces
 
+    internal_report = compose_internal_best_report(
+        data,
+        metrics,
+        decision,
+        ledger,
+        claims,
+        status="manual_review",
+        publishable=False,
+    ).lower()
+    assert "timing remains part of the rating debate" not in internal_report
+    assert "partial technical evidence" not in internal_report
+    assert "technical inputs are unscored raw observations" in internal_report
+    assert "they do not enter the rating or timing" in internal_report
+    assert "technical inputs are excluded from rating and timing" in internal_report
+    assert "technical evidence remains a timing overlay" not in internal_report
+    assert "stronger verified technical" not in internal_report
+    assert "scenario_measured" not in internal_report
+    assert "low_financial_risk" not in internal_report
+
 
 def test_adjusted_claim_surfaces_retain_validated_direction_and_reference_levels():
     data, metrics, validation, ledger, decision = _load_packet("SNOW")
@@ -1594,7 +1613,8 @@ def test_mixed_profit_declines_remain_visible_across_thesis_bear_and_rating():
     )
     assert "Current-period operating-income and net-income declines" in research_report
     assert "positive FCF does not erase" in research_report
-    assert "technical timing evidence" in research_report
+    assert "raw technical observations indicate" in research_report
+    assert "excluded from rating and timing" in research_report
     assert "A raw multiple or an isolated price signal" not in research_report
 
 
@@ -1669,7 +1689,8 @@ def test_missing_fcf_keeps_profit_declines_visible_across_complete_report_logic(
     assert "A raw multiple or an isolated price signal" not in rating
     assert "Current-period operating-income and net-income declines" in research_report
     assert "FCF is unavailable" in research_report
-    assert "technical timing evidence" in research_report
+    assert "raw technical observations indicate" in research_report
+    assert "excluded from rating and timing" in research_report
     assert "A raw multiple or an isolated price signal" not in research_report
 
 

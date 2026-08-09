@@ -263,7 +263,7 @@ class _ClaimBuilder:
                 f"with a {preferred} stance. The available evidence anchors are "
                 f"{_core_rating_evidence_text(self.metrics, self.data_packet.price_basis.currency)}; "
                 f"the technical evidence indicates {_technical_interpretation(self.metrics)}. "
-                f"Valuation status is {self.decision.signal_scores.valuation_status}."
+                f"{_valuation_status_sentence(self.decision.signal_scores.valuation_status)}"
             ),
             core_rating_metrics,
             "high",
@@ -309,7 +309,8 @@ class _ClaimBuilder:
                 (
                     f"The deterministic financial-risk screen is "
                     f"{risk.financial_risk_score:.1f}/100 "
-                    f"({risk.financial_risk_band}) with {risk.coverage_ratio:.0%} "
+                    f"({_financial_risk_band_label(risk.financial_risk_band)}) "
+                    f"with {risk.coverage_ratio:.0%} "
                     "financial-input coverage. "
                     f"{_risk_coverage_sentence(risk.coverage_ratio)} "
                     "This is not a probability of loss; "
@@ -1084,8 +1085,8 @@ class _ClaimBuilder:
                         "not establish durability or cause; negative FCF remains evidence "
                         "of weak cash conversion. A more "
                         "constructive rating still requires those comparisons to persist, "
-                        "cash conversion to improve and stronger verified technical or benchmarked "
-                        "valuation support."
+                        "cash conversion to improve, and stronger durable fundamental "
+                        "and benchmarked valuation support."
                     )
             elif fcf_value == 0:
                 cash_context = (
@@ -1093,14 +1094,14 @@ class _ClaimBuilder:
                     "not establish durability, cause or positive cash conversion. A more "
                     "constructive rating "
                     "still requires those comparisons to persist, cash conversion to "
-                    "improve and stronger verified technical or benchmarked valuation support."
+                    "improve, plus stronger durable fundamental and benchmarked valuation support."
                 )
             elif fcf_value is not None:
                 cash_context = (
                     "this records aligned current-period direction, scale and positive "
                     "cash generation, but does not establish durability or cause. A more "
                     "constructive rating still requires those "
-                    "comparisons to persist and stronger verified technical or benchmarked "
+                    "comparisons to persist and stronger durable fundamental and benchmarked "
                     "valuation support."
                 )
             else:
@@ -1109,8 +1110,7 @@ class _ClaimBuilder:
                     "not establish durability or cause; FCF is unavailable and cannot "
                     "support a cash-conversion conclusion. "
                     "A more constructive rating still requires those comparisons to "
-                    "persist, cash-conversion evidence and stronger verified technical or "
-                    "benchmarked valuation support."
+                    "persist, plus cash-conversion evidence and benchmarked valuation support."
                 )
             if not growth_divergence and not growth_declines:
                 scale_and_cash = (
@@ -1164,15 +1164,15 @@ class _ClaimBuilder:
                     "The bull case uses revenue of "
                     f"{self._money(self.metrics.fundamentals.revenue_ttm)} as scale "
                     f"evidence. {cash_context}; a more constructive rating requires "
-                    "comparable current-period evidence or verified technical confirmation."
+                    "comparable current-period evidence and benchmarked valuation support."
                 )
             else:
                 bull_text = (
                     "The bull case combines revenue of "
                     f"{self._money(self.metrics.fundamentals.revenue_ttm)} with FCF of "
                     f"{self._money(fcf_value)}. {cash_context}; a more constructive "
-                    "rating requires comparable current-period evidence or verified "
-                    "technical confirmation."
+                    "rating requires comparable current-period evidence and benchmarked "
+                    "valuation support."
                 )
         bull_metrics = ["revenue_ttm"]
         if self.metrics.fundamentals.free_cash_flow_ttm is not None:
@@ -1829,6 +1829,33 @@ def _number(value: Optional[float]) -> str:
     if value is None:
         return "not available in evidence set"
     return f"{value:.2f}"
+
+
+def _valuation_status_sentence(status: str) -> str:
+    labels = {
+        "measured": "Valuation evidence is measured against a calibrated basis.",
+        "scenario_measured": (
+            "Valuation is measured only as scenario sensitivity and is not yet calibrated."
+        ),
+        "illustrative_only": (
+            "Valuation is illustrative only because share-class price equivalence is unverified."
+        ),
+        "unbenchmarked": (
+            "Valuation multiples are observations without a validated benchmark."
+        ),
+        "not_measured": "Valuation is not sufficiently measured.",
+    }
+    return labels.get(status, "Valuation evidence requires manual interpretation.")
+
+
+def _financial_risk_band_label(status: Optional[str]) -> str:
+    labels = {
+        "low_financial_risk": "low measured financial-statement risk",
+        "moderate_financial_risk": "moderate measured financial-statement risk",
+        "high_financial_risk": "high measured financial-statement risk",
+        "not_measured": "financial-statement risk not measured",
+    }
+    return labels.get(status or "", "financial-statement risk requires review")
 
 
 def _plain_number(value: Optional[float]) -> str:
@@ -2510,13 +2537,22 @@ def _final_rating_claim_text(
         fundamental_note = "The measured fundamental signal is constructive."
     else:
         fundamental_note = "The measured fundamental signal is neutral."
+    technical_note = (
+        f"Separately, verified technical timing evidence indicates "
+        f"{_technical_interpretation(metrics)} and does not enter the long-term "
+        "composite score."
+        if _technical_basis_is_scoreable(metrics)
+        else (
+            f"Separately, raw technical observations indicate "
+            f"{_technical_interpretation(metrics)}. They are excluded from rating "
+            "and timing until the price-series basis is confirmed."
+        )
+    )
     return (
         f"We rate {ticker} {preferred} at the validated close of "
         f"{_money(metrics.technical.close, currency)}. {reason} The factual "
         f"anchors are {evidence_anchor}. {fundamental_note} {valuation_note} "
-        f"Separately, technical timing evidence indicates "
-        f"{_technical_interpretation(metrics)} and does not enter the long-term "
-        "composite score."
+        f"{technical_note}"
     )
 
 
@@ -2566,24 +2602,19 @@ def _core_rating_evidence_text(metrics: MetricsPacket, currency: str) -> str:
 
 
 def _final_rating_counterargument(preferred: str, metrics: MetricsPacket) -> str:
-    technical = (
-        "technical confirmation"
-        if _technical_basis_is_scoreable(metrics)
-        else "verified corporate-action-adjusted technical confirmation"
-    )
     if preferred in {"Accumulate", "Buy"}:
         return (
-            "A more bearish rating would require evidence that cash generation "
-            f"or {technical} has deteriorated."
+            "A more bearish rating would require deteriorating cash generation, "
+            "valuation or issuer-risk evidence."
         )
     if preferred in {"Tactical Trim", "Tactical Underweight", "Underweight"}:
         return (
             "A more bullish rating would require current-period KPI acceleration, "
-            f"{technical} and benchmarked valuation evidence."
+            "durable cash conversion and benchmarked valuation evidence."
         )
     return (
-        "A more bullish rating needs current-period evidence or "
-        f"{technical} plus benchmarked valuation evidence; a more bearish rating "
+        "A more bullish rating needs durable current-period evidence plus "
+        "benchmarked valuation evidence; a more bearish rating "
         "needs deteriorating fundamentals or unresolved data errors."
     )
 

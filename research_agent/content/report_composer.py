@@ -317,8 +317,8 @@ def _render_scenario_view(
         metrics_packet.technical.price_series_basis in TECHNICAL_SCORING_BASES
     )
     bull_condition = (
-        "- Bull case: become more constructive only if fundamentals and "
-        "verified technical confirmation improve."
+        "- Bull case: become more constructive only if durable fundamentals "
+        "or calibrated valuation evidence improve; verified technicals affect timing only."
         if technical_basis_verified
         else (
             "- Bull case: become more constructive only if fundamentals improve; "
@@ -486,8 +486,8 @@ def _render_final_rating_logic(
         if technical_basis_verified:
             why_not_constructive = (
                 "- Why not more constructive? A rating change requires stronger measured "
-                "fundamentals or verified technical confirmation and, where valuation "
-                "is relevant, benchmark evidence."
+                "fundamentals and, where valuation is relevant, benchmark evidence. "
+                "Verified technical confirmation affects timing, not the company rating."
             )
         else:
             why_not_constructive = (

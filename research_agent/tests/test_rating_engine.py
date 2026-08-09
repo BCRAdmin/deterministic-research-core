@@ -186,7 +186,7 @@ def test_unbenchmarked_strong_setup_is_capped_at_hold():
     assert partial_negative_permission.preferred_rating == Rating.HOLD
     assert partial_negative_permission.allowed_ratings == [Rating.HOLD]
     assert "Core fundamental coverage is incomplete" in partial_negative_permission.reason
-    assert "timing context only" in partial_negative_permission.reason
+    assert "excluded from rating and timing" in partial_negative_permission.reason
 
     partial_technical_permission = determine_rating_permission(
         SignalScores(
@@ -203,7 +203,7 @@ def test_unbenchmarked_strong_setup_is_capped_at_hold():
     )
     assert partial_technical_permission.preferred_rating == Rating.HOLD
     assert "neutral analytical stance" in partial_technical_permission.reason
-    assert "timing overlay" in partial_technical_permission.reason
+    assert "excluded from rating and timing" in partial_technical_permission.reason
 
 
 def test_validation_quality_cannot_change_the_company_rating():
