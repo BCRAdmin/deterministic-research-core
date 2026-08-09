@@ -17,7 +17,10 @@ from research_agent.audit.rating_action_extractor import (
 from research_agent.decision.decision_packet import DecisionPacket
 from research_agent.decision.rating_permission import extract_rating_from_text
 from research_agent.evidence.evidence_ledger import EvidenceLedger, load_evidence_ledger
-from research_agent.evidence.evidence_validator import validate_metric_evidence, validate_vendor_not_primary
+from research_agent.evidence.evidence_validator import (
+    validate_metric_evidence,
+    validate_vendor_not_primary,
+)
 from research_agent.reconciliation.canonical_financials import CanonicalFinancials
 from research_agent.research_core.ingestion.source_registry import SourceRegistry
 from research_agent.research_core.models.metrics_packet import MetricsPacket
@@ -29,7 +32,10 @@ from research_agent.research_core.calculations.fundamentals import (
     current_profit_growth_divergence_metrics,
 )
 from research_agent.quality.quality_report import QualityReport
-from research_agent.quality.deeptech_manual_review import CompanyArchetype, assess_speculative_deep_tech_manual_review
+from research_agent.quality.deeptech_manual_review import (
+    CompanyArchetype,
+    assess_speculative_deep_tech_manual_review,
+)
 from research_agent.research_core.validation.trading_logic import validate_trade_levels
 
 
@@ -37,7 +43,9 @@ CAUSALITY_RE = re.compile(
     r"(?:because of|due to|caused by|triggered by|aufgrund|wegen|führte zu|fuehrte zu|ausgelöst durch|ausgeloest durch)",
     re.IGNORECASE,
 )
-PRICE_NEWS_RE = re.compile(r"(?:news|nachricht|meldung|irland|kurs|price|selloff|rückgang|rueckgang)", re.IGNORECASE)
+PRICE_NEWS_RE = re.compile(
+    r"(?:news|nachricht|meldung|irland|kurs|price|selloff|rückgang|rueckgang)", re.IGNORECASE
+)
 NO_NEWS_RE = re.compile(
     r"(?:no news found|no relevant news|no company-specific news found|keine news|keine relevanten nachrichten|keine unternehmensspezifischen nachrichten)",
     re.IGNORECASE,
@@ -86,6 +94,8 @@ INSURANCE_BUSINESS_CONTEXT_RE = re.compile(
     r"health care benefits segment|insurance underwriting|insurance business)",
     re.IGNORECASE,
 )
+
+
 def audit_markdown_report(
     markdown: str,
     metrics_packet: MetricsPacket,
@@ -151,9 +161,7 @@ def audit_markdown_report(
     )
     issues.extend(_lint_fcf_unavailable_support(metrics_packet, canonical_financials, ticker))
     issues.extend(_lint_current_period_context(markdown, canonical_financials, ticker))
-    issues.extend(
-        _lint_current_period_cash_flow_claim(markdown, canonical_financials)
-    )
+    issues.extend(_lint_current_period_cash_flow_claim(markdown, canonical_financials))
     issues.extend(_lint_avgo_current_kpi_context(markdown, canonical_financials, ticker))
     issues.extend(_mirror_validation_warnings(validation_report, markdown))
     issues.extend(deeptech_assessment.issues)
@@ -169,9 +177,7 @@ def _lint_current_period_cash_flow_claim(
         return []
     pairs = [
         (operating_cash_flow, capex)
-        for operating_cash_flow in canonical_financials.metrics_for(
-            "operating_cash_flow"
-        )
+        for operating_cash_flow in canonical_financials.metrics_for("operating_cash_flow")
         for capex in canonical_financials.metrics_for("capex")
         if operating_cash_flow.start_date == capex.start_date
         and operating_cash_flow.end_date == capex.end_date
@@ -189,7 +195,7 @@ def _lint_current_period_cash_flow_claim(
             break
         normalized = line.casefold()
         if not (
-            "latest reported period" in normalized
+            "latest reported" in normalized
             and "operating cash flow" in normalized
             and "capital expenditure" in normalized
         ):
@@ -197,8 +203,7 @@ def _lint_current_period_cash_flow_claim(
         currency_claims = [
             claim
             for claim in extract_numeric_claims(line)
-            if claim.unit in {"usd", "huf"}
-            and claim.normalized_value is not None
+            if claim.unit in {"usd", "huf"} and claim.normalized_value is not None
         ]
         if len(currency_claims) < 2:
             continue
@@ -288,9 +293,8 @@ def _lint_sec_disclosure_fragments(markdown: str) -> list[AuditIssue]:
             continue
         disclosure = match.group(1).lstrip()
         first_letter = re.search(r"[A-Za-z]", disclosure)
-        if (
-            (first_letter and first_letter.group(0).islower())
-            or SEC_FRAGMENT_END_RE.search(disclosure)
+        if (first_letter and first_letter.group(0).islower()) or SEC_FRAGMENT_END_RE.search(
+            disclosure
         ):
             issues.append(
                 AuditIssue(
@@ -407,12 +411,15 @@ def _lint_numeric_claims(
 def _is_comparison_threshold(claim: ExtractedNumericClaim) -> bool:
     if not claim.raw_text:
         return False
-    return re.search(
-        rf"\b(?:above|below|under|over|at\s+least|at\s+most|"
-        rf"less\s+than|greater\s+than)\s+{re.escape(claim.raw_text)}",
-        claim.nearby_text,
-        re.IGNORECASE,
-    ) is not None
+    return (
+        re.search(
+            rf"\b(?:above|below|under|over|at\s+least|at\s+most|"
+            rf"less\s+than|greater\s+than)\s+{re.escape(claim.raw_text)}",
+            claim.nearby_text,
+            re.IGNORECASE,
+        )
+        is not None
+    )
 
 
 def _lint_currency_consistency(
@@ -510,10 +517,7 @@ def _lint_news_causality(
     validation_report: Optional[ValidationReport],
 ) -> list[AuditIssue]:
     claim_spans = re.split(r"(?<=[.!?])(?:[ \t]+|$)|\n+", markdown)
-    if not any(
-        CAUSALITY_RE.search(span) and PRICE_NEWS_RE.search(span)
-        for span in claim_spans
-    ):
+    if not any(CAUSALITY_RE.search(span) and PRICE_NEWS_RE.search(span) for span in claim_spans):
         return []
     codes = {issue.code for issue in validation_report.issues} if validation_report else set()
     if "NEWS_PRICE_CAUSALITY_CONFIRMED" in codes:
@@ -536,7 +540,8 @@ def _lint_no_news_claim(
     relevant_sources = [
         source
         for source in source_registry.sources
-        if source.source_type in {"company_ir", "sec_filing", "reuters", "barrons", "marketwatch", "earnings_transcript"}
+        if source.source_type
+        in {"company_ir", "sec_filing", "reuters", "barrons", "marketwatch", "earnings_transcript"}
         or "news" in source.used_for
     ]
     if not relevant_sources:
@@ -591,7 +596,9 @@ def _lint_evidence_grounding(
             if key not in seen:
                 issues.append(
                     AuditIssue(
-                        severity="error" if code == "MISSING_EVIDENCE_FOR_HARD_CLAIM" else "warning",
+                        severity="error"
+                        if code == "MISSING_EVIDENCE_FOR_HARD_CLAIM"
+                        else "warning",
                         code=code,
                         metric=metric_name,
                         message=evidence_issue["message"],
@@ -648,7 +655,9 @@ def _has_direct_evidence_for_numeric_claim(
         tokens = [token for token in re.split(r"[^a-z0-9]+", nearby) if len(token) >= 3]
         if any(token in haystack for token in tokens):
             return True
-        if "nrr" in nearby and any("net_revenue_retention" in metric for metric in item.supports_metrics):
+        if "nrr" in nearby and any(
+            "net_revenue_retention" in metric for metric in item.supports_metrics
+        ):
             return True
     return False
 
@@ -718,10 +727,7 @@ def _lint_unbenchmarked_valuation_direction(
     decision_packet: Optional[DecisionPacket],
     metrics_packet: MetricsPacket,
 ) -> list[AuditIssue]:
-    if (
-        decision_packet is None
-        or decision_packet.signal_scores.valuation_status != "unbenchmarked"
-    ):
+    if decision_packet is None or decision_packet.signal_scores.valuation_status != "unbenchmarked":
         return []
 
     valuation = metrics_packet.valuation
@@ -761,13 +767,11 @@ def _lint_unbenchmarked_valuation_direction(
     for line_number, line in enumerate(markdown.splitlines(), start=1):
         lower = line.lower()
         directional_match = any(
-            pattern.search(line)
-            for pattern in UNBENCHMARKED_VALUATION_DIRECTION_PATTERNS
+            pattern.search(line) for pattern in UNBENCHMARKED_VALUATION_DIRECTION_PATTERNS
         )
-        unsupported_label = (
-            UNBENCHMARKED_VALUATION_LABEL_PATTERN.search(line) is not None
-            and not any(marker in lower for marker in neutral_markers)
-        )
+        unsupported_label = UNBENCHMARKED_VALUATION_LABEL_PATTERN.search(
+            line
+        ) is not None and not any(marker in lower for marker in neutral_markers)
         if directional_match or unsupported_label:
             return [
                 AuditIssue(
@@ -802,20 +806,25 @@ def _lint_unsupported_guidance_claims(
             unsupported_lines.append((line_number, line.strip()))
     if not unsupported_lines:
         return []
-    guidance_items = [
-        item
-        for item in evidence_ledger.evidence_items
-        if (
-            "guidance" in item.claim_type
-            or any("guidance" in metric for metric in item.supports_metrics)
-            or "guide" in item.statement.lower()
-            or "guidance" in item.statement.lower()
-        )
-    ] if evidence_ledger else []
+    guidance_items = (
+        [
+            item
+            for item in evidence_ledger.evidence_items
+            if (
+                "guidance" in item.claim_type
+                or any("guidance" in metric for metric in item.supports_metrics)
+                or "guide" in item.statement.lower()
+                or "guidance" in item.statement.lower()
+            )
+        ]
+        if evidence_ledger
+        else []
+    )
     primary_guidance = [
         item
         for item in guidance_items
-        if item.source_type in {"company_ir", "earnings_release", "sec_filing", "official_press_release"}
+        if item.source_type
+        in {"company_ir", "earnings_release", "sec_filing", "official_press_release"}
     ]
     if primary_guidance:
         return []
@@ -869,9 +878,7 @@ def _lint_financial_sanity(
     sector = _sector_profile(ticker)
     ev_sales_issue_emitted = False
 
-    profit_growth_divergence = current_profit_growth_divergence_metrics(
-        fundamentals
-    )
+    profit_growth_divergence = current_profit_growth_divergence_metrics(fundamentals)
     if profit_growth_divergence:
         reported = getattr(fundamentals, profit_growth_divergence[0])
         message = (
@@ -923,7 +930,11 @@ def _lint_financial_sanity(
                 )
             )
         else:
-            source_phrase = "with revenue and valuation inputs evidence-backed" if valuation_inputs_backed else "without a concrete denominator bug signal"
+            source_phrase = (
+                "with revenue and valuation inputs evidence-backed"
+                if valuation_inputs_backed
+                else "without a concrete denominator bug signal"
+            )
             issues.append(
                 AuditIssue(
                     severity="error",
@@ -953,7 +964,11 @@ def _lint_financial_sanity(
                     )
                 )
             else:
-                profile_phrase = " for an early-commercial capital-intensive technology profile" if early_commercial_capital_intensive else f" for {sector}"
+                profile_phrase = (
+                    " for an early-commercial capital-intensive technology profile"
+                    if early_commercial_capital_intensive
+                    else f" for {sector}"
+                )
                 issues.append(
                     AuditIssue(
                         severity="error",
@@ -982,7 +997,13 @@ def _lint_financial_sanity(
         sbc_denominator_bug_reason = _ratio_denominator_bug_reason(
             validation_report=validation_report,
             reconciliation_warnings=reconciliation_warnings,
-            metric_terms={"sbc", "stock-based compensation", "stock based compensation", "sbc_to_revenue", "revenue"},
+            metric_terms={
+                "sbc",
+                "stock-based compensation",
+                "stock based compensation",
+                "sbc_to_revenue",
+                "revenue",
+            },
         )
         code = "PERIOD_DENOMINATOR_BUG" if sbc_denominator_bug_reason else "TRUE_FINANCIAL_ANOMALY"
         message = (
@@ -1022,7 +1043,11 @@ def _lint_financial_sanity(
                 )
             )
 
-    if valuation.price_to_fcf is not None and valuation.price_to_fcf > 100 and _fcf_denominator_clean(fundamentals.free_cash_flow_ttm):
+    if (
+        valuation.price_to_fcf is not None
+        and valuation.price_to_fcf > 100
+        and _fcf_denominator_clean(fundamentals.free_cash_flow_ttm)
+    ):
         issues.append(
             AuditIssue(
                 severity="error",
@@ -1059,10 +1084,7 @@ def _lint_financial_sanity(
                 code="GUARD_THRESHOLD_REVIEW",
                 metric="fcf_margin_ttm",
                 reported=fundamentals.fcf_margin_ttm,
-                message=(
-                    "FCF margin above 40% should be reviewed in "
-                    f"{sector} context."
-                ),
+                message=(f"FCF margin above 40% should be reviewed in {sector} context."),
             )
         )
 
@@ -1084,7 +1106,11 @@ def _lint_financial_sanity(
                 )
             )
         elif not ev_sales_issue_emitted:
-            source_phrase = "with revenue and valuation inputs evidence-backed" if valuation_inputs_backed else "without a concrete denominator bug signal"
+            source_phrase = (
+                "with revenue and valuation inputs evidence-backed"
+                if valuation_inputs_backed
+                else "without a concrete denominator bug signal"
+            )
             issues.append(
                 AuditIssue(
                     severity="error",
@@ -1116,15 +1142,26 @@ def _valuation_denominator_bug_reason(
 
     if valuation.ev_to_sales is not None and valuation.enterprise_value is not None:
         expected_ev_sales = valuation.enterprise_value / revenue_ttm
-        if not _numbers_close(expected_ev_sales, valuation.ev_to_sales, relative_tolerance=0.05, absolute_tolerance=0.10):
+        if not _numbers_close(
+            expected_ev_sales,
+            valuation.ev_to_sales,
+            relative_tolerance=0.05,
+            absolute_tolerance=0.10,
+        ):
             return "EV/Sales does not reconcile to enterprise_value / revenue_ttm."
 
-    if valuation.market_cap is not None and valuation.enterprise_value is not None and valuation.market_cap > 0:
+    if (
+        valuation.market_cap is not None
+        and valuation.enterprise_value is not None
+        and valuation.market_cap > 0
+    ):
         ev_to_market_cap = abs(valuation.enterprise_value) / valuation.market_cap
         if ev_to_market_cap > 10 or ev_to_market_cap < 0.10:
             return "enterprise_value and market_cap are on incompatible source scales."
 
-    validation_reason = _valuation_bug_signal_from_validation(validation_report, reconciliation_warnings)
+    validation_reason = _valuation_bug_signal_from_validation(
+        validation_report, reconciliation_warnings
+    )
     if validation_reason:
         return validation_reason
 
@@ -1163,7 +1200,15 @@ def _valuation_bug_signal_from_validation(
         }
         strong_text = any(
             term in f"{code.lower()} {message}"
-            for term in ["period mismatch", "denominator", "wrong bucket", "unit", "scale mismatch", "ttm/q", "quarterly as ttm"]
+            for term in [
+                "period mismatch",
+                "denominator",
+                "wrong bucket",
+                "unit",
+                "scale mismatch",
+                "ttm/q",
+                "quarterly as ttm",
+            ]
         )
         if severity == "error" and (strong_code or strong_text):
             return _issue_field(issue, "message") or code
@@ -1204,7 +1249,15 @@ def _ratio_denominator_bug_reason(
         }
         strong_text = any(
             term in f"{code.lower()} {message}"
-            for term in ["period mismatch", "denominator", "wrong bucket", "unit", "scale mismatch", "ttm/q", "quarterly as ttm"]
+            for term in [
+                "period mismatch",
+                "denominator",
+                "wrong bucket",
+                "unit",
+                "scale mismatch",
+                "ttm/q",
+                "quarterly as ttm",
+            ]
         )
         if severity == "error" and (strong_code or strong_text):
             return _issue_field(issue, "message") or code
@@ -1239,21 +1292,25 @@ def _revenue_denominator_bucket_reason(
     matches = [
         metric
         for metric in canonical_financials.metrics_for("revenue")
-        if _numbers_close(metric.value, revenue_ttm, relative_tolerance=0.01, absolute_tolerance=1_000_000)
+        if _numbers_close(
+            metric.value, revenue_ttm, relative_tolerance=0.01, absolute_tolerance=1_000_000
+        )
     ]
     if not matches:
         return None
     clean_duration = [
         metric
         for metric in matches
-        if metric.period_bucket in {"ttm", "annual"} or (metric.duration_days is not None and metric.duration_days >= 330)
+        if metric.period_bucket in {"ttm", "annual"}
+        or (metric.duration_days is not None and metric.duration_days >= 330)
     ]
     if clean_duration:
         return None
     wrong_bucket = [
         metric
         for metric in matches
-        if metric.period_bucket in {"quarterly", "ytd"} or (metric.duration_days is not None and metric.duration_days < 330)
+        if metric.period_bucket in {"quarterly", "ytd"}
+        or (metric.duration_days is not None and metric.duration_days < 330)
     ]
     if wrong_bucket:
         metric = wrong_bucket[0]
@@ -1273,10 +1330,18 @@ def _valuation_inputs_evidence_backed(
         return False
     if valuation.market_cap is None or valuation.enterprise_value is None:
         return False
-    revenue_backed = _has_high_authority_metric_source({"revenue", "revenue_ttm", "sales"}, source_registry, evidence_ledger)
-    price_backed = _has_high_authority_metric_source({"price", "close", "price_data", "price_basis"}, source_registry, evidence_ledger)
-    shares_backed = _has_high_authority_metric_source({"shares", "diluted_share_count", "share_count"}, source_registry, evidence_ledger)
-    ev_components_backed = _has_high_authority_metric_source({"debt", "total_debt", "net_debt"}, source_registry, evidence_ledger) and _has_high_authority_metric_source(
+    revenue_backed = _has_high_authority_metric_source(
+        {"revenue", "revenue_ttm", "sales"}, source_registry, evidence_ledger
+    )
+    price_backed = _has_high_authority_metric_source(
+        {"price", "close", "price_data", "price_basis"}, source_registry, evidence_ledger
+    )
+    shares_backed = _has_high_authority_metric_source(
+        {"shares", "diluted_share_count", "share_count"}, source_registry, evidence_ledger
+    )
+    ev_components_backed = _has_high_authority_metric_source(
+        {"debt", "total_debt", "net_debt"}, source_registry, evidence_ledger
+    ) and _has_high_authority_metric_source(
         {"cash", "cash_and_equivalents", "cash_and_investments", "net_cash"},
         source_registry,
         evidence_ledger,
@@ -1292,11 +1357,17 @@ def _has_high_authority_metric_source(
     normalized = {name.lower() for name in metric_names}
     if evidence_ledger is not None:
         for name in normalized:
-            if any((item.authority_rank or 99) <= 2 for item in evidence_ledger.find_by_metric(name)):
+            if any(
+                (item.authority_rank or 99) <= 2 for item in evidence_ledger.find_by_metric(name)
+            ):
                 return True
     if source_registry is not None:
         for source in source_registry.sources:
-            authority = source.resolved_authority_rank() if hasattr(source, "resolved_authority_rank") else (source.authority_rank or 99)
+            authority = (
+                source.resolved_authority_rank()
+                if hasattr(source, "resolved_authority_rank")
+                else (source.authority_rank or 99)
+            )
             if authority > 2:
                 continue
             used_for = {item.lower() for item in source.used_for}
@@ -1327,7 +1398,9 @@ def _lint_company_defined_fcf_ocf(
 ) -> list[AuditIssue]:
     if canonical_financials is None:
         return []
-    company_fcf = _latest_company_metric(canonical_financials, {"free_cash_flow", "adjusted_free_cash_flow"})
+    company_fcf = _latest_company_metric(
+        canonical_financials, {"free_cash_flow", "adjusted_free_cash_flow"}
+    )
     company_ocf = _latest_company_metric(canonical_financials, {"operating_cash_flow"})
     if company_fcf is None or company_ocf is None or company_ocf.value <= 0:
         return []
@@ -1362,16 +1435,29 @@ def _latest_company_metric(canonical_financials: CanonicalFinancials, metric_nam
     ]
     if not candidates:
         return None
-    candidates = sorted(candidates, key=lambda metric: (metric.end_date or "", metric.period or ""), reverse=True)
+    candidates = sorted(
+        candidates, key=lambda metric: (metric.end_date or "", metric.period or ""), reverse=True
+    )
     return candidates[0]
 
 
 def _periods_compatible_for_fcf_ocf(fcf_metric, ocf_metric) -> bool:
     if fcf_metric.period == ocf_metric.period:
         return True
-    if fcf_metric.start_date and ocf_metric.start_date and fcf_metric.end_date and ocf_metric.end_date:
-        return fcf_metric.start_date == ocf_metric.start_date and fcf_metric.end_date == ocf_metric.end_date
-    return fcf_metric.period_bucket == ocf_metric.period_bucket and fcf_metric.period_bucket in {"annual", "ttm"}
+    if (
+        fcf_metric.start_date
+        and ocf_metric.start_date
+        and fcf_metric.end_date
+        and ocf_metric.end_date
+    ):
+        return (
+            fcf_metric.start_date == ocf_metric.start_date
+            and fcf_metric.end_date == ocf_metric.end_date
+        )
+    return fcf_metric.period_bucket == ocf_metric.period_bucket and fcf_metric.period_bucket in {
+        "annual",
+        "ttm",
+    }
 
 
 def _sector_profile(ticker: str) -> str:
@@ -1499,7 +1585,8 @@ def _lint_company_defined_fcf(
 
 def _best_company_defined_fcf(canonical_financials: CanonicalFinancials):
     candidates = [
-        metric for metric in canonical_financials.metrics
+        metric
+        for metric in canonical_financials.metrics
         if metric.metric_name in {"free_cash_flow", "adjusted_free_cash_flow"}
         and metric.basis in {"company_defined", "non_gaap"}
         and any("IR" in source_id or "EARNINGS" in source_id for source_id in metric.source_ids)
@@ -1531,7 +1618,8 @@ def _lint_fcf_unavailable_support(
     has_adjusted_support = False
     if canonical_financials is not None:
         has_adjusted_support = any(
-            metric.metric_name in {"free_cash_flow", "adjusted_free_cash_flow", "adjusted_free_cash_flow_margin"}
+            metric.metric_name
+            in {"free_cash_flow", "adjusted_free_cash_flow", "adjusted_free_cash_flow_margin"}
             and metric.basis in {"company_defined", "non_gaap"}
             and any("IR" in source_id or "EARNINGS" in source_id for source_id in metric.source_ids)
             for metric in canonical_financials.metrics
@@ -1582,7 +1670,11 @@ def _lint_avgo_current_kpi_context(
     ticker: Optional[str],
 ) -> list[AuditIssue]:
     ticker = (ticker or "").upper()
-    if ticker != "AVGO" or canonical_financials is None or not _has_current_ir_metrics(canonical_financials):
+    if (
+        ticker != "AVGO"
+        or canonical_financials is None
+        or not _has_current_ir_metrics(canonical_financials)
+    ):
         return []
     text = markdown.lower()
     required_groups = [
@@ -1620,7 +1712,13 @@ def _current_period_terms(ticker: str) -> set[str]:
     if ticker == "MSFT":
         return {"azure", "intelligent cloud", "capex", "free cash flow", "operating margin"}
     if ticker == "AVGO":
-        return {"ai semiconductor", "vmware", "infrastructure software", "free cash flow", "guidance"}
+        return {
+            "ai semiconductor",
+            "vmware",
+            "infrastructure software",
+            "free cash flow",
+            "guidance",
+        }
     return {"revenue", "free cash flow", "operating margin", "capex"}
 
 
@@ -1631,7 +1729,11 @@ def _lint_missing_fcf_rating_support(
     ticker: Optional[str],
     canonical_financials: Optional[CanonicalFinancials] = None,
 ) -> list[AuditIssue]:
-    preferred = decision_packet.rating_permission.preferred_rating if decision_packet else extract_rating_from_text(markdown)
+    preferred = (
+        decision_packet.rating_permission.preferred_rating
+        if decision_packet
+        else extract_rating_from_text(markdown)
+    )
     if preferred is None:
         return []
     if preferred.value not in {"Accumulate", "Buy", "Strong Buy"}:
@@ -1685,7 +1787,9 @@ def _mirror_validation_warnings(
     issues: list[AuditIssue] = []
     markdown_lower = markdown.lower()
     for issue in validation_report.issues:
-        if issue.code == "FORWARD_EPS_GUIDANCE_MISMATCH" and ("eps" in markdown_lower or "kgv" in markdown_lower or "p/e" in markdown_lower):
+        if issue.code == "FORWARD_EPS_GUIDANCE_MISMATCH" and (
+            "eps" in markdown_lower or "kgv" in markdown_lower or "p/e" in markdown_lower
+        ):
             issues.append(
                 AuditIssue(
                     severity=issue.severity,
@@ -1749,7 +1853,9 @@ def _base_metric_name(metric_name: str) -> str:
 
 
 def _looks_like_unverified_hard_metric(claim: ExtractedNumericClaim) -> bool:
-    return claim.unit in {"usd", "huf", "percent", "multiple"} and bool(HARD_METRIC_RE.search(claim.nearby_text))
+    return claim.unit in {"usd", "huf", "percent", "multiple"} and bool(
+        HARD_METRIC_RE.search(claim.nearby_text)
+    )
 
 
 def _comparable_reported_value(claim: ExtractedNumericClaim, validated_value: float) -> float:
@@ -1780,7 +1886,9 @@ def _model_to_dict(model) -> dict[str, Any]:
 
 
 def main(argv: Optional[list[str]] = None) -> int:
-    parser = argparse.ArgumentParser(description="Audit a Markdown stock report against validated packets.")
+    parser = argparse.ArgumentParser(
+        description="Audit a Markdown stock report against validated packets."
+    )
     parser.add_argument("--report", required=True, help="Path to Markdown report.")
     parser.add_argument("--metrics", required=True, help="Path to metrics_packet.json.")
     parser.add_argument("--validation", help="Path to validation_report.json.")

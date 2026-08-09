@@ -46,7 +46,9 @@ def _load_packet(ticker: str):
     return (
         DataPacket(**json.loads((base / "data_packet.json").read_text(encoding="utf-8"))),
         MetricsPacket(**json.loads((base / "metrics_packet.json").read_text(encoding="utf-8"))),
-        ValidationReport(**json.loads((base / "validation_report.json").read_text(encoding="utf-8"))),
+        ValidationReport(
+            **json.loads((base / "validation_report.json").read_text(encoding="utf-8"))
+        ),
         EvidenceLedger(**json.loads((base / "evidence_ledger.json").read_text(encoding="utf-8"))),
         DecisionPacket(**json.loads((base / "decision_packet.json").read_text(encoding="utf-8"))),
     )
@@ -89,11 +91,7 @@ def _add_exact_metric_evidence(data, metrics, ledger):
                         currency=data.price_basis.currency,
                     ),
                     period=period,
-                    date=(
-                        metrics.technical.indicator_date
-                        if is_technical
-                        else data.as_of_date
-                    ),
+                    date=(metrics.technical.indicator_date if is_technical else data.as_of_date),
                     supports_metrics=[metric_name],
                     confidence="high",
                 )
@@ -116,12 +114,9 @@ def test_content_generator_keeps_only_evidence_mapped_substantive_claims():
     valuation_claim = next(
         claim
         for claim in claims
-        if claim.section == "Valuation / Multiples"
-        and claim.claim.startswith("EV/Sales is")
+        if claim.section == "Valuation / Multiples" and claim.claim.startswith("EV/Sales is")
     )
-    technical_claim = next(
-        claim for claim in claims if "50-SMA" in claim.claim
-    )
+    technical_claim = next(claim for claim in claims if "50-SMA" in claim.claim)
     assert valuation_claim.metric_refs == [
         "ev_to_sales",
         "enterprise_value",
@@ -184,20 +179,13 @@ def test_content_generator_uses_trailing_pe_without_point_in_time_share_count():
             }
         ],
     )
-    valuation_claim = next(
-        claim
-        for claim in claims
-        if claim.section == "Valuation / Multiples"
-    )
+    valuation_claim = next(claim for claim in claims if claim.section == "Valuation / Multiples")
 
     assert valuation_claim.claim.startswith("For SNOW, trailing P/E is 19.86x")
     assert valuation_claim.metric_refs == ["trailing_pe", "close", "trailing_eps"]
     assert valuation_claim.metric_values["trailing_pe"] == 19.86
     assert "missing_valuation_analysis" not in claim_coverage_gaps(quality)
-    assert (
-        "Valuation status: trailing P/E `19.86x` is an unbenchmarked observation"
-        in report
-    )
+    assert "Valuation status: trailing P/E `19.86x` is an unbenchmarked observation" in report
     assert "EV/Sales `unavailable`" not in report
     assert (
         "Market-cap-derived multiples are unavailable because the filing "
@@ -214,16 +202,11 @@ def test_content_generator_explains_extreme_positive_price_to_fcf():
     valuation_claim = next(
         claim
         for claim in claims
-        if claim.section == "Valuation / Multiples"
-        and "P/FCF is 213.32x" in claim.claim
+        if claim.section == "Valuation / Multiples" and "P/FCF is 213.32x" in claim.claim
     )
 
-    assert "highly sensitive to the durability and growth of cash flow" in (
-        valuation_claim.claim
-    )
-    assert "requires explicit manual review before publication" in (
-        valuation_claim.claim
-    )
+    assert "highly sensitive to the durability and growth of cash flow" in (valuation_claim.claim)
+    assert "requires explicit manual review before publication" in (valuation_claim.claim)
     audit = audit_markdown_report(
         valuation_claim.claim,
         metrics,
@@ -320,9 +303,7 @@ def test_content_generator_turns_primary_risk_evidence_into_qualitative_claims()
     risk_claim = next(claim for claim in claims if claim.claim_type == "risk")
 
     assert risk_claim.section == "Key Risks"
-    assert (
-        "customer demand. This identifies an exposure" in risk_claim.claim
-    )
+    assert "customer demand. This identifies an exposure" in risk_claim.claim
     assert risk_claim.metric_refs == []
     assert risk_claim.evidence_ids == ["SNOW_SEC_RISK_001"]
     assert claim_quality_metrics(claims)["risk_specific_claim_count"] == 1
@@ -331,9 +312,7 @@ def test_content_generator_turns_primary_risk_evidence_into_qualitative_claims()
 def test_content_generator_preserves_issuer_risk_order():
     data, metrics, validation, ledger, decision = _load_packet("SNOW")
     _add_exact_metric_evidence(data, metrics, ledger)
-    ledger.evidence_items = [
-        item for item in ledger.evidence_items if item.claim_type != "risk"
-    ]
+    ledger.evidence_items = [item for item in ledger.evidence_items if item.claim_type != "risk"]
     ledger.evidence_items.extend(
         EvidenceItem(
             evidence_id=f"SNOW_SEC_RISK_{index:03d}",
@@ -365,9 +344,7 @@ def test_content_generator_preserves_issuer_risk_order():
 def test_content_generator_avoids_repeating_one_risk_theme_when_alternatives_exist():
     data, metrics, validation, ledger, decision = _load_packet("SNOW")
     _add_exact_metric_evidence(data, metrics, ledger)
-    ledger.evidence_items = [
-        item for item in ledger.evidence_items if item.claim_type != "risk"
-    ]
+    ledger.evidence_items = [item for item in ledger.evidence_items if item.claim_type != "risk"]
     statements = [
         "A serious aircraft accident could damage our operations and reputation.",
         "A breach of our technology systems could disrupt operations.",
@@ -407,9 +384,7 @@ def test_content_generator_avoids_repeating_one_risk_theme_when_alternatives_exi
 def test_content_generator_avoids_repeating_pharma_ip_risks():
     data, metrics, validation, ledger, decision = _load_packet("SNOW")
     _add_exact_metric_evidence(data, metrics, ledger)
-    ledger.evidence_items = [
-        item for item in ledger.evidence_items if item.claim_type != "risk"
-    ]
+    ledger.evidence_items = [item for item in ledger.evidence_items if item.claim_type != "risk"]
     statements = [
         "Loss of patent protection and competition from generics may reduce revenues.",
         "Major products could lose patent protection earlier than expected.",
@@ -454,9 +429,7 @@ def test_bear_case_uses_balance_sheet_constraint_and_primary_risk_evidence():
     metrics.technical.close = 243.80
     metrics.technical.sma_50 = 239.32
     metrics.technical.sma_200 = 224.86
-    ledger.evidence_items = [
-        item for item in ledger.evidence_items if item.claim_type != "risk"
-    ]
+    ledger.evidence_items = [item for item in ledger.evidence_items if item.claim_type != "risk"]
     ledger.evidence_items.append(
         EvidenceItem(
             evidence_id="SNOW_SEC_RISK_PATENT",
@@ -499,8 +472,7 @@ def test_positive_fcf_is_qualified_by_sbc_to_fcf():
     fcf_claim = next(
         claim
         for claim in claims
-        if claim.section == "Fundamental Analysis"
-        and claim.claim.startswith("FCF TTM is")
+        if claim.section == "Fundamental Analysis" and claim.claim.startswith("FCF TTM is")
     )
     thesis = _generic_investment_thesis("SNOW", "Hold", metrics, decision)
 
@@ -780,6 +752,77 @@ def test_ytd_cash_flow_claim_binds_ytd_capex_instead_of_same_date_quarter():
     assert "CAPEX_QUARTER" not in cash_flow_claim.evidence_ids
 
 
+def test_full_year_cash_flow_claim_uses_latest_annual_pair():
+    _, metrics, _, _, _ = _load_packet("SNOW")
+
+    def cash_metric(name, value, start, end, bucket, fiscal_year):
+        return CanonicalMetric(
+            metric_name=name,
+            value=value,
+            unit="USD",
+            period=f"FY{fiscal_year}",
+            fiscal_year=fiscal_year,
+            fiscal_period="FY",
+            period_bucket=bucket,
+            start_date=start,
+            end_date=end,
+            basis="gaap",
+            statement_type="cash_flow",
+            source_ids=[f"SEC_FY{fiscal_year}"],
+            confidence="high",
+        )
+
+    canonical = CanonicalFinancials(
+        ticker="MSFT",
+        as_of_date="2026-08-07",
+        metrics=[
+            cash_metric(
+                "operating_cash_flow",
+                127_490_000_000,
+                "2024-07-01",
+                "2025-06-30",
+                "ytd",
+                2025,
+            ),
+            cash_metric(
+                "capex",
+                80_150_000_000,
+                "2024-07-01",
+                "2025-06-30",
+                "ytd",
+                2025,
+            ),
+            cash_metric(
+                "operating_cash_flow",
+                182_935_000_000,
+                "2025-07-01",
+                "2026-06-30",
+                "annual",
+                2026,
+            ),
+            cash_metric(
+                "capex",
+                115_948_000_000,
+                "2025-07-01",
+                "2026-06-30",
+                "annual",
+                2026,
+            ),
+        ],
+    )
+
+    specs = _current_period_claim_specs("MSFT", metrics, canonical)
+    cash_spec = next(
+        spec for spec in specs if spec.get("metrics") == ["operating_cash_flow", "capex"]
+    )
+
+    assert "latest reported fiscal year" in str(cash_spec["text"])
+    assert cash_spec["metric_values"] == {
+        "operating_cash_flow": 182_935_000_000,
+        "capex": 115_948_000_000,
+    }
+
+
 def test_bear_case_treats_negative_fcf_as_downside_not_counterevidence():
     _, metrics, _, _, _ = _load_packet("SNOW")
     metrics.fundamentals.free_cash_flow_ttm = -11_625_000_000
@@ -799,9 +842,7 @@ def test_bull_case_does_not_present_negative_fcf_as_cash_generation():
     data, metrics, validation, ledger, decision = _load_packet("SNOW")
     metrics.fundamentals.free_cash_flow_ttm = -11_625_000_000
     ledger.evidence_items = [
-        item
-        for item in ledger.evidence_items
-        if "free_cash_flow_ttm" not in item.supports_metrics
+        item for item in ledger.evidence_items if "free_cash_flow_ttm" not in item.supports_metrics
     ]
     _add_exact_metric_evidence(data, metrics, ledger)
 
@@ -853,9 +894,7 @@ def test_capex_driven_negative_fcf_is_not_called_weak_operations():
     _add_exact_metric_evidence(data, metrics, ledger)
 
     claims = generate_research_claims(data, metrics, ledger, decision, validation)
-    fundamental = next(
-        claim for claim in claims if claim.section == "Fundamental Analysis"
-    )
+    fundamental = next(claim for claim in claims if claim.section == "Fundamental Analysis")
     bull = next(claim for claim in claims if claim.section == "Bull Case")
     bear = next(claim for claim in claims if claim.section == "Bear Case")
 
@@ -870,10 +909,7 @@ def test_capex_driven_negative_fcf_is_not_called_weak_operations():
     assert "does not by itself establish weak operations" in bear.claim
     assert "Technical timing context is" in bear.claim
     assert "does not establish operating deterioration" in bear.claim
-    assert all(
-        "weak cash conversion" not in claim.claim
-        for claim in (fundamental, bull, bear)
-    )
+    assert all("weak cash conversion" not in claim.claim for claim in (fundamental, bull, bear))
 
 
 def test_bull_case_does_not_call_extreme_profit_divergence_business_direction():
@@ -926,8 +962,7 @@ def test_bull_case_does_not_call_extreme_profit_divergence_business_direction():
     final_claim = next(
         claim
         for claim in claims
-        if claim.section == "Final Rating & Action Plan"
-        and claim.claim_type == "rating"
+        if claim.section == "Final Rating & Action Plan" and claim.claim_type == "rating"
     )
 
     assert "require base-effect or one-off review" in bull_claim.claim
@@ -992,8 +1027,7 @@ def test_extreme_negative_profit_divergence_is_not_operating_downside_evidence()
     final_claim = next(
         claim
         for claim in claims
-        if claim.section == "Final Rating & Action Plan"
-        and claim.claim_type == "rating"
+        if claim.section == "Final Rating & Action Plan" and claim.claim_type == "rating"
     )
     final_section = _final_rating_section(
         "TEST",
@@ -1138,9 +1172,7 @@ def test_non_positive_equity_is_visible_with_liquidity_and_lease_context():
 
     claims = generate_research_claims(data, metrics, ledger, decision, validation)
     constraint = next(
-        claim
-        for claim in claims
-        if "debt/equity is not a meaningful leverage ratio" in claim.claim
+        claim for claim in claims if "debt/equity is not a meaningful leverage ratio" in claim.claim
     )
 
     assert "Book equity is -$7.67B" in constraint.claim
@@ -1162,11 +1194,7 @@ def test_sub_one_current_ratio_is_visible_without_claiming_distress():
     _add_exact_metric_evidence(data, metrics, ledger)
 
     claims = generate_research_claims(data, metrics, ledger, decision, validation)
-    constraint = next(
-        claim
-        for claim in claims
-        if "current ratio below 1.0x" in claim.claim
-    )
+    constraint = next(claim for claim in claims if "current ratio below 1.0x" in claim.claim)
 
     assert "current ratio is 0.77x" in constraint.claim
     assert "lease liabilities total $22.72B" in constraint.claim
@@ -1190,9 +1218,7 @@ def test_partial_lease_context_stays_partial_in_liquidity_claim():
 
     claims = generate_research_claims(data, metrics, ledger, decision, validation)
     constraint = next(
-        claim
-        for claim in claims
-        if "complete lease-liability total is unavailable" in claim.claim
+        claim for claim in claims if "complete lease-liability total is unavailable" in claim.claim
     )
 
     assert "available noncurrent lease liabilities are $3.42B" in constraint.claim
@@ -1212,9 +1238,7 @@ def test_complete_lease_obligations_remain_visible_above_one_current_ratio():
 
     claims = generate_research_claims(data, metrics, ledger, decision, validation)
     lease_claim = next(
-        claim
-        for claim in claims
-        if "Finance-lease amounts can overlap" in claim.claim
+        claim for claim in claims if "Finance-lease amounts can overlap" in claim.claim
     )
 
     assert "Separately disclosed lease liabilities total $4.28B" in lease_claim.claim
@@ -1594,8 +1618,7 @@ def test_mixed_profit_declines_remain_visible_across_thesis_bear_and_rating():
     final_claim = next(
         claim
         for claim in claims
-        if claim.claim_type == "rating"
-        and claim.section == "Final Rating & Action Plan"
+        if claim.claim_type == "rating" and claim.section == "Final Rating & Action Plan"
     )
     assert "measured fundamental picture is mixed" in final_claim.claim
     assert "operating-income and net-income declines" in final_claim.claim
@@ -1649,8 +1672,7 @@ def test_missing_fcf_keeps_profit_declines_visible_across_complete_report_logic(
     final_claim = next(
         claim
         for claim in claims
-        if claim.section == "Final Rating & Action Plan"
-        and claim.claim_type == "rating"
+        if claim.section == "Final Rating & Action Plan" and claim.claim_type == "rating"
     )
     thesis = _generic_investment_thesis("TEST", "Hold", metrics, decision)
     rating = _final_rating_section(
@@ -1705,9 +1727,7 @@ def test_missing_fcf_never_enters_bull_case_as_a_formatted_value():
         data, metrics, validation, ledger, decision = _load_packet("SNOW")
         metrics.fundamentals.free_cash_flow_ttm = None
         metrics.fundamentals.current_period_revenue_growth_yoy = revenue_growth
-        metrics.fundamentals.current_period_operating_income_growth_yoy = (
-            operating_growth
-        )
+        metrics.fundamentals.current_period_operating_income_growth_yoy = operating_growth
         metrics.fundamentals.current_period_net_income_growth_yoy = net_growth
         _add_exact_metric_evidence(data, metrics, ledger)
 
@@ -1721,8 +1741,7 @@ def test_missing_fcf_never_enters_bull_case_as_a_formatted_value():
         bull_claim = next(
             claim
             for claim in claims
-            if claim.section == "Bull Case"
-            and claim.claim_type == "financial_metric"
+            if claim.section == "Bull Case" and claim.claim_type == "financial_metric"
         )
 
         assert "not available in evidence set" not in bull_claim.claim
@@ -1758,8 +1777,7 @@ def test_final_rating_does_not_promote_direction_from_unadjusted_price_basis():
         == "Current-period KPIs improve while free-cash-flow conversion holds"
     )
     assert (
-        _clean_text("Manual review remains appropriate.")
-        == "Further review remains appropriate."
+        _clean_text("Manual review remains appropriate.") == "Further review remains appropriate."
     )
 
 
@@ -1806,10 +1824,7 @@ def test_content_generator_uses_precomputed_distribution_comparison():
     )
 
     claims = generate_research_claims(data, metrics, ledger, decision, validation)
-    claim = next(
-        item for item in claims
-        if "arithmetic comparison" in item.claim
-    )
+    claim = next(item for item in claims if "arithmetic comparison" in item.claim)
 
     assert claim.metric_values == {
         "shareholder_distributions_ttm": 90.0,
@@ -1902,9 +1917,7 @@ def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():
     assert monetary_claims
     assert all("$" not in claim.claim for claim in monetary_claims)
     assert all("HUF" in claim.claim for claim in monetary_claims)
-    balance_sheet_claim = next(
-        claim for claim in claims if "balance-sheet position" in claim.claim
-    )
+    balance_sheet_claim = next(claim for claim in claims if "balance-sheet position" in claim.claim)
     assert "net debt of 4.61B HUF" in balance_sheet_claim.claim
     assert "Balance-sheet flexibility" not in balance_sheet_claim.claim
     assert "holding corridor" not in balance_sheet_claim.investment_implication
@@ -1928,8 +1941,13 @@ def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():
     assert "unbenchmarked observations" in research_report
     assert "unbenchmarked observations" in internal_report
     assert "no direction or numeric timing level is activated" in research_report
-    assert "technical timing remains unavailable until the price-series basis is confirmed" in research_report.lower()
-    assert "reassess timing separately when the technical trend changes" not in research_report.lower()
+    assert (
+        "technical timing remains unavailable until the price-series basis is confirmed"
+        in research_report.lower()
+    )
+    assert (
+        "reassess timing separately when the technical trend changes" not in research_report.lower()
+    )
     directional_valuation_language = (
         "valuation constraint",
         "valuation and timing constraints",
@@ -1958,19 +1976,13 @@ def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():
         "trigger language should use",
     )
     assert not any(
-        phrase in claim.claim.lower()
-        for claim in claims
-        for phrase in unsupported_language
+        phrase in claim.claim.lower() for claim in claims for phrase in unsupported_language
     )
     quality_metrics = claim_quality_metrics(claims)
     assert quality_metrics["generic_claim_count"] == 0
     assert quality_metrics["risk_specific_claim_count"] == 0
     assert "missing_risk_analysis" in claim_coverage_gaps(quality_metrics)
-    rating_claim = next(
-        claim
-        for claim in claims
-        if claim.section == "Final Rating & Action Plan"
-    )
+    rating_claim = next(claim for claim in claims if claim.section == "Final Rating & Action Plan")
     assert rating_claim.metric_refs == [
         "close",
         "revenue_ttm",
@@ -2147,10 +2159,7 @@ def test_issuer_operating_spread_keeps_segments_and_regions_taxonomically_distin
 
     assert "across reported segments and regions" in spread["text"]
     assert "division-level" not in spread["text"]
-    assert (
-        "without treating unlike reporting dimensions as one taxonomy"
-        in spread["implication"]
-    )
+    assert "without treating unlike reporting dimensions as one taxonomy" in spread["implication"]
 
 
 def test_issuer_results_claim_counts_reported_growth_and_adjusted_eps_as_current_context():
@@ -2266,9 +2275,7 @@ def test_generic_company_gets_latest_reported_period_claim():
         validation,
         canonical,
     )
-    current = next(
-        claim for claim in claims if "latest reported period" in claim.claim
-    )
+    current = next(claim for claim in claims if "latest reported period" in claim.claim)
 
     assert " HUF" in current.claim
     assert "without a matching prior-year quarter" in current.claim
@@ -2402,7 +2409,8 @@ def test_generic_current_period_claim_uses_evidenced_yoy_comparison():
                 ("operating_income", 72.0),
                 ("net_income", 45.0),
             )
-        ] + [
+        ]
+        + [
             CanonicalMetric(
                 metric_name=metric_name,
                 value=value,
@@ -2427,8 +2435,7 @@ def test_generic_current_period_claim_uses_evidenced_yoy_comparison():
         ledger.evidence_items.append(
             EvidenceItem(
                 evidence_id=(
-                    f"GENERIC_{metric.metric_name.upper()}_"
-                    f"{metric.period_bucket.upper()}"
+                    f"GENERIC_{metric.metric_name.upper()}_{metric.period_bucket.upper()}"
                 ),
                 ticker=data.ticker,
                 claim_type="financial_metric",
@@ -2477,9 +2484,7 @@ def test_generic_current_period_claim_uses_evidenced_yoy_comparison():
         validation,
         canonical,
     )
-    current = next(
-        claim for claim in claims if "latest reported period" in claim.claim
-    )
+    current = next(claim for claim in claims if "latest reported period" in claim.claim)
 
     assert "latest reported period FY2026_Q3" in current.claim
     assert "latest reported period CY2026Q1" not in current.claim
@@ -2533,9 +2538,7 @@ def test_missing_ticker_specific_metrics_fall_back_to_latest_fiscal_year():
         canonical,
         currency="USD",
     )
-    current = next(
-        spec for spec in specs if "latest reported period" in spec["text"]
-    )
+    current = next(spec for spec in specs if "latest reported period" in spec["text"])
 
     assert "FY2026" in current["text"]
     assert "matching prior-year fiscal year" in current["text"]
@@ -2805,9 +2808,7 @@ def test_direct_annual_claim_prefers_canonical_sec_fact_over_equal_ttm_formula()
 
     selected = builder._compatible_evidence_for_metric("revenue")
 
-    assert [item.evidence_id for item in selected] == [
-        "DIRECT_SEC_REVENUE_FY2026"
-    ]
+    assert [item.evidence_id for item in selected] == ["DIRECT_SEC_REVENUE_FY2026"]
 
 
 def test_claim_evidence_selection_excludes_conflicting_units_and_values():
@@ -2908,13 +2909,9 @@ def test_claim_prefers_formula_lineage_over_equal_stale_raw_evidence():
 
 def test_claim_is_dropped_when_only_conflicting_metric_evidence_remains():
     data, metrics, validation, ledger, decision = _load_packet("SNOW")
-    conflicting_ids = {
-        item.evidence_id
-        for item in ledger.find_by_metric("free_cash_flow_ttm")
-    }
+    conflicting_ids = {item.evidence_id for item in ledger.find_by_metric("free_cash_flow_ttm")}
     ledger.evidence_items = [
-        item for item in ledger.evidence_items
-        if item.evidence_id not in conflicting_ids
+        item for item in ledger.evidence_items if item.evidence_id not in conflicting_ids
     ]
     ledger.evidence_items.append(
         EvidenceItem(
@@ -2935,20 +2932,14 @@ def test_claim_is_dropped_when_only_conflicting_metric_evidence_remains():
 
     claims = generate_research_claims(data, metrics, ledger, decision, validation)
 
-    assert not any(
-        "free_cash_flow_ttm" in claim.metric_refs for claim in claims
-    )
+    assert not any("free_cash_flow_ttm" in claim.metric_refs for claim in claims)
 
 
 def test_claim_is_dropped_when_its_only_evidence_id_is_ambiguous():
     data, metrics, validation, ledger, decision = _load_packet("SNOW")
-    existing_ids = {
-        item.evidence_id
-        for item in ledger.find_by_metric("free_cash_flow_ttm")
-    }
+    existing_ids = {item.evidence_id for item in ledger.find_by_metric("free_cash_flow_ttm")}
     ledger.evidence_items = [
-        item for item in ledger.evidence_items
-        if item.evidence_id not in existing_ids
+        item for item in ledger.evidence_items if item.evidence_id not in existing_ids
     ]
     common = {
         "evidence_id": "AMBIGUOUS_FCF_ID",
@@ -2979,9 +2970,7 @@ def test_claim_is_dropped_when_its_only_evidence_id_is_ambiguous():
 
     claims = generate_research_claims(data, metrics, ledger, decision, validation)
 
-    assert not any(
-        "free_cash_flow_ttm" in claim.metric_refs for claim in claims
-    )
+    assert not any("free_cash_flow_ttm" in claim.metric_refs for claim in claims)
 
 
 def test_claim_evidence_excludes_value_injected_source_placeholders():

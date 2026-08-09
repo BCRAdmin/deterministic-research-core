@@ -29,10 +29,7 @@ from research_agent.sources.prices.price_provider_base import PriceProviderBase
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 SNOW_SOURCE_ROOT = (
-    REPO_ROOT
-    / "outputs"
-    / "source_inputs"
-    / "guardrail_coverage_batch_003_current_research"
+    REPO_ROOT / "outputs" / "source_inputs" / "guardrail_coverage_batch_003_current_research"
 )
 
 
@@ -84,9 +81,7 @@ def test_companyfacts_filing_period_prefers_current_over_equal_weight_comparison
     companyfacts = {
         "facts": {
             "us-gaap": {
-                "RevenueFromContractWithCustomerExcludingAssessedTax": {
-                    "units": {"USD": rows}
-                }
+                "RevenueFromContractWithCustomerExcludingAssessedTax": {"units": {"USD": rows}}
             }
         }
     }
@@ -337,6 +332,32 @@ class _FakeSecWithCoveredResults8K(_FakeSecWithQuarterAndAnnualRisks):
         return super().get_filing_html(**kwargs)
 
 
+class _FakeSecWithCoveredFullYearResults8K(_FakeSecWithCoveredResults8K):
+    def get_companyfacts(self, cik):
+        payload = super().get_companyfacts(cik)
+        row = payload["facts"]["us-gaap"]["Revenues"]["units"]["USD"][0]
+        row.update({"fy": 2026, "fp": "FY", "end": "2026-06-30"})
+        return payload
+
+    def get_submissions(self, cik):
+        payload = super().get_submissions(cik)
+        payload["filings"]["recent"]["form"][0] = "10-K"
+        payload["filings"]["recent"]["primaryDocument"][0] = "annual-2026.htm"
+        return payload
+
+    def get_filing_html(self, **kwargs):
+        if kwargs["accession_number"].endswith("000011"):
+            if kwargs["primary_document"] == "results.htm":
+                return '<a href="fy-results.htm">Press release with annual results</a>'
+            if kwargs["primary_document"] == "fy-results.htm":
+                return """
+                <div>Fourth quarter of fiscal year 2026 results</div>
+                <div>Fiscal Year 2026 Results</div>
+                <div>Revenue increased 18% for the fiscal year ended June 30, 2026.</div>
+                """
+        return super().get_filing_html(**kwargs)
+
+
 class _FakeIfrsSec(_FakeSec):
     def get_companyfacts(self, cik):
         return {
@@ -546,9 +567,7 @@ class _StoredSnowSec(_FakeSec):
 
     def get_companyfacts(self, cik):
         return json.loads(
-            (SNOW_SOURCE_ROOT / "sec_companyfacts" / "SNOW.json").read_text(
-                encoding="utf-8"
-            )
+            (SNOW_SOURCE_ROOT / "sec_companyfacts" / "SNOW.json").read_text(encoding="utf-8")
         )
 
     def get_company_tickers(self):
@@ -581,9 +600,7 @@ class _StoredAaplSec(_FakeSec):
 
     def get_companyfacts(self, cik):
         return json.loads(
-            (SNOW_SOURCE_ROOT / "sec_companyfacts" / "AAPL.json").read_text(
-                encoding="utf-8"
-            )
+            (SNOW_SOURCE_ROOT / "sec_companyfacts" / "AAPL.json").read_text(encoding="utf-8")
         )
 
 
@@ -680,9 +697,7 @@ def test_current_runner_supplements_sparse_quarterly_risks_from_annual_filing(
     tmp_path,
 ):
     def fake_pipeline(ticker, as_of_date, config):
-        payload = json.loads(
-            Path(config.sec_risk_factors_path).read_text(encoding="utf-8")
-        )
+        payload = json.loads(Path(config.sec_risk_factors_path).read_text(encoding="utf-8"))
         assert [item["form"] for item in payload["filings"]] == ["10-Q", "10-K"]
         assert len(payload["evidence_items"]) == 4
         assert len({item["source_id"] for item in payload["evidence_items"]}) == 2
@@ -729,7 +744,8 @@ def test_current_runner_blocks_when_latest_sec_financials_are_not_in_companyfact
     [_FakeSecWithNewerResults8K(), _FakeSecWithSameDayResults8K()],
 )
 def test_current_runner_blocks_same_day_or_newer_sec_results_before_pipeline(
-    tmp_path, sec_client,
+    tmp_path,
+    sec_client,
 ):
     with pytest.raises(CurrentResearchError, match="Item 2.02"):
         run_current_research(
@@ -746,20 +762,13 @@ def test_current_runner_integrates_results_covered_by_matching_companyfacts(
     tmp_path,
 ):
     def fake_pipeline(ticker, as_of_date, config):
-        payload = json.loads(
-            Path(config.sec_results_release_path).read_text(encoding="utf-8")
-        )
+        payload = json.loads(Path(config.sec_results_release_path).read_text(encoding="utf-8"))
         assert payload["result_contract"]["fiscal_period"] == "Q2"
         assert len(payload["metrics"]) == 17
         news = json.loads(
-            Path(config.official_news_dir, "GENR_news.json").read_text(
-                encoding="utf-8"
-            )
+            Path(config.official_news_dir, "GENR_news.json").read_text(encoding="utf-8")
         )
-        assert any(
-            event["event_type"] == "company_outlook"
-            for event in news["events"]
-        )
+        assert any(event["event_type"] == "company_outlook" for event in news["events"])
         authority = tmp_path / "outputs" / ticker / as_of_date / "authority_bundle"
         authority.mkdir(parents=True)
         (authority / "authority_manifest.json").write_text(
@@ -784,12 +793,40 @@ def test_current_runner_integrates_results_covered_by_matching_companyfacts(
     assert result["results_release_metric_count"] == 17
 
 
+def test_current_runner_integrates_full_year_results_covered_by_matching_10k(
+    monkeypatch,
+    tmp_path,
+):
+    def fake_pipeline(ticker, as_of_date, config):
+        payload = json.loads(Path(config.sec_results_release_path).read_text(encoding="utf-8"))
+        assert payload["result_contract"]["fiscal_period"] == "FY"
+        authority = tmp_path / "outputs" / ticker / as_of_date / "authority_bundle"
+        authority.mkdir(parents=True)
+        (authority / "authority_manifest.json").write_text(
+            json.dumps(
+                {
+                    "contract_id": "room16.research_authority_bundle",
+                    "analysis_allowed": True,
+                }
+            ),
+            encoding="utf-8",
+        )
+
+    monkeypatch.setattr(runner, "run_research_pipeline", fake_pipeline)
+    result = run_current_research(
+        _request(tmp_path),
+        price_provider=_FakePrices(),
+        sec_client=_FakeSecWithCoveredFullYearResults8K(),
+    )
+
+    assert result["results_release_status"] == "available"
+    assert result["results_release_filing_date"] == "2026-07-20"
+
+
 def test_current_runner_rejects_unsupported_official_issuer(tmp_path):
     with pytest.raises(CurrentResearchError, match="offiziellen Marktadapter"):
         run_current_research(
-            _request(tmp_path, ticker="OTHER").model_copy(
-                update={"jurisdiction": None}
-            ),
+            _request(tmp_path, ticker="OTHER").model_copy(update={"jurisdiction": None}),
             price_provider=_FakePrices(),
             sec_client=_FakeSec(ticker="GENR"),
             bse_provider=_NoBse(),
@@ -1068,9 +1105,7 @@ def test_current_runner_builds_real_authority_bundle_from_generic_adapters(tmp_p
     snapshot_path = output_dir / "valuation_calibration_snapshot.json"
     manifest = json.loads(authority_manifest_path.read_text(encoding="utf-8"))
     snapshot = json.loads(snapshot_path.read_text(encoding="utf-8"))
-    report_manifest = json.loads(
-        (output_dir / "report_manifest.json").read_text(encoding="utf-8")
-    )
+    report_manifest = json.loads((output_dir / "report_manifest.json").read_text(encoding="utf-8"))
     assert result["status"] == "authority_ready"
     assert result["analysis_allowed"] is True
     assert manifest["analysis_allowed"] is True
@@ -1081,23 +1116,18 @@ def test_current_runner_builds_real_authority_bundle_from_generic_adapters(tmp_p
     assert snapshot["authority_manifest_sha256"] == (
         "sha256:" + hashlib.sha256(authority_manifest_path.read_bytes()).hexdigest()
     )
-    assert report_manifest["metadata"]["valuation_calibration_snapshot_path"] == str(
-        snapshot_path
-    )
+    assert report_manifest["metadata"]["valuation_calibration_snapshot_path"] == str(snapshot_path)
     assert report_manifest["metadata"]["authority_manifest_sha256"] == (
         "sha256:" + hashlib.sha256(authority_manifest_path.read_bytes()).hexdigest()
     )
     assert report_manifest["metadata"]["final_report_sha256"] == (
-        "sha256:"
-        + hashlib.sha256((output_dir / "final_report.md").read_bytes()).hexdigest()
+        "sha256:" + hashlib.sha256((output_dir / "final_report.md").read_bytes()).hexdigest()
     )
     assert report_manifest["metadata"]["quality_score_sha256"] == (
-        "sha256:"
-        + hashlib.sha256((output_dir / "quality_score.json").read_bytes()).hexdigest()
+        "sha256:" + hashlib.sha256((output_dir / "quality_score.json").read_bytes()).hexdigest()
     )
     assert report_manifest["metadata"]["audit_report_sha256"] == (
-        "sha256:"
-        + hashlib.sha256((output_dir / "audit_report.json").read_bytes()).hexdigest()
+        "sha256:" + hashlib.sha256((output_dir / "audit_report.json").read_bytes()).hexdigest()
     )
     assert report_manifest["metadata"]["deterministic_report_mode"] is True
 
@@ -1161,12 +1191,7 @@ def test_current_runner_routes_public_bse_issuer_without_sec_or_api_key(
     assert result["isin"] == "HU0000000001"
     assert result["price_provider"] == "bse"
     assert not (
-        tmp_path
-        / "staging"
-        / "GENR"
-        / "2026-07-26"
-        / "sources"
-        / "sec_companyfacts"
+        tmp_path / "staging" / "GENR" / "2026-07-26" / "sources" / "sec_companyfacts"
     ).exists()
 
 

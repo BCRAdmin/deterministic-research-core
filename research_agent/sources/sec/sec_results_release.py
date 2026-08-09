@@ -14,9 +14,7 @@ _RESULT_LINK_LANGUAGE = re.compile(
     r"\b(?:earnings|financial results?|press release|news release|investor release|quarterly results?)\b",
     re.IGNORECASE,
 )
-_PRIMARY_RESULTS_LINK_LANGUAGE = re.compile(
-    r"\b(?:press|news|investor) release\b", re.IGNORECASE
-)
+_PRIMARY_RESULTS_LINK_LANGUAGE = re.compile(r"\b(?:press|news|investor) release\b", re.IGNORECASE)
 _SUPPLEMENTAL_RESULTS_LINK_LANGUAGE = re.compile(
     r"\b(?:infographic|presentation|supplement(?:al)?)\b",
     re.IGNORECASE,
@@ -40,6 +38,13 @@ _QUARTER_PATTERNS = (
     re.compile(r"\bQ([1-4])\s*(?:FY)?\s*(20[0-9]{2})\b", re.IGNORECASE),
     re.compile(r"\b([1-4])Q\s*(20[0-9]{2})\b", re.IGNORECASE),
 )
+_FISCAL_YEAR_PATTERNS = (
+    re.compile(
+        r"\b(?:fiscal|full)[ -]+year\s*(20[0-9]{2})\s+(?:financial\s+)?results\b",
+        re.IGNORECASE,
+    ),
+    re.compile(r"\bFY\s*(20[0-9]{2})\s+(?:financial\s+)?results\b", re.IGNORECASE),
+)
 _PERCENT = re.compile(
     r"(?P<leading>[+-]?)\s*(?P<open>\()?\s*"
     r"(?P<value>[0-9]+(?:\.[0-9]+)?)\s*(?P<close_before>\))?\s*%"
@@ -58,7 +63,10 @@ _GUIDANCE_LABELS = (
 _HEADLINE_RESULT_LABELS = (
     (re.compile(r"^organic sales(?: growth| change)?$", re.IGNORECASE), "organic_sales_growth"),
     (re.compile(r"^organic revenue(?: growth| change)?$", re.IGNORECASE), "organic_revenue_growth"),
-    (re.compile(r"^comparable sales(?: growth| change)?$", re.IGNORECASE), "comparable_sales_growth"),
+    (
+        re.compile(r"^comparable sales(?: growth| change)?$", re.IGNORECASE),
+        "comparable_sales_growth",
+    ),
 )
 
 
@@ -69,9 +77,7 @@ class _LinkParser(HTMLParser):
         self._href: Optional[str] = None
         self._parts: list[str] = []
 
-    def handle_starttag(
-        self, tag: str, attrs: list[tuple[str, str | None]]
-    ) -> None:
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         if tag != "a":
             return
         self._href = str(dict(attrs).get("href") or "").strip()
@@ -103,9 +109,7 @@ class _ReleaseParser(HTMLParser):
         self._row: Optional[list[str]] = None
         self._cell_parts: Optional[list[str]] = None
 
-    def handle_starttag(
-        self, tag: str, attrs: list[tuple[str, str | None]]
-    ) -> None:
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         if tag in {"script", "style"}:
             self._hidden_depth += 1
             return
@@ -218,7 +222,7 @@ def build_sec_results_release_payload(
     """Convert a structurally supported SEC results exhibit into pipeline inputs.
 
     This adapter intentionally does not rebuild GAAP statements from press-release
-    prose. It only accepts an exhibit whose quarter is already covered by the
+    prose. It only accepts an exhibit whose fiscal period is already covered by the
     current 10-Q/10-K CompanyFacts accession and extracts issuer-defined operating
     bridges, division comparisons, and explicit guidance ranges.
     """
@@ -229,6 +233,7 @@ def build_sec_results_release_payload(
         parser.blocks,
         parser.tables,
         expected_fiscal_year=int(expected_fiscal_year),
+        expected_fiscal_period=str(expected_fiscal_period or "").upper(),
     )
     expected_period = str(expected_fiscal_period or "").upper()
     if (fiscal_year, fiscal_period) != (int(expected_fiscal_year), expected_period):
@@ -269,10 +274,7 @@ def build_sec_results_release_payload(
         metric_period_buckets[metric_name] = period_bucket
         if guidance_period is not None:
             previous_guidance_period = metric_guidance_periods.get(metric_name)
-            if (
-                previous_guidance_period is not None
-                and previous_guidance_period != guidance_period
-            ):
+            if previous_guidance_period is not None and previous_guidance_period != guidance_period:
                 raise ValueError(f"widersprüchliche Guidance-Periode für {metric_name}")
             metric_guidance_periods[metric_name] = guidance_period
         if bound_type is not None:
@@ -313,14 +315,10 @@ def build_sec_results_release_payload(
             add_value(f"guidance_{metric_base}_low", low)
             add_value(f"guidance_{metric_base}_high", high)
             break
-    guidance_years.update(
-        _extract_block_guidance_metrics(parser.blocks, add_value, fiscal_year)
-    )
+    guidance_years.update(_extract_block_guidance_metrics(parser.blocks, add_value, fiscal_year))
 
     supported_operating = [
-        metric_name
-        for metric_name in values
-        if not metric_name.startswith("guidance_")
+        metric_name for metric_name in values if not metric_name.startswith("guidance_")
     ]
     supported_guidance = [
         metric_name for metric_name in values if metric_name.startswith("guidance_")
@@ -335,8 +333,7 @@ def build_sec_results_release_payload(
         f"{_slug(document.rsplit('.', 1)[0], max_length=36).upper()}"
     )
     source_url = (
-        f"https://www.sec.gov/Archives/edgar/data/{cik_digits}/"
-        f"{accession_digits}/{document}"
+        f"https://www.sec.gov/Archives/edgar/data/{cik_digits}/{accession_digits}/{document}"
     )
     result_period = f"FY{fiscal_year}_{fiscal_period}"
     guidance_year = max(guidance_years) if guidance_years else fiscal_year
@@ -356,11 +353,7 @@ def build_sec_results_release_payload(
             metric_fiscal_period = fiscal_period
         period_bucket = metric_period_buckets.get(metric_name, "quarterly")
         label = _metric_label(metric_name, metric_labels.get(metric_name))
-        metric_period = (
-            f"FY{fiscal_year}_YTD"
-            if period_bucket == "ytd"
-            else period
-        )
+        metric_period = f"FY{fiscal_year}_YTD" if period_bucket == "ytd" else period
         metrics.append(
             {
                 "metric_name": metric_name,
@@ -509,13 +502,14 @@ def _detect_release_period(
     tables: list[list[list[str]]],
     *,
     expected_fiscal_year: Optional[int] = None,
+    expected_fiscal_period: Optional[str] = None,
 ) -> tuple[int, str]:
     candidates: list[tuple[int, str]] = []
-    sources = [*blocks[:80]]
-    sources.extend(
-        " ".join(cell for row in table[:4] for cell in row)
-        for table in tables[:8]
-    )
+    # Annual releases commonly place the full-year heading after a complete
+    # fourth-quarter summary. Keep the scan bounded, but wide enough to reach
+    # both period labels before applying the expected CompanyFacts period.
+    sources = [*blocks[:160]]
+    sources.extend(" ".join(cell for row in table[:4] for cell in row) for table in tables[:16])
     for source in sources:
         for pattern_index, pattern in enumerate(_QUARTER_PATTERNS):
             for match in pattern.finditer(source):
@@ -526,6 +520,9 @@ def _detect_release_period(
                     fiscal_period = f"Q{int(match.group(1))}"
                     fiscal_year = int(match.group(2))
                 candidates.append((fiscal_year, fiscal_period))
+        for pattern in _FISCAL_YEAR_PATTERNS:
+            for match in pattern.finditer(source):
+                candidates.append((int(match.group(1)), "FY"))
     if not candidates:
         raise ValueError("Quartalsperiode des Ergebnis-Anhangs nicht eindeutig erkannt")
     expected_year_candidates = [
@@ -535,6 +532,13 @@ def _detect_release_period(
     ]
     if expected_year_candidates:
         candidates = expected_year_candidates
+    expected_period_candidates = [
+        candidate
+        for candidate in candidates
+        if expected_fiscal_period is not None and candidate[1] == expected_fiscal_period
+    ]
+    if expected_period_candidates:
+        candidates = expected_period_candidates
     counts = Counter(candidates)
     best_count = max(counts.values())
     best = sorted(period for period, count in counts.items() if count == best_count)
@@ -551,21 +555,13 @@ def _extract_headline_operating_metrics(table, add_value) -> None:
             continue
         label = _clean_label(row[0])
         metric_name = next(
-            (
-                name
-                for pattern, name in _HEADLINE_RESULT_LABELS
-                if pattern.fullmatch(label)
-            ),
+            (name for pattern, name in _HEADLINE_RESULT_LABELS if pattern.fullmatch(label)),
             None,
         )
         if metric_name is None:
             continue
         value = next(
-            (
-                parsed
-                for cell in row[1:]
-                if (parsed := _percent_value(cell)) is not None
-            ),
+            (parsed for cell in row[1:] if (parsed := _percent_value(cell)) is not None),
             None,
         )
         if value is not None:
@@ -584,11 +580,7 @@ def _extract_headline_summary_metrics(table, add_value, controls: dict[str, floa
     if columns is None:
         return False
     current_column, change_column = columns
-    rows = {
-        _clean_result_label(row[0]): row
-        for row in table
-        if row and row[0].strip()
-    }
+    rows = {_clean_result_label(row[0]): row for row in table if row and row[0].strip()}
     sales_row = next(
         (
             rows[label]
@@ -754,9 +746,7 @@ def _extract_sectioned_segment_metrics(table, add_value) -> None:
 
 def _extract_current_guidance_metrics(table, add_value) -> None:
     guidance_table = _is_guidance_table(table)
-    table_heading = " ".join(
-        _clean_result_label(cell) for row in table[:2] for cell in row
-    )
+    table_heading = " ".join(_clean_result_label(cell) for row in table[:2] for cell in row)
     table_non_gaap = "non gaap" in table_heading
     guidance_column = next(
         (
@@ -794,9 +784,7 @@ def _extract_current_guidance_metrics(table, add_value) -> None:
         None,
     )
     value_column = (
-        guidance_column + 1
-        if prior_column == 0 and guidance_column == 1
-        else guidance_column
+        guidance_column + 1 if prior_column == 0 and guidance_column == 1 else guidance_column
     )
     guidance_period = _quarterly_guidance_period(table)
     definitions = {
@@ -885,8 +873,7 @@ def _extract_current_guidance_metrics(table, add_value) -> None:
                 (
                     parsed
                     for column in (value_column - 1, value_column + 1)
-                    if 0 <= column < len(row)
-                    and (parsed := range_parser(row[column])) is not None
+                    if 0 <= column < len(row) and (parsed := range_parser(row[column])) is not None
                 ),
                 None,
             )
@@ -1009,9 +996,7 @@ def _extract_headline_block_metrics(
     )
     for block in blocks:
         if match := comparable_sales.search(block):
-            direction = (
-                -1.0 if match.group("direction").casefold() == "decreased" else 1.0
-            )
+            direction = -1.0 if match.group("direction").casefold() == "decreased" else 1.0
             add_value(
                 "comparable_sales_growth",
                 direction * float(match.group("change")) / 100.0,
@@ -1073,13 +1058,9 @@ def _extract_headline_block_metrics(
                 (-1.0 if negative else 1.0) * float(match.group("change")) / 100.0,
                 display_label="reported-revenue growth",
             )
-            scale = (
-                1_000_000_000.0
-                if match.group("scale").casefold() == "billion"
-                else 1_000_000.0
-            )
-            controls["current_quarter_revenue"] = (
-                round(float(match.group("value").replace(",", "")) * scale, 2)
+            scale = 1_000_000_000.0 if match.group("scale").casefold() == "billion" else 1_000_000.0
+            controls["current_quarter_revenue"] = round(
+                float(match.group("value").replace(",", "")) * scale, 2
             )
         if match := margin_result.search(block):
             direction = -1.0 if match.group("direction").casefold() == "decreased" else 1.0
@@ -1165,17 +1146,10 @@ def _extract_block_guidance_metrics(blocks, add_value, default_year: int) -> set
         explicit_guidance_range = bool(
             "guidance" in folded
             and (
-                (
-                    "range" in folded
-                    and re.search(r"\b20[0-9]{2}\b", block)
-                )
+                ("range" in folded and re.search(r"\b20[0-9]{2}\b", block))
                 or (
                     block.lstrip().startswith(("•", "●", "▪", "◦", "-"))
-                    and (
-                        "$" in block
-                        or "%" in block
-                        or "growth" in folded
-                    )
+                    and ("$" in block or "%" in block or "growth" in folded)
                 )
             )
         )
@@ -1197,18 +1171,13 @@ def _extract_block_guidance_metrics(blocks, add_value, default_year: int) -> set
         if "conference call" in folded or "forward-looking statements" in folded:
             active_until = -1
             continue
-        if (
-            not block.lstrip().startswith(("•", "●", "▪", "◦", "-"))
-            and not explicit_guidance_range
-        ):
+        if not block.lstrip().startswith(("•", "●", "▪", "◦", "-")) and not explicit_guidance_range:
             continue
 
         guidance_year = _nearest_guidance_year(blocks, index, default_year)
         definitions: list[tuple[str, str, str, str]] = []
         if "comparable sales" in folded:
-            definitions.append(
-                ("comparable_sales_growth", "percent", "company_defined", "percent")
-            )
+            definitions.append(("comparable_sales_growth", "percent", "company_defined", "percent"))
         elif "operating margin" in folded or "operating income as a percentage" in folded:
             definitions.append(
                 (
@@ -1234,30 +1203,23 @@ def _extract_block_guidance_metrics(blocks, add_value, default_year: int) -> set
         elif "free cash flow" in folded:
             definitions.append(("free_cash_flow", "USD", "non_gaap", "money"))
         elif "adjusted income from operations" in folded:
-            definitions.append(
-                ("adjusted_operating_income", "USD", "non_gaap", "money")
-            )
+            definitions.append(("adjusted_operating_income", "USD", "non_gaap", "money"))
         elif "u.s. commercial revenue" in folded or "us commercial revenue" in folded:
-            definitions.append(
-                ("us_commercial_revenue", "USD", "company_defined", "money")
-            )
+            definitions.append(("us_commercial_revenue", "USD", "company_defined", "money"))
         elif "commercial revenue" in folded:
-            definitions.append(
-                ("commercial_revenue", "USD", "company_defined", "money")
-            )
+            definitions.append(("commercial_revenue", "USD", "company_defined", "money"))
         elif "revenue guidance" in folded:
             definitions.append(("revenue", "USD", "company_defined", "money"))
         elif re.search(r"^[^a-z0-9]*(?:(?:total )?sales|(?:total )?revenue)\b", folded):
             definitions.append(("revenue", "USD", "company_defined", "money"))
-            definitions.append(
-                ("reported_sales_growth", "percent", "company_defined", "percent")
-            )
+            definitions.append(("reported_sales_growth", "percent", "company_defined", "percent"))
 
         for metric_base, unit, basis, range_type in definitions:
             metric_range = (
                 _money_range(
                     block,
-                    require_scale=metric_base in {
+                    require_scale=metric_base
+                    in {
                         "revenue",
                         "commercial_revenue",
                         "us_commercial_revenue",
@@ -1274,7 +1236,8 @@ def _extract_block_guidance_metrics(blocks, add_value, default_year: int) -> set
                     _single_money_range(
                         block,
                         label=block,
-                        require_scale=metric_base in {
+                        require_scale=metric_base
+                        in {
                             "revenue",
                             "commercial_revenue",
                             "us_commercial_revenue",
@@ -1406,11 +1369,7 @@ def _extract_transposed_segment_bridge_metrics(table, add_value) -> None:
     if not table or "three months ended" not in " ".join(table[0]).casefold():
         return
     header = next(
-        (
-            row
-            for row in table[1:3]
-            if len([cell for cell in row[1:] if cell.strip()]) >= 2
-        ),
+        (row for row in table[1:3] if len([cell for cell in row[1:] if cell.strip()]) >= 2),
         None,
     )
     if header is None:
@@ -1529,9 +1488,7 @@ def _is_guidance_table(table: list[list[str]]) -> bool:
 
 
 def _is_current_quarter_bridge(table: list[list[str]], header_index: int) -> bool:
-    heading = " ".join(
-        cell for row in table[: header_index + 1] for cell in row
-    ).casefold()
+    heading = " ".join(cell for row in table[: header_index + 1] for cell in row).casefold()
     return "three months ended" in heading and "nine months ended" not in heading
 
 
@@ -1706,8 +1663,7 @@ def _result_change_percent(row: list[str], change_column: int) -> Optional[float
             and str(window[index + 1] or "").strip() in {"%", "%)"}
             and (
                 parsed := _percent_value(
-                    f"{str(cell or '').strip()}"
-                    f"{str(window[index + 1] or '').strip()}"
+                    f"{str(cell or '').strip()}{str(window[index + 1] or '').strip()}"
                 )
             )
             is not None
@@ -1794,15 +1750,17 @@ def _money_range(
     prefer_last: bool = False,
 ) -> Optional[tuple[float, float]]:
     text = " ".join(str(value or "").split())
-    matches = list(re.finditer(
-        r"\$\s*(?P<first>[0-9]+(?:\.[0-9]+)?)\s*"
-        r"(?P<first_scale>[BM]|million|billion)?"
-        r"\s*(?:\bto\b|\band\b|[-–—])\s*\$?\s*"
-        r"(?P<second>[0-9]+(?:\.[0-9]+)?)\s*"
-        r"(?P<second_scale>[BM]|million|billion)?",
-        text,
-        flags=re.IGNORECASE,
-    ))
+    matches = list(
+        re.finditer(
+            r"\$\s*(?P<first>[0-9]+(?:\.[0-9]+)?)\s*"
+            r"(?P<first_scale>[BM]|million|billion)?"
+            r"\s*(?:\bto\b|\band\b|[-–—])\s*\$?\s*"
+            r"(?P<second>[0-9]+(?:\.[0-9]+)?)\s*"
+            r"(?P<second_scale>[BM]|million|billion)?",
+            text,
+            flags=re.IGNORECASE,
+        )
+    )
     if not matches:
         return None
     match = matches[-1] if prefer_last else matches[0]
@@ -1944,9 +1902,7 @@ def _outlook_percentage_range(value: str) -> Optional[tuple[float, float]]:
     return None
 
 
-def _nearest_guidance_year(
-    blocks: list[str], index: int, default_year: int
-) -> int:
+def _nearest_guidance_year(blocks: list[str], index: int, default_year: int) -> int:
     for block in reversed(blocks[max(0, index - 6) : index + 1]):
         match = re.search(
             r"\b(?:full[ -]year|fiscal year|FY)\s*(20[0-9]{2})\b",
@@ -1973,7 +1929,11 @@ def _directional_guidance_events(
         if "expect" not in normalized:
             continue
         gaap_text = normalized.replace("non-gaap", "").replace("non gaap", "")
-        if "gaap" in gaap_text and "gross profit margin" in normalized and "roughly flat" in normalized:
+        if (
+            "gaap" in gaap_text
+            and "gross profit margin" in normalized
+            and "roughly flat" in normalized
+        ):
             summaries.append(
                 "Management expects full-year GAAP gross margin to remain roughly flat."
             )
@@ -1981,10 +1941,7 @@ def _directional_guidance_events(
             summaries.append(
                 "Management continues to expect double-digit full-year GAAP EPS growth."
             )
-        if (
-            "non-gaap" in normalized
-            and "mid-single-digit earnings per share growth" in normalized
-        ):
+        if "non-gaap" in normalized and "mid-single-digit earnings per share growth" in normalized:
             summaries.append(
                 "Management now expects mid-single-digit full-year Base Business EPS growth."
             )
@@ -2124,10 +2081,14 @@ def _material_result_context_events(
                 flags=re.IGNORECASE,
             )
             if date_match is not None:
-                effective_date = datetime.strptime(
-                    date_match.group("date"),
-                    "%B %d, %Y",
-                ).date().isoformat()
+                effective_date = (
+                    datetime.strptime(
+                        date_match.group("date"),
+                        "%B %d, %Y",
+                    )
+                    .date()
+                    .isoformat()
+                )
                 summaries.append(
                     (
                         effective_date,

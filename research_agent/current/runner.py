@@ -63,8 +63,7 @@ SEC_CAPTIVE_FINANCE_COLLECTION_CONCEPTS = {
     "ProceedsFromSaleOfFinanceReceivables",
 }
 SEC_CAPTIVE_FINANCE_ACTIVITY_CONCEPTS = (
-    SEC_CAPTIVE_FINANCE_ORIGINATION_CONCEPTS
-    | SEC_CAPTIVE_FINANCE_COLLECTION_CONCEPTS
+    SEC_CAPTIVE_FINANCE_ORIGINATION_CONCEPTS | SEC_CAPTIVE_FINANCE_COLLECTION_CONCEPTS
 )
 SEC_COMPANYFACTS_COVERAGE_METRICS = {
     "revenue",
@@ -163,9 +162,7 @@ def run_current_research(
     symbol = request.ticker
     as_of = date.fromisoformat(request.as_of_date)
     retrieved_at = datetime.now(timezone.utc).isoformat()
-    staging_dir = (
-        Path(request.staging_root).expanduser().resolve() / symbol / request.as_of_date
-    )
+    staging_dir = Path(request.staging_root).expanduser().resolve() / symbol / request.as_of_date
     source_dir = staging_dir / "sources"
     price_dir = source_dir / "prices"
     companyfacts_dir = source_dir / "sec_companyfacts"
@@ -180,14 +177,8 @@ def run_current_research(
 
     requested_jurisdiction = request.jurisdiction
     sec = sec_client
-    if (
-        sec is None
-        and request.sec_user_agent
-        and requested_jurisdiction != "HU"
-    ):
-        sec = SecClient(
-            SecClientConfig(user_agent=request.sec_user_agent, cache_ttl_hours=24)
-        )
+    if sec is None and request.sec_user_agent and requested_jurisdiction != "HU":
+        sec = SecClient(SecClientConfig(user_agent=request.sec_user_agent, cache_ttl_hours=24))
     bse = bse_provider or BseIssuerProvider()
     issuer = None
     bse_issuer = None
@@ -259,9 +250,7 @@ def run_current_research(
     official_ir_path: Optional[Path] = None
     cik_records_path: Optional[Path] = None
     ir_release_dir: Optional[Path] = (
-        Path(request.ir_release_dir).expanduser().resolve()
-        if request.ir_release_dir
-        else None
+        Path(request.ir_release_dir).expanduser().resolve() if request.ir_release_dir else None
     )
     financial_source: Optional[SourceRegistryEntry] = None
     earnings_calendar_path = request.earnings_calendar_path
@@ -294,17 +283,14 @@ def run_current_research(
             submissions,
             request.as_of_date,
         )
-        if (
-            current_filing is not None
-            and current_filing["accession_number"]
-            not in _mapped_companyfacts_accessions(companyfacts, request.as_of_date)
-        ):
+        if current_filing is not None and current_filing[
+            "accession_number"
+        ] not in _mapped_companyfacts_accessions(companyfacts, request.as_of_date):
             current_reference = next(
                 (
                     filing
                     for filing in filing_candidates
-                    if filing.accession_number
-                    == current_filing["accession_number"]
+                    if filing.accession_number == current_filing["accession_number"]
                 ),
                 None,
             )
@@ -323,9 +309,7 @@ def run_current_research(
                             required_metrics=SEC_COMPANYFACTS_COVERAGE_METRICS,
                         )
                     )
-                    filing_html_by_accession[
-                        current_reference.accession_number
-                    ] = current_html
+                    filing_html_by_accession[current_reference.accession_number] = current_html
                 except (RuntimeError, ValueError):
                     pass
         latest_financial_filing = _require_current_sec_financial_filing_coverage(
@@ -353,6 +337,7 @@ def run_current_research(
                 "Q1",
                 "Q2",
                 "Q3",
+                "FY",
             }:
                 _raise_uncovered_sec_results(symbol, latest_results_filing)
             try:
@@ -391,9 +376,7 @@ def run_current_research(
             results_release_path = results_release_dir / f"{symbol}.json"
             results_release_status = "available"
             results_release_filing_date = latest_results_filing["filing_date"]
-            results_release_metric_count = len(
-                results_release_payload.get("metrics") or []
-            )
+            results_release_metric_count = len(results_release_payload.get("metrics") or [])
         elif latest_results_filing is not None:
             results_release_status = "superseded_by_later_financial_filing"
         material_filing_html: list[tuple[dict[str, str], str]] = []
@@ -489,8 +472,7 @@ def run_current_research(
                 filing
                 for filing in filing_candidates
                 if latest_financial_filing is not None
-                and filing.accession_number
-                == latest_financial_filing["accession_number"]
+                and filing.accession_number == latest_financial_filing["accession_number"]
             ),
             None,
         )
@@ -520,9 +502,7 @@ def run_current_research(
             None,
         )
         if annual_filing is not None:
-            annual_html = filing_html_by_accession.get(
-                annual_filing.accession_number
-            )
+            annual_html = filing_html_by_accession.get(annual_filing.accession_number)
             if annual_html is None:
                 try:
                     annual_html = sec.get_filing_html(
@@ -558,17 +538,13 @@ def run_current_research(
                     html=annual_html,
                     retrieved_at=retrieved_at,
                 )
-                business_context_count = len(
-                    business_context_payload.get("events") or []
-                )
+                business_context_count = len(business_context_payload.get("events") or [])
                 if business_context_count:
                     business_context_status = "available"
                     business_context_filing_date = annual_filing.filing_date
                 else:
                     business_context_status = "no_extractable_business_context"
-        latest_filing_date = _latest_filing_date(
-            submissions, as_of_date=request.as_of_date
-        )
+        latest_filing_date = _latest_filing_date(submissions, as_of_date=request.as_of_date)
         provider = price_provider or _build_price_provider(request)
         provider_name = str(
             getattr(provider, "provider_id", None)
@@ -634,9 +610,7 @@ def run_current_research(
             freshness_status="current_ingestion",
         )
 
-    source_type = str(
-        getattr(provider, "source_type", "unknown_market_data_provider")
-    )
+    source_type = str(getattr(provider, "source_type", "unknown_market_data_provider"))
     if source_type not in {"exchange_ohlcv", "trusted_market_data_vendor"}:
         raise CurrentResearchError(
             f"Der Kursdatenanbieter meldet den Quellentyp {source_type!r}; dieser "
@@ -791,9 +765,7 @@ def run_current_research(
         sec_risk_factors_path=str(risk_factors_path) if risk_factors_path else None,
         sec_user_agent=request.sec_user_agent or None,
         ir_release_dir=str(ir_release_dir) if ir_release_dir else None,
-        sec_results_release_path=(
-            str(results_release_path) if results_release_path else None
-        ),
+        sec_results_release_path=(str(results_release_path) if results_release_path else None),
         earnings_calendar_path=earnings_calendar_path,
         official_news_dir=official_news_dir,
         price_currency=bse_issuer.currency if bse_issuer else "USD",
@@ -836,9 +808,7 @@ def run_current_research(
         "results_release_status": results_release_status,
         "results_release_filing_date": results_release_filing_date,
         "results_release_metric_count": results_release_metric_count,
-        "inline_financial_fact_count": len(
-            (inline_facts_payload or {}).get("facts") or []
-        ),
+        "inline_financial_fact_count": len((inline_facts_payload or {}).get("facts") or []),
         "inline_companyfacts_backfill_count": inline_companyfacts_backfill_count,
         "price_provider": provider_name,
         "price_source_type": source_type,
@@ -868,9 +838,7 @@ def _bound_price_history_after_corporate_actions(prices, payload: dict[str, Any]
     if not action_dates or prices.empty or "date" not in prices.columns:
         return prices
     bounded = prices.copy()
-    existing_status = str(
-        bounded.iloc[-1].get("series_adjustment_status") or ""
-    )
+    existing_status = str(bounded.iloc[-1].get("series_adjustment_status") or "")
     action_count = len(action_dates)
     if existing_status == "corporate_action_adjusted":
         bounded["corporate_action_count"] = action_count
@@ -909,15 +877,11 @@ def request_from_environment(
         isin=isin,
         sec_user_agent=os.environ.get("ROOM16_SEC_USER_AGENT", ""),
         price_provider=os.environ.get("ROOM16_PRICE_PROVIDER", "auto"),
-        price_api_key=(
-            os.environ.get("MASSIVE_API_KEY") or os.environ.get("POLYGON_API_KEY")
-        ),
+        price_api_key=(os.environ.get("MASSIVE_API_KEY") or os.environ.get("POLYGON_API_KEY")),
         staging_root=os.environ.get(
             "ROOM16_CURRENT_RESEARCH_STAGING_ROOT", ".runtime/current-research"
         ),
-        output_root=os.environ.get(
-            "ROOM16_RESEARCH_AUTHORITY_ROOT", "research_agent/data/outputs"
-        ),
+        output_root=os.environ.get("ROOM16_RESEARCH_AUTHORITY_ROOT", "research_agent/data/outputs"),
         official_news_dir=os.environ.get("ROOM16_OFFICIAL_NEWS_DIR") or None,
     )
 
@@ -1080,21 +1044,13 @@ def _require_supported_sec_captive_finance_profile(
             current_concepts.append(concept)
     current_concept_set = set(current_concepts)
     if not (
-        current_concept_set.intersection(
-            SEC_CAPTIVE_FINANCE_ORIGINATION_CONCEPTS
-        )
-        and current_concept_set.intersection(
-            SEC_CAPTIVE_FINANCE_COLLECTION_CONCEPTS
-        )
+        current_concept_set.intersection(SEC_CAPTIVE_FINANCE_ORIGINATION_CONCEPTS)
+        and current_concept_set.intersection(SEC_CAPTIVE_FINANCE_COLLECTION_CONCEPTS)
     ):
         return
     sic_text = str(submissions.get("sic") or "").strip()
-    description = str(
-        submissions.get("sicDescription") or "operatives Unternehmen"
-    ).strip()
-    industry_label = (
-        f"{description} (SIC {sic_text})" if sic_text else description
-    )
+    description = str(submissions.get("sicDescription") or "operatives Unternehmen").strip()
+    industry_label = f"{description} (SIC {sic_text})" if sic_text else description
     raise CurrentResearchError(
         f"{ticker} wurde als SEC-Emittent und als {industry_label} "
         "eindeutig erkannt. Die aktuellen SEC-Fakten weisen zugleich mehrere "
@@ -1146,9 +1102,7 @@ def _resolve_sec_issuer(payload: dict[str, Any], ticker: str) -> Optional[dict[s
 def _latest_filing_date(
     submissions: dict[str, Any], *, as_of_date: Optional[str] = None
 ) -> Optional[str]:
-    dates = (
-        submissions.get("filings", {}).get("recent", {}).get("filingDate") or []
-    )
+    dates = submissions.get("filings", {}).get("recent", {}).get("filingDate") or []
     eligible = [
         str(filing_date)
         for filing_date in dates
@@ -1245,9 +1199,7 @@ def _latest_sec_results_announcement(
                     "filing_date": filing_date,
                     "accession_number": accession,
                     "primary_document": (
-                        str(primary_documents[index])
-                        if index < len(primary_documents)
-                        else ""
+                        str(primary_documents[index]) if index < len(primary_documents) else ""
                     ),
                 }
             )
@@ -1259,9 +1211,7 @@ def _latest_sec_results_announcement(
     )
 
 
-def _mapped_companyfacts_accessions(
-    companyfacts: dict[str, Any], as_of_date: str
-) -> set[str]:
+def _mapped_companyfacts_accessions(companyfacts: dict[str, Any], as_of_date: str) -> set[str]:
     mapped_concepts = {
         concept
         for metric_name in SEC_COMPANYFACTS_COVERAGE_METRICS
@@ -1303,9 +1253,7 @@ def _sec_results_release_is_current_candidate(
         financial_date = date.fromisoformat(financial_filing["filing_date"])
     except (KeyError, ValueError):
         return True
-    return (
-        financial_date - result_date
-    ).days <= SEC_RESULTS_FILING_MATCH_WINDOW_DAYS
+    return (financial_date - result_date).days <= SEC_RESULTS_FILING_MATCH_WINDOW_DAYS
 
 
 def _companyfacts_filing_period(
@@ -1365,9 +1313,7 @@ def _raise_uncovered_sec_results(
     results_filing: Optional[dict[str, str]],
 ) -> None:
     filing_date = (
-        results_filing.get("filing_date")
-        if results_filing is not None
-        else "unbekanntem Datum"
+        results_filing.get("filing_date") if results_filing is not None else "unbekanntem Datum"
     )
     raise CurrentResearchError(
         f"{ticker} hat mit dem 8-K vom {filing_date} Ergebnisse nach SEC Item "
@@ -1414,9 +1360,7 @@ def _merge_official_news_payloads(
         if payload.get("window_end"):
             window_ends.append(str(payload["window_end"]))
         sources_checked.extend(
-            str(source)
-            for source in payload.get("sources_checked") or []
-            if source
+            str(source) for source in payload.get("sources_checked") or [] if source
         )
         for event in payload.get("events") or []:
             if not isinstance(event, dict):

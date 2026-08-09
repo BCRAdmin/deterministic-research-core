@@ -75,11 +75,7 @@ _RISK_THEME_PATTERNS = (
 
 def _risk_theme(statement: str) -> Optional[int]:
     return next(
-        (
-            index
-            for index, pattern in enumerate(_RISK_THEME_PATTERNS)
-            if pattern.search(statement)
-        ),
+        (index for index, pattern in enumerate(_RISK_THEME_PATTERNS) if pattern.search(statement)),
         None,
     )
 
@@ -115,8 +111,10 @@ def claim_quality_metrics(claims: Iterable[ResearchClaim]) -> dict[str, float | 
     total = len(claim_list)
     mapped = sum(1 for claim in claim_list if claim.evidence_ids)
     hard = [
-        claim for claim in claim_list
-        if (claim.claim_type or "") in {"financial_metric", "valuation_metric", "technical_metric", "price_data"}
+        claim
+        for claim in claim_list
+        if (claim.claim_type or "")
+        in {"financial_metric", "valuation_metric", "technical_metric", "price_data"}
     ]
     hard_mapped = sum(1 for claim in hard if claim.evidence_ids)
     data_limitations = [claim for claim in claim_list if _is_data_limitation_claim(claim)]
@@ -124,29 +122,26 @@ def claim_quality_metrics(claims: Iterable[ResearchClaim]) -> dict[str, float | 
     generic = [claim for claim in claim_list if _is_generic_meta_claim(claim)]
     current_period_kpis = [claim for claim in claim_list if _is_current_period_kpi_claim(claim)]
     current_period_metrics = {
-        metric
-        for claim in current_period_kpis
-        for metric in claim.metric_refs
+        metric for claim in current_period_kpis for metric in claim.metric_refs
     }
-    company_specific = [
+    company_specific = [claim for claim in claim_list if _is_company_specific_claim(claim)]
+    valuation_specific = [
         claim
         for claim in claim_list
-        if _is_company_specific_claim(claim)
-    ]
-    valuation_specific = [
-        claim for claim in claim_list
         if not _is_generic_meta_claim(claim)
         and (claim.section or "") == "Valuation / Multiples"
         and _has_validated_number(claim)
     ]
     technical_specific = [
-        claim for claim in claim_list
+        claim
+        for claim in claim_list
         if not _is_generic_meta_claim(claim)
         and (claim.section or "") == "Technical Setup"
         and _has_validated_number(claim)
     ]
     rating_rationale = [
-        claim for claim in claim_list
+        claim
+        for claim in claim_list
         if (claim.section or "") == "Final Rating & Action Plan" and _has_rating_implication(claim)
     ]
     risk_specific = [
@@ -155,8 +150,7 @@ def claim_quality_metrics(claims: Iterable[ResearchClaim]) -> dict[str, float | 
         if (claim.section or "") == "Key Risks"
         and bool(claim.evidence_ids)
         and (
-            (claim.claim_type or "") == "risk"
-            or bool(claim.metric_refs or claim.evidence_metrics)
+            (claim.claim_type or "") == "risk" or bool(claim.metric_refs or claim.evidence_metrics)
         )
         and not _is_generic_meta_claim(claim)
         and not _is_data_limitation_claim(claim)
@@ -177,7 +171,9 @@ def claim_quality_metrics(claims: Iterable[ResearchClaim]) -> dict[str, float | 
         "current_period_kpi_metric_count": len(current_period_metrics),
         "ticker_specific_kpi_claim_count": ticker_kpi_count,
         "final_rating_rationale_quality": _final_rating_rationale_quality(claim_list),
-        "mechanical_rating_language_count": sum(1 for claim in claim_list if _has_mechanical_rating_language(claim)),
+        "mechanical_rating_language_count": sum(
+            1 for claim in claim_list if _has_mechanical_rating_language(claim)
+        ),
         "generic_claim_ratio": (generic_count / total) if total else 0.0,
         "company_specific_claim_count": len(company_specific),
         "valuation_specific_claim_count": len(valuation_specific),
@@ -217,9 +213,7 @@ def claim_coverage_gaps(metrics: Mapping[str, object]) -> list[str]:
         gaps.append("weak_rating_rationale")
     if float(metrics.get("generic_claim_ratio") or 0.0) > 0.50:
         gaps.append("excessive_generic_content")
-    if total and (
-        int(metrics.get("data_limitation_claim_count") or 0) / total > 0.25
-    ):
+    if total and (int(metrics.get("data_limitation_claim_count") or 0) / total > 0.25):
         gaps.append("excessive_data_limitation_content")
     return gaps
 
@@ -331,9 +325,7 @@ class _ClaimBuilder:
 
         fcf_claim_metrics = ["free_cash_flow_ttm"]
         if _negative_fcf_is_capex_funding_gap(self.metrics):
-            fcf_claim_metrics.extend(
-                ["capex_ttm", "operating_cash_flow_ttm"]
-            )
+            fcf_claim_metrics.extend(["capex_ttm", "operating_cash_flow_ttm"])
         elif (
             self.metrics.fundamentals.free_cash_flow_ttm is not None
             and self.metrics.fundamentals.free_cash_flow_ttm > 0
@@ -359,14 +351,8 @@ class _ClaimBuilder:
                 "formula have passed validation."
             ),
         )
-        if (
-            self.metrics.fundamentals.shareholder_distributions_ttm
-            is not None
-            and (
-                self.metrics.fundamentals
-                .shareholder_distributions_minus_fcf_ttm
-                is not None
-            )
+        if self.metrics.fundamentals.shareholder_distributions_ttm is not None and (
+            self.metrics.fundamentals.shareholder_distributions_minus_fcf_ttm is not None
         ):
             distribution_difference = (
                 self.metrics.fundamentals.shareholder_distributions_minus_fcf_ttm
@@ -397,8 +383,7 @@ class _ClaimBuilder:
                     "distributions-minus-FCF comparison is zero."
                 )
                 distribution_counterargument = (
-                    "Equality in one period does not establish a durable funding "
-                    "relationship."
+                    "Equality in one period does not establish a durable funding relationship."
                 )
             self.add(
                 "Fundamental Analysis",
@@ -435,9 +420,7 @@ class _ClaimBuilder:
             else:
                 share_count_direction = "was unchanged"
             share_count_magnitude = (
-                f" by {_pct(abs(share_count_change))}"
-                if share_count_change != 0
-                else ""
+                f" by {_pct(abs(share_count_change))}" if share_count_change != 0 else ""
             )
             share_count_context = (
                 "The diluted weighted-average share count "
@@ -521,10 +504,7 @@ class _ClaimBuilder:
         lease_context = None
         lease_metric = None
         if lease_liabilities is not None:
-            lease_context = (
-                "lease liabilities total "
-                f"{self._money(lease_liabilities)}"
-            )
+            lease_context = f"lease liabilities total {self._money(lease_liabilities)}"
             lease_metric = "total_lease_liabilities"
         elif self.metrics.fundamentals.lease_liability_current is not None:
             lease_context = (
@@ -547,9 +527,7 @@ class _ClaimBuilder:
             ]
             constraint_metrics = ["equity"]
             if current_ratio is not None:
-                constraint_parts.append(
-                    f"the current ratio is {_multiple(current_ratio)}"
-                )
+                constraint_parts.append(f"the current ratio is {_multiple(current_ratio)}")
                 constraint_metrics.append("current_ratio")
             if lease_context and lease_metric:
                 constraint_parts.append(lease_context)
@@ -576,9 +554,7 @@ class _ClaimBuilder:
                 ),
             )
         elif current_ratio is not None and current_ratio < 1.0:
-            constraint_parts = [
-                f"The current ratio is {_multiple(current_ratio)}"
-            ]
+            constraint_parts = [f"The current ratio is {_multiple(current_ratio)}"]
             constraint_metrics = ["current_ratio"]
             if lease_context and lease_metric:
                 constraint_parts.append(lease_context)
@@ -622,8 +598,7 @@ class _ClaimBuilder:
                     "identical to unsecured borrowing."
                 ),
                 implication=(
-                    "Assess debt, lease obligations, liquidity and cash-flow "
-                    "coverage together."
+                    "Assess debt, lease obligations, liquidity and cash-flow coverage together."
                 ),
             )
 
@@ -679,14 +654,11 @@ class _ClaimBuilder:
         sensitivity = self.metrics.valuation.sensitivity
         if sensitivity.scenarios:
             scenario_metrics = [
-                f"dcf_{scenario.name}_equity_value"
-                for scenario in sensitivity.scenarios
+                f"dcf_{scenario.name}_equity_value" for scenario in sensitivity.scenarios
             ]
             if sensitivity.reverse_dcf_implied_fcf_growth is not None:
                 scenario_metrics.append("reverse_dcf_implied_fcf_growth")
-            scenario_values = {
-                scenario.name: scenario for scenario in sensitivity.scenarios
-            }
+            scenario_values = {scenario.name: scenario for scenario in sensitivity.scenarios}
             reverse_text = (
                 " The standardized reverse DCF implies a five-year FCF growth "
                 f"rate of {sensitivity.reverse_dcf_implied_fcf_growth:.1%} "
@@ -738,8 +710,7 @@ class _ClaimBuilder:
                 "medium",
                 "high",
                 implication=(
-                    "Treat trailing P/E as an observation until comparison "
-                    "evidence exists."
+                    "Treat trailing P/E as an observation until comparison evidence exists."
                 ),
             )
 
@@ -812,8 +783,7 @@ class _ClaimBuilder:
             metric
             for claim in current_claim_specs
             for metric in claim["metrics"]
-            if str(metric).startswith("current_period_")
-            and str(metric).endswith("_growth_yoy")
+            if str(metric).startswith("current_period_") and str(metric).endswith("_growth_yoy")
         ]
         growth_metrics = list(dict.fromkeys(str(metric) for metric in growth_metrics))
         margin_context_metrics = [
@@ -845,9 +815,7 @@ class _ClaimBuilder:
         )
         result_context_metrics = list(
             dict.fromkeys(
-                segment_context_metrics
-                + margin_context_metrics
-                + adjusted_result_context_metrics
+                segment_context_metrics + margin_context_metrics + adjusted_result_context_metrics
             )
         )
         result_context_labels = []
@@ -858,25 +826,18 @@ class _ClaimBuilder:
         if adjusted_result_context_metrics:
             result_context_labels.append("adjusted-result")
         current_period_loss_metrics = _current_period_loss_metrics(self.canonical)
-        current_period_loss_phrase = _current_period_loss_phrase(
-            current_period_loss_metrics
-        )
+        current_period_loss_phrase = _current_period_loss_phrase(current_period_loss_metrics)
         bull_additional_evidence: list[EvidenceItem] = []
         if growth_metrics:
-            growth_values = {
-                metric: self._metric_value(metric) for metric in growth_metrics
-            }
+            growth_values = {metric: self._metric_value(metric) for metric in growth_metrics}
             growth_text = ", ".join(
-                _growth_metric_phrase(metric, growth_values[metric])
-                for metric in growth_metrics
+                _growth_metric_phrase(metric, growth_values[metric]) for metric in growth_metrics
             )
             growth_declines = any(
-                value is not None and value < 0
-                for value in growth_values.values()
+                value is not None and value < 0 for value in growth_values.values()
             )
             growth_increases = any(
-                value is not None and value > 0
-                for value in growth_values.values()
+                value is not None and value > 0 for value in growth_values.values()
             )
             comparison_periods = {
                 str(claim.get("comparison_period") or "")
@@ -890,9 +851,7 @@ class _ClaimBuilder:
             else:
                 comparison_label = "Matching-period"
             fcf_value = self.metrics.fundamentals.free_cash_flow_ttm
-            growth_divergence = current_profit_growth_divergence_metrics(
-                self.metrics.fundamentals
-            )
+            growth_divergence = current_profit_growth_divergence_metrics(self.metrics.fundamentals)
             if growth_divergence:
                 profit_context = self._nonrecurring_profit_context()
                 if profit_context is not None:
@@ -907,19 +866,11 @@ class _ClaimBuilder:
                     else f"The extreme profit comparisons ({divergence_text})"
                 )
                 guarded_reference = (
-                    "that comparison"
-                    if len(growth_divergence) == 1
-                    else "those comparisons"
+                    "that comparison" if len(growth_divergence) == 1 else "those comparisons"
                 )
-                divergence_verb = (
-                    "diverges" if len(growth_divergence) == 1 else "diverge"
-                )
-                requirement_verb = (
-                    "requires" if len(growth_divergence) == 1 else "require"
-                )
-                guarded_verb = (
-                    "does" if len(growth_divergence) == 1 else "do"
-                )
+                divergence_verb = "diverges" if len(growth_divergence) == 1 else "diverge"
+                requirement_verb = "requires" if len(growth_divergence) == 1 else "require"
+                guarded_verb = "does" if len(growth_divergence) == 1 else "do"
                 guarded_profit_reference = (
                     "the guarded profit comparison"
                     if len(growth_divergence) == 1
@@ -989,14 +940,9 @@ class _ClaimBuilder:
                     else "All available current-period comparisons decline"
                 )
                 if fcf_value is not None and fcf_value < 0:
-                    cash_context = (
-                        "negative FCF remains separate evidence of weak cash "
-                        "conversion"
-                    )
+                    cash_context = "negative FCF remains separate evidence of weak cash conversion"
                 elif fcf_value == 0:
-                    cash_context = (
-                        "zero FCF does not establish positive cash conversion"
-                    )
+                    cash_context = "zero FCF does not establish positive cash conversion"
                 elif fcf_value is not None:
                     cash_context = (
                         "positive FCF establishes cash generation, but does not turn "
@@ -1004,19 +950,15 @@ class _ClaimBuilder:
                     )
                 else:
                     cash_context = (
-                        "FCF is unavailable and cannot support a cash-conversion "
-                        "conclusion"
+                        "FCF is unavailable and cannot support a cash-conversion conclusion"
                     )
                 scale_and_cash = (
-                    "Revenue TTM is "
-                    f"{self._money(self.metrics.fundamentals.revenue_ttm)}"
+                    f"Revenue TTM is {self._money(self.metrics.fundamentals.revenue_ttm)}"
                 )
                 if fcf_value is not None:
                     scale_and_cash += f" and FCF TTM is {self._money(fcf_value)}"
                 negative_comparison_count = sum(
-                    1
-                    for value in growth_values.values()
-                    if value is not None and value < 0
+                    1 for value in growth_values.values() if value is not None and value < 0
                 )
                 negative_comparison_reference = (
                     "the negative GAAP comparison"
@@ -1114,8 +1056,7 @@ class _ClaimBuilder:
                 )
             if not growth_divergence and not growth_declines:
                 scale_and_cash = (
-                    "revenue TTM of "
-                    f"{self._money(self.metrics.fundamentals.revenue_ttm)}"
+                    f"revenue TTM of {self._money(self.metrics.fundamentals.revenue_ttm)}"
                 )
                 if fcf_value is not None:
                     scale_and_cash += f" and FCF TTM of {self._money(fcf_value)}"
@@ -1221,29 +1162,20 @@ class _ClaimBuilder:
         bear_metrics = []
         if self.metrics.fundamentals.free_cash_flow_ttm is not None:
             bear_metrics.append("free_cash_flow_ttm")
-        bear_metrics.extend(
-            current_operating_profit_decline_metrics(
-                self.metrics.fundamentals
-            )
-        )
+        bear_metrics.extend(current_operating_profit_decline_metrics(self.metrics.fundamentals))
         bear_context: list[str] = []
         bear_additional_evidence: list[EvidenceItem] = []
         equity = self.metrics.fundamentals.equity
         current_ratio = self.metrics.fundamentals.current_ratio
         if equity is not None and equity <= 0:
             balance_context = (
-                f"Book equity of {self._money(equity)} is a material "
-                "balance-sheet constraint"
+                f"Book equity of {self._money(equity)} is a material balance-sheet constraint"
             )
             bear_metrics.append("equity")
             if current_ratio is not None:
-                balance_context += (
-                    f", alongside a current ratio of {_multiple(current_ratio)}"
-                )
+                balance_context += f", alongside a current ratio of {_multiple(current_ratio)}"
                 bear_metrics.append("current_ratio")
-            bear_context.append(
-                f"{balance_context}; this does not by itself establish insolvency."
-            )
+            bear_context.append(f"{balance_context}; this does not by itself establish insolvency.")
         elif current_ratio is not None and current_ratio < 1.0:
             bear_metrics.append("current_ratio")
             bear_context.append(
@@ -1325,8 +1257,7 @@ class _ClaimBuilder:
                 )
                 if technical_basis_verified
                 else (
-                    "Withhold technical trigger language until the price-series "
-                    "basis is confirmed."
+                    "Withhold technical trigger language until the price-series basis is confirmed."
                 )
             ),
         )
@@ -1562,9 +1493,7 @@ class _ClaimBuilder:
             value = self.metrics.valuation.sensitivity.reverse_dcf_implied_fcf_growth
             return float(value) if value is not None else None
         if metric_name.startswith("dcf_") and metric_name.endswith("_equity_value"):
-            scenario_name = metric_name.removeprefix("dcf_").removesuffix(
-                "_equity_value"
-            )
+            scenario_name = metric_name.removeprefix("dcf_").removesuffix("_equity_value")
             scenario = next(
                 (
                     item
@@ -1589,9 +1518,7 @@ class _ClaimBuilder:
             metric_evidence = self._compatible_evidence_for_metric(
                 metric,
                 expected_value=(
-                    expected_values.get(metric)
-                    if expected_values is not None
-                    else None
+                    expected_values.get(metric) if expected_values is not None else None
                 ),
             )
             if not metric_evidence:
@@ -1637,17 +1564,11 @@ class _ClaimBuilder:
             return []
 
         canonical_ids = self._canonical_evidence_ids(metric_name, expected_value)
-        canonical_matches = [
-            item for item in candidates if item.evidence_id in canonical_ids
-        ]
+        canonical_matches = [item for item in candidates if item.evidence_id in canonical_ids]
         if canonical_matches and not metric_name.endswith("_ttm"):
             return _latest_evidence(canonical_matches)
 
-        formula_backed = [
-            item
-            for item in candidates
-            if item.formula_id and item.formula_operands
-        ]
+        formula_backed = [item for item in candidates if item.formula_id and item.formula_operands]
         if formula_backed:
             return _latest_evidence(formula_backed)
         if canonical_matches:
@@ -1677,23 +1598,13 @@ class _ClaimBuilder:
             return set()
         latest_end_date = max(metric.end_date or "" for metric in matching_metrics)
         latest_metrics = [
-            metric
-            for metric in matching_metrics
-            if (metric.end_date or "") == latest_end_date
+            metric for metric in matching_metrics if (metric.end_date or "") == latest_end_date
         ]
-        return {
-            evidence_id
-            for metric in latest_metrics
-            for evidence_id in metric.evidence_ids
-        }
+        return {evidence_id for metric in latest_metrics for evidence_id in metric.evidence_ids}
 
 
 def _evidence_value(item: EvidenceItem) -> Optional[float]:
-    value = (
-        item.normalized_value
-        if item.normalized_value is not None
-        else item.value
-    )
+    value = item.normalized_value if item.normalized_value is not None else item.value
     return float(value) if isinstance(value, (int, float)) else None
 
 
@@ -1730,10 +1641,7 @@ def _evidence_unit_is_compatible(
 
 def _evidence_provenance_is_compatible(item: EvidenceItem) -> bool:
     return bool(
-        (
-            item.formula_id
-            and item.formula_operands
-        )
+        (item.formula_id and item.formula_operands)
         or item.raw_value is not None
         or item.normalized_value is not None
         or (item.date and item.period)
@@ -1806,11 +1714,7 @@ def _money(value: Optional[float], currency: str = "USD") -> str:
     else:
         amount = f"{magnitude:.2f}"
     sign = "-" if value < 0 else ""
-    return (
-        f"{sign}${amount}"
-        if currency == "USD"
-        else f"{sign}{amount} {currency}"
-    )
+    return f"{sign}${amount}" if currency == "USD" else f"{sign}{amount} {currency}"
 
 
 def _pct(value: Optional[float]) -> str:
@@ -1840,9 +1744,7 @@ def _valuation_status_sentence(status: str) -> str:
         "illustrative_only": (
             "Valuation is illustrative only because share-class price equivalence is unverified."
         ),
-        "unbenchmarked": (
-            "Valuation multiples are observations without a validated benchmark."
-        ),
+        "unbenchmarked": ("Valuation multiples are observations without a validated benchmark."),
         "not_measured": "Valuation is not sufficiently measured.",
     }
     return labels.get(status, "Valuation evidence requires manual interpretation.")
@@ -1975,10 +1877,7 @@ def _fundamental_fcf_claim_text(
             "of that FCF, an arithmetic comparison that qualifies rather than "
             "invalidates the reported cash generation."
         )
-    return (
-        f"FCF TTM is {fcf}, making cash conversion a direct rating input for "
-        f"{ticker}."
-    )
+    return f"FCF TTM is {fcf}, making cash conversion a direct rating input for {ticker}."
 
 
 def _bear_case_claim_text(
@@ -2012,16 +1911,12 @@ def _bear_case_claim_text(
             "current_period_operating_income_growth_yoy": "operating-income",
             "current_period_net_income_growth_yoy": "net-income",
         }[metric_name]
-        for metric_name in current_operating_profit_decline_metrics(
-            metrics.fundamentals
-        )
+        for metric_name in current_operating_profit_decline_metrics(metrics.fundamentals)
     ]
     if profit_declines and fcf_value is None:
         decline_text = " and ".join(profit_declines)
         decline_subject = (
-            f"{decline_text} decline"
-            if len(profit_declines) == 1
-            else f"{decline_text} declines"
+            f"{decline_text} decline" if len(profit_declines) == 1 else f"{decline_text} declines"
         )
         return (
             f"{ticker}'s current-period {decline_subject} "
@@ -2033,9 +1928,7 @@ def _bear_case_claim_text(
     if profit_declines and fcf_value is not None and fcf_value > 0:
         decline_text = " and ".join(profit_declines)
         decline_subject = (
-            f"{decline_text} decline"
-            if len(profit_declines) == 1
-            else f"{decline_text} declines"
+            f"{decline_text} decline" if len(profit_declines) == 1 else f"{decline_text} declines"
         )
         decline_verb = "is" if len(profit_declines) == 1 else "are"
         return (
@@ -2080,25 +1973,53 @@ def _has_validated_number(claim: ResearchClaim) -> bool:
 def _has_company_specific_driver(claim: ResearchClaim) -> bool:
     text = _claim_text(claim)
     drivers = {
-        "qct", "qtl", "handset", "automotive", "iot", "cloud", "search", "youtube",
-        "ai data cloud", "rpo", "nrr", "agentforce", "data cloud", "observability",
-        "large-customer", "datacenter", "reality labs", "buyback", "product revenue",
-        "remaining performance obligations", "capex", "free cash flow", "fcf",
-        "google cloud", "services revenue", "family of apps", "vmware", "infrastructure software",
-        "adjusted free cash flow", "free cash flow margin",
-        "balance-sheet", "net cash", "debt evidence", "ev/sales", "p/fcf",
-        "technical setup", "moving-average", "source disagreement", "current-period mismatch",
-        "earnings", "trigger language",
+        "qct",
+        "qtl",
+        "handset",
+        "automotive",
+        "iot",
+        "cloud",
+        "search",
+        "youtube",
+        "ai data cloud",
+        "rpo",
+        "nrr",
+        "agentforce",
+        "data cloud",
+        "observability",
+        "large-customer",
+        "datacenter",
+        "reality labs",
+        "buyback",
+        "product revenue",
+        "remaining performance obligations",
+        "capex",
+        "free cash flow",
+        "fcf",
+        "google cloud",
+        "services revenue",
+        "family of apps",
+        "vmware",
+        "infrastructure software",
+        "adjusted free cash flow",
+        "free cash flow margin",
+        "balance-sheet",
+        "net cash",
+        "debt evidence",
+        "ev/sales",
+        "p/fcf",
+        "technical setup",
+        "moving-average",
+        "source disagreement",
+        "current-period mismatch",
+        "earnings",
+        "trigger language",
     }
     return any(driver in text for driver in drivers)
 
 
 def _is_company_specific_claim(claim: ResearchClaim) -> bool:
-    if (
-        not claim.evidence_ids
-        or _is_generic_meta_claim(claim)
-        or _is_data_limitation_claim(claim)
-    ):
+    if not claim.evidence_ids or _is_generic_meta_claim(claim) or _is_data_limitation_claim(claim):
         return False
     section = claim.section or ""
     claim_type = claim.claim_type or ""
@@ -2117,26 +2038,65 @@ def _is_company_specific_claim(claim: ResearchClaim) -> bool:
 def _has_sector_specific_interpretation(claim: ResearchClaim) -> bool:
     text = _claim_text(claim)
     lenses = {
-        "semiconductor", "saas", "consumption", "ads/cloud", "mega-cap", "enterprise saas",
-        "inventory", "gross margin", "sbc", "capex", "regulatory", "cycle",
-        "rsi", "sma", "moving-average", "trend", "earnings",
+        "semiconductor",
+        "saas",
+        "consumption",
+        "ads/cloud",
+        "mega-cap",
+        "enterprise saas",
+        "inventory",
+        "gross margin",
+        "sbc",
+        "capex",
+        "regulatory",
+        "cycle",
+        "rsi",
+        "sma",
+        "moving-average",
+        "trend",
+        "earnings",
     }
-    if (claim.section or "") == "Technical Setup" and any(term in text for term in {"rsi", "sma", "moving-average", "trend", "levels"}):
+    if (claim.section or "") == "Technical Setup" and any(
+        term in text for term in {"rsi", "sma", "moving-average", "trend", "levels"}
+    ):
         return True
     return any(lens in text for lens in lenses)
 
 
 def _has_rating_implication(claim: ResearchClaim) -> bool:
     text = _claim_text(claim)
-    return any(term in text for term in {"rating", "action", "accumulate", "hold", "trim", "underweight", "buy", "sell", "conviction"})
+    return any(
+        term in text
+        for term in {
+            "rating",
+            "action",
+            "accumulate",
+            "hold",
+            "trim",
+            "underweight",
+            "buy",
+            "sell",
+            "conviction",
+        }
+    )
 
 
 def _has_counterargument_or_risk_implication(claim: ResearchClaim) -> bool:
     text = _claim_text(claim)
     terms = {
-        "risk", "counterargument", "bear", "pressure", "overbought", "unavailable",
-        "manual review", "drawdown", "low-confidence", "missing", "valuation risk",
-        "confirmation", "blocking data issue",
+        "risk",
+        "counterargument",
+        "bear",
+        "pressure",
+        "overbought",
+        "unavailable",
+        "manual review",
+        "drawdown",
+        "low-confidence",
+        "missing",
+        "valuation risk",
+        "confirmation",
+        "blocking data issue",
     }
     return any(term in text for term in terms)
 
@@ -2179,21 +2139,60 @@ def _is_data_limitation_claim(claim: ResearchClaim) -> bool:
 def _has_ticker_specific_kpi(claim: ResearchClaim) -> bool:
     text = _claim_text(claim)
     terms = {
-        "google cloud", "search", "youtube", "capex", "ai capex", "other income",
-        "product revenue", "rpo", "remaining performance obligations", "nrr",
-        "net revenue retention", "customers above $1m", "adjusted free cash flow",
-        "family of apps", "reality labs", "azure", "intelligent cloud", "vmware",
-        "infrastructure software", "ai semiconductor", "free cash flow margin",
-        "observability", "ai monitoring", "gpu observability", "cash and marketable securities",
-        "agentforce", "data cloud", "subscription growth", "capital return",
-        "backlog", "contract backlog", "contracted missions", "launch manifest",
-        "electron", "haste", "launch cadence", "neutron", "space systems",
-        "launch services", "service revenue", "execution milestone", "capital intensity",
-        "latest reported period", "operating income", "net income",
-        "reported-sales", "reported-revenue", "organic-sales", "organic-volume",
+        "google cloud",
+        "search",
+        "youtube",
+        "capex",
+        "ai capex",
+        "other income",
+        "product revenue",
+        "rpo",
+        "remaining performance obligations",
+        "nrr",
+        "net revenue retention",
+        "customers above $1m",
+        "adjusted free cash flow",
+        "family of apps",
+        "reality labs",
+        "azure",
+        "intelligent cloud",
+        "vmware",
+        "infrastructure software",
+        "ai semiconductor",
+        "free cash flow margin",
+        "observability",
+        "ai monitoring",
+        "gpu observability",
+        "cash and marketable securities",
+        "agentforce",
+        "data cloud",
+        "subscription growth",
+        "capital return",
+        "backlog",
+        "contract backlog",
+        "contracted missions",
+        "launch manifest",
+        "electron",
+        "haste",
+        "launch cadence",
+        "neutron",
+        "space systems",
+        "launch services",
+        "service revenue",
+        "execution milestone",
+        "capital intensity",
+        "latest reported period",
+        "operating income",
+        "net income",
+        "reported-sales",
+        "reported-revenue",
+        "organic-sales",
+        "organic-volume",
         "pricing contribution",
-        "adjusted eps", "gross margin",
-        "base business", "market share",
+        "adjusted eps",
+        "gross margin",
+        "base business",
+        "market share",
     }
     return any(term in text for term in terms)
 
@@ -2215,13 +2214,30 @@ def _is_current_period_kpi_claim(claim: ResearchClaim) -> bool:
         "Valuation vs Revenue/Backlog",
     }:
         return False
-    return _has_ticker_specific_kpi(claim) and _has_validated_number(claim) and any(
-        term in text
-        for term in {
-            "q1", "q2", "q3", "q4", "latest-quarter", "current-period",
-            "year to date", "year-to-date", "fy2025", "fy2026", "fy2027",
-            "quarter", "guide", "guidance", "revenue of", "fcf of",
-        }
+    return (
+        _has_ticker_specific_kpi(claim)
+        and _has_validated_number(claim)
+        and any(
+            term in text
+            for term in {
+                "q1",
+                "q2",
+                "q3",
+                "q4",
+                "latest-quarter",
+                "current-period",
+                "year to date",
+                "year-to-date",
+                "fy2025",
+                "fy2026",
+                "fy2027",
+                "quarter",
+                "guide",
+                "guidance",
+                "revenue of",
+                "fcf of",
+            }
+        )
     )
 
 
@@ -2240,7 +2256,9 @@ def _has_mechanical_rating_language(claim: ResearchClaim) -> bool:
 
 
 def _final_rating_rationale_quality(claims: list[ResearchClaim]) -> int:
-    rating_claims = [claim for claim in claims if (claim.section or "") == "Final Rating & Action Plan"]
+    rating_claims = [
+        claim for claim in claims if (claim.section or "") == "Final Rating & Action Plan"
+    ]
     if not rating_claims:
         return 0
     score = 0
@@ -2272,9 +2290,12 @@ def _is_substantive_claim(claim: ResearchClaim) -> bool:
         _has_rating_implication(claim),
         _has_counterargument_or_risk_implication(claim),
     ]
-    return _has_validated_number(claim) and _has_company_specific_driver(claim) and (
-        _has_rating_implication(claim) or _has_counterargument_or_risk_implication(claim)
-    ) and sum(1 for element in elements if element) >= 3
+    return (
+        _has_validated_number(claim)
+        and _has_company_specific_driver(claim)
+        and (_has_rating_implication(claim) or _has_counterargument_or_risk_implication(claim))
+        and sum(1 for element in elements if element) >= 3
+    )
 
 
 def _canonical_value(
@@ -2290,22 +2311,28 @@ def _canonical_value(
         "backlog": ["backlog", "contract_backlog", "remaining_performance_obligations"],
         "space_systems_revenue": ["space_systems_revenue", "product_revenue"],
         "launch_services_revenue": ["launch_services_revenue", "service_revenue"],
-        "launch_cadence": ["launch_cadence", "electron_execution", "electron_haste_new_contracts", "launch_manifest_contracts"],
+        "launch_cadence": [
+            "launch_cadence",
+            "electron_execution",
+            "electron_haste_new_contracts",
+            "launch_manifest_contracts",
+        ],
         "electron_haste_new_contracts": ["electron_haste_new_contracts", "electron_execution"],
         "neutron_new_contracts": ["neutron_new_contracts", "neutron_development_risk"],
         "launch_manifest_contracts": ["launch_manifest_contracts", "launch_cadence"],
         "operating_loss": ["operating_loss", "operating_income"],
-        "cash_and_marketable_securities": ["cash_and_marketable_securities", "cash_and_investments", "cash"],
+        "cash_and_marketable_securities": [
+            "cash_and_marketable_securities",
+            "cash_and_investments",
+            "cash",
+        ],
     }
     aliases = metric_aliases.get(metric_name, [metric_name])
-    candidates = [
-        metric
-        for alias in aliases
-        for metric in canonical_financials.metrics_for(alias)
-    ]
+    candidates = [metric for alias in aliases for metric in canonical_financials.metrics_for(alias)]
     if metric_name.startswith("current_q_"):
         current_candidates = [
-            metric for metric in candidates
+            metric
+            for metric in candidates
             if _is_current_period_metric(metric.period, metric.source_ids)
         ]
         if current_candidates:
@@ -2466,10 +2493,7 @@ def _final_rating_claim_text(
     decision: DecisionPacket,
 ) -> str:
     evidence_anchor = _core_rating_evidence_text(metrics, currency)
-    reason = (
-        decision.analytical_rating_reason
-        or decision.rating_permission.reason
-    )
+    reason = decision.analytical_rating_reason or decision.rating_permission.reason
     valuation_status = decision.signal_scores.valuation_status
     valuation_note = (
         "Valuation multiples are unbenchmarked and therefore add neither a "
@@ -2492,9 +2516,7 @@ def _final_rating_claim_text(
             "current_period_operating_income_growth_yoy": "operating-income",
             "current_period_net_income_growth_yoy": "net-income",
         }[metric_name]
-        for metric_name in current_operating_profit_decline_metrics(
-            metrics.fundamentals
-        )
+        for metric_name in current_operating_profit_decline_metrics(metrics.fundamentals)
     ]
     if current_profit_declines:
         decline_text = " and ".join(current_profit_declines)
@@ -2530,8 +2552,7 @@ def _final_rating_claim_text(
         )
     elif decision.signal_scores.fundamental_score < 0:
         fundamental_note = (
-            "The measured fundamental signal is cautious and remains part of the "
-            "rating rationale."
+            "The measured fundamental signal is cautious and remains part of the rating rationale."
         )
     elif decision.signal_scores.fundamental_score > 0:
         fundamental_note = "The measured fundamental signal is constructive."
@@ -2576,10 +2597,7 @@ def _core_rating_metric_refs(metrics: MetricsPacket) -> list[str]:
     ):
         if value is not None:
             metric_refs.append(metric_name)
-    if (
-        metrics.valuation.ev_to_sales is None
-        and metrics.valuation.trailing_pe is not None
-    ):
+    if metrics.valuation.ev_to_sales is None and metrics.valuation.trailing_pe is not None:
         metric_refs.append("trailing_pe")
     return metric_refs
 
@@ -2587,13 +2605,9 @@ def _core_rating_metric_refs(metrics: MetricsPacket) -> list[str]:
 def _core_rating_evidence_text(metrics: MetricsPacket, currency: str) -> str:
     anchors = []
     if metrics.fundamentals.revenue_ttm is not None:
-        anchors.append(
-            f"revenue TTM of {_money(metrics.fundamentals.revenue_ttm, currency)}"
-        )
+        anchors.append(f"revenue TTM of {_money(metrics.fundamentals.revenue_ttm, currency)}")
     if metrics.fundamentals.free_cash_flow_ttm is not None:
-        anchors.append(
-            f"FCF TTM of {_money(metrics.fundamentals.free_cash_flow_ttm, currency)}"
-        )
+        anchors.append(f"FCF TTM of {_money(metrics.fundamentals.free_cash_flow_ttm, currency)}")
     if metrics.valuation.ev_to_sales is not None:
         anchors.append(f"EV/Sales of {_multiple(metrics.valuation.ev_to_sales)}")
     elif metrics.valuation.trailing_pe is not None:
@@ -2720,14 +2734,10 @@ def _current_period_claim_specs(
                     "eps_diluted": "diluted EPS",
                 }
                 metric_phrases = [
-                    f"{metric_labels[metric_name]} of "
-                    f"{_money(metric.value, currency)}"
+                    f"{metric_labels[metric_name]} of {_money(metric.value, currency)}"
                     for metric_name, metric in period_metrics
                 ]
-                period_result_text = (
-                    ", ".join(metric_phrases[:-1])
-                    + f" and {metric_phrases[-1]}"
-                )
+                period_result_text = ", ".join(metric_phrases[:-1]) + f" and {metric_phrases[-1]}"
                 growth_candidates = [
                     (
                         "revenue",
@@ -2755,21 +2765,15 @@ def _current_period_claim_specs(
                 ]
                 if available_growth:
                     comparison_period = (
-                        "fiscal year"
-                        if current_revenue.period_bucket == "annual"
-                        else "quarter"
+                        "fiscal year" if current_revenue.period_bucket == "annual" else "quarter"
                     )
                     growth_phrases = [
-                        _yoy_change_phrase(label, value)
-                        for _, label, value in available_growth
+                        _yoy_change_phrase(label, value) for _, label, value in available_growth
                     ]
                     if len(growth_phrases) == 1:
                         growth_text = growth_phrases[0]
                     else:
-                        growth_text = (
-                            ", ".join(growth_phrases[:-1])
-                            + f" and {growth_phrases[-1]}"
-                        )
+                        growth_text = ", ".join(growth_phrases[:-1]) + f" and {growth_phrases[-1]}"
                     comparison_text = (
                         f" Against the matching prior-year {comparison_period}, "
                         f"{growth_text}. These are arithmetic "
@@ -2785,9 +2789,7 @@ def _current_period_claim_specs(
                     )
                 else:
                     comparison_period = (
-                        "fiscal year"
-                        if current_revenue.period_bucket == "annual"
-                        else "quarter"
+                        "fiscal year" if current_revenue.period_bucket == "annual" else "quarter"
                     )
                     comparison_text = (
                         " These are current-period results; they do not by "
@@ -2796,8 +2798,7 @@ def _current_period_claim_specs(
                     )
                     claim_metrics = metric_names
                     comparison_counterargument = (
-                        "A single reported period does not establish a durable "
-                        "trend."
+                        "A single reported period does not establish a durable trend."
                     )
                 specs.append(
                     {
@@ -2857,13 +2858,8 @@ def _issuer_operating_result_specs(
         and metric.period_bucket == "quarterly"
     ][:3]
     if len(current_metrics) >= 2:
-        phrases = [
-            f"{label} of {_pct(metric.value)}"
-            for _, label, metric in current_metrics
-        ]
-        result_text = (
-            ", ".join(phrases[:-1]) + f" and {phrases[-1]}"
-        )
+        phrases = [f"{label} of {_pct(metric.value)}" for _, label, metric in current_metrics]
+        result_text = ", ".join(phrases[:-1]) + f" and {phrases[-1]}"
         specs.append(
             {
                 "section": "Business & Segment Context",
@@ -2921,13 +2917,9 @@ def _issuer_operating_result_specs(
             )
 
     margin = canonical_financials.get_metric("current_period_gross_margin")
-    margin_change = canonical_financials.get_metric(
-        "current_period_gross_margin_change_yoy"
-    )
+    margin_change = canonical_financials.get_metric("current_period_gross_margin_change_yoy")
     adjusted_margin = canonical_financials.get_metric("adjusted_gross_margin")
-    adjusted_margin_change = canonical_financials.get_metric(
-        "adjusted_gross_margin_change_yoy"
-    )
+    adjusted_margin_change = canonical_financials.get_metric("adjusted_gross_margin_change_yoy")
     adjusted_eps = canonical_financials.get_metric("adjusted_eps_diluted")
     adjusted_eps_growth = canonical_financials.get_metric("adjusted_eps_growth_yoy")
     segment_margin = canonical_financials.get_metric("current_period_segment_margin")
@@ -2950,17 +2942,13 @@ def _issuer_operating_result_specs(
         margin_direction = "expanded" if margin_change.value >= 0 else "contracted"
         adjusted_clause = ""
         if adjusted_margin is not None and adjusted_margin_change is not None:
-            adjusted_direction = (
-                "expanded" if adjusted_margin_change.value >= 0 else "contracted"
-            )
+            adjusted_direction = "expanded" if adjusted_margin_change.value >= 0 else "contracted"
             adjusted_clause = (
                 f" Adjusted gross margin was {_pct(adjusted_margin.value)} "
                 f"and {adjusted_direction} by "
                 f"{abs(adjusted_margin_change.value) * 100:.1f} percentage points."
             )
-        eps_clause = (
-            f" Adjusted EPS was {_money(adjusted_eps.value, currency)}"
-        )
+        eps_clause = f" Adjusted EPS was {_money(adjusted_eps.value, currency)}"
         if adjusted_eps_growth is not None:
             eps_clause += f", a year-over-year change of {_pct(adjusted_eps_growth.value)}"
         eps_clause += "."
@@ -3011,11 +2999,7 @@ def _issuer_operating_result_specs(
                     "current_period_segment_margin",
                     "current_period_segment_margin_change_yoy",
                     "adjusted_eps_diluted",
-                    *(
-                        ["adjusted_eps_growth_yoy"]
-                        if adjusted_eps_growth is not None
-                        else []
-                    ),
+                    *(["adjusted_eps_growth_yoy"] if adjusted_eps_growth is not None else []),
                 ],
                 "counterargument": (
                     "Segment margin and adjusted results are issuer-defined non-GAAP "
@@ -3034,15 +3018,15 @@ def _issuer_operating_result_specs(
                 canonical_financials.get_metric("reported_revenue_growth")
                 or canonical_financials.get_metric("reported_sales_growth")
             )
-        ) is not None
+        )
+        is not None
     ):
         eps_clause = f"Adjusted EPS was {_money(adjusted_eps.value, currency)}"
         if adjusted_eps_growth is not None:
             eps_clause += (
                 ", shown as approximately flat year over year"
                 if adjusted_eps_growth.value == 0
-                else ", a year-over-year change of "
-                f"{_pct(adjusted_eps_growth.value)}"
+                else f", a year-over-year change of {_pct(adjusted_eps_growth.value)}"
             )
         growth_label = (
             "reported-revenue growth"
@@ -3061,11 +3045,7 @@ def _issuer_operating_result_specs(
                 "metrics": [
                     reported_growth.metric_name,
                     "adjusted_eps_diluted",
-                    *(
-                        ["adjusted_eps_growth_yoy"]
-                        if adjusted_eps_growth is not None
-                        else []
-                    ),
+                    *(["adjusted_eps_growth_yoy"] if adjusted_eps_growth is not None else []),
                 ],
                 "counterargument": (
                     "Issuer-disclosed growth rates are rounded, and adjusted results "
@@ -3095,11 +3075,7 @@ def _issuer_operating_result_specs(
             f"{metric.metric_name.removeprefix('market_share_').replace('_', ' ')}"
             for metric in selected_market_shares
         ]
-        share_text = (
-            phrases[0]
-            if len(phrases) == 1
-            else f"{phrases[0]} and {phrases[1]}"
-        )
+        share_text = phrases[0] if len(phrases) == 1 else f"{phrases[0]} and {phrases[1]}"
         specs.append(
             {
                 "section": "Business & Segment Context",
@@ -3126,11 +3102,8 @@ def _issuer_operating_result_specs(
         metric
         for metric in canonical_financials.metrics_for("operating_cash_flow")
         if (
-            metric.period_bucket == "ytd"
-            or (
-                metric.period_bucket == "quarterly"
-                and metric.fiscal_period == "Q1"
-            )
+            metric.period_bucket in {"annual", "ytd"}
+            or (metric.period_bucket == "quarterly" and metric.fiscal_period == "Q1")
         )
         and metric.end_date
     ]
@@ -3149,13 +3122,16 @@ def _issuer_operating_result_specs(
             None,
         )
         if capex is not None:
+            annual_period = operating_cash_flow.period_bucket == "annual"
             specs.append(
                 {
                     "section": "Fundamental Analysis",
                     "kind": "current_period",
                     "evidence_type": "financial_metric",
                     "text": (
-                        f"For the latest reported period (year to date), {ticker} "
+                        f"For the latest reported "
+                        f"{'fiscal year' if annual_period else 'period (year to date)'}, "
+                        f"{ticker} "
                         f"generated {_money(operating_cash_flow.value, currency)} of "
                         f"operating cash flow and reported {_money(capex.value, currency)} "
                         "of capital expenditure."
@@ -3166,8 +3142,15 @@ def _issuer_operating_result_specs(
                         "capex": capex.value,
                     },
                     "counterargument": (
-                        "Year-to-date cash flow can be seasonal and is not the same "
-                        "measurement window as TTM free cash flow."
+                        (
+                            "A fiscal-year cash-flow statement is historical and does not "
+                            "by itself establish the next year's cash-conversion level."
+                        )
+                        if annual_period
+                        else (
+                            "Year-to-date cash flow can be seasonal and is not the same "
+                            "measurement window as TTM free cash flow."
+                        )
                     ),
                     "implication": (
                         "Keep current cash generation visible while preserving the "
@@ -3204,7 +3187,9 @@ def _issuer_operating_result_specs(
             f"{label} of {formatter(low.value)} to {formatter(high.value)}"
             for _, _, label, formatter, low, high in guidance_ranges[:4]
         ]
-        guidance_text = phrases[0] if len(phrases) == 1 else ", ".join(phrases[:-1]) + f" and {phrases[-1]}"
+        guidance_text = (
+            phrases[0] if len(phrases) == 1 else ", ".join(phrases[:-1]) + f" and {phrases[-1]}"
+        )
         guidance_period = guidance_ranges[0][4].period
         specs.append(
             {
@@ -3212,8 +3197,7 @@ def _issuer_operating_result_specs(
                 "kind": "guidance",
                 "evidence_type": "guidance",
                 "text": (
-                    f"{ticker} issuer-filed {guidance_period} guidance calls for "
-                    f"{guidance_text}."
+                    f"{ticker} issuer-filed {guidance_period} guidance calls for {guidance_text}."
                 ),
                 "metrics": [
                     metric_name
@@ -3352,7 +3336,11 @@ def _early_commercial_capital_intensive_specs(
                 f"{_plain_number(launch_manifest)} contracted launch-manifest missions and {_plain_number(neutron_contracts)} Neutron contracts show cadence, "
                 "but Neutron development and timing risk still block a clean Buy/Accumulate view."
             ),
-            "metrics": ["electron_haste_new_contracts", "launch_manifest_contracts", "neutron_new_contracts"],
+            "metrics": [
+                "electron_haste_new_contracts",
+                "launch_manifest_contracts",
+                "neutron_new_contracts",
+            ],
             "counterargument": "Contract wins do not remove development, launch or delivery risk.",
             "implication": "Treat technical execution as gating evidence, not as standalone upside.",
         },

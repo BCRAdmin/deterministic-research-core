@@ -366,8 +366,12 @@ def test_builds_first_consolidated_summary_segments_and_current_guidance():
     assert metrics["current_period_segment_margin_change_yoy"]["value"] == pytest.approx(0.003)
     assert metrics["adjusted_eps_diluted"]["value"] == pytest.approx(4.52)
     assert metrics["adjusted_eps_growth_yoy"]["value"] == pytest.approx(-0.04)
-    assert metrics["segment_organic_sales_growth_building_automation"]["value"] == pytest.approx(0.09)
-    assert metrics["segment_organic_sales_growth_process_automation_and_technology"]["value"] == pytest.approx(-0.01)
+    assert metrics["segment_organic_sales_growth_building_automation"]["value"] == pytest.approx(
+        0.09
+    )
+    assert metrics["segment_organic_sales_growth_process_automation_and_technology"][
+        "value"
+    ] == pytest.approx(-0.01)
     assert metrics["guidance_revenue_low"]["value"] == pytest.approx(19_800_000_000)
     assert metrics["guidance_revenue_high"]["value"] == pytest.approx(20_000_000_000)
     assert metrics["guidance_organic_sales_growth_low"]["value"] == pytest.approx(0.03)
@@ -502,21 +506,15 @@ def test_builds_revised_full_year_guidance_with_shifted_range_cell():
         "adjusted_eps_growth_yoy": pytest.approx(0.0),
         "guidance_adjusted_eps_high": pytest.approx(3.00),
         "guidance_adjusted_eps_low": pytest.approx(2.80),
-        "guidance_adjusted_research_and_development_expense_high": pytest.approx(
-            11_500_000_000
-        ),
-        "guidance_adjusted_research_and_development_expense_low": pytest.approx(
-            10_500_000_000
-        ),
+        "guidance_adjusted_research_and_development_expense_high": pytest.approx(11_500_000_000),
+        "guidance_adjusted_research_and_development_expense_low": pytest.approx(10_500_000_000),
         "guidance_adjusted_sia_expense_high": pytest.approx(13_500_000_000),
         "guidance_adjusted_sia_expense_low": pytest.approx(12_500_000_000),
         "guidance_revenue_high": pytest.approx(62_500_000_000),
         "guidance_revenue_low": pytest.approx(60_500_000_000),
         "reported_revenue_growth": pytest.approx(0.03),
     }
-    guidance = [
-        item for item in payload["metrics"] if item["metric_name"].startswith("guidance_")
-    ]
+    guidance = [item for item in payload["metrics"] if item["metric_name"].startswith("guidance_")]
     assert {item["period"] for item in guidance} == {"FY2026"}
     assert {item["fiscal_period"] for item in guidance} == {"FY"}
     assert payload["result_contract"]["operating_metric_count"] == 3
@@ -527,8 +525,7 @@ def test_builds_revised_full_year_guidance_with_shifted_range_cell():
     summaries = {event["summary"] for event in payload["events"]}
     assert (
         "Management stated that reported loss per share reflected $4.3 billion "
-        "in non-cash intangible asset impairments."
-        in summaries
+        "in non-cash intangible asset impairments." in summaries
     )
 
 
@@ -805,6 +802,35 @@ def test_rejects_mismatched_result_period():
             period_end_date="2026-06-30",
             retrieved_at="2026-07-20T12:00:00Z",
         )
+
+
+def test_prefers_matching_full_year_when_release_also_describes_fourth_quarter():
+    html = """
+    <html><body>
+    <h1>Cloud strength fuels fourth quarter results</h1>
+    <div>Results for the fourth quarter of fiscal year 2026.</div>
+    <h2>Fiscal Year 2026 Results</h2>
+    <div>Revenue increased 18% for the fiscal year ended June 30, 2026.</div>
+    <h2>Fiscal Year 2027 Outlook</h2>
+    <div>The company expects revenue growth of 10% to 12%.</div>
+    </body></html>
+    """
+
+    payload = build_sec_results_release_payload(
+        ticker="GENR",
+        cik="123456",
+        accession_number="0000123456-26-000015",
+        filing_date="2026-07-29",
+        exhibit_document="fy-results.htm",
+        html=html,
+        expected_fiscal_year=2026,
+        expected_fiscal_period="FY",
+        period_end_date="2026-06-30",
+        retrieved_at="2026-07-29T12:00:00Z",
+    )
+
+    assert payload["result_contract"]["fiscal_period"] == "FY"
+    assert payload["events"][0]["headline"] == "Issuer filed FY2026_FY financial results"
 
 
 def test_historical_growth_before_guidance_is_not_misread_as_guidance_range():

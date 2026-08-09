@@ -116,6 +116,12 @@ complete visible link description per target document. Supplemental exhibits
 remain secondary even when SEC inline markup splits their labels across
 several anchors. An unresolved tie still fails closed.
 
+An Item 2.02 exhibit may bind to either a matching quarterly CompanyFacts
+period or an explicitly labelled full fiscal year covered by the same current
+10-K accession. Guidance-only full-year wording is not treated as a result
+period. Current OCF and capex commentary must use the newest exact period pair,
+including annual facts when the latest fiscal year is newer than interim data.
+
 The report auditor distinguishes an issuer guidance claim from an explicit
 disclaimer such as “not management guidance”. A disclaimer can clear only its
 own sentence fragment; it cannot mask a separate unsupported forecast in the
