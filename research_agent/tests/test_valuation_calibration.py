@@ -74,21 +74,23 @@ def _outcome(snapshot, **overrides):
         "status": "matured",
         "horizon_trading_days": 252,
         "trading_observation_count": 252,
+        "benchmark": "BENCH",
+        "basis_date": snapshot.price_basis_date,
         "observed_through": (date.fromisoformat(snapshot.as_of_date) + timedelta(days=370)).isoformat(),
         "instrument_return": 0.12,
         "benchmark_return": 0.07,
         "excess_return": 0.05,
-        "instrument_price_series_basis": "corporate_action_adjusted",
-        "benchmark_price_series_basis": "corporate_action_adjusted",
+        "instrument_price_series_basis": "total_return_adjusted",
+        "benchmark_price_series_basis": "total_return_adjusted",
         "source_hash": HASH,
     }
     payload.update(overrides)
     return ValuationCalibrationOutcome(**payload)
 
 
-def test_snapshot_requires_measured_dcf_and_adjusted_price_series():
+def test_snapshot_requires_measured_dcf_but_not_adjusted_historical_technicals():
     eligible = _snapshot()
-    excluded = build_valuation_calibration_snapshot(
+    unadjusted_technicals = build_valuation_calibration_snapshot(
         _metrics(price_series_basis="unadjusted_or_provider_default"),
         metrics_packet_sha256=HASH,
         authority_manifest_sha256=HASH,
@@ -96,8 +98,8 @@ def test_snapshot_requires_measured_dcf_and_adjusted_price_series():
 
     assert eligible.eligible
     assert eligible.base_upside is not None
-    assert not excluded.eligible
-    assert "price_series_not_corporate_action_adjusted" in excluded.exclusion_reasons
+    assert unadjusted_technicals.eligible
+    assert unadjusted_technicals.price_series_basis == "unadjusted_or_provider_default"
 
 
 def test_readiness_stays_closed_without_matured_252d_outcomes():
@@ -113,7 +115,7 @@ def test_invalid_outcome_cannot_enter_calibration_sample():
     snapshot = _snapshot()
     invalid = _outcome(
         snapshot,
-        instrument_price_series_basis="unadjusted_or_provider_default",
+        instrument_price_series_basis="split_adjusted",
         excess_return=0.04,
     )
 
@@ -121,7 +123,7 @@ def test_invalid_outcome_cannot_enter_calibration_sample():
 
     assert readiness.valid_matured_outcome_count == 0
     assert readiness.invalid_outcome_reasons[
-        "outcome_instrument_series_not_adjusted"
+        "outcome_instrument_series_not_total_return_adjusted"
     ] == 1
     assert readiness.invalid_outcome_reasons["outcome_excess_return_mismatch"] == 1
 
@@ -166,28 +168,28 @@ def test_outcome_builder_uses_only_common_future_adjusted_observations():
             date=(date(2025, 1, 1) + timedelta(days=index)).isoformat(),
             close=100 + index,
         )
-        for index in range(1, 370)
+        for index in range(0, 370)
     ]
     benchmark = [
         ValuationCalibrationPricePoint(
             date=(date(2025, 1, 1) + timedelta(days=index)).isoformat(),
             close=200 + index,
         )
-        for index in range(1, 370)
+        for index in range(0, 370)
     ]
 
     outcome = build_valuation_calibration_outcome(
         snapshot,
         benchmark="BENCH",
-        benchmark_basis_price=200,
         instrument_prices=instrument,
         benchmark_prices=benchmark,
-        instrument_price_series_basis="corporate_action_adjusted",
-        benchmark_price_series_basis="corporate_action_adjusted",
+        instrument_price_series_basis="total_return_adjusted",
+        benchmark_price_series_basis="total_return_adjusted",
     )
 
     assert outcome.status == "matured"
     assert outcome.trading_observation_count == 252
+    assert outcome.basis_date == "2025-01-02"
     assert outcome.first_observation_date == "2025-01-03"
     assert outcome.observed_through == "2025-09-11"
     assert outcome.excess_return == round(
@@ -200,7 +202,7 @@ def test_outcome_builder_stays_pending_before_252_common_observations():
     snapshot = _snapshot()
     prices = [
         ValuationCalibrationPricePoint(
-            date=(date(2025, 1, 3) + timedelta(days=index)).isoformat(),
+            date=(date(2025, 1, 2) + timedelta(days=index)).isoformat(),
             close=100 + index,
         )
         for index in range(100)
@@ -209,13 +211,12 @@ def test_outcome_builder_stays_pending_before_252_common_observations():
     outcome = build_valuation_calibration_outcome(
         snapshot,
         benchmark="BENCH",
-        benchmark_basis_price=100,
         instrument_prices=prices,
         benchmark_prices=prices,
-        instrument_price_series_basis="corporate_action_adjusted",
-        benchmark_price_series_basis="corporate_action_adjusted",
+        instrument_price_series_basis="total_return_adjusted",
+        benchmark_price_series_basis="total_return_adjusted",
     )
 
     assert outcome.status == "pending"
-    assert outcome.trading_observation_count == 100
+    assert outcome.trading_observation_count == 99
     assert outcome.instrument_return is None

@@ -14,11 +14,12 @@ A snapshot enters the calibration candidate set only when:
 - DCF status and reverse DCF are measured;
 - bear, base and bull upside values are complete;
 - the share-count basis is verified; and
-- the input price series is explicitly corporate-action adjusted.
+- the point-in-time close is dated, positive and no later than the report.
 
-An unadjusted Nasdaq series, an illustrative multi-class value or an
-incomplete scenario is excluded. A green report audit cannot waive these
-requirements.
+The historical technical-series adjustment does not gate a DCF snapshot: DCF
+uses the point-in-time equity value, not past technical returns. An
+illustrative multi-class value or an incomplete scenario remains excluded. A
+green report audit cannot waive these requirements.
 
 ## Outcome contract
 
@@ -27,7 +28,9 @@ Valuation is tested at a minimum 252-trading-day horizon. Each outcome must:
 - refer to exactly one snapshot ID;
 - use future observations only;
 - carry a source hash;
-- use corporate-action-adjusted instrument and benchmark series; and
+- use total-return-adjusted instrument and benchmark series from the same
+  basis date, including cash distributions rather than merely split-adjusted
+  closes; and
 - contain exactly 252 common future trading observations, calculated by the
   deterministic outcome builder rather than asserted by report prose; and
 - reconcile instrument return minus benchmark return exactly to excess

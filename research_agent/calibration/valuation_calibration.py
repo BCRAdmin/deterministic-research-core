@@ -34,6 +34,7 @@ class ValuationCalibrationSnapshot(BaseModel):
     policy_version: str
     sensitivity_status: str
     price_series_basis: str
+    price_basis_date: str
     share_basis: Optional[str] = None
     current_price: Optional[float] = None
     current_value_position: str
@@ -54,6 +55,7 @@ class ValuationCalibrationOutcome(BaseModel):
     horizon_trading_days: int = VALUATION_CALIBRATION_HORIZON_TRADING_DAYS
     trading_observation_count: int = 0
     benchmark: Optional[str] = None
+    basis_date: Optional[str] = None
     instrument_basis_price: Optional[float] = None
     benchmark_basis_price: Optional[float] = None
     first_observation_date: Optional[str] = None
@@ -113,8 +115,6 @@ def build_valuation_calibration_snapshot(
     reasons: list[str] = []
     if sensitivity.status != "measured":
         reasons.append("sensitivity_not_measured")
-    if metrics.technical.price_series_basis != "corporate_action_adjusted":
-        reasons.append("price_series_not_corporate_action_adjusted")
     if sensitivity.share_basis not in {"listed_share_count", "economic_share_count"}:
         reasons.append("share_basis_not_verified")
     if sensitivity.reverse_dcf_status != "measured":
@@ -129,6 +129,15 @@ def build_valuation_calibration_snapshot(
         authority_manifest_sha256
     ):
         reasons.append("authority_manifest_hash_invalid")
+    if sensitivity.current_price is None or sensitivity.current_price <= 0:
+        reasons.append("point_in_time_price_unavailable")
+    try:
+        if date.fromisoformat(metrics.technical.indicator_date) > date.fromisoformat(
+            metrics.as_of_date
+        ):
+            reasons.append("point_in_time_price_lookahead")
+    except ValueError:
+        reasons.append("point_in_time_price_date_invalid")
 
     identity_payload = {
         "ticker": metrics.ticker,
@@ -155,6 +164,7 @@ def build_valuation_calibration_snapshot(
         policy_version=sensitivity.policy_version,
         sensitivity_status=sensitivity.status,
         price_series_basis=metrics.technical.price_series_basis,
+        price_basis_date=metrics.technical.indicator_date,
         share_basis=sensitivity.share_basis,
         current_price=sensitivity.current_price,
         current_value_position=sensitivity.current_value_position,
@@ -327,18 +337,25 @@ def build_valuation_calibration_outcome(
     snapshot: ValuationCalibrationSnapshot,
     *,
     benchmark: str,
-    benchmark_basis_price: float,
     instrument_prices: list[ValuationCalibrationPricePoint],
     benchmark_prices: list[ValuationCalibrationPricePoint],
     instrument_price_series_basis: str,
     benchmark_price_series_basis: str,
 ) -> ValuationCalibrationOutcome:
-    normalized_instrument = _future_price_map(instrument_prices, snapshot.as_of_date)
-    normalized_benchmark = _future_price_map(benchmark_prices, snapshot.as_of_date)
-    common_dates = sorted(set(normalized_instrument).intersection(normalized_benchmark))
+    normalized_instrument = _price_map(instrument_prices)
+    normalized_benchmark = _price_map(benchmark_prices)
+    basis_date = snapshot.price_basis_date
+    future_common_dates = sorted(
+        day
+        for day in set(normalized_instrument).intersection(normalized_benchmark)
+        if day > basis_date
+    )
+    instrument_basis_price = normalized_instrument.get(basis_date)
+    benchmark_basis_price = normalized_benchmark.get(basis_date)
     source_payload = {
         "snapshot_id": snapshot.snapshot_id,
         "benchmark": benchmark,
+        "basis_date": basis_date,
         "benchmark_basis_price": benchmark_basis_price,
         "instrument_price_series_basis": instrument_price_series_basis,
         "benchmark_price_series_basis": benchmark_price_series_basis,
@@ -358,45 +375,49 @@ def build_valuation_calibration_outcome(
         "snapshot_id": snapshot.snapshot_id,
         "horizon_trading_days": VALUATION_CALIBRATION_HORIZON_TRADING_DAYS,
         "trading_observation_count": min(
-            len(common_dates), VALUATION_CALIBRATION_HORIZON_TRADING_DAYS
+            len(future_common_dates), VALUATION_CALIBRATION_HORIZON_TRADING_DAYS
         ),
         "benchmark": benchmark,
-        "instrument_basis_price": snapshot.current_price,
+        "basis_date": basis_date,
+        "instrument_basis_price": instrument_basis_price,
         "benchmark_basis_price": benchmark_basis_price,
-        "first_observation_date": common_dates[0] if common_dates else None,
+        "first_observation_date": (
+            future_common_dates[0] if future_common_dates else None
+        ),
         "observed_through": (
-            common_dates[VALUATION_CALIBRATION_HORIZON_TRADING_DAYS - 1]
-            if len(common_dates) >= VALUATION_CALIBRATION_HORIZON_TRADING_DAYS
-            else common_dates[-1]
-            if common_dates
+            future_common_dates[VALUATION_CALIBRATION_HORIZON_TRADING_DAYS - 1]
+            if len(future_common_dates)
+            >= VALUATION_CALIBRATION_HORIZON_TRADING_DAYS
+            else future_common_dates[-1]
+            if future_common_dates
             else None
         ),
         "instrument_price_series_basis": instrument_price_series_basis,
         "benchmark_price_series_basis": benchmark_price_series_basis,
         "source_hash": source_hash,
     }
-    if snapshot.current_price is None or snapshot.current_price <= 0:
+    if instrument_basis_price is None or instrument_basis_price <= 0:
         return ValuationCalibrationOutcome(
             **base,
             status="data_unavailable",
-            notes=["instrument_basis_price_unavailable"],
+            notes=["instrument_total_return_basis_price_unavailable"],
         )
-    if benchmark_basis_price <= 0:
+    if benchmark_basis_price is None or benchmark_basis_price <= 0:
         return ValuationCalibrationOutcome(
             **base,
             status="data_unavailable",
-            notes=["benchmark_basis_price_unavailable"],
+            notes=["benchmark_total_return_basis_price_unavailable"],
         )
     if (
-        instrument_price_series_basis != "corporate_action_adjusted"
-        or benchmark_price_series_basis != "corporate_action_adjusted"
+        instrument_price_series_basis != "total_return_adjusted"
+        or benchmark_price_series_basis != "total_return_adjusted"
     ):
         return ValuationCalibrationOutcome(
             **base,
             status="invalidated",
-            notes=["corporate_action_adjustment_not_verified"],
+            notes=["total_return_adjustment_not_verified"],
         )
-    if len(common_dates) < VALUATION_CALIBRATION_HORIZON_TRADING_DAYS:
+    if len(future_common_dates) < VALUATION_CALIBRATION_HORIZON_TRADING_DAYS:
         return ValuationCalibrationOutcome(
             **base,
             status="pending",
@@ -405,14 +426,16 @@ def build_valuation_calibration_outcome(
             ],
         )
 
-    end_date = common_dates[VALUATION_CALIBRATION_HORIZON_TRADING_DAYS - 1]
-    instrument_return = normalized_instrument[end_date] / snapshot.current_price - 1
+    end_date = future_common_dates[VALUATION_CALIBRATION_HORIZON_TRADING_DAYS - 1]
+    instrument_return = normalized_instrument[end_date] / instrument_basis_price - 1
     benchmark_return = normalized_benchmark[end_date] / benchmark_basis_price - 1
+    instrument_return = round(instrument_return, 12)
+    benchmark_return = round(benchmark_return, 12)
     return ValuationCalibrationOutcome(
         **base,
         status="matured",
-        instrument_return=round(instrument_return, 12),
-        benchmark_return=round(benchmark_return, 12),
+        instrument_return=instrument_return,
+        benchmark_return=benchmark_return,
         excess_return=round(instrument_return - benchmark_return, 12),
     )
 
@@ -489,10 +512,12 @@ def _outcome_invalid_reasons(
         reasons.append("outcome_horizon_not_252_trading_days")
     if outcome.trading_observation_count != VALUATION_CALIBRATION_HORIZON_TRADING_DAYS:
         reasons.append("outcome_observation_count_not_252")
-    if outcome.instrument_price_series_basis != "corporate_action_adjusted":
-        reasons.append("outcome_instrument_series_not_adjusted")
-    if outcome.benchmark_price_series_basis != "corporate_action_adjusted":
-        reasons.append("outcome_benchmark_series_not_adjusted")
+    if outcome.instrument_price_series_basis != "total_return_adjusted":
+        reasons.append("outcome_instrument_series_not_total_return_adjusted")
+    if outcome.benchmark_price_series_basis != "total_return_adjusted":
+        reasons.append("outcome_benchmark_series_not_total_return_adjusted")
+    if outcome.basis_date != snapshot.price_basis_date:
+        reasons.append("outcome_basis_date_mismatch")
     if outcome.observed_through is None:
         reasons.append("outcome_observed_through_missing")
     else:
@@ -530,15 +555,13 @@ def _is_sha256(value: Optional[str]) -> bool:
     )
 
 
-def _future_price_map(
+def _price_map(
     prices: list[ValuationCalibrationPricePoint],
-    as_of_date: str,
 ) -> dict[str, float]:
     normalized: dict[str, float] = {}
-    basis_date = date.fromisoformat(as_of_date)
     for point in prices:
         point_date = date.fromisoformat(point.date)
-        if point_date <= basis_date or point.close <= 0:
+        if point.close <= 0:
             continue
         normalized[point_date.isoformat()] = float(point.close)
     return normalized
