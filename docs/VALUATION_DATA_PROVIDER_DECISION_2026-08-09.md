@@ -41,34 +41,47 @@ Offizielle Nachweise:
 | Kandidat | Total-Return-Semantik | Interne kommerzielle Nutzung | Veröffentlichung | Room16-Entscheidung |
 | --- | --- | --- | --- | --- |
 | Tiingo EOD | Bereinigte Preise umfassen Splits und Dividenden; CRSP-Methode dokumentiert | `50 USD/Monat` | Start-up-Redistribution ab `250 USD/Monat`; abgeleitete Reports schriftlich klären | Bevorzugter erster US-/ETF-Pilot |
-| EODHD EOD All World | `adjusted_close` wird als split- und dividendenbereinigt beschrieben | `19,99 USD/Monat` im kommerziellen EOD-Tarif | Repackaging/Display braucht vorherige schriftliche Zustimmung | Preisgünstige globale Reserve, aber schwächere Provenienz für den Golden Standard |
+| EODHD EOD All World | `adjusted_close` wird als split- und dividendenbereinigt beschrieben | Persönlicher Einstieg `19,99 USD/Monat`; separate B2B-Seite nennt `399 USD/Monat` für Internal Use | Externe Weitergabe ist im Internal-Use-Paket ausgeschlossen; Custom-Vertrag nötig | Globale Reserve, für den ersten Pilot deutlich teurer und vertraglich komplexer |
+| Massive Stocks | Aggregate standardmäßig split-, aber ausdrücklich nicht dividendenbereinigt; Dividenden separat | Stocks Business `1.999 USD/Monat` | Business-/Redistribution-Vertrag erforderlich | Für Room16-Total-Return unnötig teuer und methodisch zusätzlicher Eigenbau |
 | Alpha Vantage | Adjusted Daily umfasst laut Anbieter Splits und Cash-Dividenden | Kommerzielle Nutzung nur nach Kontakt; kein transparenter Businesspreis | Schriftliche kommerzielle Vereinbarung erforderlich | Methodisch brauchbar, wirtschaftlich vorab unklar |
 | Twelve Data | Tagespreise splitbereinigt; Dividenden separat verfügbar | Individualtarife sind nichtkommerziell; Dividenden im Business-Venture-Tarif | Business-/Redistribution-Klärung erforderlich | Für den ersten Pilot unnötig komplex und preislich unklar |
 
 Weitere offizielle Nachweise:
 
 - [EODHD Preise](https://eodhd.com/pricing)
+- [EODHD kommerzielle Preise](https://eodhd.com/commercial-pricing)
 - [EODHD Adjusted-Close-Beschreibung](https://eodhd.com/lp/historical-eod-api)
 - [EODHD Nutzungsbedingungen](https://eodhd.com/financial-apis/terms-conditions)
+- [Massive Business-Preise](https://massive.com/business)
+- [Massive Split-/Dividendenadjustierung](https://massive.com/knowledge-base/article/is-massives-stock-data-adjusted-for-splits-or-dividends)
 - [Alpha Vantage Adjustierungsmethodik](https://www.alphavantage.co/support/)
 - [Alpha Vantage Nutzungsbedingungen](https://www.alphavantage.co/terms_of_service/)
 - [Twelve Data Preisadjustierung](https://support.twelvedata.com/en/articles/5179064-are-the-prices-adjusted)
 - [Twelve Data Dividenden-API](https://twelvedata.com/docs/introduction/overview)
 - [Twelve Data Preise](https://twelvedata.com/pricing)
 
-## Warum EODHD nicht automatisch gewinnt
+## Warum EODHD und Massive nicht gewinnen
 
-EODHD ist mit `19,99 USD/Monat` deutlich günstiger und deckt mehr Weltmärkte
-ab. Der Anbieter weist jedoch selbst darauf hin, dass Teile seiner Daten aus
-mehr als hundert OTC-, Peer-to-Peer- und Plattformquellen aggregiert werden.
-Zusätzlich verlangen die Bedingungen bei Vertragsende die Löschung der
-gespeicherten Daten innerhalb eines Monats und für Redistribution eine
-vorherige schriftliche Zustimmung.
+Die ursprünglich notierte Annahme eines kommerziellen EODHD-Tarifs für
+`19,99 USD/Monat` war falsch. Dieser Preis gehört zum persönlichen
+Self-Service-Einstieg. Die separate offizielle B2B-Seite nennt für interne
+Firmennutzung `399 USD/Monat`. Sie nennt direkte Verträge mit über 60 Börsen,
+während der Disclaimer derselben Seite zugleich von über 100 aggregierten
+OTC-, Peer-to-Peer- und Plattformquellen spricht. Diese Provenienzabgrenzung
+müsste vor Golden-Standard-Nutzung geklärt werden. Zusätzlich verlangen die
+Bedingungen bei Vertragsende die Löschung gespeicherter Daten innerhalb eines
+Monats; externe Weitergabe ist im Internal-Use-Paket ausgeschlossen.
 
-Das kann für spätere breite Länderabdeckung attraktiv sein. Für unseren ersten
-Golden-Standard-Kalibrationsfall wiegen die klarere Adjustierungsmethodik,
-Corporate-Action-Felder und einfachere US-/ETF-Gegenprüfung bei Tiingo höher
-als die Differenz von rund `30 USD/Monat`.
+Massive ist für US-Marktdaten stark, liefert historische Aggregate aber laut
+eigener FAQ nur split- und nicht dividendenbereinigt. Room16 müsste deshalb
+Dividenden und Adjustment-Faktoren selbst zu einer Total-Return-Reihe
+zusammenbauen und dauerhaft gegen Corporate-Action-Korrekturen testen. Der
+offizielle Business-Tarif beginnt zugleich bei `1.999 USD/Monat`.
+
+EODHD bleibt wegen seiner Weltmarktabdeckung ein späterer Kandidat. Für den
+ersten MCD-/SPY-Golden-Standard-Fall bietet Tiingo jedoch die direkteste
+Methodik, den kleinsten Eigenbau und mit `50 USD/Monat` den niedrigsten klar
+ausgewiesenen internen Geschäftstarif dieser drei Kandidaten.
 
 ## Vorbereiteter technischer Zustand
 
