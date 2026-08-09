@@ -60,6 +60,9 @@ never activate a valuation score automatically. The provider-neutral outcome
 workbench creates either an explicitly unverified draft or a self-contained
 `room16.valuation_calibration_source_bundle@2`; verified mode additionally
 requires evidence-bound usage rights and an independent human review.
+The current no-purchase provider decision and dormant Tiingo EOD candidate are
+documented in
+[`docs/VALUATION_DATA_PROVIDER_DECISION_2026-08-09.md`](docs/VALUATION_DATA_PROVIDER_DECISION_2026-08-09.md).
 
 The initial build includes Pydantic packet schemas, technical/fundamental/valuation calculations, source-authority checks, trade/rating/news validation rules, regression tests for known failures, and a pipeline skeleton that stops report generation on blocking validation errors.
 

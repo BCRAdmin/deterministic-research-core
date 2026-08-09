@@ -1,5 +1,10 @@
 # Room16 Valuation Calibration v1
 
+> Data-provider gate: the preferred but still disabled candidate, rights
+> questions, and staged cost architecture are documented in
+> [`VALUATION_DATA_PROVIDER_DECISION_2026-08-09.md`](VALUATION_DATA_PROVIDER_DECISION_2026-08-09.md).
+> An adapter or API token is not a live-use approval.
+
 ## Purpose
 
 The standardized DCF in Analytical Core v0.2 is sensitivity evidence, not a
