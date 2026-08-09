@@ -72,13 +72,10 @@ def build_fact_ledger(
             value=metric_use["value"],
             as_of_date=data_packet.as_of_date,
         )
-        source_ids = [
-            source_id
-            for source_id in dict.fromkeys(
-                [evidence.source_id, *evidence.source_lineage]
-            )
-            if source_id in registry_by_id
-        ]
+        source_ids = _resolve_registered_source_ids(
+            [evidence.source_id, *evidence.source_lineage],
+            registry_by_id,
+        )
         if evidence.source_id not in source_ids:
             raise FactLedgerError(
                 f"evidence source {evidence.source_id} for {metric_name} "
@@ -191,6 +188,31 @@ def _has_numeric_authority(item: EvidenceItem) -> bool:
 
 def _same_number(left: float, right: float) -> bool:
     return math.isclose(left, right, rel_tol=1e-9, abs_tol=1e-9)
+
+
+def _resolve_registered_source_ids(
+    source_ids: Iterable[str],
+    registry_by_id: dict[str, Any],
+) -> list[str]:
+    """Resolve compact SEC lineage IDs to their registered canonical IDs."""
+
+    resolved: list[str] = []
+    for raw_source_id in source_ids:
+        source_id = str(raw_source_id or "").strip()
+        if not source_id:
+            continue
+        if source_id in registry_by_id:
+            resolved.append(source_id)
+            continue
+        suffix = source_id.removeprefix("SEC_")
+        matches = sorted(
+            candidate
+            for candidate in registry_by_id
+            if suffix and candidate.endswith(suffix)
+        )
+        if len(matches) == 1:
+            resolved.append(matches[0])
+    return list(dict.fromkeys(resolved))
 
 
 def _period_type(metric_name: str, evidence: EvidenceItem) -> str:

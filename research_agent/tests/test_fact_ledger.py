@@ -277,6 +277,40 @@ def test_fact_ledger_preserves_duration_periods_and_ratio_units():
     assert fact["period_start"] == "2026-01-01"
 
 
+def test_fact_ledger_resolves_compact_sec_lineage_to_registered_source_id():
+    data_packet, claims, evidence, registry = _fact_inputs()
+    revenue = next(
+        item for item in evidence.evidence_items
+        if "revenue_ttm" in item.supports_metrics
+    )
+    revenue.source_lineage = ["SEC_0001628280-26-050503"]
+    canonical_sec_source = "SEC_0000021344_0001628280-26-050503"
+    registry.sources.append(
+        SourceRegistryEntry(
+            source_id=canonical_sec_source,
+            ticker="GENERIC",
+            source_type="sec_filing",
+            authority_rank=1,
+            owner="SEC",
+        )
+    )
+
+    payload = build_fact_ledger(
+        data_packet=data_packet,
+        claims=claims,
+        evidence_ledger=evidence,
+        source_registry=registry,
+    )
+    revenue_fact = next(
+        fact for fact in payload["claims"] if fact["metric"] == "revenue_ttm"
+    )
+
+    assert revenue_fact["source_ids"] == [
+        "SEC_GENERIC_DERIVED_TTM",
+        canonical_sec_source,
+    ]
+
+
 def test_fact_ledger_fails_when_claim_value_has_no_exact_evidence():
     data_packet, claims, evidence, registry = _fact_inputs()
     claims[0].metric_values["close"] = 101.0

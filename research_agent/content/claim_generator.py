@@ -5,7 +5,10 @@ import re
 from typing import Iterable, Mapping, Optional
 
 from research_agent.decision.decision_packet import DecisionPacket
-from research_agent.decision.signal_scores import classify_technical_trend
+from research_agent.decision.signal_scores import (
+    TECHNICAL_SCORING_BASES,
+    classify_technical_trend,
+)
 from research_agent.evidence.evidence_item import EvidenceItem
 from research_agent.evidence.evidence_ledger import EvidenceLedger, unit_for_metric
 from research_agent.reconciliation.canonical_financials import CanonicalFinancials
@@ -285,6 +288,7 @@ class _ClaimBuilder:
                 "high",
                 counterargument=current_claim.get("counterargument"),
                 implication=current_claim.get("implication"),
+                metric_values=current_claim.get("metric_values"),
             )
 
         for event in self.data_packet.news_coverage.material_events:
@@ -738,10 +742,8 @@ class _ClaimBuilder:
                 ),
             )
 
-        self.add(
-            "Technical Setup",
-            "technical",
-            "technical_metric",
+        technical_basis_verified = _technical_basis_is_scoreable(self.metrics)
+        technical_setup_text = (
             (
                 "The technical setup uses close "
                 f"{self._money(self.metrics.technical.close)}, 50-SMA "
@@ -751,11 +753,35 @@ class _ClaimBuilder:
                 "long-term trend state is "
                 f"{classify_technical_trend(self.metrics)}. "
                 f"{_technical_basis_sentence(self.metrics)}"
-            ),
+            )
+            if technical_basis_verified
+            else (
+                "The technical setup records raw observations only: close "
+                f"{self._money(self.metrics.technical.close)}, 50-SMA "
+                f"{self._money(self.metrics.technical.sma_50)}, 200-SMA "
+                f"{self._money(self.metrics.technical.sma_200)} and RSI "
+                f"{_number(self.metrics.technical.rsi_14)}. No bullish, bearish "
+                "or mixed technical conclusion is activated. "
+                f"{_technical_basis_sentence(self.metrics)}"
+            )
+        )
+        technical_setup_implication = (
+            "Timing language should follow the validated technical trend state."
+            if technical_basis_verified
+            else (
+                "Do not use these raw observations for timing until the "
+                "corporate-action adjustment is confirmed."
+            )
+        )
+        self.add(
+            "Technical Setup",
+            "technical",
+            "technical_metric",
+            technical_setup_text,
             ["close", "sma_50", "sma_200", "rsi_14"],
             "high",
             "high",
-            implication="Timing language should follow the validated technical trend state.",
+            implication=technical_setup_implication,
         )
         self.add(
             "Technical Setup",
@@ -763,16 +789,22 @@ class _ClaimBuilder:
             "technical_metric",
             (
                 f"{ticker}'s close of {self._money(self.metrics.technical.close)} "
-                "and moving-average position imply "
-                f"{_technical_interpretation(self.metrics)}; this remains "
-                "timing evidence and does not prescribe an entry, trim or "
-                "position size."
+                "and moving-average position record "
+                f"{_technical_interpretation(self.metrics)}; this does not "
+                "prescribe an entry, trim or position size."
             ),
             ["close", "sma_50", "sma_200", "rsi_14"],
             "medium",
             "medium",
             counterargument="Technical weakness can be temporary if fundamentals and catalysts improve.",
-            implication="Treat technical and fundamental divergence as a review condition, not as a personal trade instruction.",
+            implication=(
+                "Treat technical and fundamental divergence as a review condition, not as a personal trade instruction."
+                if technical_basis_verified
+                else (
+                    "No technical divergence or timing condition is activated "
+                    "until the price-series basis is confirmed."
+                )
+            ),
         )
 
         growth_metrics = [
@@ -1012,7 +1044,7 @@ class _ClaimBuilder:
                     f"{context_text} "
                     f"{scale_and_cash}; {cash_context}. A more "
                     "constructive rating requires revenue and profit measures to "
-                    "improve together, plus stronger technical or benchmarked "
+                    "improve together, plus stronger verified technical or benchmarked "
                     "valuation support."
                 )
             elif current_period_loss_metrics:
@@ -1024,7 +1056,7 @@ class _ClaimBuilder:
                         "reported top-line direction and scale; they do not establish "
                         "operating improvement. A more constructive rating still requires "
                         "profitability and cash conversion to improve, plus stronger "
-                        "technical or benchmarked valuation support."
+                        "verified technical or benchmarked valuation support."
                     )
                 else:
                     cash_context = (
@@ -1032,7 +1064,7 @@ class _ClaimBuilder:
                         f"{current_period_loss_phrase}. Revenue and FCF therefore do "
                         "not establish operating improvement. A more constructive "
                         "rating still requires profitability to improve and stronger "
-                        "technical or benchmarked valuation support."
+                        "verified technical or benchmarked valuation support."
                     )
             elif fcf_value is not None and fcf_value < 0:
                 if _negative_fcf_is_capex_funding_gap(self.metrics):
@@ -1044,7 +1076,7 @@ class _ClaimBuilder:
                         "funding requirement rather than proving weak operations. A more "
                         "constructive rating still requires those comparisons to persist, "
                         "the investment funding path to remain supportable and stronger "
-                        "technical or benchmarked valuation support."
+                        "verified technical or benchmarked valuation support."
                     )
                 else:
                     cash_context = (
@@ -1052,7 +1084,7 @@ class _ClaimBuilder:
                         "not establish durability or cause; negative FCF remains evidence "
                         "of weak cash conversion. A more "
                         "constructive rating still requires those comparisons to persist, "
-                        "cash conversion to improve and stronger technical or benchmarked "
+                        "cash conversion to improve and stronger verified technical or benchmarked "
                         "valuation support."
                     )
             elif fcf_value == 0:
@@ -1061,14 +1093,14 @@ class _ClaimBuilder:
                     "not establish durability, cause or positive cash conversion. A more "
                     "constructive rating "
                     "still requires those comparisons to persist, cash conversion to "
-                    "improve and stronger technical or benchmarked valuation support."
+                    "improve and stronger verified technical or benchmarked valuation support."
                 )
             elif fcf_value is not None:
                 cash_context = (
                     "this records aligned current-period direction, scale and positive "
                     "cash generation, but does not establish durability or cause. A more "
                     "constructive rating still requires those "
-                    "comparisons to persist and stronger technical or benchmarked "
+                    "comparisons to persist and stronger verified technical or benchmarked "
                     "valuation support."
                 )
             else:
@@ -1077,7 +1109,7 @@ class _ClaimBuilder:
                     "not establish durability or cause; FCF is unavailable and cannot "
                     "support a cash-conversion conclusion. "
                     "A more constructive rating still requires those comparisons to "
-                    "persist, cash-conversion evidence and stronger technical or "
+                    "persist, cash-conversion evidence and stronger verified technical or "
                     "benchmarked valuation support."
                 )
             if not growth_divergence and not growth_declines:
@@ -1132,15 +1164,15 @@ class _ClaimBuilder:
                     "The bull case uses revenue of "
                     f"{self._money(self.metrics.fundamentals.revenue_ttm)} as scale "
                     f"evidence. {cash_context}; a more constructive rating requires "
-                    "comparable current-period evidence or technical confirmation."
+                    "comparable current-period evidence or verified technical confirmation."
                 )
             else:
                 bull_text = (
                     "The bull case combines revenue of "
                     f"{self._money(self.metrics.fundamentals.revenue_ttm)} with FCF of "
                     f"{self._money(fcf_value)}. {cash_context}; a more constructive "
-                    "rating requires comparable current-period evidence or technical "
-                    "confirmation."
+                    "rating requires comparable current-period evidence or verified "
+                    "technical confirmation."
                 )
         bull_metrics = ["revenue_ttm"]
         if self.metrics.fundamentals.free_cash_flow_ttm is not None:
@@ -1163,11 +1195,23 @@ class _ClaimBuilder:
             implication="The bull case remains a research scenario, not an action plan.",
             additional_evidence=bull_additional_evidence,
         )
+        technical_bull_text = (
+            f"A constructive technical bull path for {ticker} requires "
+            f"confirmation beyond the current RSI of {_number(self.metrics.technical.rsi_14)} "
+            "and moving-average setup."
+            if technical_basis_verified
+            else (
+                f"No constructive technical bull path is activated for {ticker}. "
+                f"The current RSI of {_number(self.metrics.technical.rsi_14)} and "
+                "moving-average observations remain unscored until the "
+                "corporate-action adjustment is confirmed."
+            )
+        )
         self.add(
             "Bull Case",
             "bull",
             "technical_metric",
-            f"A constructive technical bull path for {ticker} requires confirmation beyond the current RSI of {_number(self.metrics.technical.rsi_14)} and moving-average setup.",
+            technical_bull_text,
             ["rsi_14", "sma_50", "sma_200", "close"],
             "medium",
             "medium",
@@ -1249,22 +1293,41 @@ class _ClaimBuilder:
                 ),
                 additional_evidence=bear_additional_evidence,
             )
-        self.add(
-            "Catalysts & Triggers",
-            "catalyst",
-            "technical_metric",
+        technical_reference_text = (
             (
                 "The validated technical reference levels are 50-SMA "
                 f"{self._money(self.metrics.technical.sma_50)} and 200-SMA "
                 f"{self._money(self.metrics.technical.sma_200)}. No separate "
                 "evidence-backed price target is present in the packet."
-            ),
+            )
+            if technical_basis_verified
+            else (
+                "The raw moving-average observations are 50-SMA "
+                f"{self._money(self.metrics.technical.sma_50)} and 200-SMA "
+                f"{self._money(self.metrics.technical.sma_200)}. They are not "
+                "validated support, resistance, risk or trigger levels because "
+                "corporate-action adjustment is not confirmed. No separate "
+                "evidence-backed price target is present in the packet."
+            )
+        )
+        self.add(
+            "Catalysts & Triggers",
+            "catalyst",
+            "technical_metric",
+            technical_reference_text,
             ["sma_50", "sma_200"],
             "medium",
             "medium",
             implication=(
-                "Treat these moving averages as reference levels, not as "
-                "standalone price targets."
+                (
+                    "Treat these moving averages as reference levels, not as "
+                    "standalone price targets."
+                )
+                if technical_basis_verified
+                else (
+                    "Withhold technical trigger language until the price-series "
+                    "basis is confirmed."
+                )
             ),
         )
 
@@ -1419,10 +1482,19 @@ class _ClaimBuilder:
         counterargument: Optional[str] = None,
         implication: Optional[str] = None,
         additional_evidence: Optional[list[EvidenceItem]] = None,
+        metric_values: Optional[Mapping[str, float]] = None,
     ) -> None:
-        if any(self._metric_value(metric) is None for metric in metrics):
+        resolved_metric_values = {
+            metric: (
+                float(metric_values[metric])
+                if metric_values is not None and metric in metric_values
+                else self._metric_value(metric)
+            )
+            for metric in metrics
+        }
+        if any(value is None for value in resolved_metric_values.values()):
             return
-        evidence = self._evidence_for(metrics)
+        evidence = self._evidence_for(metrics, resolved_metric_values)
         if not evidence:
             return
         evidence.extend(
@@ -1445,8 +1517,8 @@ class _ClaimBuilder:
                 metric_refs=metrics,
                 metric_values={
                     metric: value
-                    for metric in metrics
-                    if (value := self._metric_value(metric)) is not None
+                    for metric, value in resolved_metric_values.items()
+                    if value is not None
                 },
                 evidence_ids=[item.evidence_id for item in evidence],
                 source_ids=list(dict.fromkeys(item.source_id for item in evidence)),
@@ -1507,10 +1579,21 @@ class _ClaimBuilder:
     def _money(self, value: Optional[float]) -> str:
         return _money(value, currency=self.data_packet.price_basis.currency)
 
-    def _evidence_for(self, metrics: list[str]) -> list[EvidenceItem]:
+    def _evidence_for(
+        self,
+        metrics: list[str],
+        expected_values: Optional[Mapping[str, Optional[float]]] = None,
+    ) -> list[EvidenceItem]:
         matched: list[EvidenceItem] = []
         for metric in metrics:
-            metric_evidence = self._compatible_evidence_for_metric(metric)
+            metric_evidence = self._compatible_evidence_for_metric(
+                metric,
+                expected_value=(
+                    expected_values.get(metric)
+                    if expected_values is not None
+                    else None
+                ),
+            )
             if not metric_evidence:
                 return []
             matched.extend(metric_evidence)
@@ -1522,8 +1605,11 @@ class _ClaimBuilder:
     def _compatible_evidence_for_metric(
         self,
         metric_name: str,
+        *,
+        expected_value: Optional[float] = None,
     ) -> list[EvidenceItem]:
-        expected_value = self._metric_value(metric_name)
+        if expected_value is None:
+            expected_value = self._metric_value(metric_name)
         if expected_value is None:
             return []
         expected_unit = unit_for_metric(
@@ -1780,14 +1866,11 @@ def _yoy_change_phrase(label: str, value: float) -> str:
 
 def _technical_interpretation(metrics: MetricsPacket) -> str:
     trend_state = classify_technical_trend(metrics)
-    verified_basis = metrics.technical.price_series_basis in {
-        "corporate_action_adjusted",
-        "post_corporate_action_only",
-    }
-    if not verified_basis and trend_state != "not_measured":
+    if not _technical_basis_is_scoreable(metrics):
         return (
-            f"a provisional {trend_state} long-term trend state from a price "
-            "series whose corporate-action adjustment is not confirmed"
+            "unscored raw moving-average observations; no bullish or bearish "
+            "technical conclusion is activated because corporate-action "
+            "adjustment is not confirmed"
         )
     if trend_state == "bullish":
         return "a bullish long-term trend state"
@@ -1808,9 +1891,13 @@ def _technical_basis_sentence(metrics: MetricsPacket) -> str:
             "longer-horizon comparisons remain limited."
         )
     return (
-        "Corporate-action adjustment is not confirmed, so the direction is "
-        "provisional timing context only."
+        "Corporate-action adjustment is not confirmed, so no directional "
+        "conclusion or numeric policy level is activated."
     )
+
+
+def _technical_basis_is_scoreable(metrics: MetricsPacket) -> bool:
+    return metrics.technical.price_series_basis in TECHNICAL_SCORING_BASES
 
 
 def _risk_coverage_sentence(coverage_ratio: float) -> str:
@@ -2479,14 +2566,36 @@ def _core_rating_evidence_text(metrics: MetricsPacket, currency: str) -> str:
 
 
 def _final_rating_counterargument(preferred: str, metrics: MetricsPacket) -> str:
+    technical = (
+        "technical confirmation"
+        if _technical_basis_is_scoreable(metrics)
+        else "verified corporate-action-adjusted technical confirmation"
+    )
     if preferred in {"Accumulate", "Buy"}:
-        return "A more bearish rating would require evidence that cash generation or technical confirmation has deteriorated."
+        return (
+            "A more bearish rating would require evidence that cash generation "
+            f"or {technical} has deteriorated."
+        )
     if preferred in {"Tactical Trim", "Tactical Underweight", "Underweight"}:
-        return "A more bullish rating would require current-period KPI acceleration, technical confirmation and benchmarked valuation evidence."
-    return "A more bullish rating needs current-period or technical confirmation and benchmarked valuation evidence; a more bearish rating needs deteriorating fundamentals or unresolved data errors."
+        return (
+            "A more bullish rating would require current-period KPI acceleration, "
+            f"{technical} and benchmarked valuation evidence."
+        )
+    return (
+        "A more bullish rating needs current-period evidence or "
+        f"{technical} plus benchmarked valuation evidence; a more bearish rating "
+        "needs deteriorating fundamentals or unresolved data errors."
+    )
 
 
 def _final_rating_implication(ticker: str, preferred: str, metrics: MetricsPacket) -> str:
+    if not _technical_basis_is_scoreable(metrics):
+        return (
+            f"Reassess the {preferred} research stance for {ticker} only when new "
+            "fundamental, calibrated valuation or issuer-risk evidence changes; "
+            "technical timing remains unavailable until the price-series basis "
+            "is confirmed."
+        )
     if preferred == "Accumulate":
         return f"An Accumulate research stance for {ticker} requires confirmed KPI and technical evidence."
     if preferred in {"Tactical Trim", "Tactical Underweight"}:
@@ -3021,6 +3130,10 @@ def _issuer_operating_result_specs(
                         "of capital expenditure."
                     ),
                     "metrics": ["operating_cash_flow", "capex"],
+                    "metric_values": {
+                        "operating_cash_flow": operating_cash_flow.value,
+                        "capex": capex.value,
+                    },
                     "counterargument": (
                         "Year-to-date cash flow can be seasonal and is not the same "
                         "measurement window as TTM free cash flow."

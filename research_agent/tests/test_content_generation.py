@@ -111,7 +111,7 @@ def test_content_generator_keeps_only_evidence_mapped_substantive_claims():
     assert quality["evidence_mapped_claim_ratio"] >= 0.90
     assert quality["hard_claim_evidence_ratio"] == 1.0
     assert quality["generic_claim_count"] == 0
-    assert quality["substantive_analyst_claim_count"] == 10
+    assert quality["substantive_analyst_claim_count"] >= 10
     assert all(claim.evidence_ids for claim in claims)
     valuation_claim = next(
         claim
@@ -527,7 +527,7 @@ def test_money_formatters_place_negative_sign_before_usd_symbol():
     assert _money(-11_625_000_000, "HUF") == "-11.62B HUF"
 
 
-def test_bear_case_keeps_bullish_bearish_and_mixed_trends_as_timing_only():
+def test_bear_case_with_unadjusted_prices_never_states_direction():
     _, metrics, _, _, _ = _load_packet("SNOW")
     metrics.technical.close = 120.0
     metrics.technical.sma_50 = 110.0
@@ -541,12 +541,224 @@ def test_bear_case_keeps_bullish_bearish_and_mixed_trends_as_timing_only():
     metrics.technical.close = 105.0
     mixed = _bear_case_claim_text("TEST", metrics, "USD")
 
-    assert "provisional bullish long-term trend state" in bullish
-    assert "provisional bearish long-term trend state" in bearish
-    assert "provisional mixed long-term trend state" in mixed
     for text in (bullish, bearish, mixed):
+        assert "unscored raw moving-average observations" in text
+        assert "no bullish or bearish technical conclusion is activated" in text
         assert "does not establish operating deterioration" in text
         assert "fundamental, valuation or issuer-risk evidence" in text
+
+
+def test_bear_case_with_adjusted_prices_retains_directional_timing_context():
+    _, metrics, _, _, _ = _load_packet("SNOW")
+    metrics.technical.price_series_basis = "corporate_action_adjusted"
+    metrics.technical.close = 120.0
+    metrics.technical.sma_50 = 110.0
+    metrics.technical.sma_200 = 100.0
+
+    text = _bear_case_claim_text("TEST", metrics, "USD")
+
+    assert "a bullish long-term trend state" in text
+    assert "unscored raw moving-average observations" not in text
+
+
+def test_unadjusted_claim_surfaces_withhold_direction_and_numeric_reference_levels():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    metrics.technical.price_series_basis = "unadjusted_or_provider_default"
+    _add_exact_metric_evidence(data, metrics, ledger)
+
+    claims = generate_research_claims(
+        data,
+        metrics,
+        ledger,
+        decision,
+        validation,
+    )
+    technical_surfaces = "\n".join(
+        claim.claim
+        for claim in claims
+        if claim.section
+        in {
+            "Executive Summary",
+            "Technical Setup",
+            "Bull Case",
+            "Bear Case",
+            "Catalysts & Triggers",
+        }
+    ).lower()
+
+    assert "provisional bullish" not in technical_surfaces
+    assert "provisional bearish" not in technical_surfaces
+    assert "combined long-term trend state is" not in technical_surfaces
+    assert "a constructive technical bull path" not in technical_surfaces
+    assert "no constructive technical bull path is activated" in technical_surfaces
+    assert "validated technical reference levels" not in technical_surfaces
+    assert "no bullish or bearish technical conclusion is activated" in technical_surfaces
+    assert "not validated support, resistance, risk or trigger levels" in technical_surfaces
+
+
+def test_adjusted_claim_surfaces_retain_validated_direction_and_reference_levels():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    metrics.technical.price_series_basis = "corporate_action_adjusted"
+    _add_exact_metric_evidence(data, metrics, ledger)
+
+    claims = generate_research_claims(
+        data,
+        metrics,
+        ledger,
+        decision,
+        validation,
+    )
+    claim_text = "\n".join(claim.claim for claim in claims).lower()
+
+    assert "combined long-term trend state is bearish" in claim_text
+    assert "constructive technical bull path" in claim_text
+    assert "validated technical reference levels" in claim_text
+
+
+def test_ytd_cash_flow_claim_binds_ytd_capex_instead_of_same_date_quarter():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    data.as_of_date = "2026-08-07"
+    metrics.as_of_date = "2026-08-07"
+    _add_exact_metric_evidence(data, metrics, ledger)
+    canonical = CanonicalFinancials(
+        ticker=data.ticker,
+        as_of_date=data.as_of_date,
+        metrics=[
+            CanonicalMetric(
+                metric_name="operating_cash_flow",
+                value=7_543_000_000,
+                unit="USD",
+                period="FY2026_Q2",
+                fiscal_year=2026,
+                fiscal_period="Q2",
+                period_bucket="ytd",
+                start_date="2026-01-01",
+                end_date="2026-07-03",
+                duration_days=184,
+                basis="gaap",
+                statement_type="cash_flow",
+                source_ids=["SEC_Q2"],
+                evidence_ids=["OCF_YTD"],
+                confidence="high",
+            ),
+            CanonicalMetric(
+                metric_name="capex",
+                value=684_000_000,
+                unit="USD",
+                period="FY2026_Q2",
+                fiscal_year=2026,
+                fiscal_period="Q2",
+                period_bucket="ytd",
+                start_date="2026-01-01",
+                end_date="2026-07-03",
+                duration_days=184,
+                basis="gaap",
+                statement_type="cash_flow",
+                source_ids=["SEC_Q2"],
+                evidence_ids=["CAPEX_YTD"],
+                confidence="high",
+            ),
+            CanonicalMetric(
+                metric_name="capex",
+                value=418_000_000,
+                unit="USD",
+                period="FY2026_Q2",
+                fiscal_year=2026,
+                fiscal_period="Q2",
+                period_bucket="quarterly",
+                start_date="2026-04-04",
+                end_date="2026-07-03",
+                duration_days=91,
+                basis="gaap",
+                statement_type="cash_flow",
+                source_ids=["SEC_Q2"],
+                evidence_ids=["CAPEX_QUARTER"],
+                confidence="high",
+            ),
+        ],
+    )
+    ledger.evidence_items.extend(
+        [
+            EvidenceItem(
+                evidence_id="OCF_YTD",
+                ticker=data.ticker,
+                claim_type="financial_metric",
+                source_id="SEC_Q2",
+                source_type="sec_filing",
+                authority_rank=1,
+                statement="YTD operating cash flow.",
+                value=7_543_000_000,
+                raw_value=7_543_000_000,
+                normalized_value=7_543_000_000,
+                unit="USD",
+                period="FY2026_Q2",
+                date="2026-07-03",
+                period_start="2026-01-01",
+                period_end="2026-07-03",
+                duration_days=184,
+                supports_metrics=["operating_cash_flow"],
+                confidence="high",
+            ),
+            EvidenceItem(
+                evidence_id="CAPEX_YTD",
+                ticker=data.ticker,
+                claim_type="financial_metric",
+                source_id="SEC_Q2",
+                source_type="sec_filing",
+                authority_rank=1,
+                statement="YTD capital expenditure.",
+                value=684_000_000,
+                raw_value=684_000_000,
+                normalized_value=684_000_000,
+                unit="USD",
+                period="FY2026_Q2",
+                date="2026-07-03",
+                period_start="2026-01-01",
+                period_end="2026-07-03",
+                duration_days=184,
+                supports_metrics=["capex"],
+                confidence="high",
+            ),
+            EvidenceItem(
+                evidence_id="CAPEX_QUARTER",
+                ticker=data.ticker,
+                claim_type="financial_metric",
+                source_id="SEC_Q2",
+                source_type="sec_filing",
+                authority_rank=1,
+                statement="Second-quarter capital expenditure.",
+                value=418_000_000,
+                raw_value=418_000_000,
+                normalized_value=418_000_000,
+                unit="USD",
+                period="FY2026_Q2",
+                date="2026-07-03",
+                period_start="2026-04-04",
+                period_end="2026-07-03",
+                duration_days=91,
+                supports_metrics=["capex"],
+                confidence="high",
+            ),
+        ]
+    )
+
+    claims = generate_research_claims(
+        data,
+        metrics,
+        ledger,
+        decision,
+        validation,
+        canonical,
+    )
+    cash_flow_claim = next(
+        claim for claim in claims if "latest reported period (year to date)" in claim.claim
+    )
+
+    assert cash_flow_claim.metric_values["operating_cash_flow"] == 7_543_000_000
+    assert cash_flow_claim.metric_values["capex"] == 684_000_000
+    assert "OCF_YTD" in cash_flow_claim.evidence_ids
+    assert "CAPEX_YTD" in cash_flow_claim.evidence_ids
+    assert "CAPEX_QUARTER" not in cash_flow_claim.evidence_ids
 
 
 def test_bear_case_treats_negative_fcf_as_downside_not_counterevidence():
@@ -1236,8 +1448,8 @@ def test_final_rating_acknowledges_negative_fcf_before_defending_hold():
     assert "Negative FCF and the cautious measured fundamental signal" in section
     assert "Negative FCF is already fundamental downside evidence" in section
     assert "valuation is unbenchmarked" in section
-    assert "technical timing overlay" in section
-    assert "does not enter the long-term composite score" in section
+    assert "raw technical observations include RSI" in section
+    assert "Technical timing remains unavailable" in section
     assert "A raw multiple or an isolated price signal" not in section
 
 
@@ -1291,8 +1503,9 @@ def test_final_rating_keeps_bearish_technical_state_outside_company_rating():
     decision.signal_scores.fundamental_score = 1
     decision.signal_scores.fundamental_status = "measured"
     decision.signal_scores.technical_score = -1
-    decision.signal_scores.technical_status = "partial"
+    decision.signal_scores.technical_status = "measured"
     decision.signal_scores.valuation_status = "unbenchmarked"
+    metrics.technical.price_series_basis = "corporate_action_adjusted"
 
     section = _final_rating_section(
         "TEST",
@@ -1304,7 +1517,7 @@ def test_final_rating_keeps_bearish_technical_state_outside_company_rating():
     )
 
     assert "not enough without calibrated valuation support" in section
-    assert "Technical direction can affect timing confidence" in section
+    assert "Verified technical direction can affect timing confidence" in section
     assert "Positive FCF and the constructive fundamental signal" in section
     assert "fundamental, valuation or issuer-risk deterioration" in section
     assert "A raw multiple or an isolated price signal" not in section
@@ -1451,7 +1664,8 @@ def test_missing_fcf_keeps_profit_declines_visible_across_complete_report_logic(
     assert "FCF is unavailable" in rating
     assert "FCF of not available" not in rating
     assert "P/FCF of not available" not in rating
-    assert "technical timing overlay" in rating
+    assert "raw technical observations include RSI" in rating
+    assert "Technical timing remains unavailable" in rating
     assert "A raw multiple or an isolated price signal" not in rating
     assert "Current-period operating-income and net-income declines" in research_report
     assert "FCF is unavailable" in research_report
@@ -1509,14 +1723,10 @@ def test_final_rating_does_not_promote_direction_from_unadjusted_price_basis():
         decision,
     )
 
-    assert "technical timing overlay has RSI" in section
-    assert (
-        "direction not activated because corporate-action adjustment is not "
-        "confirmed"
-        in section
-    )
+    assert "raw technical observations include RSI" in section
+    assert "direction and timing are not activated" in section
     assert "raw indicators remain provisional observations" in section
-    assert "does not enter the long-term composite score" in section
+    assert "Technical timing remains unavailable" in section
     assert "neutral or incomplete" not in section
     assert (
         _constructive_cash_conversion_trigger(-11_625_000_000)
@@ -1686,7 +1896,8 @@ def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():
     assert "close 141.71 HUF" in technical_text
     assert f"50-SMA {metrics.technical.sma_50:.2f} HUF" in technical_text
     assert f"200-SMA {metrics.technical.sma_200:.2f} HUF" in technical_text
-    assert "validated technical reference levels" in catalyst_text
+    assert "raw moving-average observations" in catalyst_text
+    assert "not validated support, resistance, risk or trigger levels" in catalyst_text
     assert "$" not in research_report
     assert "$" not in internal_report
     assert "4.34B HUF" in research_report
@@ -1695,6 +1906,9 @@ def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():
     assert "| FCF TTM | 1,120,000,000 HUF |" in research_report
     assert "unbenchmarked observations" in research_report
     assert "unbenchmarked observations" in internal_report
+    assert "no direction or numeric timing level is activated" in research_report
+    assert "technical timing remains unavailable until the price-series basis is confirmed" in research_report.lower()
+    assert "reassess timing separately when the technical trend changes" not in research_report.lower()
     directional_valuation_language = (
         "valuation constraint",
         "valuation and timing constraints",

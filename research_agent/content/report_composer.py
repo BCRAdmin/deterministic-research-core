@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Iterable, Optional
 
 from research_agent.decision.decision_packet import DecisionPacket
+from research_agent.decision.signal_scores import TECHNICAL_SCORING_BASES
 from research_agent.evidence.evidence_ledger import EvidenceLedger
 from research_agent.research_core.models.claims import ResearchClaim
 from research_agent.research_core.models.data_packet import DataPacket
@@ -262,10 +263,16 @@ def _render_investment_thesis(
                 f"- Valuation observation: EV/Sales is `{ev_sales:.2f}x`, but "
                 "valuation is not sufficiently measured to affect the rating."
             )
-    parts.append(
-        f"- Technical boundary: status is `{technical_status}` and may inform "
-        "timing, but it cannot create or block the long-term company rating."
-    )
+    if metrics_packet.technical.price_series_basis in TECHNICAL_SCORING_BASES:
+        parts.append(
+            f"- Technical boundary: status is `{technical_status}` and may inform "
+            "timing, but it cannot create or block the long-term company rating."
+        )
+    else:
+        parts.append(
+            f"- Technical boundary: status is `{technical_status}`; raw indicators "
+            "cannot inform timing until the price-series adjustment is confirmed."
+        )
     parts.append(
         f"- Research implication: the stance for `{data_packet.ticker}` remains "
         "conditional on business evidence, valuation calibration and issuer risk."
@@ -306,11 +313,32 @@ def _render_scenario_view(
             ]
         )
         return "\n".join(lines)
+    technical_basis_verified = (
+        metrics_packet.technical.price_series_basis in TECHNICAL_SCORING_BASES
+    )
+    bull_condition = (
+        "- Bull case: become more constructive only if fundamentals and "
+        "verified technical confirmation improve."
+        if technical_basis_verified
+        else (
+            "- Bull case: become more constructive only if fundamentals improve; "
+            "technical confirmation first requires a confirmed price-series basis."
+        )
+    )
+    bear_condition = (
+        "- Bear case: become more defensive only if new blocking evidence or "
+        "a verified trend deterioration appears."
+        if technical_basis_verified
+        else (
+            "- Bear case: become more defensive only if new fundamental, "
+            "valuation or issuer-risk downside evidence appears."
+        )
+    )
     return "\n".join(
         [
             f"- Base case: `{preferred}` is the appropriate current stance.",
-            "- Bull case: become more constructive only if fundamentals and technical confirmation improve.",
-            "- Bear case: become more defensive only if new blocking evidence or trend deterioration appears.",
+            bull_condition,
+            bear_condition,
         ]
     )
 
@@ -336,6 +364,7 @@ def _render_final_rating_logic(
     t = metrics_packet.technical
     currency = data_packet.price_basis.currency
     scores = decision_packet.signal_scores
+    technical_basis_verified = t.price_series_basis in TECHNICAL_SCORING_BASES
     rating_reason = (
         decision_packet.analytical_rating_reason
         or decision_packet.rating_permission.reason
@@ -454,27 +483,56 @@ def _render_final_rating_logic(
             "corroborated by weaker cash conversion."
         )
     else:
-        why_not_constructive = (
-            "- Why not more constructive? A rating change requires stronger measured "
-            "fundamentals or technical confirmation and, where valuation is relevant, "
-            "benchmark evidence."
-        )
+        if technical_basis_verified:
+            why_not_constructive = (
+                "- Why not more constructive? A rating change requires stronger measured "
+                "fundamentals or verified technical confirmation and, where valuation "
+                "is relevant, benchmark evidence."
+            )
+        else:
+            why_not_constructive = (
+                "- Why not more constructive? A rating change requires stronger "
+                "measured fundamentals and, where valuation is relevant, benchmark "
+                "evidence. Technical confirmation is unavailable until the "
+                "price-series basis is confirmed."
+            )
         why_not_cautious = (
             "- Why not more cautious? A raw multiple or an isolated price signal "
             "cannot establish business deterioration."
         )
+    technical_context = (
+        f"- Technical context: RSI is `{_fmt_number(t.rsi_14)}`; technicals are "
+        "a separate timing overlay and do not enter the long-term composite score."
+        if technical_basis_verified
+        else (
+            f"- Technical context: raw RSI is `{_fmt_number(t.rsi_14)}`; no "
+            "direction or numeric timing level is activated because the "
+            "price-series adjustment is not confirmed."
+        )
+    )
+    review_condition = (
+        f"- Review condition: retain `{data_packet.ticker}` at `{preferred}` while "
+        "the measured evidence state is unchanged; reassess the company rating "
+        "only when new primary evidence changes fundamentals, calibrated valuation "
+        "or issuer risk, and reassess timing separately when the verified technical "
+        "trend changes."
+        if technical_basis_verified
+        else (
+            f"- Review condition: retain `{data_packet.ticker}` at `{preferred}` while "
+            "the measured evidence state is unchanged; reassess the company rating "
+            "only when new primary evidence changes fundamentals, calibrated valuation "
+            "or issuer risk. Technical timing remains unavailable until the "
+            "price-series basis is confirmed."
+        )
+    )
     lines = [
         f"- Why this rating? `{preferred}`: {rating_reason}",
         f"- Fundamental anchors: revenue is `{_fmt_money(f.revenue_ttm, currency)}` and FCF is `{_fmt_money(f.free_cash_flow_ttm, currency)}`.",
         valuation_line,
-        f"- Technical context: RSI is `{_fmt_number(t.rsi_14)}`; technicals are "
-        "a separate timing overlay and do not enter the long-term composite score.",
+        technical_context,
         why_not_constructive,
         why_not_cautious,
-        f"- Review condition: retain `{data_packet.ticker}` at `{preferred}` while "
-        "the measured evidence state is unchanged; reassess the company rating "
-        "only when new primary evidence changes fundamentals, calibrated valuation "
-        "or issuer risk, and reassess timing separately when the technical trend changes.",
+        review_condition,
     ]
     return "\n".join(lines)
 

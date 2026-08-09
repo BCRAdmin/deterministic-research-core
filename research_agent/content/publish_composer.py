@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Iterable
 
 from research_agent.decision.decision_packet import DecisionPacket
+from research_agent.decision.signal_scores import TECHNICAL_SCORING_BASES
 from research_agent.evidence.evidence_ledger import EvidenceLedger
 from research_agent.research_core.models.claims import ResearchClaim
 from research_agent.research_core.models.data_packet import DataPacket
@@ -1007,6 +1008,7 @@ def _final_rating_section(
     currency: str = "USD",
 ) -> str:
     scores = decision_packet.signal_scores
+    technical_basis_verified = t.price_series_basis in TECHNICAL_SCORING_BASES
     rating_reason = (
         decision_packet.analytical_rating_reason
         or decision_packet.rating_permission.reason
@@ -1204,9 +1206,18 @@ def _final_rating_section(
         and scores.fundamental_score > 0
     ):
         why_not_constructive = (
-            "Why not more constructive? Constructive fundamentals and positive FCF "
-            "are not enough without calibrated valuation support. Technical "
-            "direction can affect timing confidence but not the company rating."
+            (
+                "Why not more constructive? Constructive fundamentals and positive "
+                "FCF are not enough without calibrated valuation support. Verified "
+                "technical direction can affect timing confidence but not the "
+                "company rating."
+            )
+            if technical_basis_verified
+            else (
+                "Why not more constructive? Constructive fundamentals and positive "
+                "FCF are not enough without calibrated valuation support. Technical "
+                "timing is unavailable until the price-series basis is confirmed."
+            )
         )
         why_not_cautious = (
             "Why not more cautious? Positive FCF and the constructive fundamental "
@@ -1215,9 +1226,18 @@ def _final_rating_section(
         )
     else:
         why_not_constructive = (
-            "Why not more constructive? A rating change requires stronger measured "
-            "fundamentals and calibrated valuation support. Technical confirmation "
-            "can improve timing confidence but cannot change the company rating."
+            (
+                "Why not more constructive? A rating change requires stronger "
+                "measured fundamentals and calibrated valuation support. Verified "
+                "technical confirmation can improve timing confidence but cannot "
+                "change the company rating."
+            )
+            if technical_basis_verified
+            else (
+                "Why not more constructive? A rating change requires stronger "
+                "measured fundamentals and calibrated valuation support. Technical "
+                "timing is unavailable until the price-series basis is confirmed."
+            )
         )
         why_not_cautious = (
             "Why not more cautious? A raw multiple or an isolated price signal cannot "
@@ -1228,25 +1248,41 @@ def _final_rating_section(
         if f.free_cash_flow_ttm is not None
         else "FCF unavailable"
     )
+    technical_anchor = (
+        f"Separately, the verified technical timing overlay has RSI of "
+        f"{_fmt_number(t.rsi_14)} and direction {technical_text}; it does not "
+        "enter the long-term composite score."
+        if technical_basis_verified
+        else (
+            f"Separately, raw technical observations include RSI of "
+            f"{_fmt_number(t.rsi_14)}; direction and timing are {technical_text}."
+        )
+    )
+    review_condition = (
+        f"Review condition: retain the {ticker} research rating while the measured "
+        "evidence state is unchanged. Reassess only when new primary evidence "
+        "changes fundamentals, calibrated valuation or issuer risk; reassess "
+        "timing separately when the verified technical trend changes."
+        if technical_basis_verified
+        else (
+            f"Review condition: retain the {ticker} research rating while the "
+            "measured evidence state is unchanged. Reassess only when new primary "
+            "evidence changes fundamentals, calibrated valuation or issuer risk. "
+            "Technical timing remains unavailable until the price-series basis is "
+            "confirmed."
+        )
+    )
     return "\n\n".join(
         [
             f"Final Rating: {rating}. {rating_reason}",
             (
                 f"Factual anchors are revenue of {_fmt_money(f.revenue_ttm, currency)}, "
-                f"{fcf_anchor}. Separately, the technical timing overlay has RSI "
-                f"of {_fmt_number(t.rsi_14)} and direction {technical_text}; it "
-                "does not enter the long-term composite score."
+                f"{fcf_anchor}. {technical_anchor}"
             ),
             valuation_text,
             why_not_constructive,
             why_not_cautious,
-            (
-                f"Review condition: retain the {ticker} research rating while "
-                "the measured evidence state is unchanged. Reassess only when "
-                "new primary evidence changes fundamentals, calibrated valuation "
-                "or issuer risk; reassess timing separately when the technical "
-                "trend changes."
-            ),
+            review_condition,
         ]
     )
 
