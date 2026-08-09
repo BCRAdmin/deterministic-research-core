@@ -274,6 +274,30 @@ def test_orphan_outcome_is_reported_instead_of_silently_ignored():
     assert readiness.invalid_outcome_reasons["matured_outcome_missing"] == 1
 
 
+def test_same_issuer_date_cannot_be_counted_twice_across_pipeline_replays():
+    first = _snapshot()
+    second = first.model_copy(
+        update={
+            "snapshot_id": "sha256:" + "e" * 64,
+            "capture_mode": "retrospective_replay",
+            "base_snapshot_id": first.snapshot_id,
+            "retrospective_replay_manifest_sha256": HASH,
+        }
+    )
+
+    readiness = assess_valuation_calibration_readiness(
+        [first, second], [_outcome(first), _outcome(second)]
+    )
+
+    assert readiness.valid_matured_outcome_count == 0
+    assert readiness.excluded_snapshot_reasons == {"duplicate_snapshot_observation": 2}
+    assert readiness.invalid_outcome_reasons == {"outcome_snapshot_not_eligible": 2}
+    assert readiness.capture_mode_counts == {
+        "contemporaneous": 1,
+        "retrospective_replay": 1,
+    }
+
+
 def test_sufficient_diverse_sample_enters_shadow_only():
     sectors = ["Industrials", "Technology", "Healthcare", "Consumer", "Energy"]
     snapshots = []

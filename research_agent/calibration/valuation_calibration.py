@@ -18,6 +18,7 @@ VALUATION_CALIBRATION_SCHEMA = "room16.valuation_calibration_snapshot@1"
 VALUATION_SOURCE_BUNDLE_SCHEMA = "room16.valuation_calibration_source_bundle@1"
 VALUATION_OUTCOME_SCHEMA = "room16.valuation_calibration_outcome@1"
 VALUATION_READINESS_SCHEMA = "room16.valuation_calibration_readiness@1"
+VALUATION_REPLAY_SCHEMA = "room16.valuation_calibration_replay@1"
 VALUATION_OUTCOME_CALC_VERSION = "valuation-calibration-outcome-v1"
 VALUATION_CALIBRATION_HORIZON_TRADING_DAYS = 252
 MIN_EFFECTIVE_SAMPLES = 75
@@ -47,6 +48,9 @@ class ValuationCalibrationSnapshot(BaseModel):
     bull_upside: Optional[float] = None
     metrics_packet_sha256: str
     authority_manifest_sha256: Optional[str] = None
+    capture_mode: Literal["contemporaneous", "retrospective_replay"] = "contemporaneous"
+    base_snapshot_id: Optional[str] = None
+    retrospective_replay_manifest_sha256: Optional[str] = None
     eligible: bool
     exclusion_reasons: list[str] = Field(default_factory=list)
 
@@ -111,6 +115,30 @@ class ValuationCalibrationSourceBundle(BaseModel):
     source_bundle_sha256: Optional[str] = None
 
 
+class RetrospectiveReplayArtifact(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+
+    path: str
+    sha256: str
+
+
+class ValuationCalibrationReplayManifest(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+
+    schema_id: str = VALUATION_REPLAY_SCHEMA
+    replay_id: str
+    ticker: str
+    as_of_date: str
+    generated_at: str
+    replay_mode: Literal["historical_point_in_time"] = "historical_point_in_time"
+    publication_allowed: Literal[False] = False
+    pipeline_commit_sha: str
+    source_cutoff_passed: bool
+    cutoff_counts: dict[str, int]
+    artifacts: dict[str, RetrospectiveReplayArtifact]
+    replay_manifest_sha256: Optional[str] = None
+
+
 class ValuationCalibrationReadiness(BaseModel):
     schema_id: str = VALUATION_READINESS_SCHEMA
     status: Literal["not_ready", "shadow_ready"]
@@ -120,6 +148,7 @@ class ValuationCalibrationReadiness(BaseModel):
     effective_sample_count: int
     unique_issuer_count: int
     sector_count: int
+    capture_mode_counts: dict[str, int] = Field(default_factory=dict)
     excluded_snapshot_reasons: dict[str, int] = Field(default_factory=dict)
     invalid_outcome_reasons: dict[str, int] = Field(default_factory=dict)
     readiness_reasons: list[str] = Field(default_factory=list)
@@ -236,10 +265,22 @@ def assess_valuation_calibration_readiness(
     duplicate_snapshot_count = sum(count for count in snapshot_id_counts.values() if count > 1)
     if duplicate_snapshot_count:
         excluded_reasons["duplicate_snapshot_id"] += duplicate_snapshot_count
+    observation_key_counts = Counter(
+        (snapshot.ticker, snapshot.as_of_date, snapshot.price_basis_date) for snapshot in snapshots
+    )
+    duplicate_observation_count = sum(
+        count for count in observation_key_counts.values() if count > 1
+    )
+    if duplicate_observation_count:
+        excluded_reasons["duplicate_snapshot_observation"] += duplicate_observation_count
     snapshots_by_id = {
         snapshot.snapshot_id: snapshot
         for snapshot in eligible
         if snapshot_id_counts[snapshot.snapshot_id] == 1
+        and observation_key_counts[
+            (snapshot.ticker, snapshot.as_of_date, snapshot.price_basis_date)
+        ]
+        == 1
     }
     outcomes_by_snapshot: dict[str, list[ValuationCalibrationOutcome]] = defaultdict(list)
     for outcome in outcomes:
@@ -289,11 +330,14 @@ def assess_valuation_calibration_readiness(
     return ValuationCalibrationReadiness(
         status="shadow_ready" if not readiness_reasons else "not_ready",
         snapshot_count=len(snapshots),
-        eligible_snapshot_count=len(eligible),
+        eligible_snapshot_count=len(snapshots_by_id),
         valid_matured_outcome_count=len(valid_pairs),
         effective_sample_count=effective_sample_count,
         unique_issuer_count=unique_issuers,
         sector_count=len(sectors),
+        capture_mode_counts=dict(
+            sorted(Counter(snapshot.capture_mode for snapshot in snapshots).items())
+        ),
         excluded_snapshot_reasons=dict(sorted(excluded_reasons.items())),
         invalid_outcome_reasons=dict(sorted(invalid_outcome_reasons.items())),
         readiness_reasons=readiness_reasons,
@@ -315,6 +359,7 @@ def render_valuation_calibration_readiness(
             f"- Effective samples after issuer cap: `{readiness.effective_sample_count}`",
             f"- Unique issuers: `{readiness.unique_issuer_count}`",
             f"- Sectors: `{readiness.sector_count}`",
+            "- Capture modes: `" + json.dumps(readiness.capture_mode_counts, sort_keys=True) + "`",
             f"- Live activation allowed: `{str(readiness.live_activation_allowed).lower()}`",
             "",
             "## Readiness blockers",
@@ -392,6 +437,50 @@ def save_valuation_calibration_snapshot(
     target.parent.mkdir(parents=True, exist_ok=True)
     _write_json(target, snapshot.model_dump(mode="json"))
     return target
+
+
+def load_retrospective_replay_snapshots(
+    replay_root: Optional[Union[str, Path]],
+) -> list[ValuationCalibrationSnapshot]:
+    if replay_root is None:
+        return []
+    from research_agent.calibration.retrospective_replay import (
+        promote_retrospective_snapshot,
+    )
+
+    root = Path(replay_root)
+    if not root.exists():
+        raise FileNotFoundError(f"retrospective replay root does not exist: {root}")
+    snapshots: list[ValuationCalibrationSnapshot] = []
+    for saved_path in sorted(root.glob("**/valuation_calibration_replay_snapshot.json")):
+        manifest_path = next(
+            (
+                parent / "retrospective_replay_manifest.json"
+                for parent in saved_path.parents
+                if (parent / "retrospective_replay_manifest.json").is_file()
+            ),
+            None,
+        )
+        if manifest_path is None:
+            raise ValueError(f"replay snapshot has no manifest: {saved_path}")
+        manifest = ValuationCalibrationReplayManifest(
+            **json.loads(manifest_path.read_text(encoding="utf-8"))
+        )
+        base_binding = manifest.artifacts.get("base_valuation_snapshot")
+        if base_binding is None:
+            raise ValueError(f"replay manifest has no base snapshot: {manifest_path}")
+        base_path = manifest_path.parent / base_binding.path
+        base_snapshot = ValuationCalibrationSnapshot(
+            **json.loads(base_path.read_text(encoding="utf-8"))
+        )
+        expected = promote_retrospective_snapshot(base_snapshot, manifest_path)
+        saved = ValuationCalibrationSnapshot(**json.loads(saved_path.read_text(encoding="utf-8")))
+        if saved.model_dump(mode="json") != expected.model_dump(mode="json"):
+            raise ValueError(
+                f"saved retrospective replay snapshot does not match evidence: {saved_path}"
+            )
+        snapshots.append(saved)
+    return snapshots
 
 
 def file_sha256(path: Union[str, Path]) -> str:
@@ -545,6 +634,10 @@ def main() -> int:
         ),
     )
     parser.add_argument("--sectors-json")
+    parser.add_argument(
+        "--retrospective-replay-root",
+        help="Optional root containing verified historical point-in-time replay snapshots.",
+    )
     parser.add_argument("--output-dir", required=True)
     args = parser.parse_args()
 
@@ -564,6 +657,7 @@ def main() -> int:
         sectors=sectors,
         sector_source_sha256=sector_source_sha256,
     )
+    snapshots.extend(load_retrospective_replay_snapshots(args.retrospective_replay_root))
     source_bundles = load_valuation_source_bundles(args.outcome_source_root)
     outcomes = build_valuation_calibration_outcomes(snapshots, source_bundles)
     readiness = assess_valuation_calibration_readiness(snapshots, outcomes)

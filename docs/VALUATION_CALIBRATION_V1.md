@@ -26,6 +26,30 @@ Authority Bundle. Its ID binds the exact metrics and Authority Manifest
 hashes. Sector classification is a separately hash-bound calibration overlay
 and therefore does not rewrite the valuation snapshot ID.
 
+## Retrospective point-in-time replay
+
+Room16 does not need to wait a full year before beginning methodology tests,
+but a report rebuilt today for an old date is not automatically historical
+evidence. A retrospective candidate qualifies only through
+`room16.valuation_calibration_replay@1`:
+
+- the raw SEC CompanyFacts file, raw OHLCV file and issuer identity are copied
+  into an isolated replay root and hash-bound;
+- every CompanyFacts row filed after the historical cutoff is removed, and an
+  undated row is never admitted;
+- every price observation after the cutoff is removed;
+- the sanitized inputs, exact Authority Manifest, Fact Ledger and base
+  valuation snapshot are bound into the replay manifest;
+- the complete pipeline must come from a clean, committed Git worktree;
+- the replay is permanently marked `publication_allowed: false`; and
+- a promoted replay snapshot receives a distinct ID bound to the replay
+  manifest. It can enter calibration evidence but never the report library.
+
+Two pipeline versions of the same issuer, report date and price-basis date are
+one economic observation, not two samples. Readiness rejects all such
+duplicates until the superseded replay is removed from the evaluated corpus.
+This prevents repeated reruns from manufacturing sample size.
+
 ## Outcome contract
 
 Valuation is tested at a minimum 252-trading-day horizon. Each outcome must:
@@ -85,9 +109,25 @@ changes ratings automatically.
 ```bash
 python -m research_agent.calibration.valuation_calibration \
   --authority-root <ROOT_WITH_TICKER_DATE_BUNDLES> \
+  --retrospective-replay-root <OPTIONAL_VERIFIED_REPLAY_ROOT> \
   --outcome-source-root <OPTIONAL_VERIFIED_SOURCE_BUNDLES> \
   --output-dir <RUNTIME_OUTPUT_DIR>
 ```
+
+A replay itself is built from already acquired raw inputs:
+
+```bash
+python -m research_agent.calibration.retrospective_replay \
+  --ticker <TICKER> \
+  --date <HISTORICAL_CUTOFF> \
+  --raw-companyfacts <RAW_SEC_COMPANYFACTS_JSON> \
+  --raw-prices <RAW_OHLCV_CSV> \
+  --cik-records <ISSUER_IDENTITY_JSON> \
+  --replay-root <RUNTIME_REPLAY_ROOT>
+```
+
+The command deliberately refuses a dirty worktree and refuses to overwrite an
+existing replay with the same input and pipeline identity.
 
 Optional sector identities may be supplied as a ticker-to-sector JSON object.
 Until verified source bundles contain real matured observations, the correct
