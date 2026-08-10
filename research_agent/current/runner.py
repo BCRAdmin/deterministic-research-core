@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import json
 import os
+import re
+import shutil
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Optional
@@ -18,7 +20,12 @@ from research_agent.research_core.ingestion.source_registry import (
     SourceRegistryEntry,
     save_source_registry,
 )
+from research_agent.research_core.ingestion.source_snapshot import file_sha256
 from research_agent.research_core.models.report_config import ReportConfig
+from research_agent.quality.research_scope_coverage import (
+    build_research_scope_coverage,
+    save_research_scope_coverage,
+)
 from research_agent.run_pipeline import run_research_pipeline
 from research_agent.sources.bse.bse_provider import BseIssuerProvider
 from research_agent.sources.prices.massive_price_provider import MassivePriceProvider
@@ -28,12 +35,23 @@ from research_agent.sources.ir.official_news_feed import (
     build_official_ir_feed_payload,
     registered_official_ir_feeds,
 )
+from research_agent.sources.earnings.earnings_calendar import load_earnings_events
+from research_agent.sources.earnings.official_calendar_snapshot import (
+    resolve_official_calendar_snapshot,
+    verify_official_calendar_snapshot,
+)
 from research_agent.sources.sec.sec_client import SecClient, SecClientConfig
 from research_agent.sources.sec.sec_filing_risks import (
     build_sec_business_context_payload,
     build_sec_risk_evidence,
     save_sec_risk_evidence,
     select_sec_risk_filing_candidates,
+)
+from research_agent.sources.sec.sec_filing_topics import (
+    build_sec_filing_topic_payload,
+)
+from research_agent.sources.sec.sec_operating_kpis import (
+    build_sec_operating_kpi_payload,
 )
 from research_agent.sources.sec.sec_inline_facts import (
     build_sec_inline_fact_supplement_payload,
@@ -43,6 +61,7 @@ from research_agent.sources.sec.sec_inline_facts import (
 )
 from research_agent.sources.sec.sec_material_events import (
     build_material_event_payload,
+    inventory_recent_8k_filings,
     select_material_event_filings,
 )
 from research_agent.sources.sec.sec_results_release import (
@@ -90,6 +109,8 @@ class CurrentResearchRequest(BaseModel):
     as_of_date: str
     jurisdiction: Optional[str] = None
     isin: Optional[str] = None
+    exchange: Optional[str] = None
+    wkn: Optional[str] = None
     sec_user_agent: str = ""
     price_provider: str = "auto"
     price_api_key: Optional[str] = Field(default=None, repr=False)
@@ -133,6 +154,26 @@ class CurrentResearchRequest(BaseModel):
             raise ValueError("ISIN hint is invalid")
         return isin
 
+    @field_validator("exchange")
+    @classmethod
+    def normalize_exchange(cls, value: Optional[str]) -> Optional[str]:
+        if value is None or not value.strip():
+            return None
+        exchange = value.strip().upper()
+        if len(exchange) > 32 or not re.fullmatch(r"[A-Z0-9._ -]+", exchange):
+            raise ValueError("exchange hint is invalid")
+        return exchange
+
+    @field_validator("wkn")
+    @classmethod
+    def normalize_wkn(cls, value: Optional[str]) -> Optional[str]:
+        if value is None or not value.strip():
+            return None
+        wkn = value.strip().upper()
+        if not re.fullmatch(r"[A-Z0-9]{6}", wkn):
+            raise ValueError("WKN hint is invalid")
+        return wkn
+
     @field_validator("sec_user_agent")
     @classmethod
     def validate_sec_identity(cls, value: str) -> str:
@@ -175,10 +216,29 @@ def run_current_research(
     risk_factors_dir = source_dir / "sec_risk_factors"
     results_release_dir = source_dir / "sec_results_release"
     material_events_dir = source_dir / "sec_material_events"
+    filing_topics_dir = source_dir / "sec_filing_topics"
+    operating_kpis_dir = source_dir / "sec_operating_kpis"
+    submissions_dir = source_dir / "sec_submissions"
+    raw_sec_filings_dir = source_dir / "raw_sec_filings"
     official_ir_dir = source_dir / "official_ir_news"
     official_news_merge_dir = source_dir / "sec_official_news"
     packet_root = staging_dir / "packets"
     output_root = Path(request.output_root).expanduser().resolve()
+
+    registered_calendar = resolve_official_calendar_snapshot(
+        symbol,
+        request.as_of_date,
+    )
+    earnings_calendar_path = request.earnings_calendar_path or (
+        str(registered_calendar) if registered_calendar else None
+    )
+    _snapshot_configured_source_inputs(
+        ticker=symbol,
+        source_root=source_dir,
+        ir_release_dir=request.ir_release_dir,
+        earnings_calendar_path=earnings_calendar_path,
+        official_news_dir=request.official_news_dir,
+    )
 
     requested_jurisdiction = request.jurisdiction
     if requested_jurisdiction:
@@ -261,6 +321,10 @@ def run_current_research(
     results_release_path: Optional[Path] = None
     material_events_payload: Optional[dict[str, Any]] = None
     material_events_path: Optional[Path] = None
+    filing_topics_payload: Optional[dict[str, Any]] = None
+    filing_topics_path: Optional[Path] = None
+    operating_kpis_payload: Optional[dict[str, Any]] = None
+    operating_kpis_path: Optional[Path] = None
     official_ir_payload: Optional[dict[str, Any]] = None
     official_ir_path: Optional[Path] = None
     cik_records_path: Optional[Path] = None
@@ -268,10 +332,9 @@ def run_current_research(
         Path(request.ir_release_dir).expanduser().resolve() if request.ir_release_dir else None
     )
     financial_source: Optional[SourceRegistryEntry] = None
-    earnings_calendar_path = request.earnings_calendar_path
     official_news_dir = request.official_news_dir
     jurisdiction = "US"
-    isin: Optional[str] = None
+    isin: Optional[str] = request.isin
     companyfacts: Optional[dict[str, Any]] = None
     submissions: Optional[dict[str, Any]] = None
     latest_financial_filing: Optional[dict[str, str]] = None
@@ -280,6 +343,8 @@ def run_current_research(
     bse_calendar_path: Optional[Path] = None
     bse_calendar_payload: Optional[dict[str, Any]] = None
     inline_companyfacts_backfill_count = 0
+    raw_sec_filings: dict[tuple[str, str], str] = {}
+    results_html_snapshot: Optional[str] = None
     if issuer is not None:
         assert sec is not None
         cik = str(issuer["cik"])
@@ -325,6 +390,12 @@ def run_current_research(
                         )
                     )
                     filing_html_by_accession[current_reference.accession_number] = current_html
+                    raw_sec_filings[
+                        (
+                            current_reference.accession_number,
+                            current_reference.primary_document,
+                        )
+                    ] = current_html
                 except (RuntimeError, ValueError):
                     pass
         latest_financial_filing = _require_current_sec_financial_filing_coverage(
@@ -361,12 +432,22 @@ def run_current_research(
                     accession_number=latest_results_filing["accession_number"],
                     primary_document=latest_results_filing["primary_document"],
                 )
+                raw_sec_filings[
+                    (
+                        latest_results_filing["accession_number"],
+                        latest_results_filing["primary_document"],
+                    )
+                ] = results_primary_html
                 results_document = select_sec_results_exhibit(results_primary_html)
                 results_html = sec.get_filing_html(
                     cik=cik,
                     accession_number=latest_results_filing["accession_number"],
                     primary_document=results_document,
                 )
+                results_html_snapshot = results_html
+                raw_sec_filings[
+                    (latest_results_filing["accession_number"], results_document)
+                ] = results_html
                 results_release_payload = build_sec_results_release_payload(
                     ticker=symbol,
                     cik=cik,
@@ -394,6 +475,10 @@ def run_current_research(
             results_release_metric_count = len(results_release_payload.get("metrics") or [])
         elif latest_results_filing is not None:
             results_release_status = "superseded_by_later_financial_filing"
+        material_filing_inventory = inventory_recent_8k_filings(
+            submissions,
+            as_of_date=request.as_of_date,
+        )
         material_filing_html: list[tuple[dict[str, str], str]] = []
         for event_filing in select_material_event_filings(
             submissions,
@@ -405,17 +490,25 @@ def run_current_research(
                     accession_number=event_filing["accession_number"],
                     primary_document=event_filing["primary_document"],
                 )
-            except RuntimeError:
-                continue
+            except RuntimeError as exc:
+                raise CurrentResearchError(
+                    f"{symbol} besitzt ein potenziell materielles 8-K vom "
+                    f"{event_filing['filing_date']}, dessen offizieller Quelltext "
+                    "nicht vollständig geladen werden konnte. Room16 stoppt, "
+                    "statt das Ereignis still auszulassen."
+                ) from exc
+            raw_sec_filings[
+                (event_filing["accession_number"], event_filing["primary_document"])
+            ] = event_html
             material_filing_html.append((event_filing, event_html))
-        if material_filing_html:
-            material_events_payload = build_material_event_payload(
-                ticker=symbol,
-                cik=cik,
-                filings=material_filing_html,
-                retrieved_at=retrieved_at,
-            )
-            material_events_path = material_events_dir / f"{symbol}.json"
+        material_events_payload = build_material_event_payload(
+            ticker=symbol,
+            cik=cik,
+            filings=material_filing_html,
+            retrieved_at=retrieved_at,
+            candidate_inventory=material_filing_inventory,
+        )
+        material_events_path = material_events_dir / f"{symbol}.json"
         registered_feeds = registered_official_ir_feeds(cik=cik)
         if registered_feeds:
             try:
@@ -457,6 +550,9 @@ def run_current_research(
                     risk_source_status = "filing_fetch_failed"
                     continue
                 filing_html_by_accession[filing.accession_number] = filing_html
+                raw_sec_filings[
+                    (filing.accession_number, filing.primary_document)
+                ] = filing_html
             risk_evidence = build_sec_risk_evidence(
                 ticker=symbol,
                 filing=filing,
@@ -525,6 +621,9 @@ def run_current_research(
                         accession_number=annual_filing.accession_number,
                         primary_document=annual_filing.primary_document,
                     )
+                    raw_sec_filings[
+                        (annual_filing.accession_number, annual_filing.primary_document)
+                    ] = annual_html
                 except RuntimeError:
                     business_context_status = "filing_fetch_failed"
             if annual_html is not None:
@@ -559,6 +658,62 @@ def run_current_research(
                     business_context_filing_date = annual_filing.filing_date
                 else:
                     business_context_status = "no_extractable_business_context"
+        if latest_financial_reference is None:
+            filing_topics_payload = {
+                "coverage_status": "unavailable",
+                "checked_at": retrieved_at,
+                "sources_checked": [],
+                "all_topics_dispositioned": False,
+                "blocking_reason": "current_financial_filing_identity_unavailable",
+                "topic_dispositions": [],
+                "events": [],
+            }
+        else:
+            latest_financial_html = filing_html_by_accession.get(
+                latest_financial_reference.accession_number
+            )
+            if latest_financial_html is None:
+                try:
+                    latest_financial_html = sec.get_filing_html(
+                        cik=latest_financial_reference.cik,
+                        accession_number=latest_financial_reference.accession_number,
+                        primary_document=latest_financial_reference.primary_document,
+                    )
+                except RuntimeError as exc:
+                    raise CurrentResearchError(
+                        f"Der aktuelle Finanzbericht von {symbol} konnte nicht für "
+                        "den Transaktions-, Finanzierungs- und Rechts-Vollcheck "
+                        "geladen werden. Die Analyse wurde gestoppt."
+                    ) from exc
+                raw_sec_filings[
+                    (
+                        latest_financial_reference.accession_number,
+                        latest_financial_reference.primary_document,
+                    )
+                ] = latest_financial_html
+            filing_topics_payload = build_sec_filing_topic_payload(
+                ticker=symbol,
+                cik=cik,
+                accession_number=latest_financial_reference.accession_number,
+                filing_date=latest_financial_reference.filing_date,
+                primary_document=latest_financial_reference.primary_document,
+                html=latest_financial_html,
+                retrieved_at=retrieved_at,
+            )
+            operating_kpis_payload = build_sec_operating_kpi_payload(
+                ticker=symbol,
+                cik=cik,
+                accession_number=latest_financial_reference.accession_number,
+                filing_date=latest_financial_reference.filing_date,
+                primary_document=latest_financial_reference.primary_document,
+                html_documents=[
+                    latest_financial_html,
+                    *([results_html_snapshot] if results_html_snapshot else []),
+                ],
+                retrieved_at=retrieved_at,
+            )
+            operating_kpis_path = operating_kpis_dir / f"{symbol}.json"
+        filing_topics_path = filing_topics_dir / f"{symbol}.json"
         latest_filing_date = _latest_filing_date(submissions, as_of_date=request.as_of_date)
         provider = price_provider or _build_price_provider(request)
         provider_name = str(
@@ -647,6 +802,9 @@ def run_current_research(
         assert cik_records_path is not None
         assert cik is not None
         _write_json(companyfacts_path, companyfacts)
+        assert submissions is not None
+        _write_json(submissions_dir / f"{symbol}.json", submissions)
+        _save_raw_sec_filing_snapshots(raw_sec_filings_dir, raw_sec_filings)
         _write_json(
             cik_records_path,
             [{"ticker": symbol, "cik": cik, "company_name": company_name}],
@@ -663,12 +821,18 @@ def run_current_research(
             _write_json(results_release_path, results_release_payload)
         if material_events_path is not None and material_events_payload is not None:
             _write_json(material_events_path, material_events_payload)
+        if filing_topics_path is not None and filing_topics_payload is not None:
+            _write_json(filing_topics_path, filing_topics_payload)
+        if operating_kpis_path is not None and operating_kpis_payload is not None:
+            _write_json(operating_kpis_path, operating_kpis_payload)
         if official_ir_path is not None and official_ir_payload is not None:
             _write_json(official_ir_path, official_ir_payload)
         generated_news_payloads = [
             payload
             for payload in (
                 business_context_payload,
+                filing_topics_payload,
+                operating_kpis_payload,
                 material_events_payload,
                 official_ir_payload,
                 results_release_payload,
@@ -714,6 +878,36 @@ def run_current_research(
         f"{symbol}_US_MARKET_DAILY_OHLCV"
         if provider_name == "nasdaq"
         else f"{symbol}_{provider_name.upper()}_DAILY_OHLCV"
+    )
+    _write_json(
+        price_dir / f"{symbol}.metadata.json",
+        _build_price_snapshot_metadata(
+            ticker=symbol,
+            source_id=price_source_id,
+            provider_name=provider_name,
+            source_type=source_type,
+            source_url=source_url or None,
+            price_csv_path=price_csv_path,
+            columns=[str(column) for column in prices.columns],
+            retrieved_at=retrieved_at,
+        ),
+    )
+    source_scope_coverage = _build_current_scope_coverage(
+        ticker=symbol,
+        as_of_date=request.as_of_date,
+        jurisdiction=jurisdiction,
+        latest_financial_filing=latest_financial_filing,
+        results_release_status=results_release_status,
+        material_events_payload=material_events_payload,
+        filing_topics_payload=filing_topics_payload,
+        risk_source_status=risk_source_status,
+        bse_financial_payload=bse_financial_payload,
+        bse_news_payload=bse_news_payload,
+        earnings_calendar_path=earnings_calendar_path,
+    )
+    source_scope_coverage_path = save_research_scope_coverage(
+        source_scope_coverage,
+        source_dir / "research_scope_coverage.json",
     )
     registry_id = f"{symbol}_{request.as_of_date}"
     registry_sources = [
@@ -763,6 +957,10 @@ def run_current_research(
     config = ReportConfig(
         ticker=symbol,
         as_of_date=request.as_of_date,
+        exchange=(request.exchange or ("BSE" if jurisdiction == "HU" else None)),
+        jurisdiction=jurisdiction,
+        isin=isin,
+        wkn=request.wkn,
         source_mode="source_ingestion_mode",
         batch_mode="current_research",
         freshness_reference_date=request.as_of_date,
@@ -783,6 +981,8 @@ def run_current_research(
         sec_results_release_path=(str(results_release_path) if results_release_path else None),
         earnings_calendar_path=earnings_calendar_path,
         official_news_dir=official_news_dir,
+        source_artifact_root=str(source_dir),
+        source_scope_coverage_path=str(source_scope_coverage_path),
         price_currency=bse_issuer.currency if bse_issuer else "USD",
     )
     run_research_pipeline(symbol, request.as_of_date, config)
@@ -838,6 +1038,311 @@ def run_current_research(
     return result
 
 
+def _save_raw_sec_filing_snapshots(
+    root: Path,
+    filings: dict[tuple[str, str], str],
+) -> None:
+    for (accession_number, primary_document), html in sorted(filings.items()):
+        accession = accession_number.replace("-", "")
+        document = Path(primary_document).name
+        if not accession.isdigit() or not document.lower().endswith((".htm", ".html")):
+            raise CurrentResearchError(
+                "Ein abgerufener SEC-Quelltext besitzt keine sichere Filing-Identität."
+            )
+        target = root / accession / document
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(html, encoding="utf-8")
+
+
+def _build_current_scope_coverage(
+    *,
+    ticker: str,
+    as_of_date: str,
+    jurisdiction: str,
+    latest_financial_filing: Optional[dict[str, str]],
+    results_release_status: str,
+    material_events_payload: Optional[dict[str, Any]],
+    filing_topics_payload: Optional[dict[str, Any]],
+    risk_source_status: str,
+    bse_financial_payload: Optional[dict[str, Any]],
+    bse_news_payload: Optional[dict[str, Any]],
+    earnings_calendar_path: Optional[str],
+) -> dict[str, Any]:
+    calendar_status, calendar_reason = _earnings_calendar_scope(
+        ticker=ticker,
+        as_of_date=as_of_date,
+        earnings_calendar_path=earnings_calendar_path,
+    )
+    if jurisdiction == "US":
+        material_complete = bool(
+            material_events_payload
+            and material_events_payload.get("coverage_status") == "complete"
+            and material_events_payload.get("all_candidates_dispositioned") is True
+        )
+        topic_dispositions = (
+            filing_topics_payload.get("topic_dispositions")
+            if filing_topics_payload
+            else []
+        ) or []
+        topics_complete = bool(
+            filing_topics_payload
+            and filing_topics_payload.get("coverage_status") == "complete"
+            and filing_topics_payload.get("all_topics_dispositioned") is True
+        )
+        topics_by_id = {
+            str(item.get("topic") or ""): item
+            for item in topic_dispositions
+            if isinstance(item, dict)
+        }
+        transaction_found = any(
+            (topics_by_id.get(topic) or {}).get("status")
+            == "found_specific_disclosure"
+            for topic in ("transactions", "financing")
+        )
+        legal_found = (
+            (topics_by_id.get("legal_contingencies") or {}).get("status")
+            == "found_specific_disclosure"
+        )
+        results_status = (
+            "complete_no_candidates"
+            if results_release_status == "not_applicable"
+            else "complete"
+            if results_release_status
+            in {"available", "superseded_by_later_financial_filing"}
+            else "incomplete"
+        )
+        scopes = [
+            _scope("issuer_identity", "complete", "SEC issuer registry and submissions captured"),
+            _scope("financial_statements", "complete", "SEC CompanyFacts captured"),
+            _scope(
+                "latest_reporting_period",
+                "complete" if latest_financial_filing else "incomplete",
+                "latest SEC financial filing reconciled to CompanyFacts"
+                if latest_financial_filing
+                else "current SEC filing identity unavailable",
+            ),
+            _scope(
+                "results_and_guidance",
+                results_status,
+                f"SEC Item 2.02 disposition: {results_release_status}",
+            ),
+            _scope(
+                "material_events",
+                "complete" if material_complete else "incomplete",
+                "all selected material 8-K filings dispositioned"
+                if material_complete
+                else "material 8-K disposition incomplete",
+            ),
+            _scope(
+                "transactions_and_financing",
+                (
+                    "complete" if transaction_found else "complete_no_candidates"
+                )
+                if topics_complete
+                else "incomplete",
+                "current financial filing scanned for transactions and financing",
+            ),
+            _scope(
+                "legal_and_contingencies",
+                ("complete" if legal_found else "complete_no_candidates")
+                if topics_complete
+                else "incomplete",
+                "current financial filing scanned for legal and environmental contingencies",
+            ),
+            _scope(
+                "risk_disclosures",
+                "complete"
+                if risk_source_status in {"available", "no_extractable_risk_factors"}
+                else "incomplete",
+                f"SEC risk-factor disposition: {risk_source_status}",
+            ),
+            _scope("price_history", "complete", "OHLCV snapshot and metadata captured"),
+            _scope("catalyst_calendar", calendar_status, calendar_reason),
+        ]
+    else:
+        news_complete = bool(
+            bse_news_payload
+            and bse_news_payload.get("coverage_status") == "complete"
+        )
+        scopes = [
+            _scope("issuer_identity", "complete", "official BSE issuer identity captured"),
+            _scope(
+                "financial_statements",
+                "complete" if bse_financial_payload else "incomplete",
+                "issuer-submitted BSE financial data captured",
+            ),
+            _scope(
+                "latest_reporting_period",
+                "complete" if bse_financial_payload else "incomplete",
+                "latest BSE reporting period captured",
+            ),
+            _scope("results_and_guidance", "complete", "BSE issuer results reviewed"),
+            _scope(
+                "material_events",
+                "complete" if news_complete else "incomplete",
+                "BSE publication coverage is complete"
+                if news_complete
+                else "BSE publication adapter currently reports partial coverage",
+            ),
+            _scope("transactions_and_financing", "incomplete", "BSE topic disposition not yet integrated"),
+            _scope("legal_and_contingencies", "incomplete", "BSE topic disposition not yet integrated"),
+            _scope("risk_disclosures", "incomplete", "BSE risk-filing disposition not yet integrated"),
+            _scope("price_history", "complete", "official BSE OHLCV captured"),
+            _scope("catalyst_calendar", calendar_status, calendar_reason),
+        ]
+    return build_research_scope_coverage(
+        ticker=ticker,
+        as_of_date=as_of_date,
+        jurisdiction=jurisdiction,
+        scopes=scopes,
+    )
+
+
+def _scope(scope_id: str, status: str, reason: str) -> dict[str, str]:
+    return {"scope_id": scope_id, "status": status, "reason": reason}
+
+
+def _earnings_calendar_scope(
+    *,
+    ticker: str,
+    as_of_date: str,
+    earnings_calendar_path: Optional[str],
+) -> tuple[str, str]:
+    if not earnings_calendar_path:
+        return (
+            "incomplete",
+            "no official issuer or exchange catalyst calendar was captured",
+        )
+    path = Path(earnings_calendar_path).expanduser().resolve()
+    if not path.is_file():
+        return "incomplete", "configured catalyst calendar artifact is missing"
+    try:
+        raw = json.loads(path.read_text(encoding="utf-8"))
+        verification = verify_official_calendar_snapshot(
+            raw,
+            ticker=ticker,
+            as_of_date=as_of_date,
+        )
+        if not verification["verified"]:
+            return (
+                "incomplete",
+                "official catalyst calendar snapshot failed: "
+                + ", ".join(verification["blocking_failures"]),
+            )
+        events = load_earnings_events(path)
+    except (KeyError, TypeError, ValueError, json.JSONDecodeError) as exc:
+        return "incomplete", f"catalyst calendar could not be validated: {exc}"
+    eligible = [
+        event
+        for event in events
+        if event.ticker.upper() == ticker.upper()
+        and event.report_date >= as_of_date
+        and event.source_type
+        in {"company_ir", "official_press_release", "exchange_calendar", "exchange_notice"}
+        and event.confirmed is True
+        and bool(event.url)
+        and bool(event.retrieved_at)
+    ]
+    if eligible:
+        return (
+            "complete",
+            "future catalyst date captured from an official issuer or exchange source",
+        )
+    if (
+        raw.get("coverage_status") == "complete_no_candidates"
+        and raw.get("sources_checked")
+    ):
+        return (
+            "complete_no_candidates",
+            "official catalyst sources were checked and no future date was announced",
+        )
+    return (
+        "incomplete",
+        "calendar artifact contains no attributable future event or explicit no-candidate disposition",
+    )
+
+
+def _build_price_snapshot_metadata(
+    *,
+    ticker: str,
+    source_id: str,
+    provider_name: str,
+    source_type: str,
+    source_url: Optional[str],
+    price_csv_path: Path,
+    columns: list[str],
+    retrieved_at: str,
+) -> dict[str, Any]:
+    adjustment_policy = "provider_response_not_explicitly_adjusted"
+    timezone_name = "exchange_session_date_provider_local"
+    market_calendar = "provider_exchange_sessions"
+    if provider_name == "massive":
+        adjustment_policy = "split_adjusted_true"
+        timezone_name = "UTC_timestamp_converted_to_session_date"
+        market_calendar = "US_consolidated_market_sessions"
+    elif provider_name == "bse":
+        adjustment_policy = "official_exchange_series_as_published"
+        timezone_name = "Europe/Budapest_exchange_session_date"
+        market_calendar = "Budapest_Stock_Exchange_sessions"
+    elif provider_name == "nasdaq":
+        market_calendar = "Nasdaq_US_exchange_sessions"
+        timezone_name = "America/New_York_exchange_session_date"
+    return {
+        "contract_id": "room16.ohlcv_snapshot_metadata",
+        "contract_version": 1,
+        "ticker": ticker,
+        "source_id": source_id,
+        "provider": provider_name,
+        "source_type": source_type,
+        "source_url": source_url,
+        "retrieved_at": retrieved_at,
+        "artifact": price_csv_path.name,
+        "artifact_sha256": file_sha256(price_csv_path),
+        "columns": columns,
+        "market_calendar": market_calendar,
+        "timezone": timezone_name,
+        "adjustment_policy": adjustment_policy,
+    }
+
+
+def _snapshot_configured_source_inputs(
+    *,
+    ticker: str,
+    source_root: Path,
+    ir_release_dir: Optional[str],
+    earnings_calendar_path: Optional[str],
+    official_news_dir: Optional[str],
+) -> None:
+    """Preserve externally configured input bytes inside the run source tree."""
+
+    candidates: list[tuple[Path, Path]] = []
+    if ir_release_dir:
+        root = Path(ir_release_dir).expanduser().resolve()
+        for filename in (f"{ticker}.json", f"{ticker}_news.json"):
+            path = root / filename
+            if path.is_file():
+                candidates.append(
+                    (path, source_root / "configured_ir_release" / filename)
+                )
+    if earnings_calendar_path:
+        path = Path(earnings_calendar_path).expanduser().resolve()
+        if path.is_file():
+            candidates.append(
+                (path, source_root / "configured_earnings_calendar" / path.name)
+            )
+    if official_news_dir:
+        root = Path(official_news_dir).expanduser().resolve()
+        for filename in (f"{ticker}.json", f"{ticker}_news.json"):
+            path = root / filename
+            if path.is_file():
+                candidates.append(
+                    (path, source_root / "configured_official_news" / filename)
+                )
+    for source, target in candidates:
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, target)
+
+
 def _bound_price_history_after_corporate_actions(prices, payload: dict[str, Any]):
     events = payload.get("events")
     events = events if isinstance(events, list) else []
@@ -884,12 +1389,16 @@ def request_from_environment(
     *,
     jurisdiction: Optional[str] = None,
     isin: Optional[str] = None,
+    exchange: Optional[str] = None,
+    wkn: Optional[str] = None,
 ) -> CurrentResearchRequest:
     return CurrentResearchRequest(
         ticker=ticker,
         as_of_date=as_of_date,
         jurisdiction=jurisdiction,
         isin=isin,
+        exchange=exchange,
+        wkn=wkn,
         sec_user_agent=os.environ.get("ROOM16_SEC_USER_AGENT", ""),
         price_provider=os.environ.get("ROOM16_PRICE_PROVIDER", "auto"),
         price_api_key=(os.environ.get("MASSIVE_API_KEY") or os.environ.get("POLYGON_API_KEY")),

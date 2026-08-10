@@ -15,6 +15,10 @@ class QualityReport(BaseModel):
     historical_qa_only: bool = False
     freshness_issue_code: Optional[str] = None
     content_score: int = 100
+    generated_claim_mapping_complete: bool = False
+    generated_claim_mapping_gaps: list[str] = Field(default_factory=list)
+    # Historical name retained for downstream compatibility. It describes
+    # generated-claim mapping, never material source-domain completeness.
     claim_coverage_complete: bool = False
     claim_coverage_gaps: list[str] = Field(default_factory=list)
     analyst_claim_count: int = 0
@@ -69,6 +73,11 @@ class QualityReport(BaseModel):
     company_archetype: str = "UNKNOWN"
     archetype_confidence: float = 0.0
     archetype_triggered_rules: list[str] = Field(default_factory=list)
+    business_model_kpi_coverage_complete: bool = True
+    required_business_kpis: list[str] = Field(default_factory=list)
+    missing_business_kpis: list[str] = Field(default_factory=list)
+    business_model_kpi_gap_count: int = 0
+    unknown_or_low_confidence_archetype_count: int = 0
     numerical_accuracy: int
     source_quality: int
     logic_consistency: int

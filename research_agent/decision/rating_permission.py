@@ -11,8 +11,18 @@ def enforce_rating_permission(final_text: str, permission: RatingPermission) -> 
     rating = extract_rating_from_text(final_text)
     if rating is None:
         return
+    if permission.fallback_only or permission.permission_type == "safety_fallback":
+        raise RuntimeError(
+            "Final report presents an internal safety fallback as an analytical rating: "
+            f"{rating.value}"
+        )
     if rating in permission.blocked_ratings:
         raise RuntimeError(f"Final report uses blocked rating: {rating.value}")
+    if rating != permission.preferred_rating:
+        raise RuntimeError(
+            "Final report rating does not match the deterministic analytical rating: "
+            f"{rating.value}"
+        )
 
 
 def extract_rating_from_text(text: str) -> Optional[Rating]:

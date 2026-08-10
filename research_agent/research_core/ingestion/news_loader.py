@@ -56,27 +56,50 @@ def news_evidence_items(
             claim_type = "guidance"
         elif is_risk:
             claim_type = "risk"
-        evidence.append(
-            EvidenceItem(
-                evidence_id=str(
-                    event.get("evidence_id")
-                    or f"{symbol}_NEWS_{event_date}_{index:02d}"
-                ),
-                ticker=symbol,
-                claim_type=claim_type,
-                source_id=source_id,
-                source_type=source_type,
-                authority_rank=rank,
-                statement=str(event.get("summary") or headline),
-                date=event_date,
-                url=event.get("url"),
-                retrieved_at=event.get("retrieved_at"),
-                supports_claims=[
-                    "material_news_coverage",
-                    *(["company_guidance"] if is_guidance else []),
-                    *(["issuer_risk_disclosure"] if is_risk else []),
-                ],
-                confidence="high" if rank <= 2 else "medium",
-            )
+        base_evidence_id = str(
+            event.get("evidence_id")
+            or f"{symbol}_NEWS_{event_date}_{index:02d}"
         )
+        numeric_evidence = event.get("numeric_evidence")
+        numeric_evidence = (
+            numeric_evidence if isinstance(numeric_evidence, list) else []
+        )
+        evidence_records = numeric_evidence or [None]
+        for numeric_index, numeric in enumerate(evidence_records, start=1):
+            numeric = numeric if isinstance(numeric, dict) else {}
+            metric_name = str(numeric.get("metric_name") or "")
+            evidence.append(
+                EvidenceItem(
+                    evidence_id=(
+                        f"{base_evidence_id}_KPI_{numeric_index:02d}"
+                        if numeric_evidence
+                        else base_evidence_id
+                    ),
+                    ticker=symbol,
+                    claim_type=claim_type,
+                    source_id=source_id,
+                    source_type=source_type,
+                    authority_rank=rank,
+                    statement=str(event.get("summary") or headline),
+                    value=numeric.get("value"),
+                    raw_value=numeric.get("raw_value"),
+                    normalized_value=numeric.get("value"),
+                    unit=numeric.get("unit"),
+                    date=event_date,
+                    url=event.get("url"),
+                    retrieved_at=event.get("retrieved_at"),
+                    supports_claims=[
+                        "material_news_coverage",
+                        *(
+                            ["business_model_operating_kpi"]
+                            if numeric_evidence
+                            else []
+                        ),
+                        *(["company_guidance"] if is_guidance else []),
+                        *(["issuer_risk_disclosure"] if is_risk else []),
+                    ],
+                    supports_metrics=[metric_name] if metric_name else [],
+                    confidence="high" if rank <= 2 else "medium",
+                )
+            )
     return evidence

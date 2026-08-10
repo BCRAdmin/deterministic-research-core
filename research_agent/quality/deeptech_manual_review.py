@@ -20,6 +20,33 @@ ORDER_MATERIALITY_MISSING = "ORDER_MATERIALITY_MISSING"
 TECHNICAL_OVERWEIGHT_IN_FUNDAMENTAL_THESIS = "TECHNICAL_OVERWEIGHT_IN_FUNDAMENTAL_THESIS"
 CLEAN_BUY_ACCUMULATE_BLOCKED = "CLEAN_BUY_ACCUMULATE_BLOCKED"
 CLEAN_HOLD_BLOCKED_FOR_SPECULATIVE_DEEP_TECH = "CLEAN_HOLD_BLOCKED_FOR_SPECULATIVE_DEEP_TECH"
+UNKNOWN_OR_LOW_CONFIDENCE_ARCHETYPE = "UNKNOWN_OR_LOW_CONFIDENCE_ARCHETYPE"
+BUSINESS_MODEL_KPI_COVERAGE_INCOMPLETE = "BUSINESS_MODEL_KPI_COVERAGE_INCOMPLETE"
+
+BUSINESS_MODEL_KPI_REQUIREMENTS = {
+    "WASTE_ENVIRONMENTAL_SERVICES": {
+        "price_or_yield": r"\b(?:yield|price(?:ing)?|collection and disposal)\b",
+        "volume": r"\bvolume\b",
+        "operating_ebitda": r"\b(?:operating ebitda|adjusted ebitda|ebitda margin)\b",
+        "free_cash_flow_guidance": r"\b(?:free cash flow|fcf)\b.{0,100}\b(?:guidance|outlook|range)\b|\b(?:guidance|outlook|range)\b.{0,100}\b(?:free cash flow|fcf)\b",
+    },
+    "MEMBERSHIP_RETAIL": {
+        "paid_members": r"\b(?:paid members?|paid memberships?)\b",
+        "cardholders": r"\bcardholders?\b",
+        "renewal_rate": r"\brenewal rates?\b",
+        "comparable_sales": r"\b(?:comparable sales|comp sales)\b",
+        "traffic_and_ticket": r"\b(?:traffic|frequency)\b.{0,120}\b(?:ticket|basket)\b|\b(?:ticket|basket)\b.{0,120}\b(?:traffic|frequency)\b",
+        "digital_sales": r"\b(?:digital|e-?commerce)\b",
+    },
+    "DIVERSIFIED_MEDICAL_DEVICES_DIAGNOSTICS": {
+        "organic_or_comparable_growth": r"\b(?:organic|comparable)\b.{0,80}\bgrowth\b|\bgrowth\b.{0,80}\b(?:organic|comparable)\b",
+        "segment_growth": r"\bsegment\b.{0,100}\bgrowth\b|\bgrowth\b.{0,100}\bsegment\b",
+        "adjusted_eps_guidance": r"\badjusted eps\b.{0,120}\b(?:guidance|outlook|range)\b|\b(?:guidance|outlook|range)\b.{0,120}\badjusted eps\b",
+        "transaction_financing": r"\b(?:acquisition|transaction)\b.{0,140}\b(?:debt|financ|consideration|purchase price)\b|\b(?:debt|financ)\b.{0,140}\b(?:acquisition|transaction)\b",
+        "integration_effects": r"\b(?:integration costs?|amortization|purchase accounting)\b",
+        "product_or_regulatory_catalyst": r"\b(?:approval|clearance|regulatory|product launch|clinical)\b",
+    },
+}
 
 
 class CompanyArchetype(str, Enum):
@@ -28,6 +55,9 @@ class CompanyArchetype(str, Enum):
     SEMICONDUCTOR_AI_INFRA = "SEMICONDUCTOR_AI_INFRA"
     SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL = "SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL"
     EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH = "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH"
+    WASTE_ENVIRONMENTAL_SERVICES = "WASTE_ENVIRONMENTAL_SERVICES"
+    MEMBERSHIP_RETAIL = "MEMBERSHIP_RETAIL"
+    DIVERSIFIED_MEDICAL_DEVICES_DIAGNOSTICS = "DIVERSIFIED_MEDICAL_DEVICES_DIAGNOSTICS"
     STANDARD_GROWTH = "STANDARD_GROWTH"
     UNKNOWN = "UNKNOWN"
 
@@ -47,6 +77,9 @@ class DeepTechManualReviewAssessment:
     quality_score_cap: int | None = None
     counts: dict[str, int] = field(default_factory=dict)
     sec_ir_current_period_evidence_complete: bool = False
+    business_model_kpi_coverage_complete: bool = True
+    required_business_kpis: list[str] = field(default_factory=list)
+    missing_business_kpis: list[str] = field(default_factory=list)
 
     def to_quality_payload(self) -> dict[str, Any]:
         return {
@@ -61,6 +94,14 @@ class DeepTechManualReviewAssessment:
             "company_archetype": self.company_archetype.value,
             "archetype_confidence": self.archetype_confidence,
             "archetype_triggered_rules": self.archetype_triggered_rules,
+            "business_model_kpi_coverage_complete": self.business_model_kpi_coverage_complete,
+            "required_business_kpis": self.required_business_kpis,
+            "missing_business_kpis": self.missing_business_kpis,
+            "business_model_kpi_gap_count": len(self.missing_business_kpis),
+            "unknown_or_low_confidence_archetype_count": int(
+                self.company_archetype == CompanyArchetype.UNKNOWN
+                or self.archetype_confidence < 0.6
+            ),
         }
 
 
@@ -127,9 +168,11 @@ def assess_speculative_deep_tech_manual_review(
         triggered_rules = [name for name, value in speculative_triggers.items() if value]
         confidence = round(speculative_trigger_count / len(speculative_triggers), 3)
     else:
-        archetype = _infer_non_deeptech_archetype(text, metrics_packet)
+        archetype = _infer_non_deeptech_archetype(
+            text, metrics_packet, source_registry
+        )
         triggered_rules = [name for name, value in speculative_triggers.items() if value]
-        confidence = 0.0 if archetype == CompanyArchetype.UNKNOWN else 0.2
+        confidence = _archetype_confidence(archetype, text, metrics_packet, source_registry)
     active = speculative_active
     issues: list[AuditIssue] = []
     if speculative_active:
@@ -139,6 +182,30 @@ def assess_speculative_deep_tech_manual_review(
             _issue(
                 EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH_MANUAL_REVIEW_PROFILE,
                 "Early-commercial capital-intensive tech profile requires manual review until FCF path, backlog conversion and execution milestones are evidenced.",
+            )
+        )
+    required_business_kpis, missing_business_kpis = _business_model_kpi_coverage(
+        archetype=archetype,
+        text=text,
+        source_registry=source_registry,
+    )
+    kpi_coverage_complete = not missing_business_kpis
+    low_confidence_archetype = (
+        archetype == CompanyArchetype.UNKNOWN or confidence < 0.6
+    )
+    if low_confidence_archetype:
+        issues.append(
+            _issue(
+                UNKNOWN_OR_LOW_CONFIDENCE_ARCHETYPE,
+                "Business-model archetype is unknown or too weakly evidenced for a high-confidence report.",
+            )
+        )
+    if not kpi_coverage_complete:
+        issues.append(
+            _issue(
+                BUSINESS_MODEL_KPI_COVERAGE_INCOMPLETE,
+                "Required business-model KPIs are missing: "
+                + ", ".join(missing_business_kpis),
             )
         )
     if vendor_only and speculative_active:
@@ -169,6 +236,10 @@ def assess_speculative_deep_tech_manual_review(
         caps.append(75)
     if any(issue.code == EVIDENCE_INCOMPLETE_FOR_GOLD for issue in issues):
         caps.append(75)
+    if low_confidence_archetype:
+        caps.append(70)
+    if not kpi_coverage_complete:
+        caps.append(70)
     blocking_issue_codes = {
         ACCOUNTING_GAIN_NOT_OPERATING_TURNAROUND,
         VENDOR_ONLY_HARD_METRICS,
@@ -177,6 +248,8 @@ def assess_speculative_deep_tech_manual_review(
         TECHNICAL_OVERWEIGHT_IN_FUNDAMENTAL_THESIS,
         CLEAN_BUY_ACCUMULATE_BLOCKED,
         CLEAN_HOLD_BLOCKED_FOR_SPECULATIVE_DEEP_TECH,
+        UNKNOWN_OR_LOW_CONFIDENCE_ARCHETYPE,
+        BUSINESS_MODEL_KPI_COVERAGE_INCOMPLETE,
     }
     publishable = not speculative_active or (has_sec_ir and not any(issue.code in blocking_issue_codes for issue in issues))
     if early_commercial_active:
@@ -212,6 +285,9 @@ def assess_speculative_deep_tech_manual_review(
         quality_score_cap=min(caps) if caps else None,
         counts=counts,
         sec_ir_current_period_evidence_complete=has_sec_ir,
+        business_model_kpi_coverage_complete=kpi_coverage_complete,
+        required_business_kpis=required_business_kpis,
+        missing_business_kpis=missing_business_kpis,
     )
 
 
@@ -222,6 +298,15 @@ def manual_review_banner(assessment: DeepTechManualReviewAssessment | None = Non
             f"> **{display}**\n"
             "> This early-commercial capital-intensive tech report is an internal draft. Backlog, contracts and current-period evidence are meaningful, "
             "but negative FCF, valuation intensity and execution milestones prevent clean external publication.\n\n"
+        )
+    if assessment is not None and assessment.company_archetype not in {
+        CompanyArchetype.SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL,
+        CompanyArchetype.EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH,
+    }:
+        return (
+            f"> **{display}**\n"
+            "> This report remains an internal draft because the business-model "
+            "archetype or its required operating KPIs are not sufficiently evidenced.\n\n"
         )
     return (
         f"> **{display}**\n"
@@ -545,15 +630,45 @@ def _has_clean_hold(text: str) -> bool:
     return bool(re.search(r"\b(?:rating|recommendation|action|empfehlung)\s*[:=-]\s*(?:hold|halten)\b", lowered))
 
 
-def _infer_non_deeptech_archetype(text: str, metrics_packet: Any) -> CompanyArchetype:
-    lowered = text.lower()
-    ticker = str(getattr(metrics_packet, "ticker", "") or "").upper()
-    if ticker in {"GOOGL", "GOOG", "MSFT", "AMZN", "META"}:
-        return CompanyArchetype.MEGA_CAP_PLATFORM
-    if ticker in {"SNOW", "DDOG", "MDB", "CRM"}:
-        return CompanyArchetype.SAAS_CONSUMPTION
-    if ticker in {"NVDA", "AVGO", "QCOM", "MU", "AMD", "MRVL", "INTC"}:
-        return CompanyArchetype.SEMICONDUCTOR_AI_INFRA
+def _infer_non_deeptech_archetype(
+    text: str,
+    metrics_packet: Any,
+    source_registry: Any,
+) -> CompanyArchetype:
+    lowered = _context_text(text, source_registry)
+    if _contains_archetype_term(
+        lowered,
+        [
+            "solid waste",
+            "waste collection",
+            "landfill",
+            "recycling operations",
+            "environmental services",
+        ],
+    ):
+        return CompanyArchetype.WASTE_ENVIRONMENTAL_SERVICES
+    if _contains_archetype_term(
+        lowered,
+        [
+            "membership warehouse",
+            "membership retail",
+            "paid members",
+            "renewal rate",
+            "warehouse clubs",
+        ],
+    ):
+        return CompanyArchetype.MEMBERSHIP_RETAIL
+    if _contains_archetype_term(
+        lowered,
+        [
+            "medical devices",
+            "medical device",
+            "diagnostics",
+            "diagnostic products",
+            "medtech",
+        ],
+    ):
+        return CompanyArchetype.DIVERSIFIED_MEDICAL_DEVICES_DIAGNOSTICS
     if _contains_archetype_term(
         lowered,
         ["alphabet", "google", "microsoft", "amazon", "meta", "mega-cap", "mega cap"],
@@ -569,6 +684,22 @@ def _infer_non_deeptech_archetype(text: str, metrics_packet: Any) -> CompanyArch
         ["semiconductor", "nvidia", "broadcom", "qcom", "micron", "ai infra", "gpu"],
     ):
         return CompanyArchetype.SEMICONDUCTOR_AI_INFRA
+    revenue = _metric(metrics_packet, "fundamentals", "revenue_ttm")
+    operating_income = _metric(metrics_packet, "fundamentals", "operating_income_ttm")
+    market_cap = _metric(metrics_packet, "valuation", "market_cap")
+    if (
+        revenue is not None
+        and revenue >= 50_000_000_000
+        and market_cap is not None
+        and market_cap >= 250_000_000_000
+        and operating_income is not None
+        and operating_income > 0
+        and _contains_archetype_term(
+            lowered,
+            ["platform", "cloud", "digital advertising", "mega-cap", "large-cap"],
+        )
+    ):
+        return CompanyArchetype.MEGA_CAP_PLATFORM
     if _contains_archetype_term(
         lowered,
         [
@@ -580,6 +711,62 @@ def _infer_non_deeptech_archetype(text: str, metrics_packet: Any) -> CompanyArch
     ):
         return CompanyArchetype.STANDARD_GROWTH
     return CompanyArchetype.UNKNOWN
+
+
+def _archetype_confidence(
+    archetype: CompanyArchetype,
+    text: str,
+    metrics_packet: Any,
+    source_registry: Any,
+) -> float:
+    if archetype == CompanyArchetype.UNKNOWN:
+        return 0.0
+    context = _context_text(text, source_registry)
+    if archetype in {
+        CompanyArchetype.WASTE_ENVIRONMENTAL_SERVICES,
+        CompanyArchetype.MEMBERSHIP_RETAIL,
+        CompanyArchetype.DIVERSIFIED_MEDICAL_DEVICES_DIAGNOSTICS,
+    }:
+        requirement_count = len(
+            BUSINESS_MODEL_KPI_REQUIREMENTS.get(archetype.value, {})
+        )
+        matched = sum(
+            1
+            for pattern in BUSINESS_MODEL_KPI_REQUIREMENTS.get(
+                archetype.value, {}
+            ).values()
+            if re.search(pattern, context, flags=re.IGNORECASE)
+        )
+        return round(0.7 + 0.3 * (matched / max(requirement_count, 1)), 3)
+    if archetype == CompanyArchetype.MEGA_CAP_PLATFORM:
+        return 0.75
+    if archetype in {
+        CompanyArchetype.SAAS_CONSUMPTION,
+        CompanyArchetype.SEMICONDUCTOR_AI_INFRA,
+    }:
+        return 0.8
+    if archetype == CompanyArchetype.STANDARD_GROWTH:
+        return 0.6
+    return 0.7
+
+
+def _business_model_kpi_coverage(
+    *,
+    archetype: CompanyArchetype,
+    text: str,
+    source_registry: Any,
+) -> tuple[list[str], list[str]]:
+    requirements = BUSINESS_MODEL_KPI_REQUIREMENTS.get(archetype.value, {})
+    if not requirements:
+        return [], []
+    context = _context_text(text, source_registry)
+    required = sorted(requirements)
+    missing = sorted(
+        name
+        for name, pattern in requirements.items()
+        if re.search(pattern, context, flags=re.IGNORECASE) is None
+    )
+    return required, missing
 
 
 def _contains_archetype_term(text: str, terms: list[str]) -> bool:

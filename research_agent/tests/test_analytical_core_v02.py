@@ -95,6 +95,14 @@ def test_valuation_sensitivity_is_measured_only_with_verified_share_basis():
     assert measured.sensitivity.model_range_low < measured.sensitivity.model_range_high
     assert measured.sensitivity.reverse_dcf_status == "measured"
     assert measured.sensitivity.reverse_dcf_implied_fcf_growth is not None
+    assert all(
+        0 < scenario.terminal_value_share < 1
+        for scenario in measured.sensitivity.scenarios
+    )
+    assert measured.sensitivity.scenarios[1].terminal_value_share == pytest.approx(
+        measured.sensitivity.scenarios[1].present_value_terminal_value
+        / measured.sensitivity.scenarios[1].equity_value
+    )
     assert measured.sensitivity.scenarios[1].implied_price is not None
 
     assert illustrative.market_cap is None

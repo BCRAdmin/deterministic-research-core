@@ -25,6 +25,13 @@ class EventInfo(BaseModel):
     status: str = "unavailable"
 
 
+class OperatingKpiEvidence(BaseModel):
+    metric_name: str
+    value: float
+    raw_value: Optional[float] = None
+    unit: str
+
+
 class MaterialNewsEvent(BaseModel):
     date: str
     headline: str
@@ -33,6 +40,7 @@ class MaterialNewsEvent(BaseModel):
     source_type: str
     url: Optional[str] = None
     summary: Optional[str] = None
+    numeric_evidence: List[OperatingKpiEvidence] = Field(default_factory=list)
 
 
 class NewsCoverage(BaseModel):
@@ -79,6 +87,10 @@ class CompanyGuidanceMetric(BaseModel):
 class DataPacket(BaseModel):
     ticker: str
     company_name: Optional[str] = None
+    exchange: Optional[str] = None
+    jurisdiction: Optional[str] = None
+    isin: Optional[str] = None
+    wkn: Optional[str] = None
     as_of_date: str
     price_basis: PriceBasis
     fiscal_context: FiscalContext = Field(default_factory=FiscalContext)

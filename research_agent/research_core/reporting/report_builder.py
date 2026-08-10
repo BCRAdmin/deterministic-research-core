@@ -203,7 +203,9 @@ def _render_rating_permission(decision_packet: DecisionPacket) -> str:
     permission = decision_packet.rating_permission
     return "\n".join(
         [
-            f"- Preferred rating: `{permission.preferred_rating.value}`",
+            f"- Analytical display rating: `{permission.display_rating or permission.preferred_rating.value}`",
+            f"- Internal fallback rating: `{permission.preferred_rating.value}`",
+            f"- Permission type: `{permission.permission_type}`",
             f"- Allowed ratings: `{', '.join(rating.value for rating in permission.allowed_ratings)}`",
             f"- Blocked ratings: `{', '.join(rating.value for rating in permission.blocked_ratings)}`",
             f"- Reason: {permission.reason}",

@@ -6,7 +6,49 @@ from html.parser import HTMLParser
 from typing import Any
 
 
-MATERIAL_8K_ITEMS = {"1.05", "8.01"}
+MATERIAL_8K_ITEMS = {
+    "1.01",  # material agreement
+    "1.02",  # termination of material agreement
+    "1.03",  # bankruptcy or receivership
+    "1.05",  # material cybersecurity incident
+    "2.01",  # acquisition or disposition
+    "2.03",  # direct financial obligation
+    "2.04",  # acceleration or trigger event
+    "2.05",  # exit or disposal plan
+    "2.06",  # material impairment
+    "3.01",  # listing or continued-listing notice
+    "3.02",  # unregistered sale of securities
+    "4.01",  # auditor change
+    "4.02",  # non-reliance on financial statements
+    "5.01",  # change in control
+    "5.02",  # director or officer change
+    "5.03",  # charter/bylaw change
+    "5.07",  # shareholder vote
+    "7.01",  # Regulation FD disclosure
+    "8.01",  # other material event
+}
+
+ITEM_EVENT_TYPES = {
+    "1.01": ("material_agreement", "Issuer disclosed a material agreement"),
+    "1.02": ("agreement_termination", "Issuer disclosed termination of a material agreement"),
+    "1.03": ("bankruptcy_or_receivership", "Issuer disclosed a bankruptcy or receivership event"),
+    "1.05": ("cyber_incident", "Issuer filed a material cybersecurity disclosure"),
+    "2.01": ("acquisition_or_disposition", "Issuer disclosed an acquisition or disposition"),
+    "2.03": ("financing_obligation", "Issuer disclosed a material financial obligation"),
+    "2.04": ("financing_trigger", "Issuer disclosed a financing trigger or acceleration event"),
+    "2.05": ("restructuring", "Issuer disclosed an exit or disposal plan"),
+    "2.06": ("impairment", "Issuer disclosed a material impairment"),
+    "3.01": ("listing_notice", "Issuer disclosed a listing-status notice"),
+    "3.02": ("securities_issuance", "Issuer disclosed an unregistered securities sale"),
+    "4.01": ("auditor_change", "Issuer disclosed an auditor change"),
+    "4.02": ("financial_statement_non_reliance", "Issuer disclosed non-reliance on financial statements"),
+    "5.01": ("change_in_control", "Issuer disclosed a change in control"),
+    "5.02": ("leadership_change", "Issuer disclosed a director or officer change"),
+    "5.03": ("governance_change", "Issuer disclosed a charter or bylaw change"),
+    "5.07": ("shareholder_vote", "Issuer disclosed shareholder voting results"),
+    "7.01": ("regulation_fd_disclosure", "Issuer furnished a Regulation FD disclosure"),
+    "8.01": ("other_material_event", "Issuer disclosed another material event"),
+}
 
 
 class _TextParser(HTMLParser):
@@ -43,9 +85,34 @@ def select_material_event_filings(
     as_of_date: str,
     lookback_days: int = 120,
 ) -> list[dict[str, str]]:
+    return [
+        {
+            "filing_date": row["filing_date"],
+            "accession_number": row["accession_number"],
+            "primary_document": row["primary_document"],
+            "items": row["material_items"],
+        }
+        for row in inventory_recent_8k_filings(
+            submissions,
+            as_of_date=as_of_date,
+            lookback_days=lookback_days,
+        )
+        if row["disposition"] == "material_candidate"
+    ]
+
+
+def inventory_recent_8k_filings(
+    submissions: dict[str, Any],
+    *,
+    as_of_date: str,
+    lookback_days: int = 120,
+) -> list[dict[str, str]]:
+    """Disposition every 8-K returned by the scanned SEC submissions payload."""
+
     recent = submissions.get("filings", {}).get("recent", {})
     cutoff = date.fromisoformat(as_of_date).toordinal() - lookback_days
     rows: list[dict[str, str]] = []
+    seen_accessions: set[str] = set()
     forms = recent.get("form") or []
     for index, form in enumerate(forms):
         if form != "8-K":
@@ -58,27 +125,48 @@ def select_material_event_filings(
             for value in _at(recent, "items", index).replace(" ", "").split(",")
             if value.strip()
         }
-        try:
-            filing_day = date.fromisoformat(filing_date)
-        except ValueError:
-            continue
-        if (
-            not accession
-            or not primary_document
-            or filing_date > as_of_date
-            or filing_day.toordinal() < cutoff
-            or not items.intersection(MATERIAL_8K_ITEMS)
-        ):
-            continue
+        material_items = items.intersection(MATERIAL_8K_ITEMS)
+        if not accession or not primary_document:
+            disposition = "invalid_metadata"
+            reason = "accession number or primary document is missing"
+        elif accession in seen_accessions:
+            disposition = "duplicate_accession"
+            reason = "duplicate SEC accession in submissions payload"
+        else:
+            seen_accessions.add(accession)
+            try:
+                filing_day = date.fromisoformat(filing_date)
+            except ValueError:
+                disposition = "invalid_metadata"
+                reason = "filing date is missing or invalid"
+            else:
+                if filing_date > as_of_date:
+                    disposition = "excluded_after_as_of"
+                    reason = "filing occurred after the analysis cutoff"
+                elif filing_day.toordinal() < cutoff:
+                    disposition = "excluded_outside_lookback"
+                    reason = f"filing is older than the {lookback_days}-day event window"
+                elif material_items:
+                    disposition = "material_candidate"
+                    reason = "SEC item requires primary-document materiality review"
+                else:
+                    disposition = "non_material_with_reason"
+                    reason = "8-K contains no Room16 material-event item"
         rows.append(
             {
                 "filing_date": filing_date,
                 "accession_number": accession,
                 "primary_document": primary_document,
-                "items": ",".join(sorted(items.intersection(MATERIAL_8K_ITEMS))),
+                "items": ",".join(sorted(items)),
+                "material_items": ",".join(sorted(material_items)),
+                "disposition": disposition,
+                "reason": reason,
             }
         )
-    return sorted(rows, key=lambda row: (row["filing_date"], row["accession_number"]))
+    return sorted(
+        rows,
+        key=lambda row: (row["filing_date"], row["accession_number"]),
+    )
 
 
 def build_material_event_payload(
@@ -87,6 +175,7 @@ def build_material_event_payload(
     cik: str,
     filings: list[tuple[dict[str, str], str]],
     retrieved_at: str,
+    candidate_inventory: list[dict[str, str]] | None = None,
 ) -> dict[str, Any]:
     events: list[dict[str, Any]] = []
     sources_checked: list[str] = []
@@ -100,10 +189,16 @@ def build_material_event_payload(
         sources_checked.append(url)
         parser = _TextParser()
         parser.feed(html)
-        classified = classify_material_event_text(parser.text())
+        items = {
+            item for item in str(filing.get("items") or "").split(",") if item
+        }
+        classified = classify_material_event_text(parser.text(), items=items)
         if classified is None:
-            continue
+            raise ValueError(
+                "selected SEC material-event filing has no deterministic disposition"
+            )
         event_type, headline, summary = classified
+        source_id = f"SEC_CIK{cik_digits.zfill(10)}_{accession_digits}"
         events.append(
             {
                 "event_type": event_type,
@@ -111,24 +206,103 @@ def build_material_event_payload(
                 "headline": headline,
                 "summary": summary,
                 "material": True,
-                "source_id": f"SEC_CIK{cik_digits.zfill(10)}_{accession_digits}",
+                "source_id": source_id,
                 "source_type": "sec_filing",
                 "authority_rank": 1,
                 "url": url,
                 "retrieved_at": retrieved_at,
             }
         )
+    material_dispositions = [
+        {
+            "source_id": event["source_id"],
+            "filing_date": event["date"],
+            "items": next(
+                filing["items"]
+                for filing, _html in filings
+                if event["source_id"].endswith(
+                    filing["accession_number"].replace("-", "")
+                )
+            ),
+            "disposition": "material_event",
+            "event_type": event["event_type"],
+        }
+        for event in events
+    ]
+    if candidate_inventory is None:
+        dispositions = material_dispositions
+    else:
+        by_accession = {
+            str(item["source_id"]).rsplit("_", 1)[-1]: item
+            for item in material_dispositions
+        }
+        dispositions = []
+        for candidate in candidate_inventory:
+            accession_digits = str(
+                candidate.get("accession_number") or ""
+            ).replace("-", "")
+            resolved = by_accession.get(accession_digits)
+            if candidate.get("disposition") == "material_candidate" and resolved:
+                dispositions.append(resolved)
+            else:
+                inventory_disposition = str(candidate.get("disposition") or "")
+                final_disposition = {
+                    "duplicate_accession": "duplicate",
+                    "invalid_metadata": "parse_failed",
+                    "excluded_after_as_of": "non_material_with_reason",
+                    "excluded_outside_lookback": "superseded",
+                    "non_material_with_reason": "non_material_with_reason",
+                    "material_candidate": "parse_failed",
+                }.get(inventory_disposition, "parse_failed")
+                dispositions.append(
+                    {
+                        "source_id": (
+                            f"SEC_ACCESSION_{accession_digits}"
+                            if accession_digits
+                            else "SEC_ACCESSION_MISSING"
+                        ),
+                        "filing_date": candidate.get("filing_date"),
+                        "items": candidate.get("items"),
+                        "disposition": final_disposition,
+                        "inventory_disposition": inventory_disposition,
+                        "reason": candidate.get("reason"),
+                    }
+                )
+    unresolved = [
+        item
+        for item in dispositions
+        if item.get("disposition") == "parse_failed"
+    ]
+    allowed_dispositions = {
+        "material_event",
+        "non_material_with_reason",
+        "duplicate",
+        "superseded",
+        "parse_failed",
+    }
+    if any(
+        item.get("disposition") not in allowed_dispositions for item in dispositions
+    ):
+        raise ValueError("SEC filing inventory contains a non-canonical disposition")
     return {
-        "coverage_status": "available",
+        "coverage_status": "complete" if not unresolved else "incomplete",
         "checked_at": retrieved_at,
         "window_start": min((row[0]["filing_date"] for row in filings), default=None),
         "window_end": max((row[0]["filing_date"] for row in filings), default=None),
         "sources_checked": sources_checked,
+        "candidate_count": len(dispositions),
+        "fetched_material_candidate_count": len(filings),
+        "all_candidates_dispositioned": not unresolved,
+        "filing_dispositions": dispositions,
         "events": events,
     }
 
 
-def classify_material_event_text(text: str) -> tuple[str, str, str] | None:
+def classify_material_event_text(
+    text: str,
+    *,
+    items: set[str] | None = None,
+) -> tuple[str, str, str] | None:
     compact = " ".join(str(text or "").split())
     folded = compact.casefold()
     cyber = any(
@@ -158,7 +332,25 @@ def classify_material_event_text(text: str) -> tuple[str, str, str] | None:
         token in folded for token in ("product", "safety", "consumer")
     )
     if not any((cyber, disrupted, restored, recalled)):
-        return None
+        recognized_items = sorted((items or set()).intersection(ITEM_EVENT_TYPES))
+        if not recognized_items:
+            return None
+        primary_item = recognized_items[0]
+        event_type, headline = ITEM_EVENT_TYPES[primary_item]
+        sentences = re.split(r"(?<=[.!?])\s+", compact)
+        substantive = next(
+            (
+                sentence
+                for sentence in sentences
+                if len(sentence.split()) >= 8
+                and not sentence.casefold().startswith("item ")
+            ),
+            "",
+        )
+        summary = (
+            f"SEC Form 8-K Item {', '.join(recognized_items)}. {substantive}"
+        ).strip()
+        return event_type, headline, summary[:1800]
     if restored:
         event_type = "operational_recovery"
         headline = "Issuer disclosed operational recovery progress"

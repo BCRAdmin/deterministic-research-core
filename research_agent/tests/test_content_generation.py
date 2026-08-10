@@ -2000,6 +2000,7 @@ def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():
         "sma_50",
         "sma_200",
         "rsi_14",
+        "price_to_fcf",
     ]
     assert "revenue TTM of 4.34B HUF" in rating_claim.claim
     assert "FCF TTM of 1.12B HUF" in rating_claim.claim

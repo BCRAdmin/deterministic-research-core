@@ -66,6 +66,8 @@ REGISTERED_AUDIT_RULES: tuple[AuditRuleDefinition, ...] = (
     AuditRuleDefinition("UNSUPPORTED_EARNINGS_EVENT_CLAIM", "error", "earnings", "earnings date unavailable fixture", "blocks_publish"),
     AuditRuleDefinition("SPECULATIVE_DEEP_TECH_MANUAL_REVIEW_PROFILE", "warning", "archetype", "speculative deep-tech manual-review profile fixture", "requires_review"),
     AuditRuleDefinition("EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH_MANUAL_REVIEW_PROFILE", "warning", "archetype", "early-commercial capital-intensive profile fixture", "requires_review"),
+    AuditRuleDefinition("UNKNOWN_OR_LOW_CONFIDENCE_ARCHETYPE", "warning", "archetype", "unknown or weakly evidenced business-model archetype fixture", "requires_review"),
+    AuditRuleDefinition("BUSINESS_MODEL_KPI_COVERAGE_INCOMPLETE", "warning", "archetype", "business-model archetype with missing required KPI fixture", "requires_review"),
     AuditRuleDefinition("ACCOUNTING_GAIN_NOT_OPERATING_TURNAROUND", "warning", "archetype", "non-operating accounting gain caveat fixture", "requires_review"),
     AuditRuleDefinition("ORDER_MATERIALITY_MISSING", "warning", "archetype", "orders/contracts materiality fixture", "requires_review"),
     AuditRuleDefinition("PERIOD_DENOMINATOR_BUG", "error", "financial_sanity", "valuation denominator bug fixture", "blocks_publish"),

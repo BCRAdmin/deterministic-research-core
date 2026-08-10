@@ -8,7 +8,10 @@ from research_agent.evidence.evidence_item import EvidenceItem
 from research_agent.evidence.evidence_ledger import (
     build_technical_derivation_evidence,
 )
-from research_agent.integration.authority_bundle import build_authority_bundle
+from research_agent.integration.authority_bundle import (
+    AuthorityBundleError,
+    build_authority_bundle,
+)
 from research_agent.research_core.ingestion.source_registry import (
     SourceRegistry,
     merge_evidence_sources,
@@ -99,19 +102,24 @@ def test_legacy_historical_corpus_is_rejected_by_hardened_authority_contract(
             encoding="utf-8",
         )
 
-        manifest = build_authority_bundle(
-            packet_dir=packet_dir,
-            output_dir=tmp_path / "bundles" / ticker,
-            source_registry_path=local_registry,
-        )
-        if not manifest["analysis_allowed"]:
-            failures[ticker] = manifest["blocking_failures"]
+        try:
+            manifest = build_authority_bundle(
+                packet_dir=packet_dir,
+                output_dir=tmp_path / "bundles" / ticker,
+                source_registry_path=local_registry,
+            )
+        except AuthorityBundleError as exc:
+            failures[ticker] = [str(exc)]
+        else:
+            if not manifest["analysis_allowed"]:
+                failures[ticker] = manifest["blocking_failures"]
 
     assert set(failures) == {path.parent.name for path in cases}
     hardened_blockers = {
         "ttm_formula_operands_evidenced",
         "fcf_definition_explicit",
         "analytical_rating_independent_present",
+        "source snapshot manifest and source root are required by authority contract v3",
     }
     assert all(
         hardened_blockers.intersection(blockers)

@@ -23,6 +23,12 @@ class RatingPermission(BaseModel):
     preferred_rating: Rating
     reason: str
     evidence_status: str = "complete"
+    permission_type: Literal["analytical", "provisional", "safety_fallback"] = (
+        "analytical"
+    )
+    display_rating: str = ""
+    publication_allowed: bool = True
+    fallback_only: bool = False
 
 
 class DecisionPacket(BaseModel):
@@ -35,6 +41,12 @@ class DecisionPacket(BaseModel):
         "rated"
     )
     conclusion_status_reason: Optional[str] = None
+    evidence_maturity: Literal["complete", "partial", "incomplete", "blocked"] = (
+        "complete"
+    )
+    publication_permission: Literal["eligible", "manual_review", "blocked"] = (
+        "eligible"
+    )
     rating_permission: RatingPermission
     action_policy: Dict[str, object] = Field(default_factory=dict)
     key_reasons: List[str] = Field(default_factory=list)

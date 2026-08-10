@@ -147,10 +147,18 @@ def test_non_positive_equity_offsets_positive_fcf_without_inventing_a_ratio():
 def test_unbenchmarked_strong_setup_is_capped_at_hold():
     packet = build_decision_packet(_strong_metrics())
 
-    assert packet.analytical_rating_unconstrained == Rating.HOLD
+    assert packet.analytical_rating_unconstrained is None
     assert packet.rating_permission.preferred_rating == Rating.HOLD
     assert packet.conclusion_status == "not_rated"
     assert "incomplete" in packet.conclusion_status_reason
+    assert packet.evidence_maturity == "incomplete"
+    assert packet.publication_permission == "blocked"
+    assert packet.rating_permission.permission_type == "safety_fallback"
+    assert packet.rating_permission.display_rating == "Unrated"
+    assert packet.rating_permission.publication_allowed is False
+    assert packet.rating_permission.fallback_only is True
+    assert packet.action_policy["actionability"] == "blocked"
+    assert packet.action_policy["internal_fallback_rating"] == "Hold"
     assert Rating.ACCUMULATE in packet.rating_permission.blocked_ratings
     assert Rating.STRONG_BUY in packet.rating_permission.blocked_ratings
     assert Rating.SELL in packet.rating_permission.blocked_ratings
@@ -246,6 +254,23 @@ def test_blocking_validation_marks_conclusion_blocked_without_rewriting_rating()
 
     packet = build_decision_packet(_strong_metrics(), validation_report=validation)
 
-    assert packet.analytical_rating_unconstrained == Rating.HOLD
+    assert packet.analytical_rating_unconstrained is None
     assert packet.conclusion_status == "blocked"
     assert "validation" in packet.conclusion_status_reason.lower()
+    assert packet.rating_permission.display_rating == "Unrated"
+    assert packet.publication_permission == "blocked"
+
+
+def test_incomplete_research_scope_is_the_explicit_rating_blocker():
+    packet = build_decision_packet(
+        _strong_metrics(),
+        research_scope_complete=False,
+        research_scope_gaps=["transactions_and_financing"],
+    )
+
+    assert packet.conclusion_status == "not_rated"
+    assert packet.analytical_rating_unconstrained is None
+    assert packet.rating_permission.display_rating == "Unrated"
+    assert packet.rating_permission.preferred_rating == Rating.HOLD
+    assert packet.rating_permission.fallback_only is True
+    assert "transactions_and_financing" in packet.conclusion_status_reason

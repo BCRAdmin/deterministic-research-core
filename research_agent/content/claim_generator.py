@@ -30,7 +30,11 @@ _BUSINESS_CONTEXT_SECTIONS = {
     "Segment Mix",
     "Execution Milestones",
 }
-_BUSINESS_CONTEXT_EVENT_TYPES = {"business_context", "business_model"}
+_BUSINESS_CONTEXT_EVENT_TYPES = {
+    "business_context",
+    "business_model",
+    "operating_kpi",
+}
 _CATALYST_EVENT_TYPES = {
     "acquisition",
     "company_outlook",
@@ -244,7 +248,10 @@ class _ClaimBuilder:
 
     def build_candidates(self) -> list[ResearchClaim]:
         ticker = self.data_packet.ticker.upper()
-        preferred = self.decision.rating_permission.preferred_rating.value
+        preferred = (
+            self.decision.rating_permission.display_rating
+            or self.decision.rating_permission.preferred_rating.value
+        )
         core_rating_metrics = _core_rating_metric_refs(self.metrics)
 
         self.add(
@@ -656,9 +663,11 @@ class _ClaimBuilder:
             scenario_metrics = [
                 f"dcf_{scenario.name}_equity_value" for scenario in sensitivity.scenarios
             ]
+            scenario_metrics.append("dcf_base_terminal_value_share")
             if sensitivity.reverse_dcf_implied_fcf_growth is not None:
                 scenario_metrics.append("reverse_dcf_implied_fcf_growth")
             scenario_values = {scenario.name: scenario for scenario in sensitivity.scenarios}
+            base_terminal_share = scenario_values["base"].terminal_value_share
             reverse_text = (
                 " The standardized reverse DCF implies a five-year FCF growth "
                 f"rate of {sensitivity.reverse_dcf_implied_fcf_growth:.1%} "
@@ -674,7 +683,10 @@ class _ClaimBuilder:
                     "Standardized equity-DCF sensitivity, not a company forecast: "
                     f"bear {_money(scenario_values['bear'].equity_value, self.data_packet.price_basis.currency)}, "
                     f"base {_money(scenario_values['base'].equity_value, self.data_packet.price_basis.currency)} and "
-                    f"bull {_money(scenario_values['bull'].equity_value, self.data_packet.price_basis.currency)}."
+                    f"bull {_money(scenario_values['bull'].equity_value, self.data_packet.price_basis.currency)}. "
+                    f"In the base case, discounted terminal value contributes "
+                    f"{base_terminal_share:.1%} of scenario equity value, exposing "
+                    "the model's dependence on long-duration assumptions."
                     f"{reverse_text}"
                 ),
                 scenario_metrics,
@@ -1283,7 +1295,10 @@ class _ClaimBuilder:
 
     def add_event(self, event: MaterialNewsEvent, *, section: str) -> None:
         statement = str(event.summary or event.headline).strip()
-        if not statement or any(character.isdigit() for character in statement):
+        numeric_event = bool(event.numeric_evidence)
+        if not statement or (
+            any(character.isdigit() for character in statement) and not numeric_event
+        ):
             return
         evidence = [
             item
@@ -1296,6 +1311,18 @@ class _ClaimBuilder:
             and self.evidence_id_counts.get(item.evidence_id) == 1
         ]
         if not evidence:
+            return
+        metric_values = {
+            metric.metric_name: metric.value for metric in event.numeric_evidence
+        }
+        if numeric_event and not all(
+            any(
+                metric.metric_name in evidence_item.supports_metrics
+                and evidence_item.value is not None
+                for evidence_item in evidence
+            )
+            for metric in event.numeric_evidence
+        ):
             return
         claim_statement = (
             f"Issuer-filed business context: {statement}"
@@ -1323,9 +1350,9 @@ class _ClaimBuilder:
                 agent="deterministic_content_generator",
                 claim=claim_statement,
                 claim_text=claim_statement,
-                evidence_metrics=[],
-                metric_refs=[],
-                metric_values={},
+                evidence_metrics=list(metric_values),
+                metric_refs=list(metric_values),
+                metric_values=metric_values,
                 evidence_ids=[item.evidence_id for item in evidence],
                 source_ids=list(dict.fromkeys(item.source_id for item in evidence)),
                 confidence="high",
@@ -2569,12 +2596,70 @@ def _final_rating_claim_text(
             "and timing until the price-series basis is confirmed."
         )
     )
+    valuation_reconciliation = _valuation_reconciliation_text(metrics, currency)
     return (
         f"We rate {ticker} {preferred} at the validated close of "
         f"{_money(metrics.technical.close, currency)}. {reason} The factual "
         f"anchors are {evidence_anchor}. {fundamental_note} {valuation_note} "
-        f"{technical_note}"
+        f"{valuation_reconciliation} {technical_note}"
     )
+
+
+def _valuation_reconciliation_text(metrics: MetricsPacket, currency: str) -> str:
+    valuation = metrics.valuation
+    sensitivity = valuation.sensitivity
+    parts: list[str] = []
+    if sensitivity.scenarios:
+        base = next(
+            (scenario for scenario in sensitivity.scenarios if scenario.name == "base"),
+            sensitivity.scenarios[0],
+        )
+        parts.append(
+            "Valuation reconciliation: the standardized DCF spans "
+            f"{_money(sensitivity.model_range_low, currency)} to "
+            f"{_money(sensitivity.model_range_high, currency)}, with the current "
+            f"equity value positioned `{sensitivity.current_value_position}`. "
+            f"The base case derives {base.terminal_value_share:.1%} of value from "
+            "the discounted terminal value, so model uncertainty is high and the "
+            "DCF is screening evidence rather than a price target."
+        )
+    if sensitivity.reverse_dcf_implied_fcf_growth is not None:
+        parts.append(
+            "The reverse DCF requires "
+            f"{sensitivity.reverse_dcf_implied_fcf_growth:.1%} annual FCF growth "
+            "for five years under the standardized base assumptions; this is a "
+            "market-implied expectation, not issuer guidance."
+        )
+    observed = [
+        ("P/FCF", valuation.price_to_fcf),
+        ("trailing P/E", valuation.trailing_pe),
+        ("EV/Sales", valuation.ev_to_sales),
+    ]
+    available = [
+        f"{label} {_multiple(value)}"
+        for label, value in observed
+        if value is not None
+    ]
+    if available:
+        extreme = any(
+            value is not None and value > 100
+            for value in (valuation.price_to_fcf, valuation.trailing_pe)
+        )
+        parts.append(
+            "Observed multiples are "
+            + ", ".join(available)
+            + (
+                "; at least one exceeds 100x and therefore requires explicit "
+                "durability review."
+                if extreme
+                else "; they remain unbenchmarked observations."
+            )
+            + " Without a validated peer, history or cycle benchmark, they do "
+            "not independently move the rating."
+        )
+    if not parts:
+        return "No valuation model or multiple is sufficiently measured to affect the rating."
+    return " ".join(parts)
 
 
 def _core_rating_metric_refs(metrics: MetricsPacket) -> list[str]:
@@ -2599,6 +2684,17 @@ def _core_rating_metric_refs(metrics: MetricsPacket) -> list[str]:
             metric_refs.append(metric_name)
     if metrics.valuation.ev_to_sales is None and metrics.valuation.trailing_pe is not None:
         metric_refs.append("trailing_pe")
+    if metrics.valuation.price_to_fcf is not None:
+        metric_refs.append("price_to_fcf")
+    for scenario in metrics.valuation.sensitivity.scenarios:
+        metric_refs.extend(
+            [
+                f"dcf_{scenario.name}_equity_value",
+                f"dcf_{scenario.name}_terminal_value_share",
+            ]
+        )
+    if metrics.valuation.sensitivity.reverse_dcf_implied_fcf_growth is not None:
+        metric_refs.append("reverse_dcf_implied_fcf_growth")
     return metric_refs
 
 

@@ -41,6 +41,7 @@ def determine_rating_permission(
         preferred_rating=preferred,
         reason=reason,
         evidence_status=_evidence_status(scores),
+        display_rating=preferred.value,
     )
 
 
@@ -105,6 +106,8 @@ def build_decision_packet(
     action_class: Optional[str] = None,
     rule_weights: Optional[RuleWeightConfig] = None,
     calibration_mode: str = "live",
+    research_scope_complete: Optional[bool] = None,
+    research_scope_gaps: Optional[list[str]] = None,
 ) -> DecisionPacket:
     scores, triggered_rules, score_version, mode = calculate_signal_scores_with_rules(
         metrics=metrics_packet,
@@ -119,14 +122,77 @@ def build_decision_packet(
         validation_report=validation_report,
         audit_report=audit_report,
     )
-    analytical_rating, analytical_reason = (
+    base_analytical_rating, analytical_reason = (
         determine_unconstrained_analytical_rating(scores)
     )
     conclusion_status, conclusion_status_reason = _conclusion_status(
         scores=scores,
         validation_report=validation_report,
         audit_report=audit_report,
+        research_scope_complete=research_scope_complete,
+        research_scope_gaps=research_scope_gaps,
     )
+    analytical_rating: Optional[Rating] = base_analytical_rating
+    if conclusion_status in {"not_rated", "blocked"}:
+        analytical_rating = None
+        permission = permission.model_copy(
+            update={
+                "permission_type": "safety_fallback",
+                "display_rating": "Unrated",
+                "publication_allowed": False,
+                "fallback_only": True,
+                "reason": (
+                    "Hold is retained only as an internal fail-closed fallback; "
+                    "it is not an analytical rating. " + conclusion_status_reason
+                ),
+            }
+        )
+    elif conclusion_status == "provisional":
+        permission = permission.model_copy(
+            update={
+                "permission_type": "provisional",
+                "display_rating": f"Provisional — {base_analytical_rating.value}",
+                "publication_allowed": False,
+                "fallback_only": False,
+            }
+        )
+    evidence_maturity = {
+        "rated": "complete",
+        "provisional": "partial",
+        "not_rated": "incomplete",
+        "blocked": "blocked",
+    }[conclusion_status]
+    publication_permission = (
+        "eligible"
+        if conclusion_status == "rated"
+        else "manual_review"
+        if conclusion_status == "provisional"
+        else "blocked"
+    )
+    action_policy = build_action_policy(permission.preferred_rating, metrics_packet)
+    if conclusion_status in {"not_rated", "blocked"}:
+        action_policy = {
+            key: value
+            for key, value in action_policy.items()
+            if key in {"technical_boundary"}
+        }
+        action_policy.update(
+            {
+                "research_stance": "No analytical stance: required evidence is incomplete.",
+                "actionability": "blocked",
+                "internal_fallback_rating": permission.preferred_rating.value,
+                "reason": conclusion_status_reason,
+            }
+        )
+    elif conclusion_status == "provisional":
+        action_policy = {
+            **action_policy,
+            "actionability": "manual_review_only",
+            "reason": conclusion_status_reason,
+        }
+    else:
+        action_policy = {**action_policy, "actionability": "eligible"}
+
     return DecisionPacket(
         ticker=metrics_packet.ticker,
         as_of_date=metrics_packet.as_of_date,
@@ -135,8 +201,10 @@ def build_decision_packet(
         analytical_rating_reason=analytical_reason,
         conclusion_status=conclusion_status,
         conclusion_status_reason=conclusion_status_reason,
+        evidence_maturity=evidence_maturity,
+        publication_permission=publication_permission,
         rating_permission=permission,
-        action_policy=build_action_policy(permission.preferred_rating, metrics_packet),
+        action_policy=action_policy,
         key_reasons=_build_key_reasons(scores),
         key_risks=_build_key_risks(metrics_packet),
         triggered_rules=triggered_rules,
@@ -150,6 +218,8 @@ def _conclusion_status(
     scores: SignalScores,
     validation_report: Optional[ValidationReport],
     audit_report: Optional[AuditReport],
+    research_scope_complete: Optional[bool],
+    research_scope_gaps: Optional[list[str]],
 ) -> tuple[str, str]:
     """Separate an analytical direction from its review/publication maturity."""
 
@@ -157,6 +227,12 @@ def _conclusion_status(
         return "blocked", "Blocking validation errors prevent a usable conclusion."
     if audit_report and audit_report.has_blocking_errors:
         return "blocked", "Blocking audit errors prevent a usable conclusion."
+    if research_scope_complete is False:
+        gaps = ", ".join(research_scope_gaps or []) or "unspecified source scopes"
+        return (
+            "not_rated",
+            "Required research-source scopes are incomplete: " + gaps + ".",
+        )
 
     evidence_status = _evidence_status(scores)
     if evidence_status == "incomplete":

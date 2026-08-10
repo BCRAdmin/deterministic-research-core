@@ -135,6 +135,7 @@ class ValuationScenario(BaseModel):
     terminal_growth_rate: float
     present_value_explicit_cash_flows: float
     present_value_terminal_value: float
+    terminal_value_share: float
     equity_value: float
     implied_price: Optional[float] = None
     upside_to_current_price: Optional[float] = None

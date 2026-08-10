@@ -14,6 +14,10 @@ class FCFDefinitionConfig(BaseModel):
 class ReportConfig(BaseModel):
     ticker: str
     as_of_date: str
+    exchange: Optional[str] = None
+    jurisdiction: Optional[str] = None
+    isin: Optional[str] = None
+    wkn: Optional[str] = None
     source_mode: str = "manual_packet_mode"
     fcf_definition: FCFDefinitionConfig = Field(default_factory=FCFDefinitionConfig)
     block_on_validation_errors: bool = True
@@ -38,3 +42,5 @@ class ReportConfig(BaseModel):
     ir_release_dir: Optional[str] = None
     sec_results_release_path: Optional[str] = None
     official_news_dir: Optional[str] = None
+    source_artifact_root: Optional[str] = None
+    source_scope_coverage_path: Optional[str] = None

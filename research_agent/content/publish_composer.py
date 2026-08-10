@@ -84,7 +84,10 @@ def compose_publish_report(
     claim_list = list(claims)
     grouped = _group_claims(claim_list)
     ticker = data_packet.ticker.upper()
-    rating = decision_packet.rating_permission.preferred_rating.value
+    rating = (
+        decision_packet.rating_permission.display_rating
+        or decision_packet.rating_permission.preferred_rating.value
+    )
     if _is_early_commercial_capital_intensive_report(grouped, metrics_packet):
         body = _early_commercial_capital_intensive_publish_report(
             ticker,
@@ -136,7 +139,10 @@ def compose_internal_best_report(
     claim_list = list(claims)
     grouped = _group_claims(claim_list)
     ticker = data_packet.ticker.upper()
-    rating = decision_packet.rating_permission.preferred_rating.value
+    rating = (
+        decision_packet.rating_permission.display_rating
+        or decision_packet.rating_permission.preferred_rating.value
+    )
     if company_archetype == "EARLY_COMMERCIAL_CAPITAL_INTENSIVE_TECH" or _is_early_commercial_capital_intensive_report(grouped, metrics_packet):
         report = _early_commercial_capital_intensive_internal_best_report(
             company_name=data_packet.company_name,
@@ -769,6 +775,18 @@ def _generic_publish_report(
         )
         if part
     )
+    investment_thesis_evidence = _combined_evidence_reference(
+        [
+            *grouped.get("Executive Summary", []),
+            *grouped.get("Business & Segment Context", []),
+            *current_kpi_claims,
+        ],
+        limit=4,
+    )
+    if investment_thesis_evidence:
+        investment_thesis = (
+            f"{investment_thesis}\n\n{investment_thesis_evidence}"
+        )
 
     sections = [
         f"# {ticker} Research Report",
@@ -891,6 +909,9 @@ def _paragraphs(claims: list[ResearchClaim], limit: int) -> str:
             additions.append(_clean_text(claim.investment_implication))
         if additions:
             text = f"{text} {' '.join(additions)}"
+        evidence_reference = _claim_evidence_reference(claim)
+        if evidence_reference:
+            text = f"{text} {evidence_reference}"
         paragraphs.append(text)
     return "\n\n".join(paragraphs)
 
@@ -911,6 +932,27 @@ def _internal_paragraphs(claims: list[ResearchClaim], limit: int) -> str:
             text = f"{text} {' '.join(additions)}"
         paragraphs.append(text)
     return "\n\n".join(paragraphs)
+
+
+def _claim_evidence_reference(claim: ResearchClaim, limit: int = 4) -> str:
+    evidence_ids = [str(item) for item in claim.evidence_ids if str(item).strip()]
+    if not evidence_ids:
+        return ""
+    return f"Evidence: `{', '.join(evidence_ids[:limit])}`."
+
+
+def _combined_evidence_reference(
+    claims: list[ResearchClaim], limit: int = 4
+) -> str:
+    evidence_ids: list[str] = []
+    for claim in claims:
+        for item in claim.evidence_ids:
+            value = str(item).strip()
+            if value and value not in evidence_ids:
+                evidence_ids.append(value)
+            if len(evidence_ids) >= limit:
+                return f"Evidence: `{', '.join(evidence_ids)}`."
+    return f"Evidence: `{', '.join(evidence_ids)}`." if evidence_ids else ""
 
 
 def _early_commercial_valuation_sensitivity(v) -> str:

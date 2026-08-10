@@ -43,6 +43,22 @@ def test_allowed_rating_passes_permission_gate():
     enforce_rating_permission("Final Rating: Tactical Trim", _permission())
 
 
+def test_safety_fallback_cannot_be_rendered_as_analytical_rating():
+    permission = _permission().model_copy(
+        update={
+            "permission_type": "safety_fallback",
+            "display_rating": "Unrated",
+            "publication_allowed": False,
+            "fallback_only": True,
+        }
+    )
+
+    with pytest.raises(RuntimeError, match="safety fallback"):
+        enforce_rating_permission("Final Rating: Tactical Trim", permission)
+
+    enforce_rating_permission("Final Rating: Unrated", permission)
+
+
 def test_report_builder_blocks_final_decision_with_disallowed_rating():
     decision_packet = DecisionPacket(
         ticker="TEST",

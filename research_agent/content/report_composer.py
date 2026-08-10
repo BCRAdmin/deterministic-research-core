@@ -45,7 +45,10 @@ def compose_research_report(
 ) -> str:
     claim_list = list(claims)
     grouped = _group_by_section(claim_list)
-    preferred = decision_packet.rating_permission.preferred_rating.value
+    preferred = (
+        decision_packet.rating_permission.display_rating
+        or decision_packet.rating_permission.preferred_rating.value
+    )
     allowed = ", ".join(rating.value for rating in decision_packet.rating_permission.allowed_ratings)
     blocked = ", ".join(rating.value for rating in decision_packet.rating_permission.blocked_ratings)
 
@@ -212,7 +215,10 @@ def _render_investment_thesis(
     metrics_packet: MetricsPacket,
     decision_packet: DecisionPacket,
 ) -> str:
-    preferred = decision_packet.rating_permission.preferred_rating.value
+    preferred = (
+        decision_packet.rating_permission.display_rating
+        or decision_packet.rating_permission.preferred_rating.value
+    )
     revenue = metrics_packet.fundamentals.revenue_ttm
     fcf = metrics_packet.fundamentals.free_cash_flow_ttm
     ev_sales = metrics_packet.valuation.ev_to_sales
@@ -292,7 +298,10 @@ def _render_scenario_view(
     metrics_packet: MetricsPacket,
     decision_packet: DecisionPacket,
 ) -> str:
-    preferred = decision_packet.rating_permission.preferred_rating.value
+    preferred = (
+        decision_packet.rating_permission.display_rating
+        or decision_packet.rating_permission.preferred_rating.value
+    )
     scenarios = metrics_packet.valuation.sensitivity.scenarios
     if scenarios:
         lines = [
@@ -358,7 +367,10 @@ def _render_final_rating_logic(
     metrics_packet: MetricsPacket,
     decision_packet: DecisionPacket,
 ) -> str:
-    preferred = decision_packet.rating_permission.preferred_rating.value
+    preferred = (
+        decision_packet.rating_permission.display_rating
+        or decision_packet.rating_permission.preferred_rating.value
+    )
     f = metrics_packet.fundamentals
     v = metrics_packet.valuation
     t = metrics_packet.technical
@@ -399,6 +411,10 @@ def _render_final_rating_logic(
             )
     elif scores.valuation_status in {"scenario_measured", "illustrative_only"}:
         sensitivity = v.sensitivity
+        base_scenario = next(
+            (scenario for scenario in sensitivity.scenarios if scenario.name == "base"),
+            None,
+        )
         qualifier = (
             "measured but not calibrated"
             if scores.valuation_status == "scenario_measured"
@@ -408,7 +424,23 @@ def _render_final_rating_logic(
             f"- Valuation status: standardized equity-DCF range "
             f"`{_fmt_money(sensitivity.model_range_low, currency)}` to "
             f"`{_fmt_money(sensitivity.model_range_high, currency)}`; {qualifier}. "
-            "The range informs review but does not create an automatic rating signal."
+            + (
+                f"The base case derives `{base_scenario.terminal_value_share:.1%}` "
+                "of value from discounted terminal value. "
+                if base_scenario is not None
+                else ""
+            )
+            + (
+                "The reverse DCF requires "
+                f"`{sensitivity.reverse_dcf_implied_fcf_growth:.1%}` annual FCF "
+                "growth for five years under standardized base assumptions. "
+                if sensitivity.reverse_dcf_implied_fcf_growth is not None
+                else ""
+            )
+            + _multiple_reconciliation_sentence(v)
+            + " The DCF is screening evidence with material model uncertainty, "
+            "not a price target, and no unbenchmarked multiple creates an "
+            "automatic rating signal."
         )
     elif scores.valuation_status != "measured":
         valuation_line = (
@@ -535,6 +567,32 @@ def _render_final_rating_logic(
         review_condition,
     ]
     return "\n".join(lines)
+
+
+def _multiple_reconciliation_sentence(valuation: object) -> str:
+    values = [
+        ("P/FCF", getattr(valuation, "price_to_fcf", None)),
+        ("trailing P/E", getattr(valuation, "trailing_pe", None)),
+        ("EV/Sales", getattr(valuation, "ev_to_sales", None)),
+    ]
+    available = [
+        f"{label} `{_fmt_multiple(value)}`"
+        for label, value in values
+        if value is not None
+    ]
+    if not available:
+        return "No measured multiple is available for reconciliation."
+    extreme = any(
+        value is not None and value > 100
+        for label, value in values
+        if label in {"P/FCF", "trailing P/E"}
+    )
+    suffix = (
+        "At least one multiple exceeds 100x and requires explicit durability review."
+        if extreme
+        else "The multiples are unbenchmarked observations."
+    )
+    return "Observed " + ", ".join(available) + ". " + suffix
 
 
 def _clean_main_body_mechanical_language(markdown: str) -> str:

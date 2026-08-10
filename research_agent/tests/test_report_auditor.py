@@ -126,6 +126,7 @@ def test_dcf_assumptions_and_risk_coverage_map_to_their_own_metrics():
     markdown = (
         "The standardized reverse DCF implies a five-year FCF growth rate of "
         "19.9% at a 10% discount rate and 2% terminal growth.\n"
+        "The base-case terminal value contributes 50% of equity value.\n"
         "The financial-risk screen has 100% financial-input coverage."
     )
     metrics = simple_metrics()
@@ -138,6 +139,7 @@ def test_dcf_assumptions_and_risk_coverage_map_to_their_own_metrics():
             terminal_growth_rate=terminal,
             present_value_explicit_cash_flows=100,
             present_value_terminal_value=100,
+            terminal_value_share=0.5,
             equity_value=200,
         )
         for name, growth, discount, terminal in (
@@ -164,6 +166,7 @@ def test_dcf_assumptions_and_risk_coverage_map_to_their_own_metrics():
         "19.9%": "reverse_dcf_implied_fcf_growth",
         "10%": "dcf_base_discount_rate",
         "2%": "dcf_base_terminal_growth_rate",
+        "50%": "dcf_base_terminal_value_share",
         "100%": "financial_risk_coverage",
     }
 

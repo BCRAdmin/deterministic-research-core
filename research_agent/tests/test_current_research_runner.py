@@ -579,6 +579,23 @@ class _StoredSnowSec(_FakeSec):
             }
         }
 
+    def get_submissions(self, cik):
+        return {
+            "filings": {
+                "recent": {
+                    "form": ["10-K"],
+                    "filingDate": ["2026-03-20"],
+                    "reportDate": ["2026-01-31"],
+                    "accessionNumber": ["0001640147-26-000008"],
+                    "primaryDocument": ["snow-20260131.htm"],
+                    "items": [""],
+                }
+            }
+        }
+
+    def get_filing_html(self, **kwargs):
+        return "<p>Snowflake provides a cloud data platform to customers.</p>"
+
 
 class _StoredSnowPrices(_FakePrices):
     def get_history(self, ticker, start, end):
@@ -602,6 +619,23 @@ class _StoredAaplSec(_FakeSec):
         return json.loads(
             (SNOW_SOURCE_ROOT / "sec_companyfacts" / "AAPL.json").read_text(encoding="utf-8")
         )
+
+    def get_submissions(self, cik):
+        return {
+            "filings": {
+                "recent": {
+                    "form": ["10-Q"],
+                    "filingDate": ["2026-05-01"],
+                    "reportDate": ["2026-03-28"],
+                    "accessionNumber": ["0000320193-26-000013"],
+                    "primaryDocument": ["aapl-20260328.htm"],
+                    "items": [""],
+                }
+            }
+        }
+
+    def get_filing_html(self, **kwargs):
+        return "<p>Apple designs and sells consumer technology products and services.</p>"
 
 
 class _StoredAaplPrices(_FakePrices):
@@ -1117,14 +1151,52 @@ def test_current_runner_rejects_non_authority_price_provider(tmp_path):
 
 
 def test_current_runner_builds_real_authority_bundle_from_generic_adapters(tmp_path):
+    earnings_calendar = tmp_path / "aapl_earnings_calendar.json"
+    earnings_calendar.write_text(
+        json.dumps(
+            {
+                "contract_id": "room16.official_calendar_snapshot",
+                "contract_version": 1,
+                "ticker": "AAPL",
+                "as_of_date": "2026-05-17",
+                "checked_at": "2026-05-17T12:00:00+00:00",
+                "coverage_status": "complete",
+                "sources_checked": [
+                    {
+                        "url": "https://investor.apple.com/events/default.aspx",
+                        "retrieved_at": "2026-05-17T12:00:00+00:00",
+                        "observed_facts": [
+                            "The official issuer page lists the July 30, 2026 earnings event."
+                        ],
+                    }
+                ],
+                "events": [
+                    {
+                        "ticker": "AAPL",
+                        "report_date": "2026-07-30",
+                        "confirmed": True,
+                        "source_id": "AAPL_IR_EARNINGS_CALENDAR",
+                        "source_type": "company_ir",
+                        "url": "https://investor.apple.com/events/default.aspx",
+                        "retrieved_at": "2026-05-17T12:00:00+00:00",
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
     request = CurrentResearchRequest(
         ticker="AAPL",
         as_of_date="2026-05-17",
         sec_user_agent="Room16 operator@example.com",
         staging_root=str(tmp_path / "staging"),
         output_root=str(tmp_path / "outputs"),
+        jurisdiction="US",
+        exchange="NMS",
+        isin="US0378331005",
         ir_release_dir=str(SNOW_SOURCE_ROOT / "ir_releases"),
         price_api_key="unused-in-test",
+        earnings_calendar_path=str(earnings_calendar),
     )
 
     result = run_current_research(
@@ -1137,14 +1209,42 @@ def test_current_runner_builds_real_authority_bundle_from_generic_adapters(tmp_p
     authority_dir = output_dir / "authority_bundle"
     authority_manifest_path = authority_dir / "authority_manifest.json"
     metrics_path = authority_dir / "metrics_packet.json"
+    data_packet = json.loads((authority_dir / "data_packet.json").read_text(encoding="utf-8"))
     snapshot_path = output_dir / "valuation_calibration_snapshot.json"
     manifest = json.loads(authority_manifest_path.read_text(encoding="utf-8"))
+    source_snapshot_manifest = json.loads(
+        (authority_dir / "source_snapshot_manifest.json").read_text(encoding="utf-8")
+    )
+    staged_sources = tmp_path / "staging" / "AAPL" / "2026-05-17" / "sources"
+    price_path = staged_sources / "prices" / "AAPL.csv"
+    price_metadata = json.loads(
+        (staged_sources / "prices" / "AAPL.metadata.json").read_text(
+            encoding="utf-8"
+        )
+    )
     snapshot = json.loads(snapshot_path.read_text(encoding="utf-8"))
     report_manifest = json.loads((output_dir / "report_manifest.json").read_text(encoding="utf-8"))
     assert result["status"] == "authority_ready"
     assert result["analysis_allowed"] is True
     assert manifest["analysis_allowed"] is True
     assert manifest["contract_id"] == "room16.research_authority_bundle"
+    assert manifest["contract_version"] == 3
+    assert data_packet["company_name"] == "Apple Inc."
+    assert data_packet["exchange"] == "NMS"
+    assert data_packet["jurisdiction"] == "US"
+    assert data_packet["isin"] == "US0378331005"
+    assert data_packet["wkn"] is None
+    assert source_snapshot_manifest["all_sources_dispositioned"] is True
+    assert (authority_dir / "source_snapshots" / "prices" / "AAPL.csv").is_file()
+    assert (
+        authority_dir / "source_snapshots" / "sec_submissions" / "AAPL.json"
+    ).is_file()
+    assert price_metadata["artifact_sha256"] == hashlib.sha256(
+        price_path.read_bytes()
+    ).hexdigest()
+    assert price_metadata["market_calendar"]
+    assert price_metadata["timezone"]
+    assert price_metadata["adjustment_policy"]
     assert snapshot["metrics_packet_sha256"] == (
         "sha256:" + hashlib.sha256(metrics_path.read_bytes()).hexdigest()
     )

@@ -34,6 +34,8 @@ SEC_OPERATING_INCOME_CONTEXT_MISMATCH_EXCLUDED = (
 MISSING_RISK_ANALYSIS = "MISSING_RISK_ANALYSIS"
 MISSING_CURRENT_PERIOD_KPI_CONTEXT = "MISSING_CURRENT_PERIOD_KPI_CONTEXT"
 MISSING_COMPANY_SPECIFIC_ANALYSIS = "MISSING_COMPANY_SPECIFIC_ANALYSIS"
+UNKNOWN_OR_LOW_CONFIDENCE_ARCHETYPE = "UNKNOWN_OR_LOW_CONFIDENCE_ARCHETYPE"
+BUSINESS_MODEL_KPI_COVERAGE_INCOMPLETE = "BUSINESS_MODEL_KPI_COVERAGE_INCOMPLETE"
 
 
 def calculate_quality_score(
@@ -84,6 +86,11 @@ def calculate_quality_score(
     company_archetype: Optional[str] = None,
     archetype_confidence: Optional[float] = None,
     archetype_triggered_rules: Optional[list[str]] = None,
+    business_model_kpi_coverage_complete: Optional[bool] = None,
+    required_business_kpis: Optional[list[str]] = None,
+    missing_business_kpis: Optional[list[str]] = None,
+    business_model_kpi_gap_count: Optional[int] = None,
+    unknown_or_low_confidence_archetype_count: Optional[int] = None,
     data_freshness_status: Optional[str] = None,
     stale_price_basis: Optional[int] = None,
     current_report_allowed: Optional[bool] = None,
@@ -270,6 +277,12 @@ def calculate_quality_score(
     if empty_required_section_count:
         content_score = min(content_score, 76 if empty_required_section_count >= 3 else 84)
         writing_structure -= min(4, empty_required_section_count)
+    if unknown_or_low_confidence_archetype_count:
+        content_score = min(content_score, 60)
+        logic_consistency -= 6
+    if business_model_kpi_coverage_complete is False or business_model_kpi_gap_count:
+        content_score = min(content_score, 55)
+        event_awareness -= 6
     if company_defined_fcf_mismatch_count:
         content_score = min(content_score, 60)
         numerical_accuracy -= 15
@@ -432,6 +445,10 @@ def calculate_quality_score(
         order_materiality_missing_count=order_materiality_missing_count,
         technical_overweight_in_thesis_count=technical_overweight_in_thesis_count,
     )
+    if unknown_or_low_confidence_archetype_count:
+        manual_review_reasons.append(UNKNOWN_OR_LOW_CONFIDENCE_ARCHETYPE)
+    if business_model_kpi_coverage_complete is False or business_model_kpi_gap_count:
+        manual_review_reasons.append(BUSINESS_MODEL_KPI_COVERAGE_INCOMPLETE)
     if freshness_issue_code == STALE_PRICE_BASIS_FOR_CURRENT_REPORT:
         manual_review_reasons.append(STALE_PRICE_BASIS_FOR_CURRENT_REPORT)
     manual_review_reasons.extend(
@@ -525,6 +542,8 @@ def calculate_quality_score(
         historical_qa_only=bool(historical_qa_only),
         freshness_issue_code=freshness_issue_code,
         content_score=_clamp(content_score, 100),
+        generated_claim_mapping_complete=bool(claim_coverage_complete),
+        generated_claim_mapping_gaps=coverage_gaps or [],
         claim_coverage_complete=bool(claim_coverage_complete),
         claim_coverage_gaps=coverage_gaps or [],
         analyst_claim_count=int(analyst_claim_count or 0),
@@ -570,6 +589,15 @@ def calculate_quality_score(
         company_archetype=str(company_archetype or "UNKNOWN"),
         archetype_confidence=float(archetype_confidence or 0.0),
         archetype_triggered_rules=list(archetype_triggered_rules or []),
+        business_model_kpi_coverage_complete=bool(
+            business_model_kpi_coverage_complete is not False
+        ),
+        required_business_kpis=list(required_business_kpis or []),
+        missing_business_kpis=list(missing_business_kpis or []),
+        business_model_kpi_gap_count=int(business_model_kpi_gap_count or 0),
+        unknown_or_low_confidence_archetype_count=int(
+            unknown_or_low_confidence_archetype_count or 0
+        ),
         publish_report_exists=int(publish_report_exists or 0),
         publish_report_quality_score=_publish_report_quality_score(
             publish_report_exists,

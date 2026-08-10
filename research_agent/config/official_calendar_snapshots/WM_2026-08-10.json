@@ -1,0 +1,19 @@
+{
+  "contract_id": "room16.official_calendar_snapshot",
+  "contract_version": 1,
+  "ticker": "WM",
+  "as_of_date": "2026-08-10",
+  "checked_at": "2026-08-10T20:30:00+00:00",
+  "capture_method": "normalized_official_page_snapshot",
+  "coverage_status": "complete_no_candidates",
+  "sources_checked": [
+    {
+      "url": "https://investors.wm.com/news-events/events-and-presentations/",
+      "retrieved_at": "2026-08-10T20:30:00+00:00",
+      "observed_facts": [
+        "The official event page showed the July 29, 2026 Q2 call as the latest earnings event and no later earnings date."
+      ]
+    }
+  ],
+  "events": []
+}

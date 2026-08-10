@@ -151,6 +151,9 @@ METRIC_PATHS = {
     "dcf_base_terminal_growth_rate": (
         "valuation.sensitivity.scenarios.1.terminal_growth_rate"
     ),
+    "dcf_base_terminal_value_share": (
+        "valuation.sensitivity.scenarios.1.terminal_value_share"
+    ),
     "reverse_dcf_implied_fcf_growth": (
         "valuation.sensitivity.reverse_dcf_implied_fcf_growth"
     ),
@@ -184,6 +187,7 @@ def infer_possible_metric(text: str, unit: Optional[str] = None) -> Optional[str
                 "financial input coverage": "financial_risk_coverage",
                 "financial-input coverage": "financial_risk_coverage",
                 "terminal growth": "dcf_base_terminal_growth_rate",
+                "terminal value": "dcf_base_terminal_value_share",
                 "discount rate": "dcf_base_discount_rate",
                 **(
                     {"fcf growth rate": "reverse_dcf_implied_fcf_growth"}

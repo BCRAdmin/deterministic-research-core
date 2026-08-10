@@ -1776,6 +1776,40 @@ def build_fundamental_derivation_evidence(
                 source_lineage=sensitivity_lineage,
             )
         )
+        terminal_share_metric = f"dcf_{scenario.name}_terminal_value_share"
+        evidence.append(
+            EvidenceItem(
+                evidence_id=(
+                    f"{ticker.upper()}_DETERMINISTIC_"
+                    f"{terminal_share_metric.upper()}_{as_of_date}"
+                ),
+                ticker=ticker.upper(),
+                claim_type="valuation_metric",
+                source_id=source_id,
+                source_type="deterministic_calculation",
+                authority_rank=1,
+                statement=(
+                    f"{terminal_share_metric}={scenario.terminal_value_share:g} "
+                    "is discounted terminal value divided by total scenario "
+                    "equity value and exposes long-duration model dependence."
+                ),
+                value=float(scenario.terminal_value_share),
+                unit="percent",
+                period=f"{scenario.forecast_years}-year sensitivity as of {as_of_date}",
+                date=as_of_date,
+                supports_metrics=[terminal_share_metric],
+                confidence="high",
+                formula_id="dcf_terminal_value_share_v1",
+                formula_operands={
+                    "present_value_terminal_value": float(
+                        scenario.present_value_terminal_value
+                    ),
+                    "equity_value": float(scenario.equity_value),
+                },
+                normalized_value=float(scenario.terminal_value_share),
+                source_lineage=sensitivity_lineage,
+            )
+        )
     base_scenario = next(
         (scenario for scenario in sensitivity.scenarios if scenario.name == "base"),
         None,
@@ -2432,6 +2466,9 @@ def unit_for_metric(
     if metric_name in {
         "dcf_base_discount_rate",
         "dcf_base_terminal_growth_rate",
+        "dcf_bear_terminal_value_share",
+        "dcf_base_terminal_value_share",
+        "dcf_bull_terminal_value_share",
         "financial_risk_coverage",
     }:
         return "percent"

@@ -8,8 +8,16 @@ import pytest
 from research_agent.integration.authority_bundle import (
     AUTHORITY_CONTRACT_ID,
     AUTHORITY_CONTRACT_VERSION,
-    build_authority_bundle,
+    build_authority_bundle as _build_authority_bundle,
     verify_authority_bundle,
+)
+from research_agent.research_core.ingestion.source_snapshot import (
+    build_source_snapshot_manifest,
+    save_source_snapshot_manifest,
+)
+from research_agent.quality.research_scope_coverage import (
+    build_research_scope_coverage,
+    save_research_scope_coverage,
 )
 
 
@@ -26,12 +34,78 @@ def test_authority_documentation_matches_runtime_contract() -> None:
     assert contract_marker in readme
     assert f"Contract version: `{AUTHORITY_CONTRACT_VERSION}`" in contract_doc
     assert "`fact_ledger.json`" in contract_doc
+    assert "`source_snapshot_manifest.json`" in contract_doc
+    assert "`research_scope_coverage.json`" in contract_doc
     assert f"{AUTHORITY_CONTRACT_ID}@1" not in readme
 
 
 def _write_json(path: Path, payload: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload), encoding="utf-8")
+
+
+def build_authority_bundle(**kwargs):
+    """Build a v3 bundle with physical SEC and OHLCV fixture snapshots."""
+
+    packet_dir = Path(kwargs["packet_dir"])
+    registry_path = Path(kwargs["source_registry_path"])
+    data_packet = json.loads((packet_dir / "data_packet.json").read_text(encoding="utf-8"))
+    ticker = str(data_packet["ticker"])
+    as_of = str(data_packet["as_of_date"])
+    fixture_root = packet_dir.parents[2] / "source_fixtures" / ticker / as_of
+    _write_json(
+        fixture_root / "sec" / f"{ticker}.json",
+        {"source_id": f"{ticker}_SEC", "ticker": ticker},
+    )
+    price_path = fixture_root / "prices" / f"{ticker}.csv"
+    price_path.parent.mkdir(parents=True, exist_ok=True)
+    price_path.write_text(
+        f"date,open,high,low,close,volume\n{as_of},100,101,99,100,1000000\n",
+        encoding="utf-8",
+    )
+    snapshot_manifest = build_source_snapshot_manifest(
+        source_root=fixture_root,
+        source_registry=registry_path,
+        ticker=ticker,
+        as_of_date=as_of,
+    )
+    snapshot_manifest_path = save_source_snapshot_manifest(
+        snapshot_manifest,
+        packet_dir.parents[2] / "snapshot_manifests" / ticker / as_of / "manifest.json",
+    )
+    scope_path = save_research_scope_coverage(
+        build_research_scope_coverage(
+            ticker=ticker,
+            as_of_date=as_of,
+            jurisdiction="US",
+            scopes=[
+                {
+                    "scope_id": scope_id,
+                    "status": "complete_no_candidates",
+                    "reason": "authority fixture disposition",
+                }
+                for scope_id in (
+                    "issuer_identity",
+                    "financial_statements",
+                    "latest_reporting_period",
+                    "results_and_guidance",
+                    "material_events",
+                    "transactions_and_financing",
+                    "legal_and_contingencies",
+                    "risk_disclosures",
+                    "price_history",
+                    "catalyst_calendar",
+                )
+            ],
+        ),
+        packet_dir.parents[2] / "scope_manifests" / ticker / as_of / "scope.json",
+    )
+    return _build_authority_bundle(
+        **kwargs,
+        source_snapshot_manifest_path=snapshot_manifest_path,
+        source_snapshot_root=fixture_root,
+        research_scope_coverage_path=scope_path,
+    )
 
 
 def _packet_set(root: Path, ticker: str = "GENERIC", as_of: str = "2026-07-01") -> tuple[Path, Path]:
@@ -95,10 +169,17 @@ def _packet_set(root: Path, ticker: str = "GENERIC", as_of: str = "2026-07-01") 
             "ticker": ticker,
             "as_of_date": as_of,
             "analytical_rating_unconstrained": "Accumulate",
+            "conclusion_status": "rated",
+            "evidence_maturity": "complete",
+            "publication_permission": "eligible",
             "rating_permission": {
                 "allowed_ratings": ["Hold", "Accumulate"],
                 "blocked_ratings": ["Sell"],
                 "preferred_rating": "Accumulate",
+                "permission_type": "analytical",
+                "display_rating": "Accumulate",
+                "publication_allowed": True,
+                "fallback_only": False,
             },
         },
     )

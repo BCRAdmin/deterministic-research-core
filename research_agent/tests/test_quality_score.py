@@ -94,3 +94,35 @@ def test_quality_score_blocks_skeleton_report_without_claims():
     assert score.total_score <= 40
     assert score.content_score <= 40
     assert not score.publishable
+
+
+def test_quality_score_blocks_unknown_archetype_and_missing_business_kpis():
+    (
+        markdown,
+        _,
+        validation_report,
+        _,
+        audit_report,
+        decision_packet,
+    ) = _quality_inputs("nvda_2026_05_01")
+
+    score = calculate_quality_score(
+        validation_report=validation_report,
+        audit_report=audit_report.model_copy(
+            update={"issues": [], "has_blocking_errors": False}
+        ),
+        decision_packet=decision_packet,
+        final_markdown=markdown,
+        company_archetype="UNKNOWN",
+        archetype_confidence=0.0,
+        unknown_or_low_confidence_archetype_count=1,
+        business_model_kpi_coverage_complete=False,
+        business_model_kpi_gap_count=2,
+        required_business_kpis=["renewal_rate", "paid_members"],
+        missing_business_kpis=["renewal_rate", "paid_members"],
+    )
+
+    assert score.publishable is False
+    assert score.content_score <= 55
+    assert "UNKNOWN_OR_LOW_CONFIDENCE_ARCHETYPE" in score.manual_review_reasons
+    assert "BUSINESS_MODEL_KPI_COVERAGE_INCOMPLETE" in score.manual_review_reasons

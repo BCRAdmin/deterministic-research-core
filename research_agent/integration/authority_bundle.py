@@ -22,10 +22,16 @@ from research_agent.evidence.evidence_ledger import unit_for_metric
 from research_agent.research_core.models.metrics_packet import (
     MULTI_CLASS_PRICE_EQUIVALENCE_UNVERIFIED,
 )
+from research_agent.research_core.ingestion.source_snapshot import (
+    verify_source_snapshot_manifest,
+)
+from research_agent.quality.research_scope_coverage import (
+    verify_research_scope_coverage,
+)
 
 
 AUTHORITY_CONTRACT_ID = "room16.research_authority_bundle"
-AUTHORITY_CONTRACT_VERSION = 2
+AUTHORITY_CONTRACT_VERSION = 3
 PIPELINE_VERSION = "research_agent_v0.1.0"
 
 REQUIRED_PACKET_FILES = {
@@ -358,7 +364,7 @@ def _build_validated_context(
             "This context is the sole factual and numerical authority for the report.",
             "Interpret it, but do not invent, refresh, or replace values in it.",
             "Missing information must remain explicitly unavailable.",
-            "The final rating must remain within `decision_packet.rating_permission.allowed_ratings`.",
+            "A final rating is allowed only when the decision packet carries an analytical or provisional conclusion; safety-fallback values are never report ratings.",
             "",
             "```json",
             json.dumps(payload, indent=2, sort_keys=True, ensure_ascii=False),
@@ -703,11 +709,74 @@ def _assess_packets(
     analytical_rating = str(
         decision_packet.get("analytical_rating_unconstrained") or ""
     )
+    conclusion_status = str(decision_packet.get("conclusion_status") or "")
+    evidence_maturity = str(decision_packet.get("evidence_maturity") or "")
+    publication_permission = str(
+        decision_packet.get("publication_permission") or ""
+    )
+    permission_type = str(permission.get("permission_type") or "")
+    display_rating = str(permission.get("display_rating") or "")
+    publication_allowed = permission.get("publication_allowed")
+    fallback_only = permission.get("fallback_only")
+    expected_maturity = {
+        "rated": "complete",
+        "provisional": "partial",
+        "not_rated": "incomplete",
+        "blocked": "blocked",
+    }.get(conclusion_status)
+    expected_publication_permission = {
+        "rated": "eligible",
+        "provisional": "manual_review",
+        "not_rated": "blocked",
+        "blocked": "blocked",
+    }.get(conclusion_status)
     _check(
         checks,
-        "analytical_rating_independent_present",
-        bool(analytical_rating),
-        detail=analytical_rating,
+        "decision_status_dimensions_consistent",
+        bool(expected_maturity)
+        and evidence_maturity == expected_maturity
+        and publication_permission == expected_publication_permission,
+        detail=(
+            f"status={conclusion_status};maturity={evidence_maturity};"
+            f"publication={publication_permission}"
+        ),
+    )
+    if conclusion_status == "rated":
+        rating_state_valid = (
+            bool(analytical_rating)
+            and analytical_rating == preferred
+            and permission_type == "analytical"
+            and display_rating == analytical_rating
+            and publication_allowed is True
+            and fallback_only is False
+        )
+    elif conclusion_status == "provisional":
+        rating_state_valid = (
+            bool(analytical_rating)
+            and analytical_rating == preferred
+            and permission_type == "provisional"
+            and display_rating == f"Provisional — {analytical_rating}"
+            and publication_allowed is False
+            and fallback_only is False
+        )
+    elif conclusion_status in {"not_rated", "blocked"}:
+        rating_state_valid = (
+            not analytical_rating
+            and permission_type == "safety_fallback"
+            and display_rating == "Unrated"
+            and publication_allowed is False
+            and fallback_only is True
+        )
+    else:
+        rating_state_valid = False
+    _check(
+        checks,
+        "analytical_rating_state_consistent",
+        rating_state_valid,
+        detail=(
+            f"status={conclusion_status};analytical={analytical_rating or 'null'};"
+            f"display={display_rating};permission_type={permission_type}"
+        ),
     )
     return checks, ticker, as_of_date
 
@@ -718,6 +787,9 @@ def build_authority_bundle(
     output_dir: str | Path,
     source_registry_path: str | Path | None = None,
     fact_ledger_path: str | Path | None = None,
+    source_snapshot_manifest_path: str | Path | None = None,
+    source_snapshot_root: str | Path | None = None,
+    research_scope_coverage_path: str | Path | None = None,
     pipeline_version: str = PIPELINE_VERSION,
 ) -> dict[str, Any]:
     """Export a self-contained, hashed authority bundle from validated packets."""
@@ -745,6 +817,25 @@ def build_authority_bundle(
         ledger_path = Path(fact_ledger_path).expanduser().resolve()
         source_paths["fact_ledger"] = ledger_path
         payloads["fact_ledger"] = _read_json(ledger_path)
+    if source_snapshot_manifest_path is None or source_snapshot_root is None:
+        raise AuthorityBundleError(
+            "source snapshot manifest and source root are required by authority contract v3"
+        )
+    snapshot_manifest_path = Path(source_snapshot_manifest_path).expanduser().resolve()
+    snapshot_root = Path(source_snapshot_root).expanduser().resolve()
+    source_snapshot_manifest = _read_json(snapshot_manifest_path)
+    snapshot_verification = verify_source_snapshot_manifest(
+        source_snapshot_manifest,
+        source_root=snapshot_root,
+    )
+    if research_scope_coverage_path is None:
+        raise AuthorityBundleError(
+            "research scope coverage is required by authority contract v3"
+        )
+    scope_path = Path(research_scope_coverage_path).expanduser().resolve()
+    source_paths["research_scope_coverage"] = scope_path
+    research_scope_coverage = _read_json(scope_path)
+    scope_verification = verify_research_scope_coverage(research_scope_coverage)
 
     checks, ticker, as_of_date = _assess_packets(
         data_packet=payloads["data_packet"],
@@ -772,6 +863,69 @@ def build_authority_bundle(
                 f"{fact_ledger.get('report_asof')}"
             ),
         )
+    _check(
+        checks,
+        "source_snapshot_contract_valid",
+        bool(snapshot_verification["verified"]),
+        detail=", ".join(snapshot_verification["blocking_failures"]),
+    )
+    _check(
+        checks,
+        "source_snapshot_identity_matches_packets",
+        _normalized_symbol(source_snapshot_manifest.get("ticker")) == ticker
+        and str(source_snapshot_manifest.get("as_of_date") or "") == as_of_date,
+        detail=(
+            f"{source_snapshot_manifest.get('ticker')}@"
+            f"{source_snapshot_manifest.get('as_of_date')}"
+        ),
+    )
+    _check(
+        checks,
+        "all_registry_sources_dispositioned",
+        bool(source_snapshot_manifest.get("all_sources_dispositioned")),
+        detail=", ".join(source_snapshot_manifest.get("blocking_source_ids") or []),
+    )
+    registry_source_ids = {
+        str(item.get("source_id") or "")
+        for item in payloads["source_registry"].get("sources") or []
+    }
+    snapshot_source_ids = {
+        str(item.get("source_id") or "")
+        for item in source_snapshot_manifest.get("source_dispositions") or []
+    }
+    _check(
+        checks,
+        "source_snapshot_registry_matches",
+        registry_source_ids == snapshot_source_ids and "" not in registry_source_ids,
+        detail=(
+            f"registry={len(registry_source_ids)} "
+            f"snapshots={len(snapshot_source_ids)}"
+        ),
+    )
+    _check(
+        checks,
+        "research_scope_coverage_valid",
+        bool(scope_verification["verified"]),
+        detail=", ".join(scope_verification["blocking_failures"]),
+    )
+    _check(
+        checks,
+        "research_scope_identity_matches_packets",
+        _normalized_symbol(research_scope_coverage.get("ticker")) == ticker
+        and str(research_scope_coverage.get("as_of_date") or "") == as_of_date,
+        detail=(
+            f"{research_scope_coverage.get('ticker')}@"
+            f"{research_scope_coverage.get('as_of_date')}"
+        ),
+    )
+    _check(
+        checks,
+        "all_required_research_scopes_complete",
+        bool(research_scope_coverage.get("all_required_scopes_complete")),
+        detail=", ".join(
+            research_scope_coverage.get("blocking_scope_gaps") or []
+        ),
+    )
     blocking_failures = [
         item["check_id"]
         for item in checks
@@ -788,6 +942,38 @@ def build_authority_bundle(
             "sha256": _sha256(target_path),
             "bytes": target_path.stat().st_size,
         }
+
+    snapshot_target_root = target_dir / "source_snapshots"
+    snapshot_target_root.mkdir(parents=True, exist_ok=True)
+    for item in source_snapshot_manifest.get("artifacts") or []:
+        relative = Path(str(item.get("path") or ""))
+        source_path = (snapshot_root / relative).resolve()
+        target_path = (snapshot_target_root / relative).resolve()
+        if (
+            snapshot_root not in source_path.parents
+            or snapshot_target_root not in target_path.parents
+        ):
+            raise AuthorityBundleError(f"invalid source snapshot path: {relative}")
+        target_path.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source_path, target_path)
+    exported_snapshot_manifest = dict(source_snapshot_manifest)
+    exported_snapshot_manifest["source_root"] = "source_snapshots"
+    exported_snapshot_manifest_path = target_dir / "source_snapshot_manifest.json"
+    exported_snapshot_manifest_path.write_text(
+        json.dumps(
+            exported_snapshot_manifest,
+            indent=2,
+            sort_keys=True,
+            ensure_ascii=False,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    artifacts["source_snapshot_manifest"] = {
+        "path": exported_snapshot_manifest_path.name,
+        "sha256": _sha256(exported_snapshot_manifest_path),
+        "bytes": exported_snapshot_manifest_path.stat().st_size,
+    }
 
     context_path = target_dir / "validated_context.md"
     context_path.write_text(
@@ -815,6 +1001,15 @@ def build_authority_bundle(
         "ticker": ticker,
         "as_of_date": as_of_date,
         "analysis_allowed": not blocking_failures,
+        "publication_allowed": bool(
+            not blocking_failures
+            and payloads["decision_packet"].get("publication_permission")
+            == "eligible"
+            and (
+                payloads["decision_packet"].get("rating_permission") or {}
+            ).get("publication_allowed")
+            is True
+        ),
         "blocking_failures": blocking_failures,
         "checks": checks,
         "artifacts": artifacts,
@@ -853,6 +1048,8 @@ def verify_authority_bundle(bundle_dir: str | Path) -> dict[str, Any]:
         *REQUIRED_PACKET_FILES.keys(),
         "source_registry",
         "fact_ledger",
+        "source_snapshot_manifest",
+        "research_scope_coverage",
         "validated_context",
     ):
         item = artifacts.get(role)
@@ -870,6 +1067,72 @@ def verify_authority_bundle(bundle_dir: str | Path) -> dict[str, Any]:
         )
         if role != "validated_context" and exists and hash_matches:
             payloads[role] = _read_json(path)
+
+    if "source_snapshot_manifest" in payloads:
+        snapshot_verification = verify_source_snapshot_manifest(
+            payloads["source_snapshot_manifest"],
+            source_root=root / "source_snapshots",
+        )
+        _check(
+            checks,
+            "source_snapshot_contract_valid",
+            bool(snapshot_verification["verified"]),
+            detail=", ".join(snapshot_verification["blocking_failures"]),
+        )
+        _check(
+            checks,
+            "all_registry_sources_dispositioned",
+            bool(payloads["source_snapshot_manifest"].get("all_sources_dispositioned")),
+            detail=", ".join(
+                payloads["source_snapshot_manifest"].get("blocking_source_ids") or []
+            ),
+        )
+        snapshot_source_ids = {
+            str(item.get("source_id") or "")
+            for item in payloads["source_snapshot_manifest"].get(
+                "source_dispositions"
+            )
+            or []
+        }
+        registry_source_ids = {
+            str(item.get("source_id") or "")
+            for item in payloads.get("source_registry", {}).get("sources") or []
+        }
+        _check(
+            checks,
+            "source_snapshot_registry_matches",
+            bool(registry_source_ids)
+            and registry_source_ids == snapshot_source_ids
+            and "" not in registry_source_ids,
+            detail=(
+                f"registry={len(registry_source_ids)} "
+                f"snapshots={len(snapshot_source_ids)}"
+            ),
+        )
+
+    if "research_scope_coverage" in payloads:
+        scope_verification = verify_research_scope_coverage(
+            payloads["research_scope_coverage"]
+        )
+        _check(
+            checks,
+            "research_scope_coverage_valid",
+            bool(scope_verification["verified"]),
+            detail=", ".join(scope_verification["blocking_failures"]),
+        )
+        _check(
+            checks,
+            "all_required_research_scopes_complete",
+            bool(
+                payloads["research_scope_coverage"].get(
+                    "all_required_scopes_complete"
+                )
+            ),
+            detail=", ".join(
+                payloads["research_scope_coverage"].get("blocking_scope_gaps")
+                or []
+            ),
+        )
 
     if all(role in payloads for role in (*REQUIRED_PACKET_FILES.keys(), "source_registry")):
         packet_checks, ticker, as_of_date = _assess_packets(
@@ -895,6 +1158,19 @@ def verify_authority_bundle(bundle_dir: str | Path) -> dict[str, Any]:
                 == ticker
                 and str(
                     payloads["fact_ledger"].get("report_asof") or ""
+                )
+                == as_of_date,
+            )
+        if "research_scope_coverage" in payloads:
+            _check(
+                checks,
+                "research_scope_identity_matches_packets",
+                _normalized_symbol(
+                    payloads["research_scope_coverage"].get("ticker")
+                )
+                == ticker
+                and str(
+                    payloads["research_scope_coverage"].get("as_of_date") or ""
                 )
                 == as_of_date,
             )

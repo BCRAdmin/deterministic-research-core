@@ -83,7 +83,10 @@ def test_ddog_report_action_does_not_override_analytical_rating():
         audit_report=_audit("ddog_2026_05_01"),
     )
 
-    assert with_action.analytical_rating_unconstrained == Rating.HOLD
+    assert with_action.analytical_rating_unconstrained is None
+    assert without_action.analytical_rating_unconstrained is None
+    assert with_action.rating_permission.display_rating == "Unrated"
+    assert with_action.rating_permission.fallback_only is True
     assert with_action.rating_permission == without_action.rating_permission
     assert with_action.rating_permission.allowed_ratings == [Rating.HOLD]
     assert not any("action class" in reason.lower() for reason in with_action.key_reasons)

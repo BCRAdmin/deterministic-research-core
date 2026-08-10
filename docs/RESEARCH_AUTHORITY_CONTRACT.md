@@ -1,11 +1,11 @@
 # Room16 Research Authority Contract
 
 Contract ID: `room16.research_authority_bundle`  
-Contract version: `2`
+Contract version: `3`
 
-Version 2 is the only contract accepted for a new analysis. Historical
-version-1 bundles remain readable evidence, but they cannot authorize a new
-research or report run.
+Version 3 is the only contract accepted for a new analysis. Historical
+version-1 and version-2 bundles remain readable evidence, but they cannot
+authorize a new research or report run.
 
 ## Purpose
 
@@ -33,12 +33,19 @@ rules.
 - `source_registry.json` or its registered source filename
 - `evidence_ledger.json`
 - `fact_ledger.json`
+- `source_snapshot_manifest.json`
+- `research_scope_coverage.json`
+- `source_snapshots/` containing the immutable source bytes named by the
+  snapshot manifest
 - `validated_context.md`
 - `authority_manifest.json`
 
-The manifest records each artifact's relative path, SHA-256 hash, and size.
-The consumer rejects missing files, path escapes, hash changes, identity
-mismatches, unsupported contract versions, and blocked analysis permission.
+The authority manifest records each top-level artifact's relative path,
+SHA-256 hash, and size. The source snapshot manifest separately records every
+captured input artifact's relative path, SHA-256 hash, size, media type, and
+the registry sources bound to it. The consumer rejects missing files, path
+escapes, hash changes, identity mismatches, unsupported contract versions,
+unbound external sources, and blocked analysis permission.
 
 ## Fact and Source Semantics
 
@@ -67,6 +74,18 @@ retrieval-time-unavailable status, freshness state, and the identifiers of the
 claims that use them. Registry entries with no claim linkage do not establish
 evidence for a report statement.
 
+Every external registry source must additionally resolve to at least one
+physical snapshot. The only snapshot-free disposition is
+`derived_calculation`, which is reserved for deterministic values calculated
+from separately snapshotted inputs. `undispositioned` and identity mismatches
+are blocking failures. A URL or registry label alone is not evidence.
+
+`research_scope_coverage.json` is deliberately separate from generated-claim
+coverage. It proves that the required source domains were searched and each
+received an explicit disposition, including `complete_no_candidates`. A run
+cannot infer source completeness merely because every claim it happened to
+generate has an evidence mapping.
+
 ## Blocking Producer Checks
 
 - ticker and as-of identity agree across every packet
@@ -78,6 +97,15 @@ evidence for a report statement.
   classes are official exchange OHLCV and explicitly trusted market-data
   vendors with recorded provider URL and retrieval time
 - evidence is present and references only registered sources
+- source snapshots pass hash verification and match ticker/as-of identity
+- every external registry source is bound to at least one source snapshot
+- source-disposition IDs exactly equal the final source-registry IDs
+- all required research scopes are present and complete: issuer identity,
+  financial statements, latest reporting period, results/guidance, material
+  events, transactions/financing, legal/environmental contingencies, risk
+  disclosures, and OHLCV history
+- catalyst-calendar evidence uses a point-in-time official issuer/exchange
+  snapshot; unconfirmed vendor estimates and hindsight captures are blocking
 - evidence ticker agrees with the requested instrument
 - material metrics have evidence mappings
 - preferred, allowed, and blocked ratings are internally consistent

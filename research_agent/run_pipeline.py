@@ -85,6 +85,10 @@ from research_agent.research_core.ingestion.source_registry import (
     merge_evidence_sources,
     save_source_registry,
 )
+from research_agent.research_core.ingestion.source_snapshot import (
+    build_source_snapshot_manifest,
+    save_source_snapshot_manifest,
+)
 from research_agent.research_core.models.data_packet import (
     CompanyGuidanceEPS,
     CompanyGuidanceMetric,
@@ -163,6 +167,10 @@ def run_research_pipeline(
         fundamentals=normalized_fundamentals,
         news=normalized_news,
         price_currency=config.price_currency,
+        exchange=config.exchange,
+        jurisdiction=config.jurisdiction,
+        isin=config.isin,
+        wkn=config.wkn,
     )
     freshness = evaluate_price_freshness(
         data_packet.price_basis.date,
@@ -288,9 +296,23 @@ def run_research_pipeline(
             + describe_blocking_validation_errors(validation_report)
         )
 
+    if not config.source_scope_coverage_path:
+        raise RuntimeError(
+            "Research scope gate rejected report generation: "
+            "source_scope_coverage_path is not configured"
+        )
+    research_scope_coverage = json.loads(
+        Path(config.source_scope_coverage_path).read_text(encoding="utf-8")
+    )
     decision_packet = build_decision_packet(
         metrics_packet=metrics_packet,
         validation_report=validation_report,
+        research_scope_complete=bool(
+            research_scope_coverage.get("all_required_scopes_complete")
+        ),
+        research_scope_gaps=list(
+            research_scope_coverage.get("blocking_scope_gaps") or []
+        ),
     )
     decision_packet_path = save_json_packet(
         decision_packet, "decision_packet", ticker, as_of_date, packet_root=packet_root
@@ -323,11 +345,30 @@ def run_research_pipeline(
         fact_ledger_payload,
         manifest_output_dir / "fact_ledger.json",
     )
+    if not config.source_artifact_root:
+        raise RuntimeError(
+            "Source snapshot gate rejected report generation: "
+            "source_artifact_root is not configured"
+        )
+    source_snapshot_manifest = build_source_snapshot_manifest(
+        source_root=config.source_artifact_root,
+        source_registry=source_registry,
+        ticker=data_packet.ticker,
+        as_of_date=data_packet.as_of_date,
+        retrieved_at=config.price_retrieved_at,
+    )
+    source_snapshot_manifest_path = save_source_snapshot_manifest(
+        source_snapshot_manifest,
+        manifest_output_dir / "source_snapshot_manifest.json",
+    )
     authority_bundle_dir = manifest_output_dir / "authority_bundle"
     authority_manifest = build_authority_bundle(
         packet_dir=data_packet_path.parent,
         source_registry_path=source_registry_path,
         fact_ledger_path=fact_ledger_path,
+        source_snapshot_manifest_path=source_snapshot_manifest_path,
+        source_snapshot_root=config.source_artifact_root,
+        research_scope_coverage_path=config.source_scope_coverage_path,
         output_dir=authority_bundle_dir,
     )
     if not authority_manifest["analysis_allowed"]:
@@ -668,7 +709,10 @@ def run_research_pipeline(
         as_of_date=data_packet.as_of_date,
         price_basis_date=data_packet.price_basis.date,
         price_basis_close=data_packet.price_basis.close,
-        final_rating=decision_packet.rating_permission.preferred_rating.value,
+        final_rating=(
+            decision_packet.rating_permission.display_rating
+            or decision_packet.rating_permission.preferred_rating.value
+        ),
         preferred_rating=decision_packet.rating_permission.preferred_rating.value,
         allowed_ratings=[rating.value for rating in decision_packet.rating_permission.allowed_ratings],
         quality_score=quality_report.total_score,
@@ -704,6 +748,18 @@ def run_research_pipeline(
             "internal_best_report_path": internal_best_report_path,
             "internal_best_audit_report_path": internal_best_audit_report_path,
             "analyst_claims_path": str(analyst_claims_path),
+            "generated_claim_mapping_complete": claim_coverage_complete,
+            "generated_claim_mapping_gaps": coverage_gaps,
+            "research_scope_complete": bool(
+                research_scope_coverage.get("all_required_scopes_complete")
+            ),
+            "research_scope_gaps": research_scope_coverage.get(
+                "blocking_scope_gaps"
+            )
+            or [],
+            "research_scope_coverage_path": str(
+                config.source_scope_coverage_path
+            ),
             "fact_ledger_path": str(fact_ledger_path),
             "evidence_ledger_path": str(evidence_ledger_path),
             "evidence_report_path": str(evidence_report_path),
@@ -754,6 +810,10 @@ def build_data_packet(
     fundamentals: dict[str, Any],
     news: list[dict[str, Any]],
     price_currency: str = "USD",
+    exchange: str | None = None,
+    jurisdiction: str | None = None,
+    isin: str | None = None,
+    wkn: str | None = None,
 ) -> DataPacket:
     latest_price = prices.iloc[-1]
     latest_event = _next_earnings_event(news)
@@ -775,6 +835,7 @@ def build_data_packet(
             source_type=str(item.get("source_type") or ""),
             url=item.get("url"),
             summary=item.get("summary"),
+            numeric_evidence=item.get("numeric_evidence") or [],
         )
         for item in news
         if item.get("event_type") != "coverage_manifest"
@@ -788,6 +849,10 @@ def build_data_packet(
     return DataPacket(
         ticker=ticker.upper(),
         company_name=fundamentals.get("company_name"),
+        exchange=exchange,
+        jurisdiction=jurisdiction,
+        isin=isin,
+        wkn=wkn,
         as_of_date=as_of_date,
         price_basis=PriceBasis(
             close=float(latest_price["close"]),

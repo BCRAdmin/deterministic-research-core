@@ -40,8 +40,12 @@ Core rule:
 - LLM agents may only interpret validated packets.
 - Final reports may use numbers only from `data_packet.json`, `metrics_packet.json`, `validation_report.json`, or explicitly registered sources in `source_registry.json`.
 - Every report-capable run must export and pass a
-  `room16.research_authority_bundle@2`; there is no configuration switch that
+  `room16.research_authority_bundle@3`; there is no configuration switch that
   bypasses this hand-off.
+- Authority v3 includes hash-bound physical source snapshots and an explicit
+  disposition for every registry source; an unbound source stops the run.
+- Future catalyst dates require a same-as-of official issuer/exchange calendar
+  snapshot. Vendor estimates never become confirmed earnings dates.
 - Runtime-discovered sources are merged into the registry before validation,
   and calculated technical values retain their OHLCV provenance.
 - The deterministic decision packet expresses a research stance and

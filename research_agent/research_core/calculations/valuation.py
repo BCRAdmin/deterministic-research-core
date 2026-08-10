@@ -141,6 +141,7 @@ def calculate_valuation_sensitivity(
                 terminal_growth_rate=terminal_growth,
                 present_value_explicit_cash_flows=explicit_pv,
                 present_value_terminal_value=terminal_pv,
+                terminal_value_share=terminal_pv / equity_value,
                 equity_value=equity_value,
                 implied_price=implied_price,
                 upside_to_current_price=(implied_price / close_price - 1)
