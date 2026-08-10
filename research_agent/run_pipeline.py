@@ -272,6 +272,7 @@ def run_research_pipeline(
         data_packet=data_packet,
         metrics_packet=metrics_packet,
         source_registry=source_registry,
+        evidence_ledger=evidence_ledger,
     )
     validation_report_path = save_json_packet(
         validation_report, "validation_report", ticker, as_of_date, packet_root=packet_root

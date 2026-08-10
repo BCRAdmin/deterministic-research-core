@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import Counter
+from datetime import date
 from typing import Optional
 
 from research_agent.evidence.citation_policy import requires_primary_source
@@ -69,12 +70,56 @@ def validate_vendor_not_primary(metric_name: str, ledger: EvidenceLedger):
     return None
 
 
-def validate_news_event_date(item: EvidenceItem):
+def validate_news_event_date(
+    item: EvidenceItem,
+    as_of_date: Optional[str] = None,
+):
+    """Validate evidence dates without rejecting explicit future calendars.
+
+    ``EvidenceItem.date`` is the publication or observation date for every
+    evidence type except a confirmed forward event such as the next earnings
+    date.  A report must never consume evidence published after its as-of
+    boundary.
+    """
     if item.claim_type in {"news", "event"} and not item.date:
         return {
             "severity": "warning",
             "code": "MISSING_DATE_FOR_NEWS_EVENT",
             "message": f"Evidence item {item.evidence_id} is a news/event claim without a publication date.",
+        }
+    if not item.date or not as_of_date:
+        return None
+    try:
+        evidence_date = date.fromisoformat(str(item.date)[:10])
+    except ValueError:
+        return {
+            "severity": "error",
+            "code": "INVALID_EVIDENCE_DATE",
+            "message": (
+                f"Evidence item {item.evidence_id} has invalid date "
+                f"{item.date!r}."
+            ),
+        }
+    try:
+        report_date = date.fromisoformat(str(as_of_date)[:10])
+    except ValueError:
+        return {
+            "severity": "error",
+            "code": "INVALID_EVIDENCE_LEDGER_AS_OF_DATE",
+            "message": f"Evidence ledger has invalid as-of date {as_of_date!r}.",
+        }
+    is_explicit_forward_calendar = (
+        item.claim_type == "event"
+        and "next_earnings_date" in item.supports_metrics
+    )
+    if evidence_date > report_date and not is_explicit_forward_calendar:
+        return {
+            "severity": "error",
+            "code": "EVIDENCE_DATE_AFTER_AS_OF_DATE",
+            "message": (
+                f"Evidence item {item.evidence_id} is dated {evidence_date.isoformat()}, "
+                f"after report as-of date {report_date.isoformat()}."
+            ),
         }
     return None
 
@@ -146,7 +191,7 @@ def validate_ledger(
         if vendor_issue:
             issues.append(vendor_issue)
     for item in ledger.evidence_items:
-        issue = validate_news_event_date(item)
+        issue = validate_news_event_date(item, as_of_date=ledger.as_of_date)
         if issue:
             issues.append(issue)
     guidance_issue = validate_guidance_consensus_separation(ledger)

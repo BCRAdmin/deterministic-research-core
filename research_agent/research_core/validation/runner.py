@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Iterable, Optional
 
+from research_agent.evidence.evidence_ledger import EvidenceLedger
+from research_agent.evidence.evidence_validator import validate_ledger
 from research_agent.research_core.ingestion.source_registry import SourceRegistry
 from research_agent.research_core.models.data_packet import DataPacket
 from research_agent.research_core.models.metrics_packet import MetricsPacket
@@ -26,12 +28,15 @@ def run_all_validations(
     data_packet: DataPacket,
     metrics_packet: MetricsPacket,
     source_registry: Optional[SourceRegistry] = None,
+    evidence_ledger: Optional[EvidenceLedger] = None,
     trade_setups: Optional[Iterable[dict]] = None,
     rating: Optional[str] = None,
     actions: Optional[list[str]] = None,
 ) -> ValidationReport:
     raw_issues: list[dict] = []
     raw_issues.extend(validate_data_packet(data_packet))
+    if evidence_ledger is not None:
+        raw_issues.extend(validate_ledger(evidence_ledger))
 
     indicator_issue = validate_indicator_date(
         data_packet.price_basis.date,

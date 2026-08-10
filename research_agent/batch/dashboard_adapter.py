@@ -249,6 +249,9 @@ def _evidence_warning_codes(item) -> list[str]:
         "NO_PRIMARY_EVIDENCE_FOR_HARD_METRIC",
         "VENDOR_SOURCE_USED_AS_PRIMARY",
         "MISSING_DATE_FOR_NEWS_EVENT",
+        "INVALID_EVIDENCE_DATE",
+        "INVALID_EVIDENCE_LEDGER_AS_OF_DATE",
+        "EVIDENCE_DATE_AFTER_AS_OF_DATE",
         "GUIDANCE_CONSENSUS_CONFLATION",
     }:
         if code in text:

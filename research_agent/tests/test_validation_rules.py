@@ -1,5 +1,7 @@
 import pytest
 
+from research_agent.evidence.evidence_item import EvidenceItem
+from research_agent.evidence.evidence_ledger import EvidenceLedger
 from research_agent.research_core.agents.payload import build_agent_payload
 from research_agent.research_core.ingestion.source_registry import (
     SourceRegistry,
@@ -106,6 +108,45 @@ def test_validation_report_blocks_critical_errors_and_report_generation():
     assert any(issue.code == "LONG_STOP_ABOVE_ENTRY" for issue in validation.issues)
     with pytest.raises(RuntimeError, match="LONG_STOP_ABOVE_ENTRY"):
         render_markdown_report(_packet(), _metrics(), validation)
+
+
+def test_validation_report_blocks_evidence_after_as_of_date():
+    validation = run_all_validations(
+        data_packet=_packet(),
+        metrics_packet=_metrics(),
+        source_registry=SourceRegistry(
+            registry_id="MDB_2026_05_01",
+            sources=[
+                SourceRegistryEntry(
+                    source_id="MDB_IR",
+                    ticker="MDB",
+                    source_type="company_ir",
+                    used_for=["revenue"],
+                )
+            ],
+        ),
+        evidence_ledger=EvidenceLedger(
+            ticker="MDB",
+            as_of_date="2026-05-01",
+            evidence_items=[
+                EvidenceItem(
+                    evidence_id="MDB_FUTURE_NEWS",
+                    ticker="MDB",
+                    claim_type="news",
+                    source_id="MDB_IR_FUTURE",
+                    source_type="company_ir",
+                    authority_rank=1,
+                    statement="Future evidence must stop report generation.",
+                    date="2026-05-02",
+                )
+            ],
+        ),
+    )
+
+    assert validation.has_blocking_errors is True
+    assert describe_blocking_validation_errors(validation).startswith(
+        "EVIDENCE_DATE_AFTER_AS_OF_DATE:"
+    )
 
 
 def test_validation_blocks_insurer_without_primary_operating_kpi():

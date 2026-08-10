@@ -6,6 +6,7 @@ from research_agent.evidence.evidence_validator import (
     validate_metric_evidence,
     validate_news_event_date,
     validate_vendor_not_primary,
+    validate_ledger,
 )
 from research_agent.research_core.models.claims import ResearchClaim
 
@@ -97,6 +98,96 @@ def test_news_event_without_date_warns():
     issue = validate_news_event_date(item)
 
     assert issue["code"] == "MISSING_DATE_FOR_NEWS_EVENT"
+
+
+def test_future_news_is_blocked_by_ledger_as_of_date():
+    ledger = EvidenceLedger(
+        ticker="MDB",
+        as_of_date="2026-05-01",
+        evidence_items=[
+            EvidenceItem(
+                evidence_id="MDB_FUTURE_NEWS",
+                ticker="MDB",
+                claim_type="news",
+                source_id="MDB_IR_FUTURE",
+                source_type="company_ir",
+                authority_rank=1,
+                statement="A later publication must not enter this report.",
+                date="2026-05-02",
+            )
+        ],
+    )
+
+    issues = validate_ledger(ledger)
+
+    assert [issue["code"] for issue in issues] == [
+        "EVIDENCE_DATE_AFTER_AS_OF_DATE"
+    ]
+
+
+def test_future_material_event_is_blocked_but_forward_calendar_is_allowed():
+    future_material_event = EvidenceItem(
+        evidence_id="MDB_FUTURE_EVENT",
+        ticker="MDB",
+        claim_type="event",
+        source_id="MDB_IR_FUTURE_EVENT",
+        source_type="company_ir",
+        authority_rank=1,
+        statement="A future event cannot be stated as completed evidence.",
+        date="2026-05-02",
+    )
+    confirmed_calendar_event = future_material_event.model_copy(
+        update={
+            "evidence_id": "MDB_NEXT_EARNINGS",
+            "supports_metrics": ["next_earnings_date", "earnings_event"],
+        }
+    )
+
+    assert validate_news_event_date(
+        future_material_event,
+        as_of_date="2026-05-01",
+    )["code"] == "EVIDENCE_DATE_AFTER_AS_OF_DATE"
+    assert validate_news_event_date(
+        confirmed_calendar_event,
+        as_of_date="2026-05-01",
+    ) is None
+
+
+def test_same_day_and_past_evidence_dates_are_allowed():
+    for evidence_date in ("2026-05-01", "2026-04-30T23:59:59Z"):
+        item = EvidenceItem(
+            evidence_id=f"MDB_NEWS_{evidence_date}",
+            ticker="MDB",
+            claim_type="news",
+            source_id="MDB_IR",
+            source_type="company_ir",
+            authority_rank=1,
+            statement="Evidence available by the report boundary.",
+            date=evidence_date,
+        )
+
+        assert validate_news_event_date(
+            item,
+            as_of_date="2026-05-01",
+        ) is None
+
+
+def test_malformed_evidence_date_is_blocking():
+    item = EvidenceItem(
+        evidence_id="MDB_BAD_DATE",
+        ticker="MDB",
+        claim_type="news",
+        source_id="MDB_IR",
+        source_type="company_ir",
+        authority_rank=1,
+        statement="Malformed dates must fail closed.",
+        date="not-a-date",
+    )
+
+    issue = validate_news_event_date(item, as_of_date="2026-05-01")
+
+    assert issue["severity"] == "error"
+    assert issue["code"] == "INVALID_EVIDENCE_DATE"
 
 
 def test_guidance_and_consensus_are_separate_evidence_items():
