@@ -1,7 +1,10 @@
 import pytest
 
 from research_agent.content.claim_generator import generate_research_claims
-from research_agent.content.claim_generator import _is_operating_catalyst_event
+from research_agent.content.claim_generator import (
+    _event_catalyst_summary,
+    _is_operating_catalyst_event,
+)
 from research_agent.decision.rating_engine import build_decision_packet
 from research_agent.evidence.evidence_ledger import EvidenceLedger
 from research_agent.research_core.ingestion.news_loader import news_evidence_items
@@ -233,3 +236,7 @@ def test_guidance_bearing_operating_event_is_also_a_catalyst() -> None:
     )
 
     assert _is_operating_catalyst_event(event) is True
+    assert _event_catalyst_summary(event.summary) == (
+        "Operating catalyst under review: Free cash flow guidance remains "
+        "$3.75 billion to $3.85 billion."
+    )

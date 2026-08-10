@@ -243,6 +243,14 @@ def _is_operating_catalyst_event(event: MaterialNewsEvent) -> bool:
     ) is not None
 
 
+def _event_catalyst_summary(statement: str) -> str:
+    normalized = " ".join(str(statement or "").split())
+    first_sentence = re.split(r"(?<=[.!?])\s+", normalized, maxsplit=1)[0].strip()
+    if first_sentence and first_sentence[-1] not in ".!?":
+        first_sentence = f"{first_sentence}."
+    return f"Operating catalyst under review: {first_sentence}"
+
+
 class _ClaimBuilder:
     def __init__(
         self,
@@ -1362,9 +1370,13 @@ class _ClaimBuilder:
         ):
             return
         claim_statement = (
-            f"Issuer-filed business context: {statement}"
-            if event.event_type in _BUSINESS_CONTEXT_EVENT_TYPES
-            else statement
+            _event_catalyst_summary(statement)
+            if as_catalyst
+            else (
+                f"Issuer-filed business context: {statement}"
+                if event.event_type in _BUSINESS_CONTEXT_EVENT_TYPES
+                else statement
+            )
         )
         self.counter += 1
         claim_id = f"{self.data_packet.ticker}_CLAIM_{self.counter:03d}"
