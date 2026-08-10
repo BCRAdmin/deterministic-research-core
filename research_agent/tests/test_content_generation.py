@@ -23,6 +23,7 @@ from research_agent.content.publish_composer import (
     _constructive_cash_conversion_trigger,
     _final_rating_section,
     _generic_investment_thesis,
+    _current_kpi_claims,
     _fmt_money as _publish_money,
     _generic_publish_report,
     compose_internal_best_report,
@@ -76,6 +77,34 @@ def test_claim_builder_resolves_dcf_terminal_value_share_for_rating_claims():
     builder = _ClaimBuilder(data, metrics, ledger, decision, validation, None)
 
     assert builder._metric_value("dcf_base_terminal_value_share") == 0.60
+
+
+def test_current_kpi_selection_deduplicates_catalyst_copy_with_same_evidence() -> None:
+    shared = {
+        "claim_type": "news",
+        "agent": "deterministic_content_generator",
+        "claim": "FY2026 guidance remains $3.75 billion.",
+        "claim_text": "FY2026 guidance remains $3.75 billion.",
+        "evidence_metrics": ["operating_kpi_free_cash_flow_guidance_01"],
+        "metric_refs": ["operating_kpi_free_cash_flow_guidance_01"],
+        "metric_values": {"operating_kpi_free_cash_flow_guidance_01": 3_750_000_000},
+        "evidence_ids": ["TEST_GUIDANCE"],
+        "source_ids": ["TEST_SEC"],
+        "confidence": "high",
+        "importance": "high",
+    }
+    context = ResearchClaim(
+        claim_id="TEST_CLAIM_001",
+        section="Business & Segment Context",
+        **shared,
+    )
+    catalyst = ResearchClaim(
+        claim_id="TEST_CLAIM_002",
+        section="Catalysts & Triggers",
+        **shared,
+    )
+
+    assert _current_kpi_claims([context, catalyst]) == [context]
 
 
 def _add_exact_metric_evidence(data, metrics, ledger):
