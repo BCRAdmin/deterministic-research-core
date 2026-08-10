@@ -2186,6 +2186,46 @@ def test_material_company_events_create_real_context_not_generic_finance_padding
     assert claim_quality_metrics(claims)["company_specific_claim_count"] >= 2
 
 
+def test_current_filing_legal_event_is_rendered_as_specific_risk():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    _add_exact_metric_evidence(data, metrics, ledger)
+    statement = (
+        "The environmental authority issued an administrative cleanup order; "
+        "the issuer's appeal remains pending."
+    )
+    data.news_coverage.material_events = [
+        MaterialNewsEvent(
+            date="2026-07-29",
+            headline="Current filing contains a legal or contingency disclosure",
+            event_type="filing_legal_contingencies",
+            source_id="SNOW_SEC_CURRENT_LEGAL",
+            source_type="sec_filing",
+            summary=statement,
+        )
+    ]
+    ledger.evidence_items.append(
+        EvidenceItem(
+            evidence_id="SNOW_CURRENT_LEGAL_EVENT",
+            ticker="SNOW",
+            claim_type="news",
+            source_id="SNOW_SEC_CURRENT_LEGAL",
+            source_type="sec_filing",
+            authority_rank=1,
+            statement=statement,
+            date="2026-07-29",
+            supports_claims=["material_news_coverage"],
+            confidence="high",
+        )
+    )
+
+    claims = generate_research_claims(data, metrics, ledger, decision, validation)
+    risk = next(claim for claim in claims if claim.source_ids == ["SNOW_SEC_CURRENT_LEGAL"])
+
+    assert risk.section == "Key Risks"
+    assert risk.claim_type == "risk"
+    assert risk.claim.startswith("Current issuer-filed risk context:")
+
+
 def test_issuer_operating_spread_keeps_segments_and_regions_taxonomically_distinct():
     canonical = CanonicalFinancials(
         ticker="ROK",

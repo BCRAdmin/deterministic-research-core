@@ -947,6 +947,73 @@ def test_extracts_raised_full_year_guidance_from_palantir_style_bullets():
     assert "8150000000.00 USD" in outlook["summary"]
 
 
+def test_extracts_multiple_guidance_ranges_from_one_outlook_paragraph():
+    html = """
+    <div>Second Quarter 2026 Results</div>
+    <div>2026 OUTLOOK</div>
+    <div>With two quarters complete, the company remains confident in its
+    full-year outlook for adjusted operating EBITDA between $8.15 and $8.25
+    billion and free cash flow of between $3.75 and $3.85 billion. Revenue is
+    now expected to be between $26.275 and $26.475 billion, reflecting a
+    reduction from the prior outlook. Adjusted operating EBITDA margin in 2026
+    is now expected to be between 31.0% and 31.2%, an increase of 20 basis points.</div>
+    """
+    payload = build_sec_results_release_payload(
+        ticker="GENR",
+        cik="123456",
+        accession_number="0000123456-26-000101",
+        filing_date="2026-07-28",
+        exhibit_document="q2-results.htm",
+        html=html,
+        expected_fiscal_year=2026,
+        expected_fiscal_period="Q2",
+        period_end_date="2026-06-30",
+        retrieved_at="2026-07-28T12:00:00Z",
+    )
+
+    metrics = {item["metric_name"]: item for item in payload["metrics"]}
+    assert metrics["guidance_adjusted_operating_ebitda_low"]["value"] == 8_150_000_000
+    assert metrics["guidance_adjusted_operating_ebitda_high"]["value"] == 8_250_000_000
+    assert metrics["guidance_free_cash_flow_low"]["value"] == 3_750_000_000
+    assert metrics["guidance_free_cash_flow_high"]["value"] == 3_850_000_000
+    assert metrics["guidance_revenue_low"]["value"] == 26_275_000_000
+    assert metrics["guidance_revenue_high"]["value"] == 26_475_000_000
+    assert metrics["guidance_adjusted_operating_ebitda_margin_low"]["value"] == pytest.approx(0.31)
+    assert metrics["guidance_adjusted_operating_ebitda_margin_high"]["value"] == pytest.approx(0.312)
+    assert metrics["guidance_revenue_low"]["direction"] == "lowered"
+    assert payload["result_contract"]["guidance_metric_count"] == 8
+    outlook = next(event for event in payload["events"] if event["event_type"] == "company_outlook")
+    assert outlook["headline"] == "Issuer updated full-year guidance"
+    assert "revenue (lowered)" in outlook["summary"]
+    assert "free cash flow (maintained)" in outlook["summary"]
+
+
+def test_rejects_partially_parsed_multi_metric_guidance_paragraph():
+    html = """
+    <div>Second Quarter 2026 Results</div>
+    <div>2026 OUTLOOK</div>
+    <div>The company expects full-year revenue between $26.2 and $26.4 billion
+    and operating margin between 18.0% and 19.0%.</div>
+    """
+
+    with pytest.raises(
+        ValueError,
+        match="materielle Guidance erkannt, aber nicht strukturiert extrahiert",
+    ):
+        build_sec_results_release_payload(
+            ticker="GENR",
+            cik="123456",
+            accession_number="0000123456-26-000102",
+            filing_date="2026-07-28",
+            exhibit_document="q2-results.htm",
+            html=html,
+            expected_fiscal_year=2026,
+            expected_fiscal_period="Q2",
+            period_end_date="2026-06-30",
+            retrieved_at="2026-07-28T12:00:00Z",
+        )
+
+
 def test_extracts_current_column_from_coca_cola_style_guidance_table():
     html = """
     <div>Coca-Cola Reports Second Quarter 2026 Results and Raises Full Year Guidance</div>

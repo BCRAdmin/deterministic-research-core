@@ -1439,7 +1439,7 @@ def _structured_guidance_metrics(
                 "unit": str(low.get("unit") or high.get("unit") or "unknown"),
                 "period": str(low.get("period") or high.get("period") or "forward"),
                 "basis": str(low.get("basis") or high.get("basis") or "company_defined"),
-                "direction": direction,
+                "direction": str(low.get("direction") or high.get("direction") or direction),
                 "lower_bound": str(low.get("bound_type") or "inclusive"),
                 "upper_bound": str(high.get("bound_type") or "inclusive"),
                 "source_id": source_id,

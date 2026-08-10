@@ -250,6 +250,7 @@ def build_sec_results_release_payload(
     metric_period_buckets: dict[str, str] = {}
     metric_guidance_periods: dict[str, tuple[str, int, str]] = {}
     metric_bound_types: dict[str, str] = {}
+    metric_directions: dict[str, str] = {}
     headline_controls: dict[str, float] = {}
 
     def add_value(
@@ -262,6 +263,7 @@ def build_sec_results_release_payload(
         period_bucket: str = "quarterly",
         guidance_period: Optional[tuple[str, int, str]] = None,
         bound_type: Optional[str] = None,
+        direction: Optional[str] = None,
     ) -> None:
         previous = values.get(metric_name)
         if previous is not None and abs(previous - value) > 1e-9:
@@ -279,6 +281,8 @@ def build_sec_results_release_payload(
             metric_guidance_periods[metric_name] = guidance_period
         if bound_type is not None:
             metric_bound_types[metric_name] = bound_type
+        if direction is not None:
+            metric_directions[metric_name] = direction
 
     headline_summary_extracted = False
     for table in parser.tables:
@@ -316,6 +320,8 @@ def build_sec_results_release_payload(
             add_value(f"guidance_{metric_base}_high", high)
             break
     guidance_years.update(_extract_block_guidance_metrics(parser.blocks, add_value, fiscal_year))
+    if _has_unparsed_material_guidance(parser.blocks, values):
+        raise ValueError("materielle Guidance erkannt, aber nicht strukturiert extrahiert")
 
     supported_operating = [
         metric_name for metric_name in values if not metric_name.startswith("guidance_")
@@ -379,6 +385,7 @@ def build_sec_results_release_payload(
                     "figures remain sourced from the matching CompanyFacts filing."
                 ),
                 "bound_type": metric_bound_types.get(metric_name),
+                "direction": metric_directions.get(metric_name),
             }
         )
 
@@ -1168,6 +1175,14 @@ def _extract_block_guidance_metrics(blocks, add_value, default_year: int) -> set
             guidance_years.add(_nearest_guidance_year(blocks, index, default_year))
             if not explicit_guidance_range:
                 continue
+        prose_guidance = _extract_prose_guidance_metrics(
+            block,
+            add_value,
+            guidance_year=_nearest_guidance_year(blocks, index, default_year),
+        )
+        if prose_guidance:
+            guidance_years.add(_nearest_guidance_year(blocks, index, default_year))
+            continue
         if index > active_until and not explicit_guidance_range:
             continue
         if "conference call" in folded or "forward-looking statements" in folded:
@@ -1291,6 +1306,131 @@ def _extract_block_guidance_metrics(blocks, add_value, default_year: int) -> set
                 bound_type=upper_bound,
             )
     return guidance_years
+
+
+def _extract_prose_guidance_metrics(block: str, add_value, *, guidance_year: int) -> bool:
+    folded = block.casefold()
+    if not re.search(r"\b(?:outlook|guidance|expects?|expected|remains confident)\b", folded):
+        return False
+    definitions = (
+        (
+            r"\badjusted operating ebitda margin\b",
+            "adjusted_operating_ebitda_margin",
+            "percent",
+            "non_gaap",
+            "percent",
+        ),
+        (
+            r"\badjusted operating ebitda\b",
+            "adjusted_operating_ebitda",
+            "USD",
+            "non_gaap",
+            "money",
+        ),
+        (r"\bfree cash flow\b", "free_cash_flow", "USD", "non_gaap", "money"),
+        (r"\b(?:total )?revenue\b", "revenue", "USD", "company_defined", "money"),
+    )
+    found = False
+    for label_pattern, metric_base, unit, basis, range_type in definitions:
+        label = re.search(label_pattern, block, flags=re.IGNORECASE)
+        if label is None:
+            continue
+        sentence_end = re.search(
+            r"[.;](?=\s+[A-Z]|\s*$)",
+            block[label.end() :],
+        )
+        end = label.end() + (sentence_end.start() if sentence_end else 220)
+        scope = block[label.end() : min(len(block), end + 1)]
+        metric_range = (
+            _money_range(scope, require_scale=True)
+            if range_type == "money"
+            else _percentage_range(scope)
+        )
+        if metric_range is None:
+            continue
+        low, high = sorted(metric_range)
+        direction = _guidance_direction_for_scope(block, label.start())
+        for suffix, value in (("low", low), ("high", high)):
+            bound_label = "lower" if suffix == "low" else "upper"
+            add_value(
+                f"guidance_{metric_base}_{suffix}",
+                value,
+                display_label=f"{metric_base.replace('_', ' ')} guidance {bound_label} bound",
+                unit=unit,
+                basis=basis,
+                period_bucket="guidance",
+                guidance_period=(f"FY{guidance_year}", guidance_year, "FY"),
+                bound_type="inclusive",
+                direction=direction,
+            )
+        found = True
+    return found
+
+
+def _guidance_direction_for_scope(block: str, label_start: int) -> str:
+    sentence_start = max(block.rfind(". ", 0, label_start), block.rfind("; ", 0, label_start))
+    sentence_start = 0 if sentence_start < 0 else sentence_start + 2
+    following = re.search(r"[.;](?=\s+[A-Z]|\s*$)", block[label_start:])
+    sentence_end = len(block) if following is None else label_start + following.end()
+    scope = block[sentence_start:sentence_end].casefold()
+    if re.search(r"\b(?:reduc(?:e|ed|tion)|lower(?:s|ed|ing)?)\b", scope):
+        return "lowered"
+    if re.search(r"\b(?:increas(?:e|ed|ing)|rais(?:e|ed|ing))\b", scope):
+        return "raised"
+    if re.search(r"\b(?:reaffirm(?:s|ed|ing)?|remain(?:s|ed)? confident|maintain(?:s|ed|ing)?)\b", scope):
+        return "maintained"
+    return "updated"
+
+
+def _has_unparsed_material_guidance(blocks: list[str], values: dict[str, float]) -> bool:
+    definitions = (
+        (r"\badjusted operating ebitda margin\b", "adjusted_operating_ebitda_margin", "percent", False),
+        (r"\badjusted operating ebitda\b", "adjusted_operating_ebitda", "money", True),
+        (r"\bfree cash flow\b", "free_cash_flow", "money", True),
+        (r"\b(?:total )?revenue\b", "revenue", "money", True),
+        (r"\badjusted operating margin\b", "adjusted_operating_margin", "percent", False),
+        (r"\boperating margin\b", "operating_margin", "percent", False),
+        (
+            r"\badjusted(?: diluted)? (?:earnings per share|eps)\b",
+            "adjusted_eps",
+            "money",
+            False,
+        ),
+        (
+            r"(?<!adjusted )\bdiluted (?:earnings per share|eps)\b",
+            "eps_diluted",
+            "money",
+            False,
+        ),
+        (r"\bcomparable sales\b", "comparable_sales_growth", "percent", False),
+    )
+    for block in blocks:
+        folded = block.casefold()
+        if not re.search(r"\b(?:outlook|guidance|expects?|expected|remains confident)\b", folded):
+            continue
+        for label_pattern, metric_base, range_type, require_scale in definitions:
+            label = re.search(label_pattern, block, flags=re.IGNORECASE)
+            if label is None:
+                continue
+            sentence_end = re.search(
+                r"[.;](?=\s+[A-Z]|\s*$)",
+                block[label.end() :],
+            )
+            end = label.end() + (sentence_end.start() if sentence_end else 220)
+            scope = block[label.end() : min(len(block), end + 1)]
+            metric_range = (
+                _money_range(scope, require_scale=require_scale)
+                if range_type == "money"
+                else _percentage_range(scope)
+            )
+            if metric_range is None:
+                continue
+            if not {
+                f"guidance_{metric_base}_low",
+                f"guidance_{metric_base}_high",
+            }.issubset(values):
+                return True
+    return False
 
 
 def _extract_company_bridge_metrics(table, add_value) -> None:
@@ -2093,13 +2233,23 @@ def _structured_guidance_event(
     if not guidance:
         return None
     text = " ".join(blocks[:120]).casefold()
-    direction = "updated"
-    if re.search(r"\b(?:raises?|raising|increases?|increasing)\b", text):
+    metric_directions = {
+        str(item.get("direction"))
+        for item in guidance.values()
+        if item.get("direction")
+    }
+    if len(metric_directions) == 1:
+        direction = next(iter(metric_directions))
+    elif len(metric_directions) > 1:
+        direction = "updated"
+    elif re.search(r"\b(?:raises?|raising|increases?|increasing)\b", text):
         direction = "raised"
     elif re.search(r"\b(?:lowers?|lowering|reduces?|reducing)\b", text):
         direction = "lowered"
     elif re.search(r"\b(?:maintains?|maintaining|reaffirms?|reaffirming)\b", text):
         direction = "maintained"
+    else:
+        direction = "updated"
 
     details: list[str] = []
     bases = sorted(
@@ -2120,6 +2270,7 @@ def _structured_guidance_event(
         high_value = float(high["value"])
         unit = str(low.get("unit") or high.get("unit") or "")
         label = base.replace("_", " ")
+        metric_direction = str(low.get("direction") or high.get("direction") or "updated")
         if abs(low_value - high_value) <= 1e-12:
             rendered = _format_metric_value(low_value, unit)
         else:
@@ -2127,7 +2278,7 @@ def _structured_guidance_event(
                 f"{_format_metric_value(low_value, unit)} to "
                 f"{_format_metric_value(high_value, unit)}"
             )
-        details.append(f"{label}: {rendered}")
+        details.append(f"{label} ({metric_direction}): {rendered}")
     summary = f"Management {direction} guidance"
     if details:
         summary += ": " + "; ".join(details)

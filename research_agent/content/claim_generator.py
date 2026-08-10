@@ -33,6 +33,8 @@ _BUSINESS_CONTEXT_SECTIONS = {
 _BUSINESS_CONTEXT_EVENT_TYPES = {
     "business_context",
     "business_model",
+    "filing_financing",
+    "filing_transactions",
     "operating_kpi",
 }
 _CATALYST_EVENT_TYPES = {
@@ -45,6 +47,7 @@ _CATALYST_EVENT_TYPES = {
     "product_strategy",
     "strategy",
 }
+_RISK_EVENT_TYPES = {"filing_legal_contingencies"}
 _RISK_THEME_PATTERNS = (
     re.compile(
         r"\b(?:patents?|intellectual property|loss of exclusivity|"
@@ -322,7 +325,9 @@ class _ClaimBuilder:
             )
 
         for event in self.data_packet.news_coverage.material_events:
-            if event.event_type in _BUSINESS_CONTEXT_EVENT_TYPES:
+            if event.event_type in _RISK_EVENT_TYPES:
+                self.add_event(event, section="Key Risks", as_risk=True)
+            elif event.event_type in _BUSINESS_CONTEXT_EVENT_TYPES:
                 self.add_event(event, section="Business & Segment Context")
                 if _is_operating_catalyst_event(event):
                     self.add_event(
@@ -1338,6 +1343,7 @@ class _ClaimBuilder:
         *,
         section: str,
         as_catalyst: bool = False,
+        as_risk: bool = False,
     ) -> None:
         statement = str(event.summary or event.headline).strip()
         numeric_event = bool(event.numeric_evidence)
@@ -1372,6 +1378,8 @@ class _ClaimBuilder:
         claim_statement = (
             _event_catalyst_summary(statement)
             if as_catalyst
+            else f"Current issuer-filed risk context: {statement}"
+            if as_risk
             else (
                 f"Issuer-filed business context: {statement}"
                 if event.event_type in _BUSINESS_CONTEXT_EVENT_TYPES
@@ -1395,7 +1403,7 @@ class _ClaimBuilder:
             ResearchClaim(
                 claim_id=claim_id,
                 section=section,
-                claim_type="news",
+                claim_type="risk" if as_risk else "news",
                 agent="deterministic_content_generator",
                 claim=claim_statement,
                 claim_text=claim_statement,
@@ -1456,6 +1464,18 @@ class _ClaimBuilder:
             and item.statement.strip()
         ]
         candidates = list({item.evidence_id: item for item in candidates}.values())
+        current_event_risks = [
+            item
+            for item in candidates
+            if "material_news_coverage" in item.supports_claims
+        ]
+        static_risks = [
+            item
+            for item in candidates
+            if "material_news_coverage" not in item.supports_claims
+        ]
+        current_event_risks.sort(key=lambda item: item.date or "", reverse=True)
+        candidates = [*current_event_risks, *static_risks]
         # Risk factors are issuer-ordered. Preserve that materiality signal
         # while avoiding a short list dominated by repeated versions of one
         # clearly identifiable theme. If no diverse alternative exists, keep
