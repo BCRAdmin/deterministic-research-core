@@ -168,8 +168,9 @@ def merge_evidence_sources(
 def bind_registry_claims(
     registry: SourceRegistry,
     fact_ledger: dict,
+    research_claims: Optional[Iterable[object]] = None,
 ) -> SourceRegistry:
-    """Bind registered sources to the exact research claims they support."""
+    """Bind registered sources to exact numeric and narrative research claims."""
 
     by_id = {source.source_id: source for source in registry.sources}
     for fact in fact_ledger.get("claims") or []:
@@ -182,6 +183,18 @@ def bind_registry_claims(
             source = by_id.get(str(source_id or ""))
             if source is not None:
                 source.claim_ids = sorted(set(source.claim_ids) | claim_ids)
+    for claim in research_claims or []:
+        claim_id = str(getattr(claim, "claim_id", "") or "").strip()
+        if not claim_id:
+            continue
+        for raw_source_id in getattr(claim, "source_ids", []) or []:
+            source_id = str(raw_source_id or "").strip()
+            source = by_id.get(source_id)
+            if source is None:
+                raise ValueError(
+                    f"research claim {claim_id} references unregistered source {source_id}"
+                )
+            source.claim_ids = sorted(set(source.claim_ids) | {claim_id})
     return registry
 
 

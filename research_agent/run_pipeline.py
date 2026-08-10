@@ -339,7 +339,11 @@ def run_research_pipeline(
         evidence_ledger=evidence_ledger,
         source_registry=source_registry,
     )
-    bind_registry_claims(source_registry, fact_ledger_payload)
+    bind_registry_claims(
+        source_registry,
+        fact_ledger_payload,
+        research_claims=claims,
+    )
     save_source_registry(source_registry, source_registry_path)
     fact_ledger_path = save_fact_ledger(
         fact_ledger_payload,

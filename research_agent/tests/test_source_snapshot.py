@@ -2,8 +2,12 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from types import SimpleNamespace
+
+import pytest
 
 from research_agent.research_core.ingestion.source_registry import (
+    bind_registry_claims,
     SourceRegistry,
     SourceRegistryEntry,
 )
@@ -56,6 +60,39 @@ def _source_tree(root: Path, ticker: str = "TEST") -> None:
         "date,open,high,low,close,volume\n2026-08-10,10,11,9,10,100\n",
         encoding="utf-8",
     )
+
+
+def test_registry_binds_narrative_claims_without_numeric_fact_metrics() -> None:
+    registry = _registry()
+    source_id = "TEST_SEC_0000123456-26-000001"
+    claim = SimpleNamespace(
+        claim_id="TEST_CLAIM_007",
+        source_ids=[source_id],
+    )
+
+    bind_registry_claims(
+        registry,
+        {"claims": []},
+        research_claims=[claim],
+    )
+
+    source = next(item for item in registry.sources if item.source_id == source_id)
+    assert source.claim_ids == ["TEST_CLAIM_007"]
+
+
+def test_registry_rejects_narrative_claim_with_unregistered_source() -> None:
+    registry = _registry()
+    claim = SimpleNamespace(
+        claim_id="TEST_CLAIM_008",
+        source_ids=["TEST_UNREGISTERED_SOURCE"],
+    )
+
+    with pytest.raises(ValueError, match="references unregistered source"):
+        bind_registry_claims(
+            registry,
+            {"claims": []},
+            research_claims=[claim],
+        )
 
 
 def test_snapshot_manifest_binds_every_external_source(tmp_path: Path) -> None:
