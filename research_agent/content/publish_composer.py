@@ -66,6 +66,36 @@ CURRENT_PERIOD_SECTIONS = {
     "Valuation vs Revenue/Backlog",
 }
 
+OPERATING_DRIVER_PATTERNS = {
+    "Pricing / yield": re.compile(
+        r"\b(?:pricing|price|yield|collection and disposal)\b",
+        re.IGNORECASE,
+    ),
+    "Volume": re.compile(r"\bvolume\b", re.IGNORECASE),
+    "Margin": re.compile(
+        r"\b(?:margin|operating ebitda|adjusted ebitda)\b",
+        re.IGNORECASE,
+    ),
+    "Capital allocation": re.compile(
+        r"\b(?:returned?|returning)\b.{0,100}\bshareholders?\b|"
+        r"\b(?:share repurchases?|stock repurchases?|cash dividends?|buybacks?|"
+        r"capital returned|return of capital)\b",
+        re.IGNORECASE,
+    ),
+}
+
+OPERATING_DRIVER_METRIC_MARKERS = {
+    "Pricing / yield": ("yield", "pricing"),
+    "Volume": ("volume",),
+    "Margin": ("margin", "operating_ebitda", "adjusted_ebitda"),
+    "Capital allocation": (
+        "capital_allocation",
+        "share_repurchase",
+        "stock_repurchase",
+        "cash_dividend",
+    ),
+}
+
 
 def compose_publish_report(
     data_packet: DataPacket,
@@ -753,10 +783,20 @@ def _generic_publish_report(
     t = metrics_packet.technical
     current_kpi_claims = _current_kpi_claims(claim_list)
     current_kpi_ids = {claim.claim_id for claim in current_kpi_claims}
+    operating_driver_claims = _operating_driver_claims(claim_list)
+    operating_driver_ids = {
+        claim.claim_id for _, claim in operating_driver_claims
+    }
     fundamental_claims = [
         claim
         for claim in grouped.get("Fundamental Analysis", [])
         if claim.claim_id not in current_kpi_ids
+    ]
+    business_context_claims = [
+        claim
+        for claim in grouped.get("Business & Segment Context", [])
+        if claim.claim_id not in current_kpi_ids
+        and claim.claim_id not in operating_driver_ids
     ]
     investment_thesis = "\n\n".join(
         part
@@ -769,7 +809,7 @@ def _generic_publish_report(
                 currency=currency,
             ),
             _paragraphs(
-                grouped.get("Business & Segment Context", []),
+                business_context_claims,
                 limit=2,
             ),
         )
@@ -778,8 +818,9 @@ def _generic_publish_report(
     investment_thesis_evidence = _combined_evidence_reference(
         [
             *grouped.get("Executive Summary", []),
-            *grouped.get("Business & Segment Context", []),
+            *business_context_claims,
             *current_kpi_claims,
+            *(claim for _, claim in operating_driver_claims),
         ],
         limit=4,
     )
@@ -799,6 +840,15 @@ def _generic_publish_report(
         "## Current Period KPIs",
         _paragraphs(current_kpi_claims, limit=5),
         "",
+        *(
+            [
+                "## Operating Drivers & Capital Allocation",
+                _operating_driver_section(operating_driver_claims),
+                "",
+            ]
+            if operating_driver_claims
+            else []
+        ),
         "## Fundamental Analysis",
         _paragraphs(fundamental_claims, limit=5),
         "",
@@ -1032,6 +1082,81 @@ def _current_kpi_claims(claims: list[ResearchClaim]) -> list[ResearchClaim]:
         )
         and any(char.isdigit() for char in _claim_text(claim))
     ]
+
+
+def _operating_driver_claims(
+    claims: list[ResearchClaim],
+) -> list[tuple[str, ResearchClaim]]:
+    """Select one source-bound current operating claim per material driver.
+
+    The selection is deliberately semantic instead of ticker-specific. It only
+    considers claims produced from the structured operating-KPI adapter and
+    prefers claims whose metrics are dedicated to the requested driver over
+    mixed context blocks. This keeps the readable report short while ensuring
+    that material operating evidence does not disappear into the appendix.
+    """
+
+    candidates = [
+        claim
+        for claim in claims
+        if (claim.section or "") == "Business & Segment Context"
+        and any(metric.startswith("operating_kpi_") for metric in claim.metric_refs)
+        and any(char.isdigit() for char in _claim_text(claim))
+    ]
+    selected: list[tuple[str, ResearchClaim]] = []
+    used_claim_ids: set[str] = set()
+    for label, pattern in OPERATING_DRIVER_PATTERNS.items():
+        matching = [
+            claim
+            for claim in candidates
+            if claim.claim_id not in used_claim_ids
+            and pattern.search(_claim_text(claim)) is not None
+        ]
+        if not matching:
+            continue
+        claim = max(matching, key=lambda item: _operating_driver_score(label, item))
+        selected.append((label, claim))
+        used_claim_ids.add(claim.claim_id)
+    return selected
+
+
+def _operating_driver_score(label: str, claim: ResearchClaim) -> tuple[float, int, int, int]:
+    metric_markers = OPERATING_DRIVER_METRIC_MARKERS[label]
+    operating_metrics = [
+        metric for metric in claim.metric_refs if metric.startswith("operating_kpi_")
+    ]
+    direct_metrics = [
+        metric
+        for metric in operating_metrics
+        if any(marker in metric for marker in metric_markers)
+    ]
+    direct_ratio = len(direct_metrics) / max(len(operating_metrics), 1)
+    text = _claim_text(claim)
+    term_count = len(
+        {
+            match.group(0).casefold()
+            for match in OPERATING_DRIVER_PATTERNS[label].finditer(text)
+        }
+    )
+    numeric_count = len(
+        re.findall(
+            r"(?:[$€£]\s*)?\d[\d,.]*\s*(?:%|million|billion|basis points?)?",
+            text,
+            re.IGNORECASE,
+        )
+    )
+    return direct_ratio, term_count, -len(text), numeric_count
+
+
+def _operating_driver_section(
+    selected: list[tuple[str, ResearchClaim]],
+) -> str:
+    if not selected:
+        return "No source-bound current operating drivers are available."
+    return "\n".join(
+        f"- **{label}:** {_clean_text(_claim_text(claim))}"
+        for label, claim in selected
+    )
 
 
 def _generic_investment_thesis(

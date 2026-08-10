@@ -49,7 +49,9 @@ def test_waste_archetype_requires_operating_kpis_generically() -> None:
     text = (
         "The company provides solid waste collection and landfill environmental services. "
         "Collection and disposal yield rose 5%, while volume fell 1%. Adjusted EBITDA "
-        "margin was 30%. Free cash flow guidance is $3.8 billion to $3.9 billion."
+        "margin was 30%. Free cash flow guidance is $3.8 billion to $3.9 billion. "
+        "The company returned $1 billion to shareholders through share repurchases "
+        "and cash dividends."
     )
     assessment = assess_speculative_deep_tech_manual_review(
         markdown=text,
@@ -123,7 +125,8 @@ def test_wm_failure_fixture_blocks_when_fcf_guidance_is_missing() -> None:
         markdown=(
             "Waste Management provides solid waste collection, disposal and landfill "
             "environmental services. Collection and disposal yield rose 4%, volume "
-            "fell 1%, and adjusted EBITDA margin was 29%."
+            "fell 1%, adjusted EBITDA margin was 29%, and the company returned "
+            "$1 billion to shareholders."
         ),
         metrics_packet=_metrics("WM"),
         source_registry=_sources("WM"),

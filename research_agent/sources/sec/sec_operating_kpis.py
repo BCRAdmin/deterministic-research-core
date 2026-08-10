@@ -18,6 +18,11 @@ KPI_PATTERNS = {
     "collection_disposal_yield": r"\b(?:collection and disposal yield|yield)\b",
     "volume": r"\bvolume\b",
     "operating_ebitda": r"\b(?:operating ebitda|adjusted ebitda|ebitda margin)\b",
+    "capital_allocation": (
+        r"\b(?:returned?|returning)\b.{0,100}\bshareholders?\b|"
+        r"\b(?:share repurchases?|stock repurchases?|cash dividends?|"
+        r"capital returned|return of capital)\b"
+    ),
     "free_cash_flow_guidance": r"\b(?:free cash flow|fcf)\b.{0,100}\b(?:guidance|outlook|range)\b|\b(?:guidance|outlook|range)\b.{0,100}\b(?:free cash flow|fcf)\b",
     "organic_comparable_growth": r"\b(?:organic|comparable)\b.{0,80}\bgrowth\b|\bgrowth\b.{0,80}\b(?:organic|comparable)\b",
     "segment_growth": r"\bsegment\b.{0,100}\bgrowth\b|\bgrowth\b.{0,100}\bsegment\b",

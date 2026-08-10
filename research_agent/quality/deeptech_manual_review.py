@@ -29,6 +29,11 @@ BUSINESS_MODEL_KPI_REQUIREMENTS = {
         "volume": r"\bvolume\b",
         "operating_ebitda": r"\b(?:operating ebitda|adjusted ebitda|ebitda margin)\b",
         "free_cash_flow_guidance": r"\b(?:free cash flow|fcf)\b.{0,100}\b(?:guidance|outlook|range)\b|\b(?:guidance|outlook|range)\b.{0,100}\b(?:free cash flow|fcf)\b",
+        "capital_allocation": (
+            r"\b(?:returned?|returning)\b.{0,100}\bshareholders?\b|"
+            r"\b(?:share repurchases?|stock repurchases?|cash dividends?|"
+            r"capital returned|return of capital)\b"
+        ),
     },
     "MEMBERSHIP_RETAIL": {
         "paid_members": r"\b(?:paid members?|paid memberships?)\b",

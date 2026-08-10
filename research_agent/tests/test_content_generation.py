@@ -24,6 +24,7 @@ from research_agent.content.publish_composer import (
     _final_rating_section,
     _generic_investment_thesis,
     _current_kpi_claims,
+    _operating_driver_claims,
     _fmt_money as _publish_money,
     _generic_publish_report,
     compose_internal_best_report,
@@ -106,6 +107,85 @@ def test_current_kpi_selection_deduplicates_catalyst_copy_with_same_evidence() -
 
     assert _current_kpi_claims([context, catalyst]) == [context]
     assert _current_kpi_claims([catalyst]) == []
+
+
+def test_operating_driver_selection_is_generic_complete_and_prefers_specific_claims() -> None:
+    def claim(
+        claim_id: str,
+        text: str,
+        metrics: list[str],
+    ) -> ResearchClaim:
+        return ResearchClaim(
+            claim_id=claim_id,
+            section="Business & Segment Context",
+            claim_type="news",
+            agent="test",
+            claim=text,
+            claim_text=text,
+            evidence_metrics=metrics,
+            metric_refs=metrics,
+            metric_values={metric: float(index + 1) for index, metric in enumerate(metrics)},
+            evidence_ids=[f"{claim_id}_EVIDENCE"],
+            source_ids=[f"{claim_id}_SOURCE"],
+            confidence="high",
+            importance="high",
+        )
+
+    mixed = claim(
+        "MIXED",
+        "Revenue rose 4.0% due to yield and volume.",
+        [
+            "operating_kpi_statement_context_01_01",
+            "operating_kpi_collection_disposal_yield_01_02",
+        ],
+    )
+    pricing = claim(
+        "PRICING",
+        "Average landfill yield was 5.2% in the latest quarter.",
+        ["operating_kpi_collection_disposal_yield_02_01"],
+    )
+    volume = claim(
+        "VOLUME",
+        "Collection and disposal volume declined 1.8%.",
+        ["operating_kpi_volume_03_01"],
+    )
+    margin = claim(
+        "MARGIN",
+        "Operating EBITDA margin was 30.4%.",
+        ["operating_kpi_operating_ebitda_04_01"],
+    )
+    capital = claim(
+        "CAPITAL",
+        "The company returned $1.04 billion to shareholders through share repurchases and cash dividends.",
+        ["operating_kpi_capital_allocation_05_01"],
+    )
+
+    selected = _operating_driver_claims([mixed, pricing, volume, margin, capital])
+
+    assert [(label, item.claim_id) for label, item in selected] == [
+        ("Pricing / yield", "PRICING"),
+        ("Volume", "VOLUME"),
+        ("Margin", "MARGIN"),
+        ("Capital allocation", "CAPITAL"),
+    ]
+
+    _, metrics, _, ledger, decision = _load_packet("SNOW")
+    report = _generic_publish_report(
+        "TEST",
+        "Hold",
+        {"Business & Segment Context": [mixed, pricing, volume, margin, capital]},
+        metrics,
+        decision,
+        [mixed, pricing, volume, margin, capital],
+        ledger,
+    )
+    main_body = report.split("## Evidence Appendix", 1)[0]
+
+    assert "## Operating Drivers & Capital Allocation" in main_body
+    for label, item in selected:
+        assert f"**{label}:**" in main_body
+        assert main_body.count(item.claim) == 1
+    assert mixed.claim in main_body
 
 
 def _add_exact_metric_evidence(data, metrics, ledger):
