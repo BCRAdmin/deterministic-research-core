@@ -37,7 +37,7 @@ from research_agent.reconciliation.canonical_financials import (
 )
 from research_agent.research_core.models.claims import ResearchClaim
 from research_agent.research_core.models.data_packet import DataPacket, MaterialNewsEvent
-from research_agent.research_core.models.metrics_packet import MetricsPacket
+from research_agent.research_core.models.metrics_packet import MetricsPacket, ValuationScenario
 from research_agent.research_core.models.validation_report import ValidationReport
 
 
@@ -56,6 +56,26 @@ def _load_packet(ticker: str):
 
 def test_per_share_unit_normalization_accepts_sec_plural_form():
     assert _evidence_unit_is_compatible("USD/shares", "USD_per_share")
+
+
+def test_claim_builder_resolves_dcf_terminal_value_share_for_rating_claims():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    metrics.valuation.sensitivity.scenarios = [
+        ValuationScenario(
+            name="base",
+            starting_free_cash_flow=1_000_000_000,
+            free_cash_flow_growth_rate=0.05,
+            discount_rate=0.10,
+            terminal_growth_rate=0.025,
+            present_value_explicit_cash_flows=4_000_000_000,
+            present_value_terminal_value=6_000_000_000,
+            terminal_value_share=0.60,
+            equity_value=10_000_000_000,
+        )
+    ]
+    builder = _ClaimBuilder(data, metrics, ledger, decision, validation, None)
+
+    assert builder._metric_value("dcf_base_terminal_value_share") == 0.60
 
 
 def _add_exact_metric_evidence(data, metrics, ledger):

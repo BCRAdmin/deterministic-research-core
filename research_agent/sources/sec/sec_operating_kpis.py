@@ -24,9 +24,9 @@ KPI_PATTERNS = {
     "adjusted_eps_guidance": r"\badjusted eps\b.{0,120}\b(?:guidance|outlook|range)\b|\b(?:guidance|outlook|range)\b.{0,120}\badjusted eps\b",
     "transaction_financing": r"\b(?:acquisition|transaction)\b.{0,160}\b(?:debt|financ|consideration|purchase price)\b|\b(?:debt|financ)\b.{0,160}\b(?:acquisition|transaction)\b",
     "integration_effects": (
+        r"\b(?:integration costs?|purchase accounting|acquisition-related amortization)\b|"
         r"\b(?:acquisition|transaction|integration)\b.{0,180}"
-        r"\b(?:integration costs?|amortization|purchase accounting|synerg(?:y|ies))\b|"
-        r"\b(?:integration costs?|purchase accounting|synerg(?:y|ies))\b.{0,180}"
+        r"\bsynerg(?:y|ies)\b|\bsynerg(?:y|ies)\b.{0,180}"
         r"\b(?:acquisition|transaction|integration)\b"
     ),
     "product_regulatory_catalyst": r"\b(?:approval|clearance|product launch|clinical milestone)\b",

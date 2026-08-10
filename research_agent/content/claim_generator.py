@@ -1530,6 +1530,19 @@ class _ClaimBuilder:
                 None,
             )
             return float(scenario.equity_value) if scenario is not None else None
+        if metric_name.startswith("dcf_") and metric_name.endswith("_terminal_value_share"):
+            scenario_name = metric_name.removeprefix("dcf_").removesuffix(
+                "_terminal_value_share"
+            )
+            scenario = next(
+                (
+                    item
+                    for item in self.metrics.valuation.sensitivity.scenarios
+                    if item.name == scenario_name
+                ),
+                None,
+            )
+            return float(scenario.terminal_value_share) if scenario is not None else None
         return _canonical_value(self.canonical, metric_name)
 
     def _money(self, value: Optional[float]) -> str:
