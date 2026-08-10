@@ -101,6 +101,8 @@ def _outcome(snapshot, **overrides):
         "instrument_return": 0.12,
         "benchmark_return": 0.07,
         "excess_return": 0.05,
+        "instrument_max_drawdown": -0.12,
+        "benchmark_max_drawdown": -0.08,
         "instrument_price_series_basis": "total_return_adjusted",
         "benchmark_price_series_basis": "total_return_adjusted",
         "source_hash": HASH,
@@ -348,6 +350,38 @@ def test_invalid_outcome_cannot_enter_calibration_sample():
         == 1
     )
     assert readiness.invalid_outcome_reasons["outcome_excess_return_mismatch"] == 1
+
+
+def test_matured_outcome_calculates_instrument_and_benchmark_drawdown():
+    snapshot = _snapshot()
+    basis = date.fromisoformat(snapshot.price_basis_date)
+    instrument = [
+        ValuationCalibrationPricePoint(date=basis.isoformat(), close=100),
+        *[
+            ValuationCalibrationPricePoint(
+                date=(basis + timedelta(days=index)).isoformat(),
+                close=120 if index == 1 else 90 if index == 2 else 100 + index / 10,
+            )
+            for index in range(1, 253)
+        ],
+    ]
+    benchmark = [
+        ValuationCalibrationPricePoint(date=basis.isoformat(), close=100),
+        *[
+            ValuationCalibrationPricePoint(
+                date=(basis + timedelta(days=index)).isoformat(),
+                close=110 if index == 1 else 99 if index == 2 else 100 + index / 20,
+            )
+            for index in range(1, 253)
+        ],
+    ]
+    bundle = _source_bundle(snapshot, instrument, benchmark)
+
+    outcome = build_valuation_calibration_outcome(snapshot, bundle)
+
+    assert outcome.status == "matured"
+    assert outcome.instrument_max_drawdown == -0.25
+    assert outcome.benchmark_max_drawdown == -0.1
 
 
 def test_orphan_outcome_is_reported_instead_of_silently_ignored():

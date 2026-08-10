@@ -81,6 +81,8 @@ class ValuationCalibrationOutcome(BaseModel):
     instrument_return: Optional[float] = None
     benchmark_return: Optional[float] = None
     excess_return: Optional[float] = None
+    instrument_max_drawdown: Optional[float] = None
+    benchmark_max_drawdown: Optional[float] = None
     instrument_price_series_basis: str = "unknown"
     benchmark_price_series_basis: str = "unknown"
     source_hash: Optional[str] = None
@@ -584,6 +586,7 @@ def build_valuation_calibration_outcome(
         )
 
     end_date = future_common_dates[VALUATION_CALIBRATION_HORIZON_TRADING_DAYS - 1]
+    outcome_dates = future_common_dates[:VALUATION_CALIBRATION_HORIZON_TRADING_DAYS]
     instrument_return = normalized_instrument[end_date] / instrument_basis_price - 1
     benchmark_return = normalized_benchmark[end_date] / benchmark_basis_price - 1
     instrument_return = round(instrument_return, 12)
@@ -594,6 +597,14 @@ def build_valuation_calibration_outcome(
         instrument_return=instrument_return,
         benchmark_return=benchmark_return,
         excess_return=round(instrument_return - benchmark_return, 12),
+        instrument_max_drawdown=_max_drawdown(
+            instrument_basis_price,
+            [normalized_instrument[day] for day in outcome_dates],
+        ),
+        benchmark_max_drawdown=_max_drawdown(
+            benchmark_basis_price,
+            [normalized_benchmark[day] for day in outcome_dates],
+        ),
     )
 
 
@@ -799,7 +810,22 @@ def _outcome_invalid_reasons(
         > 1e-9
     ):
         reasons.append("outcome_excess_return_mismatch")
+    for label, value in (
+        ("instrument", outcome.instrument_max_drawdown),
+        ("benchmark", outcome.benchmark_max_drawdown),
+    ):
+        if value is None or not math.isfinite(float(value)) or not -1 <= float(value) <= 0:
+            reasons.append(f"outcome_{label}_max_drawdown_invalid")
     return reasons
+
+
+def outcome_invalid_reasons(
+    snapshot: ValuationCalibrationSnapshot,
+    outcome: ValuationCalibrationOutcome,
+) -> list[str]:
+    """Expose the canonical matured-outcome validator to P6 diagnostics."""
+
+    return sorted(set(_outcome_invalid_reasons(snapshot, outcome)))
 
 
 def _source_bundle_invalid_reasons(
@@ -1183,6 +1209,16 @@ def _price_map(
             raise ValueError("conflicting_duplicate_price_observation")
         normalized[key] = close
     return normalized
+
+
+def _max_drawdown(basis_price: float, future_prices: list[float]) -> float:
+    peak = float(basis_price)
+    maximum_drawdown = 0.0
+    for value in future_prices:
+        price = float(value)
+        peak = max(peak, price)
+        maximum_drawdown = min(maximum_drawdown, price / peak - 1)
+    return round(maximum_drawdown, 12)
 
 
 def _write_json(path: Path, payload: object) -> None:
