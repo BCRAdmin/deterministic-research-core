@@ -44,7 +44,11 @@ CAUSALITY_RE = re.compile(
     re.IGNORECASE,
 )
 PRICE_NEWS_RE = re.compile(
-    r"(?:news|nachricht|meldung|irland|kurs|price|selloff|rückgang|rueckgang)", re.IGNORECASE
+    r"(?:\bnews\b|\bnachricht(?:en)?\b|\bmeldung(?:en)?\b|\birland\b|"
+    r"\b(?:aktien|share|stock)?\s*kurs\b|\b(?:share|stock)\s+price\b|"
+    r"\bprice\s+(?:move|movement|decline|drop|rise|gain)\b|"
+    r"\bselloff\b|\b(?:kurs)?rückgang\b|\b(?:kurs)?rueckgang\b)",
+    re.IGNORECASE,
 )
 NO_NEWS_RE = re.compile(
     r"(?:no news found|no relevant news|no company-specific news found|keine news|keine relevanten nachrichten|keine unternehmensspezifischen nachrichten)",

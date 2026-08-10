@@ -23,12 +23,18 @@ KPI_PATTERNS = {
     "segment_growth": r"\bsegment\b.{0,100}\bgrowth\b|\bgrowth\b.{0,100}\bsegment\b",
     "adjusted_eps_guidance": r"\badjusted eps\b.{0,120}\b(?:guidance|outlook|range)\b|\b(?:guidance|outlook|range)\b.{0,120}\badjusted eps\b",
     "transaction_financing": r"\b(?:acquisition|transaction)\b.{0,160}\b(?:debt|financ|consideration|purchase price)\b|\b(?:debt|financ)\b.{0,160}\b(?:acquisition|transaction)\b",
-    "integration_effects": r"\b(?:integration costs?|amortization|purchase accounting)\b",
-    "product_regulatory_catalyst": r"\b(?:approval|clearance|regulatory|product launch|clinical)\b",
+    "integration_effects": (
+        r"\b(?:acquisition|transaction|integration)\b.{0,180}"
+        r"\b(?:integration costs?|amortization|purchase accounting|synerg(?:y|ies))\b|"
+        r"\b(?:integration costs?|purchase accounting|synerg(?:y|ies))\b.{0,180}"
+        r"\b(?:acquisition|transaction|integration)\b"
+    ),
+    "product_regulatory_catalyst": r"\b(?:approval|clearance|product launch|clinical milestone)\b",
 }
 
 NUMBER_RE = re.compile(
-    r"(?P<currency>[$€£])?\s*(?P<number>\d+(?:[.,]\d+)?)\s*"
+    r"(?P<currency>[$€£])?\s*"
+    r"(?P<number>(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?)\s*"
     r"(?P<scale>billion|million|thousand|bn|mn|m|k)?\s*(?P<percent>%)?",
     re.IGNORECASE,
 )
@@ -83,6 +89,10 @@ def build_sec_operating_kpi_payload(
         parser = _BlockParser()
         parser.feed(html)
         blocks.extend(parser.finish())
+    # A results release can be embedded in the filing and also supplied as a
+    # separate official document.  Exact block deduplication prevents the same
+    # issuer statement from becoming two report claims.
+    blocks = list(dict.fromkeys(blocks))
     cik_digits = str(int(cik)).zfill(10)
     accession_digits = accession_number.replace("-", "")
     document = primary_document.rsplit("/", 1)[-1]
@@ -91,57 +101,57 @@ def build_sec_operating_kpi_payload(
         f"{accession_digits}/{document}"
     )
     events: list[dict[str, Any]] = []
-    dispositions: list[dict[str, Any]] = []
-    for kpi_id, pattern in KPI_PATTERNS.items():
-        matches: list[tuple[str, list[dict[str, Any]]]] = []
-        for block in blocks:
-            if not re.search(pattern, block, flags=re.IGNORECASE):
-                continue
-            numeric_evidence = _numeric_evidence(block, kpi_id=kpi_id)
-            if numeric_evidence:
-                matches.append((block, numeric_evidence))
-            if len(matches) >= 3:
-                break
-        dispositions.append(
+    match_counts = {kpi_id: 0 for kpi_id in KPI_PATTERNS}
+    primary_counts = {kpi_id: 0 for kpi_id in KPI_PATTERNS}
+    for statement in blocks:
+        matched_kpis = [
+            kpi_id
+            for kpi_id, pattern in KPI_PATTERNS.items()
+            if re.search(pattern, statement, flags=re.IGNORECASE)
+            and match_counts[kpi_id] < 3
+        ]
+        if not matched_kpis:
+            continue
+        numeric_evidence = _numeric_evidence(
+            statement,
+            kpi_ids=matched_kpis,
+            event_index=len(events) + 1,
+        )
+        if not numeric_evidence:
+            continue
+        for kpi_id in matched_kpis:
+            match_counts[kpi_id] += 1
+        primary_kpi = matched_kpis[0]
+        primary_counts[primary_kpi] += 1
+        events.append(
             {
-                "kpi_id": kpi_id,
-                "status": "found" if matches else "reviewed_not_found",
-                "match_count": len(matches),
+                "event_type": "operating_kpi",
+                "date": filing_date,
+                "headline": (
+                    "Issuer reported operating KPI context: "
+                    + ", ".join(kpi_id.replace("_", " ") for kpi_id in matched_kpis)
+                ),
+                "summary": statement[:1800],
+                "material": True,
+                "source_id": (
+                    f"SEC_CIK{cik_digits}_{accession_digits}_KPI_"
+                    f"{primary_kpi.upper()}_{primary_counts[primary_kpi]:02d}"
+                ),
+                "source_type": "sec_filing",
+                "authority_rank": 1,
+                "url": url,
+                "retrieved_at": retrieved_at,
+                "numeric_evidence": numeric_evidence,
             }
         )
-        for index, (statement, numeric_evidence) in enumerate(matches, start=1):
-            # Metric identifiers are fact-ledger keys.  A filing can discuss the
-            # same KPI more than once with different period values, so numbering
-            # must include the statement occurrence as well as the value within
-            # that statement.  Reusing ``..._01`` for every statement makes two
-            # legitimate values look like a contradictory claim.
-            scoped_numeric_evidence = [
-                {
-                    **item,
-                    "metric_name": (
-                        f"operating_kpi_{kpi_id}_{index:02d}_{numeric_index:02d}"
-                    ),
-                }
-                for numeric_index, item in enumerate(numeric_evidence, start=1)
-            ]
-            events.append(
-                {
-                    "event_type": "operating_kpi",
-                    "date": filing_date,
-                    "headline": f"Issuer reported operating KPI: {kpi_id.replace('_', ' ')}",
-                    "summary": statement[:1800],
-                    "material": True,
-                    "source_id": (
-                        f"SEC_CIK{cik_digits}_{accession_digits}_KPI_"
-                        f"{kpi_id.upper()}_{index:02d}"
-                    ),
-                    "source_type": "sec_filing",
-                    "authority_rank": 1,
-                    "url": url,
-                    "retrieved_at": retrieved_at,
-                    "numeric_evidence": scoped_numeric_evidence,
-                }
-            )
+    dispositions = [
+        {
+            "kpi_id": kpi_id,
+            "status": "found" if match_counts[kpi_id] else "reviewed_not_found",
+            "match_count": match_counts[kpi_id],
+        }
+        for kpi_id in KPI_PATTERNS
+    ]
     return {
         "coverage_status": "complete",
         "checked_at": retrieved_at,
@@ -154,23 +164,22 @@ def build_sec_operating_kpi_payload(
     }
 
 
-def _numeric_evidence(statement: str, *, kpi_id: str) -> list[dict[str, Any]]:
-    target_pattern = KPI_PATTERNS[kpi_id]
-    target_ranges = [
-        match.span()
-        for match in re.finditer(target_pattern, statement, flags=re.IGNORECASE)
+def _numeric_evidence(
+    statement: str,
+    *,
+    kpi_ids: list[str],
+    event_index: int,
+) -> list[dict[str, Any]]:
+    label_ranges = [
+        (kpi_id, match.span())
+        for kpi_id in kpi_ids
+        for match in re.finditer(KPI_PATTERNS[kpi_id], statement, flags=re.IGNORECASE)
     ]
-    if not target_ranges:
+    if not label_ranges:
         return []
-    competing_ranges = [
-        match.span()
-        for other_kpi, pattern in KPI_PATTERNS.items()
-        if other_kpi != kpi_id
-        for match in re.finditer(pattern, statement, flags=re.IGNORECASE)
-    ]
     values: list[dict[str, Any]] = []
     for match in NUMBER_RE.finditer(statement):
-        raw = float(match.group("number").replace(",", "."))
+        raw = float(match.group("number").replace(",", ""))
         scale = str(match.group("scale") or "").casefold()
         percent = bool(match.group("percent"))
         if (
@@ -181,18 +190,10 @@ def _numeric_evidence(statement: str, *, kpi_id: str) -> list[dict[str, Any]]:
             and 1900 <= raw <= 2100
         ):
             continue
-        target_distance = min(
-            _semantic_distance(match.span(), target_range)
-            for target_range in target_ranges
-        )
-        competing_distance = min(
-            (
-                _semantic_distance(match.span(), competing_range)
-                for competing_range in competing_ranges
-            ),
-            default=10_000,
-        )
-        if target_distance > 140 or competing_distance < target_distance:
+        # Every monetary, percentage or explicitly scaled value in an emitted
+        # source statement is a hard report claim.  Binding only the value
+        # nearest the KPI label leaves the other visible numbers unverifiable.
+        if not (match.group("currency") or percent or scale):
             continue
         multiplier = {
             "billion": 1_000_000_000,
@@ -203,17 +204,44 @@ def _numeric_evidence(statement: str, *, kpi_id: str) -> list[dict[str, Any]]:
             "thousand": 1_000,
             "k": 1_000,
         }.get(scale, 1)
-        value = raw / 100 if percent else raw * multiplier
+        direction = _numeric_direction(statement, match.span()) if percent else 1.0
+        value = direction * raw / 100 if percent else raw * multiplier
         unit = "percent" if percent else "currency" if match.group("currency") else "count"
+        distance, owner = min(
+            (
+                _semantic_distance(match.span(), label_range),
+                kpi_id,
+            )
+            for kpi_id, label_range in label_ranges
+        )
+        metric_owner = owner if distance <= 140 else "statement_context"
         values.append(
             {
-                "metric_name": f"operating_kpi_{kpi_id}_{len(values) + 1:02d}",
+                "metric_name": (
+                    f"operating_kpi_{metric_owner}_{event_index:02d}_{len(values) + 1:02d}"
+                ),
                 "value": value,
                 "raw_value": raw,
                 "unit": unit,
             }
         )
     return values
+
+
+def _numeric_direction(statement: str, number_range: tuple[int, int]) -> float:
+    directions: list[tuple[int, float]] = []
+    for pattern, multiplier in (
+        (r"\b(?:decline|declined|decrease|decreased|fell|lower)\b", -1.0),
+        (r"\b(?:growth|grew|increase|increased|rose|higher)\b", 1.0),
+    ):
+        directions.extend(
+            (_semantic_distance(number_range, match.span()), multiplier)
+            for match in re.finditer(pattern, statement, flags=re.IGNORECASE)
+        )
+    if not directions:
+        return 1.0
+    distance, multiplier = min(directions, key=lambda item: item[0])
+    return multiplier if distance <= 90 else 1.0
 
 
 def _range_distance(left: tuple[int, int], right: tuple[int, int]) -> int:

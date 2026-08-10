@@ -1,3 +1,5 @@
+import pytest
+
 from research_agent.content.claim_generator import generate_research_claims
 from research_agent.decision.rating_engine import build_decision_packet
 from research_agent.evidence.evidence_ledger import EvidenceLedger
@@ -55,26 +57,17 @@ def test_operating_kpi_extractor_creates_numeric_primary_evidence() -> None:
 
 def test_operating_kpi_numbers_are_owned_by_the_nearest_semantic_label() -> None:
     payload = _cost_payload()
-    events = {
-        event["source_id"].split("_KPI_", 1)[1].rsplit("_", 1)[0].lower(): event
+    metric_values = {
+        item["metric_name"]: item["value"]
         for event in payload["events"]
+        for item in event["numeric_evidence"]
     }
 
-    assert [item["value"] for item in events["paid_members"]["numeric_evidence"]] == [
-        82_900_000
-    ]
-    assert [item["value"] for item in events["cardholders"]["numeric_evidence"]] == [
-        148_500_000
-    ]
-    assert [item["value"] for item in events["comparable_sales"]["numeric_evidence"]] == [
-        0.057
-    ]
-    assert [item["value"] for item in events["traffic_frequency"]["numeric_evidence"]] == [
-        0.049
-    ]
-    assert [item["value"] for item in events["average_ticket"]["numeric_evidence"]] == [
-        0.008
-    ]
+    assert any("paid_members" in key and value == 82_900_000 for key, value in metric_values.items())
+    assert any("cardholders" in key and value == 148_500_000 for key, value in metric_values.items())
+    assert any("comparable_sales" in key and value == 0.057 for key, value in metric_values.items())
+    assert any("traffic_frequency" in key and value == 0.049 for key, value in metric_values.items())
+    assert any("average_ticket" in key and value == 0.008 for key, value in metric_values.items())
 
 
 def test_operating_kpi_extractor_does_not_mislabel_a_year_as_a_kpi_value() -> None:
@@ -115,6 +108,57 @@ def test_repeated_kpi_statements_have_distinct_fact_ledger_metric_ids() -> None:
 
     assert len(metric_ids) == 2
     assert len(metric_ids) == len(set(metric_ids))
+
+
+def test_all_visible_hard_numbers_in_emitted_statement_are_bound() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="TEST",
+        cik="123456",
+        accession_number="0000123456-26-000001",
+        filing_date="2026-08-01",
+        primary_document="test.htm",
+        html_documents=[
+            """
+            <p>Income from operations was $1,253 million, or 18.7% of revenue,
+            compared with $1,151 million, or 17.9%; the $102 million increase
+            was driven by collection and disposal yield.</p>
+            """
+        ],
+        retrieved_at="2026-08-02T12:00:00Z",
+    )
+    event = next(
+        event
+        for event in payload["events"]
+        if "COLLECTION_DISPOSAL_YIELD" in event["source_id"]
+    )
+
+    assert [item["value"] for item in event["numeric_evidence"]] == [
+        1_253_000_000,
+        0.187,
+        1_151_000_000,
+        0.179,
+        102_000_000,
+    ]
+
+
+def test_declining_percentages_are_bound_with_the_reported_direction() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="TEST",
+        cik="123456",
+        accession_number="0000123456-26-000001",
+        filing_date="2026-08-01",
+        primary_document="test.htm",
+        html_documents=[
+            "<p>Collection volume declined 1.8%, landfill volume grew 1.7%, "
+            "and collection volume declined 0.4%.</p>"
+        ],
+        retrieved_at="2026-08-02T12:00:00Z",
+    )
+    event = next(event for event in payload["events"] if "VOLUME" in event["source_id"])
+
+    assert [item["value"] for item in event["numeric_evidence"]] == pytest.approx(
+        [-0.018, 0.017, -0.004]
+    )
 
 
 def test_numeric_operating_kpi_event_is_not_dropped_from_claims() -> None:

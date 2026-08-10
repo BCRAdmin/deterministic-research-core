@@ -793,6 +793,16 @@ Pricing regulations could change due to factors beyond management's control.
     assert not audit.has_issue("OVERSTATED_CAUSALITY")
 
 
+def test_auditor_does_not_treat_operating_pricing_as_stock_price_causality():
+    markdown = (
+        "Collection revenue increased due to higher pricing and a favorable "
+        "price-to-cost spread."
+    )
+    audit = audit_markdown_report(markdown, simple_metrics())
+
+    assert not audit.has_issue("OVERSTATED_CAUSALITY")
+
+
 def test_auditor_catches_forward_eps_guidance_mismatch():
     audit = audit_fixture("mdb_2026_05_01")
 
