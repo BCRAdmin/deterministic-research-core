@@ -56,6 +56,7 @@ from research_agent.reconciliation.canonical_financials import (
     save_canonical_financials,
 )
 from research_agent.reconciliation.reconciliation_report import (
+    deduplicate_reconciliation_warnings,
     render_current_period_reconciliation_summary,
     render_reconciliation_report,
     save_current_period_reconciliation_summary,
@@ -147,6 +148,9 @@ def run_research_pipeline(
         canonical_financials,
         reconciliation_warnings,
     ) = _load_pipeline_inputs(ticker, as_of_date, config)
+    reconciliation_warnings = deduplicate_reconciliation_warnings(
+        reconciliation_warnings
+    )
 
     normalized_prices = normalize_prices(prices)
     normalized_fundamentals = normalize_fundamentals(fundamentals)

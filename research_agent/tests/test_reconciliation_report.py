@@ -1,5 +1,6 @@
 from research_agent.reconciliation.canonical_financials import CanonicalFinancials, CanonicalMetric
 from research_agent.reconciliation.reconciliation_report import (
+    deduplicate_reconciliation_warnings,
     render_current_period_reconciliation_summary,
     render_reconciliation_report,
     save_current_period_reconciliation_summary,
@@ -7,6 +8,24 @@ from research_agent.reconciliation.reconciliation_report import (
     save_reconciliation_warnings,
 )
 from research_agent.research_core.models.metrics_packet import FundamentalMetrics, MetricsPacket, TechnicalMetrics, ValuationMetrics
+
+
+def test_deduplicates_only_exact_reconciliation_warnings_in_source_order():
+    first = {
+        "severity": "warning",
+        "code": "MISSING_COMPATIBLE_NUMERATOR",
+        "metric": "ebitda",
+        "message": "EBITDA is unavailable.",
+    }
+    distinct_same_code = {
+        **first,
+        "metric": "gross_profit",
+        "message": "Gross profit is unavailable.",
+    }
+
+    assert deduplicate_reconciliation_warnings(
+        [first, distinct_same_code, dict(first)]
+    ) == [first, distinct_same_code]
 
 
 def test_reconciliation_report_is_generated(tmp_path):

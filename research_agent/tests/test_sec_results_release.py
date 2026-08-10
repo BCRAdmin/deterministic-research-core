@@ -116,6 +116,16 @@ AOS_STYLE_RESULT_HTML = """
 </body></html>
 """
 
+ABT_STYLE_CURRENT_AND_PREVIOUS_GUIDANCE_HTML = """
+<html><body>
+<div>Abbott Reports Second-Quarter 2026 Results and Raises Full-Year EPS Guidance</div>
+<div>•Abbott raises full-year 2026 adjusted diluted EPS guidance range to
+$5.45 to $5.60, compared to previous range of $5.38 to $5.58.</div>
+<div>•Second-quarter GAAP diluted EPS of $0.53 and adjusted diluted EPS of
+$1.31, which excludes specified items.</div>
+</body></html>
+"""
+
 ROK_STYLE_RESULT_HTML = """
 <html><body>
 <div>Rockwell Automation Reports Third Quarter 2026 Results</div>
@@ -345,6 +355,29 @@ def test_builds_percent_header_bridge_and_value_first_adjusted_results():
     assert any("continuing-operations EPS" in summary for summary in summaries)
 
 
+def test_company_bridge_prefers_quarter_over_cumulative_duplicate_metric():
+    from research_agent.sources.sec.sec_results_release import (
+        _extract_company_bridge_metrics,
+    )
+
+    blank = ""
+    table = [
+        [blank, "Period-to-Period Change", blank, "Period-to-Period Change"],
+        [blank, "Three Months Ended", blank, "Six Months Ended"],
+        [blank, blank, blank, blank],
+        [blank, "Total", blank, "Total"],
+        ["Total", blank, "4.0", "%", "3.7", "%"],
+    ]
+    extracted: dict[str, float] = {}
+
+    _extract_company_bridge_metrics(
+        table,
+        lambda metric_name, value, **_: extracted.setdefault(metric_name, value),
+    )
+
+    assert extracted == {"reported_sales_growth": pytest.approx(0.04)}
+
+
 def test_builds_first_consolidated_summary_segments_and_current_guidance():
     payload = build_sec_results_release_payload(
         ticker="GENR",
@@ -453,6 +486,28 @@ def test_builds_sparse_current_quarter_bridge_and_updated_guidance():
     assert not any(
         metric_name.startswith("segment_reported_sales_growth_effect") for metric_name in values
     )
+
+
+def test_selects_current_full_year_guidance_and_ignores_historical_quarter_eps():
+    payload = build_sec_results_release_payload(
+        ticker="ABT",
+        cik="1800",
+        accession_number="0001628280-26-048377",
+        filing_date="2026-07-16",
+        exhibit_document="abt-2026q2xexhibitx991.htm",
+        html=ABT_STYLE_CURRENT_AND_PREVIOUS_GUIDANCE_HTML,
+        expected_fiscal_year=2026,
+        expected_fiscal_period="Q2",
+        period_end_date="2026-06-30",
+        retrieved_at="2026-07-16T12:00:00Z",
+    )
+
+    values = {item["metric_name"]: item["value"] for item in payload["metrics"]}
+
+    assert values == {
+        "guidance_adjusted_eps_high": pytest.approx(5.60),
+        "guidance_adjusted_eps_low": pytest.approx(5.45),
+    }
 
 
 def test_builds_indented_current_guidance_with_segment_revenue_ranges():

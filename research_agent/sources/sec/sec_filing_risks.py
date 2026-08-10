@@ -918,7 +918,19 @@ def _standalone_topic_risk_sentence(sentence: str) -> str | None:
 def _clean_risk_heading_marker(text: str) -> str:
     """Remove an issuer's decorative square from an otherwise valid heading."""
 
-    return re.sub(r"^\s*■\s*", "", text).strip()
+    return _clean_extracted_text(re.sub(r"^\s*■\s*", "", text))
+
+
+def _clean_extracted_text(text: str) -> str:
+    """Remove filing footnote markers and HTML spacing artifacts from prose."""
+
+    cleaned = re.sub(
+        r"(?<=[A-Za-z0-9’'])\*+(?=\s|[,.;:!?]|$)",
+        "",
+        str(text or ""),
+    )
+    cleaned = re.sub(r"\s+([,.;:!?])", r"\1", cleaned)
+    return " ".join(cleaned.split())
 
 
 def _inline_title_case_risk_heading(text: str) -> str | None:
@@ -1013,7 +1025,9 @@ def _business_context_fragments(text: str) -> list[str]:
     )
     fragments: list[str] = []
     for raw_fragment in re.split(r"(?<=[.!?])\s+", protected):
-        fragment = raw_fragment.replace(_PROTECTED_PERIOD, ".").strip()
+        fragment = _clean_extracted_text(
+            raw_fragment.replace(_PROTECTED_PERIOD, ".")
+        )
         fragment = re.sub(r"^[•●▪◦-]\s*", "", fragment).strip()
         fragment = re.sub(r"\b[1-9]\)\s*", "", fragment)
         fragment = re.sub(r";\s*(?:and)?$", "", fragment).strip()

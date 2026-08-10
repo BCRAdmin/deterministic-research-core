@@ -1153,7 +1153,7 @@ def _extract_block_guidance_metrics(blocks, add_value, default_year: int) -> set
                 )
             )
         )
-        if re.search(
+        guidance_heading = re.search(
             r"\b(?:"
             r"(?:full[ -]year|fiscal year)\s+20[0-9]{2}.{0,80}?"
             r"(?:outlook|guidance)|"
@@ -1162,16 +1162,27 @@ def _extract_block_guidance_metrics(blocks, add_value, default_year: int) -> set
             r")\b",
             block,
             re.IGNORECASE,
-        ):
+        )
+        if guidance_heading:
             active_until = index + 15
             guidance_years.add(_nearest_guidance_year(blocks, index, default_year))
-            continue
+            if not explicit_guidance_range:
+                continue
         if index > active_until and not explicit_guidance_range:
             continue
         if "conference call" in folded or "forward-looking statements" in folded:
             active_until = -1
             continue
         if not block.lstrip().startswith(("•", "●", "▪", "◦", "-")) and not explicit_guidance_range:
+            continue
+        is_quarter_only = bool(
+            re.search(
+                r"\b(?:first|second|third|fourth)[ -]+quarter\b",
+                folded,
+            )
+            and not re.search(r"\b(?:full[ -]year|fiscal year)\b", folded)
+        )
+        if is_quarter_only:
             continue
 
         guidance_year = _nearest_guidance_year(blocks, index, default_year)
@@ -1226,7 +1237,10 @@ def _extract_block_guidance_metrics(blocks, add_value, default_year: int) -> set
                         "adjusted_operating_income",
                         "free_cash_flow",
                     },
-                    prefer_last=explicit_guidance_range,
+                    prefer_last=bool(
+                        explicit_guidance_range
+                        and re.search(r"\bfrom\b.{0,160}\bto\b", block, re.IGNORECASE)
+                    ),
                 )
                 if range_type == "money"
                 else _outlook_percentage_range(block)
@@ -1318,6 +1332,11 @@ def _extract_company_bridge_metrics(table, add_value) -> None:
             ):
                 return
             continue
+        header_map = _prefer_current_quarter_bridge_columns(
+            table,
+            header_index,
+            header_map,
+        )
         for column, metric_name in header_map.items():
             value = _percent_value(
                 total_row[column],
@@ -1361,6 +1380,58 @@ def _extract_company_bridge_metrics(table, add_value) -> None:
             metric_name = f"segment_{metric_base}_{_slug(label)}"
             add_value(metric_name, value, display_label=label)
         return
+
+
+def _prefer_current_quarter_bridge_columns(
+    table: list[list[str]],
+    header_index: int,
+    header_map: dict[int, str],
+) -> dict[int, str]:
+    """Resolve duplicate bridge metrics in quarter-plus-YTD tables.
+
+    Some issuer releases place a three-month bridge and its cumulative
+    six-/nine-/twelve-month bridge in one wide table.  The HTML flattener
+    preserves their left-to-right order but not ``colspan`` ownership.  When
+    the same metric label therefore appears twice, retain the side belonging
+    to the three-month section.  Tables without both time horizons remain
+    untouched and fail closed on genuinely contradictory values.
+    """
+
+    metric_counts = Counter(header_map.values())
+    if not any(count > 1 for count in metric_counts.values()):
+        return header_map
+    heading = " ".join(
+        cell
+        for row in table[: header_index + 1]
+        for cell in row
+        if cell.strip()
+    ).casefold()
+    quarter_position = heading.find("three months ended")
+    cumulative_positions = [
+        position
+        for phrase in (
+            "six months ended",
+            "nine months ended",
+            "twelve months ended",
+            "year ended",
+        )
+        if (position := heading.find(phrase)) >= 0
+    ]
+    if quarter_position < 0 or not cumulative_positions:
+        return header_map
+    quarter_is_left = quarter_position < min(cumulative_positions)
+    selected: dict[int, str] = {}
+    for metric_name, count in metric_counts.items():
+        columns = sorted(
+            column
+            for column, mapped_metric in header_map.items()
+            if mapped_metric == metric_name
+        )
+        if count == 1:
+            selected[columns[0]] = metric_name
+            continue
+        selected[columns[0] if quarter_is_left else columns[-1]] = metric_name
+    return selected
 
 
 def _extract_transposed_segment_bridge_metrics(table, add_value) -> None:
@@ -1524,21 +1595,35 @@ def _extract_sparse_quarter_bridge_metrics(
 
     if not _is_current_quarter_bridge(table, header_index):
         return False
-    metric_names = [header_map[column] for column in sorted(header_map)]
+    ordered_columns = sorted(header_map)
+    metric_names = [header_map[column] for column in ordered_columns]
     if len(metric_names) < 2:
         return False
     total_values = _ordered_percent_cells(table[total_index])
     if len(total_values) != len(metric_names):
         return False
-    for metric_name, value in zip(metric_names, total_values):
+    preferred_columns = set(
+        _prefer_current_quarter_bridge_columns(
+            table,
+            header_index,
+            header_map,
+        )
+    )
+    selected_indexes = [
+        index
+        for index, column in enumerate(ordered_columns)
+        if column in preferred_columns
+    ]
+    for index in selected_indexes:
+        metric_name = metric_names[index]
+        value = total_values[index]
         if value is not None:
             add_value(metric_name, value)
 
     segment_metric_index = next(
         (
-            index
-            for index, metric_name in enumerate(metric_names)
-            if metric_name
+            index for index in selected_indexes
+            if metric_names[index]
             in {
                 "organic_sales_growth",
                 "organic_revenue_growth",

@@ -75,6 +75,25 @@ def test_cleans_decorative_square_from_emphasized_risk_heading():
     ]
 
 
+def test_cleans_filing_footnote_markers_and_punctuation_spacing_from_prose():
+    html = """
+    <html><body>
+      <div><strong>Item 1. Business</strong></div>
+      <p>Abbott’s* principal business is the development, manufacture, and sale of healthcare products.</p>
+      <div><strong>Item 1A. Risk Factors</strong></div>
+      <p><strong>Supply-chain disruptions could negatively affect our results of operations .</strong></p>
+      <div><strong>Item 1B. Unresolved Staff Comments</strong></div>
+    </body></html>
+    """
+
+    assert extract_sec_business_context(html) == [
+        "Abbott’s principal business is the development, manufacture, and sale of healthcare products."
+    ]
+    assert extract_sec_risk_headings(html) == [
+        "Supply-chain disruptions could negatively affect our results of operations."
+    ]
+
+
 def test_resolves_emphasized_uppercase_topic_to_substantive_risk_sentence():
     html = """
     <html><body>

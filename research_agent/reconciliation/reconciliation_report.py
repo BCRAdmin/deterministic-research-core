@@ -9,6 +9,20 @@ from research_agent.reconciliation.canonical_financials import CanonicalFinancia
 from research_agent.research_core.models.metrics_packet import MetricsPacket
 
 
+def deduplicate_reconciliation_warnings(warnings: list[dict]) -> list[dict]:
+    """Keep one copy of each exact warning while preserving source order."""
+
+    unique: list[dict] = []
+    seen: set[str] = set()
+    for warning in warnings:
+        identity = json.dumps(warning, sort_keys=True, separators=(",", ":"))
+        if identity in seen:
+            continue
+        seen.add(identity)
+        unique.append(warning)
+    return unique
+
+
 def render_reconciliation_report(canonical: CanonicalFinancials, warnings: Optional[list[dict]] = None) -> str:
     warnings = warnings or []
     lines = [
