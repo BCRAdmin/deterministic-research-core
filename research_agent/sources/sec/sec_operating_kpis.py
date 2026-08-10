@@ -98,6 +98,11 @@ def build_sec_operating_kpi_payload(
     # separate official document.  Exact block deduplication prevents the same
     # issuer statement from becoming two report claims.
     blocks = list(dict.fromkeys(blocks))
+    priority_statements = {
+        "capital_allocation": set(
+            _ranked_capital_allocation_statements(blocks, limit=3)
+        )
+    }
     cik_digits = str(int(cik)).zfill(10)
     accession_digits = accession_number.replace("-", "")
     document = primary_document.rsplit("/", 1)[-1]
@@ -114,6 +119,10 @@ def build_sec_operating_kpi_payload(
             for kpi_id, pattern in KPI_PATTERNS.items()
             if re.search(pattern, statement, flags=re.IGNORECASE)
             and match_counts[kpi_id] < 3
+            and (
+                kpi_id not in priority_statements
+                or statement in priority_statements[kpi_id]
+            )
         ]
         if not matched_kpis:
             continue
@@ -167,6 +176,67 @@ def build_sec_operating_kpi_payload(
         "kpi_dispositions": dispositions,
         "events": events,
     }
+
+
+def _ranked_capital_allocation_statements(
+    statements: list[str],
+    *,
+    limit: int,
+) -> list[str]:
+    """Prefer aggregate shareholder returns over isolated per-share rows."""
+
+    candidates = [
+        statement
+        for statement in statements
+        if re.search(
+            KPI_PATTERNS["capital_allocation"],
+            statement,
+            flags=re.IGNORECASE,
+        )
+        and _numeric_evidence(
+            statement,
+            kpi_ids=["capital_allocation"],
+            event_index=1,
+        )
+    ]
+    return sorted(
+        candidates,
+        key=_capital_allocation_statement_score,
+        reverse=True,
+    )[:limit]
+
+
+def _capital_allocation_statement_score(statement: str) -> tuple[int, int, int, int, int]:
+    aggregate_return = int(
+        re.search(
+            r"\b(?:returned?|returning)\b.{0,100}\bshareholders?\b",
+            statement,
+            flags=re.IGNORECASE,
+        )
+        is not None
+    )
+    component_count = sum(
+        int(re.search(pattern, statement, flags=re.IGNORECASE) is not None)
+        for pattern in (
+            r"\b(?:share|stock) repurchases?\b",
+            r"\bcash dividends?\b",
+        )
+    )
+    scaled_value_count = len(
+        re.findall(r"\b(?:billion|million|bn|mn)\b", statement, re.IGNORECASE)
+    )
+    numeric_count = len(list(NUMBER_RE.finditer(statement)))
+    per_share_penalty = int(
+        re.search(r"\bper (?:common )?share\b", statement, re.IGNORECASE)
+        is not None
+    )
+    return (
+        aggregate_return,
+        component_count,
+        scaled_value_count,
+        numeric_count,
+        -per_share_penalty,
+    )
 
 
 def _numeric_evidence(

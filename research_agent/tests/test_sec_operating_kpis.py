@@ -173,8 +173,13 @@ def test_capital_allocation_is_extracted_as_source_bound_operating_kpi() -> None
         filing_date="2026-08-01",
         primary_document="test.htm",
         html_documents=[
-            "<p>The company returned $1.04 billion to shareholders, consisting of "
-            "$659 million in share repurchases and $379 million in cash dividends.</p>"
+            """
+            <p>Cash dividends declared of $0.945 per common share.</p>
+            <p>Cash dividends declared of $0.825 per common share.</p>
+            <p>Cash dividends declared of $1.89 per common share.</p>
+            <p>The company returned $1.04 billion to shareholders, consisting of
+            $659 million in share repurchases and $379 million in cash dividends.</p>
+            """
         ],
         retrieved_at="2026-08-02T12:00:00Z",
     )
@@ -182,6 +187,7 @@ def test_capital_allocation_is_extracted_as_source_bound_operating_kpi() -> None
         event
         for event in payload["events"]
         if "CAPITAL_ALLOCATION" in event["source_id"]
+        and "returned $1.04 billion" in event["summary"]
     )
 
     assert [item["value"] for item in event["numeric_evidence"]] == [
