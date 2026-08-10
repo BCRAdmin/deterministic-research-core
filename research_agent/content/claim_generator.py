@@ -1348,7 +1348,9 @@ class _ClaimBuilder:
         statement = str(event.summary or event.headline).strip()
         numeric_event = bool(event.numeric_evidence)
         if not statement or (
-            any(character.isdigit() for character in statement) and not numeric_event
+            any(character.isdigit() for character in statement)
+            and not numeric_event
+            and not as_risk
         ):
             return
         evidence = [

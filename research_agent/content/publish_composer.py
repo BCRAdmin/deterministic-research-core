@@ -1018,10 +1018,11 @@ def _executive_summary(
 
 
 def _current_kpi_claims(claims: list[ResearchClaim]) -> list[ResearchClaim]:
-    candidates = [
+    return [
         claim
         for claim in claims
         if (claim.section or "") in CURRENT_PERIOD_SECTIONS
+        and (claim.section or "") != "Catalysts & Triggers"
         and (
             any(
                 metric.startswith("current_period_") or "guidance" in metric
@@ -1030,20 +1031,6 @@ def _current_kpi_claims(claims: list[ResearchClaim]) -> list[ResearchClaim]:
             or CURRENT_PERIOD_MARKER_RE.search(_claim_text(claim)) is not None
         )
         and any(char.isdigit() for char in _claim_text(claim))
-    ]
-    non_catalyst_evidence = {
-        tuple(sorted(str(item) for item in claim.evidence_ids))
-        for claim in candidates
-        if (claim.section or "") != "Catalysts & Triggers"
-        and claim.evidence_ids
-    }
-    return [
-        claim
-        for claim in candidates
-        if (claim.section or "") != "Catalysts & Triggers"
-        or not claim.evidence_ids
-        or tuple(sorted(str(item) for item in claim.evidence_ids))
-        not in non_catalyst_evidence
     ]
 
 

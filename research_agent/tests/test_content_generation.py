@@ -105,6 +105,7 @@ def test_current_kpi_selection_deduplicates_catalyst_copy_with_same_evidence() -
     )
 
     assert _current_kpi_claims([context, catalyst]) == [context]
+    assert _current_kpi_claims([catalyst]) == []
 
 
 def _add_exact_metric_evidence(data, metrics, ledger):
@@ -2190,8 +2191,8 @@ def test_current_filing_legal_event_is_rendered_as_specific_risk():
     data, metrics, validation, ledger, decision = _load_packet("SNOW")
     _add_exact_metric_evidence(data, metrics, ledger)
     statement = (
-        "The environmental authority issued an administrative cleanup order; "
-        "the issuer's appeal remains pending."
+        "On April 26, 2026, the environmental authority issued an administrative "
+        "cleanup order; the issuer's appeal remains pending."
     )
     data.news_coverage.material_events = [
         MaterialNewsEvent(
