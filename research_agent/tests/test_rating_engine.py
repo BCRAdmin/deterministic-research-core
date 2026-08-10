@@ -13,6 +13,8 @@ from research_agent.research_core.models.metrics_packet import (
     MetricsPacket,
     TechnicalMetrics,
     ValuationMetrics,
+    ValuationScenario,
+    ValuationSensitivity,
 )
 from research_agent.research_core.models.validation_report import ValidationReport
 
@@ -95,6 +97,86 @@ def test_fundamentals_use_directional_evidence_not_global_quality_thresholds():
         for rule in packet.triggered_rules
     )
     assert "TREND_STATE_BULLISH" in packet.triggered_rules
+
+
+def _standardized_dcf_sensitivity(*, equity_value: float) -> ValuationSensitivity:
+    scenarios = []
+    for name, growth, discount, terminal in (
+        ("bear", -0.05, 0.12, 0.01),
+        ("base", 0.05, 0.10, 0.02),
+        ("bull", 0.15, 0.08, 0.03),
+    ):
+        scenarios.append(
+            ValuationScenario(
+                name=name,
+                starting_free_cash_flow=100.0,
+                free_cash_flow_growth_rate=growth,
+                discount_rate=discount,
+                terminal_growth_rate=terminal,
+                present_value_explicit_cash_flows=equity_value * 0.25,
+                present_value_terminal_value=equity_value * 0.75,
+                terminal_value_share=0.75,
+                equity_value=equity_value,
+            )
+        )
+    return ValuationSensitivity(
+        status="measured",
+        current_market_cap=1_000.0,
+        current_price=100.0,
+        share_basis="listed_share_count",
+        reverse_dcf_implied_fcf_growth=0.20,
+        reverse_dcf_status="measured",
+        model_range_low=equity_value,
+        model_range_base=equity_value,
+        model_range_high=equity_value,
+        current_value_position="inside_range",
+        scenarios=scenarios,
+        limitations=["standardized sensitivity; not calibrated fair value"],
+    )
+
+
+def test_standardized_dcf_extremes_cannot_change_rating_without_calibration():
+    deeply_bearish = _strong_metrics()
+    deeply_bearish.fundamentals.revenue_ttm = 1_000.0
+    deeply_bearish.fundamentals.operating_income_ttm = 200.0
+    deeply_bearish.fundamentals.net_income_ttm = 150.0
+    deeply_bearish.fundamentals.operating_cash_flow_ttm = 120.0
+    deeply_bearish.fundamentals.total_debt = 50.0
+    deeply_bearish.valuation.sensitivity = _standardized_dcf_sensitivity(
+        equity_value=100.0
+    )
+
+    deeply_bullish = deeply_bearish.model_copy(deep=True)
+    deeply_bullish.valuation.sensitivity = _standardized_dcf_sensitivity(
+        equity_value=10_000.0
+    )
+
+    bearish_packet = build_decision_packet(deeply_bearish)
+    bullish_packet = build_decision_packet(deeply_bullish)
+
+    assert bearish_packet.signal_scores.valuation_status == "scenario_measured"
+    assert bullish_packet.signal_scores.valuation_status == "scenario_measured"
+    assert bearish_packet.signal_scores.valuation_score == 0
+    assert bullish_packet.signal_scores.valuation_score == 0
+    assert (
+        bearish_packet.signal_scores.composite_score
+        == bullish_packet.signal_scores.composite_score
+    )
+    assert (
+        bearish_packet.rating_permission.preferred_rating
+        == bullish_packet.rating_permission.preferred_rating
+        == Rating.HOLD
+    )
+    assert bearish_packet.conclusion_status == "provisional"
+    assert bullish_packet.conclusion_status == "provisional"
+    assert "without calibrated valuation evidence" in (
+        bearish_packet.analytical_rating_reason or ""
+    )
+    assert "without calibrated valuation evidence" in (
+        bullish_packet.analytical_rating_reason or ""
+    )
+    assert not any("DCF" in rule for rule in bearish_packet.triggered_rules)
+    assert not any("DCF" in rule for rule in bullish_packet.triggered_rules)
 
 
 def test_momentum_and_volatility_observations_do_not_stack_rating_scores():
