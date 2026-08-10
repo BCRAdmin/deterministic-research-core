@@ -1120,7 +1120,10 @@ def _operating_driver_claims(
     return selected
 
 
-def _operating_driver_score(label: str, claim: ResearchClaim) -> tuple[float, int, int, int]:
+def _operating_driver_score(
+    label: str,
+    claim: ResearchClaim,
+) -> tuple[int, float, int, int, int]:
     metric_markers = OPERATING_DRIVER_METRIC_MARKERS[label]
     operating_metrics = [
         metric for metric in claim.metric_refs if metric.startswith("operating_kpi_")
@@ -1132,6 +1135,24 @@ def _operating_driver_score(label: str, claim: ResearchClaim) -> tuple[float, in
     ]
     direct_ratio = len(direct_metrics) / max(len(operating_metrics), 1)
     text = _claim_text(claim)
+    category_materiality = 0
+    if label == "Capital allocation":
+        aggregate_return = int(
+            re.search(
+                r"\b(?:returned?|returning)\b.{0,100}\bshareholders?\b",
+                text,
+                re.IGNORECASE,
+            )
+            is not None
+        )
+        allocation_components = sum(
+            int(re.search(pattern, text, re.IGNORECASE) is not None)
+            for pattern in (
+                r"\b(?:share|stock) repurchases?\b",
+                r"\bcash dividends?\b",
+            )
+        )
+        category_materiality = aggregate_return * 10 + allocation_components
     term_count = len(
         {
             match.group(0).casefold()
@@ -1145,7 +1166,7 @@ def _operating_driver_score(label: str, claim: ResearchClaim) -> tuple[float, in
             re.IGNORECASE,
         )
     )
-    return direct_ratio, term_count, -len(text), numeric_count
+    return category_materiality, direct_ratio, term_count, -len(text), numeric_count
 
 
 def _operating_driver_section(

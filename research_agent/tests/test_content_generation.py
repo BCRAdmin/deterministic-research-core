@@ -159,8 +159,15 @@ def test_operating_driver_selection_is_generic_complete_and_prefers_specific_cla
         "The company returned $1.04 billion to shareholders through share repurchases and cash dividends.",
         ["operating_kpi_capital_allocation_05_01"],
     )
+    repurchases_only = claim(
+        "REPURCHASES_ONLY",
+        "The common stock repurchase program used $1.003 billion for common stock repurchases, with no share repurchases in the prior year.",
+        ["operating_kpi_capital_allocation_06_01"],
+    )
 
-    selected = _operating_driver_claims([mixed, pricing, volume, margin, capital])
+    selected = _operating_driver_claims(
+        [mixed, pricing, volume, margin, repurchases_only, capital]
+    )
 
     assert [(label, item.claim_id) for label, item in selected] == [
         ("Pricing / yield", "PRICING"),
@@ -173,10 +180,19 @@ def test_operating_driver_selection_is_generic_complete_and_prefers_specific_cla
     report = _generic_publish_report(
         "TEST",
         "Hold",
-        {"Business & Segment Context": [mixed, pricing, volume, margin, capital]},
+        {
+            "Business & Segment Context": [
+                mixed,
+                pricing,
+                volume,
+                margin,
+                repurchases_only,
+                capital,
+            ]
+        },
         metrics,
         decision,
-        [mixed, pricing, volume, margin, capital],
+        [mixed, pricing, volume, margin, repurchases_only, capital],
         ledger,
     )
     main_body = report.split("## Evidence Appendix", 1)[0]
