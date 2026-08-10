@@ -509,7 +509,7 @@ def canonical_financials_to_fundamentals(canonical: CanonicalFinancials) -> dict
         "source": "canonical_financials",
         "reconciliation_issues": [],
     }
-    duration_metrics = {
+    duration_metrics = (
         "revenue",
         "gross_profit",
         "operating_income",
@@ -523,7 +523,7 @@ def canonical_financials_to_fundamentals(canonical: CanonicalFinancials) -> dict
         "depreciation_and_amortization",
         "interest_expense",
         "eps_diluted",
-    }
+    )
     for metric_name in duration_metrics:
         values, issue, bridge = _compatible_trailing_period_values(canonical, metric_name)
         if values:
@@ -543,7 +543,7 @@ def canonical_financials_to_fundamentals(canonical: CanonicalFinancials) -> dict
             if issue:
                 fundamentals["reconciliation_issues"].append(issue)
 
-    balance_sheet_metrics = {
+    balance_sheet_metrics = (
         "cash_and_equivalents",
         "short_term_investments",
         "marketable_securities",
@@ -558,7 +558,7 @@ def canonical_financials_to_fundamentals(canonical: CanonicalFinancials) -> dict
         "lease_liability_current",
         "lease_liability_noncurrent",
         "treasury_stock_value",
-    }
+    )
     balance_sheet_date = _latest_balance_sheet_date(canonical)
     for metric_name in balance_sheet_metrics:
         selected = _latest_current_metric(canonical, metric_name, require_gaap=True)
@@ -635,6 +635,14 @@ def canonical_financials_to_fundamentals(canonical: CanonicalFinancials) -> dict
             fundamentals["reconciliation_issues"].append(_stale_metric_issue(metric_name))
     _exclude_incompatible_per_share_basis(fundamentals)
     _derive_diluted_share_count_yoy(canonical, fundamentals)
+    fundamentals["reconciliation_issues"].sort(
+        key=lambda issue: (
+            str(issue.get("code") or ""),
+            str(issue.get("metric") or ""),
+            str(issue.get("metric_end_date") or issue.get("end_date") or ""),
+            str(issue.get("message") or ""),
+        )
+    )
     return fundamentals
 
 

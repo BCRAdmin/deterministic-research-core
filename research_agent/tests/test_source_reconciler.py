@@ -767,11 +767,12 @@ def test_balance_sheet_totals_do_not_mix_prior_debt_with_current_cash():
     assert "short_term_debt" not in balance
     assert "debt_noncurrent" not in balance
     assert "total_debt" not in balance
-    assert {
+    mismatch_metrics = [
         issue["metric"]
         for issue in fundamentals["reconciliation_issues"]
         if issue["code"] == "BALANCE_SHEET_DATE_MISMATCH_EXCLUDED"
-    } == {"short_term_debt", "debt_noncurrent"}
+    ]
+    assert mismatch_metrics == ["debt_noncurrent", "short_term_debt"]
 
 
 def test_ttm_bridge_does_not_skip_q4_when_current_q1_arrives():
