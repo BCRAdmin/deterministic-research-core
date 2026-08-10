@@ -8,6 +8,11 @@ from typing import Any, Optional
 
 from pydantic import BaseModel, Field, field_validator
 
+from research_agent.capabilities.market_registry import (
+    MarketCapabilityError,
+    get_jurisdiction_capability,
+    supported_jurisdiction_codes,
+)
 from research_agent.research_core.ingestion.source_registry import (
     SourceRegistry,
     SourceRegistryEntry,
@@ -114,7 +119,7 @@ class CurrentResearchRequest(BaseModel):
         if value is None or not value.strip():
             return None
         jurisdiction = value.strip().upper()
-        if jurisdiction not in {"US", "HU"}:
+        if jurisdiction not in supported_jurisdiction_codes(include_recognized=True):
             raise ValueError(f"unsupported jurisdiction hint: {jurisdiction}")
         return jurisdiction
 
@@ -176,6 +181,16 @@ def run_current_research(
     output_root = Path(request.output_root).expanduser().resolve()
 
     requested_jurisdiction = request.jurisdiction
+    if requested_jurisdiction:
+        try:
+            capability = get_jurisdiction_capability(requested_jurisdiction)
+        except MarketCapabilityError as exc:
+            raise CurrentResearchError(str(exc)) from exc
+        if capability["status"] != "supported":
+            raise CurrentResearchError(
+                f"{symbol} wurde der Jurisdiktion {requested_jurisdiction} eindeutig "
+                f"zugeordnet. {capability['message']} Es wurde keine Analyse gestartet."
+            )
     sec = sec_client
     if sec is None and request.sec_user_agent and requested_jurisdiction != "HU":
         sec = SecClient(SecClientConfig(user_agent=request.sec_user_agent, cache_ttl_hours=24))
@@ -1071,9 +1086,7 @@ def _build_price_provider(request: CurrentResearchRequest) -> PriceProviderBase:
             "unterstützt. Bitte einen Adapter einrichten, der den verbindlichen "
             "Quellenstandard erfüllt."
         )
-    if request.price_provider == "nasdaq":
-        return NasdaqPriceProvider()
-    if request.price_provider == "auto" and not request.price_api_key:
+    if request.price_provider in {"auto", "nasdaq"}:
         return NasdaqPriceProvider()
     if not request.price_api_key:
         raise CurrentResearchError(

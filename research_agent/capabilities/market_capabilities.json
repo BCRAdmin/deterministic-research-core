@@ -1,0 +1,186 @@
+{
+  "schemaVersion": 1,
+  "contractId": "room16.market_capability_registry",
+  "contractVersion": 1,
+  "updatedAt": "2026-08-10",
+  "jurisdictions": [
+    {
+      "code": "US",
+      "label": "United States",
+      "status": "supported",
+      "identityProviderId": "sec",
+      "fundamentalsProviderId": "sec",
+      "priceProviderIds": ["nasdaq", "massive"],
+      "defaultPriceProviderId": "nasdaq",
+      "requiredAdapterId": null,
+      "requiredConfiguration": ["ROOM16_SEC_USER_AGENT"],
+      "message": "Der SEC-Datenweg ist integriert. Die lokale SEC-Kontaktkennung bleibt Pflicht."
+    },
+    {
+      "code": "HU",
+      "label": "Hungary",
+      "status": "supported",
+      "identityProviderId": "bse",
+      "fundamentalsProviderId": "bse",
+      "priceProviderIds": ["bse"],
+      "defaultPriceProviderId": "bse",
+      "requiredAdapterId": null,
+      "requiredConfiguration": [],
+      "message": "Der offizielle BSE-Datenweg ist integriert und benötigt keine Provider-Credentials."
+    },
+    {
+      "code": "JP",
+      "label": "Japan",
+      "status": "recognized_unsupported",
+      "identityProviderId": "resolver_only",
+      "fundamentalsProviderId": null,
+      "priceProviderIds": [],
+      "defaultPriceProviderId": null,
+      "requiredAdapterId": "edinet",
+      "requiredConfiguration": [],
+      "message": "Das Instrument kann erkannt werden, aber der offizielle EDINET-Datenweg ist noch nicht integriert."
+    },
+    {
+      "code": "KR",
+      "label": "South Korea",
+      "status": "recognized_unsupported",
+      "identityProviderId": "resolver_only",
+      "fundamentalsProviderId": null,
+      "priceProviderIds": [],
+      "defaultPriceProviderId": null,
+      "requiredAdapterId": "opendart",
+      "requiredConfiguration": [],
+      "message": "Das Instrument kann erkannt werden, aber der offizielle OpenDART-Datenweg ist noch nicht integriert."
+    }
+  ],
+  "providers": [
+    {
+      "providerId": "sec",
+      "label": "SEC EDGAR",
+      "roles": ["issuer_identity", "fundamentals", "filings", "official_events"],
+      "integrationStatus": "live_supported",
+      "authorityUse": true,
+      "variableCost": "none",
+      "credentialMode": "operator_contact_identity",
+      "automaticUse": "allowed_when_configured",
+      "semantics": ["official_primary_source", "us_gaap", "point_in_time_filings"],
+      "limitations": ["us_sec_filers_only", "polite_access_identity_required"]
+    },
+    {
+      "providerId": "bse",
+      "label": "Budapest Stock Exchange",
+      "roles": ["issuer_identity", "fundamentals", "filings", "market_prices", "corporate_actions"],
+      "integrationStatus": "live_supported",
+      "authorityUse": true,
+      "variableCost": "none",
+      "credentialMode": "none",
+      "automaticUse": "allowed",
+      "semantics": ["official_primary_source", "issuer_submitted_ifrs", "daily_ohlcv"],
+      "limitations": ["bse_listed_issuers_only"]
+    },
+    {
+      "providerId": "nasdaq",
+      "label": "Nasdaq Historical",
+      "roles": ["market_prices"],
+      "integrationStatus": "live_supported",
+      "authorityUse": true,
+      "variableCost": "none",
+      "credentialMode": "none",
+      "automaticUse": "allowed",
+      "semantics": ["daily_ohlcv", "official_market_surface"],
+      "limitations": ["not_fundamentals", "total_return_not_guaranteed", "corporate_action_semantics_must_be_verified"]
+    },
+    {
+      "providerId": "massive",
+      "label": "Massive / Polygon",
+      "roles": ["market_prices"],
+      "integrationStatus": "optional_integrated",
+      "authorityUse": true,
+      "variableCost": "possible",
+      "credentialMode": "api_key",
+      "automaticUse": "explicit_only",
+      "semantics": ["daily_ohlcv"],
+      "limitations": ["not_fundamentals", "not_total_return_authority", "cost_go_required"]
+    },
+    {
+      "providerId": "openfigi",
+      "label": "OpenFIGI",
+      "roles": ["instrument_resolution"],
+      "integrationStatus": "resolver_only",
+      "authorityUse": false,
+      "variableCost": "none_or_rate_limited",
+      "credentialMode": "optional_api_key",
+      "automaticUse": "allowed_for_resolution",
+      "semantics": ["identifier_mapping"],
+      "limitations": ["not_fundamentals", "not_market_data", "not_report_evidence"]
+    },
+    {
+      "providerId": "yahoo_search",
+      "label": "Yahoo Finance Search",
+      "roles": ["instrument_resolution"],
+      "integrationStatus": "resolver_only",
+      "authorityUse": false,
+      "variableCost": "none",
+      "credentialMode": "none",
+      "automaticUse": "allowed_for_resolution",
+      "semantics": ["symbol_discovery"],
+      "limitations": ["not_fundamentals", "not_market_data_authority", "not_report_evidence"]
+    },
+    {
+      "providerId": "fred",
+      "label": "Federal Reserve Economic Data",
+      "roles": ["official_macro"],
+      "integrationStatus": "candidate_not_integrated",
+      "authorityUse": false,
+      "variableCost": "none",
+      "credentialMode": "not_configured",
+      "automaticUse": "forbidden_until_adapter_review",
+      "semantics": ["official_us_macro_time_series"],
+      "limitations": ["not_company_fundamentals", "adapter_and_claim_mapping_required"]
+    },
+    {
+      "providerId": "tiingo_eod",
+      "label": "Tiingo EOD",
+      "roles": ["total_return_prices", "valuation_outcomes"],
+      "integrationStatus": "paused_no_cost",
+      "authorityUse": false,
+      "variableCost": "possible",
+      "credentialMode": "api_token",
+      "automaticUse": "forbidden_without_data_go",
+      "semantics": ["total_return_candidate", "corporate_action_candidate"],
+      "limitations": ["contract_review_required", "usage_rights_required", "human_source_review_required"]
+    },
+    {
+      "providerId": "eodhd",
+      "label": "EODHD",
+      "roles": ["world_market_reserve"],
+      "integrationStatus": "reserve_not_integrated",
+      "authorityUse": false,
+      "variableCost": "possible",
+      "credentialMode": "api_token",
+      "automaticUse": "forbidden_until_gap_review",
+      "semantics": ["market_data_candidate"],
+      "limitations": ["only_after_verified_geographic_gap", "contract_and_semantics_review_required"]
+    },
+    {
+      "providerId": "tradingview",
+      "label": "TradingView",
+      "roles": ["manual_chart_check"],
+      "integrationStatus": "manual_only",
+      "authorityUse": false,
+      "variableCost": "outside_room16_scope",
+      "credentialMode": "user_session",
+      "automaticUse": "forbidden",
+      "semantics": ["manual_plausibility_check"],
+      "limitations": ["no_automated_backend", "not_report_authority"]
+    }
+  ],
+  "policies": {
+    "vendorFundamentalsFallbackAllowed": false,
+    "tickerSpecificAdapterExceptionsAllowed": false,
+    "automaticPaidProviderSelectionAllowed": false,
+    "automaticCountryAdapterCreationAllowed": false,
+    "unsupportedMarketAnalysisAllowed": false,
+    "resolverEvidenceMayBecomeReportEvidence": false
+  }
+}

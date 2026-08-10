@@ -834,6 +834,29 @@ def test_current_runner_rejects_unsupported_official_issuer(tmp_path):
     _assert_no_run_dirs(tmp_path)
 
 
+@pytest.mark.parametrize(
+    ("jurisdiction", "adapter_name"),
+    [("JP", "EDINET"), ("KR", "OpenDART")],
+)
+def test_current_runner_stops_honestly_for_recognized_unsupported_markets(
+    tmp_path,
+    jurisdiction,
+    adapter_name,
+):
+    with pytest.raises(
+        CurrentResearchError,
+        match=rf"{jurisdiction}.*{adapter_name}.*keine Analyse gestartet",
+    ):
+        run_current_research(
+            _request(tmp_path).model_copy(update={"jurisdiction": jurisdiction}),
+            price_provider=_FakePrices(),
+            sec_client=_FakeSec(),
+            bse_provider=_NoBse(),
+        )
+
+    _assert_no_run_dirs(tmp_path)
+
+
 def test_current_runner_names_unsupported_sec_ifrs_profile_before_pipeline(tmp_path):
     with pytest.raises(CurrentResearchError, match="IFRS-Taxonomie mit 20-F"):
         run_current_research(
@@ -1058,6 +1081,18 @@ def test_auto_price_provider_uses_public_nasdaq_without_paid_key():
     provider = runner._build_price_provider(request)
     assert provider.provider_id == "nasdaq"
     assert provider.source_type == "exchange_ohlcv"
+
+
+def test_auto_price_provider_never_activates_massive_from_key_presence():
+    request = CurrentResearchRequest(
+        ticker="RIOT",
+        as_of_date="2026-07-24",
+        sec_user_agent="Room16 operator@example.com",
+        price_provider="auto",
+        price_api_key="configured-but-not-approved",
+    )
+    provider = runner._build_price_provider(request)
+    assert provider.provider_id == "nasdaq"
 
 
 def test_explicit_massive_provider_still_requires_key():
