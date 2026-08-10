@@ -91,6 +91,32 @@ def test_operating_kpi_extractor_does_not_mislabel_a_year_as_a_kpi_value() -> No
     assert [item["value"] for item in event["numeric_evidence"]] == [82_900_000]
 
 
+def test_repeated_kpi_statements_have_distinct_fact_ledger_metric_ids() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="TEST",
+        cik="123456",
+        accession_number="0000123456-26-000001",
+        filing_date="2026-08-01",
+        primary_document="test.htm",
+        html_documents=[
+            """
+            <p>Collection and disposal yield contributed $254 million this quarter.</p>
+            <p>Collection and disposal yield contributed $102 million last quarter.</p>
+            """
+        ],
+        retrieved_at="2026-08-02T12:00:00Z",
+    )
+    metric_ids = [
+        item["metric_name"]
+        for event in payload["events"]
+        if "COLLECTION_DISPOSAL_YIELD" in event["source_id"]
+        for item in event["numeric_evidence"]
+    ]
+
+    assert len(metric_ids) == 2
+    assert len(metric_ids) == len(set(metric_ids))
+
+
 def test_numeric_operating_kpi_event_is_not_dropped_from_claims() -> None:
     payload = _cost_payload()
     event_payload = next(

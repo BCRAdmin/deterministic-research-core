@@ -110,6 +110,20 @@ def build_sec_operating_kpi_payload(
             }
         )
         for index, (statement, numeric_evidence) in enumerate(matches, start=1):
+            # Metric identifiers are fact-ledger keys.  A filing can discuss the
+            # same KPI more than once with different period values, so numbering
+            # must include the statement occurrence as well as the value within
+            # that statement.  Reusing ``..._01`` for every statement makes two
+            # legitimate values look like a contradictory claim.
+            scoped_numeric_evidence = [
+                {
+                    **item,
+                    "metric_name": (
+                        f"operating_kpi_{kpi_id}_{index:02d}_{numeric_index:02d}"
+                    ),
+                }
+                for numeric_index, item in enumerate(numeric_evidence, start=1)
+            ]
             events.append(
                 {
                     "event_type": "operating_kpi",
@@ -125,7 +139,7 @@ def build_sec_operating_kpi_payload(
                     "authority_rank": 1,
                     "url": url,
                     "retrieved_at": retrieved_at,
-                    "numeric_evidence": numeric_evidence,
+                    "numeric_evidence": scoped_numeric_evidence,
                 }
             )
     return {
