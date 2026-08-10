@@ -2,6 +2,7 @@ import pytest
 
 from research_agent.content.claim_generator import generate_research_claims
 from research_agent.content.claim_generator import (
+    _event_display_statement,
     _event_catalyst_summary,
     _is_operating_catalyst_event,
 )
@@ -57,6 +58,15 @@ def test_operating_kpi_extractor_creates_numeric_primary_evidence() -> None:
     assert any(item.value == 82_900_000 for item in evidence)
     assert any(item.value == 0.922 and item.unit == "percent" for item in evidence)
     assert all(item.authority_rank == 1 for item in evidence)
+
+
+def test_readable_event_statement_removes_filing_list_and_footnote_artifacts() -> None:
+    assert _event_display_statement(
+        "· The company returned $1.04 billion to shareholders. (a)"
+    ) == "The company returned $1.04 billion to shareholders."
+    assert _event_display_statement("●Operating EBITDA margin was 30.4%") == (
+        "Operating EBITDA margin was 30.4%"
+    )
 
 
 def test_operating_kpi_numbers_are_owned_by_the_nearest_semantic_label() -> None:

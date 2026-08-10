@@ -247,11 +247,20 @@ def _is_operating_catalyst_event(event: MaterialNewsEvent) -> bool:
 
 
 def _event_catalyst_summary(statement: str) -> str:
-    normalized = " ".join(str(statement or "").split())
+    normalized = _event_display_statement(statement)
     first_sentence = re.split(r"(?<=[.!?])\s+", normalized, maxsplit=1)[0].strip()
     if first_sentence and first_sentence[-1] not in ".!?":
         first_sentence = f"{first_sentence}."
     return f"Operating catalyst under review: {first_sentence}"
+
+
+def _event_display_statement(statement: str) -> str:
+    """Remove filing-list and footnote artifacts from readable claim prose."""
+
+    normalized = " ".join(str(statement or "").split())
+    normalized = re.sub(r"^[•●·]+\s*", "", normalized)
+    normalized = re.sub(r"\s*\([a-z]\)\s*$", "", normalized, flags=re.IGNORECASE)
+    return normalized.strip()
 
 
 class _ClaimBuilder:
@@ -1345,10 +1354,11 @@ class _ClaimBuilder:
         as_catalyst: bool = False,
         as_risk: bool = False,
     ) -> None:
-        statement = str(event.summary or event.headline).strip()
+        source_statement = str(event.summary or event.headline).strip()
+        statement = _event_display_statement(source_statement)
         numeric_event = bool(event.numeric_evidence)
         if not statement or (
-            any(character.isdigit() for character in statement)
+            any(character.isdigit() for character in source_statement)
             and not numeric_event
             and not as_risk
         ):
@@ -1360,7 +1370,7 @@ class _ClaimBuilder:
             and item.claim_type in {"event", "guidance", "news", "management_quote"}
             and item.authority_rank <= 2
             and item.date == event.date
-            and item.statement.strip() == statement
+            and item.statement.strip() == source_statement
             and self.evidence_id_counts.get(item.evidence_id) == 1
         ]
         if not evidence:
