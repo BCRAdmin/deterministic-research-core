@@ -1,6 +1,7 @@
 import pytest
 
 from research_agent.content.claim_generator import generate_research_claims
+from research_agent.content.claim_generator import _is_operating_catalyst_event
 from research_agent.decision.rating_engine import build_decision_packet
 from research_agent.evidence.evidence_ledger import EvidenceLedger
 from research_agent.research_core.ingestion.news_loader import news_evidence_items
@@ -211,3 +212,24 @@ def test_numeric_operating_kpi_event_is_not_dropped_from_claims() -> None:
     )
     assert operating_claim.metric_refs
     assert operating_claim.evidence_ids
+
+
+def test_guidance_bearing_operating_event_is_also_a_catalyst() -> None:
+    event = MaterialNewsEvent(
+        date="2026-08-01",
+        headline="Issuer reaffirmed full-year outlook",
+        event_type="operating_kpi",
+        source_id="TEST_GUIDANCE",
+        source_type="sec_filing",
+        summary="Free cash flow guidance remains $3.75 billion to $3.85 billion.",
+        numeric_evidence=[
+            {
+                "metric_name": "operating_kpi_free_cash_flow_guidance_01_01",
+                "value": 3_750_000_000,
+                "raw_value": 3.75,
+                "unit": "currency",
+            }
+        ],
+    )
+
+    assert _is_operating_catalyst_event(event) is True

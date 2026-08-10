@@ -222,6 +222,27 @@ def claim_coverage_gaps(metrics: Mapping[str, object]) -> list[str]:
     return gaps
 
 
+def _is_operating_catalyst_event(event: MaterialNewsEvent) -> bool:
+    metric_names = [metric.metric_name.casefold() for metric in event.numeric_evidence]
+    if any(
+        marker in metric_name
+        for metric_name in metric_names
+        for marker in (
+            "guidance",
+            "outlook",
+            "product_regulatory_catalyst",
+            "transaction_financing",
+        )
+    ):
+        return True
+    text = f"{event.headline} {event.summary or ''}".casefold()
+    return re.search(
+        r"\b(?:guidance|outlook|expects?|expected|reaffirmed|remains confident|"
+        r"approval|clearance|product launch|closing of the transaction)\b",
+        text,
+    ) is not None
+
+
 class _ClaimBuilder:
     def __init__(
         self,
@@ -295,8 +316,18 @@ class _ClaimBuilder:
         for event in self.data_packet.news_coverage.material_events:
             if event.event_type in _BUSINESS_CONTEXT_EVENT_TYPES:
                 self.add_event(event, section="Business & Segment Context")
+                if _is_operating_catalyst_event(event):
+                    self.add_event(
+                        event,
+                        section="Catalysts & Triggers",
+                        as_catalyst=True,
+                    )
             elif event.event_type in _CATALYST_EVENT_TYPES:
-                self.add_event(event, section="Catalysts & Triggers")
+                self.add_event(
+                    event,
+                    section="Catalysts & Triggers",
+                    as_catalyst=True,
+                )
 
         selected_risk_evidence = self._selected_risk_evidence(limit=4)
         for index, risk_evidence in enumerate(selected_risk_evidence):
@@ -1293,7 +1324,13 @@ class _ClaimBuilder:
         )
         return self.claims
 
-    def add_event(self, event: MaterialNewsEvent, *, section: str) -> None:
+    def add_event(
+        self,
+        event: MaterialNewsEvent,
+        *,
+        section: str,
+        as_catalyst: bool = False,
+    ) -> None:
         statement = str(event.summary or event.headline).strip()
         numeric_event = bool(event.numeric_evidence)
         if not statement or (
@@ -1333,7 +1370,7 @@ class _ClaimBuilder:
         claim_id = f"{self.data_packet.ticker}_CLAIM_{self.counter:03d}"
         counterargument = None
         implication = None
-        if event.event_type in _CATALYST_EVENT_TYPES:
+        if as_catalyst:
             counterargument = (
                 "An announced strategy is forward-looking intent; execution and "
                 "financial contribution remain unproven."
@@ -1361,7 +1398,6 @@ class _ClaimBuilder:
                 investment_implication=implication,
             )
         )
-
     def add_risk(
         self,
         evidence: EvidenceItem,
