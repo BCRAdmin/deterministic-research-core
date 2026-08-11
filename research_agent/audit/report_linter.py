@@ -589,6 +589,8 @@ def _lint_evidence_grounding(
             continue
 
         metric_name = mapped.metric_name
+        if _has_direct_evidence_for_numeric_claim(claim, evidence_ledger):
+            continue
         evidence_issue = validate_metric_evidence(metric_name, evidence_ledger)
         if evidence_issue:
             code = (
@@ -636,8 +638,18 @@ def _has_direct_evidence_for_numeric_claim(
 ) -> bool:
     if evidence_ledger is None or claim.normalized_value is None:
         return False
-    nearby = claim.nearby_text.lower()
+    nearby = " ".join(claim.nearby_text.casefold().split())
     for item in evidence_ledger.evidence_items:
+        statement = " ".join(str(item.statement or "").casefold().split())
+        if (
+            item.authority_rank <= 2
+            and item.claim_type in {"event", "guidance", "news", "management_quote"}
+            and item.source_type
+            in {"company_ir", "earnings_release", "official_press_release", "sec_filing"}
+            and len(statement.split()) >= 6
+            and statement in nearby
+        ):
+            return True
         if item.value is None:
             continue
         if not _numbers_close_for_evidence(

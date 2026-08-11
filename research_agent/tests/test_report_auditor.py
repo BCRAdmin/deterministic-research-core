@@ -162,6 +162,46 @@ def test_period_matched_capital_allocation_maps_without_ttm_conflation():
     assert not audit.has_issue("UNVERIFIED_HARD_METRIC")
 
 
+def test_primary_event_statement_supports_unstructured_numeric_details():
+    statement = (
+        "The issuer disclosed a $1 million transition bonus, an $850,000 base "
+        "salary and a 105% target incentive in the filed leadership change."
+    )
+    ledger = EvidenceLedger(
+        ticker="WM",
+        as_of_date="2026-08-10",
+        evidence_items=[
+            EvidenceItem(
+                evidence_id="WM_SEC_LEADERSHIP_EVENT",
+                ticker="WM",
+                claim_type="event",
+                source_id="WM_SEC_LEADERSHIP",
+                source_type="sec_filing",
+                authority_rank=1,
+                statement=statement,
+                date="2026-05-13",
+                confidence="high",
+            )
+        ],
+    )
+
+    supported = audit_markdown_report(
+        markdown=statement,
+        metrics_packet=simple_metrics(ticker="WM"),
+        evidence_ledger=ledger,
+    )
+    altered = audit_markdown_report(
+        markdown=statement.replace("$850,000", "$950,000"),
+        metrics_packet=simple_metrics(ticker="WM"),
+        evidence_ledger=ledger,
+    )
+
+    assert not supported.has_issue("UNVERIFIED_HARD_METRIC")
+    assert not supported.has_issue("NUMERIC_MISMATCH")
+    assert not supported.has_issue("MISSING_EVIDENCE_FOR_HARD_CLAIM")
+    assert altered.has_issue("NUMERIC_MISMATCH")
+
+
 def test_dcf_assumptions_and_risk_coverage_map_to_their_own_metrics():
     markdown = (
         "The standardized reverse DCF implies a five-year FCF growth rate of "
