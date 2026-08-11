@@ -36,6 +36,63 @@ REPORT_SECTIONS = [
 ]
 
 
+US_SUBDIVISION_NAMES = {
+    "AL": "Alabama",
+    "AK": "Alaska",
+    "AZ": "Arizona",
+    "AR": "Arkansas",
+    "CA": "California",
+    "CO": "Colorado",
+    "CT": "Connecticut",
+    "DE": "Delaware",
+    "DC": "District of Columbia",
+    "FL": "Florida",
+    "GA": "Georgia",
+    "HI": "Hawaii",
+    "ID": "Idaho",
+    "IL": "Illinois",
+    "IN": "Indiana",
+    "IA": "Iowa",
+    "KS": "Kansas",
+    "KY": "Kentucky",
+    "LA": "Louisiana",
+    "ME": "Maine",
+    "MD": "Maryland",
+    "MA": "Massachusetts",
+    "MI": "Michigan",
+    "MN": "Minnesota",
+    "MS": "Mississippi",
+    "MO": "Missouri",
+    "MT": "Montana",
+    "NE": "Nebraska",
+    "NV": "Nevada",
+    "NH": "New Hampshire",
+    "NJ": "New Jersey",
+    "NM": "New Mexico",
+    "NY": "New York",
+    "NC": "North Carolina",
+    "ND": "North Dakota",
+    "OH": "Ohio",
+    "OK": "Oklahoma",
+    "OR": "Oregon",
+    "PA": "Pennsylvania",
+    "RI": "Rhode Island",
+    "SC": "South Carolina",
+    "SD": "South Dakota",
+    "TN": "Tennessee",
+    "TX": "Texas",
+    "UT": "Utah",
+    "VT": "Vermont",
+    "VA": "Virginia",
+    "WA": "Washington",
+    "WV": "West Virginia",
+    "WI": "Wisconsin",
+    "WY": "Wyoming",
+    "PR": "Puerto Rico",
+    "VI": "U.S. Virgin Islands",
+}
+
+
 def compose_research_report(
     data_packet: DataPacket,
     metrics_packet: MetricsPacket,
@@ -237,7 +294,18 @@ def render_instrument_identity(data_packet: DataPacket) -> str:
     cik = cik.zfill(10) if cik.isdigit() else cik or "not available"
     legal_location = data_packet.jurisdiction or "not available"
     if data_packet.incorporation_state:
-        legal_location += f" / incorporation {data_packet.incorporation_state}"
+        incorporation_state = str(data_packet.incorporation_state).strip()
+        subdivision = (
+            US_SUBDIVISION_NAMES.get(incorporation_state.upper())
+            if str(data_packet.jurisdiction or "").upper() in {"US", "USA"}
+            else None
+        )
+        incorporation_label = (
+            f"{subdivision} ({incorporation_state.upper()})"
+            if subdivision
+            else incorporation_state
+        )
+        legal_location += f" / incorporation {incorporation_label}"
     return "\n".join(
         [
             "| Identity field | Verified value |",

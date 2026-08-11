@@ -17,6 +17,7 @@ from research_agent.content.claim_generator import (
 from research_agent.content.report_composer import (
     _fmt_money as _report_money,
     compose_research_report,
+    render_instrument_identity,
 )
 from research_agent.content.publish_composer import (
     _cash_and_marketable_securities,
@@ -160,7 +161,7 @@ def test_report_has_visible_canonical_instrument_identity():
     assert "## Instrument Identity" in report
     assert "| Legal company name | Waste Management, Inc. |" in report
     assert "| Listing venue | NYSE (NYQ) |" in report
-    assert "| Jurisdiction | US / incorporation DE |" in report
+    assert "| Jurisdiction | US / incorporation Delaware (DE) |" in report
     assert "| SEC CIK | 0000823768 |" in report
     assert "| ISIN | not available |" in report
 
@@ -176,7 +177,7 @@ def test_report_has_visible_canonical_instrument_identity():
     assert "## Instrument Identity" in internal_report
     assert "| Legal company name | Waste Management, Inc. |" in internal_report
     assert "| Listing venue | NYSE (NYQ) |" in internal_report
-    assert "| Jurisdiction | US / incorporation DE |" in internal_report
+    assert "| Jurisdiction | US / incorporation Delaware (DE) |" in internal_report
     assert "| SEC CIK | 0000823768 |" in internal_report
     assert "| WKN | not available |" in internal_report
 
@@ -193,6 +194,17 @@ def test_report_has_visible_canonical_instrument_identity():
     assert "## Instrument Identity" in special_report
     assert special_report.count("## Instrument Identity") == 1
     assert "| Legal company name | Waste Management, Inc. |" in special_report
+
+
+def test_identity_keeps_unknown_or_non_us_incorporation_codes_explicit():
+    data, *_ = _load_packet("SNOW")
+    data.jurisdiction = "CA"
+    data.incorporation_state = "ON"
+    assert "| Jurisdiction | CA / incorporation ON |" in render_instrument_identity(data)
+
+    data.jurisdiction = "US"
+    data.incorporation_state = "ZZ"
+    assert "| Jurisdiction | US / incorporation ZZ |" in render_instrument_identity(data)
 
 
 def test_current_period_capital_allocation_is_visible_without_ttm_relabeling():
