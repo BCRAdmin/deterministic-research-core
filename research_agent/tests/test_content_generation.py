@@ -83,6 +83,10 @@ def test_internal_evidence_appendix_is_compact_and_points_to_bound_claim_registr
     assert "`analyst_claims.json`" in appendix
     assert "| Claim ID | Section | Claim Type | Evidence Count | Source Types | Confidence |" in appendix
     assert "| Claim | Evidence IDs |" not in appendix
+    assert "financial_metric" not in appendix
+    assert "deterministic_calculation" not in appendix
+    assert "financial metric" in appendix
+    assert "deterministic calculation" in appendix
     assert len(claims) > 0
     for claim in claims:
         assert appendix.count(claim.claim_id) == 1

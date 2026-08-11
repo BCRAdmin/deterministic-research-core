@@ -1649,6 +1649,9 @@ def _valuation_scenario_table(v, rating: str, *, currency: str) -> str:
 
 
 def _evidence_appendix(claims: list[ResearchClaim], evidence_ledger: EvidenceLedger) -> str:
+    def display_label(value: object) -> str:
+        return re.sub(r"[_-]+", " ", str(value or "")).strip()
+
     evidence_by_id = {item.evidence_id: item for item in evidence_ledger.evidence_items}
     lines = [
         (
@@ -1672,9 +1675,9 @@ def _evidence_appendix(claims: list[ResearchClaim], evidence_ledger: EvidenceLed
             "{source_types} | {confidence} |".format(
                 claim_id=_table_text(claim.claim_id or ""),
                 section=_table_text(claim.section or "Unassigned"),
-                claim_type=_table_text(str(claim_type or "")),
+                claim_type=_table_text(display_label(claim_type)),
                 evidence_count=len(claim.evidence_ids),
-                source_types=_table_text(", ".join(source_types)),
+                source_types=_table_text(", ".join(display_label(item) for item in source_types)),
                 confidence=_table_text(str(claim.confidence or "")),
             )
         )
