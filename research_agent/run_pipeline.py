@@ -803,6 +803,7 @@ def run_research_pipeline(
                 if internal_best_audit_report_path
                 else ""
             ),
+            "analyst_claims_sha256": file_sha256(analyst_claims_path),
             "audit_report_sha256": file_sha256(audit_report_path),
             "quality_score_sha256": file_sha256(quality_report_path),
             "deterministic_report_mode": True,

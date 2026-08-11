@@ -1651,8 +1651,14 @@ def _valuation_scenario_table(v, rating: str, *, currency: str) -> str:
 def _evidence_appendix(claims: list[ResearchClaim], evidence_ledger: EvidenceLedger) -> str:
     evidence_by_id = {item.evidence_id: item for item in evidence_ledger.evidence_items}
     lines = [
-        "| Claim | Evidence IDs | Source Type | Confidence |",
-        "|---|---|---|---|",
+        (
+            "The complete claim text, evidence IDs, metric mappings and source IDs are "
+            "stored in the separately hash-bound `analyst_claims.json`. This appendix is "
+            "the compact human-readable index."
+        ),
+        "",
+        "| Claim ID | Section | Claim Type | Evidence Count | Source Types | Confidence |",
+        "|---|---|---|---:|---|---|",
     ]
     for claim in claims:
         source_types = sorted({
@@ -1660,8 +1666,17 @@ def _evidence_appendix(claims: list[ResearchClaim], evidence_ledger: EvidenceLed
             for item_id in claim.evidence_ids
             if item_id in evidence_by_id
         })
+        claim_type = getattr(claim.claim_type, "value", claim.claim_type)
         lines.append(
-            f"| {_table_text(_claim_text(claim))} | {', '.join(claim.evidence_ids)} | {', '.join(source_types)} | {claim.confidence or ''} |"
+            "| {claim_id} | {section} | {claim_type} | {evidence_count} | "
+            "{source_types} | {confidence} |".format(
+                claim_id=_table_text(claim.claim_id or ""),
+                section=_table_text(claim.section or "Unassigned"),
+                claim_type=_table_text(str(claim_type or "")),
+                evidence_count=len(claim.evidence_ids),
+                source_types=_table_text(", ".join(source_types)),
+                confidence=_table_text(str(claim.confidence or "")),
+            )
         )
     return "\n".join(lines)
 

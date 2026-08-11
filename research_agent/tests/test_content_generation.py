@@ -65,6 +65,30 @@ def test_per_share_unit_normalization_accepts_sec_plural_form():
     assert _evidence_unit_is_compatible("USD/shares", "USD_per_share")
 
 
+def test_internal_evidence_appendix_is_compact_and_points_to_bound_claim_registry():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    _add_exact_metric_evidence(data, metrics, ledger)
+    claims = generate_research_claims(data, metrics, ledger, decision, validation)
+    report = compose_internal_best_report(
+        data,
+        metrics,
+        decision,
+        ledger,
+        claims,
+        status="Needs manual review",
+        publishable=False,
+    )
+
+    appendix = report.split("## Evidence Appendix", 1)[1]
+    assert "`analyst_claims.json`" in appendix
+    assert "| Claim ID | Section | Claim Type | Evidence Count | Source Types | Confidence |" in appendix
+    assert "| Claim | Evidence IDs |" not in appendix
+    assert len(claims) > 0
+    for claim in claims:
+        assert appendix.count(claim.claim_id) == 1
+        assert claim.claim not in appendix
+
+
 def test_operating_kpi_columns_are_labeled_and_normalized_for_readers():
     event = MaterialNewsEvent(
         date="2026-07-28",
