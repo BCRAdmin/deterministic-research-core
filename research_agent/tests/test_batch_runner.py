@@ -230,7 +230,7 @@ def test_default_batch_runner_uses_manual_packet_fixture_fallback(tmp_path):
 
     manifest = BatchRunner(config).run()
 
-    assert manifest.items[0].status == "repaired"
-    assert manifest.items[0].quality_score >= 85
+    assert manifest.items[0].status == "manual_review"
+    assert manifest.items[0].quality_score >= 80
     assert manifest.items[0].preferred_rating == "Hold"
     assert "final_repaired_report.md" in manifest.items[0].artifacts

@@ -1,4 +1,11 @@
-from research_agent.evidence.claim_evidence_mapper import map_claim_to_evidence
+import pytest
+
+from research_agent.evidence.claim_evidence_mapper import (
+    bind_evidence_claim_ids,
+    map_claim_to_evidence,
+    validate_claim_evidence_graph,
+    validate_visible_citation_completeness,
+)
 from research_agent.evidence.evidence_item import EvidenceItem
 from research_agent.evidence.evidence_ledger import EvidenceLedger
 from research_agent.research_core.models.claims import ResearchClaim
@@ -123,3 +130,56 @@ def test_missing_explicit_evidence_does_not_fall_back_to_metric_matches():
 
     assert mapped["status"] == "missing_evidence"
     assert mapped["evidence_ids"] == []
+
+
+def test_reverse_claim_edges_are_rebuilt_exactly_and_stale_edges_are_removed():
+    claim = ResearchClaim(
+        claim_id="CLAIM-001",
+        agent="fundamental",
+        claim="Current revenue is source-bound.",
+        evidence_metrics=["revenue_ttm"],
+        evidence_ids=["EVIDENCE-001"],
+        source_ids=["SOURCE-001"],
+        confidence="high",
+    )
+    ledger = EvidenceLedger(
+        ticker="WM",
+        as_of_date="2026-08-11",
+        evidence_items=[
+            EvidenceItem(
+                evidence_id="EVIDENCE-001",
+                ticker="WM",
+                claim_type="financial_metric",
+                source_id="SOURCE-001",
+                source_type="sec_filing",
+                authority_rank=1,
+                statement="Revenue evidence.",
+                supports_metrics=["revenue_ttm"],
+                supports_claim_ids=["STALE-CLAIM"],
+            )
+        ],
+    )
+
+    bind_evidence_claim_ids([claim], ledger)
+    report = validate_claim_evidence_graph([claim], ledger)
+
+    assert ledger.evidence_items[0].supports_claim_ids == ["CLAIM-001"]
+    assert report["edge_count"] == 1
+
+
+def test_visible_citation_gate_blocks_truncated_evidence_join():
+    claim = ResearchClaim(
+        claim_id="CLAIM-001",
+        agent="fundamental",
+        claim="Current revenue is source-bound.",
+        evidence_metrics=["revenue_ttm"],
+        evidence_ids=["EVIDENCE-001", "EVIDENCE-002"],
+        source_ids=["SOURCE-001"],
+        confidence="high",
+    )
+    markdown = (
+        "Current revenue is source-bound. Evidence: `CLAIM-001, EVIDENCE-001`."
+    )
+
+    with pytest.raises(ValueError, match="EVIDENCE-002"):
+        validate_visible_citation_completeness(markdown, [claim])

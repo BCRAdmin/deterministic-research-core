@@ -12,7 +12,7 @@ GOLDEN_E2E_CASES = {
         "blocked_ratings": ["Sell", "Strong Buy"],
         "expected_issues": ["NO_NEWS_WITH_AVAILABLE_SOURCES", "NUMERIC_MISMATCH"],
         "minimum_quality_score_after_repair": 85,
-        "expected_final_status": "repaired_publishable",
+        "expected_final_status": "manual_review",
     },
     "nvda_2026_05_01": {
         "ticker": "NVDA",
@@ -20,7 +20,7 @@ GOLDEN_E2E_CASES = {
         "blocked_ratings": ["Sell", "Underweight"],
         "expected_issues": ["NUMERIC_MISMATCH", "PERIOD_MISMATCH"],
         "minimum_quality_score_after_repair": 85,
-        "expected_final_status": "repaired_publishable",
+        "expected_final_status": "manual_review",
     },
     "ddog_2026_05_01": {
         "ticker": "DDOG",
@@ -28,7 +28,7 @@ GOLDEN_E2E_CASES = {
         "blocked_ratings": ["Sell", "Strong Buy"],
         "expected_issues": ["INVALID_TRADE_LEVEL", "RATING_TOO_HARSH_FOR_ACTION"],
         "minimum_quality_score_after_repair": 85,
-        "expected_final_status": "repaired_publishable",
+        "expected_final_status": "manual_review",
     },
     "mdb_2026_05_01": {
         "ticker": "MDB",
@@ -36,7 +36,7 @@ GOLDEN_E2E_CASES = {
         "blocked_ratings": ["Sell", "Strong Buy"],
         "expected_issues": ["OVERSTATED_CAUSALITY", "FORWARD_EPS_GUIDANCE_MISMATCH", "RATING_TOO_HARSH_FOR_ACTION"],
         "minimum_quality_score_after_repair": 85,
-        "expected_final_status": "repaired_publishable",
+        "expected_final_status": "manual_review",
     },
 }
 

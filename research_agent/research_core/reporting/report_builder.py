@@ -184,8 +184,13 @@ def _render_claims(
             if evidence_ids
             else ""
         )
+        claim_id_suffix = (
+            f" Claim ID: `{claim.claim_id}`."
+            if claim.claim_id
+            else ""
+        )
         lines.append(
-            f"- {claim.claim} Evidence metrics: `{', '.join(claim.evidence_metrics)}`.{evidence_suffix} Confidence: `{claim.confidence}`."
+            f"- {claim.claim}{claim_id_suffix} Evidence metrics: `{', '.join(claim.evidence_metrics)}`.{evidence_suffix} Confidence: `{claim.confidence}`."
         )
     return "\n".join(lines)
 

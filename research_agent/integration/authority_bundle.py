@@ -320,6 +320,7 @@ def _unit_normalization_failures(
         "b": 1_000_000_000.0,
         "bn": 1_000_000_000.0,
         "percent": 0.01,
+        "basis_points": 1.0,
     }
     failures: list[str] = []
     for item in evidence_items:
@@ -771,10 +772,16 @@ def _assess_packets(
     preferred = str(permission.get("preferred_rating") or "")
     allowed = {str(item) for item in permission.get("allowed_ratings") or []}
     blocked = {str(item) for item in permission.get("blocked_ratings") or []}
+    permission_type = str(permission.get("permission_type") or "")
+    permission_consistent = (
+        not allowed and bool(preferred) and preferred in blocked
+        if permission_type == "safety_fallback"
+        else bool(preferred) and preferred in allowed and preferred not in blocked
+    )
     _check(
         checks,
         "decision_permission_consistent",
-        bool(preferred) and preferred in allowed and preferred not in blocked,
+        permission_consistent,
         detail=preferred,
     )
     analytical_rating = str(
@@ -785,7 +792,6 @@ def _assess_packets(
     publication_permission = str(
         decision_packet.get("publication_permission") or ""
     )
-    permission_type = str(permission.get("permission_type") or "")
     display_rating = str(permission.get("display_rating") or "")
     publication_allowed = permission.get("publication_allowed")
     fallback_only = permission.get("fallback_only")
@@ -861,6 +867,7 @@ def build_authority_bundle(
     source_snapshot_manifest_path: str | Path | None = None,
     source_snapshot_root: str | Path | None = None,
     research_scope_coverage_path: str | Path | None = None,
+    integrity_artifact_paths: Mapping[str, str | Path] | None = None,
     pipeline_version: str = PIPELINE_VERSION,
 ) -> dict[str, Any]:
     """Export a self-contained, hashed authority bundle from validated packets."""
@@ -907,6 +914,12 @@ def build_authority_bundle(
     source_paths["research_scope_coverage"] = scope_path
     research_scope_coverage = _read_json(scope_path)
     scope_verification = verify_research_scope_coverage(research_scope_coverage)
+    for role, raw_path in (integrity_artifact_paths or {}).items():
+        if not re.fullmatch(r"[a-z][a-z0-9_]*", str(role)):
+            raise AuthorityBundleError(f"invalid integrity artifact role: {role!r}")
+        integrity_path = Path(raw_path).expanduser().resolve()
+        source_paths[str(role)] = integrity_path
+        payloads[str(role)] = _read_json(integrity_path)
 
     checks, ticker, as_of_date = _assess_packets(
         data_packet=payloads["data_packet"],
@@ -1011,6 +1024,15 @@ def build_authority_bundle(
             research_scope_coverage.get("blocking_scope_gaps") or []
         ),
     )
+    for role in sorted(integrity_artifact_paths or {}):
+        payload = payloads[str(role)]
+        _check(
+            checks,
+            f"{role}_valid",
+            payload.get("status") == "pass"
+            and payload.get("release_allowed") is not False,
+            detail=", ".join(payload.get("blocking_failures") or []),
+        )
     blocking_failures = [
         item["check_id"]
         for item in checks

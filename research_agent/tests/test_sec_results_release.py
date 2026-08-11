@@ -980,12 +980,51 @@ def test_extracts_multiple_guidance_ranges_from_one_outlook_paragraph():
     assert metrics["guidance_revenue_high"]["value"] == 26_475_000_000
     assert metrics["guidance_adjusted_operating_ebitda_margin_low"]["value"] == pytest.approx(0.31)
     assert metrics["guidance_adjusted_operating_ebitda_margin_high"]["value"] == pytest.approx(0.312)
+    assert metrics["guidance_adjusted_operating_ebitda_margin_change_basis_points"]["value"] == 20
     assert metrics["guidance_revenue_low"]["direction"] == "lowered"
-    assert payload["result_contract"]["guidance_metric_count"] == 8
+    assert payload["result_contract"]["guidance_metric_count"] == 9
     outlook = next(event for event in payload["events"] if event["event_type"] == "company_outlook")
     assert outlook["headline"] == "Issuer updated full-year guidance"
     assert "revenue (lowered)" in outlook["summary"]
     assert "free cash flow (maintained)" in outlook["summary"]
+
+
+def test_extracts_complete_signed_projected_fcf_reconciliation():
+    html = """
+    <div>Second Quarter 2026 Results</div>
+    <div>2026 Outlook</div>
+    <div>The company expects free cash flow between $3.75 and $3.85 billion.</div>
+    <table>
+      <tr><td>2026 Projected Free Cash Flow Reconciliation</td><td>Scenario 1</td><td>Scenario 2</td></tr>
+      <tr><td>Net cash provided by operating activities</td><td>$6,300</td><td>$6,450</td></tr>
+      <tr><td>Capital expenditures to support the business</td><td>(2,400)</td><td>(2,500)</td></tr>
+      <tr><td>Proceeds from divestitures of businesses and other assets, net of cash divested</td><td>100</td><td>150</td></tr>
+      <tr><td>Free cash flow without sustainability growth investments</td><td>$4,000</td><td>$4,100</td></tr>
+      <tr><td>Capital expenditures - sustainability growth investments</td><td>(250)</td><td>(250)</td></tr>
+      <tr><td>Free cash flow</td><td>$3,750</td><td>$3,850</td></tr>
+    </table>
+    <div>(In Millions)</div>
+    """
+    payload = build_sec_results_release_payload(
+        ticker="GENR",
+        cik="123456",
+        accession_number="0000123456-26-000103",
+        filing_date="2026-07-28",
+        exhibit_document="q2-results.htm",
+        html=html,
+        expected_fiscal_year=2026,
+        expected_fiscal_period="Q2",
+        period_end_date="2026-06-30",
+        retrieved_at="2026-07-28T12:00:00Z",
+    )
+
+    values = {item["metric_name"]: item["value"] for item in payload["metrics"]}
+    assert values["guidance_fcf_bridge_operating_cash_flow_scenario_1"] == 6_300_000_000
+    assert values["guidance_fcf_bridge_support_capex_scenario_2"] == -2_500_000_000
+    assert values["guidance_fcf_bridge_divestiture_proceeds_scenario_1"] == 100_000_000
+    assert values["guidance_fcf_bridge_fcf_before_sustainability_growth_scenario_2"] == 4_100_000_000
+    assert values["guidance_fcf_bridge_sustainability_growth_capex_scenario_1"] == -250_000_000
+    assert values["guidance_fcf_bridge_free_cash_flow_scenario_2"] == 3_850_000_000
 
 
 def test_rejects_partially_parsed_multi_metric_guidance_paragraph():

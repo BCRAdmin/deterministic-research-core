@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import re
+from calendar import monthrange
+from datetime import date
 from html.parser import HTMLParser
 from typing import Any
 
@@ -24,6 +26,9 @@ KPI_PATTERNS = {
         r"capital returned|return of capital)\b"
     ),
     "free_cash_flow_guidance": r"\b(?:free cash flow|fcf)\b.{0,100}\b(?:guidance|outlook|range)\b|\b(?:guidance|outlook|range)\b.{0,100}\b(?:free cash flow|fcf)\b",
+    "internalization": r"\binternalization(?: of waste)?\b",
+    "landfill_depletable_tons": r"\blandfill depletable tons?\b",
+    "acquired_annualized_revenue": r"\b(?:gross )?annualized revenue acquired\b|\bacquired annualized revenue\b",
     "organic_comparable_growth": r"\b(?:organic|comparable)\b.{0,80}\bgrowth\b|\bgrowth\b.{0,80}\b(?:organic|comparable)\b",
     "segment_growth": r"\bsegment\b.{0,100}\bgrowth\b|\bgrowth\b.{0,100}\bsegment\b",
     "adjusted_eps_guidance": r"\badjusted eps\b.{0,120}\b(?:guidance|outlook|range)\b|\b(?:guidance|outlook|range)\b.{0,120}\badjusted eps\b",
@@ -38,7 +43,7 @@ KPI_PATTERNS = {
 }
 
 NUMBER_RE = re.compile(
-    r"(?P<currency>[$€£])?\s*"
+    r"(?P<currency>C\$|US\$|A\$|HK\$|S\$|[$€£¥])?\s*"
     r"(?P<number>(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?)\s*"
     r"(?P<scale>billion|million|thousand|bn|mn|m|k)?\s*(?P<percent>%)?",
     re.IGNORECASE,
@@ -88,16 +93,23 @@ def build_sec_operating_kpi_payload(
     primary_document: str,
     html_documents: list[str],
     retrieved_at: str,
+    report_date: str | None = None,
+    report_period_months: int | None = None,
 ) -> dict[str, Any]:
     blocks: list[str] = []
     for html in html_documents:
         parser = _BlockParser()
         parser.feed(html)
         blocks.extend(parser.finish())
-    # A results release can be embedded in the filing and also supplied as a
-    # separate official document.  Exact block deduplication prevents the same
-    # issuer statement from becoming two report claims.
-    blocks = list(dict.fromkeys(blocks))
+    # Preserve table headers and their local row context.  Global block
+    # deduplication can delete a repeated header from a later table and collapse
+    # all periods to the filing date.  Duplicate emitted statements are removed
+    # below after period parsing.
+    blocks = [
+        block
+        for index, block in enumerate(blocks)
+        if index == 0 or block != blocks[index - 1]
+    ]
     priority_statements = {
         "capital_allocation": set(
             _ranked_capital_allocation_statements(blocks, limit=3)
@@ -114,7 +126,12 @@ def build_sec_operating_kpi_payload(
     match_counts = {kpi_id: 0 for kpi_id in KPI_PATTERNS}
     primary_counts = {kpi_id: 0 for kpi_id in KPI_PATTERNS}
     filing_year = int(filing_date[:4])
+    emitted_statements: set[str] = set()
     for block_index, statement in enumerate(blocks):
+        if statement in emitted_statements:
+            continue
+        if _is_forward_looking_boilerplate(statement):
+            continue
         matched_kpis = [
             kpi_id
             for kpi_id, pattern in KPI_PATTERNS.items()
@@ -137,9 +154,13 @@ def build_sec_operating_kpi_payload(
                 block_index,
                 filing_year=filing_year,
             ),
+            filing_date=filing_date,
+            report_date=report_date,
+            report_period_months=report_period_months,
         )
         if not numeric_evidence:
             continue
+        emitted_statements.add(statement)
         for kpi_id in matched_kpis:
             match_counts[kpi_id] += 1
         primary_kpi = matched_kpis[0]
@@ -162,6 +183,19 @@ def build_sec_operating_kpi_payload(
                 "authority_rank": 1,
                 "url": url,
                 "retrieved_at": retrieved_at,
+                "content_complete": True,
+                "dependency_status": "complete",
+                "report_disposition": "included_main_report",
+                "report_disposition_reason": (
+                    "A current primary-source operating KPI is included in the "
+                    "main analytical evidence chain."
+                ),
+                "materiality_rationale": (
+                    "The issuer disclosed a numeric operating KPI matched to the "
+                    "active business-model contract."
+                ),
+                "inventory_filter_reason": "inside_analysis_window",
+                "semantic_disposition": "current_operating_kpi",
                 "numeric_evidence": numeric_evidence,
             }
         )
@@ -253,6 +287,9 @@ def _numeric_evidence(
     event_index: int,
     context_scale: str | None = None,
     column_labels: list[str] | None = None,
+    filing_date: str | None = None,
+    report_date: str | None = None,
+    report_period_months: int | None = None,
 ) -> list[dict[str, Any]]:
     label_ranges = [
         (kpi_id, match.span())
@@ -265,6 +302,8 @@ def _numeric_evidence(
     number_matches = list(NUMBER_RE.finditer(statement))
     for number_index, match in enumerate(number_matches):
         raw = float(match.group("number").replace(",", ""))
+        if _is_non_metric_number(statement, match):
+            continue
         explicit_scale = str(match.group("scale") or "").casefold()
         per_share = _is_per_share_value(statement, match)
         scale = (
@@ -275,6 +314,13 @@ def _numeric_evidence(
             or str(context_scale or "").casefold()
         )
         percent = bool(match.group("percent"))
+        basis_points = bool(
+            re.match(
+                r"\s*(?:-|–|—)?\s*basis points?\b",
+                statement[match.end() :],
+                flags=re.IGNORECASE,
+            )
+        )
         if (
             not explicit_scale
             and not percent
@@ -286,7 +332,7 @@ def _numeric_evidence(
         # Every monetary, percentage or explicitly scaled value in an emitted
         # source statement is a hard report claim.  Binding only the value
         # nearest the KPI label leaves the other visible numbers unverifiable.
-        if not (match.group("currency") or percent or explicit_scale):
+        if not (match.group("currency") or percent or basis_points or scale):
             continue
         multiplier = {
             "billion": 1_000_000_000,
@@ -297,10 +343,22 @@ def _numeric_evidence(
             "thousand": 1_000,
             "k": 1_000,
         }.get(scale, 1)
-        direction = _numeric_direction(statement, match.span()) if percent else 1.0
-        value = direction * raw / 100 if percent else raw * multiplier
+        direction = (
+            _numeric_direction(statement, match.span())
+            if percent or basis_points
+            else 1.0
+        )
+        value = (
+            direction * raw
+            if basis_points
+            else direction * raw / 100
+            if percent
+            else raw * multiplier
+        )
         unit = (
-            "percent"
+            "basis_points"
+            if basis_points
+            else "percent"
             if percent
             else "currency_per_share"
             if match.group("currency") and per_share
@@ -309,9 +367,15 @@ def _numeric_evidence(
             else "count"
         )
         currency = {
+            "C$": "CAD",
+            "US$": "USD",
+            "A$": "AUD",
+            "HK$": "HKD",
+            "S$": "SGD",
             "$": "USD",
             "€": "EUR",
             "£": "GBP",
+            "¥": "JPY",
         }.get(str(match.group("currency") or ""))
         distance, owner = min(
             (
@@ -321,26 +385,489 @@ def _numeric_evidence(
             for kpi_id, label_range in label_ranges
         )
         metric_owner = owner if distance <= 140 else "statement_context"
+        column_label = (
+            column_labels[number_index]
+            if column_labels and number_index < len(column_labels)
+            else None
+        )
+        period_contract = _numeric_period_contract(
+            statement,
+            match=match,
+            number_index=number_index,
+            column_label=column_label,
+            filing_date=filing_date,
+            report_date=report_date,
+            report_period_months=report_period_months,
+        )
+        metric_role = _numeric_metric_role(
+            statement,
+            owner=metric_owner,
+            match=match,
+            column_label=column_label,
+            period_role=period_contract["period_role"],
+            number_index=number_index,
+        )
+        display_unit = (
+            f"{currency}/share"
+            if unit == "currency_per_share" and currency
+            else currency
+            if unit == "currency" and currency
+            else "basis_points"
+            if basis_points
+            else "percent"
+            if percent
+            else "count"
+        )
         values.append(
             {
-                "metric_name": (
-                    f"operating_kpi_{metric_owner}_{event_index:02d}_{len(values) + 1:02d}"
-                ),
+                "metric_name": f"operating_kpi_{metric_role}",
+                "metric_role": metric_role,
                 "value": value,
                 "raw_value": raw,
                 "unit": unit,
-                "source_scale": "percent" if percent else scale or "base",
+                "display_unit": display_unit,
+                "dimension": (
+                    "per_share"
+                    if unit == "currency_per_share"
+                    else "currency"
+                    if currency
+                    else "basis_points"
+                    if basis_points
+                    else "percent"
+                    if percent
+                    else "count"
+                ),
+                "source_scale": (
+                    "basis_points"
+                    if basis_points
+                    else "percent"
+                    if percent
+                    else scale or "base"
+                ),
                 "source_unit": unit,
                 "source_sign": int(direction),
                 "currency": currency,
-                "column_label": (
-                    column_labels[number_index]
-                    if column_labels and number_index < len(column_labels)
-                    else None
-                ),
+                "column_label": column_label,
+                **{key: value for key, value in period_contract.items() if key != "period_role"},
+                "mapping_status": "unmapped" if metric_role.startswith("unmapped_") else "mapped",
             }
         )
     return values
+
+
+MONTHS = {
+    name.casefold(): index
+    for index, name in enumerate(
+        (
+            "",
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December",
+        )
+    )
+    if name
+}
+
+
+def _numeric_period_contract(
+    statement: str,
+    *,
+    match: re.Match[str],
+    number_index: int,
+    column_label: str | None,
+    filing_date: str | None,
+    report_date: str | None = None,
+    report_period_months: int | None = None,
+) -> dict[str, Any]:
+    label = str(column_label or "")
+    ended_label = re.search(
+        r"\b(3|6|9|12)M\s+ended\s+(20\d{2})-(\d{2})-(\d{2})\b",
+        label,
+        re.IGNORECASE,
+    )
+    if ended_label:
+        months = int(ended_label.group(1))
+        end = date(
+            int(ended_label.group(2)),
+            int(ended_label.group(3)),
+            int(ended_label.group(4)),
+        )
+        start_month_index = end.year * 12 + end.month - months
+        start_year, month_zero = divmod(start_month_index, 12)
+        start = date(start_year, month_zero + 1, 1)
+        return {
+            "period_kind": "duration",
+            "presentation_basis": "period_total",
+            "period_start": start.isoformat(),
+            "period_end": end.isoformat(),
+            "period_role": f"{months}m_{end.isoformat()}",
+        }
+    quarter = re.search(r"\bQ([1-4])\s*(20\d{2})\b", label, re.IGNORECASE)
+    if quarter:
+        q, year = int(quarter.group(1)), int(quarter.group(2))
+        start_month = (q - 1) * 3 + 1
+        end_month = start_month + 2
+        start = date(year, start_month, 1).isoformat()
+        end = date(year, end_month, monthrange(year, end_month)[1]).isoformat()
+        role = f"q{q}_{year}_{_slug(label.replace(quarter.group(0), '')) or 'reported'}"
+        return {
+            "period_kind": "duration",
+            "presentation_basis": "period_total",
+            "period_start": start,
+            "period_end": end,
+            "period_role": role,
+        }
+
+    ended = re.search(
+        r"\b(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2}),\s*(20\d{2})\b",
+        statement,
+        re.IGNORECASE,
+    )
+    period_end = None
+    if ended:
+        period_end = date(
+            int(ended.group(3)),
+            MONTHS[ended.group(1).casefold()],
+            int(ended.group(2)),
+        )
+    nearby = statement[max(0, match.start() - 180) : match.end() + 180].casefold()
+    if "last quarter" in nearby:
+        return {
+            "period_kind": "unknown",
+            "presentation_basis": "period_total",
+            "period_start": None,
+            "period_end": None,
+            "period_role": "previous_quarter",
+        }
+    if "this quarter" in nearby:
+        return {
+            "period_kind": "unknown",
+            "presentation_basis": "period_total",
+            "period_start": None,
+            "period_end": None,
+            "period_role": "current_quarter",
+        }
+    duration_months = None
+    if re.search(r"three and six months ended", nearby):
+        paired_amount_and_ratio = re.search(
+            r"[$€£¥].{0,40}%\s*,?\s*(?:and|versus|vs\.)\s*[$€£¥].{0,40}%",
+            statement,
+            re.IGNORECASE,
+        )
+        period_slot = number_index // 2 if paired_amount_and_ratio else number_index
+        duration_months = 3 if period_slot % 2 == 0 else 6
+    elif re.search(r"six months ended", nearby):
+        duration_months = 6
+    elif re.search(r"three months ended|second quarter|first quarter|third quarter|fourth quarter", nearby):
+        duration_months = 3
+    if period_end and duration_months:
+        start_month_index = period_end.year * 12 + period_end.month - duration_months
+        start_year, month_zero = divmod(start_month_index, 12)
+        start = date(start_year, month_zero + 1, 1)
+        return {
+            "period_kind": "duration",
+            "presentation_basis": "period_total",
+            "period_start": start.isoformat(),
+            "period_end": period_end.isoformat(),
+            "period_role": f"{duration_months}m_{period_end.isoformat()}",
+        }
+    guidance_year = re.search(r"\b(?:full[- ]year|FY)\s*(20\d{2})\b", statement, re.IGNORECASE)
+    if guidance_year or "outlook" in statement.casefold() or "guidance" in statement.casefold():
+        year = int(guidance_year.group(1)) if guidance_year else int((filing_date or "0000")[:4])
+        if year >= 1900:
+            return {
+                "period_kind": "guidance",
+                "presentation_basis": "guidance_range",
+                "period_start": date(year, 1, 1).isoformat(),
+                "period_end": date(year, 12, 31).isoformat(),
+                "period_role": f"fy{year}_guidance",
+            }
+    relational_role = _comparison_number_role(statement, match)
+    if report_date and report_period_months in {3, 6, 9, 12} and relational_role:
+        current_end = date.fromisoformat(report_date)
+        current_start = _duration_start(current_end, report_period_months)
+        prior_end = date(current_end.year - 1, current_end.month, current_end.day)
+        prior_start = _duration_start(prior_end, report_period_months)
+        if relational_role.startswith("prior_year"):
+            return {
+                "period_kind": "duration",
+                "presentation_basis": "period_total",
+                "period_start": prior_start.isoformat(),
+                "period_end": prior_end.isoformat(),
+                "period_role": relational_role,
+            }
+        if relational_role.startswith("yoy_change"):
+            return {
+                "period_kind": "comparison",
+                "presentation_basis": "period_over_period_comparison",
+                "period_start": current_start.isoformat(),
+                "period_end": current_end.isoformat(),
+                "current_period_start": current_start.isoformat(),
+                "current_period_end": current_end.isoformat(),
+                "comparison_period_start": prior_start.isoformat(),
+                "comparison_period_end": prior_end.isoformat(),
+                "period_role": relational_role,
+            }
+        return {
+            "period_kind": "duration",
+            "presentation_basis": "period_total",
+            "period_start": current_start.isoformat(),
+            "period_end": current_end.isoformat(),
+            "period_role": relational_role,
+        }
+    if report_date and report_period_months in {3, 6, 9, 12}:
+        current_end = date.fromisoformat(report_date)
+        current_start = _duration_start(current_end, report_period_months)
+        return {
+            "period_kind": "duration",
+            "presentation_basis": "period_total",
+            "period_start": current_start.isoformat(),
+            "period_end": current_end.isoformat(),
+            "period_role": f"{report_period_months}m_{current_end.isoformat()}",
+        }
+    return {
+        "period_kind": "unknown",
+        "presentation_basis": "unknown",
+        "period_start": None,
+        "period_end": None,
+        "period_role": "period_unmapped",
+    }
+
+
+def _numeric_metric_role(
+    statement: str,
+    *,
+    owner: str,
+    match: re.Match[str],
+    column_label: str | None,
+    period_role: str,
+    number_index: int,
+) -> str:
+    context = statement[max(0, match.start() - 130) : match.end() + 90].casefold()
+    metric = _statement_metric_base(statement)
+    semantic_rules = (
+        ("internalization", r"internalization"),
+        ("landfill_depletable_tons", r"depletable tons"),
+        ("acquired_annualized_revenue", r"annualized revenue"),
+        ("free_cash_flow", r"free cash flow|\bfcf\b"),
+        ("adjusted_operating_ebitda_margin", r"adjusted operating ebitda margin"),
+        ("operating_ebitda_margin", r"operating ebitda margin"),
+        ("adjusted_operating_ebitda", r"adjusted operating ebitda"),
+        ("operating_ebitda", r"operating ebitda|\bebitda\b"),
+        ("share_repurchases", r"share repurchases?|stock repurchases?"),
+        ("cash_dividends", r"cash dividends?|dividend payments?"),
+        ("shareholder_returns", r"returned?.{0,50}shareholders"),
+        ("revenue", r"revenues?|sales"),
+        ("operating_income", r"income from operations|operating income"),
+        ("operating_expenses", r"operating expenses"),
+        ("collection_disposal_yield", r"yield"),
+        ("collection_disposal_volume", r"collection and disposal volume"),
+        ("landfill_volume", r"landfill volumes?"),
+        ("residential_volume", r"residential volume"),
+        ("basis_point_change", r"basis points?"),
+    )
+    closest_metric = _closest_semantic_metric(statement, match, semantic_rules)
+    generic_owners = {
+        "capital_allocation",
+        "free_cash_flow_guidance",
+        "operating_ebitda",
+        "segment_growth",
+        "statement_context",
+        "volume",
+    }
+    if metric is None:
+        metric = (
+            owner
+            if owner not in generic_owners
+            else closest_metric or (owner if owner != "statement_context" else None)
+        )
+    elif closest_metric in {
+        "internalization",
+        "landfill_depletable_tons",
+        "acquired_annualized_revenue",
+    }:
+        metric = closest_metric
+    component_metric = _component_metric_override(statement, match)
+    if component_metric:
+        metric = component_metric
+    label_role = _slug(str(column_label or ""))
+    if metric is None and owner != "statement_context":
+        metric = owner
+    if metric is None:
+        return f"unmapped_{owner}_{period_role}_{label_role or 'numeric'}"
+    if label_role and label_role in period_role:
+        label_role = ""
+    variant = (
+        ""
+        if period_role.endswith(("_value", "_ratio", "_amount", "_percent"))
+        else _numeric_metric_variant(statement, match, number_index)
+    )
+    unit_variant = (
+        "ratio"
+        if match.group("percent")
+        else "amount"
+        if match.group("currency")
+        else ""
+    )
+    if variant and unit_variant and unit_variant not in variant:
+        variant = f"{variant}_{unit_variant}"
+    return "_".join(
+        part for part in (metric, period_role, label_role, variant) if part
+    )
+
+
+def _statement_metric_base(statement: str) -> str | None:
+    normalized = statement.lstrip("•·● ").casefold()
+    rules = (
+        ("volume_revenue", r"^(?:our\s+)?revenues? from volume\b"),
+        ("revenue", r"^(?:our\s+)?revenues?\b"),
+        ("operating_expenses", r"^operating expenses\b"),
+        ("operating_income", r"^(?:income from operations|operating income)\b"),
+    )
+    return next((name for name, pattern in rules if re.search(pattern, normalized)), None)
+
+
+def _comparison_number_role(statement: str, match: re.Match[str]) -> str | None:
+    """Name common current/prior/change tuples without positional IDs."""
+
+    compared = re.search(r"\bcompared (?:to|with)\b", statement, re.IGNORECASE)
+    if not compared:
+        return None
+    before = statement[: match.start()].casefold()
+    after = statement[match.end() : match.end() + 70].casefold()
+    compared_at = max(before.rfind("compared to"), before.rfind("compared with"))
+    change_at = max(before.rfind("increase"), before.rfind("decrease"))
+    is_percent = bool(match.group("percent"))
+    if re.search(r"^\s*(?:million|billion|bn|mn)?\s*(?:increase|decrease)\b", after):
+        return "yoy_change_percent" if is_percent else "yoy_change_amount"
+    if change_at > compared_at and match.start() - change_at <= 90:
+        return "yoy_change_percent" if is_percent else "yoy_change_amount"
+    if compared_at >= 0 and match.start() - compared_at <= 170:
+        return "prior_year_ratio" if is_percent else "prior_year_value"
+    if 0 <= compared.start() - match.end() <= 170:
+        return "current_period_ratio" if is_percent else "current_period_value"
+    return None
+
+
+def _duration_start(period_end: date, months: int) -> date:
+    month_index = period_end.year * 12 + period_end.month - months
+    year, month_zero = divmod(month_index, 12)
+    return date(year, month_zero + 1, 1)
+
+
+def _closest_semantic_metric(
+    statement: str,
+    match: re.Match[str],
+    semantic_rules: tuple[tuple[str, str], ...],
+) -> str | None:
+    candidates: list[tuple[int, int, str]] = []
+    for priority, (name, pattern) in enumerate(semantic_rules):
+        for label in re.finditer(pattern, statement, re.IGNORECASE):
+            candidates.append(
+                (_semantic_distance(match.span(), label.span()), priority, name)
+            )
+    return min(candidates)[2] if candidates else None
+
+
+def _numeric_metric_variant(
+    statement: str,
+    match: re.Match[str],
+    number_index: int,
+) -> str:
+    before = statement[max(0, match.start() - 170) : match.start()].casefold()
+    after = statement[match.end() : match.end() + 100].casefold()
+    if "between" in before:
+        prior_range_values = list(NUMBER_RE.finditer(before.rsplit("between", 1)[-1]))
+        if not prior_range_values:
+            return "range_low"
+        if re.search(r"\b(?:and|to)\s*$", before):
+            return "range_high"
+    if re.match(
+        r"^\s*(?:million|billion|bn|mn)?\s*on an adjusted basis\b",
+        after,
+    ) or "adjusted basis" in before[-45:]:
+        return "adjusted_change"
+    if re.match(r"^\s*(?:%|,|or)?\s*(?:when removing|excluding)\b", after):
+        return "excluding_adjustment"
+    if re.search(r"\bwhen removing\b|\bexcluding\b", after[:70]):
+        return "reported"
+    if "when removing" in before or "excluding" in before:
+        return "excluding_adjustment"
+    if re.search(r"\bin\s+20\d{2}\b", after[:35]):
+        year = re.search(r"\bin\s+(20\d{2})\b", after[:35])
+        return f"fy{year.group(1)}" if year else ""
+    if "respectively" in statement.casefold() and re.search(r"20\d{2}\s+and\s+20\d{2}", statement):
+        return "current_period" if number_index == 0 else "prior_period" if number_index == 1 else ""
+    if match.group("percent"):
+        return "ratio"
+    trailing = statement[match.end() : match.end() + 35]
+    if re.match(r"\s*(?:-|–|—)?\s*basis points?\b", trailing, re.IGNORECASE):
+        return "basis_points"
+    if match.group("currency"):
+        return "amount"
+    return ""
+
+
+def _is_non_metric_number(statement: str, match: re.Match[str]) -> bool:
+    before = statement[max(0, match.start() - 24) : match.start()]
+    after = statement[match.end() : match.end() + 16]
+    if re.search(
+        r"\b(?:January|February|March|April|May|June|July|August|September|October|November|December)$",
+        before.rstrip(),
+        re.IGNORECASE,
+    ) and re.match(r",\s*20\d{2}\b", after):
+        return True
+    if re.search(r"\b(?:Note|Item|Form)$", before.rstrip(), re.IGNORECASE):
+        return True
+    return False
+
+
+def _is_forward_looking_boilerplate(statement: str) -> bool:
+    lowered = statement.casefold()
+    return (
+        "forward-looking statements" in lowered
+        or (
+            "from time to time" in lowered
+            and "estimates or projections" in lowered
+            and "future periods" in lowered
+        )
+    )
+
+
+def _component_metric_override(
+    statement: str,
+    match: re.Match[str],
+) -> str | None:
+    after = statement[match.end() : match.end() + 70].casefold()
+    before = statement[max(0, match.start() - 70) : match.start()].casefold()
+    next_number = NUMBER_RE.search(after)
+    component_window = after[: next_number.start()] if next_number else after
+    component_rules = (
+        ("share_repurchases", r"\b(?:share|stock) repurchases?\b"),
+        ("cash_dividends", r"\bcash dividends?\b"),
+    )
+    for name, pattern in component_rules:
+        if re.search(pattern, component_window):
+            return name
+    if re.search(r"\bexcluding\b", before) and "volume" in before:
+        if "landfill" in before:
+            return "landfill_volume"
+        if "collection" in before:
+            return "collection_disposal_volume"
+    return None
+
+
+def _slug(value: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "_", value.casefold()).strip("_")
 
 
 def _is_per_share_value(statement: str, current: re.Match[str]) -> bool:
@@ -420,16 +947,67 @@ def _inherited_column_labels(
     """Bind the common reported/adjusted four-column release layout."""
 
     context = " ".join(blocks[max(0, index - 6) : index])
-    if len(re.findall(r"\bAs Reported\b", context, re.IGNORECASE)) < 2:
-        return None
-    if len(re.findall(r"\bAs Adjusted", context, re.IGNORECASE)) < 2:
-        return None
-    return [
-        f"Q2 {filing_year} as reported",
-        f"Q2 {filing_year} as adjusted",
-        f"Q2 {filing_year - 1} as reported",
-        f"Q2 {filing_year - 1} as adjusted",
-    ]
+    if len(re.findall(r"\bAs Reported\b", context, re.IGNORECASE)) >= 2 and len(
+        re.findall(r"\bAs Adjusted", context, re.IGNORECASE)
+    ) >= 2:
+        return [
+            f"Q2 {filing_year} as reported",
+            f"Q2 {filing_year} as adjusted",
+            f"Q2 {filing_year - 1} as reported",
+            f"Q2 {filing_year - 1} as adjusted",
+        ]
+    duration_header = re.search(
+        r"Three Months Ended\s+Six Months Ended.*?"
+        r"(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2}).*?"
+        r"(20\d{2})\s+(20\d{2})\s+(20\d{2})\s+(20\d{2})",
+        context,
+        re.IGNORECASE,
+    )
+    if duration_header:
+        month = MONTHS[duration_header.group(1).casefold()]
+        day = int(duration_header.group(2))
+        years = [int(duration_header.group(index)) for index in range(3, 7)]
+        return [
+            f"{months}M ended {date(year, month, day).isoformat()}"
+            for months, year in zip((3, 3, 6, 6), years)
+        ]
+    prior_blocks = blocks[max(0, index - 10) : index]
+    if any(
+        re.search(r"Three Months Ended\s+Six Months Ended", value, re.IGNORECASE)
+        for value in prior_blocks
+    ):
+        month_match = next(
+            (
+                re.search(
+                    r"(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2})",
+                    value,
+                    re.IGNORECASE,
+                )
+                for value in reversed(prior_blocks)
+                if re.search(
+                    r"January|February|March|April|May|June|July|August|September|October|November|December",
+                    value,
+                    re.IGNORECASE,
+                )
+            ),
+            None,
+        )
+        year_values = next(
+            (
+                re.findall(r"\b20\d{2}\b", value)
+                for value in reversed(prior_blocks)
+                if len(re.findall(r"\b20\d{2}\b", value)) >= 4
+            ),
+            [],
+        )
+        if month_match and len(year_values) >= 4:
+            month = MONTHS[month_match.group(1).casefold()]
+            day = int(month_match.group(2))
+            return [
+                f"{months}M ended {date(int(year), month, day).isoformat()}"
+                for months, year in zip((3, 3, 6, 6), year_values[:4])
+            ]
+    return None
 
 
 def _numeric_direction(statement: str, number_range: tuple[int, int]) -> float:

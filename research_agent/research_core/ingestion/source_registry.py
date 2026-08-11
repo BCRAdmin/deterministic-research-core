@@ -170,19 +170,17 @@ def bind_registry_claims(
     fact_ledger: dict,
     research_claims: Optional[Iterable[object]] = None,
 ) -> SourceRegistry:
-    """Bind registered sources to exact numeric and narrative research claims."""
+    """Bind registered sources to exact research-claim source edges.
+
+    Fact lineage remains in the fact/evidence ledgers.  Copying every lineage
+    source onto every claim overstates support and makes the reverse graph
+    asymmetric, so the registry is rebuilt solely from each claim's declared
+    source IDs.
+    """
 
     by_id = {source.source_id: source for source in registry.sources}
-    for fact in fact_ledger.get("claims") or []:
-        claim_ids = {
-            str(claim_id)
-            for claim_id in fact.get("research_claim_ids") or []
-            if str(claim_id)
-        }
-        for source_id in fact.get("source_ids") or [fact.get("source_id")]:
-            source = by_id.get(str(source_id or ""))
-            if source is not None:
-                source.claim_ids = sorted(set(source.claim_ids) | claim_ids)
+    for source in registry.sources:
+        source.claim_ids = []
     for claim in research_claims or []:
         claim_id = str(getattr(claim, "claim_id", "") or "").strip()
         if not claim_id:

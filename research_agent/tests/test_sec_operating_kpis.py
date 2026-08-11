@@ -156,6 +156,38 @@ def test_all_visible_hard_numbers_in_emitted_statement_are_bound() -> None:
     ]
 
 
+def test_current_prior_and_change_tuple_gets_semantic_period_contracts() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="TEST",
+        cik="123456",
+        accession_number="0000123456-26-000001",
+        filing_date="2026-07-29",
+        report_date="2026-06-30",
+        report_period_months=3,
+        primary_document="test.htm",
+        html_documents=[
+            "<p>Revenues of $6,684 million, compared to $6,430 million in the "
+            "prior year period, an increase of $254 million, or 4.0%, driven by "
+            "higher collection and disposal yield.</p>"
+        ],
+        retrieved_at="2026-08-02T12:00:00Z",
+    )
+    records = payload["events"][0]["numeric_evidence"]
+
+    assert [item["metric_role"] for item in records] == [
+        "revenue_current_period_value",
+        "revenue_prior_year_value",
+        "revenue_yoy_change_amount",
+        "revenue_yoy_change_percent",
+    ]
+    assert records[0]["period_start"] == "2026-04-01"
+    assert records[0]["period_end"] == "2026-06-30"
+    assert records[1]["period_start"] == "2025-04-01"
+    assert records[1]["period_end"] == "2025-06-30"
+    assert records[2]["current_period_end"] == "2026-06-30"
+    assert records[2]["comparison_period_end"] == "2025-06-30"
+
+
 def test_declining_percentages_are_bound_with_the_reported_direction() -> None:
     payload = build_sec_operating_kpi_payload(
         ticker="TEST",

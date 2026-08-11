@@ -805,7 +805,8 @@ def test_builds_primary_risk_evidence_without_inventing_numeric_metrics():
     assert evidence[0].claim_type == "risk"
     assert evidence[0].source_type == "sec_filing"
     assert evidence[0].supports_metrics == []
-    assert evidence[0].supports_claims == ["company_risk_analysis"]
+    assert evidence[0].supports_claims == []
+    assert evidence[0].supports_categories == ["company_risk_analysis"]
 
 
 def test_risk_selection_keeps_late_governance_risk_beyond_first_thirty():

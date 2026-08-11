@@ -90,10 +90,20 @@ def news_evidence_items(
                     source_sign=numeric.get("source_sign"),
                     currency=numeric.get("currency"),
                     column_label=numeric.get("column_label"),
+                    dimension=numeric.get("dimension"),
+                    display_unit=numeric.get("display_unit"),
+                    period_kind=numeric.get("period_kind"),
+                    presentation_basis=numeric.get("presentation_basis"),
+                    period_start=numeric.get("period_start"),
+                    period_end=numeric.get("period_end"),
+                    current_period_start=numeric.get("current_period_start"),
+                    current_period_end=numeric.get("current_period_end"),
+                    comparison_period_start=numeric.get("comparison_period_start"),
+                    comparison_period_end=numeric.get("comparison_period_end"),
                     date=event_date,
                     url=event.get("url"),
                     retrieved_at=event.get("retrieved_at"),
-                    supports_claims=[
+                    supports_categories=[
                         "material_news_coverage",
                         *(
                             ["business_model_operating_kpi"]

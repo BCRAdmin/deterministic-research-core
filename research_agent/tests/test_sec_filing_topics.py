@@ -64,8 +64,11 @@ def test_filing_topic_scanner_prioritizes_specific_current_legal_disclosures() -
         <p>On April 26, 2026, the state environmental department issued an order
         alleging environmental violations. The order seeks certain remedial actions
         and an administrative penalty. Our appeal of this order is pending.</p>
-        <p>In May 2026 the subsidiary entered a one-year deferred prosecution
-        agreement and remains subject to compliance and reporting obligations.</p>
+        <p>In May 2026 the subsidiary entered settlement agreements, including
+        a one-year deferred prosecution agreement, made the agreed penalty and
+        settlement payments, and remains subject to continuing compliance,
+        reporting and cooperation obligations. We do not currently believe this
+        matter will have a material adverse effect on the company.</p>
         <p>As of June 2026, the company had been notified that 75 locations were
         listed as Superfund sites and 14 sites were owned by the company.</p>
         <p>The majority of proceedings involving NPL sites that we do not own are
@@ -89,4 +92,10 @@ def test_filing_topic_scanner_prioritizes_specific_current_legal_disclosures() -
     assert "In preparing our financial statements" not in summaries
     san_jacinto = next(event for event in events if "San Jacinto" in event["summary"])
     assert san_jacinto["numeric_evidence"][0]["value"] == 100_000_000
+    assert san_jacinto["legal_context"]["reserve_or_obligation_present"] is True
+    assert san_jacinto["legal_context"]["uncertainty_present"] is True
+    stericycle = next(event for event in events if "deferred prosecution" in event["summary"])
+    assert stericycle["legal_context"]["latest_status_present"] is True
+    assert stericycle["legal_context"]["continuing_obligations_present"] is True
+    assert stericycle["legal_context"]["management_assessment_present"] is True
     assert len({event["source_id"] for event in events}) == 3

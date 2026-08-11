@@ -24,6 +24,7 @@ from research_agent.content.publish_composer import (
     _clean_text,
     _constructive_cash_conversion_trigger,
     _final_rating_section,
+    _fcf_definition_reconciliation,
     _generic_investment_thesis,
     _current_kpi_claims,
     _operating_driver_claims,
@@ -334,9 +335,34 @@ def test_operating_driver_selection_is_generic_complete_and_prefers_specific_cla
         "The common stock repurchase program used $1.003 billion for common stock repurchases, with no share repurchases in the prior year.",
         ["operating_kpi_capital_allocation_06_01"],
     )
+    internalization = claim(
+        "INTERNALIZATION",
+        "Internalization of waste based on disposal costs was 73.0%.",
+        ["operating_kpi_internalization_07_01"],
+    )
+    landfill_tons = claim(
+        "LANDFILL_TONS",
+        "Landfill depletable tons were 33.5 million.",
+        ["operating_kpi_landfill_depletable_tons_08_01"],
+    )
+    acquired_revenue = claim(
+        "ACQUIRED_REVENUE",
+        "Gross annualized revenue acquired was $123 million.",
+        ["operating_kpi_acquired_annualized_revenue_09_01"],
+    )
 
     selected = _operating_driver_claims(
-        [mixed, pricing, volume, margin, repurchases_only, capital]
+        [
+            mixed,
+            pricing,
+            volume,
+            margin,
+            repurchases_only,
+            capital,
+            internalization,
+            landfill_tons,
+            acquired_revenue,
+        ]
     )
 
     assert [(label, item.claim_id) for label, item in selected] == [
@@ -344,6 +370,9 @@ def test_operating_driver_selection_is_generic_complete_and_prefers_specific_cla
         ("Volume", "VOLUME"),
         ("Margin", "MARGIN"),
         ("Capital allocation", "CAPITAL"),
+        ("Internalization", "INTERNALIZATION"),
+        ("Landfill depletable tons", "LANDFILL_TONS"),
+        ("Acquired annualized revenue", "ACQUIRED_REVENUE"),
     ]
 
     data, metrics, _, ledger, decision = _load_packet("SNOW")
@@ -359,20 +388,74 @@ def test_operating_driver_selection_is_generic_complete_and_prefers_specific_cla
                 margin,
                 repurchases_only,
                 capital,
+                internalization,
+                landfill_tons,
+                acquired_revenue,
             ]
         },
         metrics,
         decision,
-        [mixed, pricing, volume, margin, repurchases_only, capital],
+        [
+            mixed,
+            pricing,
+            volume,
+            margin,
+            repurchases_only,
+            capital,
+            internalization,
+            landfill_tons,
+            acquired_revenue,
+        ],
         ledger,
     )
     main_body = report.split("## Evidence Appendix", 1)[0]
 
     assert "## Operating Drivers & Capital Allocation" in main_body
+    assert not any(
+        line.startswith("Evidence: `") for line in main_body.splitlines()
+    )
     for label, item in selected:
         assert f"**{label}:**" in main_body
         assert main_body.count(item.claim) == 1
     assert mixed.claim in main_body
+
+
+def test_fcf_definition_table_deduplicates_the_same_guidance_bound() -> None:
+    items = []
+    for evidence_id, value, period in (
+        ("LOW_EXACT", 3_750_000_000.0, "FY2026"),
+        ("LOW_TABLE", 3_750_000_000.0, None),
+        ("HIGH_EXACT", 3_850_000_000.0, "FY2026"),
+        ("HIGH_TABLE", 3_850_000_000.0, None),
+    ):
+        items.append(
+            EvidenceItem(
+                evidence_id=evidence_id,
+                ticker="TEST",
+                claim_type="guidance",
+                source_id="TEST_SEC",
+                source_type="sec_filing",
+                authority_rank=1,
+                statement="Issuer FCF guidance.",
+                value=value,
+                unit="USD",
+                currency="USD",
+                period=period,
+                period_start="2026-01-01",
+                period_end="2026-12-31",
+                date="2026-07-29",
+                supports_metrics=["free_cash_flow_guidance"],
+                raw_value=value,
+            )
+        )
+
+    table = _fcf_definition_reconciliation(
+        EvidenceLedger(ticker="TEST", as_of_date="2026-08-11", evidence_items=items),
+        currency="USD",
+    )
+
+    assert table.count("$3.75B") == 1
+    assert table.count("$3.85B") == 1
 
 
 def _add_exact_metric_evidence(data, metrics, ledger):
@@ -2260,7 +2343,10 @@ def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():
     assert "`EARNINGS_DATE_UNAVAILABLE`" in internal_report
     assert "Next earnings date is unavailable" in internal_report
     assert internal_report.index("## Data Limits & Review Status") < internal_report.index("## Evidence Appendix")
-    assert "$" not in internal_report
+    # The packet currency applies to packet-derived values. Official source
+    # evidence keeps its own ISO currency instead of being silently relabeled.
+    assert "HUF" in internal_report
+    assert "Issuer-defined FCF" in internal_report
     assert "4.34B HUF" in research_report
     assert "4.34B HUF" in internal_report
     assert "| Close | 141.71 HUF |" in research_report

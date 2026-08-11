@@ -674,7 +674,7 @@ def build_sec_risk_evidence(
             date=filing.filing_date,
             url=filing.url,
             retrieved_at=retrieved_at,
-            supports_claims=["company_risk_analysis"],
+            supports_categories=["company_risk_analysis"],
             confidence="high",
             amendment_status="original",
         )

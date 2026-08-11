@@ -37,6 +37,11 @@ from research_agent.evidence.evidence_ledger import (
     build_technical_derivation_evidence,
 )
 from research_agent.evidence.fact_ledger import build_fact_ledger, save_fact_ledger
+from research_agent.evidence.claim_evidence_mapper import (
+    bind_evidence_claim_ids,
+    validate_claim_evidence_graph,
+    validate_visible_citation_completeness,
+)
 from research_agent.evidence.evidence_report import render_evidence_report, save_evidence_report
 from research_agent.evidence.source_ranker import rank_source
 from research_agent.integration.authority_bundle import build_authority_bundle
@@ -46,6 +51,8 @@ from research_agent.quality.quality_score import (
     count_empty_required_archetype_sections,
     save_quality_report,
 )
+from research_agent.quality.semantic_invariants import verify_semantic_invariants
+from research_agent.quality.quality_state_invariants import verify_quality_state
 from research_agent.quality.deeptech_manual_review import (
     assess_speculative_deep_tech_manual_review,
     manual_review_banner,
@@ -316,6 +323,7 @@ def run_research_pipeline(
         research_scope_gaps=list(
             research_scope_coverage.get("blocking_scope_gaps") or []
         ),
+        decision_inputs=_decision_inputs(data_packet),
     )
     decision_packet_path = save_json_packet(
         decision_packet, "decision_packet", ticker, as_of_date, packet_root=packet_root
@@ -336,6 +344,19 @@ def run_research_pipeline(
         claims,
         manifest_output_dir / "analyst_claims.json",
     )
+    bind_evidence_claim_ids(claims, evidence_ledger)
+    claim_evidence_graph = validate_claim_evidence_graph(claims, evidence_ledger)
+    evidence_ledger_path = save_json_packet(
+        evidence_ledger,
+        "evidence_ledger",
+        ticker,
+        as_of_date,
+        packet_root=packet_root,
+    )
+    (manifest_output_dir / "claim_evidence_graph_integrity.json").write_text(
+        json.dumps(claim_evidence_graph, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
     fact_ledger_payload = build_fact_ledger(
         data_packet=data_packet,
         claims=claims,
@@ -352,6 +373,26 @@ def run_research_pipeline(
         fact_ledger_payload,
         manifest_output_dir / "fact_ledger.json",
     )
+    semantic_invariant_report = verify_semantic_invariants(
+        fact_ledger=fact_ledger_payload,
+        evidence_ledger=evidence_ledger,
+        source_registry=source_registry,
+        claims=claims,
+        decision_packet=decision_packet,
+        material_events=data_packet.news_coverage.material_events,
+    )
+    semantic_invariant_report_path = (
+        manifest_output_dir / "semantic_invariant_report.json"
+    )
+    semantic_invariant_report_path.write_text(
+        json.dumps(semantic_invariant_report, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    if not semantic_invariant_report["release_allowed"]:
+        raise RuntimeError(
+            "Semantic invariant gate rejected report generation: "
+            + ", ".join(semantic_invariant_report["blocking_failures"])
+        )
     if not config.source_artifact_root:
         raise RuntimeError(
             "Source snapshot gate rejected report generation: "
@@ -376,6 +417,12 @@ def run_research_pipeline(
         source_snapshot_manifest_path=source_snapshot_manifest_path,
         source_snapshot_root=config.source_artifact_root,
         research_scope_coverage_path=config.source_scope_coverage_path,
+        integrity_artifact_paths={
+            "claim_evidence_graph_integrity": (
+                manifest_output_dir / "claim_evidence_graph_integrity.json"
+            ),
+            "semantic_invariant_report": semantic_invariant_report_path,
+        },
         output_dir=authority_bundle_dir,
     )
     if not authority_manifest["analysis_allowed"]:
@@ -441,6 +488,17 @@ def run_research_pipeline(
     material_topic_coverage_path.parent.mkdir(parents=True, exist_ok=True)
     material_topic_coverage_path.write_text(
         json.dumps(material_topic_coverage, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    visible_citation_completeness_path = (
+        manifest_output_dir / "visible_citation_completeness.json"
+    )
+    visible_citation_completeness = validate_visible_citation_completeness(
+        report,
+        claims,
+    )
+    visible_citation_completeness_path.write_text(
+        json.dumps(visible_citation_completeness, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
     report_path = manifest_output_dir / "final_report.md"
@@ -695,6 +753,14 @@ def run_research_pipeline(
             json.dumps(material_topic_coverage, indent=2, sort_keys=True) + "\n",
             encoding="utf-8",
         )
+        citation_completeness = validate_visible_citation_completeness(
+            internal_best_report,
+            claims,
+        )
+        visible_citation_completeness_path.write_text(
+            json.dumps(citation_completeness, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
         internal_best_audit = audit_markdown_report(
             markdown=internal_best_report,
             metrics_packet=metrics_packet,
@@ -752,6 +818,22 @@ def run_research_pipeline(
                     manifest_output_dir / "internal_best_report.md",
                 )
             )
+    quality_state_integrity = verify_quality_state(
+        quality_report=quality_report,
+        audit_report=audit_report,
+    )
+    quality_state_integrity_path = (
+        manifest_output_dir / "quality_state_integrity.json"
+    )
+    quality_state_integrity_path.write_text(
+        json.dumps(quality_state_integrity, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    if not quality_state_integrity["release_allowed"]:
+        raise RuntimeError(
+            "Quality-state integrity gate rejected report generation: "
+            + ", ".join(quality_state_integrity["blocking_failures"])
+        )
     quality_report_path = save_quality_report(
         quality_report,
         quality_report_path,
@@ -781,6 +863,12 @@ def run_research_pipeline(
             "data_packet_path": str(data_packet_path),
             "source_registry_path": str(source_registry_path),
             "quality_score_path": str(quality_report_path),
+            "quality_state_integrity_path": str(
+                quality_state_integrity_path
+            ),
+            "quality_state_integrity_sha256": file_sha256(
+                quality_state_integrity_path
+            ),
             "publish_quality_score": quality_report.publish_quality_score,
             "internal_research_quality_score": quality_report.internal_research_quality_score,
             "data_confidence_score": quality_report.data_confidence_score,
@@ -815,6 +903,18 @@ def run_research_pipeline(
                 config.source_scope_coverage_path
             ),
             "fact_ledger_path": str(fact_ledger_path),
+            "semantic_invariant_report_path": str(
+                semantic_invariant_report_path
+            ),
+            "semantic_invariant_report_sha256": file_sha256(
+                semantic_invariant_report_path
+            ),
+            "visible_citation_completeness_path": str(
+                visible_citation_completeness_path
+            ),
+            "visible_citation_completeness_sha256": file_sha256(
+                visible_citation_completeness_path
+            ),
             "evidence_ledger_path": str(evidence_ledger_path),
             "evidence_report_path": str(evidence_report_path),
             "authority_bundle_path": str(authority_bundle_dir),
@@ -905,6 +1005,39 @@ def _coverage_status_message(coverage_gaps: list[str]) -> str:
     return f"Research coverage is incomplete: {readable}."
 
 
+def _decision_inputs(data_packet: DataPacket) -> list[dict[str, Any]]:
+    inputs: list[dict[str, Any]] = []
+    for event in data_packet.news_coverage.material_events:
+        is_risk = event.event_type in {
+            "risk",
+            "filing_legal_contingencies",
+            "cyber_incident",
+            "operational_disruption",
+            "product_recall",
+        }
+        is_kpi = event.event_type in {"operating_kpi", "company_outlook", "guidance"}
+        if not (is_risk or is_kpi):
+            continue
+        inputs.append(
+            {
+                "input_id": event.source_id,
+                "input_type": "current_risk" if is_risk else "operating_kpi",
+                "direction": "negative" if is_risk else "mixed",
+                "materiality": "material",
+                "confidence": "high" if event.source_type in {"sec_filing", "company_ir"} else "medium",
+                "included_in_score": False,
+                "exclusion_reason": (
+                    "Current qualitative issuer risk is visible in the decision lineage, "
+                    "but no validated cross-company severity-to-score calibration exists."
+                    if is_risk
+                    else "The operating KPI is visible in the decision lineage; the current "
+                    "standardized score uses only validated rule inputs and does not invent a weight."
+                ),
+            }
+        )
+    return inputs
+
+
 def build_data_packet(
     ticker: str,
     as_of_date: str,
@@ -940,11 +1073,11 @@ def build_data_packet(
             url=item.get("url"),
             summary=item.get("summary"),
             filing_items=item.get("filing_items") or [],
-            content_complete=item.get("content_complete"),
-            dependency_status=item.get("dependency_status"),
-            report_disposition=item.get("report_disposition"),
-            report_disposition_reason=item.get("report_disposition_reason"),
+            **_material_event_state(item),
             superseded_by=item.get("superseded_by"),
+            inventory_filter_reason=item.get("inventory_filter_reason"),
+            semantic_disposition=item.get("semantic_disposition"),
+            legal_context=item.get("legal_context"),
             numeric_evidence=item.get("numeric_evidence") or [],
         )
         for item in news
@@ -1008,6 +1141,50 @@ def build_data_packet(
             for item in fundamentals.get("company_guidance_metrics") or []
         ],
     )
+
+
+def _material_event_state(item: dict[str, Any]) -> dict[str, Any]:
+    """Migrate legacy official events into an explicit, fail-closed state.
+
+    Older source adapters omitted the state fields entirely.  A populated
+    primary-source summary is sufficient to mark the captured content itself
+    complete; missing content remains incomplete and blocks the semantic gate.
+    This does not infer whether an event is economically positive or negative.
+    """
+
+    summary_present = bool(str(item.get("summary") or "").strip())
+    content_complete = item.get("content_complete")
+    if content_complete is None:
+        content_complete = summary_present
+    dependency_status = item.get("dependency_status")
+    if not dependency_status:
+        dependency_status = "complete" if content_complete else "missing_content"
+    report_disposition = item.get("report_disposition")
+    if not report_disposition:
+        report_disposition = (
+            "included_main_report" if content_complete else "blocked_incomplete"
+        )
+    report_reason = item.get("report_disposition_reason")
+    if not report_reason:
+        report_reason = (
+            "The material event has complete captured source content and must be "
+            "visible in the main report."
+            if content_complete
+            else "The material event is blocked because source content is incomplete."
+        )
+    materiality_rationale = item.get("materiality_rationale")
+    if not materiality_rationale:
+        materiality_rationale = (
+            "The upstream source adapter classified this official current event as "
+            "investment-material; the report must preserve that classification."
+        )
+    return {
+        "content_complete": bool(content_complete),
+        "dependency_status": str(dependency_status),
+        "report_disposition": str(report_disposition),
+        "report_disposition_reason": str(report_reason),
+        "materiality_rationale": str(materiality_rationale),
+    }
 
 
 def _exchange_display_name(exchange: str | None) -> str | None:
@@ -1611,6 +1788,12 @@ def _ir_current_metric_inputs(
         basis = row.get("basis") or ("company_defined" if metric_name in {"free_cash_flow", "cash_and_marketable_securities"} else "gaap")
         statement_type = row.get("statement_type") or _ir_statement_type(metric_name)
         period_bucket = row.get("period_bucket") or ("instant" if statement_type == "balance_sheet" else "annual")
+        is_guidance = (
+            str(row.get("claim_type") or "") == "guidance"
+            or period_bucket == "guidance"
+        )
+        period_start = row.get("start_date")
+        period_end = row.get("end_date")
         supports_metrics = row.get("supports_metrics") or _ir_supports_metrics(metric_name)
         evidence_id = f"{ticker.upper()}_{source_id}_{metric_name}_{period}".replace(" ", "_")
         statement = row.get("statement") or f"{ticker.upper()} reported {metric_name} of {value} {unit} for {period}."
@@ -1632,6 +1815,26 @@ def _ir_current_metric_inputs(
                 unit=unit,
                 period=period,
                 date=row.get("date"),
+                period_start=period_start,
+                period_end=period_end,
+                period_kind=(
+                    "guidance"
+                    if is_guidance
+                    else "instant"
+                    if statement_type == "balance_sheet"
+                    else "duration"
+                    if period_start and period_end
+                    else "unknown"
+                ),
+                presentation_basis=(
+                    "guidance_range"
+                    if is_guidance
+                    else "point_in_time"
+                    if statement_type == "balance_sheet"
+                    else "period_total"
+                    if period_start and period_end
+                    else "unknown"
+                ),
                 url=url,
                 retrieved_at=retrieved_at,
                 supports_metrics=supports_metrics,

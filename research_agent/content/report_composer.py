@@ -234,7 +234,11 @@ def _render_claim_section(grouped: dict[str, list[ResearchClaim]], section: str)
         return "- No evidence-backed claim is available for this section."
     lines = []
     for claim in claims:
-        lines.append(f"- **{claim.claim_id}**: {claim.claim}")
+        evidence_ids = ", ".join(claim.evidence_ids)
+        lines.append(
+            f"- {claim.claim} Claim ID: `{claim.claim_id}`. "
+            f"Evidence IDs: `{evidence_ids}`."
+        )
         if claim.counterargument:
             lines.append(f"  Counterargument: {claim.counterargument}")
         if claim.investment_implication:

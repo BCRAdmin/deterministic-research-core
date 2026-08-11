@@ -97,6 +97,9 @@ class DeterministicRepairClient:
         if issue.code == "INVALID_TRADE_LEVEL":
             return _repair_trade_levels(markdown, metrics_packet)
         if issue.code in {"RATING_TOO_HARSH_FOR_ACTION", "RATING_ACTION_MISMATCH", "RATING_BLOCKED_BY_DECISION_PACKET"}:
+            permission = decision_packet.rating_permission
+            if permission.permission_type == "safety_fallback" or not permission.allowed_ratings:
+                return _remove_rating_and_action_language(markdown)
             preferred = decision_packet.rating_permission.preferred_rating.value
             return _replace_rating(markdown, preferred)
         if issue.code in {"OVERSTATED_CAUSALITY", "WEAK_NEWS_CAUSALITY"}:
@@ -202,6 +205,23 @@ def _replace_rating(markdown: str, preferred_rating: str) -> str:
     if rating_re.search(markdown):
         return rating_re.sub(rf"\1{preferred_rating}", markdown, count=1)
     return f"Rating: {preferred_rating}\n\n{markdown}"
+
+
+def _remove_rating_and_action_language(markdown: str) -> str:
+    """Remove recommendations when the decision packet permits no rating.
+
+    A safety fallback is an explicit abstention, not a weak Hold.  Replacing a
+    prohibited rating with another rating would make the prose contradict the
+    machine-readable decision state.
+    """
+
+    prohibited_prefix = re.compile(
+        r"^\s*(?:[-*]\s*)?(?:rating|operative\s+action|action\s+plan|action)\s*[:\-]",
+        re.IGNORECASE,
+    )
+    return "\n".join(
+        line for line in markdown.splitlines() if not prohibited_prefix.search(line)
+    )
 
 
 def _soften_causality(markdown: str) -> str:

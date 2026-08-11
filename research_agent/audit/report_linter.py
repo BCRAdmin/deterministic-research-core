@@ -1447,7 +1447,7 @@ def _latest_company_metric(canonical_financials: CanonicalFinancials, metric_nam
         for metric in canonical_financials.metrics
         if metric.metric_name in metric_names
         and metric.basis in {"company_defined", "non_gaap", "gaap"}
-        and any("IR" in source_id or "EARNINGS" in source_id for source_id in metric.source_ids)
+        and any(_is_primary_issuer_source_id(source_id) for source_id in metric.source_ids)
     ]
     if not candidates:
         return None
@@ -1592,8 +1592,8 @@ def _lint_company_defined_fcf(
             reported=packet_fcf,
             validated=company_fcf.value,
             message=(
-                f"{(ticker or metrics_packet.ticker or '').upper()} packet FCF differs from company-defined IR/Earnings Release FCF by more than 10%; "
-                "company-defined FCF must override SEC-derived FCF before publish."
+                f"{(ticker or metrics_packet.ticker or '').upper()} normalized TTM FCF differs from an issuer-defined primary-source FCF measure by more than 10%; "
+                "measurement windows and definitions must be bridged explicitly before publication."
             ),
         )
     ]
@@ -1605,7 +1605,7 @@ def _best_company_defined_fcf(canonical_financials: CanonicalFinancials):
         for metric in canonical_financials.metrics
         if metric.metric_name in {"free_cash_flow", "adjusted_free_cash_flow"}
         and metric.basis in {"company_defined", "non_gaap"}
-        and any("IR" in source_id or "EARNINGS" in source_id for source_id in metric.source_ids)
+        and any(_is_primary_issuer_source_id(source_id) for source_id in metric.source_ids)
     ]
     if not candidates:
         return None
@@ -1618,6 +1618,14 @@ def _best_company_defined_fcf(canonical_financials: CanonicalFinancials):
         ),
         reverse=True,
     )[0]
+
+
+def _is_primary_issuer_source_id(source_id: str) -> bool:
+    normalized = str(source_id or "").strip().upper()
+    return normalized.startswith("SEC_CIK") or any(
+        marker in normalized
+        for marker in ("_IR_", "IR_", "EARNINGS", "OFFICIAL_PRESS_RELEASE")
+    )
 
 
 def _lint_fcf_unavailable_support(
@@ -1637,7 +1645,7 @@ def _lint_fcf_unavailable_support(
             metric.metric_name
             in {"free_cash_flow", "adjusted_free_cash_flow", "adjusted_free_cash_flow_margin"}
             and metric.basis in {"company_defined", "non_gaap"}
-            and any("IR" in source_id or "EARNINGS" in source_id for source_id in metric.source_ids)
+            and any(_is_primary_issuer_source_id(source_id) for source_id in metric.source_ids)
             for metric in canonical_financials.metrics
         )
     if ticker == "PANW" or not has_adjusted_support:

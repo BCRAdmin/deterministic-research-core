@@ -18,7 +18,7 @@ from research_agent.research_core.models.data_packet import DataPacket
 
 
 FACT_LEDGER_CONTRACT_ID = "room16-canonical-fact-ledger"
-FACT_LEDGER_CONTRACT_VERSION = 3
+FACT_LEDGER_CONTRACT_VERSION = 4
 
 
 class FactLedgerError(ValueError):
@@ -86,20 +86,25 @@ def build_fact_ledger(
             )
         used_source_ids.extend(source_ids)
         period_metadata = _period_metadata(metric_name, evidence)
+        dimension, display_unit, currency = _typed_unit(evidence)
+        presentation_basis = _presentation_basis(
+            metric_name,
+            evidence,
+            period_kind=str(period_metadata["period_kind"]),
+        )
         fact = {
             "claim_id": f"{data_packet.ticker.upper()}_FACT_{metric_name.upper()}",
             "label": metric_name.replace("_", " "),
             "metric": metric_name,
             "value": metric_use["value"],
-            "unit": _canonical_unit(
-                metric_name,
-                evidence.unit,
-                data_packet.price_basis.currency,
-            ),
+            "unit": display_unit,
+            "display_unit": display_unit,
+            "dimension": dimension,
+            "currency": currency,
             "period_type": _period_type(metric_name, evidence),
             **period_metadata,
             "fiscal_label": evidence.period,
-            "presentation_basis": _presentation_basis(metric_name, evidence),
+            "presentation_basis": presentation_basis,
             "asof": evidence.date or data_packet.as_of_date,
             "source_id": evidence.source_id,
             "source_ids": source_ids,
@@ -112,6 +117,8 @@ def build_fact_ledger(
             fact["formula_id"] = evidence.formula_id
             fact["formula_operands"] = dict(sorted(evidence.formula_operands.items()))
         facts.append(fact)
+
+    _validate_typed_facts(facts)
 
     sources = [
         _source_record(
@@ -218,8 +225,18 @@ def _resolve_registered_source_ids(
 
 
 def _period_type(metric_name: str, evidence: EvidenceItem) -> str:
+    if evidence.period_kind == "guidance":
+        return "range"
+    if evidence.period_kind == "comparison":
+        return "comparison"
+    if evidence.period_kind == "trailing_twelve_months":
+        return "ttm"
     if evidence.formula_id:
         return "calculated"
+    if evidence.period_kind == "duration" and evidence.duration_days is None:
+        return "duration"
+    if evidence.period_kind == "instant":
+        return "instant"
     lowered_period = str(evidence.period or "").lower()
     if metric_name.endswith("_ttm") or "ttm" in lowered_period:
         return "ttm"
@@ -237,7 +254,7 @@ def _period_type(metric_name: str, evidence: EvidenceItem) -> str:
         return "duration"
     if metric_name.startswith("current_q_") or "quarter" in lowered_period:
         return "quarterly"
-    return "spot"
+    return "unknown"
 
 
 def _period_metadata(metric_name: str, evidence: EvidenceItem) -> dict[str, Any]:
@@ -246,6 +263,37 @@ def _period_metadata(metric_name: str, evidence: EvidenceItem) -> dict[str, Any]
     period_end = evidence.period_end or evidence.date
     period_start = evidence.period_start
     comparison = _comparison_periods(period)
+    if evidence.period_kind == "unknown" and evidence.value is not None:
+        raise FactLedgerError(
+            f"material numeric fact {metric_name} has unknown period semantics"
+        )
+    if evidence.period_kind == "guidance":
+        if not evidence.period_start or not (evidence.period_end or evidence.date):
+            raise FactLedgerError(
+                f"guidance fact {metric_name} lacks a complete guidance period"
+            )
+        return {
+            "period_kind": "guidance",
+            "period_start": evidence.period_start,
+            "period_end": evidence.period_end or evidence.date,
+        }
+    if evidence.period_kind == "comparison" and all(
+        (
+            evidence.current_period_start,
+            evidence.current_period_end,
+            evidence.comparison_period_start,
+            evidence.comparison_period_end,
+        )
+    ):
+        return {
+            "period_kind": "comparison",
+            "period_start": evidence.current_period_start,
+            "period_end": evidence.current_period_end,
+            "comparison_period_start": evidence.comparison_period_start,
+            "comparison_period_end": evidence.comparison_period_end,
+            "current_period_start": evidence.current_period_start,
+            "current_period_end": evidence.current_period_end,
+        }
     if comparison is not None or metric_name.endswith("_yoy"):
         comparison = comparison or _comparison_from_evidence(evidence)
         if comparison is None:
@@ -254,7 +302,9 @@ def _period_metadata(metric_name: str, evidence: EvidenceItem) -> dict[str, Any]
             )
         return {
             "period_kind": "comparison",
-            "period_start": comparison[0][0],
+            # Generic period fields always describe the primary/current
+            # measurement.  The comparator is orthogonal metadata.
+            "period_start": comparison[1][0],
             "period_end": comparison[1][1],
             "comparison_period_start": comparison[0][0],
             "comparison_period_end": comparison[0][1],
@@ -352,12 +402,42 @@ def _quarter_bounds(year: int, quarter: int) -> tuple[str, str]:
     )
 
 
-def _presentation_basis(metric_name: str, evidence: EvidenceItem) -> str:
+def _presentation_basis(
+    metric_name: str,
+    evidence: EvidenceItem,
+    *,
+    period_kind: str,
+) -> str:
+    if evidence.presentation_basis and evidence.presentation_basis != "unknown":
+        expected = {
+            "instant": "point_in_time",
+            "duration": {"period_total", "period_average"},
+            "comparison": "period_over_period_comparison",
+            "trailing_twelve_months": "trailing_twelve_months",
+            "guidance": "guidance_range",
+        }.get(period_kind)
+        if isinstance(expected, set):
+            if evidence.presentation_basis in expected:
+                return evidence.presentation_basis
+        elif expected == evidence.presentation_basis:
+            return evidence.presentation_basis
     lowered_period = str(evidence.period or "").lower()
-    if _comparison_periods(str(evidence.period or "")) is not None or metric_name.endswith("_yoy"):
+    if period_kind == "comparison":
         return "period_over_period_comparison"
-    if metric_name.endswith("_ttm") or "ttm" in lowered_period:
+    if period_kind == "trailing_twelve_months":
         return "trailing_twelve_months"
+    if period_kind == "guidance":
+        return "guidance_range"
+    if period_kind == "duration":
+        if evidence.duration_days is None:
+            return "period_total"
+        if 70 <= evidence.duration_days <= 110:
+            return "period_total"
+        if 111 <= evidence.duration_days < 330:
+            return "period_total"
+        if 330 <= evidence.duration_days <= 380:
+            return "period_total"
+        return "period_total"
     if evidence.duration_days is not None:
         if 70 <= evidence.duration_days <= 110:
             return "quarter"
@@ -367,6 +447,67 @@ def _presentation_basis(metric_name: str, evidence: EvidenceItem) -> str:
             return "full_year"
         return "duration_unknown"
     return "point_in_time"
+
+
+def _typed_unit(evidence: EvidenceItem) -> tuple[str, str, str | None]:
+    """Preserve the evidence dimension; never reclassify it by metric name."""
+
+    dimension = str(evidence.dimension or "unknown")
+    display_unit = str(evidence.display_unit or evidence.unit or "").strip()
+    currency = str(evidence.currency or "").strip().upper() or None
+    if dimension == "currency":
+        if currency is None and re.fullmatch(r"[A-Z]{3}", display_unit.upper()):
+            currency = display_unit.upper()
+        if currency is None:
+            raise FactLedgerError(
+                f"currency evidence {evidence.evidence_id} lacks ISO currency"
+            )
+        display_unit = currency
+    if not display_unit:
+        display_unit = dimension
+    if dimension == "unknown":
+        raise FactLedgerError(
+            f"numeric evidence {evidence.evidence_id} has unknown dimension"
+        )
+    return dimension, display_unit, currency
+
+
+def _validate_typed_facts(facts: list[dict[str, Any]]) -> None:
+    for fact in facts:
+        metric = str(fact.get("metric") or "<unknown>")
+        period_kind = fact.get("period_kind")
+        basis = fact.get("presentation_basis")
+        if period_kind == "instant" and basis != "point_in_time":
+            raise FactLedgerError(
+                f"instant fact {metric} has incompatible presentation basis {basis}"
+            )
+        if period_kind == "duration" and basis not in {
+            "period_total",
+            "period_average",
+        }:
+            raise FactLedgerError(
+                f"duration fact {metric} has incompatible presentation basis {basis}"
+            )
+        if period_kind == "comparison":
+            required = {
+                "current_period_start",
+                "current_period_end",
+                "comparison_period_start",
+                "comparison_period_end",
+            }
+            if any(not fact.get(key) for key in required):
+                raise FactLedgerError(
+                    f"comparison fact {metric} lacks complete current/comparison periods"
+                )
+            if (
+                fact["period_start"] != fact["current_period_start"]
+                or fact["period_end"] != fact["current_period_end"]
+            ):
+                raise FactLedgerError(
+                    f"comparison fact {metric} generic period is not the current period"
+                )
+        if fact.get("dimension") == "currency" and not fact.get("currency"):
+            raise FactLedgerError(f"currency fact {metric} lacks ISO currency")
 
 
 def _canonical_unit(
@@ -437,6 +578,8 @@ def _promotion_source_type(source_type: str) -> str:
         return "TRANSCRIPT"
     if normalized in {"exchange_ohlcv", "trusted_market_data_vendor"}:
         return "PRICE_VENDOR"
+    if normalized in {"deterministic_calculation", "derived_calculation"}:
+        return "DERIVED_CALCULATION"
     if normalized in {"reuters", "barrons", "marketwatch", "wsj"}:
         return "NEWSWIRE"
     if normalized == "social_media":

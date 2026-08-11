@@ -76,7 +76,7 @@ class _TextParser(HTMLParser):
 
 
 _TOPIC_NUMBER_RE = re.compile(
-    r"(?P<currency>[$€£])?\s*"
+    r"(?P<currency>C\$|US\$|A\$|HK\$|S\$|[$€£¥])?\s*"
     r"(?P<number>(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?)\s*"
     r"(?P<scale>billion|million|thousand|bn|mn|m|k)?\s*(?P<percent>%)?",
     re.IGNORECASE,
@@ -112,7 +112,13 @@ def build_sec_filing_topic_payload(
             score = _topic_match_score(topic, block, patterns)
             if score <= 0:
                 continue
-            candidates.append((score, -source_index, _condense_topic_excerpt(block)))
+            candidates.append(
+                (
+                    score,
+                    -source_index,
+                    _condense_topic_excerpt(block, limit=2800),
+                )
+            )
         matches = [
             excerpt
             for _, _, excerpt in sorted(candidates, reverse=True)[:3]
@@ -152,11 +158,24 @@ def build_sec_filing_topic_payload(
                     "authority_rank": 1,
                     "url": url,
                     "retrieved_at": retrieved_at,
+                    "content_complete": True,
+                    "dependency_status": "complete",
                     "report_disposition": "included_main_report",
                     "report_disposition_reason": (
                         "A specific material filing topic must be visible in the main report."
                     ),
+                    "materiality_rationale": (
+                        "A source-specific filing topic was found in a current "
+                        "primary SEC filing and requires explicit report treatment."
+                    ),
+                    "inventory_filter_reason": "inside_analysis_window",
+                    "semantic_disposition": "current_material_topic",
                     "numeric_evidence": _topic_numeric_evidence(summary, topic),
+                    "legal_context": (
+                        _legal_context(summary)
+                        if topic == "legal_contingencies"
+                        else None
+                    ),
                 }
             )
     return {
@@ -272,24 +291,97 @@ def _topic_numeric_evidence(summary: str, topic: str) -> list[dict[str, Any]]:
             "k": 1_000,
         }.get(scale, 1)
         value = raw / 100 if percent else raw * multiplier
+        currency = {
+            "C$": "CAD",
+            "US$": "USD",
+            "A$": "AUD",
+            "HK$": "HKD",
+            "S$": "SGD",
+            "$": "USD",
+            "€": "EUR",
+            "£": "GBP",
+            "¥": "JPY",
+        }.get(str(match.group("currency") or ""))
+        metric_name = _topic_metric_name(
+            summary,
+            topic=topic,
+            match=match,
+            ordinal=len(values) + 1,
+        )
+        if currency:
+            metric_name = f"{metric_name}_{currency.casefold()}"
         values.append(
             {
-                "metric_name": f"filing_{topic}_{len(values) + 1:02d}",
+                "metric_name": metric_name,
                 "value": value,
                 "raw_value": raw,
-                "unit": "percent" if percent else "currency" if match.group("currency") else "count",
+                "unit": "percent" if percent else currency or "count",
+                "dimension": "percent" if percent else "currency" if currency else "count",
                 "source_scale": "percent" if percent else scale or "base",
-                "source_unit": "percent" if percent else "currency" if match.group("currency") else "count",
+                "source_unit": "percent" if percent else currency or "count",
                 "source_sign": 1,
-                "currency": {
-                    "$": "USD",
-                    "€": "EUR",
-                    "£": "GBP",
-                }.get(str(match.group("currency") or "")),
+                "currency": currency,
                 "column_label": None,
             }
         )
     return values
+
+
+def _topic_metric_name(
+    summary: str,
+    *,
+    topic: str,
+    match: re.Match[str],
+    ordinal: int,
+) -> str:
+    context = summary[max(0, match.start() - 90) : match.end() + 70].casefold()
+    if match.group("percent"):
+        return f"filing_{topic}_interest_rate"
+    rules = (
+        ("acquisition_total_consideration", r"total consideration|purchase price"),
+        ("acquisition_stock_consideration", r"shares?.{0,40}(?:valued|value)"),
+        ("acquisition_net_cash_paid", r"net cash paid"),
+        ("acquisition_holdback", r"holdbacks?"),
+        ("debt_net_proceeds", r"net proceeds"),
+        ("debt_redemption_principal", r"redeem|outstanding"),
+        ("debt_principal", r"issued|senior notes"),
+        ("interest_rate", r"senior notes|matured"),
+        ("legal_reserve", r"recorded.{0,40}(?:liability|reserve)|reserve"),
+        ("legal_payment", r"paid|payment"),
+        ("legal_penalty", r"penalty|fine"),
+    )
+    for name, pattern in rules:
+        if re.search(pattern, context):
+            return f"filing_{topic}_{name}"
+    return f"filing_{topic}_unmapped_{ordinal:02d}"
+
+
+def _legal_context(summary: str) -> dict[str, Any]:
+    folded = summary.casefold()
+    return {
+        "latest_status_present": bool(
+            re.search(
+                r"\b(?:settled|settlement|resolved|resolution|entered into|issued|"
+                r"approved|pending|deferred prosecution agreement|dpa)\b",
+                folded,
+            )
+        ),
+        "reserve_or_obligation_present": bool(
+            re.search(r"\b(?:reserve|liability|obligation|payment|penalty|fine)\b", folded)
+        ),
+        "uncertainty_present": bool(
+            re.search(r"\b(?:uncertain|uncertainty|may be|could be|not been established)\b", folded)
+        ),
+        "continuing_obligations_present": bool(
+            re.search(r"\b(?:continuing|ongoing|compliance|reporting|cooperation)\b", folded)
+        ),
+        "management_assessment_present": bool(
+            re.search(
+                r"\b(?:we believe|management believes|we do not (?:currently )?(?:expect|believe)|our estimate)\b",
+                folded,
+            )
+        ),
+    }
 
 
 def _document_name(value: str) -> str:

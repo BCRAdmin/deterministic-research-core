@@ -51,7 +51,8 @@ def test_waste_archetype_requires_operating_kpis_generically() -> None:
         "Collection and disposal yield rose 5%, while volume fell 1%. Adjusted EBITDA "
         "margin was 30%. Free cash flow guidance is $3.8 billion to $3.9 billion. "
         "The company returned $1 billion to shareholders through share repurchases "
-        "and cash dividends."
+        "and cash dividends. Internalization and landfill depletable tons were "
+        "reviewed as archetype KPIs and explicitly dispositioned."
     )
     assessment = assess_speculative_deep_tech_manual_review(
         markdown=text,
@@ -133,7 +134,11 @@ def test_wm_failure_fixture_blocks_when_fcf_guidance_is_missing() -> None:
     )
     assert assessment.company_archetype == CompanyArchetype.WASTE_ENVIRONMENTAL_SERVICES
     assert assessment.business_model_kpi_coverage_complete is False
-    assert assessment.missing_business_kpis == ["free_cash_flow_guidance"]
+    assert set(assessment.missing_business_kpis) == {
+        "free_cash_flow_guidance",
+        "internalization",
+        "landfill_depletable_tons",
+    }
     assert assessment.publishable is False
 
 

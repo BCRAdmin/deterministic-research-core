@@ -18,7 +18,7 @@ def score_fundamentals(
     metrics: MetricsPacket,
     weights: Optional[RuleWeightConfig] = None,
     triggered_rules: Optional[list[str]] = None,
-    calibration_mode: str = "live",
+    calibration_mode: str = "standardized_uncalibrated",
 ) -> float:
     weights = weights or DEFAULT_RULE_WEIGHTS
     score = 0.0
@@ -55,7 +55,7 @@ def score_technicals(
     metrics: MetricsPacket,
     weights: Optional[RuleWeightConfig] = None,
     triggered_rules: Optional[list[str]] = None,
-    calibration_mode: str = "live",
+    calibration_mode: str = "standardized_uncalibrated",
 ) -> float:
     weights = weights or DEFAULT_RULE_WEIGHTS
     if metrics.technical.price_series_basis not in TECHNICAL_SCORING_BASES:
@@ -102,7 +102,7 @@ def score_valuation(
     metrics: MetricsPacket,
     weights: Optional[RuleWeightConfig] = None,
     triggered_rules: Optional[list[str]] = None,
-    calibration_mode: str = "live",
+    calibration_mode: str = "standardized_uncalibrated",
 ) -> float:
     # Absolute multiples are observations, not relative valuation evidence.
     # Until a peer, history or cycle benchmark is present in the authority
@@ -116,7 +116,7 @@ def score_risk(
     audit_report: Optional[AuditReport] = None,
     weights: Optional[RuleWeightConfig] = None,
     triggered_rules: Optional[list[str]] = None,
-    calibration_mode: str = "live",
+    calibration_mode: str = "standardized_uncalibrated",
 ) -> float:
     """Apply only the deterministic financial-risk screen as downside weight.
 
@@ -142,7 +142,7 @@ def calculate_signal_scores(
     validation_report: Optional[ValidationReport] = None,
     audit_report: Optional[AuditReport] = None,
     weights: Optional[RuleWeightConfig] = None,
-    calibration_mode: str = "live",
+    calibration_mode: str = "standardized_uncalibrated",
 ) -> SignalScores:
     scores, _, _, _ = calculate_signal_scores_with_rules(
         metrics=metrics,

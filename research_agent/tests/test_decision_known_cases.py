@@ -88,7 +88,7 @@ def test_ddog_report_action_does_not_override_analytical_rating():
     assert with_action.rating_permission.display_rating == "Unrated"
     assert with_action.rating_permission.fallback_only is True
     assert with_action.rating_permission == without_action.rating_permission
-    assert with_action.rating_permission.allowed_ratings == [Rating.HOLD]
+    assert with_action.rating_permission.allowed_ratings == []
     assert not any("action class" in reason.lower() for reason in with_action.key_reasons)
 
 
@@ -102,4 +102,4 @@ def test_mdb_blocks_strong_buy_and_sell():
     assert Rating.STRONG_BUY in packet.rating_permission.blocked_ratings
     assert Rating.SELL in packet.rating_permission.blocked_ratings
     assert packet.rating_permission.preferred_rating == Rating.HOLD
-    assert packet.rating_permission.allowed_ratings == [Rating.HOLD]
+    assert packet.rating_permission.allowed_ratings == []

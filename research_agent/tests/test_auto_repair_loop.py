@@ -102,7 +102,7 @@ def test_auto_repair_fixes_nvda_fcf_mismatch():
     assert "$96.575B" in result.final_markdown
 
 
-def test_report_builder_auto_repair_writes_final_and_quality_artifacts(tmp_path):
+def test_report_builder_auto_repair_keeps_safety_fallback_in_manual_review(tmp_path):
     _, data_packet, metrics_packet, validation_report, source_registry, _, decision_packet = _fixture_objects("nvda_2026_05_01")
     claims = [
         ResearchClaim(
@@ -114,21 +114,23 @@ def test_report_builder_auto_repair_writes_final_and_quality_artifacts(tmp_path)
         )
     ]
 
-    report = render_markdown_report(
-        data_packet=data_packet,
-        metrics_packet=metrics_packet,
-        validation_report=validation_report,
-        claims=claims,
-        source_registry=source_registry,
-        decision_packet=decision_packet,
-        run_audit=True,
-        enable_auto_repair=True,
-        audit_output_dir=str(tmp_path),
-    )
+    with pytest.raises(RuntimeError, match="Quality gate failed"):
+        render_markdown_report(
+            data_packet=data_packet,
+            metrics_packet=metrics_packet,
+            validation_report=validation_report,
+            claims=claims,
+            source_registry=source_registry,
+            decision_packet=decision_packet,
+            run_audit=True,
+            enable_auto_repair=True,
+            audit_output_dir=str(tmp_path),
+        )
 
-    assert "$96.575B" in report
     assert (tmp_path / "repaired_report.md").exists()
-    assert (tmp_path / "final_report.md").exists()
+    assert "$96.575B" in (tmp_path / "repaired_report.md").read_text(encoding="utf-8")
+    assert (tmp_path / "manual_review_required.md").exists()
+    assert not (tmp_path / "final_report.md").exists()
     assert (tmp_path / "quality_score.json").exists()
 
 

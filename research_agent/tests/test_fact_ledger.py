@@ -222,7 +222,8 @@ def test_fact_ledger_binds_exact_values_formulas_and_sources():
         "SEC_GENERIC_DERIVED_TTM",
         "GENERIC_EXCHANGE",
     ]
-    assert facts["sbc_to_revenue"]["unit"] == "fraction (1.0 = 100%)"
+    assert facts["sbc_to_revenue"]["unit"] == "percent"
+    assert facts["sbc_to_revenue"]["dimension"] == "percent"
     assert facts[
         "shareholder_distributions_minus_fcf_ttm"
     ]["formula_operands"] == {
@@ -248,7 +249,7 @@ def test_fact_ledger_preserves_comparison_periods_and_ratio_units():
             authority_rank=1,
             statement="Diluted shares increased two percent.",
             value=0.02,
-            unit="shares",
+            unit="ratio",
             period="CY2025Q2..CY2026Q2",
             date="2026-06-30",
             supports_metrics=["diluted_share_count_yoy"],
@@ -273,13 +274,52 @@ def test_fact_ledger_preserves_comparison_periods_and_ratio_units():
         if item["metric"] == "diluted_share_count_yoy"
     )
     assert fact["unit"] == "ratio"
+    assert fact["period_start"] == fact["current_period_start"] == "2026-04-01"
+    assert fact["period_end"] == fact["current_period_end"] == "2026-06-30"
     assert fact["period_kind"] == "comparison"
     assert fact["period_type"] == "calculated"
     assert fact["presentation_basis"] == "period_over_period_comparison"
     assert fact["comparison_period_start"] == "2025-04-01"
     assert fact["comparison_period_end"] == "2025-06-30"
-    assert fact["current_period_start"] == "2026-04-01"
-    assert fact["current_period_end"] == "2026-06-30"
+
+
+def test_fact_ledger_never_labels_a_duration_fact_as_spot() -> None:
+    data_packet, claims, evidence, registry = _fact_inputs()
+    claims[0].metric_values["operating_kpi_volume"] = 42.0
+    evidence.evidence_items.append(
+        EvidenceItem(
+            evidence_id="GENERIC_DURATION_KPI",
+            ticker="GENERIC",
+            claim_type="financial_metric",
+            source_id="SEC_GENERIC_DERIVED_TTM",
+            source_type="sec_filing",
+            authority_rank=1,
+            statement="Volume for the six months ended June 30.",
+            value=42.0,
+            unit="count",
+            period="6M ended 2026-06-30",
+            period_start="2026-01-01",
+            period_end="2026-06-30",
+            date="2026-06-30",
+            supports_metrics=["operating_kpi_volume"],
+            raw_value=42.0,
+        )
+    )
+
+    payload = build_fact_ledger(
+        data_packet=data_packet,
+        claims=claims,
+        evidence_ledger=evidence,
+        source_registry=registry,
+    )
+
+    fact = next(
+        item for item in payload["claims"]
+        if item["metric"] == "operating_kpi_volume"
+    )
+    assert fact["period_kind"] == "duration"
+    assert fact["period_type"] == "duration"
+    assert fact["presentation_basis"] == "period_total"
 
 
 def test_fact_ledger_resolves_compact_sec_lineage_to_registered_source_id():

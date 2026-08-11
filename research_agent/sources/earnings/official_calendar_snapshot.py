@@ -75,10 +75,16 @@ def verify_official_calendar_snapshot(
     sources = sources if isinstance(sources, list) else []
     if not sources:
         failures.append("calendar_sources_checked")
+    origin_capture_verified = True
+    proxy_transports: list[str] = []
     for source in sources:
         url = str(source.get("url") or "") if isinstance(source, Mapping) else ""
         parsed = urlsplit(url)
         facts = source.get("observed_facts") if isinstance(source, Mapping) else None
+        transport = str(source.get("capture_transport") or "") if isinstance(source, Mapping) else ""
+        if "proxy" in transport.casefold():
+            origin_capture_verified = False
+            proxy_transports.append(transport)
         if (
             parsed.scheme != "https"
             or not parsed.hostname
@@ -175,6 +181,16 @@ def verify_official_calendar_snapshot(
         "verified": not failures,
         "status": "pass" if not failures else "fail",
         "blocking_failures": sorted(set(failures)),
+        "content_snapshot_verified": not failures,
+        "origin_capture_verified": bool(not failures and origin_capture_verified),
+        "transport_assurance": (
+            "origin_capture_verified"
+            if not failures and origin_capture_verified
+            else "proxy_observation_origin_response_unverified"
+            if not failures and proxy_transports
+            else "unverified"
+        ),
+        "proxy_transports": sorted(set(proxy_transports)),
     }
 
 

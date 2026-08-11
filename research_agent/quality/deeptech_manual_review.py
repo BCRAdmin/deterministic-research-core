@@ -34,6 +34,8 @@ BUSINESS_MODEL_KPI_REQUIREMENTS = {
             r"\b(?:share repurchases?|stock repurchases?|cash dividends?|"
             r"capital returned|return of capital)\b"
         ),
+        "internalization": r"\binternalization(?: of waste)?\b",
+        "landfill_depletable_tons": r"\blandfill depletable tons?\b",
     },
     "MEMBERSHIP_RETAIL": {
         "paid_members": r"\b(?:paid members?|paid memberships?)\b",
@@ -176,7 +178,11 @@ def assess_speculative_deep_tech_manual_review(
         archetype = _infer_non_deeptech_archetype(
             text, metrics_packet, source_registry
         )
-        triggered_rules = [name for name, value in speculative_triggers.items() if value]
+        triggered_rules = _explain_non_deeptech_archetype(
+            archetype,
+            text,
+            source_registry,
+        )
         confidence = _archetype_confidence(archetype, text, metrics_packet, source_registry)
     active = speculative_active
     issues: list[AuditIssue] = []
@@ -769,6 +775,48 @@ def _archetype_confidence(
     if archetype == CompanyArchetype.STANDARD_GROWTH:
         return 0.6
     return 0.7
+
+
+def _explain_non_deeptech_archetype(
+    archetype: CompanyArchetype,
+    text: str,
+    source_registry: Any,
+) -> list[str]:
+    context = _context_text(text, source_registry)
+    rules: list[str] = []
+    identity_terms = {
+        CompanyArchetype.WASTE_ENVIRONMENTAL_SERVICES: (
+            "solid waste",
+            "waste collection",
+            "landfill",
+            "environmental services",
+        ),
+        CompanyArchetype.MEMBERSHIP_RETAIL: (
+            "membership warehouse",
+            "membership retail",
+            "paid members",
+            "renewal rate",
+        ),
+        CompanyArchetype.DIVERSIFIED_MEDICAL_DEVICES_DIAGNOSTICS: (
+            "medical devices",
+            "diagnostics",
+            "diagnostic products",
+        ),
+    }.get(archetype, ())
+    rules.extend(
+        f"identity_term:{term.replace(' ', '_')}"
+        for term in identity_terms
+        if term in context
+    )
+    rules.extend(
+        f"kpi_contract:{name}"
+        for name, pattern in BUSINESS_MODEL_KPI_REQUIREMENTS.get(
+            archetype.value,
+            {},
+        ).items()
+        if re.search(pattern, context, flags=re.IGNORECASE)
+    )
+    return rules
 
 
 def _business_model_kpi_coverage(

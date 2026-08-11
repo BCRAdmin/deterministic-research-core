@@ -5,7 +5,12 @@ from typing import Optional
 from research_agent.audit.audit_report import AuditReport
 from research_agent.calibration.rule_weight_config import RuleWeightConfig
 from research_agent.decision.action_policy import build_action_policy
-from research_agent.decision.decision_packet import DecisionPacket, RatingPermission, SignalScores
+from research_agent.decision.decision_packet import (
+    DecisionInput,
+    DecisionPacket,
+    RatingPermission,
+    SignalScores,
+)
 from research_agent.decision.rating_taxonomy import Rating
 from research_agent.decision.signal_scores import calculate_signal_scores_with_rules
 from research_agent.research_core.models.metrics_packet import MetricsPacket
@@ -27,17 +32,14 @@ def determine_rating_permission(
     """
 
     preferred, reason = determine_unconstrained_analytical_rating(scores)
-    # There is no independent policy model that justifies alternative ratings
-    # today.  Keep the compatibility layer fail-closed to the analytical result
-    # instead of inventing a corridor around it.
-    allowed = [preferred]
-
     all_ratings = list(Rating)
-    blocked = [rating for rating in all_ratings if rating not in allowed]
 
     return RatingPermission(
-        allowed_ratings=allowed,
-        blocked_ratings=blocked,
+        # These are policy permissions, not the analytical output.  A singleton
+        # list would make the preferred rating look discriminating while policy
+        # had preselected it.
+        allowed_ratings=all_ratings,
+        blocked_ratings=[],
         preferred_rating=preferred,
         reason=reason,
         evidence_status=_evidence_status(scores),
@@ -105,9 +107,10 @@ def build_decision_packet(
     audit_report: Optional[AuditReport] = None,
     action_class: Optional[str] = None,
     rule_weights: Optional[RuleWeightConfig] = None,
-    calibration_mode: str = "live",
+    calibration_mode: str = "standardized_uncalibrated",
     research_scope_complete: Optional[bool] = None,
     research_scope_gaps: Optional[list[str]] = None,
+    decision_inputs: Optional[list[DecisionInput | dict]] = None,
 ) -> DecisionPacket:
     scores, triggered_rules, score_version, mode = calculate_signal_scores_with_rules(
         metrics=metrics_packet,
@@ -137,6 +140,8 @@ def build_decision_packet(
         analytical_rating = None
         permission = permission.model_copy(
             update={
+                "allowed_ratings": [],
+                "blocked_ratings": list(Rating),
                 "permission_type": "safety_fallback",
                 "display_rating": "Unrated",
                 "publication_allowed": False,
@@ -210,6 +215,10 @@ def build_decision_packet(
         triggered_rules=triggered_rules,
         score_version=score_version,
         calibration_mode=mode,
+        decision_inputs=[
+            item if isinstance(item, DecisionInput) else DecisionInput(**item)
+            for item in decision_inputs or []
+        ],
     )
 
 

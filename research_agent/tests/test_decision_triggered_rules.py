@@ -41,4 +41,4 @@ def test_decision_packet_records_triggered_rules():
     assert packet.signal_scores.valuation_score == 0
     assert packet.signal_scores.valuation_status == "unbenchmarked"
     assert packet.score_version == "v1"
-    assert packet.calibration_mode == "live"
+    assert packet.calibration_mode == "standardized_uncalibrated"

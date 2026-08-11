@@ -200,6 +200,24 @@ def infer_possible_metric(text: str, unit: Optional[str] = None) -> Optional[str
             "not a ttm claim",
         )
     )
+    if str(unit or "").lower() in {"usd", "cad", "huf", "eur", "gbp", "jpy"}:
+        currency_metric = _nearest_labeled_metric(
+            normalized,
+            {
+                "revenue ttm": "revenue_ttm",
+                "ttm revenue": "revenue_ttm",
+                "free cash flow ttm": "free_cash_flow_ttm",
+                "fcf ttm": "free_cash_flow_ttm",
+                "ttm free cash flow": "free_cash_flow_ttm",
+                "frozen close": "close",
+                "price basis": "close",
+                "net cash": "net_cash",
+                "net debt": "net_debt",
+            },
+            prefer_preceding=True,
+        )
+        if currency_metric is not None:
+            return currency_metric
     if current_period:
         if re.search(
             r"(?:covered by|below) same[- ]period fcf.{0,40}"

@@ -55,7 +55,7 @@ def test_quality_score_blocks_low_quality_report():
     assert not score.publishable
 
 
-def test_quality_score_allows_repaired_report():
+def test_quality_score_keeps_repaired_safety_fallback_nonpublishable():
     from research_agent.research_core.models.data_packet import DataPacket
 
     markdown, metrics_packet, validation_report, source_registry, audit_report, decision_packet = _quality_inputs("nvda_2026_05_01")
@@ -77,7 +77,8 @@ def test_quality_score_allows_repaired_report():
     )
 
     assert score.total_score >= 85
-    assert score.publishable
+    assert score.publishable is False
+    assert decision_packet.rating_permission.permission_type == "safety_fallback"
 
 
 def test_quality_score_blocks_skeleton_report_without_claims():

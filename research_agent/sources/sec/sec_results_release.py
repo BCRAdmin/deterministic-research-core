@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 import unicodedata
 from collections import Counter
-from datetime import datetime
+from datetime import date, datetime
 from html.parser import HTMLParser
 from pathlib import PurePosixPath
 from typing import Any, Optional
@@ -297,6 +297,12 @@ def build_sec_results_release_payload(
         _extract_transposed_segment_bridge_metrics(table, add_value)
         _extract_sectioned_segment_metrics(table, add_value)
         _extract_current_guidance_metrics(table, add_value)
+        _extract_projected_fcf_reconciliation(
+            table,
+            parser.blocks,
+            add_value,
+            default_year=fiscal_year,
+        )
     _extract_headline_block_metrics(parser.blocks, add_value, headline_controls)
 
     guidance_years: set[int] = set()
@@ -320,6 +326,13 @@ def build_sec_results_release_payload(
             add_value(f"guidance_{metric_base}_high", high)
             break
     guidance_years.update(_extract_block_guidance_metrics(parser.blocks, add_value, fiscal_year))
+    guidance_years.update(
+        _extract_guidance_basis_point_changes(
+            parser.blocks,
+            add_value,
+            default_year=fiscal_year,
+        )
+    )
     if _has_unparsed_material_guidance(parser.blocks, values):
         raise ValueError("materielle Guidance erkannt, aber nicht strukturiert extrahiert")
 
@@ -369,7 +382,16 @@ def build_sec_results_release_payload(
                 "period_bucket": "guidance" if is_guidance else period_bucket,
                 "fiscal_year": metric_fiscal_year if is_guidance else fiscal_year,
                 "fiscal_period": metric_fiscal_period if is_guidance else fiscal_period,
-                "end_date": filing_date if is_guidance else period_end_date,
+                "start_date": (
+                    date(metric_fiscal_year, 1, 1).isoformat()
+                    if is_guidance
+                    else None
+                ),
+                "end_date": (
+                    date(metric_fiscal_year, 12, 31).isoformat()
+                    if is_guidance
+                    else period_end_date
+                ),
                 "date": filing_date if is_guidance else period_end_date,
                 "basis": metric_bases.get(metric_name, "company_defined"),
                 "statement_type": "guidance" if is_guidance else "income_statement",
@@ -480,6 +502,140 @@ def build_sec_results_release_payload(
             "guidance_metric_count": len(supported_guidance),
         },
     }
+
+
+def _extract_projected_fcf_reconciliation(
+    table: list[list[str]],
+    blocks: list[str],
+    add_value,
+    *,
+    default_year: int,
+) -> bool:
+    """Capture every signed component of an issuer projected-FCF bridge."""
+
+    heading = " ".join(table[0]) if table else ""
+    if not re.search(
+        r"projected\s+free\s+cash\s+flow\s+reconciliation",
+        heading,
+        flags=re.IGNORECASE,
+    ):
+        return False
+    year_match = re.search(r"\b(20[0-9]{2})\b", heading)
+    guidance_year = int(year_match.group(1)) if year_match else default_year
+    in_millions = any(
+        re.fullmatch(r"\(?\s*in\s+millions\s*\)?", block.strip(), re.IGNORECASE)
+        for block in blocks
+    )
+    if not in_millions:
+        raise ValueError(
+            "projected FCF reconciliation detected without an explicit in-millions scale"
+        )
+    definitions = {
+        "net cash provided by operating activities": "operating_cash_flow",
+        "capital expenditures to support the business": "support_capex",
+        "proceeds from divestitures of businesses and other assets, net of cash divested": (
+            "divestiture_proceeds"
+        ),
+        "free cash flow without sustainability growth investments": (
+            "fcf_before_sustainability_growth"
+        ),
+        "capital expenditures - sustainability growth investments": (
+            "sustainability_growth_capex"
+        ),
+        "free cash flow": "free_cash_flow",
+    }
+    found: set[str] = set()
+    for row in table[1:]:
+        label = " ".join(str(row[0] or "").casefold().split()) if row else ""
+        metric = definitions.get(label)
+        if metric is None:
+            continue
+        values = _signed_table_values(row[1:])
+        if len(values) != 2:
+            raise ValueError(
+                f"projected FCF reconciliation row {label!r} requires exactly two scenarios"
+            )
+        found.add(metric)
+        for scenario, value in enumerate(values, start=1):
+            add_value(
+                f"guidance_fcf_bridge_{metric}_scenario_{scenario}",
+                value * 1_000_000,
+                display_label=(
+                    f"projected FCF bridge {label} scenario {scenario}"
+                ),
+                unit="USD",
+                basis="non_gaap",
+                period_bucket="guidance",
+                guidance_period=(f"FY{guidance_year}", guidance_year, "FY"),
+                bound_type="scenario",
+                direction="issuer_scenario",
+            )
+    missing = set(definitions.values()) - found
+    if missing:
+        raise ValueError(
+            "projected FCF reconciliation is incomplete: " + ", ".join(sorted(missing))
+        )
+    return True
+
+
+def _signed_table_values(cells: list[str]) -> list[float]:
+    text = " ".join(str(cell or "") for cell in cells)
+    matches = re.findall(r"\(?\s*([0-9]{1,3}(?:,[0-9]{3})+|[0-9]+)\s*\)?", text)
+    values: list[float] = []
+    cursor = 0
+    for raw in matches:
+        position = text.find(raw, cursor)
+        before = text[max(0, position - 2) : position]
+        after = text[position + len(raw) : position + len(raw) + 2]
+        sign = -1.0 if "(" in before and ")" in after else 1.0
+        values.append(sign * float(raw.replace(",", "")))
+        cursor = position + len(raw)
+    return values
+
+
+def _extract_guidance_basis_point_changes(
+    blocks: list[str],
+    add_value,
+    *,
+    default_year: int,
+) -> set[int]:
+    years: set[int] = set()
+    definitions = {
+        "adjusted operating ebitda margin": "adjusted_operating_ebitda_margin",
+        "adjusted operating margin": "adjusted_operating_margin",
+        "operating margin": "operating_margin",
+    }
+    for index, block in enumerate(blocks):
+        folded = block.casefold()
+        if not re.search(r"\b(?:guidance|outlook|expected|expects?)\b", folded):
+            continue
+        for label, metric_base in definitions.items():
+            label_start = folded.find(label)
+            if label_start < 0:
+                continue
+            change = re.search(
+                r"\b(?P<direction>increase|increased|raise|raised|decrease|decreased|lower|lowered)"
+                r"(?:\s+of|\s+by)?\s+(?P<value>[0-9]+(?:\.[0-9]+)?)\s+basis points?\b",
+                folded[label_start:],
+            )
+            if change is None:
+                continue
+            value = float(change.group("value"))
+            if change.group("direction") in {"decrease", "decreased", "lower", "lowered"}:
+                value = -value
+            year = _nearest_guidance_year(blocks, index, default_year)
+            years.add(year)
+            add_value(
+                f"guidance_{metric_base}_change_basis_points",
+                value,
+                display_label=f"{label} guidance change",
+                unit="basis_points",
+                basis="non_gaap" if "adjusted" in label else "company_defined",
+                period_bucket="guidance",
+                guidance_period=(f"FY{year}", year, "FY"),
+                direction="raised" if value > 0 else "lowered",
+            )
+    return years
 
 
 def _forward_guidance_scope(block: str) -> str:

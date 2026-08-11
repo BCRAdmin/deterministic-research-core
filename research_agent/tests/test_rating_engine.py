@@ -71,7 +71,7 @@ def test_fundamentals_use_directional_evidence_not_global_quality_thresholds():
         )
     )
     assert unbenchmarked_permission.evidence_status == "partial"
-    assert unbenchmarked_permission.allowed_ratings == [Rating.HOLD]
+    assert unbenchmarked_permission.allowed_ratings == list(Rating)
     assert not any(
         rule.startswith(
             (
@@ -258,8 +258,8 @@ def test_unbenchmarked_strong_setup_is_capped_at_hold():
         )
     )
     assert negative_permission.preferred_rating == Rating.UNDERWEIGHT
-    assert negative_permission.allowed_ratings == [Rating.UNDERWEIGHT]
-    assert Rating.SELL in negative_permission.blocked_ratings
+    assert negative_permission.allowed_ratings == list(Rating)
+    assert negative_permission.blocked_ratings == []
 
     partial_negative_permission = determine_rating_permission(
         SignalScores(
@@ -275,7 +275,7 @@ def test_unbenchmarked_strong_setup_is_capped_at_hold():
         )
     )
     assert partial_negative_permission.preferred_rating == Rating.HOLD
-    assert partial_negative_permission.allowed_ratings == [Rating.HOLD]
+    assert partial_negative_permission.allowed_ratings == list(Rating)
     assert "Core fundamental coverage is incomplete" in partial_negative_permission.reason
     assert "excluded from rating and timing" in partial_negative_permission.reason
 
@@ -319,12 +319,11 @@ def test_validation_quality_cannot_change_the_company_rating():
     )
 
     assert permission.preferred_rating == Rating.HOLD
-    assert permission.allowed_ratings == [Rating.HOLD]
+    assert permission.allowed_ratings == list(Rating)
     assert scores.risk_score == 0
     assert scores.risk_status == "not_measured"
     assert scores.composite_score == 1
-    assert Rating.STRONG_BUY in permission.blocked_ratings
-    assert Rating.ACCUMULATE in permission.blocked_ratings
+    assert permission.blocked_ratings == []
 
 
 def test_blocking_validation_marks_conclusion_blocked_without_rewriting_rating():

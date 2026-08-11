@@ -35,6 +35,18 @@ class OperatingKpiEvidence(BaseModel):
     source_sign: Optional[Literal[-1, 1]] = None
     currency: Optional[str] = None
     column_label: Optional[str] = None
+    dimension: Optional[str] = None
+    display_unit: Optional[str] = None
+    period_kind: Optional[str] = None
+    presentation_basis: Optional[str] = None
+    period_start: Optional[str] = None
+    period_end: Optional[str] = None
+    current_period_start: Optional[str] = None
+    current_period_end: Optional[str] = None
+    comparison_period_start: Optional[str] = None
+    comparison_period_end: Optional[str] = None
+    metric_role: Optional[str] = None
+    mapping_status: str = "mapped"
 
 
 class MaterialNewsEvent(BaseModel):
@@ -51,6 +63,10 @@ class MaterialNewsEvent(BaseModel):
     report_disposition: Optional[str] = None
     report_disposition_reason: Optional[str] = None
     superseded_by: Optional[str] = None
+    materiality_rationale: Optional[str] = None
+    inventory_filter_reason: Optional[str] = None
+    semantic_disposition: Optional[str] = None
+    legal_context: Optional[dict] = None
     numeric_evidence: List[OperatingKpiEvidence] = Field(default_factory=list)
 
 

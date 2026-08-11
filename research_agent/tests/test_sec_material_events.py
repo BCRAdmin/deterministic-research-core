@@ -210,7 +210,7 @@ def test_material_event_payload_retains_excluded_and_non_material_dispositions()
     assert [
         item["disposition"] for item in payload["filing_dispositions"]
     ] == [
-        "superseded",
+        "outside_window",
         "material_event",
         "material_event",
         "non_material_with_reason",
@@ -346,6 +346,6 @@ def test_routine_compensation_filing_is_condensed_and_routed_to_appendix() -> No
     )
 
     event = payload["events"][0]
-    assert event["report_disposition"] == "included_appendix"
+    assert event["report_disposition"] == "immaterial_with_reason"
     assert len(event["summary"]) < 250
     assert "no new named leadership transition" in event["summary"]

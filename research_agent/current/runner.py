@@ -795,6 +795,11 @@ def run_current_research(
                     *([results_html_snapshot] if results_html_snapshot else []),
                 ],
                 retrieved_at=retrieved_at,
+                report_date=latest_financial_reference.report_date,
+                report_period_months=(
+                    3 if latest_financial_reference.form == "10-Q" else 12
+                    if latest_financial_reference.form == "10-K" else None
+                ),
             )
             operating_kpis_path = operating_kpis_dir / f"{symbol}.json"
         filing_topics_path = filing_topics_dir / f"{symbol}.json"
@@ -1382,9 +1387,15 @@ def _earnings_calendar_scope(
         raw.get("coverage_status") == "complete_no_candidates"
         and raw.get("sources_checked")
     ):
+        assurance = str(verification.get("transport_assurance") or "")
         return (
             "complete_no_candidates",
-            "official catalyst sources were checked and no future date was announced",
+            (
+                "a proxy-rendered official catalyst page snapshot was checked and no "
+                "future date was visible; the origin-server response remains unverified"
+                if assurance == "proxy_observation_origin_response_unverified"
+                else "official catalyst sources were checked and no future date was announced"
+            ),
         )
     return (
         "incomplete",

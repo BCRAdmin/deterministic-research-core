@@ -1,6 +1,6 @@
 from typing import Dict, List, Literal, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from research_agent.decision.rating_taxonomy import Rating
 
@@ -31,6 +31,16 @@ class RatingPermission(BaseModel):
     fallback_only: bool = False
 
 
+class DecisionInput(BaseModel):
+    input_id: str
+    input_type: Literal["financial_metric", "operating_kpi", "current_risk"]
+    direction: Literal["positive", "negative", "mixed", "neutral", "unknown"]
+    materiality: Literal["material", "immaterial", "unknown"]
+    confidence: Literal["high", "medium", "low"]
+    included_in_score: bool
+    exclusion_reason: Optional[str] = None
+
+
 class DecisionPacket(BaseModel):
     ticker: str
     as_of_date: str
@@ -53,4 +63,20 @@ class DecisionPacket(BaseModel):
     key_risks: List[str] = Field(default_factory=list)
     triggered_rules: List[str] = Field(default_factory=list)
     score_version: str = "v1"
-    calibration_mode: str = "live"
+    calibration_mode: Literal[
+        "standardized_uncalibrated",
+        "company_calibrated",
+        "backtested",
+        "shadow",
+    ] = "standardized_uncalibrated"
+    decision_inputs: List[DecisionInput] = Field(default_factory=list)
+
+    @field_validator("calibration_mode", mode="before")
+    @classmethod
+    def migrate_legacy_live_calibration(cls, value):
+        # Historical packets used ``live`` to mean that the deterministic
+        # standardized rules were active.  They were never company-calibrated
+        # or backtested, so the honest migration is explicitly uncalibrated.
+        if value == "live":
+            return "standardized_uncalibrated"
+        return value

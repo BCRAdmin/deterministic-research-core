@@ -84,6 +84,16 @@ OPERATING_DRIVER_PATTERNS = {
         r"capital returned|return of capital)\b",
         re.IGNORECASE,
     ),
+    "Internalization": re.compile(r"\binternalization\b", re.IGNORECASE),
+    "Landfill depletable tons": re.compile(
+        r"\blandfill\s+depletable\s+tons\b",
+        re.IGNORECASE,
+    ),
+    "Acquired annualized revenue": re.compile(
+        r"\b(?:gross\s+)?annualized\s+revenue\s+acquired\b|"
+        r"\bacquired\s+annualized\s+revenue\b",
+        re.IGNORECASE,
+    ),
 }
 
 OPERATING_DRIVER_METRIC_MARKERS = {
@@ -96,6 +106,9 @@ OPERATING_DRIVER_METRIC_MARKERS = {
         "stock_repurchase",
         "cash_dividend",
     ),
+    "Internalization": ("internalization",),
+    "Landfill depletable tons": ("landfill_depletable_tons",),
+    "Acquired annualized revenue": ("acquired_annualized_revenue",),
 }
 
 
@@ -166,9 +179,9 @@ def compose_internal_best_report(
 ) -> str:
     """Render the readable internal surface for manual-review cases.
 
-    The final report can remain a claim-near ledger. This report is the
-    internal reading copy: no claim IDs or source labels in the main body, with
-    source traceability pushed into the appendix.
+    The final report remains a claim-near ledger. The internal reading copy
+    keeps the prose readable while retaining the complete claim and evidence
+    join beside each material paragraph.
     """
 
     claim_list = list(claims)
@@ -863,19 +876,10 @@ def _generic_publish_report(
         )
         if part
     )
-    investment_thesis_evidence = _combined_evidence_reference(
-        [
-            *grouped.get("Executive Summary", []),
-            *business_context_claims,
-            *current_kpi_claims,
-            *(claim for _, claim in operating_driver_claims),
-        ],
-        limit=4,
+    projected_fcf_bridge = _projected_fcf_guidance_bridge(
+        evidence_ledger,
+        currency=currency,
     )
-    if investment_thesis_evidence:
-        investment_thesis = (
-            f"{investment_thesis}\n\n{investment_thesis_evidence}"
-        )
 
     sections = [
         f"# {ticker} Research Report",
@@ -903,6 +907,18 @@ def _generic_publish_report(
         "## Fundamental Analysis",
         _paragraphs(fundamental_claims, limit=5),
         "",
+        "## Free Cash Flow Definitions",
+        _fcf_definition_reconciliation(evidence_ledger, currency=currency),
+        "",
+        *(
+            [
+                "## Projected FCF Guidance Bridge",
+                projected_fcf_bridge,
+                "",
+            ]
+            if projected_fcf_bridge
+            else []
+        ),
         *(
             [
                 "## Capital Allocation, Transactions & Contingencies",
@@ -1052,19 +1068,24 @@ def _internal_paragraphs(claims: list[ResearchClaim], limit: int) -> str:
             additions.append(_clean_internal_text(claim.investment_implication))
         if additions:
             text = f"{text} {' '.join(additions)}"
+        evidence_reference = _claim_evidence_reference(claim)
+        if evidence_reference:
+            text = f"{text} {evidence_reference}"
         paragraphs.append(text)
     return "\n\n".join(paragraphs)
 
 
-def _claim_evidence_reference(claim: ResearchClaim, limit: int = 4) -> str:
+def _claim_evidence_reference(claim: ResearchClaim, limit: int | None = None) -> str:
     evidence_ids = [str(item) for item in claim.evidence_ids if str(item).strip()]
     if not evidence_ids:
         return ""
-    return f"Evidence: `{', '.join(evidence_ids[:limit])}`."
+    selected = evidence_ids if limit is None else evidence_ids[:limit]
+    claim_id = str(claim.claim_id or "UNIDENTIFIED_CLAIM")
+    return f"Claim `{claim_id}` · Evidence: `{', '.join(selected)}`."
 
 
 def _combined_evidence_reference(
-    claims: list[ResearchClaim], limit: int = 4
+    claims: list[ResearchClaim], limit: int | None = None
 ) -> str:
     evidence_ids: list[str] = []
     for claim in claims:
@@ -1072,7 +1093,7 @@ def _combined_evidence_reference(
             value = str(item).strip()
             if value and value not in evidence_ids:
                 evidence_ids.append(value)
-            if len(evidence_ids) >= limit:
+            if limit is not None and len(evidence_ids) >= limit:
                 return f"Evidence: `{', '.join(evidence_ids)}`."
     return f"Evidence: `{', '.join(evidence_ids)}`." if evidence_ids else ""
 
@@ -1247,7 +1268,8 @@ def _operating_driver_section(
     if not selected:
         return "No source-bound current operating drivers are available."
     return "\n".join(
-        f"- **{label}:** {_clean_text(_claim_text(claim))}"
+        f"- **{label}:** {_clean_text(_claim_text(claim))} "
+        f"{_claim_evidence_reference(claim)}"
         for label, claim in selected
     )
 
@@ -1846,12 +1868,152 @@ def _strip_main_body_internal_language(markdown: str) -> str:
         return "\n".join(_clean_text(line) for line in markdown.splitlines())
     main, appendix = markdown.split("## Evidence Appendix", 1)
     main = "\n".join(_clean_text(line) for line in main.splitlines())
-    main = re.sub(r"\b[A-Z]{1,6}_CLAIM_\d{3}\b", "", main)
     return f"{main.rstrip()}\n\n## Evidence Appendix{appendix}"
 
 
 def _table_text(text: str) -> str:
     return _clean_text(text).replace("|", "\\|")
+
+
+def _fcf_definition_reconciliation(
+    evidence_ledger: EvidenceLedger,
+    *,
+    currency: str,
+) -> str:
+    normalized = [
+        item
+        for item in evidence_ledger.evidence_items
+        if "free_cash_flow_ttm" in item.supports_metrics
+        and item.value is not None
+        and item.formula_id
+    ]
+    issuer = [
+        item
+        for item in evidence_ledger.evidence_items
+        if item.value is not None
+        and item.provenance_class == "primary_source"
+        and any(
+            "free_cash_flow" in metric
+            for metric in item.supports_metrics
+        )
+        and not item.formula_id
+    ]
+    lines = [
+        "| Definition | Measurement window | Value | Use in this report |",
+        "|---|---|---:|---|",
+    ]
+    if normalized:
+        item = sorted(normalized, key=lambda value: value.evidence_id)[0]
+        lines.append(
+            "| Room16 normalized FCF (operating cash flow minus capital expenditure) "
+            f"| {item.period or 'TTM'} | {_fmt_money(item.value, item.currency or currency)} "
+            "| Valuation denominator and normalized cash-conversion analysis |"
+        )
+    else:
+        lines.append(
+            "| Room16 normalized FCF | unavailable | unavailable | Not used until the formula is source-bound |"
+        )
+    seen_issuer_rows: set[tuple[str, float, str]] = set()
+    issuer_rows: list[EvidenceItem] = []
+    for item in sorted(
+        issuer,
+        key=lambda value: (value.period_end or value.date or "", value.evidence_id),
+        reverse=True,
+    ):
+        row_key = (
+            str(item.period_end or item.date or "period not mapped"),
+            float(item.value),
+            str(item.currency or currency).upper(),
+        )
+        if row_key in seen_issuer_rows:
+            continue
+        seen_issuer_rows.add(row_key)
+        issuer_rows.append(item)
+        if len(issuer_rows) == 3:
+            break
+    for item in issuer_rows:
+        lines.append(
+            "| Issuer-defined FCF | "
+            f"{item.period or item.period_kind or 'period not mapped'} | "
+            f"{_fmt_money(item.value, item.currency or currency)} | "
+            "Issuer presentation only; not substituted for normalized TTM FCF without a period-matched bridge |"
+        )
+    lines.append(
+        "Room16 and issuer-defined FCF are separate measures. Differences can reflect measurement windows, "
+        "capital-expenditure definitions, sustainability investments or other issuer adjustments."
+    )
+    return "\n".join(lines)
+
+
+def _projected_fcf_guidance_bridge(
+    evidence_ledger: EvidenceLedger,
+    *,
+    currency: str,
+) -> str:
+    prefix = "guidance_fcf_bridge_"
+    values: dict[str, EvidenceItem] = {}
+    for item in evidence_ledger.evidence_items:
+        if item.value is None:
+            continue
+        for metric in item.supports_metrics:
+            if metric.startswith(prefix):
+                values[metric.removeprefix(prefix)] = item
+    if not values:
+        return ""
+    components = (
+        ("Operating cash flow", "operating_cash_flow"),
+        ("Support capital expenditure", "support_capex"),
+        ("Divestiture proceeds", "divestiture_proceeds"),
+        ("FCF before sustainability growth", "fcf_before_sustainability_growth"),
+        ("Sustainability-growth capital expenditure", "sustainability_growth_capex"),
+        ("Issuer-defined free cash flow", "free_cash_flow"),
+    )
+    required = {
+        f"{metric}_scenario_{scenario}"
+        for _, metric in components
+        for scenario in (1, 2)
+    }
+    missing = required - set(values)
+    if missing:
+        raise ValueError(
+            "projected FCF guidance bridge evidence is incomplete: "
+            + ", ".join(sorted(missing))
+        )
+    lines = [
+        "| Issuer bridge component | Scenario 1 | Scenario 2 |",
+        "|---|---:|---:|",
+    ]
+    for label, metric in components:
+        first = values[f"{metric}_scenario_1"]
+        second = values[f"{metric}_scenario_2"]
+        lines.append(
+            f"| {label} | {_fmt_money(first.value, first.currency or currency)} "
+            f"| {_fmt_money(second.value, second.currency or currency)} |"
+        )
+    checks: list[str] = []
+    for scenario in (1, 2):
+        def amount(metric: str) -> float:
+            return float(values[f"{metric}_scenario_{scenario}"].value or 0.0)
+
+        pre_growth = (
+            amount("operating_cash_flow")
+            + amount("support_capex")
+            + amount("divestiture_proceeds")
+        )
+        final_fcf = pre_growth + amount("sustainability_growth_capex")
+        checks.append(
+            "PASS"
+            if abs(pre_growth - amount("fcf_before_sustainability_growth")) <= 1.0
+            and abs(final_fcf - amount("free_cash_flow")) <= 1.0
+            else "FAIL"
+        )
+    if checks != ["PASS", "PASS"]:
+        raise ValueError("projected FCF guidance bridge arithmetic does not reconcile")
+    lines.append(
+        "Both issuer scenarios reconcile arithmetically. These forward-looking "
+        "non-GAAP scenarios remain separate from Room16 normalized trailing-twelve-month FCF."
+    )
+    return "\n".join(lines)
 
 
 def _fmt_money(value: float | None, currency: str = "USD") -> str:

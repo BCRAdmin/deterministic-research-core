@@ -280,6 +280,22 @@ def test_numeric_extractor_ignores_period_tokens_inside_evidence_metadata():
     assert "Q4" not in claim.nearby_text
 
 
+def test_numeric_extractor_maps_each_adjacent_wm_anchor_to_its_own_metric():
+    claims = extract_numeric_claims(
+        "The available evidence anchors are revenue TTM of $25.67B, FCF TTM "
+        "of $3.57B, EV/Sales of 4.42x."
+    )
+
+    assert [
+        (claim.normalized_value, claim.possible_metric)
+        for claim in claims
+        if claim.unit == "usd"
+    ] == [
+        (25_670_000_000, "revenue_ttm"),
+        (3_570_000_000, "free_cash_flow_ttm"),
+    ]
+
+
 def test_direct_percent_evidence_normalizes_single_digit_percentage():
     metrics = simple_metrics(ticker="MCD")
     ledger = EvidenceLedger(
@@ -629,6 +645,39 @@ def test_auditor_blocks_stale_latest_period_cash_flow_pair():
     assert stale.has_issue("CURRENT_PERIOD_CASH_FLOW_MISMATCH", metric="capex")
     assert stale.has_blocking_errors
     assert not current.has_issue("CURRENT_PERIOD_CASH_FLOW_MISMATCH")
+
+
+def test_auditor_recognizes_sec_exhibit_as_primary_issuer_fcf_source():
+    metrics = simple_metrics(ticker="WM")
+    metrics.fundamentals.free_cash_flow_ttm = 3_570_000_000
+    canonical = CanonicalFinancials(
+        ticker="WM",
+        as_of_date="2026-08-11",
+        metrics=[
+            CanonicalMetric(
+                metric_name="free_cash_flow",
+                value=2_024_000_000,
+                unit="USD",
+                period="FY2026_YTD",
+                period_bucket="ytd",
+                start_date="2026-01-01",
+                end_date="2026-06-30",
+                basis="non_gaap",
+                statement_type="cash_flow",
+                source_ids=["SEC_CIK0000823768_EX99_1"],
+                confidence="high",
+            )
+        ],
+    )
+
+    audit = audit_markdown_report(
+        "## Executive Summary\nRoom16 normalized FCF TTM is $3.57B.",
+        metrics,
+        canonical_financials=canonical,
+        ticker="WM",
+    )
+
+    assert audit.has_issue("COMPANY_DEFINED_FCF_MISMATCH")
 
 
 def test_auditor_catches_nvda_fcf_ttm_mismatch():

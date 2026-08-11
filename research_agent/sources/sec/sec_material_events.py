@@ -230,12 +230,19 @@ def build_material_event_payload(
                 else f"{base_source_id}_ITEM_{item.replace('.', '') or 'EVENT'}"
             )
             dependency_status = _required_dependency_status(item, dependencies)
+            investment_material, materiality_rationale = _investment_materiality(
+                item,
+                event_type,
+                summary,
+            )
             event = {
                 "event_type": event_type,
                 "date": filing["filing_date"],
                 "headline": headline,
                 "summary": summary,
-                "material": True,
+                "protocol_candidate": True,
+                "material": investment_material,
+                "materiality_rationale": materiality_rationale,
                 "source_id": source_id,
                 "source_type": "sec_filing",
                 "authority_rank": 1,
@@ -246,7 +253,7 @@ def build_material_event_payload(
                 "content_profile": (
                     "routine_compensation"
                     if item == "5.02"
-                    and "no new named leadership transition" in summary.casefold()
+                    and not _named_leadership_transition(summary)
                     else "substantive_event"
                 ),
                 "dependency_status": dependency_status,
@@ -300,7 +307,7 @@ def build_material_event_payload(
                     "duplicate_accession": "duplicate",
                     "invalid_metadata": "parse_failed",
                     "excluded_after_as_of": "non_material_with_reason",
-                    "excluded_outside_lookback": "superseded",
+                    "excluded_outside_lookback": "outside_window",
                     "non_material_with_reason": "non_material_with_reason",
                     "material_candidate": "parse_failed",
                 }.get(inventory_disposition, "parse_failed")
@@ -315,6 +322,12 @@ def build_material_event_payload(
                         "items": candidate.get("items"),
                         "disposition": final_disposition,
                         "inventory_disposition": inventory_disposition,
+                        "inventory_filter_reason": (
+                            "outside_protocol_window"
+                            if inventory_disposition == "excluded_outside_lookback"
+                            else inventory_disposition
+                        ),
+                        "semantic_disposition": None,
                         "reason": candidate.get("reason"),
                     }
                 )
@@ -328,6 +341,7 @@ def build_material_event_payload(
         "non_material_with_reason",
         "duplicate",
         "superseded",
+        "outside_window",
         "parse_failed",
     }
     if any(
@@ -401,7 +415,7 @@ def verify_material_event_payload(payload: dict[str, Any]) -> dict[str, Any]:
         isinstance(expected_protocol_count, int)
         and expected_protocol_count == len(protocol_rows)
         and not any(
-        item.get("disposition") in {"superseded", "parse_failed"}
+        item.get("disposition") in {"parse_failed"}
         for item in protocol_rows
         )
     )
@@ -427,6 +441,9 @@ def verify_material_event_payload(payload: dict[str, Any]) -> dict[str, Any]:
             "blocked_missing_evidence",
         }
         and bool(str(event.get("report_disposition_reason") or "").strip())
+        and isinstance(event.get("material"), bool)
+        and bool(str(event.get("materiality_rationale") or "").strip())
+        and _event_profile_consistent(event)
         and all(
             _event_item_content_complete(event, str(item))
             for item in event.get("filing_items") or []
@@ -494,7 +511,8 @@ def _event_item_content_complete(event: dict[str, Any], item: str) -> bool:
     summary = str(event.get("summary") or "")
     if item == "5.02" and event.get("content_profile") == "routine_compensation":
         return (
-            event.get("report_disposition") == "included_appendix"
+            event.get("report_disposition")
+            in {"included_appendix", "immaterial_with_reason"}
             and "no new named leadership transition" in summary.casefold()
             and any(
                 token in summary.casefold()
@@ -515,6 +533,9 @@ def _material_event_report_dispositions(
         if event.get("content_complete") is not True:
             status = "blocked_missing_evidence"
             reason = "A required filing document is not physically captured and hash-bound."
+        elif event.get("material") is not True:
+            status = "immaterial_with_reason"
+            reason = str(event.get("materiality_rationale") or "Investment materiality was not established.")
         elif event_type == "results_announcement":
             status = "included_via_current_period_analysis"
             reason = "The newest results release is represented through current-period KPIs and guidance."
@@ -554,6 +575,50 @@ def _material_event_report_dispositions(
             }
         )
     return dispositions
+
+
+def _investment_materiality(
+    item: str,
+    event_type: str,
+    summary: str,
+) -> tuple[bool, str]:
+    """Separate SEC protocol candidacy from investment materiality."""
+
+    folded = summary.casefold()
+    if item in {"2.01", "2.02", "2.03", "2.04", "2.05", "2.06", "4.01", "4.02", "5.01"}:
+        return True, f"SEC Item {item} is directly financial, transactional or control-relevant."
+    if item == "5.02":
+        if _named_leadership_transition(summary):
+            return True, "The filing describes a named appointment, departure or leadership transition."
+        return False, "The filing contains compensation or award detail without a new named leadership transition."
+    if item == "5.07":
+        return False, "Routine shareholder-vote results are retained as protocol evidence without presumed thesis relevance."
+    if item in {"7.01", "8.01"}:
+        material_terms = (
+            "guidance",
+            "acquisition",
+            "strategic transaction",
+            "material agreement",
+            "cybersecurity",
+            "operational disruption",
+            "restructuring",
+            "investigation",
+        )
+        material = any(term in folded for term in material_terms)
+        return (
+            material,
+            "The disclosure contains a thesis-relevant financial or operating event."
+            if material
+            else "The filing is a protocol candidate, but no thesis-relevant event was established from its content.",
+        )
+    return True, f"SEC Item {item or event_type} is retained as a thesis-relevant current event."
+
+
+def _event_profile_consistent(event: dict[str, Any]) -> bool:
+    if event.get("event_type") != "leadership_change":
+        return True
+    named = _named_leadership_transition(str(event.get("summary") or ""))
+    return (event.get("content_profile") == "substantive_event") is named
 
 
 def _resolve_cross_filing_report_dispositions(events: list[dict[str, Any]]) -> None:

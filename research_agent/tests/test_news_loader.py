@@ -34,7 +34,7 @@ def test_official_news_manifest_becomes_coverage_and_evidence(tmp_path: Path):
         item for item in evidence if item.source_id == "SEC_0000063908_2026_Q1_OUTLOOK"
     )
     assert outlook.claim_type == "guidance"
-    assert "company_guidance" in outlook.supports_claims
+    assert "company_guidance" in outlook.supports_categories
 
 
 def test_missing_official_news_manifest_is_explicitly_empty(tmp_path: Path):
@@ -58,4 +58,4 @@ def test_official_risk_event_becomes_risk_evidence():
     )
 
     assert evidence[0].claim_type == "risk"
-    assert "issuer_risk_disclosure" in evidence[0].supports_claims
+    assert "issuer_risk_disclosure" in evidence[0].supports_categories

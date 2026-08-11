@@ -78,7 +78,7 @@ def test_calendar_snapshot_rejects_declared_but_missing_raw_artifact(
     assert "calendar_physical_snapshot_integrity" in result["blocking_failures"]
 
 
-def test_current_wm_calendar_has_a_physical_point_in_time_snapshot() -> None:
+def test_current_wm_calendar_preserves_proxy_transport_limit() -> None:
     path = DEFAULT_ROOT / "WM_2026-08-11.json"
     payload = json.loads(path.read_text(encoding="utf-8"))
     result = verify_official_calendar_snapshot(
@@ -88,6 +88,11 @@ def test_current_wm_calendar_has_a_physical_point_in_time_snapshot() -> None:
         snapshot_root=path.parent,
     )
     assert result["verified"] is True
+    assert result["content_snapshot_verified"] is True
+    assert result["origin_capture_verified"] is False
+    assert result["transport_assurance"] == (
+        "proxy_observation_origin_response_unverified"
+    )
 
 
 def test_past_calendar_template_cannot_be_live_reconstructed(tmp_path: Path) -> None:

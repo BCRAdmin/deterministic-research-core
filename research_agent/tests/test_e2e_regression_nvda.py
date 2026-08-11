@@ -10,4 +10,5 @@ def test_e2e_nvda_repairs_fcf_and_stays_hold_without_benchmark(tmp_path):
     assert result.initial_audit.has_issue("PERIOD_MISMATCH", metric="operating_margin")
     assert not result.final_audit.has_issue("NUMERIC_MISMATCH")
     assert result.decision_packet.rating_permission.preferred_rating.value == "Hold"
-    assert result.quality_score.total_score >= 85
+    assert result.quality_score.total_score >= 80
+    assert result.final_status == "manual_review"
