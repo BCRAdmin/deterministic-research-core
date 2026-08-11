@@ -2,16 +2,22 @@
   "contract_id": "room16.official_calendar_snapshot",
   "contract_version": 2,
   "ticker": "WM",
-  "as_of_date": "2026-08-10",
-  "checked_at": "2026-08-10T20:30:00+00:00",
-  "capture_method": "normalized_official_page_snapshot",
+  "as_of_date": "2026-08-11",
+  "checked_at": "2026-08-11T16:07:08+00:00",
+  "capture_method": "physical_official_page_snapshot",
   "coverage_status": "complete_no_candidates",
   "sources_checked": [
     {
       "url": "https://investors.wm.com/news-events/events-and-presentations/",
-      "capture_url": "https://r.jina.ai/http://investors.wm.com/news-events/events-and-presentations/",
       "capture_transport": "read_only_render_proxy_due_origin_403",
-      "retrieved_at": "2026-08-10T20:30:00+00:00",
+      "retrieved_at": "2026-08-11T16:07:08+00:00",
+      "snapshot_artifact": {
+        "path": "evidence/WM_2026-08-11-events-and-presentations.md",
+        "sha256": "3a948e38b076cf311c5cbc81f9fb1845a08e4bcb6104682b742005c4be301471",
+        "bytes": 17861,
+        "media_type": "text/plain",
+        "retrieved_at": "2026-08-11T18:07:24.218912+02:00"
+      },
       "observed_facts": [
         "The official event page showed the July 29, 2026 Q2 call as the latest earnings event and no later earnings date."
       ]

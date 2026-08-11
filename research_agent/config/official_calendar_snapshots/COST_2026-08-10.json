@@ -1,6 +1,6 @@
 {
   "contract_id": "room16.official_calendar_snapshot",
-  "contract_version": 1,
+  "contract_version": 2,
   "ticker": "COST",
   "as_of_date": "2026-08-10",
   "checked_at": "2026-08-10T20:30:00+00:00",
@@ -9,6 +9,8 @@
   "sources_checked": [
     {
       "url": "https://investor.costco.com/events-and-presentations/events/event-details/2026/Q4-2026-Earnings-Call/default.aspx",
+      "capture_url": "https://r.jina.ai/http://investor.costco.com/events-and-presentations/events/event-details/2026/Q4-2026-Earnings-Call/default.aspx",
+      "capture_transport": "read_only_render_proxy_due_origin_bot_protection",
       "retrieved_at": "2026-08-10T20:30:00+00:00",
       "observed_facts": [
         "The official event page schedules Costco's Q4 2026 earnings call for September 24, 2026 at 2:00 PM PT."

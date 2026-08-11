@@ -4,6 +4,9 @@ from __future__ import annotations
 
 import json
 import math
+import re
+from calendar import monthrange
+from datetime import date, timedelta
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -15,7 +18,7 @@ from research_agent.research_core.models.data_packet import DataPacket
 
 
 FACT_LEDGER_CONTRACT_ID = "room16-canonical-fact-ledger"
-FACT_LEDGER_CONTRACT_VERSION = 2
+FACT_LEDGER_CONTRACT_VERSION = 3
 
 
 class FactLedgerError(ValueError):
@@ -82,6 +85,7 @@ def build_fact_ledger(
                 "is not registered"
             )
         used_source_ids.extend(source_ids)
+        period_metadata = _period_metadata(metric_name, evidence)
         fact = {
             "claim_id": f"{data_packet.ticker.upper()}_FACT_{metric_name.upper()}",
             "label": metric_name.replace("_", " "),
@@ -93,9 +97,7 @@ def build_fact_ledger(
                 data_packet.price_basis.currency,
             ),
             "period_type": _period_type(metric_name, evidence),
-            "period_kind": _period_kind(evidence),
-            "period_start": evidence.period_start,
-            "period_end": evidence.period_end or evidence.date,
+            **period_metadata,
             "fiscal_label": evidence.period,
             "presentation_basis": _presentation_basis(metric_name, evidence),
             "asof": evidence.date or data_packet.as_of_date,
@@ -238,12 +240,122 @@ def _period_type(metric_name: str, evidence: EvidenceItem) -> str:
     return "spot"
 
 
-def _period_kind(evidence: EvidenceItem) -> str:
-    return "duration" if evidence.period_start or evidence.duration_days is not None else "instant"
+def _period_metadata(metric_name: str, evidence: EvidenceItem) -> dict[str, Any]:
+    period = str(evidence.period or "")
+    lowered = period.casefold()
+    period_end = evidence.period_end or evidence.date
+    period_start = evidence.period_start
+    comparison = _comparison_periods(period)
+    if comparison is not None or metric_name.endswith("_yoy"):
+        comparison = comparison or _comparison_from_evidence(evidence)
+        if comparison is None:
+            raise FactLedgerError(
+                f"comparison fact {metric_name} lacks machine-readable comparison periods"
+            )
+        return {
+            "period_kind": "comparison",
+            "period_start": comparison[0][0],
+            "period_end": comparison[1][1],
+            "comparison_period_start": comparison[0][0],
+            "comparison_period_end": comparison[0][1],
+            "current_period_start": comparison[1][0],
+            "current_period_end": comparison[1][1],
+        }
+    if metric_name.endswith("_ttm") or "ttm" in lowered or "trailing twelve" in lowered:
+        if not period_end:
+            raise FactLedgerError(f"TTM fact {metric_name} lacks a period end")
+        if not period_start:
+            range_dates = _iso_period_range(period)
+            period_start = range_dates[0] if range_dates else (
+                date.fromisoformat(period_end) - timedelta(days=364)
+            ).isoformat()
+        return {
+            "period_kind": "trailing_twelve_months",
+            "period_start": period_start,
+            "period_end": period_end,
+        }
+    range_dates = _iso_period_range(period)
+    if period_start or evidence.duration_days is not None or range_dates:
+        period_start = period_start or (range_dates[0] if range_dates else None)
+        period_end = period_end or (range_dates[1] if range_dates else None)
+        if not period_start or not period_end:
+            raise FactLedgerError(f"duration fact {metric_name} lacks start/end dates")
+        return {
+            "period_kind": "duration",
+            "period_start": period_start,
+            "period_end": period_end,
+        }
+    if not period_end:
+        raise FactLedgerError(f"instant fact {metric_name} lacks an as-of date")
+    return {
+        "period_kind": "instant",
+        "period_start": None,
+        "period_end": period_end,
+    }
+
+
+def _iso_period_range(value: str) -> tuple[str, str] | None:
+    match = re.fullmatch(r"(\d{4}-\d{2}-\d{2})\.\.(\d{4}-\d{2}-\d{2})", value.strip())
+    return (match.group(1), match.group(2)) if match else None
+
+
+def _comparison_periods(value: str) -> tuple[tuple[str, str], tuple[str, str]] | None:
+    match = re.fullmatch(r"CY(\d{4})Q([1-4])\.\.CY(\d{4})Q([1-4])", value.strip())
+    if not match:
+        return None
+    return (
+        _quarter_bounds(int(match.group(1)), int(match.group(2))),
+        _quarter_bounds(int(match.group(3)), int(match.group(4))),
+    )
+
+
+def _comparison_from_evidence(
+    evidence: EvidenceItem,
+) -> tuple[tuple[str, str], tuple[str, str]] | None:
+    """Recover comparison bounds only from explicit deterministic metadata.
+
+    Legacy calculation evidence sometimes stored an ISO start/end range rather
+    than the two fiscal labels.  The start is the prior-period start and the end
+    is the current-period end.  Formula identity tells us whether both matched
+    periods are quarters or full years; no date is inferred from prose.
+    """
+
+    if not evidence.period_start or not (evidence.period_end or evidence.date):
+        return None
+    prior_start = date.fromisoformat(evidence.period_start)
+    current_end = date.fromisoformat(str(evidence.period_end or evidence.date))
+    formula_id = str(evidence.formula_id or "")
+    if not any(
+        token in formula_id
+        for token in ("quarter", "annual", "fiscal_year", "matching_period")
+    ):
+        return None
+    prior_end = _shift_year(current_end, -1)
+    current_start = _shift_year(prior_start, 1)
+    return (
+        (prior_start.isoformat(), prior_end.isoformat()),
+        (current_start.isoformat(), current_end.isoformat()),
+    )
+
+
+def _shift_year(value: date, years: int) -> date:
+    target_year = value.year + years
+    return date(target_year, value.month, min(value.day, monthrange(target_year, value.month)[1]))
+
+
+def _quarter_bounds(year: int, quarter: int) -> tuple[str, str]:
+    start_month = (quarter - 1) * 3 + 1
+    end_month = start_month + 2
+    return (
+        date(year, start_month, 1).isoformat(),
+        date(year, end_month, monthrange(year, end_month)[1]).isoformat(),
+    )
 
 
 def _presentation_basis(metric_name: str, evidence: EvidenceItem) -> str:
     lowered_period = str(evidence.period or "").lower()
+    if _comparison_periods(str(evidence.period or "")) is not None or metric_name.endswith("_yoy"):
+        return "period_over_period_comparison"
     if metric_name.endswith("_ttm") or "ttm" in lowered_period:
         return "trailing_twelve_months"
     if evidence.duration_days is not None:

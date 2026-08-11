@@ -33,9 +33,11 @@ _BUSINESS_CONTEXT_SECTIONS = {
 _BUSINESS_CONTEXT_EVENT_TYPES = {
     "business_context",
     "business_model",
+    "operating_kpi",
+}
+_MATERIAL_CAPITAL_EVENT_TYPES = {
     "filing_financing",
     "filing_transactions",
-    "operating_kpi",
 }
 _CATALYST_EVENT_TYPES = {
     "acquisition",
@@ -394,7 +396,7 @@ class _ClaimBuilder:
                 else f"above same-period FCF by {_money(gap, self.data_packet.price_basis.currency)}"
             )
             self.add(
-                "Fundamental Analysis",
+                "Capital Allocation, Transactions & Contingencies",
                 "capital_allocation",
                 "financial_metric",
                 (
@@ -422,7 +424,20 @@ class _ClaimBuilder:
             )
 
         for event in self.data_packet.news_coverage.material_events:
-            if event.event_type in _RISK_EVENT_TYPES:
+            if event.report_disposition in {
+                "superseded",
+                "included_appendix",
+                "blocked_missing_evidence",
+                "immaterial_with_reason",
+            }:
+                continue
+            if event.event_type in _MATERIAL_CAPITAL_EVENT_TYPES:
+                self.add_event(
+                    event,
+                    section="Capital Allocation, Transactions & Contingencies",
+                    allow_source_bound_numbers=True,
+                )
+            elif event.event_type in _RISK_EVENT_TYPES:
                 self.add_event(event, section="Key Risks", as_risk=True)
             elif event.event_type in _BUSINESS_CONTEXT_EVENT_TYPES:
                 self.add_event(event, section="Business & Segment Context")
@@ -439,6 +454,8 @@ class _ClaimBuilder:
                     as_catalyst=True,
                 )
             elif event.event_type in _MATERIAL_REPORT_EVENT_TYPES:
+                if event.report_disposition not in {None, "included_main_report"}:
+                    continue
                 self.add_event(
                     event,
                     section="Material Events & Governance",

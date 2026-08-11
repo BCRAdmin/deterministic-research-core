@@ -517,6 +517,26 @@ def verify_source_snapshot_manifest(
                         f"material_event_payload:{failure}"
                         for failure in event_verification["blocking_failures"]
                     )
+                for event in event_payload.get("events") or []:
+                    if not isinstance(event, Mapping):
+                        failures.append(f"material_event_dependency_schema:{relative}")
+                        continue
+                    for dependency in event.get("document_dependencies") or []:
+                        if not isinstance(dependency, Mapping):
+                            failures.append(f"material_event_dependency_schema:{relative}")
+                            continue
+                        dependency_relative = str(dependency.get("snapshot_path") or "")
+                        dependency_path = (root / dependency_relative).resolve()
+                        if (
+                            root not in dependency_path.parents
+                            or not dependency_path.is_file()
+                            or dependency_path.stat().st_size != dependency.get("bytes")
+                            or file_sha256(dependency_path)
+                            != str(dependency.get("sha256") or "")
+                        ):
+                            failures.append(
+                                f"material_event_dependency_invalid:{dependency_relative or relative}"
+                            )
 
     dispositions = manifest.get("source_dispositions")
     if not isinstance(dispositions, list) or not dispositions:

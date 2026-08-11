@@ -37,6 +37,8 @@ TOPIC_HEADLINES = {
     "financing": "Current filing contains a financing disclosure",
     "legal_contingencies": "Current filing contains a legal or contingency disclosure",
 }
+TOPIC_CONTRACT_ID = "room16.sec_filing_topics"
+TOPIC_CONTRACT_VERSION = 2
 
 
 class _TextParser(HTMLParser):
@@ -110,7 +112,7 @@ def build_sec_filing_topic_payload(
             score = _topic_match_score(topic, block, patterns)
             if score <= 0:
                 continue
-            candidates.append((score, -source_index, block[:1800]))
+            candidates.append((score, -source_index, _condense_topic_excerpt(block)))
         matches = [
             excerpt
             for _, _, excerpt in sorted(candidates, reverse=True)[:3]
@@ -128,6 +130,12 @@ def build_sec_filing_topic_payload(
                     f"{source_id}_{index:02d}"
                     for index in range(1, len(matches) + 1)
                 ],
+                "material": bool(matches),
+                "report_requirement": (
+                    "included_main_report_or_explicit_disposition"
+                    if matches
+                    else "reviewed_no_specific_disclosure"
+                ),
             }
         )
         for match_index, summary in enumerate(matches, start=1):
@@ -144,10 +152,16 @@ def build_sec_filing_topic_payload(
                     "authority_rank": 1,
                     "url": url,
                     "retrieved_at": retrieved_at,
+                    "report_disposition": "included_main_report",
+                    "report_disposition_reason": (
+                        "A specific material filing topic must be visible in the main report."
+                    ),
                     "numeric_evidence": _topic_numeric_evidence(summary, topic),
                 }
             )
     return {
+        "contract_id": TOPIC_CONTRACT_ID,
+        "contract_version": TOPIC_CONTRACT_VERSION,
         "coverage_status": "complete",
         "checked_at": retrieved_at,
         "window_start": filing_date,
@@ -163,6 +177,25 @@ def build_sec_filing_topic_payload(
         "topic_dispositions": dispositions,
         "events": events,
     }
+
+
+def _condense_topic_excerpt(text: str, *, limit: int = 950) -> str:
+    compact = " ".join(str(text or "").split())
+    if len(compact) <= limit:
+        return compact
+    sentences = re.split(r"(?<=[.!?])\s+", compact)
+    selected: list[str] = []
+    for sentence in sentences:
+        candidate = " ".join([*selected, sentence]).strip()
+        if selected and len(candidate) > limit:
+            break
+        selected.append(sentence)
+        if len(candidate) >= limit * 0.72:
+            break
+    summary = " ".join(selected).strip()
+    if not summary:
+        summary = compact[:limit].rsplit(" ", 1)[0]
+    return summary[:limit].rstrip()
 
 
 def _topic_match_score(topic: str, text: str, patterns: tuple[str, ...]) -> int:

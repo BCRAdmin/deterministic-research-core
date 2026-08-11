@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import os
 import re
 import shutil
@@ -37,6 +38,7 @@ from research_agent.sources.ir.official_news_feed import (
 )
 from research_agent.sources.earnings.earnings_calendar import load_earnings_events
 from research_agent.sources.earnings.official_calendar_snapshot import (
+    materialize_official_calendar_snapshot,
     resolve_official_calendar_snapshot,
     verify_official_calendar_snapshot,
 )
@@ -230,8 +232,19 @@ def run_current_research(
         symbol,
         request.as_of_date,
     )
-    earnings_calendar_path = request.earnings_calendar_path or (
+    configured_calendar_path = request.earnings_calendar_path or (
         str(registered_calendar) if registered_calendar else None
+    )
+    earnings_calendar_path = (
+        str(
+            materialize_official_calendar_snapshot(
+                configured_calendar_path,
+                output_root=source_dir / "configured_earnings_calendar",
+                user_agent=request.sec_user_agent,
+            )
+        )
+        if configured_calendar_path
+        else None
     )
     _snapshot_configured_source_inputs(
         ticker=symbol,
@@ -487,6 +500,7 @@ def run_current_research(
             as_of_date=request.as_of_date,
         )
         material_filing_html: list[tuple[dict[str, str], str]] = []
+        material_filing_documents: dict[str, list[dict[str, Any]]] = {}
         for event_filing in select_material_event_filings(
             submissions,
             as_of_date=request.as_of_date,
@@ -507,6 +521,57 @@ def run_current_research(
             raw_sec_filings[
                 (event_filing["accession_number"], event_filing["primary_document"])
             ] = event_html
+            accession_digits = event_filing["accession_number"].replace("-", "")
+            documents = [
+                _sec_document_dependency(
+                    accession_number=event_filing["accession_number"],
+                    document=event_filing["primary_document"],
+                    html=event_html,
+                    role="primary_document",
+                    required_for_items=sorted(
+                        part
+                        for part in str(event_filing.get("items") or "").split(",")
+                        if part
+                    ),
+                )
+            ]
+            filing_items = {
+                part
+                for part in str(event_filing.get("items") or "").split(",")
+                if part
+            }
+            if "2.02" in filing_items:
+                try:
+                    results_document = select_sec_results_exhibit(event_html)
+                    results_key = (
+                        event_filing["accession_number"],
+                        results_document,
+                    )
+                    results_exhibit_html = raw_sec_filings.get(results_key)
+                    if results_exhibit_html is None:
+                        results_exhibit_html = sec.get_filing_html(
+                            cik=cik,
+                            accession_number=event_filing["accession_number"],
+                            primary_document=results_document,
+                        )
+                        raw_sec_filings[results_key] = results_exhibit_html
+                except (RuntimeError, ValueError) as exc:
+                    raise CurrentResearchError(
+                        f"{symbol} besitzt ein Results-8-K vom "
+                        f"{event_filing['filing_date']}, dessen verpflichtender "
+                        f"Exhibit-99.1-Anhang nicht vollständig gebunden werden "
+                        f"konnte: {exc}. Room16 stoppt fail-closed."
+                    ) from exc
+                documents.append(
+                    _sec_document_dependency(
+                        accession_number=event_filing["accession_number"],
+                        document=results_document,
+                        html=results_exhibit_html,
+                        role="results_exhibit_99_1",
+                        required_for_items=["2.02"],
+                    )
+                )
+            material_filing_documents[accession_digits] = documents
             if (
                 results_html_snapshot
                 and latest_results_filing is not None
@@ -525,6 +590,7 @@ def run_current_research(
             retrieved_at=retrieved_at,
             candidate_inventory=material_filing_inventory,
             as_of_date=request.as_of_date,
+            filing_documents=material_filing_documents,
         )
         material_events_path = material_events_dir / f"{symbol}.json"
         registered_feeds = registered_official_ir_feeds(cik=cik)
@@ -1074,6 +1140,30 @@ def _save_raw_sec_filing_snapshots(
         target.write_text(html, encoding="utf-8")
 
 
+def _sec_document_dependency(
+    *,
+    accession_number: str,
+    document: str,
+    html: str,
+    role: str,
+    required_for_items: list[str],
+) -> dict[str, Any]:
+    accession = accession_number.replace("-", "")
+    name = Path(document).name
+    encoded = html.encode("utf-8")
+    if not accession.isdigit() or not name.lower().endswith((".htm", ".html")):
+        raise CurrentResearchError("SEC document dependency has no safe snapshot identity")
+    return {
+        "document": name,
+        "role": role,
+        "required_for_items": required_for_items,
+        "status": "captured",
+        "snapshot_path": f"raw_sec_filings/{accession}/{name}",
+        "sha256": hashlib.sha256(encoded).hexdigest(),
+        "bytes": len(encoded),
+    }
+
+
 def _build_current_scope_coverage(
     *,
     ticker: str,
@@ -1261,6 +1351,7 @@ def _earnings_calendar_scope(
             raw,
             ticker=ticker,
             as_of_date=as_of_date,
+            snapshot_root=path.parent,
         )
         if not verification["verified"]:
             return (
@@ -1378,6 +1469,8 @@ def _snapshot_configured_source_inputs(
                     (path, source_root / "configured_official_news" / filename)
                 )
     for source, target in candidates:
+        if source.resolve() == target.resolve():
+            continue
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, target)
 

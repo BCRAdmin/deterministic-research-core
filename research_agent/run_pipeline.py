@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from math import isclose
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Iterable, Optional
 
 from research_agent.batch.freshness import evaluate_price_freshness
 from research_agent.calibration.valuation_calibration import (
@@ -100,6 +100,7 @@ from research_agent.research_core.models.data_packet import (
     NewsCoverage,
     PriceBasis,
 )
+from research_agent.research_core.models.claims import ResearchClaim
 from research_agent.research_core.models.metrics_packet import MetricsPacket, ValuationMetrics
 from research_agent.research_core.models.report_config import ReportConfig
 from research_agent.research_core.models.validation_report import (
@@ -426,6 +427,22 @@ def run_research_pipeline(
             "\n\n## Research Coverage Status\n\n"
             f"{_coverage_status_message(coverage_gaps)}\n"
         )
+    material_topic_coverage = _material_topic_report_coverage(
+        markdown=report,
+        claims=claims,
+        report_kind="full_research_report",
+    )
+    if material_topic_coverage["status"] != "pass":
+        raise RuntimeError(
+            "Material topic propagation gate rejected report generation: "
+            + ", ".join(material_topic_coverage["blocking_claim_ids"])
+        )
+    material_topic_coverage_path = manifest_output_dir / "material_topic_report_coverage.json"
+    material_topic_coverage_path.parent.mkdir(parents=True, exist_ok=True)
+    material_topic_coverage_path.write_text(
+        json.dumps(material_topic_coverage, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
     report_path = manifest_output_dir / "final_report.md"
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(report, encoding="utf-8")
@@ -664,6 +681,20 @@ def run_research_pipeline(
                     manual_review_reasons=quality_report.manual_review_reasons,
                     review_issue_details=review_issue_details,
                 )
+        material_topic_coverage = _material_topic_report_coverage(
+            markdown=internal_best_report,
+            claims=claims,
+            report_kind="internal_best_report",
+        )
+        if material_topic_coverage["status"] != "pass":
+            raise RuntimeError(
+                "Material topic propagation gate rejected the internal report: "
+                + ", ".join(material_topic_coverage["blocking_claim_ids"])
+            )
+        material_topic_coverage_path.write_text(
+            json.dumps(material_topic_coverage, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
         internal_best_audit = audit_markdown_report(
             markdown=internal_best_report,
             metrics_packet=metrics_packet,
@@ -804,6 +835,12 @@ def run_research_pipeline(
                 else ""
             ),
             "analyst_claims_sha256": file_sha256(analyst_claims_path),
+            "material_topic_report_coverage_path": str(
+                material_topic_coverage_path
+            ),
+            "material_topic_report_coverage_sha256": file_sha256(
+                material_topic_coverage_path
+            ),
             "audit_report_sha256": file_sha256(audit_report_path),
             "quality_score_sha256": file_sha256(quality_report_path),
             "deterministic_report_mode": True,
@@ -815,6 +852,47 @@ def run_research_pipeline(
     )
     save_report_manifest(manifest, config.output_dir)
     return report
+
+
+def _material_topic_report_coverage(
+    *,
+    markdown: str,
+    claims: Iterable[ResearchClaim],
+    report_kind: str,
+) -> dict[str, Any]:
+    required = [
+        claim
+        for claim in claims
+        if any("_TOPIC_" in str(source_id) for source_id in claim.source_ids)
+    ]
+    dispositions = [
+        {
+            "claim_id": claim.claim_id,
+            "section": claim.section,
+            "source_ids": list(claim.source_ids),
+            "disposition": (
+                "included_main_report"
+                if str(claim.claim_text or claim.claim).strip() in markdown
+                else "blocked_missing_propagation"
+            ),
+        }
+        for claim in required
+    ]
+    blocking = [
+        item["claim_id"]
+        for item in dispositions
+        if item["disposition"] != "included_main_report"
+    ]
+    return {
+        "contract_id": "room16.material_topic_report_coverage",
+        "contract_version": 1,
+        "report_kind": report_kind,
+        "status": "pass" if not blocking else "fail",
+        "required_claim_count": len(dispositions),
+        "included_claim_count": len(dispositions) - len(blocking),
+        "blocking_claim_ids": blocking,
+        "dispositions": dispositions,
+    }
 
 
 def _coverage_status_message(coverage_gaps: list[str]) -> str:
@@ -863,6 +941,10 @@ def build_data_packet(
             summary=item.get("summary"),
             filing_items=item.get("filing_items") or [],
             content_complete=item.get("content_complete"),
+            dependency_status=item.get("dependency_status"),
+            report_disposition=item.get("report_disposition"),
+            report_disposition_reason=item.get("report_disposition_reason"),
+            superseded_by=item.get("superseded_by"),
             numeric_evidence=item.get("numeric_evidence") or [],
         )
         for item in news

@@ -23,6 +23,7 @@ REPORT_SECTIONS = [
     "Data / Source Quality Note",
     "Business & Segment Context",
     "Fundamental Analysis",
+    "Capital Allocation, Transactions & Contingencies",
     "Valuation / Multiples",
     "Technical Setup",
     "Bull Case",
@@ -149,6 +150,17 @@ def compose_research_report(
         "## Fundamental Analysis",
         _render_claim_section(grouped, "Fundamental Analysis"),
         "",
+        *(
+            [
+                "## Capital Allocation, Transactions & Contingencies",
+                _render_claim_section(
+                    grouped, "Capital Allocation, Transactions & Contingencies"
+                ),
+                "",
+            ]
+            if grouped.get("Capital Allocation, Transactions & Contingencies")
+            else []
+        ),
         "## Valuation / Multiples",
         _render_claim_section(grouped, "Valuation / Multiples"),
         "",

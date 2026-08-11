@@ -903,6 +903,18 @@ def _generic_publish_report(
         "## Fundamental Analysis",
         _paragraphs(fundamental_claims, limit=5),
         "",
+        *(
+            [
+                "## Capital Allocation, Transactions & Contingencies",
+                _paragraphs(
+                    grouped.get("Capital Allocation, Transactions & Contingencies", []),
+                    limit=8,
+                ),
+                "",
+            ]
+            if grouped.get("Capital Allocation, Transactions & Contingencies")
+            else []
+        ),
         "## Valuation / Risk-Reward",
         _paragraphs(grouped.get("Valuation / Multiples", []), limit=3),
         "",

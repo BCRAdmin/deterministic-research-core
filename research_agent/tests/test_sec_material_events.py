@@ -9,6 +9,38 @@ from research_agent.sources.sec.sec_material_events import (
 )
 
 
+def _captured_documents(
+    filing: dict[str, str], *, results_exhibit: bool = False
+) -> dict[str, list[dict[str, object]]]:
+    accession = filing["accession_number"].replace("-", "")
+    documents: list[dict[str, object]] = [
+        {
+            "document": filing["primary_document"],
+            "role": "primary_document",
+            "required_for_items": [
+                item for item in filing["items"].split(",") if item
+            ],
+            "status": "captured",
+            "snapshot_path": f"raw_sec_filings/{accession}/{filing['primary_document']}",
+            "sha256": "a" * 64,
+            "bytes": 100,
+        }
+    ]
+    if results_exhibit:
+        documents.append(
+            {
+                "document": "exhibit991.htm",
+                "role": "results_exhibit_99_1",
+                "required_for_items": ["2.02"],
+                "status": "captured",
+                "snapshot_path": f"raw_sec_filings/{accession}/exhibit991.htm",
+                "sha256": "b" * 64,
+                "bytes": 100,
+            }
+        )
+    return {accession: documents}
+
+
 def test_selects_results_8k_for_explicit_protocol_disposition():
     submissions = {
         "filings": {
@@ -76,6 +108,7 @@ def test_builds_primary_source_event_payload():
             )
         ],
         retrieved_at="2026-07-16T20:00:00Z",
+        filing_documents=_captured_documents(filing),
     )
     assert payload["events"][0]["event_type"] == "cyber_incident"
     assert payload["events"][0]["source_type"] == "sec_filing"
@@ -101,6 +134,9 @@ def test_selects_and_dispositions_acquisition_and_debt_8k_items():
         }
     }
     rows = select_material_event_filings(submissions, as_of_date="2026-08-05")
+    filing_documents = {}
+    filing_documents.update(_captured_documents(rows[0]))
+    filing_documents.update(_captured_documents(rows[1]))
     payload = build_material_event_payload(
         ticker="TEST",
         cik="1",
@@ -109,6 +145,7 @@ def test_selects_and_dispositions_acquisition_and_debt_8k_items():
             (rows[1], "<p>Item 2.03 The company entered into a new secured credit facility.</p>"),
         ],
         retrieved_at="2026-08-05T12:00:00Z",
+        filing_documents=filing_documents,
     )
 
     assert [event["event_type"] for event in payload["events"]] == [
@@ -148,6 +185,9 @@ def test_material_event_payload_retains_excluded_and_non_material_dispositions()
         submissions,
         as_of_date="2026-08-05",
     )
+    filing_documents = {}
+    filing_documents.update(_captured_documents(selected[0]))
+    filing_documents.update(_captured_documents(selected[1], results_exhibit=True))
     payload = build_material_event_payload(
         ticker="TEST",
         cik="1",
@@ -163,6 +203,7 @@ def test_material_event_payload_retains_excluded_and_non_material_dispositions()
         ],
         retrieved_at="2026-08-05T12:00:00Z",
         candidate_inventory=inventory,
+        filing_documents=filing_documents,
     )
 
     assert payload["all_candidates_dispositioned"] is True
@@ -174,6 +215,34 @@ def test_material_event_payload_retains_excluded_and_non_material_dispositions()
         "material_event",
         "non_material_with_reason",
     ]
+
+
+def test_results_event_cannot_pass_without_captured_exhibit_99_1() -> None:
+    filing = {
+        "filing_date": "2026-04-28",
+        "accession_number": "0000823768-26-000044",
+        "primary_document": "wm-20260428.htm",
+        "items": "2.02,9.01",
+    }
+    payload = build_material_event_payload(
+        ticker="WM",
+        cik="823768",
+        filings=[
+            (
+                filing,
+                "<p>Item 2.02 The company furnished quarterly financial results as Exhibit 99.1.</p>",
+            )
+        ],
+        retrieved_at="2026-08-10T12:00:00Z",
+        as_of_date="2026-08-10",
+        filing_documents=_captured_documents(filing),
+    )
+
+    verification = verify_material_event_payload(payload)
+    assert verification["status"] == "fail"
+    assert payload["coverage_status"] == "incomplete"
+    assert payload["events"][0]["dependency_status"] == "blocked_missing_evidence"
+    assert payload["events"][0]["report_disposition"] == "blocked_missing_evidence"
 
 
 def test_protocol_year_includes_filings_older_than_120_days() -> None:
@@ -243,9 +312,40 @@ def test_leadership_event_requires_and_retains_substantive_actions() -> None:
         ],
         retrieved_at="2026-08-10T12:00:00Z",
         as_of_date="2026-08-10",
+        filing_documents=_captured_documents(filing),
     )
 
     assert verify_material_event_payload(payload)["status"] == "pass"
     summary = payload["events"][0]["summary"]
     assert all(name in summary for name in ("Carrasco", "Hemmer", "Morris"))
     assert all(action in summary.casefold() for action in ("retir", "promot", "resign"))
+
+
+def test_routine_compensation_filing_is_condensed_and_routed_to_appendix() -> None:
+    filing = {
+        "filing_date": "2026-03-06",
+        "accession_number": "0001104659-26-030001",
+        "primary_document": "compensation.htm",
+        "items": "5.02,9.01",
+    }
+    payload = build_material_event_payload(
+        ticker="WM",
+        cik="823768",
+        filings=[
+            (
+                filing,
+                "<p>Item 5.02 John Smith received annual incentive awards. "
+                "Involuntary Termination for Cause or Voluntary Resignation before "
+                "the payment date causes forfeiture. Vested options remain exercisable "
+                "for 90 days under the award agreement.</p>",
+            )
+        ],
+        retrieved_at="2026-08-10T12:00:00Z",
+        as_of_date="2026-08-10",
+        filing_documents=_captured_documents(filing),
+    )
+
+    event = payload["events"][0]
+    assert event["report_disposition"] == "included_appendix"
+    assert len(event["summary"]) < 250
+    assert "no new named leadership transition" in event["summary"]

@@ -440,6 +440,8 @@ def build_fundamental_derivation_evidence(
                         f"..{bridge.get('current_period') or 'unknown'}"
                     ),
                     date=str(bridge.get("period_end") or as_of_date),
+                    period_start=str(bridge.get("period_start") or "") or None,
+                    period_end=str(bridge.get("period_end") or "") or None,
                     evidence_items=[*runtime_items, *evidence],
                     source_lineage=_canonical_lineage_source_ids(
                         [*runtime_items, *evidence],
@@ -509,6 +511,8 @@ def build_fundamental_derivation_evidence(
                         f"..{share_count_bridge.get('current_period') or 'unknown'}"
                     ),
                     date=str(share_count_bridge.get("period_end") or as_of_date),
+                    period_start=str(share_count_bridge.get("period_start") or "") or None,
+                    period_end=str(share_count_bridge.get("period_end") or "") or None,
                     evidence_items=[*runtime_items, *evidence],
                     source_lineage=_canonical_lineage_source_ids(
                         runtime_items,
@@ -2293,6 +2297,8 @@ def _calculation_evidence(
     unit: str,
     period: str,
     date: str,
+    period_start: Optional[str] = None,
+    period_end: Optional[str] = None,
     evidence_items: Iterable[EvidenceItem],
     claim_type: str = "financial_metric",
     source_lineage: Optional[list[str]] = None,
@@ -2315,6 +2321,8 @@ def _calculation_evidence(
         unit=unit,
         period=period,
         date=date,
+        period_start=period_start,
+        period_end=period_end,
         supports_metrics=[metric_name],
         confidence="high",
         formula_id=formula_id,

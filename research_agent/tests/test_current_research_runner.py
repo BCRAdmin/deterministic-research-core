@@ -1192,11 +1192,17 @@ def test_current_runner_rejects_non_authority_price_provider(tmp_path):
 
 def test_current_runner_builds_real_authority_bundle_from_generic_adapters(tmp_path):
     earnings_calendar = tmp_path / "aapl_earnings_calendar.json"
+    calendar_evidence = tmp_path / "aapl_official_calendar.html"
+    calendar_evidence.write_text(
+        "<html><body>Apple Q3 2026 results: July 30, 2026.</body></html>",
+        encoding="utf-8",
+    )
+    calendar_evidence_bytes = calendar_evidence.read_bytes()
     earnings_calendar.write_text(
         json.dumps(
             {
                 "contract_id": "room16.official_calendar_snapshot",
-                "contract_version": 1,
+                "contract_version": 2,
                 "ticker": "AAPL",
                 "as_of_date": "2026-05-17",
                 "checked_at": "2026-05-17T12:00:00+00:00",
@@ -1208,6 +1214,14 @@ def test_current_runner_builds_real_authority_bundle_from_generic_adapters(tmp_p
                         "observed_facts": [
                             "The official issuer page lists the July 30, 2026 earnings event."
                         ],
+                        "capture_transport": "stored_test_fixture",
+                        "snapshot_artifact": {
+                            "path": calendar_evidence.name,
+                            "sha256": hashlib.sha256(calendar_evidence_bytes).hexdigest(),
+                            "bytes": len(calendar_evidence_bytes),
+                            "media_type": "text/html",
+                            "retrieved_at": "2026-05-17T12:00:00+00:00",
+                        },
                     }
                 ],
                 "events": [

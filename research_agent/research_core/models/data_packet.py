@@ -47,6 +47,10 @@ class MaterialNewsEvent(BaseModel):
     summary: Optional[str] = None
     filing_items: List[str] = Field(default_factory=list)
     content_complete: Optional[bool] = None
+    dependency_status: Optional[str] = None
+    report_disposition: Optional[str] = None
+    report_disposition_reason: Optional[str] = None
+    superseded_by: Optional[str] = None
     numeric_evidence: List[OperatingKpiEvidence] = Field(default_factory=list)
 
 

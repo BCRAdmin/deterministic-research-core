@@ -235,7 +235,7 @@ def test_fact_ledger_binds_exact_values_formulas_and_sources():
     }
 
 
-def test_fact_ledger_preserves_duration_periods_and_ratio_units():
+def test_fact_ledger_preserves_comparison_periods_and_ratio_units():
     data_packet, claims, evidence, registry = _fact_inputs()
     claims[0].metric_values["diluted_share_count_yoy"] = 0.02
     evidence.evidence_items.append(
@@ -249,13 +249,15 @@ def test_fact_ledger_preserves_duration_periods_and_ratio_units():
             statement="Diluted shares increased two percent.",
             value=0.02,
             unit="shares",
-            period="FY2026_Q2",
+            period="CY2025Q2..CY2026Q2",
             date="2026-06-30",
-            period_start="2026-01-01",
-            period_end="2026-06-30",
-            duration_days=180,
             supports_metrics=["diluted_share_count_yoy"],
             raw_value=0.02,
+            formula_id="matching_quarter_diluted_share_count_yoy_change",
+            formula_operands={
+                "current_diluted_share_count": 102.0,
+                "prior_diluted_share_count": 100.0,
+            },
         )
     )
 
@@ -271,10 +273,13 @@ def test_fact_ledger_preserves_duration_periods_and_ratio_units():
         if item["metric"] == "diluted_share_count_yoy"
     )
     assert fact["unit"] == "ratio"
-    assert fact["period_kind"] == "duration"
-    assert fact["period_type"] == "ytd"
-    assert fact["presentation_basis"] == "year_to_date"
-    assert fact["period_start"] == "2026-01-01"
+    assert fact["period_kind"] == "comparison"
+    assert fact["period_type"] == "calculated"
+    assert fact["presentation_basis"] == "period_over_period_comparison"
+    assert fact["comparison_period_start"] == "2025-04-01"
+    assert fact["comparison_period_end"] == "2025-06-30"
+    assert fact["current_period_start"] == "2026-04-01"
+    assert fact["current_period_end"] == "2026-06-30"
 
 
 def test_fact_ledger_resolves_compact_sec_lineage_to_registered_source_id():
