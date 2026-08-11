@@ -47,6 +47,24 @@ _CATALYST_EVENT_TYPES = {
     "product_strategy",
     "strategy",
 }
+_MATERIAL_REPORT_EVENT_TYPES = {
+    "acquisition_or_disposition",
+    "agreement_termination",
+    "auditor_change",
+    "bankruptcy_or_receivership",
+    "change_in_control",
+    "cyber_incident",
+    "financial_statement_non_reliance",
+    "financing_obligation",
+    "financing_trigger",
+    "governance_change",
+    "impairment",
+    "leadership_change",
+    "listing_notice",
+    "material_agreement",
+    "restructuring",
+    "securities_issuance",
+}
 _RISK_EVENT_TYPES = {"filing_legal_contingencies"}
 _RISK_THEME_PATTERNS = (
     re.compile(
@@ -419,6 +437,11 @@ class _ClaimBuilder:
                     event,
                     section="Catalysts & Triggers",
                     as_catalyst=True,
+                )
+            elif event.event_type in _MATERIAL_REPORT_EVENT_TYPES:
+                self.add_event(
+                    event,
+                    section="Material Events & Governance",
                 )
 
         selected_risk_evidence = self._selected_risk_evidence(limit=4)

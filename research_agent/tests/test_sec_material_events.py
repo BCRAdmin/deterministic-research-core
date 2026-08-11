@@ -234,9 +234,10 @@ def test_leadership_event_requires_and_retains_substantive_actions() -> None:
         filings=[
             (
                 filing,
-                "<p>Item 5.02 Rafael Carrasco announced his retirement. "
-                "Tara Hemmer was promoted to Executive Vice President and Chief "
-                "Operating Officer. John Morris resigned from the COO role and "
+                "<p>Item 5.02 Retirement of Mr. Rafael E. Carrasco. "
+                "Mr. Carrasco announced his retirement after leading the Stericycle, Inc. integration. "
+                "Promotion of Ms. Tara J. Hemmer. Ms. Hemmer was promoted to Executive Vice President and Chief "
+                "Operating Officer. Mr. John J. Morris, Jr. resigned from the COO role and "
                 "continues as President of the company.</p>",
             )
         ],
@@ -246,4 +247,5 @@ def test_leadership_event_requires_and_retains_substantive_actions() -> None:
 
     assert verify_material_event_payload(payload)["status"] == "pass"
     summary = payload["events"][0]["summary"]
-    assert all(name in summary for name in ("Rafael Carrasco", "Tara Hemmer", "John Morris"))
+    assert all(name in summary for name in ("Carrasco", "Hemmer", "Morris"))
+    assert all(action in summary.casefold() for action in ("retir", "promot", "resign"))

@@ -5,6 +5,7 @@ import re
 from pathlib import Path
 from typing import Iterable
 
+from research_agent.content.report_composer import render_instrument_identity
 from research_agent.decision.decision_packet import DecisionPacket
 from research_agent.decision.signal_scores import TECHNICAL_SCORING_BASES
 from research_agent.evidence.evidence_ledger import EvidenceLedger
@@ -56,6 +57,7 @@ CURRENT_PERIOD_SECTIONS = {
     "Fundamental Analysis",
     "Catalysts & Triggers",
     "Key Risks",
+    "Material Events & Governance",
     "Business Model Reality",
     "Revenue Scale and Backlog",
     "Contract / Backlog Materiality",
@@ -129,6 +131,7 @@ def compose_publish_report(
         )
     else:
         body = _generic_publish_report(
+            data_packet,
             ticker,
             rating,
             grouped,
@@ -138,6 +141,8 @@ def compose_publish_report(
             evidence_ledger,
             currency=data_packet.price_basis.currency,
         )
+    body = _attach_instrument_identity(body, data_packet)
+    body = _attach_material_events(body, grouped)
     return _strip_main_body_internal_language(body).strip() + "\n"
 
 
@@ -229,6 +234,8 @@ def compose_internal_best_report(
         )
     else:
         report = compose_publish_report(data_packet, metrics_packet, decision_packet, evidence_ledger, claim_list)
+    report = _attach_instrument_identity(report, data_packet)
+    report = _attach_material_events(report, grouped)
     return _attach_data_limits_and_review_status(
         report,
         status=status,
@@ -236,6 +243,46 @@ def compose_internal_best_report(
         manual_review_reasons=manual_review_reasons,
         review_issue_details=review_issue_details,
     ).strip() + "\n"
+
+
+def _attach_instrument_identity(markdown: str, data_packet: DataPacket) -> str:
+    """Make canonical instrument identity visible in every report archetype."""
+
+    if "## Instrument Identity" in markdown:
+        return markdown
+    title, separator, remainder = markdown.partition("\n")
+    identity = "\n".join(
+        [
+            "## Instrument Identity",
+            render_instrument_identity(data_packet),
+        ]
+    )
+    if not separator:
+        return f"{title}\n\n{identity}\n"
+    return f"{title}\n\n{identity}\n\n{remainder.lstrip()}"
+
+
+def _attach_material_events(
+    markdown: str,
+    grouped: dict[str, list[ResearchClaim]],
+) -> str:
+    """Surface material issuer events before the appendix in every archetype."""
+
+    claims = grouped.get("Material Events & Governance", [])
+    if not claims or "## Material Events & Governance" in markdown:
+        return markdown
+    section = "\n".join(
+        [
+            "## Material Events & Governance",
+            "",
+            _paragraphs(claims, limit=6),
+        ]
+    )
+    marker = "## Evidence Appendix"
+    if marker in markdown:
+        main, appendix = markdown.split(marker, 1)
+        return f"{main.rstrip()}\n\n{section}\n\n{marker}{appendix}"
+    return f"{markdown.rstrip()}\n\n{section}\n"
 
 
 def _attach_data_limits_and_review_status(
@@ -768,6 +815,7 @@ def _early_commercial_final_view(ticker: str, rating: str, f, v, t) -> str:
 
 
 def _generic_publish_report(
+    data_packet: DataPacket,
     ticker: str,
     rating: str,
     grouped: dict[str, list[ResearchClaim]],
@@ -831,6 +879,9 @@ def _generic_publish_report(
 
     sections = [
         f"# {ticker} Research Report",
+        "## Instrument Identity",
+        render_instrument_identity(data_packet),
+        "",
         "## Executive Summary",
         _executive_summary(ticker, rating, grouped, metrics_packet),
         "",
@@ -867,6 +918,15 @@ def _generic_publish_report(
         "## Bear Case",
         _paragraphs(grouped.get("Bear Case", []), limit=3),
         "",
+        *(
+            [
+                "## Material Events & Governance",
+                _paragraphs(grouped.get("Material Events & Governance", []), limit=6),
+                "",
+            ]
+            if grouped.get("Material Events & Governance")
+            else []
+        ),
         "## Risks",
         _paragraphs(grouped.get("Key Risks", []), limit=5),
         "",

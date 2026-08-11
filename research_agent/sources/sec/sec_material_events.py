@@ -455,6 +455,8 @@ def classify_material_event_sections(
                 continue
             event_type, headline = ITEM_EVENT_TYPES[item]
             summary = f"SEC Form 8-K Item {item}. {_summary_sentences(section)}"
+            if not _item_summary_complete(item, section, summary):
+                continue
             classified.append((item, event_type, headline, summary[:1800]))
         if classified or any(item not in {"7.01", "8.01"} for item in recognized_items):
             return classified
@@ -540,12 +542,66 @@ def _extract_item_section(text: str, item: str) -> str:
 
 
 def _summary_sentences(section: str) -> str:
+    protected = section
+    abbreviations = (
+        "Mr.",
+        "Ms.",
+        "Mrs.",
+        "Dr.",
+        "Jr.",
+        "Sr.",
+        "Inc.",
+        "Corp.",
+        "Co.",
+        "N.A.",
+        "U.S.",
+    )
+    for abbreviation in abbreviations:
+        protected = protected.replace(abbreviation, abbreviation.replace(".", "\u2024"))
+    protected = re.sub(
+        r"\b([A-Z])\.",
+        lambda match: f"{match.group(1)}\u2024",
+        protected,
+    )
     sentences = [
-        sentence.strip()
-        for sentence in re.split(r"(?<=[.!?])\s+", section)
+        sentence.replace("\u2024", ".").strip()
+        for sentence in re.split(r"(?<=[.!?])\s+", protected)
         if len(sentence.split()) >= 4
     ]
     return " ".join(sentences[:6]) or section[:1600]
+
+
+def _item_summary_complete(item: str, section: str, summary: str) -> bool:
+    """Require Item 5.02 summaries to retain opening names and actions."""
+
+    if item != "5.02":
+        return True
+    narrative = section[:1600]
+    names = set()
+    for match in re.finditer(
+        r"\b(?:Mr\.|Ms\.|Mrs\.|Dr\.)\s+"
+        r"((?:[A-Z][A-Za-z'’-]*\.?\s+){0,2}[A-Z][A-Za-z'’-]+)",
+        narrative,
+    ):
+        names.add(match.group(1).split()[-1].rstrip("."))
+    if names and any(name not in summary for name in names):
+        return False
+    action_patterns = (
+        r"\bretir\w*\b",
+        r"\bpromot\w*\b",
+        r"\bresign\w*\b",
+        r"\bappoint\w*\b",
+        r"\belect\w*\b",
+        r"\bdepart\w*\b",
+    )
+    for pattern in action_patterns:
+        if re.search(pattern, narrative, re.IGNORECASE) and not re.search(
+            pattern,
+            summary,
+            re.IGNORECASE,
+        ):
+            return False
+    return True
 
 
 def _item_content_complete(item: str, section: str) -> bool:

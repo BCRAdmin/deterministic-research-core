@@ -136,6 +136,36 @@ def test_report_has_visible_canonical_instrument_identity():
     assert "| SEC CIK | 0000823768 |" in report
     assert "| ISIN | not available |" in report
 
+    internal_report = compose_internal_best_report(
+        data,
+        metrics,
+        decision,
+        ledger,
+        [],
+        status="manual_review",
+        publishable=False,
+    )
+    assert "## Instrument Identity" in internal_report
+    assert "| Legal company name | Waste Management, Inc. |" in internal_report
+    assert "| Listing venue | NYSE (NYQ) |" in internal_report
+    assert "| Jurisdiction | US / incorporation DE |" in internal_report
+    assert "| SEC CIK | 0000823768 |" in internal_report
+    assert "| WKN | not available |" in internal_report
+
+    special_report = compose_internal_best_report(
+        data,
+        metrics,
+        decision,
+        ledger,
+        [],
+        status="manual_review",
+        publishable=False,
+        company_archetype="SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL",
+    )
+    assert "## Instrument Identity" in special_report
+    assert special_report.count("## Instrument Identity") == 1
+    assert "| Legal company name | Waste Management, Inc. |" in special_report
+
 
 def test_current_period_capital_allocation_is_visible_without_ttm_relabeling():
     data, metrics, validation, ledger, decision = _load_packet("SNOW")
@@ -276,8 +306,9 @@ def test_operating_driver_selection_is_generic_complete_and_prefers_specific_cla
         ("Capital allocation", "CAPITAL"),
     ]
 
-    _, metrics, _, ledger, decision = _load_packet("SNOW")
+    data, metrics, _, ledger, decision = _load_packet("SNOW")
     report = _generic_publish_report(
+        data,
         "TEST",
         "Hold",
         {
@@ -1622,7 +1653,7 @@ def test_bull_case_does_not_call_revenue_growth_operating_improvement_during_los
 
 
 def test_generic_report_routes_claims_without_repeating_main_body_paragraphs():
-    _, metrics, _, ledger, decision = _load_packet("SNOW")
+    data, metrics, _, ledger, decision = _load_packet("SNOW")
 
     def claim(
         claim_id: str,
@@ -1688,6 +1719,7 @@ def test_generic_report_routes_claims_without_repeating_main_body_paragraphs():
     }
 
     report = _generic_publish_report(
+        data,
         "TEST",
         "Hold",
         grouped,
@@ -2421,6 +2453,77 @@ def test_current_filing_legal_event_is_rendered_as_specific_risk():
     assert risk.section == "Key Risks"
     assert risk.claim_type == "risk"
     assert risk.claim.startswith("Current issuer-filed risk context:")
+
+
+def test_material_leadership_and_financing_events_are_visible_in_main_report():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    _add_exact_metric_evidence(data, metrics, ledger)
+    events = [
+        (
+            "2026-05-13",
+            "leadership_change",
+            "SNOW_SEC_LEADERSHIP",
+            "Rafael Carrasco will retire; Tara Hemmer was promoted to COO and John Morris resigned from the COO role.",
+        ),
+        (
+            "2026-03-25",
+            "material_agreement",
+            "SNOW_SEC_CREDIT_AMENDMENT",
+            "The issuer amended its revolving credit agreement and the EBIT and EBITDA definitions used for its leverage covenant.",
+        ),
+    ]
+    data.news_coverage.material_events = [
+        MaterialNewsEvent(
+            date=date,
+            headline="Issuer disclosed a material event",
+            event_type=event_type,
+            source_id=source_id,
+            source_type="sec_filing",
+            summary=statement,
+            filing_items=["5.02" if event_type == "leadership_change" else "1.01"],
+            content_complete=True,
+        )
+        for date, event_type, source_id, statement in events
+    ]
+    ledger.evidence_items.extend(
+        EvidenceItem(
+            evidence_id=f"{source_id}_EVIDENCE",
+            ticker=data.ticker,
+            claim_type="news",
+            source_id=source_id,
+            source_type="sec_filing",
+            authority_rank=1,
+            statement=statement,
+            date=date,
+            supports_claims=["material_news_coverage"],
+            confidence="high",
+        )
+        for date, _event_type, source_id, statement in events
+    )
+
+    claims = generate_research_claims(data, metrics, ledger, decision, validation)
+    material_claims = [
+        claim for claim in claims if claim.section == "Material Events & Governance"
+    ]
+    assert {claim.source_ids[0] for claim in material_claims} == {
+        "SNOW_SEC_LEADERSHIP",
+        "SNOW_SEC_CREDIT_AMENDMENT",
+    }
+
+    report = compose_internal_best_report(
+        data,
+        metrics,
+        decision,
+        ledger,
+        claims,
+        status="manual_review",
+        publishable=False,
+        company_archetype="SPECULATIVE_DEEP_TECH_EARLY_COMMERCIAL",
+    )
+    main_body = report.split("## Evidence Appendix", 1)[0]
+    assert "## Material Events & Governance" in main_body
+    assert "Tara Hemmer" in main_body
+    assert "revolving credit agreement" in main_body
 
 
 def test_issuer_operating_spread_keeps_segments_and_regions_taxonomically_distinct():

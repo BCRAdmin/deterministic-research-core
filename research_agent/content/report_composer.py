@@ -56,7 +56,7 @@ def compose_research_report(
     sections = [
         f"# {data_packet.ticker} Research Report",
         "## Instrument Identity",
-        _render_instrument_identity(data_packet),
+        render_instrument_identity(data_packet),
         "",
         "## Executive Summary",
         _render_claim_section(grouped, "Executive Summary"),
@@ -214,7 +214,7 @@ def _render_data_note(
     return "\n".join(lines)
 
 
-def _render_instrument_identity(data_packet: DataPacket) -> str:
+def render_instrument_identity(data_packet: DataPacket) -> str:
     exchange_name = data_packet.exchange_display_name or data_packet.exchange
     exchange = (
         f"{exchange_name} ({data_packet.exchange})"
