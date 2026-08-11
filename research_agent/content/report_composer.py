@@ -27,6 +27,7 @@ REPORT_SECTIONS = [
     "Technical Setup",
     "Bull Case",
     "Bear Case",
+    "Material Events & Governance",
     "Key Risks",
     "Catalysts & Triggers",
     "Scenario View",
@@ -103,6 +104,15 @@ def compose_research_report(
         "## Bear Case",
         _render_claim_section(grouped, "Bear Case"),
         "",
+        *(
+            [
+                "## Material Events & Governance",
+                _render_claim_section(grouped, "Material Events & Governance"),
+                "",
+            ]
+            if grouped.get("Material Events & Governance")
+            else []
+        ),
         "## Key Risks",
         _render_claim_section(grouped, "Key Risks"),
         "",

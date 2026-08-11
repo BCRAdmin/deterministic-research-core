@@ -442,6 +442,7 @@ class _ClaimBuilder:
                 self.add_event(
                     event,
                     section="Material Events & Governance",
+                    allow_source_bound_numbers=True,
                 )
 
         selected_risk_evidence = self._selected_risk_evidence(limit=4)
@@ -1446,6 +1447,7 @@ class _ClaimBuilder:
         section: str,
         as_catalyst: bool = False,
         as_risk: bool = False,
+        allow_source_bound_numbers: bool = False,
     ) -> None:
         source_statement = str(event.summary or event.headline).strip()
         statement = _event_display_statement(source_statement)
@@ -1454,6 +1456,7 @@ class _ClaimBuilder:
             any(character.isdigit() for character in source_statement)
             and not numeric_event
             and not as_risk
+            and not allow_source_bound_numbers
         ):
             return
         evidence = [

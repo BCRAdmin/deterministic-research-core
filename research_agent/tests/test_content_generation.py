@@ -2463,7 +2463,7 @@ def test_material_leadership_and_financing_events_are_visible_in_main_report():
             "2026-05-13",
             "leadership_change",
             "SNOW_SEC_LEADERSHIP",
-            "Rafael Carrasco will retire; Tara Hemmer was promoted to COO and John Morris resigned from the COO role.",
+            "Rafael Carrasco will retire on July 17, 2026; Tara Hemmer was promoted to COO and John Morris resigned from the COO role.",
         ),
         (
             "2026-03-25",
@@ -2524,6 +2524,18 @@ def test_material_leadership_and_financing_events_are_visible_in_main_report():
     assert "## Material Events & Governance" in main_body
     assert "Tara Hemmer" in main_body
     assert "revolving credit agreement" in main_body
+
+    research_report = compose_research_report(
+        data,
+        metrics,
+        validation,
+        decision,
+        ledger,
+        claims,
+    )
+    assert "## Material Events & Governance" in research_report
+    assert "July 17, 2026" in research_report
+    assert "revolving credit agreement" in research_report
 
 
 def test_issuer_operating_spread_keeps_segments_and_regions_taxonomically_distinct():
