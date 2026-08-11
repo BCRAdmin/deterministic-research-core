@@ -113,7 +113,8 @@ def build_sec_operating_kpi_payload(
     events: list[dict[str, Any]] = []
     match_counts = {kpi_id: 0 for kpi_id in KPI_PATTERNS}
     primary_counts = {kpi_id: 0 for kpi_id in KPI_PATTERNS}
-    for statement in blocks:
+    filing_year = int(filing_date[:4])
+    for block_index, statement in enumerate(blocks):
         matched_kpis = [
             kpi_id
             for kpi_id, pattern in KPI_PATTERNS.items()
@@ -130,6 +131,12 @@ def build_sec_operating_kpi_payload(
             statement,
             kpi_ids=matched_kpis,
             event_index=len(events) + 1,
+            context_scale=_inherited_block_scale(blocks, block_index),
+            column_labels=_inherited_column_labels(
+                blocks,
+                block_index,
+                filing_year=filing_year,
+            ),
         )
         if not numeric_evidence:
             continue
@@ -244,6 +251,8 @@ def _numeric_evidence(
     *,
     kpi_ids: list[str],
     event_index: int,
+    context_scale: str | None = None,
+    column_labels: list[str] | None = None,
 ) -> list[dict[str, Any]]:
     label_ranges = [
         (kpi_id, match.span())
@@ -253,12 +262,21 @@ def _numeric_evidence(
     if not label_ranges:
         return []
     values: list[dict[str, Any]] = []
-    for match in NUMBER_RE.finditer(statement):
+    number_matches = list(NUMBER_RE.finditer(statement))
+    for number_index, match in enumerate(number_matches):
         raw = float(match.group("number").replace(",", ""))
-        scale = str(match.group("scale") or "").casefold()
+        explicit_scale = str(match.group("scale") or "").casefold()
+        per_share = _is_per_share_value(statement, match)
+        scale = (
+            "base"
+            if per_share
+            else explicit_scale
+            or _inherited_inline_scale(statement, match, number_matches)
+            or str(context_scale or "").casefold()
+        )
         percent = bool(match.group("percent"))
         if (
-            not scale
+            not explicit_scale
             and not percent
             and not match.group("currency")
             and raw.is_integer()
@@ -268,7 +286,7 @@ def _numeric_evidence(
         # Every monetary, percentage or explicitly scaled value in an emitted
         # source statement is a hard report claim.  Binding only the value
         # nearest the KPI label leaves the other visible numbers unverifiable.
-        if not (match.group("currency") or percent or scale):
+        if not (match.group("currency") or percent or explicit_scale):
             continue
         multiplier = {
             "billion": 1_000_000_000,
@@ -281,7 +299,20 @@ def _numeric_evidence(
         }.get(scale, 1)
         direction = _numeric_direction(statement, match.span()) if percent else 1.0
         value = direction * raw / 100 if percent else raw * multiplier
-        unit = "percent" if percent else "currency" if match.group("currency") else "count"
+        unit = (
+            "percent"
+            if percent
+            else "currency_per_share"
+            if match.group("currency") and per_share
+            else "currency"
+            if match.group("currency")
+            else "count"
+        )
+        currency = {
+            "$": "USD",
+            "€": "EUR",
+            "£": "GBP",
+        }.get(str(match.group("currency") or ""))
         distance, owner = min(
             (
                 _semantic_distance(match.span(), label_range),
@@ -298,9 +329,107 @@ def _numeric_evidence(
                 "value": value,
                 "raw_value": raw,
                 "unit": unit,
+                "source_scale": "percent" if percent else scale or "base",
+                "source_unit": unit,
+                "source_sign": int(direction),
+                "currency": currency,
+                "column_label": (
+                    column_labels[number_index]
+                    if column_labels and number_index < len(column_labels)
+                    else None
+                ),
             }
         )
     return values
+
+
+def _is_per_share_value(statement: str, current: re.Match[str]) -> bool:
+    """Keep per-share values on a base-unit scale even inside scaled tables."""
+
+    for marker in re.finditer(
+        r"\b(?:per[- ](?:common )?share|per[- ]share amounts?|per[- ]share data)\b",
+        statement,
+        flags=re.IGNORECASE,
+    ):
+        between = statement[
+            min(current.end(), marker.end()) : max(current.start(), marker.start())
+        ]
+        if len(between) <= 160 and not re.search(r"[;:]|\.(?:\s|$)", between):
+            return True
+    return False
+
+
+def _inherited_inline_scale(
+    statement: str,
+    current: re.Match[str],
+    matches: list[re.Match[str]],
+) -> str:
+    """Inherit an explicit scale inside the same compact range or clause."""
+
+    candidates: list[tuple[int, str]] = []
+    for other in matches:
+        if other is current or not other.group("scale"):
+            continue
+        between = statement[
+            min(current.end(), other.end()) : max(current.start(), other.start())
+        ]
+        if len(between) > 80 or re.search(r"[.;:]", between):
+            continue
+        candidates.append(
+            (
+                _range_distance(current.span(), other.span()),
+                str(other.group("scale") or "").casefold(),
+            )
+        )
+    return min(candidates, default=(0, ""), key=lambda item: item[0])[1]
+
+
+def _inherited_block_scale(blocks: list[str], index: int) -> str | None:
+    """Carry an explicit table scale into nearby value rows, never across prose."""
+
+    current = blocks[index]
+    direct = _scale_from_text(current)
+    if direct:
+        return direct
+    for prior in reversed(blocks[max(0, index - 6) : index]):
+        inherited = _scale_from_text(prior)
+        if inherited:
+            return inherited
+        if len(prior) > 180 and re.search(r"[.!?]", prior):
+            break
+    return None
+
+
+def _scale_from_text(value: str) -> str | None:
+    match = re.search(
+        r"\b(?:in\s+)?(?P<scale>billions?|millions?|thousands?)\b",
+        value,
+        flags=re.IGNORECASE,
+    )
+    if not match:
+        return None
+    return match.group("scale").casefold().removesuffix("s")
+
+
+def _inherited_column_labels(
+    blocks: list[str],
+    index: int,
+    *,
+    filing_year: int,
+) -> list[str] | None:
+    """Bind the common reported/adjusted four-column release layout."""
+
+    context = " ".join(blocks[max(0, index - 6) : index])
+    if len(re.findall(r"\bAs Reported\b", context, re.IGNORECASE)) < 2:
+        return None
+    if len(re.findall(r"\bAs Adjusted", context, re.IGNORECASE)) < 2:
+        return None
+    return [
+        f"Q2 {filing_year} as reported",
+        f"Q2 {filing_year} as adjusted",
+        f"Q2 {filing_year - 1} as reported",
+        f"Q2 {filing_year - 1} as adjusted",
+    ]
 
 
 def _numeric_direction(statement: str, number_range: tuple[int, int]) -> float:

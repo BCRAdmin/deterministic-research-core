@@ -1866,6 +1866,17 @@ def _comparable_reported_value(claim: ExtractedNumericClaim, validated_value: fl
     reported = float(claim.normalized_value or 0)
     if claim.unit == "percent":
         return reported / 100
+    if (
+        validated_value < 0
+        and reported >= 0
+        and claim.possible_metric
+        == "shareholder_distributions_minus_fcf_current_period"
+        and any(
+            marker in claim.nearby_text.casefold()
+            for marker in ("remaining", "covered by", "below same-period fcf")
+        )
+    ):
+        return -reported
     return reported
 
 

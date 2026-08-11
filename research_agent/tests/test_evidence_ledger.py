@@ -23,6 +23,105 @@ def test_revenue_growth_uses_percentage_unit():
     assert unit_for_metric("revenue_growth_yoy", currency="USD") == "percent"
 
 
+def test_current_period_capital_allocation_has_period_matched_lineage():
+    period_start = "2026-01-01"
+    period_end = "2026-06-30"
+    raw_values = {
+        "buybacks": 1_003_000_000.0,
+        "dividends_paid": 764_000_000.0,
+        "operating_cash_flow": 3_227_000_000.0,
+        "capex": 1_280_000_000.0,
+    }
+    raw_evidence = [
+        EvidenceItem(
+            evidence_id=f"WM_{metric.upper()}_H1_2026",
+            ticker="WM",
+            claim_type="financial_metric",
+            source_id="SEC_WM_2026_Q2",
+            source_type="sec_filing",
+            authority_rank=1,
+            statement=f"WM reported {metric} for H1 2026.",
+            value=value,
+            unit="USD",
+            period="CY2026Q2YTD",
+            date=period_end,
+            supports_metrics=[metric],
+            raw_value=value,
+            normalized_value=value,
+            confidence="high",
+        )
+        for metric, value in raw_values.items()
+    ]
+    metrics = MetricsPacket(
+        ticker="WM",
+        as_of_date="2026-07-31",
+        technical=TechnicalMetrics(indicator_date="2026-07-31", close=200.0),
+        fundamentals=FundamentalMetrics(
+            fiscal_period="H1 2026",
+            buybacks_current_period=1_003_000_000.0,
+            dividends_paid_current_period=764_000_000.0,
+            shareholder_distributions_current_period=1_767_000_000.0,
+            free_cash_flow_current_period=1_947_000_000.0,
+            shareholder_distributions_minus_fcf_current_period=-180_000_000.0,
+            shareholder_distribution_period_start=period_start,
+            shareholder_distribution_period_end=period_end,
+        ),
+        valuation=ValuationMetrics(),
+    )
+    normalized = {
+        "current_period": raw_values,
+        "current_period_metadata": {
+            metric: {
+                "period": "CY2026Q2YTD",
+                "period_start": period_start,
+                "period_end": period_end,
+                "source_ids": ["SEC_WM_2026_Q2"],
+            }
+            for metric in raw_values
+        },
+    }
+
+    derived = build_fundamental_derivation_evidence(
+        ticker="WM",
+        as_of_date="2026-07-31",
+        metrics_packet=metrics,
+        normalized_fundamentals=normalized,
+        runtime_evidence=raw_evidence,
+    )
+    by_metric = {
+        item.supports_metrics[0]: item
+        for item in derived
+        if item.supports_metrics
+    }
+
+    assert by_metric["buybacks_current_period"].period == (
+        "2026-01-01..2026-06-30"
+    )
+    assert by_metric["shareholder_distributions_current_period"].value == (
+        1_767_000_000.0
+    )
+    assert by_metric["free_cash_flow_current_period"].formula_operands == {
+        "operating_cash_flow": 3_227_000_000.0,
+        "capex": 1_280_000_000.0,
+    }
+    assert by_metric[
+        "shareholder_distributions_minus_fcf_current_period"
+    ].formula_operands == {
+        "shareholder_distributions_current_period": 1_767_000_000.0,
+        "free_cash_flow_current_period": 1_947_000_000.0,
+    }
+    assert all(
+        not str(by_metric[metric_name].period).startswith("TTM")
+        for metric_name in (
+            "buybacks_current_period",
+            "dividends_paid_current_period",
+            "shareholder_distributions_current_period",
+            "free_cash_flow_current_period",
+            "shareholder_distributions_minus_fcf_current_period",
+        )
+    )
+
+
 def test_diluted_share_count_yoy_requires_both_reported_periods():
     current_shares = 883_000_000.0
     prior_shares = 909_000_000.0

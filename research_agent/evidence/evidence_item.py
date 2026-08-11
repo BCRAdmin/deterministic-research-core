@@ -42,6 +42,11 @@ class EvidenceItem(BaseModel):
     formula_operands: Dict[str, float] = Field(default_factory=dict)
     raw_value: Optional[float] = None
     normalized_value: Optional[float] = None
+    source_scale: Optional[str] = None
+    source_unit: Optional[str] = None
+    source_sign: Optional[Literal[-1, 1]] = None
+    currency: Optional[str] = None
+    column_label: Optional[str] = None
     source_lineage: List[str] = Field(default_factory=list)
     duration_days: Optional[int] = None
     audited: Optional[bool] = None

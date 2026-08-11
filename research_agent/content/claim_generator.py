@@ -263,6 +263,34 @@ def _event_display_statement(statement: str) -> str:
     return normalized.strip()
 
 
+def _labeled_numeric_event_statement(
+    event: MaterialNewsEvent,
+    fallback: str,
+    *,
+    default_currency: str,
+) -> str:
+    metrics = list(event.numeric_evidence)
+    if len(metrics) < 2 or not all(metric.column_label for metric in metrics):
+        return fallback
+    label = re.split(r"\s+[$€£]?\d", fallback, maxsplit=1)[0]
+    label = re.sub(r"\s*\([a-z]\)", "", label, flags=re.IGNORECASE).strip(" :-")
+    if not label:
+        label = "Reported operating KPI"
+    values: list[str] = []
+    for metric in metrics:
+        if metric.unit == "percent":
+            value = f"{metric.value:.1%}"
+        elif metric.unit == "currency":
+            value = _money(
+                metric.value,
+                metric.currency or default_currency,
+            )
+        else:
+            value = _number(metric.value)
+        values.append(f"{metric.column_label}: {value}")
+    return f"{label}: " + "; ".join(values) + "."
+
+
 class _ClaimBuilder:
     def __init__(
         self,
@@ -331,6 +359,48 @@ class _ClaimBuilder:
                 counterargument=current_claim.get("counterargument"),
                 implication=current_claim.get("implication"),
                 metric_values=current_claim.get("metric_values"),
+            )
+
+        f = self.metrics.fundamentals
+        if (
+            f.shareholder_distributions_current_period is not None
+            and f.free_cash_flow_current_period is not None
+            and f.shareholder_distributions_minus_fcf_current_period is not None
+            and f.shareholder_distribution_period_start
+            and f.shareholder_distribution_period_end
+        ):
+            gap = f.shareholder_distributions_minus_fcf_current_period
+            coverage = (
+                f"covered by same-period FCF with {_money(abs(gap), self.data_packet.price_basis.currency)} remaining"
+                if gap <= 0
+                else f"above same-period FCF by {_money(gap, self.data_packet.price_basis.currency)}"
+            )
+            self.add(
+                "Fundamental Analysis",
+                "capital_allocation",
+                "financial_metric",
+                (
+                    f"From {f.shareholder_distribution_period_start} through "
+                    f"{f.shareholder_distribution_period_end}, shareholder distributions "
+                    f"were {_money(f.shareholder_distributions_current_period, self.data_packet.price_basis.currency)} "
+                    f"versus same-period FCF of {_money(f.free_cash_flow_current_period, self.data_packet.price_basis.currency)}; "
+                    f"distributions were {coverage}. This is a period-matched capital-allocation comparison, not a TTM claim."
+                ),
+                [
+                    "shareholder_distributions_current_period",
+                    "free_cash_flow_current_period",
+                    "shareholder_distributions_minus_fcf_current_period",
+                    "buybacks_current_period",
+                    "dividends_paid_current_period",
+                ],
+                "high",
+                "high",
+                counterargument=(
+                    "One interim period can be seasonal and does not establish a durable payout policy."
+                ),
+                implication=(
+                    "Track repurchases, dividends and FCF on the same reporting window before judging funding pressure."
+                ),
             )
 
         for event in self.data_packet.news_coverage.material_events:
@@ -1375,6 +1445,11 @@ class _ClaimBuilder:
         ]
         if not evidence:
             return
+        statement = _labeled_numeric_event_statement(
+            event,
+            statement,
+            default_currency=self.data_packet.price_basis.currency,
+        )
         metric_values = {
             metric.metric_name: metric.value for metric in event.numeric_evidence
         }
@@ -1859,10 +1934,10 @@ def _valuation_status_sentence(status: str) -> str:
     labels = {
         "measured": "Valuation evidence is measured against a calibrated basis.",
         "scenario_measured": (
-            "Valuation is measured only as scenario sensitivity and is not yet calibrated."
+            "Valuation uses a company-calibrated scenario model."
         ),
         "illustrative_only": (
-            "Valuation is illustrative only because share-class price equivalence is unverified."
+            "The standardized DCF is an uncalibrated illustration outside the rating logic."
         ),
         "unbenchmarked": ("Valuation multiples are observations without a validated benchmark."),
         "not_measured": "Valuation is not sufficiently measured.",
@@ -2620,12 +2695,11 @@ def _final_rating_claim_text(
         "positive nor a negative rating signal."
         if valuation_status == "unbenchmarked"
         else (
-            "The standardized DCF is measured sensitivity evidence but remains "
-            "uncalibrated and therefore does not move the rating."
+            "The company-calibrated scenario model is measured valuation evidence."
             if valuation_status == "scenario_measured"
             else (
-                "The standardized DCF is illustrative because share-class price "
-                "equivalence is unverified and therefore does not move the rating."
+                "The standardized DCF is an uncalibrated illustration outside "
+                "the rating logic and therefore does not move the rating."
                 if valuation_status == "illustrative_only"
                 else "No calibrated valuation signal is present."
             )

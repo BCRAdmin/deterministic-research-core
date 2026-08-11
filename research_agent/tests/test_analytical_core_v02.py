@@ -86,14 +86,17 @@ def test_valuation_sensitivity_is_measured_only_with_verified_share_basis():
         ),
     )
 
-    assert measured.sensitivity.status == "measured"
+    assert measured.sensitivity.status == "illustrative_only"
+    assert measured.sensitivity.calibration_status == "standardized_uncalibrated"
     assert [scenario.name for scenario in measured.sensitivity.scenarios] == [
         "bear",
         "base",
         "bull",
     ]
     assert measured.sensitivity.model_range_low < measured.sensitivity.model_range_high
-    assert measured.sensitivity.reverse_dcf_status == "measured"
+    assert measured.sensitivity.reverse_dcf_status == (
+        "illustrative_standardized_sensitivity"
+    )
     assert measured.sensitivity.reverse_dcf_implied_fcf_growth is not None
     assert all(
         0 < scenario.terminal_value_share < 1

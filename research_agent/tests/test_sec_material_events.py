@@ -1,12 +1,15 @@
+import pytest
+
 from research_agent.sources.sec.sec_material_events import (
     build_material_event_payload,
     classify_material_event_text,
     inventory_recent_8k_filings,
     select_material_event_filings,
+    verify_material_event_payload,
 )
 
 
-def test_selects_material_8k_without_treating_results_as_incident():
+def test_selects_results_8k_for_explicit_protocol_disposition():
     submissions = {
         "filings": {
             "recent": {
@@ -19,14 +22,14 @@ def test_selects_material_8k_without_treating_results_as_incident():
         }
     }
     rows = select_material_event_filings(submissions, as_of_date="2026-08-05")
-    assert [row["primary_document"] for row in rows] == ["incident.htm"]
+    assert [row["primary_document"] for row in rows] == ["incident.htm", "results.htm"]
     inventory = inventory_recent_8k_filings(
         submissions,
         as_of_date="2026-08-05",
     )
     assert [row["disposition"] for row in inventory] == [
         "material_candidate",
-        "non_material_with_reason",
+        "material_candidate",
     ]
 
 
@@ -41,6 +44,18 @@ def test_classifies_cyber_disruption_and_later_recovery_separately():
     )
     assert incident is not None and incident[0] == "cyber_incident"
     assert recovery is not None and recovery[0] == "operational_recovery"
+
+
+def test_explicit_results_item_cannot_be_reclassified_by_exhibit_keywords() -> None:
+    event = classify_material_event_text(
+        "Item 2.02 The company furnished quarterly financial results as Exhibit 99.1. "
+        "The exhibit also discusses cybersecurity investments and unauthorized access risk.",
+        items={"2.02"},
+    )
+
+    assert event is not None
+    assert event[0] == "results_announcement"
+    assert "Item 2.02" in event[2]
 
 
 def test_builds_primary_source_event_payload():
@@ -90,8 +105,8 @@ def test_selects_and_dispositions_acquisition_and_debt_8k_items():
         ticker="TEST",
         cik="1",
         filings=[
-            (rows[0], "<p>The transaction closed following satisfaction of all conditions.</p>"),
-            (rows[1], "<p>The company entered into a new secured credit facility.</p>"),
+            (rows[0], "<p>Item 2.01 The transaction closed following satisfaction of all conditions.</p>"),
+            (rows[1], "<p>Item 2.03 The company entered into a new secured credit facility.</p>"),
         ],
         retrieved_at="2026-08-05T12:00:00Z",
     )
@@ -137,7 +152,14 @@ def test_material_event_payload_retains_excluded_and_non_material_dispositions()
         ticker="TEST",
         cik="1",
         filings=[
-            (selected[0], "<p>The acquisition closed after all conditions.</p>")
+                (
+                    selected[0],
+                    "<p>Item 2.01 The company completed the material acquisition after all closing conditions were satisfied.</p>",
+                ),
+            (
+                selected[1],
+                "<p>Item 2.02 The company furnished quarterly financial results as Exhibit 99.1.</p>",
+            ),
         ],
         retrieved_at="2026-08-05T12:00:00Z",
         candidate_inventory=inventory,
@@ -149,6 +171,79 @@ def test_material_event_payload_retains_excluded_and_non_material_dispositions()
     ] == [
         "superseded",
         "material_event",
-        "non_material_with_reason",
+        "material_event",
         "non_material_with_reason",
     ]
+
+
+def test_protocol_year_includes_filings_older_than_120_days() -> None:
+    submissions = {
+        "filings": {
+            "recent": {
+                "form": ["8-K", "8-K"],
+                "filingDate": ["2026-03-25", "2025-12-31"],
+                "accessionNumber": [
+                    "0000000001-26-000010",
+                    "0000000001-25-000011",
+                ],
+                "primaryDocument": ["credit.htm", "old.htm"],
+                "items": ["1.01,9.01", "1.01,9.01"],
+            }
+        }
+    }
+
+    inventory = inventory_recent_8k_filings(submissions, as_of_date="2026-08-10")
+
+    assert inventory[0]["disposition"] == "excluded_outside_lookback"
+    assert inventory[1]["disposition"] == "material_candidate"
+
+
+def test_header_only_material_event_cannot_false_pass() -> None:
+    filing = {
+        "filing_date": "2026-05-13",
+        "accession_number": "0001104659-26-059860",
+        "primary_document": "leadership.htm",
+        "items": "5.02,9.01",
+    }
+
+    with pytest.raises(ValueError, match="item-specific disposition"):
+        build_material_event_payload(
+            ticker="WM",
+            cik="823768",
+            filings=[
+                (
+                    filing,
+                    "<p>Item 5.02 Departure of Directors or Certain Officers.</p>",
+                )
+            ],
+            retrieved_at="2026-08-10T12:00:00Z",
+            as_of_date="2026-08-10",
+        )
+
+
+def test_leadership_event_requires_and_retains_substantive_actions() -> None:
+    filing = {
+        "filing_date": "2026-05-13",
+        "accession_number": "0001104659-26-059860",
+        "primary_document": "leadership.htm",
+        "items": "5.02,9.01",
+    }
+    payload = build_material_event_payload(
+        ticker="WM",
+        cik="823768",
+        filings=[
+            (
+                filing,
+                "<p>Item 5.02 Rafael Carrasco announced his retirement. "
+                "Tara Hemmer was promoted to Executive Vice President and Chief "
+                "Operating Officer. John Morris resigned from the COO role and "
+                "continues as President of the company.</p>",
+            )
+        ],
+        retrieved_at="2026-08-10T12:00:00Z",
+        as_of_date="2026-08-10",
+    )
+
+    assert verify_material_event_payload(payload)["status"] == "pass"
+    summary = payload["events"][0]["summary"]
+    assert all(name in summary for name in ("Rafael Carrasco", "Tara Hemmer", "John Morris"))

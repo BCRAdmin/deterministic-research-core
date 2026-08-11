@@ -97,6 +97,13 @@ class FundamentalMetrics(BaseModel):
     dividends_paid: Optional[float] = None
     shareholder_distributions_ttm: Optional[float] = None
     shareholder_distributions_minus_fcf_ttm: Optional[float] = None
+    buybacks_current_period: Optional[float] = None
+    dividends_paid_current_period: Optional[float] = None
+    shareholder_distributions_current_period: Optional[float] = None
+    free_cash_flow_current_period: Optional[float] = None
+    shareholder_distributions_minus_fcf_current_period: Optional[float] = None
+    shareholder_distribution_period_start: Optional[str] = None
+    shareholder_distribution_period_end: Optional[str] = None
     depreciation_and_amortization_ttm: Optional[float] = None
     interest_expense_ttm: Optional[float] = None
     operating_income_interest_coverage_ttm: Optional[float] = None
@@ -148,6 +155,11 @@ class ValuationSensitivity(BaseModel):
     status: Literal["measured", "illustrative_only", "not_measured"] = (
         "not_measured"
     )
+    calibration_status: Literal[
+        "standardized_uncalibrated",
+        "company_calibrated",
+        "not_applicable",
+    ] = "not_applicable"
     anchor_growth_rate: Optional[float] = None
     anchor_growth_basis: Optional[str] = None
     current_market_cap: Optional[float] = None

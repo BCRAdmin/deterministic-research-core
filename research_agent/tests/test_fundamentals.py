@@ -127,6 +127,49 @@ def test_shareholder_distributions_require_both_ttm_components():
     assert metrics.shareholder_distributions_minus_fcf_ttm is None
 
 
+def test_current_period_shareholder_distributions_use_only_aligned_periods():
+    fundamentals = {
+        "quarterly": {},
+        "current_period": {
+            "buybacks": 1_003_000_000,
+            "dividends_paid": 764_000_000,
+            "operating_cash_flow": 3_227_000_000,
+            "capex": 1_280_000_000,
+        },
+        "current_period_metadata": {
+            metric: {
+                "period_start": "2026-01-01",
+                "period_end": "2026-06-30",
+            }
+            for metric in (
+                "buybacks",
+                "dividends_paid",
+                "operating_cash_flow",
+                "capex",
+            )
+        },
+    }
+
+    metrics = calculate_fundamental_metrics(fundamentals)
+
+    assert metrics.buybacks_current_period == 1_003_000_000
+    assert metrics.dividends_paid_current_period == 764_000_000
+    assert metrics.shareholder_distributions_current_period == 1_767_000_000
+    assert metrics.free_cash_flow_current_period == 1_947_000_000
+    assert metrics.shareholder_distributions_minus_fcf_current_period == -180_000_000
+    assert metrics.shareholder_distribution_period_start == "2026-01-01"
+    assert metrics.shareholder_distribution_period_end == "2026-06-30"
+    assert metrics.shareholder_distributions_ttm is None
+
+    fundamentals["current_period_metadata"]["dividends_paid"] = {
+        "period_start": "2026-04-01",
+        "period_end": "2026-06-30",
+    }
+    mismatched = calculate_fundamental_metrics(fundamentals)
+    assert mismatched.shareholder_distributions_current_period is None
+    assert mismatched.shareholder_distributions_minus_fcf_current_period is None
+
+
 def test_shareholder_distribution_comparison_rejects_mixed_periods():
     shared = {
         "quarterly": {

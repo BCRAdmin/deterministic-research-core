@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from typing import Any, Optional
 
 from pydantic import BaseModel
@@ -130,6 +131,13 @@ METRIC_PATHS = {
     "shareholder_distributions_minus_fcf_ttm": (
         "fundamentals.shareholder_distributions_minus_fcf_ttm"
     ),
+    "shareholder_distributions_current_period": (
+        "fundamentals.shareholder_distributions_current_period"
+    ),
+    "free_cash_flow_current_period": "fundamentals.free_cash_flow_current_period",
+    "shareholder_distributions_minus_fcf_current_period": (
+        "fundamentals.shareholder_distributions_minus_fcf_current_period"
+    ),
     "revenue_ttm": "fundamentals.revenue_ttm",
     "fcf_margin_ttm": "fundamentals.fcf_margin_ttm",
     "operating_income_ttm": "fundamentals.operating_income_ttm",
@@ -180,6 +188,46 @@ class MappedMetric(BaseModel):
 def infer_possible_metric(text: str, unit: Optional[str] = None) -> Optional[str]:
     normalized = _normalize_text(text)
     compact = normalized.replace(" / ", "/")
+    current_period = any(
+        marker in normalized
+        for marker in (
+            "same-period",
+            "same period",
+            "current-period",
+            "current period",
+            "period-matched",
+            "period matched",
+            "not a ttm claim",
+        )
+    )
+    if current_period:
+        if re.search(
+            r"(?:covered by|below) same[- ]period fcf.{0,40}"
+            r"metricvalueanchor.{0,20}remaining|"
+            r"above same[- ]period fcf by.{0,20}metricvalueanchor",
+            normalized,
+        ):
+            return "shareholder_distributions_minus_fcf_current_period"
+        current_metric = _nearest_labeled_metric(
+            normalized,
+            {
+                "shareholder distributions": "shareholder_distributions_current_period",
+                "same-period fcf": "free_cash_flow_current_period",
+                "same period fcf": "free_cash_flow_current_period",
+                "free cash flow": "free_cash_flow_current_period",
+                "fcf": "free_cash_flow_current_period",
+                "remaining": "shareholder_distributions_minus_fcf_current_period",
+                "above same-period fcf": (
+                    "shareholder_distributions_minus_fcf_current_period"
+                ),
+                "above same period fcf": (
+                    "shareholder_distributions_minus_fcf_current_period"
+                ),
+            },
+            prefer_preceding=True,
+        )
+        if current_metric is not None:
+            return current_metric
     if str(unit or "").lower() == "percent":
         assumption_metric = _nearest_labeled_metric(
             normalized,

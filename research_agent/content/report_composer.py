@@ -18,6 +18,7 @@ from research_agent.research_core.reporting.report_builder import render_metric_
 
 
 REPORT_SECTIONS = [
+    "Instrument Identity",
     "Executive Summary",
     "Data / Source Quality Note",
     "Business & Segment Context",
@@ -54,6 +55,9 @@ def compose_research_report(
 
     sections = [
         f"# {data_packet.ticker} Research Report",
+        "## Instrument Identity",
+        _render_instrument_identity(data_packet),
+        "",
         "## Executive Summary",
         _render_claim_section(grouped, "Executive Summary"),
         "",
@@ -210,6 +214,38 @@ def _render_data_note(
     return "\n".join(lines)
 
 
+def _render_instrument_identity(data_packet: DataPacket) -> str:
+    exchange_name = data_packet.exchange_display_name or data_packet.exchange
+    exchange = (
+        f"{exchange_name} ({data_packet.exchange})"
+        if exchange_name
+        and data_packet.exchange
+        and exchange_name != data_packet.exchange
+        else exchange_name or "not available"
+    )
+    cik = str(data_packet.cik or "").strip()
+    cik = cik.zfill(10) if cik.isdigit() else cik or "not available"
+    legal_location = data_packet.jurisdiction or "not available"
+    if data_packet.incorporation_state:
+        legal_location += f" / incorporation {data_packet.incorporation_state}"
+    return "\n".join(
+        [
+            "| Identity field | Verified value |",
+            "| --- | --- |",
+            f"| Legal company name | {data_packet.company_name or 'not available'} |",
+            f"| Ticker | {data_packet.ticker} |",
+            f"| Listing venue | {exchange} |",
+            f"| Jurisdiction | {legal_location} |",
+            f"| SEC CIK | {cik} |",
+            f"| Reporting / price currency | {data_packet.price_basis.currency} |",
+            f"| Analysis cutoff | {data_packet.as_of_date} |",
+            f"| Price date | {data_packet.price_basis.date} |",
+            f"| ISIN | {data_packet.isin or 'not available'} |",
+            f"| WKN | {data_packet.wkn or 'not available'} |",
+        ]
+    )
+
+
 def _render_investment_thesis(
     data_packet: DataPacket,
     metrics_packet: MetricsPacket,
@@ -245,19 +281,18 @@ def _render_investment_thesis(
         elif valuation_status == "scenario_measured":
             sensitivity = metrics_packet.valuation.sensitivity
             parts.append(
-                f"- Valuation sensitivity: the standardized equity-DCF range is "
+                f"- Valuation model: the company-calibrated equity-DCF range is "
                 f"`{_fmt_money(sensitivity.model_range_low, currency)}` to "
-                f"`{_fmt_money(sensitivity.model_range_high, currency)}`. It is "
-                "measured scenario evidence, not a calibrated fair-value claim."
+                f"`{_fmt_money(sensitivity.model_range_high, currency)}`."
             )
         elif valuation_status == "illustrative_only":
             sensitivity = metrics_packet.valuation.sensitivity
             parts.append(
                 f"- Valuation sensitivity: the standardized equity-DCF range is "
                 f"`{_fmt_money(sensitivity.model_range_low, currency)}` to "
-                f"`{_fmt_money(sensitivity.model_range_high, currency)}`, but the "
-                "current-value comparison remains illustrative because share-class "
-                "price equivalence is unverified."
+                f"`{_fmt_money(sensitivity.model_range_high, currency)}`. It is an "
+                "uncalibrated illustration outside the rating logic; it is not a "
+                "company-specific fair-value estimate."
             )
         elif valuation_status == "measured":
             parts.append(
@@ -416,9 +451,9 @@ def _render_final_rating_logic(
             None,
         )
         qualifier = (
-            "measured but not calibrated"
+            "company-calibrated"
             if scores.valuation_status == "scenario_measured"
-            else "illustrative because share-class price equivalence is unverified"
+            else "illustrative and uncalibrated; outside the rating logic"
         )
         valuation_line = (
             f"- Valuation status: standardized equity-DCF range "
@@ -631,8 +666,8 @@ def _replace_mechanical_language(text: str) -> str:
 
 def _render_evidence_appendix(claims: list[ResearchClaim], evidence_ledger: EvidenceLedger) -> str:
     lines = [
-        "| Claim ID | Claim | Evidence IDs | Source Type | Confidence | Metric Refs |",
-        "|---|---|---|---|---|---|",
+        "| Claim ID | Evidence IDs | Source Type | Confidence | Metric Refs |",
+        "|---|---|---|---|---|",
     ]
     evidence_by_id = {item.evidence_id: item for item in evidence_ledger.evidence_items}
     for claim in claims:
@@ -642,9 +677,8 @@ def _render_evidence_appendix(claims: list[ResearchClaim], evidence_ledger: Evid
             if item_id in evidence_by_id
         })
         lines.append(
-            "| {claim_id} | {claim_text} | {evidence_ids} | {source_types} | {confidence} | {metrics} |".format(
+            "| {claim_id} | {evidence_ids} | {source_types} | {confidence} | {metrics} |".format(
                 claim_id=claim.claim_id or "",
-                claim_text=_table_text(claim.claim),
                 evidence_ids=", ".join(claim.evidence_ids),
                 source_types=", ".join(source_types),
                 confidence=claim.confidence,

@@ -122,6 +122,46 @@ def test_markdown_numeric_extractor_normalizes_german_cash_claim():
     assert huf_claim.unit == "huf"
 
 
+def test_currency_range_lower_bound_inherits_explicit_upper_bound_scale():
+    claims = extract_numeric_claims(
+        "Guidance calls for adjusted EBITDA between $8.15 and $8.25 billion, "
+        "FCF between $3.75 and $3.85 billion, and revenue between $26.275 and "
+        "$26.475 billion."
+    )
+
+    assert [claim.normalized_value for claim in claims] == [
+        8_150_000_000,
+        8_250_000_000,
+        3_750_000_000,
+        3_850_000_000,
+        26_275_000_000,
+        26_475_000_000,
+    ]
+
+
+def test_period_matched_capital_allocation_maps_without_ttm_conflation():
+    metrics = simple_metrics(ticker="WM")
+    metrics.fundamentals.shareholder_distributions_current_period = 1_767_000_000
+    metrics.fundamentals.free_cash_flow_current_period = 1_947_000_000
+    metrics.fundamentals.shareholder_distributions_minus_fcf_current_period = -180_000_000
+    markdown = (
+        "From 2026-01-01 through 2026-06-30, shareholder distributions were "
+        "$1.77B versus same-period FCF of $1.95B; distributions were covered "
+        "by same-period FCF with $180.0M remaining. This is a period-matched "
+        "capital-allocation comparison, not a TTM claim."
+    )
+    claims = [claim for claim in extract_numeric_claims(markdown) if claim.unit == "usd"]
+
+    assert [claim.possible_metric for claim in claims] == [
+        "shareholder_distributions_current_period",
+        "free_cash_flow_current_period",
+        "shareholder_distributions_minus_fcf_current_period",
+    ]
+    audit = audit_markdown_report(markdown=markdown, metrics_packet=metrics)
+    assert not audit.has_issue("NUMERIC_MISMATCH")
+    assert not audit.has_issue("UNVERIFIED_HARD_METRIC")
+
+
 def test_dcf_assumptions_and_risk_coverage_map_to_their_own_metrics():
     markdown = (
         "The standardized reverse DCF implies a five-year FCF growth rate of "

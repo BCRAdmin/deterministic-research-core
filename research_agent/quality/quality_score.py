@@ -96,6 +96,9 @@ def calculate_quality_score(
     current_report_allowed: Optional[bool] = None,
     historical_qa_only: Optional[bool] = None,
     freshness_issue_code: Optional[str] = None,
+    source_inventory_complete: Optional[bool] = None,
+    material_event_content_complete: Optional[bool] = None,
+    unit_normalization_valid: Optional[bool] = None,
 ) -> QualityReport:
     numerical_accuracy = 25
     source_quality = 20
@@ -104,6 +107,18 @@ def calculate_quality_score(
     event_awareness = 10
     writing_structure = 10
     content_score = 100
+    integrity_failures = [
+        code
+        for code, passed in (
+            ("SOURCE_INVENTORY_INCOMPLETE", source_inventory_complete),
+            (
+                "MATERIAL_EVENT_CONTENT_INCOMPLETE",
+                material_event_content_complete,
+            ),
+            ("UNIT_NORMALIZATION_INVALID", unit_normalization_valid),
+        )
+        if passed is False
+    ]
     research_incomplete = _is_research_incomplete(final_markdown, analyst_claim_count)
     main_body_kpi_count: Optional[int] = None
     appendix_only_kpi_count = 0
@@ -349,6 +364,20 @@ def calculate_quality_score(
         content_score = min(content_score, 80)
         source_quality -= 4
 
+    if source_inventory_complete is False:
+        source_quality = 0
+        event_awareness = 0
+        content_score = min(content_score, 50)
+    if material_event_content_complete is False:
+        source_quality = min(source_quality, 8)
+        event_awareness = 0
+        content_score = min(content_score, 55)
+    if unit_normalization_valid is False:
+        numerical_accuracy = 0
+        source_quality = min(source_quality, 8)
+        logic_consistency = min(logic_consistency, 10)
+        content_score = min(content_score, 50)
+
     category_scores = {
         "numerical_accuracy": _clamp(numerical_accuracy, 25),
         "source_quality": _clamp(source_quality, 20),
@@ -386,6 +415,9 @@ def calculate_quality_score(
         current_report_allowed=current_report_allowed,
         freshness_issue_code=freshness_issue_code,
     )
+    if integrity_failures:
+        total = min(total, 50)
+        publish_quality_score = min(publish_quality_score, 40)
     publishable = is_publishable(
         total_score=publish_quality_score,
         validation_report=validation_report,
@@ -467,6 +499,9 @@ def calculate_quality_score(
         reason = coverage_review_reasons.get(gap)
         if reason and reason not in manual_review_reasons:
             manual_review_reasons.append(reason)
+    for axis in integrity_failures:
+        if axis not in manual_review_reasons:
+            manual_review_reasons.append(axis)
     if manual_review_reasons:
         publishable = False
     data_confidence_score = _data_confidence_score(
@@ -485,6 +520,8 @@ def calculate_quality_score(
         current_report_allowed=current_report_allowed,
         freshness_issue_code=freshness_issue_code,
     )
+    if integrity_failures:
+        data_confidence_score = min(data_confidence_score, 50)
     internal_research_quality_score = _internal_research_quality_score(
         content_score=content_score,
         final_markdown=final_markdown,
@@ -514,6 +551,11 @@ def calculate_quality_score(
         current_report_allowed=current_report_allowed,
         freshness_issue_code=freshness_issue_code,
     )
+    if integrity_failures:
+        internal_research_quality_score = min(
+            internal_research_quality_score,
+            60,
+        )
     score_explanation_short = _score_explanation_short(
         publishable=publishable,
         publish_quality_score=publish_quality_score,
@@ -544,8 +586,9 @@ def calculate_quality_score(
         content_score=_clamp(content_score, 100),
         generated_claim_mapping_complete=bool(claim_coverage_complete),
         generated_claim_mapping_gaps=coverage_gaps or [],
-        claim_coverage_complete=bool(claim_coverage_complete),
-        claim_coverage_gaps=coverage_gaps or [],
+        source_inventory_complete=bool(source_inventory_complete),
+        material_event_content_complete=bool(material_event_content_complete),
+        unit_normalization_valid=bool(unit_normalization_valid),
         analyst_claim_count=int(analyst_claim_count or 0),
         substantive_analyst_claim_count=int(substantive_analyst_claim_count or 0),
         substantive_claim_count=int(substantive_analyst_claim_count or 0),

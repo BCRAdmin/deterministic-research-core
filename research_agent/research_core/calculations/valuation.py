@@ -151,8 +151,8 @@ def calculate_valuation_sensitivity(
         )
 
     target_market_cap = current_market_cap
-    reverse_status = "measured"
-    status = "measured"
+    reverse_status = "illustrative_standardized_sensitivity"
+    status = "illustrative_only"
     limitations = [
         "Scenario growth, discount and terminal-growth rates are standardized sensitivity assumptions, not company guidance or a point forecast.",
         "Revenue growth is used only as a capped scenario anchor; durable FCF growth still requires reinvestment and human business-model review.",
@@ -182,6 +182,7 @@ def calculate_valuation_sensitivity(
     model_values = [scenario.equity_value for scenario in scenarios]
     return ValuationSensitivity(
         status=status,
+        calibration_status="standardized_uncalibrated",
         anchor_growth_rate=anchor_growth,
         anchor_growth_basis=anchor_basis,
         current_market_cap=current_market_cap,

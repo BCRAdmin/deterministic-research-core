@@ -242,6 +242,38 @@ def calculate_fundamental_metrics(
         finance_lease_principal_ttm=finance_lease_principal_ttm,
         fcf_definition=fcf_definition,
     )
+    current_period = fundamentals.get("current_period")
+    current_period = current_period if isinstance(current_period, Mapping) else {}
+    current_distribution_period = _aligned_current_period(
+        fundamentals,
+        "buybacks",
+        "dividends_paid",
+    )
+    current_fcf_period = _aligned_current_period(
+        fundamentals,
+        "operating_cash_flow",
+        "capex",
+    )
+    buybacks_current_period = _optional_float(current_period.get("buybacks"))
+    dividends_current_period = _optional_float(
+        current_period.get("dividends_paid")
+    )
+    shareholder_distributions_current_period = (
+        buybacks_current_period + dividends_current_period
+        if buybacks_current_period is not None
+        and dividends_current_period is not None
+        and current_distribution_period is not None
+        else None
+    )
+    current_ocf = _optional_float(current_period.get("operating_cash_flow"))
+    current_capex = _optional_float(current_period.get("capex"))
+    free_cash_flow_current_period = (
+        current_ocf - abs(current_capex)
+        if current_ocf is not None
+        and current_capex is not None
+        and current_fcf_period is not None
+        else None
+    )
 
     cash_and_equivalents = _optional_float(balance_sheet.get("cash_and_equivalents"))
     short_term_investments = _optional_float(balance_sheet.get("short_term_investments"))
@@ -424,6 +456,30 @@ def calculate_fundamental_metrics(
             and distribution_period == fcf_period
             else None
         ),
+        buybacks_current_period=buybacks_current_period,
+        dividends_paid_current_period=dividends_current_period,
+        shareholder_distributions_current_period=(
+            shareholder_distributions_current_period
+        ),
+        free_cash_flow_current_period=free_cash_flow_current_period,
+        shareholder_distributions_minus_fcf_current_period=(
+            shareholder_distributions_current_period
+            - free_cash_flow_current_period
+            if shareholder_distributions_current_period is not None
+            and free_cash_flow_current_period is not None
+            and current_distribution_period == current_fcf_period
+            else None
+        ),
+        shareholder_distribution_period_start=(
+            current_distribution_period[0]
+            if current_distribution_period is not None
+            else None
+        ),
+        shareholder_distribution_period_end=(
+            current_distribution_period[1]
+            if current_distribution_period is not None
+            else None
+        ),
         depreciation_and_amortization_ttm=depreciation_and_amortization_ttm,
         interest_expense_ttm=interest_expense_ttm,
         operating_income_interest_coverage_ttm=safe_divide(
@@ -536,6 +592,26 @@ def _aligned_ttm_bridge_period(
             return None
         period_start = str(bridge.get("period_start") or "").strip()
         period_end = str(bridge.get("period_end") or "").strip()
+        if not period_start or not period_end:
+            return None
+        periods.add((period_start, period_end))
+    return next(iter(periods)) if len(periods) == 1 else None
+
+
+def _aligned_current_period(
+    fundamentals: Mapping[str, Any],
+    *metric_names: str,
+) -> Optional[tuple[str, str]]:
+    metadata = fundamentals.get("current_period_metadata")
+    if not isinstance(metadata, Mapping):
+        return None
+    periods: set[tuple[str, str]] = set()
+    for metric_name in metric_names:
+        record = metadata.get(metric_name)
+        if not isinstance(record, Mapping):
+            return None
+        period_start = str(record.get("period_start") or "")
+        period_end = str(record.get("period_end") or "")
         if not period_start or not period_end:
             return None
         periods.add((period_start, period_end))

@@ -245,6 +245,15 @@ def _topic_numeric_evidence(summary: str, topic: str) -> list[dict[str, Any]]:
                 "value": value,
                 "raw_value": raw,
                 "unit": "percent" if percent else "currency" if match.group("currency") else "count",
+                "source_scale": "percent" if percent else scale or "base",
+                "source_unit": "percent" if percent else "currency" if match.group("currency") else "count",
+                "source_sign": 1,
+                "currency": {
+                    "$": "USD",
+                    "€": "EUR",
+                    "£": "GBP",
+                }.get(str(match.group("currency") or "")),
+                "column_label": None,
             }
         )
     return values

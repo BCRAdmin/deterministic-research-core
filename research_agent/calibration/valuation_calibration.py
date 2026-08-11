@@ -209,6 +209,8 @@ def build_valuation_calibration_snapshot(
     reasons: list[str] = []
     if sensitivity.status != "measured":
         reasons.append("sensitivity_not_measured")
+    if sensitivity.calibration_status != "company_calibrated":
+        reasons.append("sensitivity_not_company_calibrated")
     if sensitivity.share_basis not in {"listed_share_count", "economic_share_count"}:
         reasons.append("share_basis_not_verified")
     if sensitivity.reverse_dcf_status != "measured":

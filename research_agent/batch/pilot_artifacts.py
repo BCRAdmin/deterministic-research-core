@@ -668,7 +668,7 @@ def _reason_groups(item: dict) -> list[str]:
         }
     ):
         groups.append("data_gap")
-    if not counts.get("claim_coverage_complete", 0):
+    if not counts.get("generated_claim_mapping_complete", 0):
         groups.append("claim_substance_gap")
     return list(dict.fromkeys(groups or ["data_gap"]))
 

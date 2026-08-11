@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Literal, Optional
 
 from pydantic import BaseModel, Field
 
@@ -30,6 +30,11 @@ class OperatingKpiEvidence(BaseModel):
     value: float
     raw_value: Optional[float] = None
     unit: str
+    source_scale: Optional[str] = None
+    source_unit: Optional[str] = None
+    source_sign: Optional[Literal[-1, 1]] = None
+    currency: Optional[str] = None
+    column_label: Optional[str] = None
 
 
 class MaterialNewsEvent(BaseModel):
@@ -40,6 +45,8 @@ class MaterialNewsEvent(BaseModel):
     source_type: str
     url: Optional[str] = None
     summary: Optional[str] = None
+    filing_items: List[str] = Field(default_factory=list)
+    content_complete: Optional[bool] = None
     numeric_evidence: List[OperatingKpiEvidence] = Field(default_factory=list)
 
 
@@ -87,8 +94,11 @@ class CompanyGuidanceMetric(BaseModel):
 class DataPacket(BaseModel):
     ticker: str
     company_name: Optional[str] = None
+    cik: Optional[str] = None
     exchange: Optional[str] = None
+    exchange_display_name: Optional[str] = None
     jurisdiction: Optional[str] = None
+    incorporation_state: Optional[str] = None
     isin: Optional[str] = None
     wkn: Optional[str] = None
     as_of_date: str

@@ -57,6 +57,7 @@ def test_operating_kpi_extractor_creates_numeric_primary_evidence() -> None:
     )
     assert any(item.value == 82_900_000 for item in evidence)
     assert any(item.value == 0.922 and item.unit == "percent" for item in evidence)
+    assert all(item.source_sign in {-1, 1} for item in evidence)
     assert all(item.authority_rank == 1 for item in evidence)
 
 
@@ -210,6 +211,83 @@ def test_capital_allocation_is_extracted_as_source_bound_operating_kpi() -> None
         for item in payload["kpi_dispositions"]
         if item["kpi_id"] == "capital_allocation"
     )["status"] == "found"
+
+
+def test_currency_ranges_inherit_scale_and_table_headers() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="TEST",
+        cik="123456",
+        accession_number="0000123456-26-000001",
+        filing_date="2026-08-01",
+        primary_document="test.htm",
+        html_documents=[
+            """
+            <p>(in millions, except per share amounts)</p>
+            <p>As Reported As Adjusted(a) As Reported As Adjusted(a)</p>
+            <p>Operating EBITDA $2,030 $2,067 $1,895 $1,959</p>
+            <p>Adjusted EBITDA guidance is between $8.15 and $8.25 billion and
+            free cash flow guidance is between $3.75 and $3.85 billion.</p>
+            """
+        ],
+        retrieved_at="2026-08-02T12:00:00Z",
+    )
+    records = [
+        item
+        for event in payload["events"]
+        for item in event["numeric_evidence"]
+    ]
+    table = next(
+        event["numeric_evidence"]
+        for event in payload["events"]
+        if event["summary"].startswith("Operating EBITDA $2,030")
+    )
+
+    assert [item["value"] for item in table] == [
+        2_030_000_000,
+        2_067_000_000,
+        1_895_000_000,
+        1_959_000_000,
+    ]
+    assert [item["column_label"] for item in table] == [
+        "Q2 2026 as reported",
+        "Q2 2026 as adjusted",
+        "Q2 2025 as reported",
+        "Q2 2025 as adjusted",
+    ]
+    assert all(item["currency"] == "USD" for item in table)
+    assert any(item["raw_value"] == 8.15 and item["value"] == 8_150_000_000 for item in records)
+    assert any(item["raw_value"] == 3.75 and item["value"] == 3_750_000_000 for item in records)
+
+
+def test_per_share_values_do_not_inherit_million_scale() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="TEST",
+        cik="123456",
+        accession_number="0000123456-26-000001",
+        filing_date="2026-08-01",
+        primary_document="test.htm",
+        html_documents=[
+            """
+            <p>(in millions, except per share amounts)</p>
+            <p>Cash Dividends — We paid cash dividends of $764 million and
+            $669 million during the six months ended June 30, 2026 and 2025,
+            respectively. The quarterly per share dividend increased from
+            $0.825 in 2025 to $0.945 in 2026.</p>
+            """
+        ],
+        retrieved_at="2026-08-02T12:00:00Z",
+    )
+    values = [
+        item
+        for event in payload["events"]
+        for item in event["numeric_evidence"]
+    ]
+    per_share = [item for item in values if item["raw_value"] in {0.825, 0.945}]
+
+    assert [item["value"] for item in per_share] == [0.825, 0.945]
+    assert all(item["source_scale"] == "base" for item in per_share)
+    assert all(item["unit"] == "currency_per_share" for item in per_share)
+    assert any(item["raw_value"] == 764 and item["value"] == 764_000_000 for item in values)
 
 
 def test_numeric_operating_kpi_event_is_not_dropped_from_claims() -> None:

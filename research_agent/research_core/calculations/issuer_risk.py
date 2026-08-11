@@ -205,6 +205,42 @@ def _capital_allocation_component(f: FundamentalMetrics) -> RiskComponent:
                 "Shareholder distributions are covered by TTM FCF." if gap <= 0 else f"Distributions exceed TTM FCF by {gap:.2f} in reporting currency.",
             )
         )
+    current_distributions_available = (
+        f.shareholder_distributions_current_period is not None
+    )
+    current_fcf_available = f.free_cash_flow_current_period not in (None, 0)
+    if not values and current_distributions_available and current_fcf_available:
+        gap = float(f.shareholder_distributions_minus_fcf_current_period or 0.0)
+        ratio = gap / abs(float(f.free_cash_flow_current_period))
+        score = (
+            15.0
+            if ratio <= 0
+            else 45.0
+            if ratio <= 0.25
+            else 65.0
+            if ratio <= 0.5
+            else 85.0
+        )
+        period = (
+            f"{f.shareholder_distribution_period_start} to "
+            f"{f.shareholder_distribution_period_end}"
+        )
+        values.append(
+            (
+                "shareholder_distributions_minus_fcf_current_period",
+                score,
+                (
+                    f"Shareholder distributions are covered by FCF for {period}."
+                    if gap <= 0
+                    else f"Distributions exceed same-period FCF by {gap:.2f} for {period}."
+                ),
+            )
+        )
+        missing = [
+            item
+            for item in missing
+            if item not in {"shareholder_distributions_ttm", "free_cash_flow_ttm"}
+        ]
     return _component(
         "capital_allocation",
         "Capital-allocation coverage",
@@ -214,7 +250,7 @@ def _capital_allocation_component(f: FundamentalMetrics) -> RiskComponent:
         1,
         # The coverage relationship cannot be measured until both the
         # distribution numerator and the FCF denominator are available.
-        coverage_ratio=1.0 if distributions_available and fcf_available else 0.0,
+        coverage_ratio=1.0 if values else 0.0,
     )
 
 

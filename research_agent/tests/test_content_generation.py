@@ -8,6 +8,7 @@ from research_agent.content.claim_generator import (
     _current_period_claim_specs,
     _evidence_unit_is_compatible,
     _issuer_operating_result_specs,
+    _labeled_numeric_event_statement,
     _money,
     claim_coverage_gaps,
     claim_quality_metrics,
@@ -38,7 +39,11 @@ from research_agent.reconciliation.canonical_financials import (
     CanonicalMetric,
 )
 from research_agent.research_core.models.claims import ResearchClaim
-from research_agent.research_core.models.data_packet import DataPacket, MaterialNewsEvent
+from research_agent.research_core.models.data_packet import (
+    DataPacket,
+    MaterialNewsEvent,
+    OperatingKpiEvidence,
+)
 from research_agent.research_core.models.metrics_packet import MetricsPacket, ValuationScenario
 from research_agent.research_core.models.validation_report import ValidationReport
 
@@ -58,6 +63,101 @@ def _load_packet(ticker: str):
 
 def test_per_share_unit_normalization_accepts_sec_plural_form():
     assert _evidence_unit_is_compatible("USD/shares", "USD_per_share")
+
+
+def test_operating_kpi_columns_are_labeled_and_normalized_for_readers():
+    event = MaterialNewsEvent(
+        date="2026-07-28",
+        headline="WM reported second-quarter results",
+        event_type="operating_kpi",
+        source_id="WM_RESULTS",
+        source_type="sec_filing",
+        summary="Operating EBITDA Margin 30.4% 30.9% 29.5% 30.5%",
+        numeric_evidence=[
+            OperatingKpiEvidence(
+                metric_name=f"operating_ebitda_margin_{index}",
+                value=value,
+                raw_value=value * 100,
+                unit="percent",
+                source_scale="percent",
+                source_unit="percent",
+                column_label=label,
+            )
+            for index, (label, value) in enumerate(
+                (
+                    ("Q2 2026 as reported", 0.304),
+                    ("Q2 2026 as adjusted", 0.309),
+                    ("Q2 2025 as reported", 0.295),
+                    ("Q2 2025 as adjusted", 0.305),
+                ),
+                start=1,
+            )
+        ],
+    )
+
+    rendered = _labeled_numeric_event_statement(
+        event,
+        event.summary or "",
+        default_currency="USD",
+    )
+
+    assert rendered == (
+        "Operating EBITDA Margin: Q2 2026 as reported: 30.4%; "
+        "Q2 2026 as adjusted: 30.9%; Q2 2025 as reported: 29.5%; "
+        "Q2 2025 as adjusted: 30.5%."
+    )
+
+
+def test_report_has_visible_canonical_instrument_identity():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    data.company_name = "Waste Management, Inc."
+    data.ticker = "WM"
+    data.cik = "823768"
+    data.exchange = "NYQ"
+    data.exchange_display_name = "NYSE"
+    data.jurisdiction = "US"
+    data.incorporation_state = "DE"
+    data.isin = None
+    data.wkn = None
+
+    report = compose_research_report(
+        data,
+        metrics,
+        validation,
+        decision,
+        ledger,
+        [],
+    )
+
+    assert "## Instrument Identity" in report
+    assert "| Legal company name | Waste Management, Inc. |" in report
+    assert "| Listing venue | NYSE (NYQ) |" in report
+    assert "| Jurisdiction | US / incorporation DE |" in report
+    assert "| SEC CIK | 0000823768 |" in report
+    assert "| ISIN | not available |" in report
+
+
+def test_current_period_capital_allocation_is_visible_without_ttm_relabeling():
+    data, metrics, validation, ledger, decision = _load_packet("SNOW")
+    f = metrics.fundamentals
+    f.buybacks_current_period = 1_003_000_000
+    f.dividends_paid_current_period = 764_000_000
+    f.shareholder_distributions_current_period = 1_767_000_000
+    f.free_cash_flow_current_period = 1_947_000_000
+    f.shareholder_distributions_minus_fcf_current_period = -180_000_000
+    f.shareholder_distribution_period_start = "2026-01-01"
+    f.shareholder_distribution_period_end = "2026-06-30"
+    _add_exact_metric_evidence(data, metrics, ledger)
+
+    claims = generate_research_claims(data, metrics, ledger, decision, validation)
+    capital = next(
+        claim for claim in claims if "period-matched capital-allocation" in claim.claim
+    )
+
+    assert "$1.77B versus same-period FCF of $1.95B" in capital.claim
+    assert "$180.0M remaining" in capital.claim
+    assert "not a TTM claim" in capital.claim
+    assert "shareholder_distributions_current_period" in capital.metric_refs
 
 
 def test_claim_builder_resolves_dcf_terminal_value_share_for_rating_claims():

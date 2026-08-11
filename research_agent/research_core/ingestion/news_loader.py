@@ -85,6 +85,11 @@ def news_evidence_items(
                     raw_value=numeric.get("raw_value"),
                     normalized_value=numeric.get("value"),
                     unit=numeric.get("unit"),
+                    source_scale=numeric.get("source_scale"),
+                    source_unit=numeric.get("source_unit"),
+                    source_sign=numeric.get("source_sign"),
+                    currency=numeric.get("currency"),
+                    column_label=numeric.get("column_label"),
                     date=event_date,
                     url=event.get("url"),
                     retrieved_at=event.get("retrieved_at"),
@@ -92,7 +97,7 @@ def news_evidence_items(
                         "material_news_coverage",
                         *(
                             ["business_model_operating_kpi"]
-                            if numeric_evidence
+                            if event_type == "operating_kpi" and numeric_evidence
                             else []
                         ),
                         *(["company_guidance"] if is_guidance else []),

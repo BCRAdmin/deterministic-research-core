@@ -12,6 +12,7 @@ MATERIAL_8K_ITEMS = {
     "1.03",  # bankruptcy or receivership
     "1.05",  # material cybersecurity incident
     "2.01",  # acquisition or disposition
+    "2.02",  # results of operations and financial condition
     "2.03",  # direct financial obligation
     "2.04",  # acceleration or trigger event
     "2.05",  # exit or disposal plan
@@ -34,6 +35,7 @@ ITEM_EVENT_TYPES = {
     "1.03": ("bankruptcy_or_receivership", "Issuer disclosed a bankruptcy or receivership event"),
     "1.05": ("cyber_incident", "Issuer filed a material cybersecurity disclosure"),
     "2.01": ("acquisition_or_disposition", "Issuer disclosed an acquisition or disposition"),
+    "2.02": ("results_announcement", "Issuer disclosed results of operations"),
     "2.03": ("financing_obligation", "Issuer disclosed a material financial obligation"),
     "2.04": ("financing_trigger", "Issuer disclosed a financing trigger or acceleration event"),
     "2.05": ("restructuring", "Issuer disclosed an exit or disposal plan"),
@@ -83,7 +85,7 @@ def select_material_event_filings(
     submissions: dict[str, Any],
     *,
     as_of_date: str,
-    lookback_days: int = 120,
+    lookback_days: int | None = None,
 ) -> list[dict[str, str]]:
     return [
         {
@@ -105,12 +107,22 @@ def inventory_recent_8k_filings(
     submissions: dict[str, Any],
     *,
     as_of_date: str,
-    lookback_days: int = 120,
+    lookback_days: int | None = None,
 ) -> list[dict[str, str]]:
-    """Disposition every 8-K returned by the scanned SEC submissions payload."""
+    """Disposition every 8-K in the protocol year through the as-of date."""
 
     recent = submissions.get("filings", {}).get("recent", {})
-    cutoff = date.fromisoformat(as_of_date).toordinal() - lookback_days
+    as_of = date.fromisoformat(as_of_date)
+    cutoff = (
+        as_of.toordinal() - lookback_days
+        if lookback_days is not None
+        else date(as_of.year, 1, 1).toordinal()
+    )
+    horizon_label = (
+        f"{lookback_days}-day event window"
+        if lookback_days is not None
+        else f"{as_of.year} protocol year"
+    )
     rows: list[dict[str, str]] = []
     seen_accessions: set[str] = set()
     forms = recent.get("form") or []
@@ -145,7 +157,7 @@ def inventory_recent_8k_filings(
                     reason = "filing occurred after the analysis cutoff"
                 elif filing_day.toordinal() < cutoff:
                     disposition = "excluded_outside_lookback"
-                    reason = f"filing is older than the {lookback_days}-day event window"
+                    reason = f"filing is outside the {horizon_label}"
                 elif material_items:
                     disposition = "material_candidate"
                     reason = "SEC item requires primary-document materiality review"
@@ -176,8 +188,10 @@ def build_material_event_payload(
     filings: list[tuple[dict[str, str], str]],
     retrieved_at: str,
     candidate_inventory: list[dict[str, str]] | None = None,
+    as_of_date: str | None = None,
 ) -> dict[str, Any]:
     events: list[dict[str, Any]] = []
+    material_dispositions: list[dict[str, Any]] = []
     sources_checked: list[str] = []
     cik_digits = str(int(cik))
     for filing, html in filings:
@@ -192,15 +206,24 @@ def build_material_event_payload(
         items = {
             item for item in str(filing.get("items") or "").split(",") if item
         }
-        classified = classify_material_event_text(parser.text(), items=items)
-        if classified is None:
+        classifications = classify_material_event_sections(parser.text(), items=items)
+        recognized_items = sorted(items.intersection(ITEM_EVENT_TYPES))
+        classified_items = {item for item, *_rest in classifications if item}
+        if not classifications or (
+            recognized_items and classified_items != set(recognized_items)
+        ):
             raise ValueError(
-                "selected SEC material-event filing has no deterministic disposition"
+                "selected SEC material-event filing has no complete item-specific disposition"
             )
-        event_type, headline, summary = classified
-        source_id = f"SEC_CIK{cik_digits.zfill(10)}_{accession_digits}"
-        events.append(
-            {
+        base_source_id = f"SEC_CIK{cik_digits.zfill(10)}_{accession_digits}"
+        filing_events: list[dict[str, Any]] = []
+        for item, event_type, headline, summary in classifications:
+            source_id = (
+                base_source_id
+                if len(classifications) == 1
+                else f"{base_source_id}_ITEM_{item.replace('.', '') or 'EVENT'}"
+            )
+            event = {
                 "event_type": event_type,
                 "date": filing["filing_date"],
                 "headline": headline,
@@ -211,24 +234,28 @@ def build_material_event_payload(
                 "authority_rank": 1,
                 "url": url,
                 "retrieved_at": retrieved_at,
+                "filing_items": [item] if item else [],
+                "content_complete": True,
+            }
+            events.append(event)
+            filing_events.append(event)
+        material_dispositions.append(
+            {
+                "source_id": base_source_id,
+                "filing_date": filing["filing_date"],
+                "items": filing["items"],
+                "disposition": "material_event",
+                "event_types": [event["event_type"] for event in filing_events],
+                "content_complete": True,
+                "item_dispositions": [
+                    {
+                        "item": item,
+                        "status": "content_complete",
+                    }
+                    for item in recognized_items
+                ],
             }
         )
-    material_dispositions = [
-        {
-            "source_id": event["source_id"],
-            "filing_date": event["date"],
-            "items": next(
-                filing["items"]
-                for filing, _html in filings
-                if event["source_id"].endswith(
-                    filing["accession_number"].replace("-", "")
-                )
-            ),
-            "disposition": "material_event",
-            "event_type": event["event_type"],
-        }
-        for event in events
-    ]
     if candidate_inventory is None:
         dispositions = material_dispositions
     else:
@@ -284,17 +311,119 @@ def build_material_event_payload(
         item.get("disposition") not in allowed_dispositions for item in dispositions
     ):
         raise ValueError("SEC filing inventory contains a non-canonical disposition")
-    return {
+    inferred_as_of = as_of_date or max(
+        (
+            str(row.get("filing_date") or "")
+            for row in (candidate_inventory or [])
+            if str(row.get("filing_date") or "") <= retrieved_at[:10]
+        ),
+        default=retrieved_at[:10],
+    )
+    protocol_start = f"{inferred_as_of[:4]}-01-01"
+    protocol_candidate_count = sum(
+        protocol_start <= str(row.get("filing_date") or "") <= inferred_as_of
+        for row in dispositions
+    )
+    payload = {
         "coverage_status": "complete" if not unresolved else "incomplete",
         "checked_at": retrieved_at,
-        "window_start": min((row[0]["filing_date"] for row in filings), default=None),
-        "window_end": max((row[0]["filing_date"] for row in filings), default=None),
+        "protocol_window_start": protocol_start,
+        "protocol_window_end": inferred_as_of,
+        "window_start": protocol_start,
+        "window_end": inferred_as_of,
         "sources_checked": sources_checked,
         "candidate_count": len(dispositions),
+        "protocol_candidate_count": protocol_candidate_count,
         "fetched_material_candidate_count": len(filings),
         "all_candidates_dispositioned": not unresolved,
+        "source_inventory_complete": not unresolved,
+        "material_event_content_complete": all(
+            event.get("content_complete") is True for event in events
+        ),
         "filing_dispositions": dispositions,
         "events": events,
+    }
+    verification = verify_material_event_payload(payload)
+    payload["coverage_status"] = "complete" if verification["verified"] else "incomplete"
+    payload["source_inventory_complete"] = verification["source_inventory_complete"]
+    payload["material_event_content_complete"] = verification[
+        "material_event_content_complete"
+    ]
+    return payload
+
+
+def verify_material_event_payload(payload: dict[str, Any]) -> dict[str, Any]:
+    failures: list[str] = []
+    start = str(payload.get("protocol_window_start") or payload.get("window_start") or "")
+    end = str(payload.get("protocol_window_end") or payload.get("window_end") or "")
+    try:
+        start_date = date.fromisoformat(start)
+        end_date = date.fromisoformat(end)
+    except ValueError:
+        failures.append("protocol_horizon_invalid")
+        start_date = end_date = date.min
+    dispositions = payload.get("filing_dispositions") or []
+    if not isinstance(dispositions, list):
+        dispositions = []
+        failures.append("filing_dispositions_missing")
+    protocol_rows = [
+        item
+        for item in dispositions
+        if isinstance(item, dict)
+        and start <= str(item.get("filing_date") or "") <= end
+    ]
+    expected_protocol_count = payload.get("protocol_candidate_count")
+    inventory_complete = (
+        isinstance(expected_protocol_count, int)
+        and expected_protocol_count == len(protocol_rows)
+        and not any(
+        item.get("disposition") in {"superseded", "parse_failed"}
+        for item in protocol_rows
+        )
+    )
+    if not inventory_complete:
+        failures.append("source_inventory_incomplete")
+    events = payload.get("events") or []
+    if not isinstance(events, list):
+        events = []
+    event_ids = [str(item.get("source_id") or "") for item in events if isinstance(item, dict)]
+    content_complete = len(event_ids) == len(set(event_ids)) and all(
+        isinstance(event, dict)
+        and event.get("content_complete") is True
+        and bool(str(event.get("summary") or "").strip())
+        and all(
+            _item_content_complete(
+                str(item),
+                str(event.get("summary") or ""),
+            )
+            for item in event.get("filing_items") or []
+        )
+        for event in events
+    )
+    material_rows = [
+        item for item in protocol_rows if item.get("disposition") == "material_event"
+    ]
+    if any(
+        item.get("content_complete") is not True
+        or not item.get("item_dispositions")
+        or any(
+            detail.get("status") != "content_complete"
+            for detail in item.get("item_dispositions") or []
+            if isinstance(detail, dict)
+        )
+        for item in material_rows
+    ):
+        content_complete = False
+    if not content_complete:
+        failures.append("material_event_content_incomplete")
+    if start_date.year != end_date.year or start_date.month != 1 or start_date.day != 1:
+        failures.append("protocol_horizon_not_calendar_year")
+    return {
+        "verified": not failures,
+        "status": "pass" if not failures else "fail",
+        "blocking_failures": sorted(set(failures)),
+        "source_inventory_complete": inventory_complete,
+        "material_event_content_complete": content_complete,
     }
 
 
@@ -303,8 +432,32 @@ def classify_material_event_text(
     *,
     items: set[str] | None = None,
 ) -> tuple[str, str, str] | None:
+    classified = classify_material_event_sections(text, items=items)
+    if not classified:
+        return None
+    _item, event_type, headline, summary = classified[0]
+    return event_type, headline, summary
+
+
+def classify_material_event_sections(
+    text: str,
+    *,
+    items: set[str] | None = None,
+) -> list[tuple[str, str, str, str]]:
     compact = " ".join(str(text or "").split())
     folded = compact.casefold()
+    recognized_items = sorted((items or set()).intersection(ITEM_EVENT_TYPES))
+    if recognized_items:
+        classified: list[tuple[str, str, str, str]] = []
+        for item in recognized_items:
+            section = _extract_item_section(compact, item)
+            if not _item_content_complete(item, section):
+                continue
+            event_type, headline = ITEM_EVENT_TYPES[item]
+            summary = f"SEC Form 8-K Item {item}. {_summary_sentences(section)}"
+            classified.append((item, event_type, headline, summary[:1800]))
+        if classified or any(item not in {"7.01", "8.01"} for item in recognized_items):
+            return classified
     cyber = any(
         token in folded
         for token in (
@@ -332,25 +485,7 @@ def classify_material_event_text(
         token in folded for token in ("product", "safety", "consumer")
     )
     if not any((cyber, disrupted, restored, recalled)):
-        recognized_items = sorted((items or set()).intersection(ITEM_EVENT_TYPES))
-        if not recognized_items:
-            return None
-        primary_item = recognized_items[0]
-        event_type, headline = ITEM_EVENT_TYPES[primary_item]
-        sentences = re.split(r"(?<=[.!?])\s+", compact)
-        substantive = next(
-            (
-                sentence
-                for sentence in sentences
-                if len(sentence.split()) >= 8
-                and not sentence.casefold().startswith("item ")
-            ),
-            "",
-        )
-        summary = (
-            f"SEC Form 8-K Item {', '.join(recognized_items)}. {substantive}"
-        ).strip()
-        return event_type, headline, summary[:1800]
+        return []
     if restored:
         event_type = "operational_recovery"
         headline = "Issuer disclosed operational recovery progress"
@@ -385,7 +520,51 @@ def classify_material_event_text(
     summary = " ".join(selected)
     if not summary:
         summary = headline + "."
-    return event_type, headline, summary[:1800]
+    return [
+        (item, event_type, headline, summary[:1800])
+        for item in (recognized_items or [""])
+    ]
+
+
+def _extract_item_section(text: str, item: str) -> str:
+    heading = re.compile(
+        rf"\bItem\s+{re.escape(item)}\b[.\s:-]*",
+        re.IGNORECASE,
+    )
+    match = heading.search(text)
+    if not match:
+        return ""
+    next_item = re.search(r"\bItem\s+\d\.\d{2}\b", text[match.end() :], re.IGNORECASE)
+    end = match.end() + next_item.start() if next_item else len(text)
+    return " ".join(text[match.end() : end].split())
+
+
+def _summary_sentences(section: str) -> str:
+    sentences = [
+        sentence.strip()
+        for sentence in re.split(r"(?<=[.!?])\s+", section)
+        if len(sentence.split()) >= 4
+    ]
+    return " ".join(sentences[:6]) or section[:1600]
+
+
+def _item_content_complete(item: str, section: str) -> bool:
+    folded = " ".join(section.casefold().split())
+    if len(folded.split()) < 8:
+        return False
+    required_patterns = {
+        "1.01": r"\b(?:agreement|facility|contract|amendment)\b",
+        "2.02": r"\b(?:results|operations|financial condition|earnings|exhibit)\b",
+        "2.03": r"\b(?:debt|obligation|credit|facility|agreement|incorporated by reference)\b",
+        "5.02": r"\b(?:appoint|elect|resign|retir|promot|depart|ceased|terminate)\w*\b",
+        "5.07": r"\b(?:vote|voting|shares|proposal|elected)\w*\b",
+    }
+    pattern = required_patterns.get(item)
+    if pattern and not re.search(pattern, folded, re.IGNORECASE):
+        return False
+    if item == "5.02" and not re.search(r"\b[A-Z][a-z]+\s+[A-Z][a-z]+\b", section):
+        return False
+    return True
 
 
 def _at(payload: dict[str, Any], key: str, index: int) -> str:

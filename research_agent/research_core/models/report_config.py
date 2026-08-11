@@ -14,7 +14,9 @@ class FCFDefinitionConfig(BaseModel):
 class ReportConfig(BaseModel):
     ticker: str
     as_of_date: str
+    cik: Optional[str] = None
     exchange: Optional[str] = None
+    incorporation_state: Optional[str] = None
     jurisdiction: Optional[str] = None
     isin: Optional[str] = None
     wkn: Optional[str] = None

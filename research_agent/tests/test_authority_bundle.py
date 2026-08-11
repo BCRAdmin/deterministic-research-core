@@ -340,6 +340,68 @@ def test_authority_bundle_fails_when_validation_blocks(tmp_path: Path) -> None:
     assert "deterministic_validation_clean" in manifest["blocking_failures"]
 
 
+def test_authority_bundle_blocks_inconsistent_operating_kpi_scale(tmp_path: Path) -> None:
+    packet_dir, registry_path = _packet_set(tmp_path)
+    ledger_path = packet_dir / "evidence_ledger.json"
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    ledger["evidence_items"].append(
+        {
+            "evidence_id": "GENERIC_NEWS_BAD_SCALE",
+            "ticker": "GENERIC",
+            "source_id": "GENERIC_SEC",
+            "supports_claims": ["business_model_operating_kpi"],
+            "supports_metrics": ["operating_kpi_guidance_low"],
+            "raw_value": 8.15,
+            "normalized_value": 8.15,
+            "value": 8.15,
+            "unit": "currency",
+            "source_unit": "currency",
+            "source_scale": "billion",
+            "currency": "USD",
+        }
+    )
+    _write_json(ledger_path, ledger)
+
+    manifest = build_authority_bundle(
+        packet_dir=packet_dir,
+        source_registry_path=registry_path,
+        output_dir=tmp_path / "bundle",
+    )
+
+    assert "unit_normalization_valid" in manifest["blocking_failures"]
+
+
+def test_authority_bundle_accepts_explicit_negative_kpi_normalization(tmp_path: Path) -> None:
+    packet_dir, registry_path = _packet_set(tmp_path)
+    ledger_path = packet_dir / "evidence_ledger.json"
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    ledger["evidence_items"].append(
+        {
+            "evidence_id": "GENERIC_NEWS_NEGATIVE_PERCENT",
+            "ticker": "GENERIC",
+            "source_id": "GENERIC_SEC_KPI_VOLUME",
+            "supports_claims": ["business_model_operating_kpi"],
+            "supports_metrics": ["operating_kpi_volume"],
+            "raw_value": 0.3,
+            "normalized_value": -0.003,
+            "value": -0.003,
+            "unit": "percent",
+            "source_unit": "percent",
+            "source_scale": "percent",
+            "source_sign": -1,
+        }
+    )
+    _write_json(ledger_path, ledger)
+
+    manifest = build_authority_bundle(
+        packet_dir=packet_dir,
+        source_registry_path=registry_path,
+        output_dir=tmp_path / "bundle",
+    )
+
+    assert "unit_normalization_valid" not in manifest["blocking_failures"]
+
+
 def test_authority_bundle_blocks_stale_price_basis(tmp_path: Path) -> None:
     packet_dir, registry_path = _packet_set(
         tmp_path,

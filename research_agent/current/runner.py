@@ -63,6 +63,7 @@ from research_agent.sources.sec.sec_material_events import (
     build_material_event_payload,
     inventory_recent_8k_filings,
     select_material_event_filings,
+    verify_material_event_payload,
 )
 from research_agent.sources.sec.sec_results_release import (
     build_sec_results_release_payload,
@@ -334,6 +335,7 @@ def run_current_research(
     financial_source: Optional[SourceRegistryEntry] = None
     official_news_dir = request.official_news_dir
     jurisdiction = "US"
+    incorporation_state: Optional[str] = None
     isin: Optional[str] = request.isin
     companyfacts: Optional[dict[str, Any]] = None
     submissions: Optional[dict[str, Any]] = None
@@ -351,6 +353,11 @@ def run_current_research(
         company_name = str(issuer["company_name"])
         companyfacts = sec.get_companyfacts(cik)
         submissions = sec.get_submissions(cik)
+        incorporation_state = str(
+            submissions.get("stateOfIncorporation")
+            or submissions.get("stateOfIncorporationDescription")
+            or ""
+        ).strip() or None
         _require_supported_sec_industry_profile(symbol, submissions)
         _require_supported_sec_reporting_profile(symbol, companyfacts)
         filing_candidates = select_sec_risk_filing_candidates(
@@ -500,6 +507,16 @@ def run_current_research(
             raw_sec_filings[
                 (event_filing["accession_number"], event_filing["primary_document"])
             ] = event_html
+            if (
+                results_html_snapshot
+                and latest_results_filing is not None
+                and event_filing["accession_number"]
+                == latest_results_filing["accession_number"]
+            ):
+                event_html = (
+                    "<div>Item 2.02</div>"
+                    f"{results_html_snapshot}\n{event_html}"
+                )
             material_filing_html.append((event_filing, event_html))
         material_events_payload = build_material_event_payload(
             ticker=symbol,
@@ -507,6 +524,7 @@ def run_current_research(
             filings=material_filing_html,
             retrieved_at=retrieved_at,
             candidate_inventory=material_filing_inventory,
+            as_of_date=request.as_of_date,
         )
         material_events_path = material_events_dir / f"{symbol}.json"
         registered_feeds = registered_official_ir_feeds(cik=cik)
@@ -957,7 +975,9 @@ def run_current_research(
     config = ReportConfig(
         ticker=symbol,
         as_of_date=request.as_of_date,
+        cik=cik,
         exchange=(request.exchange or ("BSE" if jurisdiction == "HU" else None)),
+        incorporation_state=incorporation_state,
         jurisdiction=jurisdiction,
         isin=isin,
         wkn=request.wkn,
@@ -1074,11 +1094,16 @@ def _build_current_scope_coverage(
         earnings_calendar_path=earnings_calendar_path,
     )
     if jurisdiction == "US":
-        material_complete = bool(
-            material_events_payload
-            and material_events_payload.get("coverage_status") == "complete"
-            and material_events_payload.get("all_candidates_dispositioned") is True
+        material_verification = (
+            verify_material_event_payload(material_events_payload)
+            if material_events_payload
+            else {
+                "verified": False,
+                "source_inventory_complete": False,
+                "material_event_content_complete": False,
+            }
         )
+        material_complete = bool(material_verification.get("verified"))
         topic_dispositions = (
             filing_topics_payload.get("topic_dispositions")
             if filing_topics_payload
@@ -1099,6 +1124,17 @@ def _build_current_scope_coverage(
             == "found_specific_disclosure"
             for topic in ("transactions", "financing")
         )
+        event_financing_found = any(
+            item.get("disposition") == "material_event"
+            and item.get("content_complete") is True
+            and bool(
+                {part.strip() for part in str(item.get("items") or "").split(",")}
+                & {"1.01", "2.03"}
+            )
+            for item in (material_events_payload or {}).get("filing_dispositions") or []
+            if isinstance(item, dict)
+        )
+        transaction_found = transaction_found or event_financing_found
         legal_found = (
             (topics_by_id.get("legal_contingencies") or {}).get("status")
             == "found_specific_disclosure"
@@ -1129,9 +1165,12 @@ def _build_current_scope_coverage(
             _scope(
                 "material_events",
                 "complete" if material_complete else "incomplete",
-                "all selected material 8-K filings dispositioned"
+                "all protocol-year 8-K filings dispositioned with complete item content"
                 if material_complete
-                else "material 8-K disposition incomplete",
+                else (
+                    "8-K inventory or item-content completeness failed: "
+                    + ", ".join(material_verification.get("blocking_failures") or [])
+                ),
             ),
             _scope(
                 "transactions_and_financing",
@@ -1140,7 +1179,7 @@ def _build_current_scope_coverage(
                 )
                 if topics_complete
                 else "incomplete",
-                "current financial filing scanned for transactions and financing",
+                "current financial filing and protocol-year financing 8-Ks scanned",
             ),
             _scope(
                 "legal_and_contingencies",

@@ -326,7 +326,11 @@ class _FakeSecWithCoveredResults8K(_FakeSecWithQuarterAndAnnualRisks):
     def get_filing_html(self, **kwargs):
         if kwargs["accession_number"].endswith("000011"):
             if kwargs["primary_document"] == "results.htm":
-                return '<a href="q2-results.htm">Press release with quarterly results</a>'
+                return (
+                    "<div>Item 2.02 Results of Operations and Financial Condition</div>"
+                    '<a href="q2-results.htm">Press release with quarterly results</a>'
+                    "<div>Item 9.01 Financial Statements and Exhibits</div>"
+                )
             if kwargs["primary_document"] == "q2-results.htm":
                 return _COVERED_RESULTS_HTML
         return super().get_filing_html(**kwargs)
@@ -348,7 +352,11 @@ class _FakeSecWithCoveredFullYearResults8K(_FakeSecWithCoveredResults8K):
     def get_filing_html(self, **kwargs):
         if kwargs["accession_number"].endswith("000011"):
             if kwargs["primary_document"] == "results.htm":
-                return '<a href="fy-results.htm">Press release with annual results</a>'
+                return (
+                    "<div>Item 2.02 Results of Operations and Financial Condition</div>"
+                    '<a href="fy-results.htm">Press release with annual results</a>'
+                    "<div>Item 9.01 Financial Statements and Exhibits</div>"
+                )
             if kwargs["primary_document"] == "fy-results.htm":
                 return """
                 <div>Fourth quarter of fiscal year 2026 results</div>
@@ -622,14 +630,46 @@ class _StoredAaplSec(_FakeSec):
 
     def get_submissions(self, cik):
         return {
+            "stateOfIncorporation": "CA",
             "filings": {
                 "recent": {
-                    "form": ["10-Q"],
-                    "filingDate": ["2026-05-01"],
-                    "reportDate": ["2026-03-28"],
-                    "accessionNumber": ["0000320193-26-000013"],
-                    "primaryDocument": ["aapl-20260328.htm"],
-                    "items": [""],
+                    "form": ["10-Q", "10-Q", "10-K", "10-Q", "10-Q"],
+                    "filingDate": [
+                        "2026-05-01",
+                        "2026-01-30",
+                        "2025-10-31",
+                        "2025-08-01",
+                        "2025-05-02",
+                    ],
+                    "reportDate": [
+                        "2026-03-28",
+                        "2025-12-27",
+                        "2025-09-27",
+                        "2025-06-28",
+                        "2025-03-29",
+                    ],
+                    "acceptanceDateTime": [
+                        "2026-05-01T12:00:05Z",
+                        "2026-01-30T12:00:04Z",
+                        "2025-10-31T12:00:03Z",
+                        "2025-08-01T12:00:02Z",
+                        "2025-05-02T12:00:01Z",
+                    ],
+                    "accessionNumber": [
+                        "0000320193-26-000013",
+                        "0000320193-26-000006",
+                        "0000320193-25-000079",
+                        "0000320193-25-000073",
+                        "0000320193-25-000057",
+                    ],
+                    "primaryDocument": [
+                        "aapl-20260328.htm",
+                        "aapl-20251227.htm",
+                        "aapl-20250927.htm",
+                        "aapl-20250628.htm",
+                        "aapl-20250329.htm",
+                    ],
+                    "items": ["", "", "", "", ""],
                 }
             }
         }
@@ -1427,11 +1467,19 @@ def test_data_packet_uses_explicit_exchange_price_currency():
         },
         news=[],
         price_currency="HUF",
+        cik="823768",
+        exchange="NYQ",
+        incorporation_state="DE",
+        jurisdiction="US",
     )
 
     assert packet.price_basis.currency == "HUF"
     assert packet.fiscal_context.latest_fiscal_year == "FY2025"
     assert packet.fiscal_context.latest_quarter == "FY2026_Q1"
+    assert packet.cik == "823768"
+    assert packet.exchange == "NYQ"
+    assert packet.exchange_display_name == "NYSE"
+    assert packet.incorporation_state == "DE"
 
 
 def test_data_packet_exposes_validated_material_news_coverage():
@@ -1468,6 +1516,8 @@ def test_data_packet_exposes_validated_material_news_coverage():
                 "source_id": "MCD_IR_NEXT_2026",
                 "source_type": "company_ir",
                 "url": "https://example.com/next",
+                "filing_items": ["8.01"],
+                "content_complete": True,
             },
         ],
     )
@@ -1475,6 +1525,8 @@ def test_data_packet_exposes_validated_material_news_coverage():
     assert packet.news_coverage.status == "complete"
     assert packet.news_coverage.window_end == "2026-07-24"
     assert packet.news_coverage.material_events[0].source_id == "MCD_IR_NEXT_2026"
+    assert packet.news_coverage.material_events[0].filing_items == ["8.01"]
+    assert packet.news_coverage.material_events[0].content_complete is True
 
 
 def test_official_metrics_preserve_ttm_fiscal_period(tmp_path):

@@ -67,13 +67,43 @@ def _metrics(
     )
 
 
+def _calibration_metrics(
+    ticker: str = "TEST",
+    as_of_date: str = "2025-01-02",
+    price_series_basis: str = "corporate_action_adjusted",
+) -> MetricsPacket:
+    metrics = _metrics(
+        ticker=ticker,
+        as_of_date=as_of_date,
+        price_series_basis=price_series_basis,
+    )
+    sensitivity = metrics.valuation.sensitivity.model_copy(
+        update={
+            "status": "measured",
+            "calibration_status": "company_calibrated",
+            "reverse_dcf_status": "measured",
+            "scenarios": [
+                scenario.model_copy(update={"assumption_basis": "company_calibrated"})
+                for scenario in metrics.valuation.sensitivity.scenarios
+            ],
+        }
+    )
+    return metrics.model_copy(
+        update={
+            "valuation": metrics.valuation.model_copy(
+                update={"sensitivity": sensitivity}
+            )
+        }
+    )
+
+
 def _snapshot(
     ticker: str = "TEST",
     as_of_date: str = "2025-01-02",
     sector: Optional[str] = "Industrials",
 ):
     return build_valuation_calibration_snapshot(
-        _metrics(ticker=ticker, as_of_date=as_of_date),
+        _calibration_metrics(ticker=ticker, as_of_date=as_of_date),
         metrics_packet_sha256=HASH,
         authority_manifest_sha256=HASH,
         authority_analysis_allowed=True,
@@ -234,10 +264,16 @@ def _materialize_source_bundle_evidence(bundle_root, source_bundle):
     )
 
 
-def test_snapshot_requires_measured_dcf_but_not_adjusted_historical_technicals():
+def test_snapshot_requires_company_calibrated_dcf_but_not_adjusted_historical_technicals():
     eligible = _snapshot()
     unadjusted_technicals = build_valuation_calibration_snapshot(
-        _metrics(price_series_basis="unadjusted_or_provider_default"),
+        _calibration_metrics(price_series_basis="unadjusted_or_provider_default"),
+        metrics_packet_sha256=HASH,
+        authority_manifest_sha256=HASH,
+        authority_analysis_allowed=True,
+    )
+    standardized = build_valuation_calibration_snapshot(
+        _metrics(),
         metrics_packet_sha256=HASH,
         authority_manifest_sha256=HASH,
         authority_analysis_allowed=True,
@@ -247,10 +283,12 @@ def test_snapshot_requires_measured_dcf_but_not_adjusted_historical_technicals()
     assert eligible.base_upside is not None
     assert unadjusted_technicals.eligible
     assert unadjusted_technicals.price_series_basis == "unadjusted_or_provider_default"
+    assert not standardized.eligible
+    assert "sensitivity_not_company_calibrated" in standardized.exclusion_reasons
 
 
 def test_sector_overlay_does_not_rewrite_immutable_snapshot_id():
-    metrics = _metrics()
+    metrics = _calibration_metrics()
     first = build_valuation_calibration_snapshot(
         metrics,
         metrics_packet_sha256=HASH,
@@ -277,12 +315,12 @@ def test_scanner_reuses_and_verifies_saved_snapshot(tmp_path):
     metrics_path = bundle / "metrics_packet.json"
     manifest_path = bundle / "authority_manifest.json"
     metrics_path.write_text(
-        json.dumps(_metrics().model_dump(mode="json"), sort_keys=True),
+        json.dumps(_calibration_metrics().model_dump(mode="json"), sort_keys=True),
         encoding="utf-8",
     )
     manifest_path.write_text('{"analysis_allowed": true}', encoding="utf-8")
     snapshot = build_valuation_calibration_snapshot(
-        _metrics(),
+        _calibration_metrics(),
         metrics_packet_sha256=file_sha256(metrics_path),
         authority_manifest_sha256=file_sha256(manifest_path),
         authority_analysis_allowed=True,
@@ -308,11 +346,11 @@ def test_scanner_reuses_and_verifies_saved_snapshot(tmp_path):
 
 def test_snapshot_stays_ineligible_without_approved_authority_bundle():
     missing = build_valuation_calibration_snapshot(
-        _metrics(),
+        _calibration_metrics(),
         metrics_packet_sha256=HASH,
     )
     rejected = build_valuation_calibration_snapshot(
-        _metrics(),
+        _calibration_metrics(),
         metrics_packet_sha256=HASH,
         authority_manifest_sha256=HASH,
         authority_analysis_allowed=False,

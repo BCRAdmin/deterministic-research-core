@@ -1310,9 +1310,9 @@ def _final_rating_section(
     elif scores.valuation_status in {"scenario_measured", "illustrative_only"}:
         sensitivity = v.sensitivity
         qualifier = (
-            "measured scenario evidence that is not yet calibrated"
+            "company-calibrated scenario evidence"
             if scores.valuation_status == "scenario_measured"
-            else "illustrative scenario evidence because share-class price equivalence is unverified"
+            else "an uncalibrated illustration outside the rating logic"
         )
         valuation_text = (
             "The standardized equity-DCF range is "
@@ -1809,7 +1809,7 @@ def _fmt_score(value: float | None) -> str:
 def _valuation_status_label(status: str) -> str:
     labels = {
         "measured": "calibrated",
-        "scenario_measured": "scenario-measured but uncalibrated",
+        "scenario_measured": "company-calibrated scenario",
         "illustrative_only": "illustrative-only",
         "unbenchmarked": "unbenchmarked",
         "not_measured": "not-sufficiently-measured",

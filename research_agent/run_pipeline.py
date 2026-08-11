@@ -167,7 +167,9 @@ def run_research_pipeline(
         fundamentals=normalized_fundamentals,
         news=normalized_news,
         price_currency=config.price_currency,
+        cik=config.cik,
         exchange=config.exchange,
+        incorporation_state=config.incorporation_state,
         jurisdiction=config.jurisdiction,
         isin=config.isin,
         wkn=config.wkn,
@@ -557,6 +559,23 @@ def run_research_pipeline(
         current_report_allowed=freshness.current_report_allowed,
         historical_qa_only=freshness.historical_qa_only,
         freshness_issue_code=freshness.issue_code,
+        source_inventory_complete=(
+            (source_snapshot_manifest.get("quality_axes") or {}).get(
+                "source_inventory_complete"
+            )
+            is True
+        ),
+        material_event_content_complete=(
+            (source_snapshot_manifest.get("quality_axes") or {}).get(
+                "material_event_content_complete"
+            )
+            is True
+        ),
+        unit_normalization_valid=any(
+            item.get("check_id") == "unit_normalization_valid"
+            and item.get("status") == "pass"
+            for item in authority_manifest.get("checks") or []
+        ),
         **deeptech_assessment.to_quality_payload(),
     )
     if not quality_report.publishable:
@@ -814,7 +833,9 @@ def build_data_packet(
     fundamentals: dict[str, Any],
     news: list[dict[str, Any]],
     price_currency: str = "USD",
+    cik: str | None = None,
     exchange: str | None = None,
+    incorporation_state: str | None = None,
     jurisdiction: str | None = None,
     isin: str | None = None,
     wkn: str | None = None,
@@ -839,6 +860,8 @@ def build_data_packet(
             source_type=str(item.get("source_type") or ""),
             url=item.get("url"),
             summary=item.get("summary"),
+            filing_items=item.get("filing_items") or [],
+            content_complete=item.get("content_complete"),
             numeric_evidence=item.get("numeric_evidence") or [],
         )
         for item in news
@@ -853,8 +876,11 @@ def build_data_packet(
     return DataPacket(
         ticker=ticker.upper(),
         company_name=fundamentals.get("company_name"),
+        cik=cik,
         exchange=exchange,
+        exchange_display_name=_exchange_display_name(exchange),
         jurisdiction=jurisdiction,
+        incorporation_state=incorporation_state,
         isin=isin,
         wkn=wkn,
         as_of_date=as_of_date,
@@ -899,6 +925,22 @@ def build_data_packet(
             for item in fundamentals.get("company_guidance_metrics") or []
         ],
     )
+
+
+def _exchange_display_name(exchange: str | None) -> str | None:
+    value = str(exchange or "").strip()
+    if not value:
+        return None
+    return {
+        "NYQ": "NYSE",
+        "NYS": "NYSE",
+        "NYSE": "NYSE",
+        "NMS": "Nasdaq Global Select Market",
+        "NGM": "Nasdaq Global Market",
+        "NCM": "Nasdaq Capital Market",
+        "NASDAQ": "Nasdaq",
+        "BSE": "Budapest Stock Exchange",
+    }.get(value.upper(), value)
 
 
 def _load_pipeline_inputs(ticker: str, as_of_date: str, config: ReportConfig):

@@ -551,7 +551,23 @@ def _has_vendor_only_hard_metrics(packet: Any, source_registry: Any, has_sec_ir:
 
 
 def _has_derivative_or_warrant_effects(text: str) -> bool:
-    return bool(re.search(r"\b(?:derivative|warrant|fair[- ]?value|fair value|derivat|optionsschein)\b", text, re.IGNORECASE))
+    financial_effect = (
+        r"(?:fair[- ]?value|gain|loss|income|expense|liabilit(?:y|ies)|"
+        r"accounting|remeasur(?:e|ement)|hedg(?:e|ing)|instrument|"
+        r"equity|stock|share|securit(?:y|ies)|dilut(?:ion|ive))"
+    )
+    derivative_term = r"(?:derivative(?:s)?|derivat\w*|optionsschein\w*)"
+    warrant_term = r"(?:stock warrants?|share warrants?|equity warrants?|warrant liabilities?)"
+    return bool(
+        re.search(
+            rf"\b{derivative_term}\b[^.\n]{{0,140}}\b{financial_effect}\b|"
+            rf"\b{financial_effect}\b[^.\n]{{0,140}}\b{derivative_term}\b|"
+            rf"\b{warrant_term}\b[^.\n]{{0,140}}\b{financial_effect}\b|"
+            rf"\b{financial_effect}\b[^.\n]{{0,140}}\b{warrant_term}\b",
+            text,
+            re.IGNORECASE,
+        )
+    )
 
 
 def _has_lumpy_or_non_scaled_adoption_language(text: str) -> bool:

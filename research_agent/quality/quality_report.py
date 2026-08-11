@@ -17,10 +17,9 @@ class QualityReport(BaseModel):
     content_score: int = 100
     generated_claim_mapping_complete: bool = False
     generated_claim_mapping_gaps: list[str] = Field(default_factory=list)
-    # Historical name retained for downstream compatibility. It describes
-    # generated-claim mapping, never material source-domain completeness.
-    claim_coverage_complete: bool = False
-    claim_coverage_gaps: list[str] = Field(default_factory=list)
+    source_inventory_complete: bool = False
+    material_event_content_complete: bool = False
+    unit_normalization_valid: bool = False
     analyst_claim_count: int = 0
     substantive_analyst_claim_count: int = 0
     substantive_claim_count: int = 0

@@ -49,13 +49,19 @@ def _extract_line_claims(line: str, line_number: int) -> list[ExtractedNumericCl
             )
         )
 
-    for match, currency in _iter_currency_matches(line):
+    currency_matches = list(_iter_currency_matches(line))
+    for match, currency in currency_matches:
+        scale = match.group("scale") or _inherited_currency_scale(
+            line,
+            match,
+            [item[0] for item in currency_matches],
+        )
         claims.append(
             _claim(
                 raw_text=match.group(0),
                 value=_normalize_number(
                     f"{match.groupdict().get('leading_sign') or ''}{match.group('number')}",
-                    match.group("scale"),
+                    scale,
                 ),
                 unit=currency,
                 nearby_text=nearby,
@@ -93,6 +99,27 @@ def _extract_line_claims(line: str, line_number: int) -> list[ExtractedNumericCl
         )
 
     return claims
+
+
+def _inherited_currency_scale(
+    line: str,
+    current: re.Match[str],
+    matches: list[re.Match[str]],
+) -> Optional[str]:
+    """Apply an explicitly stated range scale to the unscaled range bound."""
+
+    candidates: list[tuple[int, str]] = []
+    for other in matches:
+        scale = other.group("scale")
+        if other is current or not scale:
+            continue
+        between = line[
+            min(current.end(), other.end()) : max(current.start(), other.start())
+        ]
+        if len(between) > 80 or re.search(r"[.;:]", between):
+            continue
+        candidates.append((_span_distance(*current.span(), *other.span()), scale))
+    return min(candidates, default=(0, None), key=lambda item: item[0])[1]
 
 
 def _claim_text_without_metadata(line: str) -> str:

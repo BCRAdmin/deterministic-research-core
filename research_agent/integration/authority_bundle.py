@@ -84,6 +84,11 @@ MATERIAL_METRIC_KEYS = {
     "dividends_paid",
     "shareholder_distributions_ttm",
     "shareholder_distributions_minus_fcf_ttm",
+    "buybacks_current_period",
+    "dividends_paid_current_period",
+    "shareholder_distributions_current_period",
+    "free_cash_flow_current_period",
+    "shareholder_distributions_minus_fcf_current_period",
     "sbc_ttm",
     "sbc_to_revenue",
     "sbc_to_fcf",
@@ -297,6 +302,63 @@ def _ttm_period_is_compatible(
     if not period or "ttm" in period or ".." in period:
         return True
     return not any(token in period for token in ("q1", "q2", "q3", "q4"))
+
+
+def _unit_normalization_failures(
+    evidence_items: Iterable[Mapping[str, Any]],
+) -> list[str]:
+    """Validate source-to-base conversion for emitted operating KPI evidence."""
+
+    multipliers = {
+        "base": 1.0,
+        "thousand": 1_000.0,
+        "k": 1_000.0,
+        "million": 1_000_000.0,
+        "m": 1_000_000.0,
+        "mn": 1_000_000.0,
+        "billion": 1_000_000_000.0,
+        "b": 1_000_000_000.0,
+        "bn": 1_000_000_000.0,
+        "percent": 0.01,
+    }
+    failures: list[str] = []
+    for item in evidence_items:
+        source_id = str(item.get("source_id") or "")
+        supports_claims = {str(value) for value in item.get("supports_claims") or []}
+        if (
+            "business_model_operating_kpi" not in supports_claims
+            and "_KPI_" not in source_id
+        ):
+            continue
+        evidence_id = str(item.get("evidence_id") or source_id or "unknown")
+        raw = item.get("raw_value")
+        normalized = item.get("normalized_value")
+        if raw is None and normalized is None:
+            # Registry-derived KPI capability rows carry no numeric claim and
+            # therefore have no source-to-base conversion to verify.
+            continue
+        scale = str(item.get("source_scale") or "").casefold()
+        source_unit = str(item.get("source_unit") or "")
+        unit = str(item.get("unit") or "")
+        source_sign = item.get("source_sign", 1)
+        if (
+            not isinstance(raw, (int, float))
+            or isinstance(raw, bool)
+            or not isinstance(normalized, (int, float))
+            or isinstance(normalized, bool)
+            or scale not in multipliers
+            or source_unit != unit
+            or source_sign not in {-1, 1}
+        ):
+            failures.append(evidence_id)
+            continue
+        expected = float(raw) * multipliers[scale] * float(source_sign)
+        if not math.isclose(float(normalized), expected, rel_tol=1e-12, abs_tol=1e-9):
+            failures.append(evidence_id)
+            continue
+        if unit == "currency" and not item.get("currency"):
+            failures.append(evidence_id)
+    return sorted(set(failures))
 
 
 def _resolve_source_registry_path(
@@ -579,6 +641,15 @@ def _assess_packets(
             },
             sort_keys=True,
         ),
+    )
+    unit_failures = _unit_normalization_failures(
+        item for item in evidence_items if isinstance(item, Mapping)
+    )
+    _check(
+        checks,
+        "unit_normalization_valid",
+        not unit_failures,
+        detail=",".join(unit_failures),
     )
 
     material_metrics = dict(_metric_items(metrics_packet))
@@ -885,6 +956,20 @@ def build_authority_bundle(
         bool(source_snapshot_manifest.get("all_sources_dispositioned")),
         detail=", ".join(source_snapshot_manifest.get("blocking_source_ids") or []),
     )
+    snapshot_quality_axes = source_snapshot_manifest.get("quality_axes")
+    snapshot_quality_axes = (
+        snapshot_quality_axes if isinstance(snapshot_quality_axes, Mapping) else {}
+    )
+    _check(
+        checks,
+        "source_inventory_complete",
+        snapshot_quality_axes.get("source_inventory_complete") is True,
+    )
+    _check(
+        checks,
+        "material_event_content_complete",
+        snapshot_quality_axes.get("material_event_content_complete") is True,
+    )
     registry_source_ids = {
         str(item.get("source_id") or "")
         for item in payloads["source_registry"].get("sources") or []
@@ -1086,6 +1171,24 @@ def verify_authority_bundle(bundle_dir: str | Path) -> dict[str, Any]:
             detail=", ".join(
                 payloads["source_snapshot_manifest"].get("blocking_source_ids") or []
             ),
+        )
+        snapshot_quality_axes = payloads["source_snapshot_manifest"].get(
+            "quality_axes"
+        )
+        snapshot_quality_axes = (
+            snapshot_quality_axes
+            if isinstance(snapshot_quality_axes, Mapping)
+            else {}
+        )
+        _check(
+            checks,
+            "source_inventory_complete",
+            snapshot_quality_axes.get("source_inventory_complete") is True,
+        )
+        _check(
+            checks,
+            "material_event_content_complete",
+            snapshot_quality_axes.get("material_event_content_complete") is True,
         )
         snapshot_source_ids = {
             str(item.get("source_id") or "")

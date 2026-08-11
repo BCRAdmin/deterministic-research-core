@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import math
+import re
 from pathlib import Path
 from typing import Iterable, List, Mapping, Optional, Union
 
@@ -1032,6 +1033,302 @@ def build_fundamental_derivation_evidence(
                 source_lineage=_operand_source_lineage(
                     [*runtime_items, *evidence],
                     operands,
+                    fallback_source_id=source_id,
+                ),
+            )
+        )
+    current_metadata = normalized_fundamentals.get("current_period_metadata")
+    if not isinstance(current_metadata, Mapping):
+        current_metadata = {}
+    current_distribution_period = _common_current_period(
+        current_metadata,
+        "buybacks",
+        "dividends_paid",
+    )
+    current_fcf_period = _common_current_period(
+        current_metadata,
+        "operating_cash_flow",
+        "capex",
+    )
+    current_values = normalized_fundamentals.get("current_period")
+    if not isinstance(current_values, Mapping):
+        current_values = {}
+
+    for source_metric, target_metric, metric_value in (
+        (
+            "buybacks",
+            "buybacks_current_period",
+            fundamentals.buybacks_current_period,
+        ),
+        (
+            "dividends_paid",
+            "dividends_paid_current_period",
+            fundamentals.dividends_paid_current_period,
+        ),
+    ):
+        metadata = current_metadata.get(source_metric)
+        period = _current_period_tuple(metadata)
+        if (
+            metric_value is None
+            or period is None
+            or not _current_period_raw_value_is_evidenced(
+                runtime_items,
+                metric_name=source_metric,
+                value=float(metric_value),
+                metadata=metadata,
+            )
+        ):
+            continue
+        evidence.append(
+            EvidenceItem(
+                evidence_id=(
+                    f"{ticker.upper()}_DETERMINISTIC_"
+                    f"{target_metric.upper()}_{as_of_date}"
+                ),
+                ticker=ticker.upper(),
+                claim_type="financial_metric",
+                source_id=source_id,
+                source_type="deterministic_calculation",
+                authority_rank=1,
+                statement=(
+                    f"{target_metric}={metric_value:g} is the reported "
+                    f"{source_metric} value for {period[0]}..{period[1]}; "
+                    "it is not presented as TTM."
+                ),
+                value=float(metric_value),
+                unit=currency,
+                period=f"{period[0]}..{period[1]}",
+                date=period[1],
+                supports_metrics=[target_metric],
+                confidence="high",
+                formula_id=f"reported_current_period_{source_metric}",
+                formula_operands={source_metric: float(metric_value)},
+                normalized_value=float(metric_value),
+                source_lineage=_operand_source_lineage(
+                    runtime_items,
+                    {source_metric: float(metric_value)},
+                    fallback_source_id=source_id,
+                ),
+            )
+        )
+
+    current_fcf_operands: dict[str, float] = {}
+    if (
+        fundamentals.free_cash_flow_current_period is not None
+        and current_fcf_period is not None
+    ):
+        ocf = current_values.get("operating_cash_flow")
+        capex = current_values.get("capex")
+        if isinstance(ocf, (int, float)) and isinstance(capex, (int, float)):
+            current_fcf_operands = {
+                "operating_cash_flow": float(ocf),
+                "capex": float(capex),
+            }
+            if not (
+                math.isclose(
+                    float(fundamentals.free_cash_flow_current_period),
+                    float(ocf) - abs(float(capex)),
+                    rel_tol=1e-9,
+                    abs_tol=1e-9,
+                )
+                and all(
+                    _current_period_raw_value_is_evidenced(
+                        runtime_items,
+                        metric_name=metric_name,
+                        value=value,
+                        metadata=current_metadata.get(metric_name),
+                    )
+                    for metric_name, value in current_fcf_operands.items()
+                )
+            ):
+                current_fcf_operands = {}
+    if current_fcf_operands:
+        evidence.append(
+            EvidenceItem(
+                evidence_id=(
+                    f"{ticker.upper()}_DETERMINISTIC_"
+                    f"FREE_CASH_FLOW_CURRENT_PERIOD_{as_of_date}"
+                ),
+                ticker=ticker.upper(),
+                claim_type="financial_metric",
+                source_id=source_id,
+                source_type="deterministic_calculation",
+                authority_rank=1,
+                statement=(
+                    "free_cash_flow_current_period="
+                    f"{fundamentals.free_cash_flow_current_period:g} was "
+                    "derived as current-period operating cash flow minus "
+                    "current-period capex."
+                ),
+                value=float(fundamentals.free_cash_flow_current_period),
+                unit=currency,
+                period=f"{current_fcf_period[0]}..{current_fcf_period[1]}",
+                date=current_fcf_period[1],
+                supports_metrics=["free_cash_flow_current_period"],
+                confidence="high",
+                formula_id="current_period_cfo_minus_capex",
+                formula_operands=current_fcf_operands,
+                normalized_value=float(fundamentals.free_cash_flow_current_period),
+                source_lineage=_operand_source_lineage(
+                    runtime_items,
+                    current_fcf_operands,
+                    fallback_source_id=source_id,
+                ),
+            )
+        )
+
+    current_distribution_operands: dict[str, float] = {}
+    if (
+        fundamentals.shareholder_distributions_current_period is not None
+        and fundamentals.buybacks_current_period is not None
+        and fundamentals.dividends_paid_current_period is not None
+        and current_distribution_period is not None
+    ):
+        current_distribution_operands = {
+            "buybacks_current_period": float(
+                fundamentals.buybacks_current_period
+            ),
+            "dividends_paid_current_period": float(
+                fundamentals.dividends_paid_current_period
+            ),
+        }
+        if not (
+            math.isclose(
+                float(fundamentals.shareholder_distributions_current_period),
+                sum(current_distribution_operands.values()),
+                rel_tol=1e-9,
+                abs_tol=1e-9,
+            )
+            and _operands_have_exact_evidence(
+                [*runtime_items, *evidence],
+                current_distribution_operands,
+            )
+        ):
+            current_distribution_operands = {}
+    if current_distribution_operands:
+        evidence.append(
+            EvidenceItem(
+                evidence_id=(
+                    f"{ticker.upper()}_DETERMINISTIC_"
+                    f"SHAREHOLDER_DISTRIBUTIONS_CURRENT_PERIOD_{as_of_date}"
+                ),
+                ticker=ticker.upper(),
+                claim_type="financial_metric",
+                source_id=source_id,
+                source_type="deterministic_calculation",
+                authority_rank=1,
+                statement=(
+                    "shareholder_distributions_current_period="
+                    f"{fundamentals.shareholder_distributions_current_period:g} "
+                    "was derived as period-matched buybacks plus dividends."
+                ),
+                value=float(
+                    fundamentals.shareholder_distributions_current_period
+                ),
+                unit=currency,
+                period=(
+                    f"{current_distribution_period[0]}.."
+                    f"{current_distribution_period[1]}"
+                ),
+                date=current_distribution_period[1],
+                supports_metrics=["shareholder_distributions_current_period"],
+                confidence="high",
+                formula_id=(
+                    "buybacks_current_period_plus_"
+                    "dividends_paid_current_period"
+                ),
+                formula_operands=current_distribution_operands,
+                normalized_value=float(
+                    fundamentals.shareholder_distributions_current_period
+                ),
+                source_lineage=_operand_source_lineage(
+                    [*runtime_items, *evidence],
+                    current_distribution_operands,
+                    fallback_source_id=source_id,
+                ),
+            )
+        )
+
+    current_gap_operands: dict[str, float] = {}
+    if (
+        fundamentals.shareholder_distributions_minus_fcf_current_period
+        is not None
+        and fundamentals.shareholder_distributions_current_period is not None
+        and fundamentals.free_cash_flow_current_period is not None
+        and current_distribution_period is not None
+        and current_distribution_period == current_fcf_period
+    ):
+        current_gap_operands = {
+            "shareholder_distributions_current_period": float(
+                fundamentals.shareholder_distributions_current_period
+            ),
+            "free_cash_flow_current_period": float(
+                fundamentals.free_cash_flow_current_period
+            ),
+        }
+        if not (
+            math.isclose(
+                float(
+                    fundamentals.
+                    shareholder_distributions_minus_fcf_current_period
+                ),
+                current_gap_operands[
+                    "shareholder_distributions_current_period"
+                ]
+                - current_gap_operands["free_cash_flow_current_period"],
+                rel_tol=1e-9,
+                abs_tol=1e-9,
+            )
+            and _operands_have_exact_evidence(
+                [*runtime_items, *evidence],
+                current_gap_operands,
+            )
+        ):
+            current_gap_operands = {}
+    if current_gap_operands:
+        evidence.append(
+            EvidenceItem(
+                evidence_id=(
+                    f"{ticker.upper()}_DETERMINISTIC_"
+                    "SHAREHOLDER_DISTRIBUTIONS_MINUS_FCF_CURRENT_PERIOD_"
+                    f"{as_of_date}"
+                ),
+                ticker=ticker.upper(),
+                claim_type="financial_metric",
+                source_id=source_id,
+                source_type="deterministic_calculation",
+                authority_rank=1,
+                statement=(
+                    "shareholder_distributions_minus_fcf_current_period="
+                    f"{fundamentals.shareholder_distributions_minus_fcf_current_period:g} "
+                    "was derived from values for the same reporting period."
+                ),
+                value=float(
+                    fundamentals.
+                    shareholder_distributions_minus_fcf_current_period
+                ),
+                unit=currency,
+                period=(
+                    f"{current_distribution_period[0]}.."
+                    f"{current_distribution_period[1]}"
+                ),
+                date=current_distribution_period[1],
+                supports_metrics=[
+                    "shareholder_distributions_minus_fcf_current_period"
+                ],
+                confidence="high",
+                formula_id=(
+                    "shareholder_distributions_current_period_minus_"
+                    "free_cash_flow_current_period"
+                ),
+                formula_operands=current_gap_operands,
+                normalized_value=float(
+                    fundamentals.
+                    shareholder_distributions_minus_fcf_current_period
+                ),
+                source_lineage=_operand_source_lineage(
+                    [*runtime_items, *evidence],
+                    current_gap_operands,
                     fallback_source_id=source_id,
                 ),
             )
@@ -2274,6 +2571,84 @@ def _common_bridge_period(
     return next(iter(periods)) if len(periods) == 1 else None
 
 
+def _current_period_tuple(
+    metadata: object,
+) -> Optional[tuple[str, str]]:
+    if not isinstance(metadata, Mapping):
+        return None
+    period_start = str(metadata.get("period_start") or "").strip()
+    period_end = str(metadata.get("period_end") or "").strip()
+    if not period_start or not period_end:
+        return None
+    return period_start, period_end
+
+
+def _common_current_period(
+    metadata: Mapping[str, object],
+    *metric_names: str,
+) -> Optional[tuple[str, str]]:
+    periods = [
+        period
+        for metric_name in metric_names
+        if (period := _current_period_tuple(metadata.get(metric_name)))
+    ]
+    unique_periods = set(periods)
+    return (
+        periods[0]
+        if len(periods) == len(metric_names) and len(unique_periods) == 1
+        else None
+    )
+
+
+def _current_period_raw_value_is_evidenced(
+    evidence_items: Iterable[EvidenceItem],
+    *,
+    metric_name: str,
+    value: float,
+    metadata: object,
+) -> bool:
+    period = _current_period_tuple(metadata)
+    if period is None or not isinstance(metadata, Mapping):
+        return False
+    source_ids = {
+        str(source_id)
+        for source_id in (metadata.get("source_ids") or [])
+        if source_id
+    }
+    return any(
+        metric_name in item.supports_metrics
+        and item.value is not None
+        and math.isclose(
+            float(item.value),
+            value,
+            rel_tol=1e-9,
+            abs_tol=max(1e-9, abs(value) * 1e-9),
+        )
+        and str(item.date or "") == period[1]
+        and (
+            not source_ids
+            or any(
+                _source_ids_refer_to_same_filing(item.source_id, source_id)
+                for source_id in source_ids
+            )
+        )
+        for item in evidence_items
+    )
+
+
+def _source_ids_refer_to_same_filing(left: str, right: str) -> bool:
+    if left == right:
+        return True
+    accession_pattern = r"\d{10}-\d{2}-\d{6}"
+    left_accession = re.search(accession_pattern, str(left or ""))
+    right_accession = re.search(accession_pattern, str(right or ""))
+    return bool(
+        left_accession
+        and right_accession
+        and left_accession.group(0) == right_accession.group(0)
+    )
+
+
 def _canonical_lineage_source_ids(
     evidence_items: Iterable[EvidenceItem],
     lineage: Iterable[str],
@@ -2532,6 +2907,11 @@ def unit_for_metric(
         "interest_expense_ttm",
         "shareholder_distributions_ttm",
         "shareholder_distributions_minus_fcf_ttm",
+        "buybacks_current_period",
+        "dividends_paid_current_period",
+        "shareholder_distributions_current_period",
+        "free_cash_flow_current_period",
+        "shareholder_distributions_minus_fcf_current_period",
         "cash_and_equivalents",
         "cash_and_investments",
         "current_assets",

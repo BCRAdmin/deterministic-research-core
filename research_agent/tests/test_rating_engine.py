@@ -120,7 +120,8 @@ def _standardized_dcf_sensitivity(*, equity_value: float) -> ValuationSensitivit
             )
         )
     return ValuationSensitivity(
-        status="measured",
+        status="illustrative_only",
+        calibration_status="standardized_uncalibrated",
         current_market_cap=1_000.0,
         current_price=100.0,
         share_basis="listed_share_count",
@@ -154,8 +155,8 @@ def test_standardized_dcf_extremes_cannot_change_rating_without_calibration():
     bearish_packet = build_decision_packet(deeply_bearish)
     bullish_packet = build_decision_packet(deeply_bullish)
 
-    assert bearish_packet.signal_scores.valuation_status == "scenario_measured"
-    assert bullish_packet.signal_scores.valuation_status == "scenario_measured"
+    assert bearish_packet.signal_scores.valuation_status == "illustrative_only"
+    assert bullish_packet.signal_scores.valuation_status == "illustrative_only"
     assert bearish_packet.signal_scores.valuation_score == 0
     assert bullish_packet.signal_scores.valuation_score == 0
     assert (

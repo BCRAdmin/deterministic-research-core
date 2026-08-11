@@ -503,6 +503,8 @@ def canonical_financials_to_fundamentals(canonical: CanonicalFinancials) -> dict
         "quarterly": {},
         "ttm": {},
         "annual": {},
+        "current_period": {},
+        "current_period_metadata": {},
         "balance_sheet": {},
         "share_data": {},
         "reconciliation_material_dates": {},
@@ -542,6 +544,15 @@ def canonical_financials_to_fundamentals(canonical: CanonicalFinancials) -> dict
                 )
             if issue:
                 fundamentals["reconciliation_issues"].append(issue)
+        current_period = _latest_current_period_metric(canonical, metric_name)
+        if current_period is not None:
+            fundamentals["current_period"][metric_name] = current_period.value
+            fundamentals["current_period_metadata"][metric_name] = {
+                "period": current_period.period,
+                "period_start": current_period.start_date,
+                "period_end": current_period.end_date,
+                "source_ids": current_period.source_ids,
+            }
 
     balance_sheet_metrics = (
         "cash_and_equivalents",
@@ -802,6 +813,33 @@ def _latest_annual_metric(
             _confidence_rank(metric.confidence),
             concept_priority(metric.metric_name, metric.source_concept),
             1 if metric.frame else 0,
+        ),
+        reverse=True,
+    )[0]
+
+
+def _latest_current_period_metric(
+    canonical: CanonicalFinancials,
+    metric_name: str,
+) -> Optional[CanonicalMetric]:
+    candidates = [
+        metric
+        for metric in canonical.metrics_for(metric_name)
+        if metric.period_bucket in {"quarterly", "ytd"}
+        and metric.basis == "gaap"
+        and _is_current_metric(canonical, metric)
+        and metric.start_date
+        and metric.end_date
+    ]
+    if not candidates:
+        return None
+    return sorted(
+        candidates,
+        key=lambda metric: (
+            metric.end_date or "",
+            1 if metric.period_bucket == "ytd" else 0,
+            metric.duration_days or 0,
+            _confidence_rank(metric.confidence),
         ),
         reverse=True,
     )[0]

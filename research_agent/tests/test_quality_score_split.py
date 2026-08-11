@@ -75,6 +75,55 @@ def test_manual_review_can_have_high_internal_quality():
     )
 
 
+def test_semantic_integrity_axes_prevent_a_false_high_quality_pass():
+    quality = calculate_quality_score(
+        validation_report=_validation("WM"),
+        audit_report=_audit("WM", []),
+        decision_packet=_decision("WM", Rating.HOLD),
+        final_markdown=_strong_rklb_internal_text(),
+        analyst_claim_count=24,
+        substantive_analyst_claim_count=20,
+        substantive_claim_ratio=0.9,
+        evidence_mapped_claim_ratio=1.0,
+        hard_claim_evidence_ratio=1.0,
+        current_period_kpi_claim_count=6,
+        current_period_kpi_metric_count=6,
+        ticker_specific_kpi_claim_count=8,
+        final_rating_rationale_quality=90,
+        mechanical_rating_language_count=0,
+        generic_claim_ratio=0.0,
+        company_specific_claim_count=3,
+        valuation_specific_claim_count=2,
+        technical_specific_claim_count=1,
+        rating_rationale_claim_count=1,
+        risk_specific_claim_count=1,
+        publish_report_exists=1,
+        publish_current_kpi_count=3,
+        publish_evidence_appendix_exists=1,
+        publish_mechanical_language_count=0,
+        publish_claim_id_main_body_count=0,
+        publish_valuation_sensitivity_present=1,
+        publish_action_plan_trigger_count=2,
+        source_inventory_complete=False,
+        material_event_content_complete=False,
+        unit_normalization_valid=False,
+    )
+
+    assert quality.publishable is False
+    assert quality.total_score <= 50
+    assert quality.publish_quality_score <= 40
+    assert quality.internal_research_quality_score <= 60
+    assert quality.data_confidence_score <= 50
+    assert quality.source_quality == 0
+    assert quality.event_awareness == 0
+    assert quality.numerical_accuracy == 0
+    assert {
+        "SOURCE_INVENTORY_INCOMPLETE",
+        "MATERIAL_EVENT_CONTENT_INCOMPLETE",
+        "UNIT_NORMALIZATION_INVALID",
+    } <= set(quality.manual_review_reasons)
+
+
 def test_rgti_vendor_only_low_publish_but_useful_internal():
     quality = calculate_quality_score(
         validation_report=_validation("RGTI"),
@@ -194,8 +243,8 @@ def test_gold_report_without_risk_claim_is_incomplete():
         publish_action_plan_trigger_count=2,
     )
 
-    assert quality.claim_coverage_complete is False
-    assert quality.claim_coverage_gaps == ["missing_risk_analysis"]
+    assert quality.generated_claim_mapping_complete is False
+    assert quality.generated_claim_mapping_gaps == ["missing_risk_analysis"]
     assert quality.manual_review_reasons == ["MISSING_RISK_ANALYSIS"]
     assert quality.publishable is False
 

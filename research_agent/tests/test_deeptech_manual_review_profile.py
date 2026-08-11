@@ -19,6 +19,7 @@ from research_agent.quality.deeptech_manual_review import (
     TECHNICAL_OVERWEIGHT_IN_FUNDAMENTAL_THESIS,
     VENDOR_ONLY_HARD_METRICS,
     assess_speculative_deep_tech_manual_review,
+    _has_derivative_or_warrant_effects,
 )
 from research_agent.quality.quality_score import calculate_quality_score
 from research_agent.research_core.ingestion.source_registry import SourceRegistry, SourceRegistryEntry
@@ -140,6 +141,18 @@ def _rgti_text() -> str:
     Beta: 1.8. Adoption is limited commercial adoption and not scaled.
     The report mentions a defense contract, roadmap milestone, and order but lacks a quantified materiality bridge.
     """
+
+
+def test_legal_warrant_language_is_not_a_derivative_accounting_trigger():
+    assert not _has_derivative_or_warrant_effects(
+        "The company received a search warrant and a related legal subpoena."
+    )
+    assert not _has_derivative_or_warrant_effects(
+        "Environmental enforcement included a warrant and consent order."
+    )
+    assert _has_derivative_or_warrant_effects(
+        "GAAP net income improved after derivative and warrant fair-value effects."
+    )
 
 
 def test_rgti_profile_is_manual_review_and_not_publishable():
