@@ -2967,12 +2967,12 @@ def _current_risk_decision_text(decision: DecisionPacket) -> str:
         item
         for item in decision.decision_inputs
         if item.input_type == "current_risk"
-    ][:2]
+    ][:3]
     if not risks:
         return ""
     parts: list[str] = []
     for risk in risks:
-        summary = _named_risk_label(
+        summary = named_current_risk_label(
             str(risk.summary or ""),
             fallback=str(risk.label or risk.input_id),
         )
@@ -2991,13 +2991,13 @@ def _current_risk_narrative_evidence(
     decision: DecisionPacket,
     ledger: EvidenceLedger,
     *,
-    limit: int = 2,
+    limit: int = 3,
 ) -> list[EvidenceItem]:
     """Return exactly one narrative edge for every risk rendered in synthesis.
 
     Numeric risk disclosures receive a dedicated ``source_narrative`` record;
     disclosures without numbers already have a non-numeric primary evidence
-    record.  The rendered text uses the first two decision risks, so the
+    record.  The rendered text uses the first three decision risks, so the
     evidence selection must use the identical ordered slice.
     """
 
@@ -3028,7 +3028,7 @@ def _current_risk_narrative_evidence(
     return selected
 
 
-def _named_risk_label(summary: str, *, fallback: str) -> str:
+def named_current_risk_label(summary: str, *, fallback: str) -> str:
     folded = summary.casefold()
     if "san jacinto" in folded:
         return "San Jacinto River Waste Pits remediation and EPA cleanup order."

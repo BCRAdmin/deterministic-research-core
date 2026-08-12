@@ -5,6 +5,7 @@ import re
 from pathlib import Path
 from typing import Iterable
 
+from research_agent.content.claim_generator import named_current_risk_label
 from research_agent.content.report_composer import render_instrument_identity
 from research_agent.decision.decision_packet import DecisionPacket
 from research_agent.decision.signal_scores import TECHNICAL_SCORING_BASES
@@ -1612,6 +1613,9 @@ def _final_rating_section(
             "Why not more cautious? A raw multiple or an isolated price signal cannot "
             "establish business deterioration."
         )
+    current_risk_context = _current_risk_rating_context(decision_packet)
+    if current_risk_context:
+        why_not_cautious = f"{why_not_cautious} {current_risk_context}"
     fcf_anchor = (
         f"FCF of {_fmt_money(f.free_cash_flow_ttm, currency)}"
         if f.free_cash_flow_ttm is not None
@@ -1653,6 +1657,31 @@ def _final_rating_section(
             why_not_cautious,
             review_condition,
         ]
+    )
+
+
+def _current_risk_rating_context(decision_packet: DecisionPacket) -> str:
+    risks = [
+        item
+        for item in decision_packet.decision_inputs
+        if item.input_type == "current_risk"
+    ][:3]
+    if not risks:
+        return ""
+    labels = [
+        named_current_risk_label(
+            str(item.summary or ""),
+            fallback=str(item.label or item.input_id),
+        ).rstrip(".")
+        for item in risks
+    ]
+    return (
+        "The rating already monitors these named current risks: "
+        + "; ".join(labels)
+        + ". A more cautious rating requires new primary evidence that their "
+        "reserve, compliance, operating or cash-flow transmission outweighs "
+        "the measured counterevidence; an issuer counterposition is context, "
+        "not independent proof."
     )
 
 

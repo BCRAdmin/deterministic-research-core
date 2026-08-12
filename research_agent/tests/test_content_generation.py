@@ -34,7 +34,7 @@ from research_agent.content.publish_composer import (
     _generic_publish_report,
     compose_internal_best_report,
 )
-from research_agent.decision.decision_packet import DecisionPacket
+from research_agent.decision.decision_packet import DecisionInput, DecisionPacket
 from research_agent.evidence.evidence_item import EvidenceItem
 from research_agent.evidence.evidence_ledger import EvidenceLedger, unit_for_metric
 from research_agent.quality.quality_score import calculate_quality_score
@@ -314,6 +314,7 @@ def test_current_risk_synthesis_binds_one_narrative_per_rendered_risk() -> None:
     assert [item.evidence_id for item in selected] == [
         "NUMERIC_NARRATIVE",
         "TEXT_PRIMARY",
+        "THIRD",
     ]
 
 
@@ -2031,6 +2032,47 @@ def test_final_rating_keeps_bearish_technical_state_outside_company_rating():
     assert "Positive FCF and the constructive fundamental signal" in section
     assert "fundamental, valuation or issuer-risk deterioration" in section
     assert "A raw multiple or an isolated price signal" not in section
+
+
+def test_final_rating_names_each_current_risk_and_sets_evidence_threshold():
+    _, metrics, _, _, decision = _load_packet("SNOW")
+    decision.decision_inputs = [
+        DecisionInput(
+            input_id=f"RISK_{index}",
+            input_type="current_risk",
+            direction="negative",
+            materiality="material",
+            confidence="high",
+            included_in_score=False,
+            exclusion_reason="Severity is not cross-company calibrated.",
+            label=label,
+            summary=summary,
+        )
+        for index, (label, summary) in enumerate(
+            (
+                ("San Jacinto", "San Jacinto environmental reserve remains open."),
+                ("Stericycle", "Stericycle compliance obligations remain active."),
+                ("Delaware", "Delaware litigation remains unresolved."),
+            ),
+            start=1,
+        )
+    ]
+
+    section = _final_rating_section(
+        "TEST",
+        "Hold",
+        metrics.fundamentals,
+        metrics.valuation,
+        metrics.technical,
+        decision,
+    )
+
+    assert "these named current risks" in section
+    assert "San Jacinto River Waste Pits remediation and EPA cleanup order" in section
+    assert "Stericycle deferred-prosecution and continuing-compliance obligations" in section
+    assert "Delaware litigation remains unresolved" in section
+    assert "requires new primary evidence" in section
+    assert "issuer counterposition is context, not independent proof" in section
 
 
 def test_mixed_profit_declines_remain_visible_across_thesis_bear_and_rating():
