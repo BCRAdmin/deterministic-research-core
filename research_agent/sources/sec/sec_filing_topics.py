@@ -116,7 +116,12 @@ def build_sec_filing_topic_payload(
                 (
                     score,
                     -source_index,
-                    _condense_topic_excerpt(block, limit=2800),
+                    _topic_context_excerpt(
+                        blocks,
+                        source_index=source_index,
+                        block=block,
+                        topic=topic,
+                    ),
                 )
             )
         matches = [
@@ -170,7 +175,11 @@ def build_sec_filing_topic_payload(
                     ),
                     "inventory_filter_reason": "inside_analysis_window",
                     "semantic_disposition": "current_material_topic",
-                    "numeric_evidence": _topic_numeric_evidence(summary, topic),
+                    "numeric_evidence": _topic_numeric_evidence(
+                        summary,
+                        topic,
+                        filing_date=filing_date,
+                    ),
                     "legal_context": (
                         _legal_context(summary)
                         if topic == "legal_contingencies"
@@ -215,6 +224,29 @@ def _condense_topic_excerpt(text: str, *, limit: int = 950) -> str:
     if not summary:
         summary = compact[:limit].rsplit(" ", 1)[0]
     return summary[:limit].rstrip()
+
+
+def _topic_context_excerpt(
+    blocks: list[str],
+    *,
+    source_index: int,
+    block: str,
+    topic: str,
+) -> str:
+    """Preserve an immediately preceding issuer assessment for legal topics."""
+
+    context = block
+    if topic == "legal_contingencies" and source_index > 0:
+        preceding = " ".join(str(blocks[source_index - 1] or "").split())
+        assessment = re.search(
+            r"([^.!?]*(?:we do not (?:currently )?(?:expect|believe)|we believe|"
+            r"management believes)[^.!?]*[.!?])\s*$",
+            preceding,
+            re.IGNORECASE,
+        )
+        if assessment:
+            context = f"{assessment.group(1).strip()} {block}"
+    return _condense_topic_excerpt(context, limit=2800)
 
 
 def _topic_match_score(topic: str, text: str, patterns: tuple[str, ...]) -> int:
@@ -273,8 +305,15 @@ def _topic_match_score(topic: str, text: str, patterns: tuple[str, ...]) -> int:
     return score
 
 
-def _topic_numeric_evidence(summary: str, topic: str) -> list[dict[str, Any]]:
+def _topic_numeric_evidence(
+    summary: str,
+    topic: str,
+    *,
+    filing_date: str | None = None,
+) -> list[dict[str, Any]]:
     values: list[dict[str, Any]] = []
+    metric_occurrences: dict[str, int] = {}
+    period_contract = _topic_period_contract(summary, filing_date=filing_date)
     for match in _TOPIC_NUMBER_RE.finditer(summary):
         raw = float(match.group("number").replace(",", ""))
         scale = str(match.group("scale") or "").casefold()
@@ -310,6 +349,12 @@ def _topic_numeric_evidence(summary: str, topic: str) -> list[dict[str, Any]]:
         )
         if currency:
             metric_name = f"{metric_name}_{currency.casefold()}"
+        # ResearchClaim.metric_values is a mapping.  A repeated semantic label
+        # must therefore receive a stable occurrence suffix instead of
+        # silently overwriting a source number during promotion.
+        metric_occurrences[metric_name] = metric_occurrences.get(metric_name, 0) + 1
+        if metric_occurrences[metric_name] > 1:
+            metric_name = f"{metric_name}_occurrence_{metric_occurrences[metric_name]:02d}"
         values.append(
             {
                 "metric_name": metric_name,
@@ -322,9 +367,71 @@ def _topic_numeric_evidence(summary: str, topic: str) -> list[dict[str, Any]]:
                 "source_sign": 1,
                 "currency": currency,
                 "column_label": None,
+                "effective_asof_dates": (
+                    _effective_asof_dates(summary)
+                    if "legal_reserve" in metric_name
+                    else []
+                ),
+                **period_contract,
             }
         )
     return values
+
+
+def _effective_asof_dates(summary: str) -> list[str]:
+    month_names = (
+        "January|February|March|April|May|June|July|August|September|October|November|December"
+    )
+    values = re.findall(
+        rf"\b(?:{month_names})\s+\d{{1,2}},\s+20\d{{2}}\b",
+        summary,
+        re.IGNORECASE,
+    )
+    from datetime import datetime
+
+    dates: list[str] = []
+    for value in values:
+        try:
+            dates.append(datetime.strptime(value, "%B %d, %Y").date().isoformat())
+        except ValueError:
+            continue
+    return list(dict.fromkeys(dates))
+
+
+def _topic_period_contract(
+    summary: str,
+    *,
+    filing_date: str | None,
+) -> dict[str, Any]:
+    ended = re.search(
+        r"\b(three|six|nine|twelve) months ended "
+        r"(January|February|March|April|May|June|July|August|September|October|November|December) "
+        r"(\d{1,2}), (20\d{2})\b",
+        summary,
+        re.IGNORECASE,
+    )
+    if not ended:
+        return {}
+    from datetime import date
+
+    months = {"three": 3, "six": 6, "nine": 9, "twelve": 12}[ended.group(1).casefold()]
+    month = {
+        name.casefold(): index
+        for index, name in enumerate(
+            ("", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
+        )
+        if name
+    }[ended.group(2).casefold()]
+    period_end = date(int(ended.group(4)), month, int(ended.group(3)))
+    start_month_index = period_end.year * 12 + period_end.month - months
+    start_year, month_zero = divmod(start_month_index, 12)
+    period_start = date(start_year, month_zero + 1, 1)
+    return {
+        "period_kind": "duration",
+        "presentation_basis": "period_total",
+        "period_start": period_start.isoformat(),
+        "period_end": period_end.isoformat(),
+    }
 
 
 def _topic_metric_name(
@@ -334,13 +441,25 @@ def _topic_metric_name(
     match: re.Match[str],
     ordinal: int,
 ) -> str:
-    context = summary[max(0, match.start() - 90) : match.end() + 70].casefold()
     if match.group("percent"):
-        return f"filing_{topic}_interest_rate"
+        preceding = summary[max(0, match.start() - 160) : match.start()].casefold()
+        following = summary[match.end() : match.end() + 100].casefold()
+        if re.search(r"previously outstanding|redeem(?:ed|ing)?", preceding):
+            role = "refinanced_interest_rate"
+        elif re.search(r"senior notes", following) or re.search(r"issued", preceding):
+            role = "issued_interest_rate"
+        else:
+            role = "interest_rate"
+        return f"filing_{topic}_{role}"
+    following_context = summary[match.end() : match.end() + 90].casefold()
+    if re.search(r"holdbacks? related to prior", following_context):
+        return f"filing_{topic}_acquisition_prior_period_holdback"
     rules = (
         ("acquisition_total_consideration", r"total consideration|purchase price"),
-        ("acquisition_stock_consideration", r"shares?.{0,40}(?:valued|value)"),
         ("acquisition_net_cash_paid", r"net cash paid"),
+        ("acquisition_prior_period_holdback", r"holdbacks? related to prior"),
+        ("acquisition_other_consideration", r"other consideration"),
+        ("acquisition_stock_consideration", r"shares?.{0,55}(?:valued|value)"),
         ("acquisition_holdback", r"holdbacks?"),
         ("debt_net_proceeds", r"net proceeds"),
         ("debt_redemption_principal", r"redeem|outstanding"),
@@ -350,9 +469,19 @@ def _topic_metric_name(
         ("legal_payment", r"paid|payment"),
         ("legal_penalty", r"penalty|fine"),
     )
-    for name, pattern in rules:
-        if re.search(pattern, context):
-            return f"filing_{topic}_{name}"
+    candidates: list[tuple[int, int, str]] = []
+    for priority, (name, pattern) in enumerate(rules):
+        for label in re.finditer(pattern, summary, re.IGNORECASE):
+            if label.end() <= match.start():
+                distance = match.start() - label.end()
+            elif match.end() <= label.start():
+                distance = label.start() - match.end()
+            else:
+                distance = 0
+            if distance <= 120:
+                candidates.append((distance, priority, name))
+    if candidates:
+        return f"filing_{topic}_{min(candidates)[2]}"
     return f"filing_{topic}_unmapped_{ordinal:02d}"
 
 

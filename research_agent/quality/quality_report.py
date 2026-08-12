@@ -49,6 +49,8 @@ class QualityReport(BaseModel):
     company_defined_fcf_used: int = 0
     sec_derived_fcf_used: int = 0
     company_defined_fcf_mismatch_count: int = 0
+    company_defined_fcf_definition_difference_count: int = 0
+    company_defined_fcf_unresolved_mismatch_count: int = 0
     fcf_unavailable_block_count: int = 0
     evidence_mapped_claim_ratio: float = 0.0
     hard_claim_evidence_ratio: float = 0.0

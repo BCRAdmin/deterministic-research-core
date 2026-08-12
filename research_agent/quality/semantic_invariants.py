@@ -53,6 +53,21 @@ def verify_semantic_invariants(
         ),
         "No unmapped positional filing metric is promoted into the canonical fact ledger.",
     )
+    check(
+        "source_fact_value_normalization",
+        all(_fact_value_matches_source_contract(fact) for fact in facts),
+        "Every promoted source value preserves its declared scale and direction.",
+    )
+    check(
+        "fact_evidence_is_claim_bound",
+        all(
+            set(fact.get("evidence_ids") or []).issubset(
+                set(fact.get("claim_bound_evidence_ids") or [])
+            )
+            for fact in facts
+        ),
+        "A fact may use only evidence explicitly bound to the originating claim.",
+    )
 
     evidence_items = list(evidence_ledger.evidence_items)
     claim_ids = {str(claim.claim_id) for claim in claim_list if claim.claim_id}
@@ -79,6 +94,41 @@ def verify_semantic_invariants(
             for claim_id in item.supports_claim_ids
         ),
         "Every supports_claim_id resolves to a real analyst claim.",
+    )
+    evidence_by_id = {item.evidence_id: item for item in evidence_items}
+    check(
+        "claim_evidence_selectivity",
+        all(
+            all(
+                evidence_id in evidence_by_id
+                and (
+                    evidence_by_id[evidence_id].value is None
+                    or bool(
+                        set(evidence_by_id[evidence_id].supports_metrics).intersection(
+                            set(claim.metric_refs or claim.metric_values)
+                        )
+                    )
+                )
+                for evidence_id in claim.evidence_ids
+            )
+            for claim in claim_list
+            if getattr(claim, "metric_values", None)
+        ),
+        "Every numeric evidence edge supports a metric actually used by that claim.",
+    )
+    check(
+        "material_event_numeric_cardinality",
+        all(
+            len(getattr(event, "numeric_evidence", []) or [])
+            == len(
+                {
+                    item.metric_name
+                    for item in (getattr(event, "numeric_evidence", []) or [])
+                }
+            )
+            for event in event_list
+        ),
+        "No material source number is lost through a duplicate metric key.",
     )
 
     expected_source_edges = {
@@ -122,6 +172,20 @@ def verify_semantic_invariants(
             for event in event_list
         ),
         "Every promoted material event is complete and has a non-blocking report disposition.",
+    )
+    check(
+        "leadership_materiality_reason_consistent",
+        all(
+            not (
+                getattr(event, "event_type", None) == "leadership_change"
+                and getattr(event, "material", True) is True
+                and "routine compensation" in str(
+                    getattr(event, "report_disposition_reason", "") or ""
+                ).casefold()
+            )
+            for event in event_list
+        ),
+        "A substantive leadership event cannot be dispositioned as routine compensation.",
     )
 
     permission = decision_packet.rating_permission
@@ -167,13 +231,42 @@ def verify_semantic_invariants(
     failures = [item["check_id"] for item in checks if item["status"] != "pass"]
     report = {
         "contract_id": "room16.semantic_invariant_report",
-        "contract_version": 1,
+        "contract_version": 2,
         "status": "pass" if not failures else "fail",
-        "release_allowed": not failures,
+        "semantic_integrity_passed": not failures,
+        "internally_reviewable": not failures,
+        "release_candidate": False,
+        "publication_allowed": False,
+        "release_allowed": False,
         "checks": checks,
         "blocking_failures": failures,
     }
     return report
+
+
+def _fact_value_matches_source_contract(fact: Mapping[str, Any]) -> bool:
+    raw = fact.get("source_value")
+    scale = str(fact.get("source_scale") or "").casefold()
+    sign = fact.get("source_sign")
+    if raw is None or not scale:
+        return True
+    multiplier = {
+        "base": 1.0,
+        "percent": 0.01,
+        "basis_points": 1.0,
+        "thousand": 1_000.0,
+        "k": 1_000.0,
+        "million": 1_000_000.0,
+        "mn": 1_000_000.0,
+        "m": 1_000_000.0,
+        "billion": 1_000_000_000.0,
+        "bn": 1_000_000_000.0,
+    }.get(scale)
+    if multiplier is None:
+        return True
+    expected = float(raw) * multiplier * float(sign or 1)
+    actual = float(fact.get("value"))
+    return abs(expected - actual) <= max(1e-9, abs(expected) * 1e-9)
 
 
 def _fact_period_valid(fact: Mapping[str, Any]) -> bool:

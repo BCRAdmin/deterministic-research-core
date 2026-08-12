@@ -51,10 +51,19 @@ def build_fact_ledger(
                 )
             item = metric_uses.setdefault(
                 metric_name,
-                {"value": value, "research_claim_ids": []},
+                {
+                    "value": value,
+                    "research_claim_ids": [],
+                    "claim_evidence_ids": [],
+                },
             )
             if claim.claim_id and claim.claim_id not in item["research_claim_ids"]:
                 item["research_claim_ids"].append(claim.claim_id)
+            item["claim_evidence_ids"] = list(
+                dict.fromkeys(
+                    [*item["claim_evidence_ids"], *claim.evidence_ids]
+                )
+            )
 
     if len(metric_uses) < 5:
         raise FactLedgerError(
@@ -74,6 +83,7 @@ def build_fact_ledger(
             metric_name=metric_name,
             value=metric_use["value"],
             as_of_date=data_packet.as_of_date,
+            allowed_evidence_ids=set(metric_use["claim_evidence_ids"]),
         )
         source_ids = _resolve_registered_source_ids(
             [evidence.source_id, *evidence.source_lineage],
@@ -105,10 +115,19 @@ def build_fact_ledger(
             **period_metadata,
             "fiscal_label": evidence.period,
             "presentation_basis": presentation_basis,
-            "asof": evidence.date or data_packet.as_of_date,
+            "asof": (
+                max(evidence.effective_asof_dates)
+                if evidence.effective_asof_dates
+                else evidence.date or data_packet.as_of_date
+            ),
+            "effective_asof_dates": list(evidence.effective_asof_dates),
             "source_id": evidence.source_id,
             "source_ids": source_ids,
             "evidence_ids": [evidence.evidence_id],
+            "claim_bound_evidence_ids": sorted(metric_use["claim_evidence_ids"]),
+            "source_value": evidence.raw_value,
+            "source_scale": evidence.source_scale,
+            "source_sign": evidence.source_sign,
             "research_claim_ids": sorted(metric_use["research_claim_ids"]),
         }
         if evidence.period:
@@ -161,11 +180,13 @@ def _select_exact_evidence(
     metric_name: str,
     value: float,
     as_of_date: str,
+    allowed_evidence_ids: set[str],
 ) -> EvidenceItem:
     candidates = [
         item
         for item in evidence_ledger.evidence_items
-        if metric_name in item.supports_metrics
+        if (not allowed_evidence_ids or item.evidence_id in allowed_evidence_ids)
+        and metric_name in item.supports_metrics
         and item.value is not None
         and _same_number(float(item.value), value)
         and _has_numeric_authority(item)

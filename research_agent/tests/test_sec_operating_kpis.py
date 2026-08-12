@@ -125,6 +125,37 @@ def test_repeated_kpi_statements_have_distinct_fact_ledger_metric_ids() -> None:
     assert len(metric_ids) == len(set(metric_ids))
 
 
+def test_multiple_values_inside_one_kpi_row_receive_lossless_unique_metric_ids() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="TEST",
+        cik="123456",
+        accession_number="0000123456-26-000001",
+        filing_date="2026-08-01",
+        primary_document="test.htm",
+        html_documents=[
+            """
+            <p>(in millions)</p>
+            <p>Stericycle acquisition and integration costs 24 24 6 18</p>
+            """
+        ],
+        retrieved_at="2026-08-02T12:00:00Z",
+    )
+    event = next(
+        event for event in payload["events"]
+        if "INTEGRATION_EFFECTS" in event["source_id"]
+    )
+    metric_ids = [item["metric_name"] for item in event["numeric_evidence"]]
+
+    assert len(metric_ids) == 4
+    assert len(metric_ids) == len(set(metric_ids))
+    assert [item["value"] for item in event["numeric_evidence"]] == [
+        24_000_000,
+        24_000_000,
+        6_000_000,
+        18_000_000,
+    ]
+
+
 def test_all_visible_hard_numbers_in_emitted_statement_are_bound() -> None:
     payload = build_sec_operating_kpi_payload(
         ticker="TEST",
@@ -186,6 +217,8 @@ def test_current_prior_and_change_tuple_gets_semantic_period_contracts() -> None
     assert records[1]["period_end"] == "2025-06-30"
     assert records[2]["current_period_end"] == "2026-06-30"
     assert records[2]["comparison_period_end"] == "2025-06-30"
+    assert records[2]["value"] == 254_000_000
+    assert records[2]["source_sign"] == 1
 
 
 def test_declining_percentages_are_bound_with_the_reported_direction() -> None:
@@ -206,6 +239,38 @@ def test_declining_percentages_are_bound_with_the_reported_direction() -> None:
     assert [item["value"] for item in event["numeric_evidence"]] == pytest.approx(
         [-0.018, 0.017, -0.004]
     )
+
+
+def test_declining_amounts_and_growth_rates_keep_direction_and_comparison_periods() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="WM",
+        cik="823768",
+        accession_number="0001104659-26-088016",
+        filing_date="2026-07-29",
+        primary_document="wm-20260630x10q.htm",
+        html_documents=[
+            """
+            <p>Revenues from volume decreased $22 million, or 0.3%, and
+            $10 million, or 0.1%, for the three and six months ended June 30,
+            2026, respectively.</p>
+            <p>Operating EBITDA increased 5.5% and 9.1% for the three and six
+            months ended June 30, 2026, respectively.</p>
+            """
+        ],
+        retrieved_at="2026-08-02T12:00:00Z",
+    )
+    records = [
+        item for event in payload["events"] for item in event["numeric_evidence"]
+    ]
+    amount_changes = [
+        item for item in records if "volume_revenue" in item["metric_name"] and item["unit"] == "currency"
+    ]
+    assert [item["value"] for item in amount_changes] == [-22_000_000, -10_000_000]
+    growth = [
+        item for item in records if "ebitda" in item["metric_name"] and item["unit"] == "percent"
+    ]
+    assert [item["period_kind"] for item in growth] == ["comparison", "comparison"]
+    assert all(item["presentation_basis"] == "period_over_period_comparison" for item in growth)
 
 
 def test_capital_allocation_is_extracted_as_source_bound_operating_kpi() -> None:
@@ -289,6 +354,133 @@ def test_currency_ranges_inherit_scale_and_table_headers() -> None:
     assert all(item["currency"] == "USD" for item in table)
     assert any(item["raw_value"] == 8.15 and item["value"] == 8_150_000_000 for item in records)
     assert any(item["raw_value"] == 3.75 and item["value"] == 3_750_000_000 for item in records)
+
+
+def test_actual_free_cash_flow_table_is_captured_with_quarter_and_ytd_periods() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="WM",
+        cik="823768",
+        accession_number="0001104659-26-087575",
+        filing_date="2026-07-29",
+        primary_document="ex99-1.htm",
+        html_documents=[
+            """
+            <p>(in millions)</p>
+            <p>Three Months Ended June 30, Six Months Ended June 30</p>
+            <p>2026 2025 2026 2025</p>
+            <table><tr><td>Free cash flow</td><td>$</td><td>1,104</td>
+            <td>$</td><td>818</td><td>$</td><td>2,024</td><td>$</td><td>1,293</td></tr></table>
+            """
+        ],
+        retrieved_at="2026-08-02T12:00:00Z",
+        report_date="2026-06-30",
+        report_period_months=3,
+    )
+    event = next(
+        event for event in payload["events"]
+        if event["summary"].startswith("Free cash flow")
+    )
+    assert [item["value"] for item in event["numeric_evidence"]] == [
+        1_104_000_000,
+        818_000_000,
+        2_024_000_000,
+        1_293_000_000,
+    ]
+    ytd = next(item for item in event["numeric_evidence"] if item["value"] == 2_024_000_000)
+    assert ytd["period_start"] == "2026-01-01"
+    assert ytd["period_end"] == "2026-06-30"
+
+
+def test_actual_free_cash_flow_inherits_scale_across_split_sec_table_headers() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="WM",
+        cik="823768",
+        accession_number="0001104659-26-087575",
+        filing_date="2026-07-29",
+        primary_document="ex99-1.htm",
+        html_documents=[
+            """
+            <p>(in millions)</p>
+            <p>Three Months Ended</p><p>June 30</p>
+            <p>Six Months Ended</p><p>June 30</p>
+            <p>2026 2025 2026 2025</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p>
+            <p>Free cash flow $1,104 $818 $2,024 $1,293</p>
+            """
+        ],
+        retrieved_at="2026-08-02T12:00:00Z",
+        report_date="2026-06-30",
+        report_period_months=3,
+    )
+    event = next(
+        event for event in payload["events"]
+        if event["summary"].startswith("Free cash flow")
+    )
+
+    assert [item["value"] for item in event["numeric_evidence"]] == [
+        1_104_000_000,
+        818_000_000,
+        2_024_000_000,
+        1_293_000_000,
+    ]
+
+
+def test_adjusted_fcf_variant_is_semantically_distinct_from_plain_issuer_fcf() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="WM",
+        cik="823768",
+        accession_number="0001104659-26-087575",
+        filing_date="2026-07-29",
+        primary_document="ex99-1.htm",
+        html_documents=[
+            """
+            <p>(in millions)</p>
+            <p>Three Months Ended June 30, Six Months Ended June 30</p>
+            <p>2026 2025 2026 2025</p>
+            <p>Free cash flow without sustainability growth investments 1,179 978 2,160 1,581</p>
+            <p>Free cash flow $1,104 $818 $2,024 $1,293</p>
+            """
+        ],
+        retrieved_at="2026-08-02T12:00:00Z",
+        report_date="2026-06-30",
+        report_period_months=3,
+    )
+    metrics = [
+        item["metric_name"]
+        for event in payload["events"]
+        for item in event["numeric_evidence"]
+    ]
+
+    assert any("free_cash_flow_ex_sustainability_growth_actual" in metric for metric in metrics)
+    assert any(
+        "free_cash_flow_actual" in metric
+        and "ex_sustainability_growth" not in metric
+        for metric in metrics
+    )
+
+
+def test_free_cash_flow_guidance_rows_are_not_promoted_as_actuals() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="WM",
+        cik="823768",
+        accession_number="0001104659-26-087575",
+        filing_date="2026-07-29",
+        primary_document="ex99-1.htm",
+        html_documents=[
+            """
+            <p>(in millions)</p>
+            <p>Free cash flow without sustainability growth investments $4,000 $4,100</p>
+            <p>Free cash flow $3,750 $3,850</p>
+            """
+        ],
+        retrieved_at="2026-08-02T12:00:00Z",
+        report_date="2026-06-30",
+        report_period_months=3,
+    )
+
+    assert not any(
+        "FREE_CASH_FLOW_ACTUAL" in event["source_id"]
+        for event in payload["events"]
+    )
 
 
 def test_per_share_values_do_not_inherit_million_scale() -> None:

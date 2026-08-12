@@ -65,7 +65,11 @@ def render_markdown_report(
         f"# {data_packet.ticker} Research Report",
         _render_data_basis(data_packet),
         "## Validated Metric Table",
-        render_metric_table(metrics_packet, data_packet.price_basis.currency),
+        _render_metric_table_with_binding(
+            metrics_packet,
+            evidence_ledger,
+            currency=data_packet.price_basis.currency,
+        ),
         "## Validation Status",
         _render_validation_summary(validation_report),
         "## Analyst Interpretation",
@@ -135,6 +139,38 @@ def render_markdown_report(
                 raise RuntimeError("Quality gate failed. Final report generation stopped.")
 
     return report
+
+
+def _render_metric_table_with_binding(
+    metrics: MetricsPacket,
+    evidence_ledger: Optional[EvidenceLedger],
+    *,
+    currency: str,
+) -> str:
+    table = render_metric_table(metrics, currency)
+    if evidence_ledger is None:
+        return table
+    metric_names = {
+        "close",
+        "sma_50",
+        "sma_200",
+        "rsi_14",
+        "free_cash_flow_ttm",
+        "sbc_to_revenue",
+        "ev_to_sales",
+        "price_to_fcf",
+    }
+    evidence_ids = [
+        item.evidence_id
+        for item in evidence_ledger.evidence_items
+        if metric_names.intersection(item.supports_metrics)
+    ]
+    return (
+        table
+        + "\nTable claim `VALIDATED_METRIC_TABLE` · Evidence: `"
+        + ", ".join(dict.fromkeys(evidence_ids))
+        + "`."
+    )
 
 
 def _render_data_basis(data_packet: DataPacket) -> str:

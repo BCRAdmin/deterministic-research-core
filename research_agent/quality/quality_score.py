@@ -61,6 +61,8 @@ def calculate_quality_score(
     company_defined_fcf_used: Optional[int] = None,
     sec_derived_fcf_used: Optional[int] = None,
     company_defined_fcf_mismatch_count: Optional[int] = None,
+    company_defined_fcf_definition_difference_count: Optional[int] = None,
+    company_defined_fcf_unresolved_mismatch_count: Optional[int] = None,
     fcf_unavailable_block_count: Optional[int] = None,
     company_specific_claim_count: Optional[int] = None,
     valuation_specific_claim_count: Optional[int] = None,
@@ -609,6 +611,14 @@ def calculate_quality_score(
         company_defined_fcf_used=int(company_defined_fcf_used or 0),
         sec_derived_fcf_used=int(sec_derived_fcf_used or 0),
         company_defined_fcf_mismatch_count=int(company_defined_fcf_mismatch_count or 0),
+        company_defined_fcf_definition_difference_count=int(
+            company_defined_fcf_definition_difference_count or 0
+        ),
+        company_defined_fcf_unresolved_mismatch_count=int(
+            company_defined_fcf_unresolved_mismatch_count
+            if company_defined_fcf_unresolved_mismatch_count is not None
+            else company_defined_fcf_mismatch_count or 0
+        ),
         fcf_unavailable_block_count=int(fcf_unavailable_block_count or 0),
         evidence_mapped_claim_ratio=float(evidence_mapped_claim_ratio if evidence_mapped_claim_ratio is not None else 0.0),
         hard_claim_evidence_ratio=float(hard_claim_evidence_ratio if hard_claim_evidence_ratio is not None else 0.0),

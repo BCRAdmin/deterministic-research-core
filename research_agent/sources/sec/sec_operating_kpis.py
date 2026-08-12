@@ -26,6 +26,7 @@ KPI_PATTERNS = {
         r"capital returned|return of capital)\b"
     ),
     "free_cash_flow_guidance": r"\b(?:free cash flow|fcf)\b.{0,100}\b(?:guidance|outlook|range)\b|\b(?:guidance|outlook|range)\b.{0,100}\b(?:free cash flow|fcf)\b",
+    "free_cash_flow_actual": r"^\s*free cash flow\b",
     "internalization": r"\binternalization(?: of waste)?\b",
     "landfill_depletable_tons": r"\blandfill depletable tons?\b",
     "acquired_annualized_revenue": r"\b(?:gross )?annualized revenue acquired\b|\bacquired annualized revenue\b",
@@ -144,16 +145,27 @@ def build_sec_operating_kpi_payload(
         ]
         if not matched_kpis:
             continue
+        column_labels = _inherited_column_labels(
+            blocks,
+            block_index,
+            filing_year=filing_year,
+        )
+        # A row beginning with "Free cash flow" is not automatically an
+        # actual-period table.  Issuer guidance tables often use the same row
+        # label for a low/high range.  Promote it as an actual only when the
+        # surrounding table supplies explicit period columns.
+        if "free_cash_flow_actual" in matched_kpis and not column_labels:
+            matched_kpis = [
+                kpi_id for kpi_id in matched_kpis if kpi_id != "free_cash_flow_actual"
+            ]
+        if not matched_kpis:
+            continue
         numeric_evidence = _numeric_evidence(
             statement,
             kpi_ids=matched_kpis,
             event_index=len(events) + 1,
             context_scale=_inherited_block_scale(blocks, block_index),
-            column_labels=_inherited_column_labels(
-                blocks,
-                block_index,
-                filing_year=filing_year,
-            ),
+            column_labels=column_labels,
             filing_date=filing_date,
             report_date=report_date,
             report_period_months=report_period_months,
@@ -343,18 +355,7 @@ def _numeric_evidence(
             "thousand": 1_000,
             "k": 1_000,
         }.get(scale, 1)
-        direction = (
-            _numeric_direction(statement, match.span())
-            if percent or basis_points
-            else 1.0
-        )
-        value = (
-            direction * raw
-            if basis_points
-            else direction * raw / 100
-            if percent
-            else raw * multiplier
-        )
+        direction = _numeric_direction(statement, match.span()) if percent or basis_points else 1.0
         unit = (
             "basis_points"
             if basis_points
@@ -407,6 +408,21 @@ def _numeric_evidence(
             period_role=period_contract["period_role"],
             number_index=number_index,
         )
+        if not (percent or basis_points) and "yoy_change_amount" in metric_role:
+            direction = _numeric_direction(statement, match.span())
+        elif not (percent or basis_points) and re.search(
+                r"\b(?:decline|declined|decrease|decreased|fell|lower)\b.{0,35}$",
+                statement[max(0, match.start() - 70) : match.start()],
+                re.IGNORECASE,
+            ):
+            direction = -1.0
+        value = (
+            direction * raw
+            if basis_points
+            else direction * raw / 100
+            if percent
+            else direction * raw * multiplier
+        )
         display_unit = (
             f"{currency}/share"
             if unit == "currency_per_share" and currency
@@ -452,6 +468,19 @@ def _numeric_evidence(
                 "mapping_status": "unmapped" if metric_role.startswith("unmapped_") else "mapped",
             }
         )
+    metric_counts: dict[str, int] = {}
+    metric_totals: dict[str, int] = {}
+    for item in values:
+        name = str(item["metric_name"])
+        metric_totals[name] = metric_totals.get(name, 0) + 1
+    for item in values:
+        name = str(item["metric_name"])
+        if metric_totals[name] == 1:
+            continue
+        metric_counts[name] = metric_counts.get(name, 0) + 1
+        suffix = f"_event_{event_index:02d}_value_{metric_counts[name]:02d}"
+        item["metric_name"] = f"{name}{suffix}"
+        item["metric_role"] = f"{item['metric_role']}{suffix}"
     return values
 
 
@@ -573,6 +602,23 @@ def _numeric_period_contract(
         start_month_index = period_end.year * 12 + period_end.month - duration_months
         start_year, month_zero = divmod(start_month_index, 12)
         start = date(start_year, month_zero + 1, 1)
+        if match.group("percent") and re.search(
+            r"\b(?:growth|grew|increase|increased|decrease|decreased|decline|declined)\b",
+            nearby,
+        ):
+            prior_end = date(period_end.year - 1, period_end.month, period_end.day)
+            prior_start = _duration_start(prior_end, duration_months)
+            return {
+                "period_kind": "comparison",
+                "presentation_basis": "period_over_period_comparison",
+                "period_start": start.isoformat(),
+                "period_end": period_end.isoformat(),
+                "current_period_start": start.isoformat(),
+                "current_period_end": period_end.isoformat(),
+                "comparison_period_start": prior_start.isoformat(),
+                "comparison_period_end": prior_end.isoformat(),
+                "period_role": f"yoy_change_{duration_months}m_{period_end.isoformat()}",
+            }
         return {
             "period_kind": "duration",
             "presentation_basis": "period_total",
@@ -653,7 +699,15 @@ def _numeric_metric_role(
     number_index: int,
 ) -> str:
     context = statement[max(0, match.start() - 130) : match.end() + 90].casefold()
-    metric = _statement_metric_base(statement)
+    metric = (
+        "free_cash_flow_ex_sustainability_growth_actual"
+        if re.search(
+            r"free cash flow without sustainability growth investments",
+            statement,
+            re.IGNORECASE,
+        )
+        else _statement_metric_base(statement)
+    )
     semantic_rules = (
         ("internalization", r"internalization"),
         ("landfill_depletable_tons", r"depletable tons"),
@@ -918,7 +972,10 @@ def _inherited_block_scale(blocks: list[str], index: int) -> str | None:
     direct = _scale_from_text(current)
     if direct:
         return direct
-    for prior in reversed(blocks[max(0, index - 6) : index]):
+    # SEC tables frequently split scale, duration headers, years and spacer
+    # cells into separate HTML blocks.  Use the same bounded lookback as the
+    # period-label parser while still stopping at intervening prose.
+    for prior in reversed(blocks[max(0, index - 12) : index]):
         inherited = _scale_from_text(prior)
         if inherited:
             return inherited
@@ -972,9 +1029,9 @@ def _inherited_column_labels(
             for months, year in zip((3, 3, 6, 6), years)
         ]
     prior_blocks = blocks[max(0, index - 10) : index]
-    if any(
-        re.search(r"Three Months Ended\s+Six Months Ended", value, re.IGNORECASE)
-        for value in prior_blocks
+    if (
+        any(re.search(r"Three Months Ended", value, re.IGNORECASE) for value in prior_blocks)
+        and any(re.search(r"Six Months Ended", value, re.IGNORECASE) for value in prior_blocks)
     ):
         month_match = next(
             (

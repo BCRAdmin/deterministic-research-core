@@ -1026,11 +1026,18 @@ def build_authority_bundle(
     )
     for role in sorted(integrity_artifact_paths or {}):
         payload = payloads[str(role)]
+        role_passed = payload.get("status") == "pass"
+        if role == "semantic_invariant_report":
+            role_passed = (
+                role_passed
+                and payload.get("semantic_integrity_passed") is True
+            )
+        else:
+            role_passed = role_passed and payload.get("release_allowed") is not False
         _check(
             checks,
             f"{role}_valid",
-            payload.get("status") == "pass"
-            and payload.get("release_allowed") is not False,
+            role_passed,
             detail=", ".join(payload.get("blocking_failures") or []),
         )
     blocking_failures = [

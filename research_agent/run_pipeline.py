@@ -31,6 +31,9 @@ from research_agent.audit.audit_report import AuditReport
 from research_agent.audit.report_linter import audit_markdown_report
 from research_agent.decision.rating_engine import build_decision_packet
 from research_agent.evidence.evidence_item import EvidenceItem
+from research_agent.evidence.capital_allocation_bridge import (
+    build_capital_allocation_bridge_evidence,
+)
 from research_agent.evidence.evidence_ledger import (
     build_fundamental_derivation_evidence,
     build_evidence_ledger_from_source_registry,
@@ -280,6 +283,16 @@ def run_research_pipeline(
         currency=config.price_currency,
     )
     evidence_ledger.evidence_items.extend(source_evidence_items)
+    evidence_ledger.evidence_items.extend(
+        build_capital_allocation_bridge_evidence(
+            ticker=data_packet.ticker,
+            as_of_date=data_packet.as_of_date,
+            evidence_items=evidence_ledger.evidence_items,
+            period_start=metrics_packet.fundamentals.shareholder_distribution_period_start,
+            period_end=metrics_packet.fundamentals.shareholder_distribution_period_end,
+            currency=config.price_currency,
+        )
+    )
     evidence_ledger_path = save_json_packet(
         evidence_ledger, "evidence_ledger", ticker, as_of_date, packet_root=packet_root
     )
@@ -388,7 +401,7 @@ def run_research_pipeline(
         json.dumps(semantic_invariant_report, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
-    if not semantic_invariant_report["release_allowed"]:
+    if not semantic_invariant_report["semantic_integrity_passed"]:
         raise RuntimeError(
             "Semantic invariant gate rejected report generation: "
             + ", ".join(semantic_invariant_report["blocking_failures"])
@@ -496,6 +509,7 @@ def run_research_pipeline(
     visible_citation_completeness = validate_visible_citation_completeness(
         report,
         claims,
+        evidence_ledger,
     )
     visible_citation_completeness_path.write_text(
         json.dumps(visible_citation_completeness, indent=2, sort_keys=True) + "\n",
@@ -520,6 +534,7 @@ def run_research_pipeline(
         canonical_financials=canonical_financials,
         reconciliation_warnings=reconciliation_warnings,
         ticker=data_packet.ticker,
+        research_claims=claims,
     )
     audit_report_path = _save_model_json(
         audit_report,
@@ -573,6 +588,7 @@ def run_research_pipeline(
             canonical_financials=canonical_financials,
             reconciliation_warnings=reconciliation_warnings,
             ticker=data_packet.ticker,
+            research_claims=claims,
         )
         readable_report_audit_path = str(
             _save_model_json(
@@ -620,9 +636,23 @@ def run_research_pipeline(
         publish_valuation_sensitivity_present=publish_quality_payload["publish_valuation_sensitivity_present"],
         publish_action_plan_trigger_count=publish_quality_payload["publish_action_plan_trigger_count"],
         fcf_ocf_inconsistency_count=_count_audit_code(audit_report, "COMPANY_DEFINED_FCF_OCF_INCONSISTENCY"),
-        company_defined_fcf_used=_company_defined_fcf_used(canonical_financials),
+        company_defined_fcf_used=max(
+            _company_defined_fcf_used(canonical_financials),
+            sum(
+                "issuer_defined_fcf_current_period" in item.supports_metrics
+                for item in evidence_ledger.evidence_items
+            ),
+        ),
         sec_derived_fcf_used=_sec_derived_fcf_used(evidence_ledger),
         company_defined_fcf_mismatch_count=_count_audit_code(audit_report, "COMPANY_DEFINED_FCF_MISMATCH"),
+        company_defined_fcf_definition_difference_count=sum(
+            "fcf_definition_difference_current_period" in item.supports_metrics
+            for item in evidence_ledger.evidence_items
+        ),
+        company_defined_fcf_unresolved_mismatch_count=_count_audit_code(
+            audit_report,
+            "COMPANY_DEFINED_FCF_MISMATCH",
+        ),
         fcf_unavailable_block_count=_count_audit_code(audit_report, "FCF_UNAVAILABLE_WITHOUT_IR_SUPPORT"),
         company_specific_claim_count=int(claim_metrics["company_specific_claim_count"]),
         valuation_specific_claim_count=int(claim_metrics["valuation_specific_claim_count"]),
@@ -756,6 +786,7 @@ def run_research_pipeline(
         citation_completeness = validate_visible_citation_completeness(
             internal_best_report,
             claims,
+            evidence_ledger,
         )
         visible_citation_completeness_path.write_text(
             json.dumps(citation_completeness, indent=2, sort_keys=True) + "\n",
@@ -773,6 +804,7 @@ def run_research_pipeline(
             canonical_financials=canonical_financials,
             reconciliation_warnings=reconciliation_warnings,
             ticker=data_packet.ticker,
+            research_claims=claims,
         )
         internal_best_audit_report_path = str(
             _save_model_json(
@@ -821,6 +853,8 @@ def run_research_pipeline(
     quality_state_integrity = verify_quality_state(
         quality_report=quality_report,
         audit_report=audit_report,
+        semantic_invariant_report=semantic_invariant_report,
+        visible_citation_completeness=visible_citation_completeness,
     )
     quality_state_integrity_path = (
         manifest_output_dir / "quality_state_integrity.json"
@@ -829,7 +863,7 @@ def run_research_pipeline(
         json.dumps(quality_state_integrity, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
-    if not quality_state_integrity["release_allowed"]:
+    if not quality_state_integrity["integrity_contract_passed"]:
         raise RuntimeError(
             "Quality-state integrity gate rejected report generation: "
             + ", ".join(quality_state_integrity["blocking_failures"])
@@ -963,6 +997,7 @@ def _material_topic_report_coverage(
     required = [
         claim
         for claim in claims
+        if claim.claim_type in {"news", "risk"}
         if any("_TOPIC_" in str(source_id) for source_id in claim.source_ids)
     ]
     dispositions = [
@@ -1033,9 +1068,37 @@ def _decision_inputs(data_packet: DataPacket) -> list[dict[str, Any]]:
                     else "The operating KPI is visible in the decision lineage; the current "
                     "standardized score uses only validated rule inputs and does not invent a weight."
                 ),
+                "label": event.headline,
+                "summary": event.summary,
+                "transmission": (
+                    "Remediation, penalties, operating restrictions or reserve changes can reduce cash flow or constrain operations."
+                    if is_risk
+                    else "The KPI can affect revenue, margin or cash-conversion expectations if the reported trend persists."
+                ),
+                "management_counterposition": (
+                    _issuer_management_counterposition(event.summary or "")
+                    if is_risk
+                    else None
+                ),
+                "review_trigger": (
+                    "Reassess when the issuer reports an appeal outcome, a reserve change, a settlement, a new order or a cash-flow impact."
+                    if is_risk
+                    else "Reassess on the next comparable issuer-reported period."
+                ),
             }
         )
     return inputs
+
+
+def _issuer_management_counterposition(summary: str) -> str | None:
+    import re
+
+    match = re.search(
+        r"([^.!?]*(?:we do not (?:currently )?(?:expect|believe)|we believe|management believes)[^.!?]*[.!?])",
+        summary,
+        re.IGNORECASE,
+    )
+    return " ".join(match.group(1).split()) if match else None
 
 
 def build_data_packet(

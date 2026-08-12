@@ -29,8 +29,10 @@ def test_quality_state_consistent_fixture_passes():
     result = verify_quality_state(
         quality_report=_quality(), audit_report=_audit()
     )
-    assert result["contract_version"] == 2
-    assert result["release_allowed"] is True
+    assert result["contract_version"] == 3
+    assert result["internally_reviewable"] is True
+    assert result["release_candidate"] is False
+    assert result["release_allowed"] is False
     assert result["integrity_contract_passed"] is True
     assert result["report_publishable"] is False
     assert result["publication_allowed"] is False

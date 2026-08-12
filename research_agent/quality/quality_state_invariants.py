@@ -3,7 +3,13 @@
 from __future__ import annotations
 
 
-def verify_quality_state(*, quality_report, audit_report) -> dict:
+def verify_quality_state(
+    *,
+    quality_report,
+    audit_report,
+    semantic_invariant_report=None,
+    visible_citation_completeness=None,
+) -> dict:
     checks: list[dict[str, object]] = []
 
     def check(check_id: str, passed: bool, detail: str) -> None:
@@ -67,15 +73,41 @@ def verify_quality_state(*, quality_report, audit_report) -> dict:
         for item in checks
         if item["status"] != "pass"
     ]
+    semantic_passed = bool(
+        not semantic_invariant_report
+        or semantic_invariant_report.get("semantic_integrity_passed") is True
+    )
+    citations_passed = bool(
+        not visible_citation_completeness
+        or visible_citation_completeness.get("status") == "pass"
+    )
+    integrity_passed = not failures and semantic_passed and citations_passed
+    internally_reviewable = integrity_passed
+    release_candidate = bool(
+        integrity_passed
+        and not audit_report.has_blocking_errors
+        and quality_report.publishable
+        and quality_report.current_report_allowed
+        and quality_report.grade in {"A", "B"}
+    )
+    publication_allowed = bool(
+        release_candidate and quality_report.status == "publishable"
+    )
     return {
         "contract_id": "room16.quality_state_integrity",
-        "contract_version": 2,
-        "status": "pass" if not failures else "fail",
-        "integrity_contract_passed": not failures,
-        "release_allowed": not failures,
+        "contract_version": 3,
+        "status": "pass" if integrity_passed else "fail",
+        "integrity_contract_passed": integrity_passed,
+        "internally_reviewable": internally_reviewable,
+        "release_candidate": release_candidate,
+        "release_allowed": release_candidate,
         "report_publishable": bool(quality_report.publishable),
-        "publication_allowed": bool(quality_report.publishable) and not failures,
+        "publication_allowed": publication_allowed,
         "quality_status": quality_report.status,
         "checks": checks,
-        "blocking_failures": failures,
+        "blocking_failures": [
+            *failures,
+            *([] if semantic_passed else ["semantic_invariant_report"]),
+            *([] if citations_passed else ["visible_citation_completeness"]),
+        ],
     }

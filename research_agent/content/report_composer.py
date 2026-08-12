@@ -127,7 +127,11 @@ def compose_research_report(
         _render_data_note(data_packet, validation_report, reconciliation_warnings),
         "",
         "## Validated Metric Table",
-        render_metric_table(metrics_packet, data_packet.price_basis.currency),
+        _render_metric_table_with_binding(
+            metrics_packet,
+            evidence_ledger,
+            currency=data_packet.price_basis.currency,
+        ),
         "",
         "## Business & Segment Context",
         _render_claim_section(grouped, "Business & Segment Context"),
@@ -190,7 +194,12 @@ def compose_research_report(
         _render_event_limit(data_packet),
         "",
         "## Scenario View",
-        _render_scenario_view(data_packet, metrics_packet, decision_packet),
+        _render_scenario_view(
+            data_packet,
+            metrics_packet,
+            decision_packet,
+            evidence_ledger,
+        ),
         "",
         "## Final Rating & Action Plan",
         f"Final Rating: {preferred}",
@@ -426,6 +435,7 @@ def _render_scenario_view(
     data_packet: DataPacket,
     metrics_packet: MetricsPacket,
     decision_packet: DecisionPacket,
+    evidence_ledger: EvidenceLedger,
 ) -> str:
     preferred = (
         decision_packet.rating_permission.display_rating
@@ -449,6 +459,16 @@ def _render_scenario_view(
                 "These are standardized sensitivities, not management guidance or price targets.",
                 f"The current `{preferred}` stance does not change automatically with one model cell.",
             ]
+        )
+        evidence_ids = [
+            item.evidence_id
+            for item in evidence_ledger.evidence_items
+            if any(metric.startswith("dcf_") for metric in item.supports_metrics)
+        ]
+        lines.append(
+            "Table claim `DCF_SCENARIO_VIEW` · Evidence: `"
+            + ", ".join(dict.fromkeys(evidence_ids))
+            + "`."
         )
         return "\n".join(lines)
     technical_basis_verified = (
@@ -478,6 +498,35 @@ def _render_scenario_view(
             bull_condition,
             bear_condition,
         ]
+    )
+
+
+def _render_metric_table_with_binding(
+    metrics_packet: MetricsPacket,
+    evidence_ledger: EvidenceLedger,
+    *,
+    currency: str,
+) -> str:
+    metric_names = {
+        "close",
+        "sma_50",
+        "sma_200",
+        "rsi_14",
+        "free_cash_flow_ttm",
+        "sbc_to_revenue",
+        "ev_to_sales",
+        "price_to_fcf",
+    }
+    evidence_ids = [
+        item.evidence_id
+        for item in evidence_ledger.evidence_items
+        if metric_names.intersection(item.supports_metrics)
+    ]
+    return (
+        render_metric_table(metrics_packet, currency)
+        + "\nTable claim `VALIDATED_METRIC_TABLE` · Evidence: `"
+        + ", ".join(dict.fromkeys(evidence_ids))
+        + "`."
     )
 
 

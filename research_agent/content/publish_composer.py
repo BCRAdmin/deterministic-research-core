@@ -8,6 +8,7 @@ from typing import Iterable
 from research_agent.content.report_composer import render_instrument_identity
 from research_agent.decision.decision_packet import DecisionPacket
 from research_agent.decision.signal_scores import TECHNICAL_SCORING_BASES
+from research_agent.evidence.evidence_item import EvidenceItem
 from research_agent.evidence.evidence_ledger import EvidenceLedger
 from research_agent.research_core.models.claims import ResearchClaim
 from research_agent.research_core.models.data_packet import DataPacket
@@ -935,7 +936,12 @@ def _generic_publish_report(
         _paragraphs(grouped.get("Valuation / Multiples", []), limit=3),
         "",
         "## Scenario / Sensitivity",
-        _valuation_scenario_table(v, rating, currency=currency),
+        _valuation_scenario_table(
+            v,
+            rating,
+            currency=currency,
+            evidence_ledger=evidence_ledger,
+        ),
         "",
         "## Technical Setup",
         _paragraphs(grouped.get("Technical Setup", []), limit=3),
@@ -1650,7 +1656,13 @@ def _final_rating_section(
     )
 
 
-def _valuation_scenario_table(v, rating: str, *, currency: str) -> str:
+def _valuation_scenario_table(
+    v,
+    rating: str,
+    *,
+    currency: str,
+    evidence_ledger: EvidenceLedger,
+) -> str:
     scenarios = v.sensitivity.scenarios
     if not scenarios:
         return (
@@ -1678,6 +1690,16 @@ def _valuation_scenario_table(v, rating: str, *, currency: str) -> str:
         )
     lines.append(
         "\nThe table is a standardized sensitivity, not management guidance or a precise price target."
+    )
+    evidence_ids = [
+        item.evidence_id
+        for item in evidence_ledger.evidence_items
+        if any(metric.startswith("dcf_") for metric in item.supports_metrics)
+    ]
+    lines.append(
+        "Table claim `DCF_SCENARIO_VIEW` · Evidence: `"
+        + ", ".join(dict.fromkeys(evidence_ids))
+        + "`."
     )
     return "\n".join(lines)
 
@@ -1942,6 +1964,15 @@ def _fcf_definition_reconciliation(
         "Room16 and issuer-defined FCF are separate measures. Differences can reflect measurement windows, "
         "capital-expenditure definitions, sustainability investments or other issuer adjustments."
     )
+    evidence_ids = [
+        item.evidence_id for item in [*normalized[:1], *issuer_rows]
+    ]
+    if evidence_ids:
+        lines.append(
+            "Table claim `FCF_DEFINITION_RECONCILIATION` · Evidence: `"
+            + ", ".join(evidence_ids)
+            + "`."
+        )
     return "\n".join(lines)
 
 
@@ -2012,6 +2043,17 @@ def _projected_fcf_guidance_bridge(
     lines.append(
         "Both issuer scenarios reconcile arithmetically. These forward-looking "
         "non-GAAP scenarios remain separate from Room16 normalized trailing-twelve-month FCF."
+    )
+    evidence_ids = list(
+        dict.fromkeys(
+            values[key].evidence_id
+            for key in sorted(required)
+        )
+    )
+    lines.append(
+        "Table claim `PROJECTED_FCF_GUIDANCE_BRIDGE` · Evidence: `"
+        + ", ".join(evidence_ids)
+        + "`."
     )
     return "\n".join(lines)
 

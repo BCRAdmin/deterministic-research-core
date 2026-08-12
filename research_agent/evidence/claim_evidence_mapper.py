@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import re
+
 from research_agent.evidence.evidence_ledger import EvidenceLedger
 
 
@@ -120,7 +122,11 @@ def validate_claim_evidence_graph(claims, ledger: EvidenceLedger) -> dict:
     }
 
 
-def validate_visible_citation_completeness(markdown: str, claims) -> dict:
+def validate_visible_citation_completeness(
+    markdown: str,
+    claims,
+    evidence_ledger: EvidenceLedger | None = None,
+) -> dict:
     """Require a complete evidence join beside every rendered material claim."""
 
     missing: list[dict[str, str]] = []
@@ -148,6 +154,19 @@ def validate_visible_citation_completeness(markdown: str, claims) -> dict:
                 missing.append(
                     {"claim_id": claim_id, "missing": str(evidence_id)}
                 )
+    table_bindings = _material_table_bindings(markdown)
+    known_evidence_ids = {
+        item.evidence_id for item in evidence_ledger.evidence_items
+    } if evidence_ledger is not None else set()
+    for binding in table_bindings:
+        checked += 1
+        if not binding["claim_id"]:
+            missing.append({"claim_id": str(binding.get("table_header") or "material_table"), "missing": f"table_claim_id near {binding.get('trailer', '')}"})
+        if not binding["evidence_ids"]:
+            missing.append({"claim_id": binding["claim_id"] or "material_table", "missing": "evidence_ids"})
+        for evidence_id in binding["evidence_ids"]:
+            if known_evidence_ids and evidence_id not in known_evidence_ids:
+                missing.append({"claim_id": binding["claim_id"], "missing": evidence_id})
     if missing:
         raise ValueError(
             "visible citation completeness failed: "
@@ -157,8 +176,49 @@ def validate_visible_citation_completeness(markdown: str, claims) -> dict:
         )
     return {
         "contract_id": "room16.visible_citation_completeness",
-        "contract_version": 1,
+        "contract_version": 2,
         "status": "pass",
         "rendered_claim_count": checked,
+        "rendered_material_table_count": len(table_bindings),
         "missing_bindings": [],
     }
+
+
+def _material_table_bindings(markdown: str) -> list[dict[str, object]]:
+    lines = markdown.splitlines()
+    bindings: list[dict[str, object]] = []
+    index = 0
+    while index < len(lines):
+        if not lines[index].lstrip().startswith("|"):
+            index += 1
+            continue
+        block: list[str] = []
+        while index < len(lines) and lines[index].lstrip().startswith("|"):
+            block.append(lines[index])
+            index += 1
+        material = any(
+            re.search(
+                r"(?:[$€£¥]\s*[-+(]?\d|\d[\d,.]*\s*(?:USD|EUR|GBP|CAD|AUD|JPY|HUF)\b|\d(?:[.,]\d+)?%|\d(?:[.,]\d+)?x\b)",
+                row,
+                re.IGNORECASE,
+            )
+            for row in block[2:]
+        )
+        if not material:
+            continue
+        trailer = " ".join(lines[index : min(len(lines), index + 4)])
+        claim_match = re.search(r"Table claim\s+`([^`]+)`", trailer)
+        evidence_match = re.search(r"Evidence:\s*`([^`]+)`", trailer)
+        bindings.append(
+            {
+                "table_header": block[0][:120],
+                "trailer": trailer[:240],
+                "claim_id": claim_match.group(1) if claim_match else "",
+                "evidence_ids": (
+                    [value.strip() for value in evidence_match.group(1).split(",") if value.strip()]
+                    if evidence_match
+                    else []
+                ),
+            }
+        )
+    return bindings

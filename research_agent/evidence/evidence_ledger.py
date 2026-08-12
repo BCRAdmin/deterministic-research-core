@@ -2077,6 +2077,50 @@ def build_fundamental_derivation_evidence(
                 source_lineage=sensitivity_lineage,
             )
         )
+        for assumption_name, assumption_value in (
+            ("free_cash_flow_growth_rate", scenario.free_cash_flow_growth_rate),
+            ("discount_rate", scenario.discount_rate),
+            ("terminal_growth_rate", scenario.terminal_growth_rate),
+        ):
+            assumption_metric = f"dcf_{scenario.name}_{assumption_name}"
+            if scenario.name == "base" and assumption_name in {
+                "discount_rate",
+                "terminal_growth_rate",
+            }:
+                # These two base-case assumptions are emitted below with the
+                # longstanding explicit policy labels.
+                continue
+            if any(
+                assumption_metric in item.supports_metrics
+                for item in [*runtime_items, *evidence]
+            ):
+                continue
+            evidence.append(
+                EvidenceItem(
+                    evidence_id=(
+                        f"{ticker.upper()}_DETERMINISTIC_"
+                        f"{assumption_metric.upper()}_{as_of_date}"
+                    ),
+                    ticker=ticker.upper(),
+                    claim_type="valuation_metric",
+                    source_id=source_id,
+                    source_type="deterministic_calculation",
+                    authority_rank=1,
+                    statement=(
+                        f"{assumption_metric}={assumption_value:g} is an explicit "
+                        "standardized DCF sensitivity assumption, not issuer guidance."
+                    ),
+                    value=float(assumption_value),
+                    unit="percent",
+                    period=f"{scenario.forecast_years}-year sensitivity as of {as_of_date}",
+                    date=as_of_date,
+                    supports_metrics=[assumption_metric],
+                    confidence="high",
+                    formula_id="equity_dcf_sensitivity_v1",
+                    normalized_value=float(assumption_value),
+                    source_lineage=sensitivity_lineage,
+                )
+            )
         terminal_share_metric = f"dcf_{scenario.name}_terminal_value_share"
         evidence.append(
             EvidenceItem(

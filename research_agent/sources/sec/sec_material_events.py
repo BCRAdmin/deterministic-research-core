@@ -559,12 +559,15 @@ def _material_event_report_dispositions(
                 )
             )
             and not _named_leadership_transition(summary)
-        ) or (
-            event_type == "leadership_change"
-            and "previously announced" in folded
         ):
             status = "included_appendix"
             reason = "Routine compensation detail is retained in the evidence layer without displacing thesis-relevant events."
+        elif event_type == "leadership_change" and "previously announced" in folded:
+            status = "included_appendix"
+            reason = (
+                "The named leadership transition is substantive but was previously announced; "
+                "this filing is retained in the evidence appendix to avoid duplicating the same event."
+            )
         else:
             status = "included_main_report"
             reason = "The event is thesis-relevant and must be visible in the main report."

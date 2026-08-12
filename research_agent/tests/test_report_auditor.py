@@ -6,7 +6,10 @@ from pathlib import Path
 import pytest
 
 from research_agent.audit.markdown_numeric_extractor import extract_numeric_claims
-from research_agent.audit.report_linter import audit_markdown_report
+from research_agent.audit.report_linter import (
+    _numbers_close_for_evidence,
+    audit_markdown_report,
+)
 from research_agent.decision.rating_engine import build_decision_packet
 from research_agent.evidence.evidence_item import EvidenceItem
 from research_agent.evidence.evidence_ledger import EvidenceLedger
@@ -33,6 +36,36 @@ from research_agent.research_core.reporting.report_builder import render_markdow
 
 
 FIXTURES = Path(__file__).parent / "fixtures"
+
+
+def test_structured_numeric_matching_respects_display_rounding_and_semantic_sign():
+    assert _numbers_close_for_evidence(
+        0.7,
+        0.006818093271515955,
+        reported_unit="percent",
+        evidence_unit="percent",
+    )
+    assert _numbers_close_for_evidence(
+        0.5,
+        -0.004699480583724957,
+        reported_unit="percent",
+        evidence_unit="percent",
+        nearby_text="The share count decreased by 0.5%.",
+    )
+    assert _numbers_close_for_evidence(
+        22_000_000,
+        -22_000_000,
+        reported_unit="usd",
+        evidence_unit="USD",
+        nearby_text="Revenue from volume decreased $22 million.",
+    )
+    assert not _numbers_close_for_evidence(
+        22_000_000,
+        -22_000_000,
+        reported_unit="usd",
+        evidence_unit="USD",
+        nearby_text="Revenue increased $22 million.",
+    )
 
 
 def load_fixture(name, filename):

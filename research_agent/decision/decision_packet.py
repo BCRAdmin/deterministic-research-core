@@ -39,6 +39,11 @@ class DecisionInput(BaseModel):
     confidence: Literal["high", "medium", "low"]
     included_in_score: bool
     exclusion_reason: Optional[str] = None
+    label: Optional[str] = None
+    summary: Optional[str] = None
+    transmission: Optional[str] = None
+    management_counterposition: Optional[str] = None
+    review_trigger: Optional[str] = None
 
 
 class DecisionPacket(BaseModel):

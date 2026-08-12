@@ -1,11 +1,13 @@
 import json
 from pathlib import Path
+from types import SimpleNamespace
 
 from research_agent.audit.report_linter import audit_markdown_report
 from research_agent.content.claim_generator import (
     _ClaimBuilder,
     _bear_case_claim_text,
     _current_period_claim_specs,
+    _current_risk_narrative_evidence,
     _evidence_unit_is_compatible,
     _issuer_operating_result_specs,
     _labeled_numeric_event_statement,
@@ -225,7 +227,8 @@ def test_current_period_capital_allocation_is_visible_without_ttm_relabeling():
         claim for claim in claims if "period-matched capital-allocation" in claim.claim
     )
 
-    assert "$1.77B versus same-period FCF of $1.95B" in capital.claim
+    assert "$1.77B versus Room16 normalized same-period FCF of $1.95B" in capital.claim
+    assert "No source-bound acquisition-cash component was available" in capital.claim
     assert "$180.0M remaining" in capital.claim
     assert "not a TTM claim" in capital.claim
     assert "shareholder_distributions_current_period" in capital.metric_refs
@@ -249,6 +252,69 @@ def test_claim_builder_resolves_dcf_terminal_value_share_for_rating_claims():
     builder = _ClaimBuilder(data, metrics, ledger, decision, validation, None)
 
     assert builder._metric_value("dcf_base_terminal_value_share") == 0.60
+
+
+def test_current_risk_synthesis_binds_one_narrative_per_rendered_risk() -> None:
+    decision = SimpleNamespace(
+        decision_inputs=[
+            SimpleNamespace(input_type="current_risk", input_id="RISK_NUMERIC"),
+            SimpleNamespace(input_type="current_risk", input_id="RISK_TEXT"),
+            SimpleNamespace(input_type="current_risk", input_id="RISK_NOT_RENDERED"),
+        ]
+    )
+    ledger = EvidenceLedger(
+        ticker="TEST",
+        as_of_date="2026-08-11",
+        evidence_items=[
+            EvidenceItem(
+                evidence_id="NUMERIC",
+                ticker="TEST",
+                claim_type="risk",
+                authority_rank=1,
+                source_id="RISK_NUMERIC",
+                source_type="sec_filing",
+                statement="Reserve was $100 million.",
+                value=100_000_000,
+                unit="USD",
+            ),
+            EvidenceItem(
+                evidence_id="NUMERIC_NARRATIVE",
+                ticker="TEST",
+                claim_type="risk",
+                authority_rank=1,
+                source_id="RISK_NUMERIC",
+                source_type="sec_filing",
+                statement="Management response and uncertainty.",
+                supports_categories=["source_narrative"],
+            ),
+            EvidenceItem(
+                evidence_id="TEXT_PRIMARY",
+                ticker="TEST",
+                claim_type="risk",
+                authority_rank=1,
+                source_id="RISK_TEXT",
+                source_type="sec_filing",
+                statement="A deferred prosecution agreement remains active.",
+                supports_categories=["material_news_coverage"],
+            ),
+            EvidenceItem(
+                evidence_id="THIRD",
+                ticker="TEST",
+                claim_type="risk",
+                authority_rank=1,
+                source_id="RISK_NOT_RENDERED",
+                source_type="sec_filing",
+                statement="Not rendered due to the synthesis limit.",
+            ),
+        ],
+    )
+
+    selected = _current_risk_narrative_evidence(decision, ledger)
+
+    assert [item.evidence_id for item in selected] == [
+        "NUMERIC_NARRATIVE",
+        "TEXT_PRIMARY",
+    ]
 
 
 def test_current_kpi_selection_deduplicates_catalyst_copy_with_same_evidence() -> None:
@@ -2024,8 +2090,8 @@ def test_mixed_profit_declines_remain_visible_across_thesis_bear_and_rating():
     assert "measured fundamental picture is mixed" in final_claim.claim
     assert "operating-income and net-income declines" in final_claim.claim
     assert "fundamental signal is constructive" not in final_claim.claim
-    assert "current_period_operating_income_growth_yoy" in final_claim.metric_refs
-    assert "current_period_net_income_growth_yoy" in final_claim.metric_refs
+    assert "current_period_operating_income_growth_yoy" not in final_claim.metric_refs
+    assert "current_period_net_income_growth_yoy" not in final_claim.metric_refs
     assert "is measured counterevidence" in rating
     research_report = compose_research_report(
         data,
@@ -2401,9 +2467,6 @@ def test_generic_report_surfaces_use_the_packet_currency_instead_of_dollars():
         "revenue_ttm",
         "free_cash_flow_ttm",
         "ev_to_sales",
-        "sma_50",
-        "sma_200",
-        "rsi_14",
         "price_to_fcf",
     ]
     assert "revenue TTM of 4.34B HUF" in rating_claim.claim

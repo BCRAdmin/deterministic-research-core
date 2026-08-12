@@ -45,6 +45,7 @@ class OperatingKpiEvidence(BaseModel):
     current_period_end: Optional[str] = None
     comparison_period_start: Optional[str] = None
     comparison_period_end: Optional[str] = None
+    effective_asof_dates: List[str] = Field(default_factory=list)
     metric_role: Optional[str] = None
     mapping_status: str = "mapped"
 

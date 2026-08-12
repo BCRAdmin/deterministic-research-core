@@ -2,6 +2,8 @@ from copy import deepcopy
 from types import SimpleNamespace
 
 from research_agent.quality.semantic_invariants import verify_semantic_invariants
+from research_agent.research_core.models.claims import ResearchClaim
+from research_agent.run_pipeline import _material_topic_report_coverage
 
 
 def _fixture():
@@ -57,7 +59,10 @@ def _fixture():
 
 def test_semantic_invariant_fixture_passes():
     report = verify_semantic_invariants(**_fixture())
-    assert report["release_allowed"] is True
+    assert report["semantic_integrity_passed"] is True
+    assert report["internally_reviewable"] is True
+    assert report["release_candidate"] is False
+    assert report["release_allowed"] is False
     assert report["blocking_failures"] == []
 
 
@@ -99,3 +104,36 @@ def test_semantic_invariant_negative_mutants_are_blocked():
         report = verify_semantic_invariants(**fixture)
         assert report["release_allowed"] is False
         assert expected_failure in report["blocking_failures"]
+
+
+def test_material_topic_propagation_requires_direct_topic_claim_not_rating_synthesis():
+    direct = ResearchClaim(
+        claim_id="TEST_CLAIM_001",
+        section="Key Risks",
+        claim_type="risk",
+        agent="deterministic_content_generator",
+        claim="The issuer disclosed a material regulatory order.",
+        evidence_metrics=[],
+        source_ids=["SEC_TEST_TOPIC_LEGAL_01"],
+        confidence="high",
+    )
+    synthesis = ResearchClaim(
+        claim_id="TEST_CLAIM_002",
+        section="Final Rating & Action Plan",
+        claim_type="rating",
+        agent="deterministic_content_generator",
+        claim="A decision synthesis rendered through the rating section.",
+        evidence_metrics=[],
+        source_ids=["SEC_TEST_TOPIC_LEGAL_01"],
+        confidence="high",
+    )
+
+    result = _material_topic_report_coverage(
+        markdown="# Report\n\nThe issuer disclosed a material regulatory order.\n",
+        claims=[direct, synthesis],
+        report_kind="full_research_report",
+    )
+
+    assert result["status"] == "pass"
+    assert result["required_claim_count"] == 1
+    assert result["dispositions"][0]["claim_id"] == "TEST_CLAIM_001"

@@ -111,6 +111,7 @@ def audit_markdown_report(
     reconciliation_warnings: Optional[list[dict]] = None,
     quality_report: Optional[QualityReport] = None,
     ticker: Optional[str] = None,
+    research_claims: Optional[list] = None,
 ) -> AuditReport:
     claims = extract_numeric_claims(markdown)
     issues: list[AuditIssue] = []
@@ -119,7 +120,15 @@ def audit_markdown_report(
         metrics_packet=metrics_packet,
         source_registry=source_registry,
     )
-    issues.extend(_lint_numeric_claims(claims, metrics_packet, evidence_ledger))
+    issues.extend(
+        _lint_numeric_claims(
+            claims,
+            metrics_packet,
+            evidence_ledger,
+            research_claims=research_claims,
+            table_evidence_by_line=_table_evidence_line_map(markdown),
+        )
+    )
     issues.extend(_lint_currency_consistency(claims, evidence_ledger))
     issues.extend(_lint_trade_levels(markdown))
     issues.extend(_lint_rating_action(markdown))
@@ -341,10 +350,69 @@ def _lint_numeric_claims(
     claims: list[ExtractedNumericClaim],
     metrics_packet: MetricsPacket,
     evidence_ledger: Optional[EvidenceLedger] = None,
+    *,
+    research_claims: Optional[list] = None,
+    table_evidence_by_line: Optional[dict[int, set[str]]] = None,
 ) -> list[AuditIssue]:
     issues: list[AuditIssue] = []
+    claims_by_id = {
+        str(item.claim_id): item
+        for item in research_claims or []
+        if getattr(item, "claim_id", None)
+    }
+    evidence_by_id = {
+        item.evidence_id: item
+        for item in evidence_ledger.evidence_items
+    } if evidence_ledger is not None else {}
     for claim in claims:
         if claim.unit == "date" or _is_comparison_threshold(claim):
+            continue
+        table_evidence_ids = (table_evidence_by_line or {}).get(claim.line_number)
+        if table_evidence_ids is not None:
+            if not _number_matches_evidence_ids(
+                claim,
+                table_evidence_ids,
+                evidence_by_id,
+            ):
+                issues.append(
+                    AuditIssue(
+                        severity="error",
+                        code="NUMERIC_MISMATCH",
+                        metric="table_bound_numeric_value",
+                        reported=claim.normalized_value,
+                        message=(
+                            f"Table number {claim.raw_text} does not match the "
+                            "evidence explicitly bound to its material table."
+                        ),
+                        line_number=claim.line_number,
+                        raw_text=claim.raw_text,
+                    )
+                )
+            continue
+        bound_claim = _research_claim_for_rendered_number(claim, claims_by_id)
+        if bound_claim is not None:
+            if not _number_matches_bound_claim_evidence(
+                claim,
+                bound_claim,
+                evidence_by_id,
+            ):
+                issues.append(
+                    AuditIssue(
+                        severity="error",
+                        code="NUMERIC_MISMATCH",
+                        metric="claim_bound_numeric_value",
+                        reported=claim.normalized_value,
+                        message=(
+                            f"Report number {claim.raw_text} does not match any "
+                            f"metric/evidence pair bound to {bound_claim.claim_id}."
+                        ),
+                        line_number=claim.line_number,
+                        raw_text=claim.raw_text,
+                    )
+                )
+            # A structured claim binding is authoritative.  Never run the
+            # prose heuristic again and silently remap the same number to an
+            # unrelated packet metric.
             continue
         mapped = map_claim_to_metric(claim, metrics_packet)
         if mapped is None:
@@ -410,6 +478,82 @@ def _lint_numeric_claims(
                 )
             )
     return issues
+
+
+def _research_claim_for_rendered_number(
+    claim: ExtractedNumericClaim,
+    claims_by_id: dict[str, object],
+):
+    match = re.search(r"\bClaim\s+`([^`]+)`", claim.nearby_text)
+    return claims_by_id.get(match.group(1)) if match else None
+
+
+def _number_matches_bound_claim_evidence(
+    extracted: ExtractedNumericClaim,
+    research_claim,
+    evidence_by_id: dict[str, object],
+) -> bool:
+    if extracted.normalized_value is None:
+        return False
+    metric_values = dict(getattr(research_claim, "metric_values", {}) or {})
+    for evidence_id in getattr(research_claim, "evidence_ids", []) or []:
+        evidence = evidence_by_id.get(str(evidence_id))
+        if evidence is None or evidence.value is None:
+            continue
+        supported = set(evidence.supports_metrics).intersection(metric_values)
+        if not supported:
+            continue
+        if _numbers_close_for_evidence(
+            float(extracted.normalized_value),
+            float(evidence.value),
+            reported_unit=extracted.unit,
+            evidence_unit=evidence.unit,
+            nearby_text=extracted.nearby_text,
+        ):
+            return True
+    return False
+
+
+def _number_matches_evidence_ids(
+    extracted: ExtractedNumericClaim,
+    evidence_ids: set[str],
+    evidence_by_id: dict[str, object],
+) -> bool:
+    if extracted.normalized_value is None:
+        return False
+    return any(
+        evidence is not None
+        and evidence.value is not None
+        and _numbers_close_for_evidence(
+            float(extracted.normalized_value),
+            float(evidence.value),
+            reported_unit=extracted.unit,
+            evidence_unit=evidence.unit,
+            nearby_text=extracted.nearby_text,
+        )
+        for evidence in (evidence_by_id.get(value) for value in evidence_ids)
+    )
+
+
+def _table_evidence_line_map(markdown: str) -> dict[int, set[str]]:
+    lines = markdown.splitlines()
+    result: dict[int, set[str]] = {}
+    index = 0
+    while index < len(lines):
+        if not lines[index].lstrip().startswith("|"):
+            index += 1
+            continue
+        start = index
+        while index < len(lines) and lines[index].lstrip().startswith("|"):
+            index += 1
+        trailer = " ".join(lines[index : min(len(lines), index + 4)])
+        match = re.search(r"Table claim\s+`[^`]+`\s+·\s+Evidence:\s*`([^`]+)`", trailer)
+        if not match:
+            continue
+        ids = {value.strip() for value in match.group(1).split(",") if value.strip()}
+        for line_number in range(start + 1, index + 1):
+            result[line_number] = ids
+    return result
 
 
 def _is_comparison_threshold(claim: ExtractedNumericClaim) -> bool:
@@ -684,6 +828,7 @@ def _numbers_close_for_evidence(
     *,
     reported_unit: Optional[str] = None,
     evidence_unit: Optional[str] = None,
+    nearby_text: str = "",
 ) -> bool:
     if evidence_value == 0:
         return abs(reported) < 1e-9
@@ -692,7 +837,25 @@ def _numbers_close_for_evidence(
         and str(evidence_unit or "").lower() == "percent"
     ):
         reported = reported / 100
+        # A displayed percentage rounded to one decimal place represents an
+        # interval of +/- 0.05 percentage points, not a 1.5% relative band.
+        if evidence_value < 0 and reported >= 0 and _text_encodes_negative_value(nearby_text):
+            reported = -reported
+        return abs(reported - evidence_value) <= 0.0005 + 1e-12
+    if evidence_value < 0 and reported >= 0 and _text_encodes_negative_value(nearby_text):
+        reported = -reported
     return abs(reported - evidence_value) / abs(evidence_value) <= 0.015
+
+
+def _text_encodes_negative_value(value: str) -> bool:
+    return bool(
+        re.search(
+            r"\b(?:decreas(?:e|ed|ing)|declin(?:e|ed|ing)|fell|lower|"
+            r"net debt|remaining|below same-period fcf)\b",
+            value,
+            re.IGNORECASE,
+        )
+    )
 
 
 def _lint_decision_permission(

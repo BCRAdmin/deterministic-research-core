@@ -101,6 +101,7 @@ class EvidenceItem(BaseModel):
     current_period_end: Optional[str] = None
     comparison_period_start: Optional[str] = None
     comparison_period_end: Optional[str] = None
+    effective_asof_dates: List[str] = Field(default_factory=list)
     provenance_class: Optional[
         Literal[
             "primary_source",

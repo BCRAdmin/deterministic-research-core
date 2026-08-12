@@ -65,6 +65,24 @@ def news_evidence_items(
             numeric_evidence if isinstance(numeric_evidence, list) else []
         )
         evidence_records = numeric_evidence or [None]
+        if numeric_evidence:
+            evidence.append(
+                EvidenceItem(
+                    evidence_id=f"{base_evidence_id}_NARRATIVE",
+                    ticker=symbol,
+                    claim_type=claim_type,
+                    source_id=source_id,
+                    source_type=source_type,
+                    authority_rank=rank,
+                    statement=str(event.get("summary") or headline),
+                    date=event_date,
+                    url=event.get("url"),
+                    retrieved_at=event.get("retrieved_at"),
+                    supports_categories=["material_news_coverage", "source_narrative"],
+                    source_sign=1,
+                    confidence="high" if rank <= 2 else "medium",
+                )
+            )
         for numeric_index, numeric in enumerate(evidence_records, start=1):
             numeric = numeric if isinstance(numeric, dict) else {}
             metric_name = str(numeric.get("metric_name") or "")
@@ -100,6 +118,7 @@ def news_evidence_items(
                     current_period_end=numeric.get("current_period_end"),
                     comparison_period_start=numeric.get("comparison_period_start"),
                     comparison_period_end=numeric.get("comparison_period_end"),
+                    effective_asof_dates=numeric.get("effective_asof_dates") or [],
                     date=event_date,
                     url=event.get("url"),
                     retrieved_at=event.get("retrieved_at"),

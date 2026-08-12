@@ -305,6 +305,20 @@ def _labeled_numeric_event_statement(
                 metric.value,
                 metric.currency or default_currency,
             )
+        elif metric.raw_value is not None and metric.source_scale in {
+            "thousand",
+            "k",
+            "million",
+            "mn",
+            "m",
+            "billion",
+            "bn",
+        }:
+            # Count KPIs are normalized to base units for calculations, but a
+            # source-labelled table must display the source-scale value.  This
+            # prevents a base value such as 33,500,000 from appearing under an
+            # "in millions" heading.
+            value = _number(metric.raw_value)
         else:
             value = _number(metric.value)
         values.append(f"{metric.column_label}: {value}")
@@ -341,7 +355,8 @@ class _ClaimBuilder:
             self.decision.rating_permission.display_rating
             or self.decision.rating_permission.preferred_rating.value
         )
-        core_rating_metrics = _core_rating_metric_refs(self.metrics)
+        executive_summary_metrics = _executive_summary_metric_refs(self.metrics)
+        final_rating_metrics = _final_rating_metric_refs(self.metrics)
 
         self.add(
             "Executive Summary",
@@ -355,7 +370,7 @@ class _ClaimBuilder:
                 f"the technical evidence indicates {_technical_interpretation(self.metrics)}. "
                 f"{_valuation_status_sentence(self.decision.signal_scores.valuation_status)}"
             ),
-            core_rating_metrics,
+            executive_summary_metrics,
             "high",
             "high",
             implication=f"The action language should stay consistent with the {preferred} stance.",
@@ -382,6 +397,20 @@ class _ClaimBuilder:
             )
 
         f = self.metrics.fundamentals
+        bridge_values = {
+            metric: float(item.value)
+            for item in self.ledger.evidence_items
+            if item.value is not None
+            for metric in item.supports_metrics
+            if metric
+            in {
+                "capital_allocation_acquisition_cash_current_period",
+                "capital_allocation_room16_fcf_residual_current_period",
+                "issuer_defined_fcf_current_period",
+                "capital_allocation_issuer_fcf_residual_current_period",
+                "fcf_definition_difference_current_period",
+            }
+        }
         if (
             f.shareholder_distributions_current_period is not None
             and f.free_cash_flow_current_period is not None
@@ -389,30 +418,114 @@ class _ClaimBuilder:
             and f.shareholder_distribution_period_start
             and f.shareholder_distribution_period_end
         ):
-            gap = f.shareholder_distributions_minus_fcf_current_period
-            coverage = (
-                f"covered by same-period FCF with {_money(abs(gap), self.data_packet.price_basis.currency)} remaining"
-                if gap <= 0
-                else f"above same-period FCF by {_money(gap, self.data_packet.price_basis.currency)}"
-            )
-            self.add(
-                "Capital Allocation, Transactions & Contingencies",
-                "capital_allocation",
-                "financial_metric",
-                (
+            has_full_bridge = {
+                "capital_allocation_acquisition_cash_current_period",
+                "capital_allocation_room16_fcf_residual_current_period",
+            }.issubset(bridge_values)
+            if has_full_bridge:
+                acquisition_cash = bridge_values[
+                    "capital_allocation_acquisition_cash_current_period"
+                ]
+                room16_residual = bridge_values[
+                    "capital_allocation_room16_fcf_residual_current_period"
+                ]
+                issuer_fcf = bridge_values.get("issuer_defined_fcf_current_period")
+                issuer_residual = bridge_values.get(
+                    "capital_allocation_issuer_fcf_residual_current_period"
+                )
+                definition_difference = bridge_values.get(
+                    "fcf_definition_difference_current_period"
+                )
+                bridge_text = (
                     f"From {f.shareholder_distribution_period_start} through "
                     f"{f.shareholder_distribution_period_end}, shareholder distributions "
                     f"were {_money(f.shareholder_distributions_current_period, self.data_packet.price_basis.currency)} "
-                    f"versus same-period FCF of {_money(f.free_cash_flow_current_period, self.data_packet.price_basis.currency)}; "
-                    f"distributions were {coverage}. This is a period-matched capital-allocation comparison, not a TTM claim."
-                ),
-                [
+                    f"and period-matched acquisition cash was {_money(acquisition_cash, self.data_packet.price_basis.currency)}. "
+                    f"Against Room16 normalized same-period FCF of "
+                    f"{_money(f.free_cash_flow_current_period, self.data_packet.price_basis.currency)}, "
+                    f"these outflows leave {_money(room16_residual, self.data_packet.price_basis.currency)}."
+                )
+                if issuer_fcf is not None and issuer_residual is not None:
+                    bridge_text += (
+                        f" Issuer-defined same-period FCF was "
+                        f"{_money(issuer_fcf, self.data_packet.price_basis.currency)}; "
+                        f"the same outflows leave {_money(issuer_residual, self.data_packet.price_basis.currency)}."
+                    )
+                if definition_difference is not None:
+                    bridge_text += (
+                        f" The two FCF definitions differ by "
+                        f"{_money(abs(definition_difference), self.data_packet.price_basis.currency)}; "
+                        "this is an intentional definition difference, not an unresolved value mismatch."
+                    )
+                bridge_metrics = [
+                    "shareholder_distributions_current_period",
+                    "free_cash_flow_current_period",
+                    "buybacks_current_period",
+                    "dividends_paid_current_period",
+                    "capital_allocation_acquisition_cash_current_period",
+                    "capital_allocation_room16_fcf_residual_current_period",
+                    *(
+                        [
+                            "issuer_defined_fcf_current_period",
+                            "capital_allocation_issuer_fcf_residual_current_period",
+                        ]
+                        if issuer_fcf is not None and issuer_residual is not None
+                        else []
+                    ),
+                    *(
+                        ["fcf_definition_difference_current_period"]
+                        if definition_difference is not None
+                        else []
+                    ),
+                ]
+                bridge_metric_values = {
+                    "shareholder_distributions_current_period": f.shareholder_distributions_current_period,
+                    "free_cash_flow_current_period": f.free_cash_flow_current_period,
+                    "buybacks_current_period": f.buybacks_current_period,
+                    "dividends_paid_current_period": f.dividends_paid_current_period,
+                    **bridge_values,
+                }
+            else:
+                gap = f.shareholder_distributions_minus_fcf_current_period
+                coverage = (
+                    f"covered by Room16 normalized same-period FCF with {_money(abs(gap), self.data_packet.price_basis.currency)} remaining"
+                    if gap <= 0
+                    else f"above Room16 normalized same-period FCF by {_money(gap, self.data_packet.price_basis.currency)}"
+                )
+                bridge_text = (
+                    f"From {f.shareholder_distribution_period_start} through "
+                    f"{f.shareholder_distribution_period_end}, shareholder distributions "
+                    f"were {_money(f.shareholder_distributions_current_period, self.data_packet.price_basis.currency)} "
+                    f"versus Room16 normalized same-period FCF of {_money(f.free_cash_flow_current_period, self.data_packet.price_basis.currency)}; "
+                    f"distributions were {coverage}. No source-bound acquisition-cash component was available for this period."
+                )
+                bridge_metrics = [
                     "shareholder_distributions_current_period",
                     "free_cash_flow_current_period",
                     "shareholder_distributions_minus_fcf_current_period",
                     "buybacks_current_period",
                     "dividends_paid_current_period",
-                ],
+                ]
+                bridge_metric_values = None
+            if bridge_metric_values is not None:
+                bridge_metric_values = {
+                    metric: value
+                    for metric, value in bridge_metric_values.items()
+                    if value is not None and metric in bridge_metrics
+                }
+                bridge_metrics = list(bridge_metric_values)
+            else:
+                bridge_metrics = [
+                    metric
+                    for metric in bridge_metrics
+                    if self._metric_value(metric) is not None
+                ]
+            self.add(
+                "Capital Allocation, Transactions & Contingencies",
+                "capital_allocation",
+                "financial_metric",
+                bridge_text + " This is a period-matched capital-allocation bridge, not a TTM claim.",
+                bridge_metrics,
                 "high",
                 "high",
                 counterargument=(
@@ -421,6 +534,7 @@ class _ClaimBuilder:
                 implication=(
                     "Track repurchases, dividends and FCF on the same reporting window before judging funding pressure."
                 ),
+                metric_values=bridge_metric_values,
             )
 
         for event in self.data_packet.news_coverage.material_events:
@@ -463,6 +577,10 @@ class _ClaimBuilder:
                 )
 
         selected_risk_evidence = self._selected_risk_evidence(limit=4)
+        current_risk_narrative_evidence = _current_risk_narrative_evidence(
+            self.decision,
+            self.ledger,
+        )
         for index, risk_evidence in enumerate(selected_risk_evidence):
             self.add_risk(risk_evidence, explain_disclosure=index == 0)
         risk = self.metrics.risk
@@ -827,7 +945,13 @@ class _ClaimBuilder:
             scenario_metrics = [
                 f"dcf_{scenario.name}_equity_value" for scenario in sensitivity.scenarios
             ]
-            scenario_metrics.append("dcf_base_terminal_value_share")
+            scenario_metrics.extend(
+                [
+                    "dcf_base_terminal_value_share",
+                    "dcf_base_discount_rate",
+                    "dcf_base_terminal_growth_rate",
+                ]
+            )
             if sensitivity.reverse_dcf_implied_fcf_growth is not None:
                 scenario_metrics.append("reverse_dcf_implied_fcf_growth")
             scenario_values = {scenario.name: scenario for scenario in sensitivity.scenarios}
@@ -1368,6 +1492,10 @@ class _ClaimBuilder:
                 "This identifies a risk, not evidence that the adverse outcome has occurred."
             )
             bear_additional_evidence.append(issuer_risk)
+        current_risk_text = _current_risk_decision_text(self.decision)
+        if current_risk_text:
+            bear_context.append(current_risk_text)
+            bear_additional_evidence.extend(current_risk_narrative_evidence)
         if bear_metrics:
             bear_metrics.extend(
                 metric
@@ -1449,11 +1577,12 @@ class _ClaimBuilder:
                 self.data_packet.price_basis.currency,
                 self.decision,
             ),
-            core_rating_metrics,
+            final_rating_metrics,
             "high",
             "high",
             counterargument=_final_rating_counterargument(preferred, self.metrics),
             implication=_final_rating_implication(ticker, preferred, self.metrics),
+            additional_evidence=current_risk_narrative_evidence,
         )
         return self.claims
 
@@ -1516,6 +1645,23 @@ class _ClaimBuilder:
                 else statement
             )
         )
+        visible_metrics = [
+            metric
+            for metric in event.numeric_evidence
+            if _event_metric_is_visible(metric, claim_statement)
+        ]
+        metric_values = {
+            metric.metric_name: metric.value for metric in visible_metrics
+        }
+        visible_metric_names = set(metric_values)
+        evidence = [
+            item
+            for item in evidence
+            if not numeric_event
+            or visible_metric_names.intersection(item.supports_metrics)
+        ]
+        if numeric_event and not metric_values:
+            return
         self.counter += 1
         claim_id = f"{self.data_packet.ticker}_CLAIM_{self.counter:03d}"
         counterargument = None
@@ -2807,12 +2953,97 @@ def _final_rating_claim_text(
         )
     )
     valuation_reconciliation = _valuation_reconciliation_text(metrics, currency)
+    risk_synthesis = _current_risk_decision_text(decision)
     return (
         f"We rate {ticker} {preferred} at the validated close of "
         f"{_money(metrics.technical.close, currency)}. {reason} The factual "
         f"anchors are {evidence_anchor}. {fundamental_note} {valuation_note} "
-        f"{valuation_reconciliation} {technical_note}"
+        f"{valuation_reconciliation} {technical_note} {risk_synthesis}"
     )
+
+
+def _current_risk_decision_text(decision: DecisionPacket) -> str:
+    risks = [
+        item
+        for item in decision.decision_inputs
+        if item.input_type == "current_risk"
+    ][:2]
+    if not risks:
+        return ""
+    parts: list[str] = []
+    for risk in risks:
+        summary = _named_risk_label(
+            str(risk.summary or ""),
+            fallback=str(risk.label or risk.input_id),
+        )
+        part = f"Named current risk: {summary}"
+        if risk.transmission:
+            part += f" Transmission: {risk.transmission}"
+        if risk.management_counterposition:
+            part += f" Issuer counterposition: {risk.management_counterposition}"
+        if risk.review_trigger:
+            part += f" Review trigger: {risk.review_trigger}"
+        parts.append(part)
+    return " ".join(parts)
+
+
+def _current_risk_narrative_evidence(
+    decision: DecisionPacket,
+    ledger: EvidenceLedger,
+    *,
+    limit: int = 2,
+) -> list[EvidenceItem]:
+    """Return exactly one narrative edge for every risk rendered in synthesis.
+
+    Numeric risk disclosures receive a dedicated ``source_narrative`` record;
+    disclosures without numbers already have a non-numeric primary evidence
+    record.  The rendered text uses the first two decision risks, so the
+    evidence selection must use the identical ordered slice.
+    """
+
+    selected: list[EvidenceItem] = []
+    risks = [
+        item
+        for item in decision.decision_inputs
+        if item.input_type == "current_risk"
+    ][:limit]
+    for risk in risks:
+        candidates = [
+            item
+            for item in ledger.evidence_items
+            if item.source_id == risk.input_id and item.value is None
+        ]
+        if not candidates:
+            continue
+        selected.append(
+            next(
+                (
+                    item
+                    for item in candidates
+                    if "source_narrative" in item.supports_categories
+                ),
+                candidates[0],
+            )
+        )
+    return selected
+
+
+def _named_risk_label(summary: str, *, fallback: str) -> str:
+    folded = summary.casefold()
+    if "san jacinto" in folded:
+        return "San Jacinto River Waste Pits remediation and EPA cleanup order."
+    if "delaware" in folded and "order" in folded:
+        return "Delaware environmental order and pending appeal."
+    if "deferred prosecution" in folded or "stericycle" in folded:
+        return "Stericycle deferred-prosecution and continuing-compliance obligations."
+    cleaned = re.sub(
+        r"(?:[$€£¥]\s*\d[\d,.]*(?:\s*(?:million|billion|mn|bn|m|k))?|\b\d+(?:[.,]\d+)?%|\b\d{4}\b)",
+        "",
+        " ".join((summary or fallback).split()),
+        flags=re.IGNORECASE,
+    )
+    cleaned = " ".join(cleaned.split()).strip(" ,;:-")
+    return (cleaned[:220].rsplit(" ", 1)[0] + "...") if len(cleaned) > 220 else cleaned
 
 
 def _valuation_reconciliation_text(metrics: MetricsPacket, currency: str) -> str:
@@ -2872,27 +3103,28 @@ def _valuation_reconciliation_text(metrics: MetricsPacket, currency: str) -> str
     return " ".join(parts)
 
 
-def _core_rating_metric_refs(metrics: MetricsPacket) -> list[str]:
+def _executive_summary_metric_refs(metrics: MetricsPacket) -> list[str]:
+    refs = ["close"]
+    for metric_name, value in (
+        ("revenue_ttm", metrics.fundamentals.revenue_ttm),
+        ("free_cash_flow_ttm", metrics.fundamentals.free_cash_flow_ttm),
+        ("ev_to_sales", metrics.valuation.ev_to_sales),
+    ):
+        if value is not None:
+            refs.append(metric_name)
+    return refs
+
+
+def _final_rating_metric_refs(metrics: MetricsPacket) -> list[str]:
     metric_refs = ["close"]
     for metric_name, value in (
         ("revenue_ttm", metrics.fundamentals.revenue_ttm),
         ("free_cash_flow_ttm", metrics.fundamentals.free_cash_flow_ttm),
         ("ev_to_sales", metrics.valuation.ev_to_sales),
-        ("sma_50", metrics.technical.sma_50),
-        ("sma_200", metrics.technical.sma_200),
-        ("rsi_14", metrics.technical.rsi_14),
-        (
-            "current_period_operating_income_growth_yoy",
-            metrics.fundamentals.current_period_operating_income_growth_yoy,
-        ),
-        (
-            "current_period_net_income_growth_yoy",
-            metrics.fundamentals.current_period_net_income_growth_yoy,
-        ),
     ):
         if value is not None:
             metric_refs.append(metric_name)
-    if metrics.valuation.ev_to_sales is None and metrics.valuation.trailing_pe is not None:
+    if metrics.valuation.trailing_pe is not None:
         metric_refs.append("trailing_pe")
     if metrics.valuation.price_to_fcf is not None:
         metric_refs.append("price_to_fcf")
@@ -2906,6 +3138,32 @@ def _core_rating_metric_refs(metrics: MetricsPacket) -> list[str]:
     if metrics.valuation.sensitivity.reverse_dcf_implied_fcf_growth is not None:
         metric_refs.append("reverse_dcf_implied_fcf_growth")
     return metric_refs
+
+
+def _event_metric_is_visible(metric, text: str) -> bool:
+    """Return True only when a source number survives into rendered claim prose."""
+
+    raw = metric.raw_value
+    if raw is None:
+        raw = metric.value * 100 if metric.unit == "percent" else metric.value
+    token = f"{float(raw):.12g}"
+    if "." in token:
+        integer, fraction = token.split(".", 1)
+        token_pattern = (
+            re.escape(integer)
+            + r"[.,]"
+            + re.escape(fraction.rstrip("0") or "0")
+            + r"0*"
+        )
+    else:
+        token_pattern = re.escape(token)
+    if re.search(rf"(?<![\d.]){token_pattern}(?!\d)", text):
+        return True
+    if metric.unit == "currency":
+        return _money(metric.value, metric.currency or "USD") in text
+    if metric.unit == "percent":
+        return f"{metric.value:.1%}" in text
+    return _number(metric.value) in text
 
 
 def _core_rating_evidence_text(metrics: MetricsPacket, currency: str) -> str:
