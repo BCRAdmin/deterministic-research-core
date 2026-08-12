@@ -141,12 +141,33 @@ def validate_visible_citation_completeness(
         if not claim_id or not claim_text:
             continue
         anchor = claim_text[: min(len(claim_text), 90)]
-        position = markdown.find(anchor)
-        if position < 0:
+        positions: list[int] = []
+        cursor = 0
+        while (position := markdown.find(anchor, cursor)) >= 0:
+            positions.append(position)
+            cursor = position + max(1, len(anchor))
+        if not positions:
             continue
         checked += 1
-        paragraph_end = markdown.find("\n\n", position)
-        paragraph = markdown[position : paragraph_end if paragraph_end >= 0 else len(markdown)]
+        paragraphs = []
+        for position in positions:
+            paragraph_end = markdown.find("\n\n", position)
+            paragraphs.append(
+                markdown[position : paragraph_end if paragraph_end >= 0 else len(markdown)]
+            )
+        required_ids = {
+            claim_id,
+            *(str(item) for item in getattr(claim, "evidence_ids", []) or []),
+        }
+        if any(
+            all(required_id in paragraph for required_id in required_ids)
+            for paragraph in paragraphs
+        ):
+            continue
+        paragraph = max(
+            paragraphs,
+            key=lambda item: sum(required_id in item for required_id in required_ids),
+        )
         if claim_id not in paragraph:
             missing.append({"claim_id": claim_id, "missing": "claim_id"})
         for evidence_id in getattr(claim, "evidence_ids", []) or []:

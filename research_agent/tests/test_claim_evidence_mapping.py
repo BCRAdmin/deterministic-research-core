@@ -185,6 +185,26 @@ def test_visible_citation_gate_blocks_truncated_evidence_join():
         validate_visible_citation_completeness(markdown, [claim])
 
 
+def test_visible_citation_gate_accepts_later_bound_duplicate_text():
+    claim = ResearchClaim(
+        claim_id="CLAIM-001",
+        agent="fundamental",
+        claim="Current revenue is source-bound.",
+        evidence_metrics=["revenue_ttm"],
+        evidence_ids=["EVIDENCE-001"],
+        source_ids=["SOURCE-001"],
+        confidence="high",
+    )
+    markdown = (
+        "Current revenue is source-bound. This is an unbound source excerpt.\n\n"
+        "Current revenue is source-bound. Evidence: `CLAIM-001`, `EVIDENCE-001`."
+    )
+
+    report = validate_visible_citation_completeness(markdown, [claim])
+
+    assert report["status"] == "pass"
+
+
 def test_visible_citation_gate_accepts_hidden_table_lineage():
     markdown = """| Metric | Value |
 |---|---:|

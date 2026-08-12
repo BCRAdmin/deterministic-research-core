@@ -2,6 +2,7 @@ import pytest
 
 from research_agent.sources.sec.sec_material_events import (
     build_material_event_payload,
+    classify_material_event_sections,
     classify_material_event_text,
     inventory_recent_8k_filings,
     select_material_event_filings,
@@ -88,6 +89,40 @@ def test_explicit_results_item_cannot_be_reclassified_by_exhibit_keywords() -> N
     assert event is not None
     assert event[0] == "results_announcement"
     assert "Item 2.02" in event[2]
+
+
+def test_classifies_joined_sec_item_headings_and_named_board_appointment() -> None:
+    events = classify_material_event_sections(
+        "Item 5.02Departure of Directors or Certain Officers; Election of Directors. "
+        "On April 24, 2026, Kevin Conroy was named to the issuer's Board of Directors. "
+        "Item 5.03Amendments to Articles of Incorporation or Bylaws. On April 24, "
+        "2026, the Board amended the bylaws to change its authorized size. "
+        "Item 5.07 — Submission of Matters to a Vote of Security Holders. The "
+        "shareholders elected the full Board and approved the incentive plan by vote. "
+        "Item 9.01Financial Statements and Exhibits.",
+        items={"5.02", "5.03", "5.07"},
+    )
+
+    assert [event[0] for event in events] == ["5.02", "5.03", "5.07"]
+    leadership = events[0]
+    assert "Kevin Conroy" in leadership[3]
+
+
+def test_numeric_dense_note_offering_is_summarized_without_unbound_tranches() -> None:
+    events = classify_material_event_sections(
+        "Item 1.01 Entry into a Material Definitive Agreement. The issuer entered "
+        "into a pricing agreement to issue $20,000,000,000 of senior notes, "
+        "consisting of $1,000,000,000 floating-rate notes and $2,250,000,000 "
+        "of 3.700% notes. Item 2.03 The information in Item 1.01 is incorporated "
+        "by reference. Item 9.01 Financial Statements and Exhibits.",
+        items={"1.01", "2.03"},
+    )
+
+    summaries = {event[0]: event[3] for event in events}
+    assert "$" not in summaries["1.01"]
+    assert "%" not in summaries["1.01"]
+    assert "pricing agreement" in summaries["1.01"].casefold()
+    assert "incorporated" in summaries["2.03"].casefold()
 
 
 def test_builds_primary_source_event_payload():

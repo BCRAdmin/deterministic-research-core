@@ -1,0 +1,30 @@
+{
+  "contract_id": "room16.official_calendar_snapshot",
+  "contract_version": 2,
+  "ticker": "ABT",
+  "as_of_date": "2026-08-13",
+  "checked_at": "2026-08-13T01:20:03+02:00",
+  "capture_method": "normalized_official_page_snapshot",
+  "coverage_status": "complete_no_candidates",
+  "sources_checked": [
+    {
+      "url": "https://www.abbott.com/en-us/investors",
+      "capture_url": "https://www.abbott.com/en-us/investors",
+      "capture_transport": "official_page_search_snapshot",
+      "retrieved_at": "2026-08-13T01:20:03+02:00",
+      "observed_facts": [
+        "The official investor page contained no exact future earnings or investor-event date after the July 16 Q2 call."
+      ]
+    },
+    {
+      "url": "https://www.abbott.com/en-us/investors/resources/shareholder-faq",
+      "capture_url": "https://www.abbott.com/en-us/investors/resources/shareholder-faq",
+      "capture_transport": "official_page_search_snapshot",
+      "retrieved_at": "2026-08-13T01:20:03+02:00",
+      "observed_facts": [
+        "The official FAQ states that earnings announcements occur in October but still provides no exact Q3 date."
+      ]
+    }
+  ],
+  "events": []
+}

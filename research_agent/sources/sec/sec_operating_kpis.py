@@ -47,7 +47,8 @@ KPI_PATTERNS = {
 NUMBER_RE = re.compile(
     r"(?P<currency>C\$|US\$|A\$|HK\$|S\$|[$€£¥])?\s*"
     r"(?P<number>(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?)\s*"
-    r"(?P<scale>billion|million|thousand|bn|mn|m|k)?\s*(?P<percent>%)?",
+    r"(?P<scale>billion|million|thousand|bn|mn|m|k)?\s*"
+    r"(?P<percent>%|percent(?:age points?)?)?",
     re.IGNORECASE,
 )
 
@@ -913,6 +914,23 @@ def _numeric_period_contract(
     report_date: str | None = None,
     report_period_months: int | None = None,
 ) -> dict[str, Any]:
+    inline_year = re.search(
+        r"\b(20\d{2})\s*:\s*(?:C\$|US\$|A\$|HK\$|S\$|[$€£¥])?\s*$",
+        statement[max(0, match.start() - 30) : match.start()],
+        re.IGNORECASE,
+    )
+    if inline_year and report_date and report_period_months in {3, 6, 9, 12}:
+        year = int(inline_year.group(1))
+        reported_end = date.fromisoformat(report_date)
+        period_end = reported_end.replace(year=year)
+        period_start = _duration_start(period_end, report_period_months)
+        return {
+            "period_kind": "duration",
+            "presentation_basis": "period_total",
+            "period_start": period_start.isoformat(),
+            "period_end": period_end.isoformat(),
+            "period_role": f"{report_period_months}m_{period_end.isoformat()}",
+        }
     label = str(column_label or "")
     ended_label = re.search(
         r"\b(3|6|9|12)M\s+ended\s+(20\d{2})-(\d{2})-(\d{2})\b",
@@ -1204,6 +1222,7 @@ def _numeric_metric_role(
         ("internalization", r"internalization"),
         ("landfill_depletable_tons", r"depletable tons"),
         ("acquired_annualized_revenue", r"annualized revenue"),
+        ("pension_contributions", r"(?:defined benefit )?pension plans?"),
         ("free_cash_flow", r"free cash flow|\bfcf\b"),
         ("adjusted_operating_ebitda_margin", r"adjusted operating ebitda margin"),
         ("operating_ebitda_margin", r"operating ebitda margin"),
@@ -1233,11 +1252,17 @@ def _numeric_metric_role(
         "volume",
     }
     if metric is None:
-        metric = (
-            owner
-            if owner not in generic_owners
-            else closest_metric or (owner if owner != "statement_context" else None)
-        )
+        if owner not in generic_owners:
+            metric = owner
+        elif closest_metric and _metric_label_is_local(
+            statement,
+            match,
+            semantic_rules,
+            closest_metric,
+        ):
+            metric = closest_metric
+        else:
+            metric = owner if owner != "statement_context" else None
     if closest_metric in {
         "comparable_sales",
         "traffic_frequency",
@@ -1246,6 +1271,7 @@ def _numeric_metric_role(
         "internalization",
         "landfill_depletable_tons",
         "acquired_annualized_revenue",
+        "pension_contributions",
         "landfill_average_yield",
         "collection_disposal_yield",
         "core_price",
@@ -1254,6 +1280,16 @@ def _numeric_metric_role(
     component_metric = _component_metric_override(statement, match)
     if component_metric:
         metric = component_metric
+    elif _is_per_share_value(statement, match) and re.search(
+        r"\bdividends?\b",
+        statement,
+        re.IGNORECASE,
+    ):
+        # The governing "per share dividend" label can precede a compact
+        # current/prior rate pair by more than the normal local-label window.
+        # Both rates still belong to the dividend metric, not to an unresolved
+        # statement-context bucket.
+        metric = "cash_dividends"
     label_role = _slug(str(column_label or ""))
     if metric is None and owner != "statement_context":
         metric = owner
@@ -1442,6 +1478,26 @@ def _component_metric_override(
     next_number = NUMBER_RE.search(after)
     component_window = after[: next_number.start()] if next_number else after
     local = f"{before} {component_window}"
+    transaction_context = statement.casefold()
+    if _is_per_share_value(statement, match) and re.search(
+        r"\b(?:acquisition|purchase price|transaction)\b",
+        transaction_context,
+    ):
+        return "acquisition_purchase_price_per_share"
+    if re.search(r"\bassum(?:ed|ption)\b.{0,80}\bdebt\b", local):
+        return "acquisition_assumed_debt"
+    if re.search(
+        r"\b(?:issued|issuance)\b.{0,90}\b(?:debt|notes?)\b|"
+        r"\b(?:debt|notes?)\b.{0,90}\b(?:issued|issuance)\b",
+        local,
+    ) and re.search(r"\b(?:acquisition|transaction)\b", transaction_context):
+        return "acquisition_debt_issued"
+    if re.search(
+        r"\b(?:completed|purchase price|total consideration)\b.{0,100}\b(?:acquisition|transaction)\b|"
+        r"\b(?:acquisition|transaction)\b.{0,100}\b(?:completed|purchase price|total consideration)\b",
+        local,
+    ):
+        return "acquisition_total_consideration"
     if match.group("percent") and re.search(r"\breward\b", local):
         return "membership_reward_rate"
     if re.search(r"\b(?:maximum )?reward\b", local) and re.search(r"\bper year\b", after):
@@ -1497,6 +1553,18 @@ def _is_per_share_value(statement: str, current: re.Match[str]) -> bool:
         between = statement[
             min(current.end(), marker.end()) : max(current.start(), marker.start())
         ]
+        if marker.end() <= current.start() and re.fullmatch(
+            r"\s*(?:[-–—]\s*)?(?:20\d{2}\s*:\s*)?",
+            between,
+        ):
+            return True
+        if (
+            marker.end() <= current.start()
+            and len(between) <= 120
+            and ")" not in between
+            and re.search(r"\b20\d{2}\s*:", between)
+        ):
+            return True
         if len(between) <= 160 and not re.search(r"[;:]|\.(?:\s|$)", between):
             return True
     return False

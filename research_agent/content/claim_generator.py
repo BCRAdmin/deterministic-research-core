@@ -1520,10 +1520,6 @@ class _ClaimBuilder:
                 "This identifies a risk, not evidence that the adverse outcome has occurred."
             )
             bear_additional_evidence.append(issuer_risk)
-        current_risk_text = _current_risk_decision_text(self.decision)
-        if current_risk_text:
-            bear_context.append(current_risk_text)
-            bear_additional_evidence.extend(current_risk_narrative_evidence)
         if bear_metrics:
             bear_metrics.extend(
                 metric
@@ -3055,7 +3051,7 @@ def _final_rating_claim_text(
         )
     )
     valuation_reconciliation = _valuation_reconciliation_text(metrics, currency)
-    risk_synthesis = _current_risk_decision_text(decision)
+    risk_synthesis = _current_risk_rating_summary(decision)
     return (
         f"We rate {ticker} {preferred} at the validated close of "
         f"{_money(metrics.technical.close, currency)}. {reason} The factual "
@@ -3087,6 +3083,22 @@ def _current_risk_decision_text(decision: DecisionPacket) -> str:
             part += f" Review trigger: {risk.review_trigger}"
         parts.append(part)
     return " ".join(parts)
+
+
+def _current_risk_rating_summary(decision: DecisionPacket) -> str:
+    risks = [
+        item
+        for item in decision.decision_inputs
+        if item.input_type == "current_risk"
+    ][:3]
+    if not risks:
+        return ""
+    trigger_count = sum(bool(item.review_trigger) for item in risks)
+    return (
+        f"The decision packet retains {len(risks)} current issuer-risk "
+        f"record{'s' if len(risks) != 1 else ''}; {trigger_count} include"
+        f"{'s' if trigger_count == 1 else ''} an explicit reassessment trigger."
+    )
 
 
 def _current_risk_narrative_evidence(

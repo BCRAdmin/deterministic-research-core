@@ -157,7 +157,14 @@ class EvidenceItem(BaseModel):
         unit = str(self.unit or self.source_unit or "").strip()
         upper_unit = unit.upper()
         if self.dimension is None:
-            if self.currency or re.fullmatch(r"[A-Z]{3}", upper_unit):
+            per_share_currency = re.fullmatch(
+                r"([A-Z]{3})(?:_PER_SHARE|/SHARE)",
+                upper_unit,
+            )
+            if per_share_currency:
+                self.dimension = "per_share"
+                self.currency = self.currency or per_share_currency.group(1)
+            elif self.currency or re.fullmatch(r"[A-Z]{3}", upper_unit):
                 self.dimension = "currency"
             elif upper_unit in {"PERCENT", "%", "FRACTION (1.0 = 100%)"}:
                 self.dimension = "percent"
@@ -179,6 +186,10 @@ class EvidenceItem(BaseModel):
             if self.currency is None and re.fullmatch(r"[A-Z]{3}", upper_unit):
                 self.currency = upper_unit
             self.display_unit = self.display_unit or self.currency or upper_unit or None
+        elif self.dimension == "per_share":
+            self.display_unit = self.display_unit or unit or (
+                f"{self.currency}/share" if self.currency else "per_share"
+            )
         else:
             self.display_unit = self.display_unit or unit or None
 

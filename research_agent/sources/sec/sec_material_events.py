@@ -755,13 +755,16 @@ def classify_material_event_sections(
 
 def _extract_item_section(text: str, item: str) -> str:
     heading = re.compile(
-        rf"\bItem\s+{re.escape(item)}\b[.\s:-]*",
+        rf"\bItem\s+{re.escape(item)}(?=\D|$)[.\s:—–-]*",
         re.IGNORECASE,
     )
     match = heading.search(text)
     if not match:
         return ""
-    next_item = re.search(r"\bItem\s+\d\.\d{2}\b", text[match.end() :], re.IGNORECASE)
+    next_item = re.search(
+        r"(?i:\bItem\s+\d\.\d{2})(?=\D|$)(?=\s*(?:[—–-]|[A-Z]))",
+        text[match.end() :],
+    )
     end = match.end() + next_item.start() if next_item else len(text)
     return " ".join(text[match.end() : end].split())
 
@@ -776,6 +779,27 @@ def _summary_sentences(section: str, *, item: str) -> str:
                 "vesting terms; no new named leadership transition was identified "
                 "in the item text."
             )
+    elif item == "1.01" and "senior notes" in section.casefold():
+        if re.search(
+            r"\bcompleted\b.{0,80}\b(?:offering|issuance)\b",
+            section,
+            re.IGNORECASE,
+        ):
+            return (
+                "The issuer completed a public senior-notes offering and issuance "
+                "under the disclosed agreement."
+            )
+        if "pricing agreement" in section.casefold():
+            return (
+                "The issuer entered into a pricing agreement for a public "
+                "senior-notes offering."
+            )
+        selected = sentences[:3]
+    elif item == "2.03" and "incorporat" in section.casefold():
+        return (
+            "The issuer incorporated the financing-obligation disclosure from "
+            "Item 1.01 by reference."
+        )
     else:
         selected = sentences[:3]
     return _truncate_complete_text(" ".join(selected) or section, 1000)
@@ -802,7 +826,7 @@ def _protected_sentences(text: str) -> list[str]:
 
 def _leadership_action_sentences(sentences: list[str]) -> list[str]:
     action = re.compile(
-        r"\b(?:retir|promot|resign|appoint|elect|depart|ceased|terminate)\w*\b",
+        r"\b(?:retir|promot|resign|appoint|elect|depart|ceased|terminate|named)\w*\b",
         re.IGNORECASE,
     )
     candidates = []
@@ -864,6 +888,12 @@ def _named_leadership_transition(text: str) -> bool:
     return bool(
         re.search(rf"{person}.{{0,180}}\b{action}\b", compact, re.IGNORECASE)
         or re.search(rf"\b{action}\b.{{0,180}}{person}", compact, re.IGNORECASE)
+        or re.search(
+            r"\b[A-Z][A-Za-z'’-]+\s+[A-Z][A-Za-z'’-]+\s+was\s+named\s+to\b"
+            r".{0,180}\b(?:board|director|officer|chief|president)\b",
+            compact,
+            re.IGNORECASE,
+        )
     )
 
 
@@ -920,7 +950,7 @@ def _item_content_complete(item: str, section: str) -> bool:
         "1.01": r"\b(?:agreement|facility|contract|amendment)\b",
         "2.02": r"\b(?:results|operations|financial condition|earnings|exhibit)\b",
         "2.03": r"\b(?:debt|obligation|credit|facility|agreement|incorporated by reference)\b",
-        "5.02": r"\b(?:appoint|elect|resign|retir|promot|depart|ceased|terminate)\w*\b",
+        "5.02": r"\b(?:appoint|elect|resign|retir|promot|depart|ceased|terminate|named)\w*\b",
         "5.07": r"\b(?:vote|voting|shares|proposal|elected)\w*\b",
     }
     pattern = required_patterns.get(item)

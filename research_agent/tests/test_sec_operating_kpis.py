@@ -116,6 +116,130 @@ def test_operating_kpi_numbers_are_owned_by_the_nearest_semantic_label() -> None
     assert any("average_ticket" in key and value == 0.008 for key, value in metric_values.items())
 
 
+def test_transaction_financing_amounts_have_distinct_semantic_owners() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="TEST",
+        cik="1800",
+        accession_number="0001628280-26-050134",
+        filing_date="2026-07-28",
+        primary_document="test.htm",
+        html_documents=[
+            """
+            <p>Abbott completed the acquisition of Exact Sciences for approximately
+            $20.6 billion. Abbott issued $20.0 billion of debt to finance the
+            acquisition. Under the acquisition agreement, Abbott paid $105 per
+            common share in cash. As part of the acquisition, Abbott assumed
+            approximately $2.8 billion of Exact Sciences debt.</p>
+            """
+        ],
+        retrieved_at="2026-08-13T12:00:00Z",
+        report_date="2026-06-30",
+        report_period_months=3,
+    )
+
+    metrics = {
+        metric["metric_name"]: metric["value"]
+        for event in payload["events"]
+        for metric in event["numeric_evidence"]
+        if metric["mapping_status"] == "mapped"
+    }
+    assert metrics["operating_kpi_acquisition_total_consideration_3m_2026-06-30_amount"] == 20_600_000_000
+    assert metrics["operating_kpi_acquisition_debt_issued_3m_2026-06-30_amount"] == 20_000_000_000
+    assert metrics["operating_kpi_acquisition_purchase_price_per_share_3m_2026-06-30_amount"] == 105
+    assert metrics["operating_kpi_acquisition_assumed_debt_3m_2026-06-30_amount"] == 2_800_000_000
+
+
+def test_inline_year_dividend_table_keeps_year_and_per_share_identity() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="TEST",
+        cik="1800",
+        accession_number="0001628280-26-050134",
+        filing_date="2026-07-28",
+        primary_document="test.htm",
+        html_documents=[
+            "<p>Cash dividends declared on common shares "
+            "(per share — 2026: $0.63; 2025: $0.59)</p>"
+        ],
+        retrieved_at="2026-08-13T12:00:00Z",
+        report_date="2026-06-30",
+        report_period_months=3,
+    )
+
+    metrics = [
+        metric
+        for event in payload["events"]
+        for metric in event["numeric_evidence"]
+    ]
+    assert [metric["period_end"] for metric in metrics] == [
+        "2026-06-30",
+        "2025-06-30",
+    ]
+    assert [metric["unit"] for metric in metrics] == [
+        "currency_per_share",
+        "currency_per_share",
+    ]
+    assert [metric["value"] for metric in metrics] == [0.63, 0.59]
+
+
+def test_distant_dividend_mention_does_not_own_pension_amounts() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="TEST",
+        cik="1800",
+        accession_number="0001628280-26-010185",
+        filing_date="2026-02-20",
+        primary_document="test.htm",
+        html_documents=[
+            "<p>Abbott funded $309 million in 2025 and $349 million in 2024 to "
+            "defined benefit pension plans. Abbott expects to contribute "
+            "$85 million in 2026. Operating cash flow is expected to exceed "
+            "capital expenditures and cash dividends.</p>"
+        ],
+        retrieved_at="2026-08-13T12:00:00Z",
+        report_date="2025-12-31",
+        report_period_months=12,
+    )
+
+    metrics = [
+        metric
+        for event in payload["events"]
+        for metric in event["numeric_evidence"]
+    ]
+    assert metrics
+    assert all("cash_dividends" not in metric["metric_name"] for metric in metrics)
+    assert all("pension_contributions" in metric["metric_name"] for metric in metrics)
+    assert all(metric["mapping_status"] == "mapped" for metric in metrics)
+
+
+def test_spelled_percent_is_not_scaled_by_nearby_billions() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="TEST",
+        cik="1800",
+        accession_number="0001628280-26-010185",
+        filing_date="2026-02-20",
+        primary_document="test.htm",
+        html_documents=[
+            "<p>Core Laboratory segment growth was driven as sales increased "
+            "2.1 percent in 2025 "
+            "and 5.6 percent in 2024. "
+            "Sales later totaled $7.6 billion.</p>"
+        ],
+        retrieved_at="2026-08-13T12:00:00Z",
+        report_date="2025-12-31",
+        report_period_months=12,
+    )
+
+    percent_metrics = [
+        metric
+        for event in payload["events"]
+        for metric in event["numeric_evidence"]
+        if metric["dimension"] == "percent"
+    ]
+    assert [metric["value"] for metric in percent_metrics] == pytest.approx(
+        [0.021, 0.056]
+    )
+    assert all(metric["source_scale"] == "percent" for metric in percent_metrics)
+
+
 def test_net_sales_total_is_not_owned_by_a_later_comparable_sales_explanation() -> None:
     payload = build_sec_operating_kpi_payload(
         ticker="TEST",

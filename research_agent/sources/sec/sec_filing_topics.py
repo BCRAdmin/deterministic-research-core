@@ -124,10 +124,11 @@ def build_sec_filing_topic_payload(
                     ),
                 )
             )
-        matches = [
-            excerpt
-            for _, _, excerpt in sorted(candidates, reverse=True)[:3]
-        ]
+        matches = list(
+            dict.fromkeys(
+                excerpt for _, _, excerpt in sorted(candidates, reverse=True)
+            )
+        )[:3]
         status = "found_specific_disclosure" if matches else "reviewed_no_specific_disclosure"
         source_id = f"SEC_CIK{cik_digits}_{accession_digits}_TOPIC_{topic.upper()}"
         dispositions.append(
@@ -187,6 +188,7 @@ def build_sec_filing_topic_payload(
                     ),
                 }
             )
+    _disambiguate_event_metric_names(events)
     return {
         "contract_id": TOPIC_CONTRACT_ID,
         "contract_version": TOPIC_CONTRACT_VERSION,
@@ -205,6 +207,22 @@ def build_sec_filing_topic_payload(
         "topic_dispositions": dispositions,
         "events": events,
     }
+
+
+def _disambiguate_event_metric_names(events: list[dict[str, Any]]) -> None:
+    """Keep ambiguous repeated labels in inventory without promoting them."""
+
+    occurrences: dict[str, list[tuple[int, dict[str, Any]]]] = {}
+    for event_index, event in enumerate(events, start=1):
+        for metric in event.get("numeric_evidence") or []:
+            metric_name = str(metric.get("metric_name") or "")
+            if metric_name:
+                occurrences.setdefault(metric_name, []).append((event_index, metric))
+    for metric_name, matches in occurrences.items():
+        if len(matches) < 2:
+            continue
+        for _event_index, metric in matches:
+            metric["mapping_status"] = "unresolved"
 
 
 def _condense_topic_excerpt(text: str, *, limit: int = 950) -> str:
@@ -381,10 +399,35 @@ def _topic_numeric_evidence(
                 "currency": currency,
                 "column_label": None,
                 "effective_asof_dates": effective_asof_dates,
+                "raw_text": _topic_numeric_clause(summary, match),
+                "normalized_magnitude": abs(value),
+                "signed_value": value,
+                "direction": "neutral",
+                "impact": "neutral",
+                "mapping_status": (
+                    "unresolved" if "_unmapped_" in metric_name else "mapped"
+                ),
                 **metric_period_contract,
             }
         )
     return values
+
+
+def _topic_numeric_clause(summary: str, match: re.Match[str]) -> str:
+    start = max(
+        summary.rfind(".", 0, match.start()),
+        summary.rfind(";", 0, match.start()),
+    )
+    end_candidates = [
+        index
+        for index in (
+            summary.find(".", match.end()),
+            summary.find(";", match.end()),
+        )
+        if index >= 0
+    ]
+    end = min(end_candidates) + 1 if end_candidates else len(summary)
+    return " ".join(summary[start + 1 : end].split())
 
 
 def _effective_asof_dates(summary: str) -> list[str]:
@@ -460,6 +503,17 @@ def _topic_metric_name(
         else:
             role = "interest_rate"
         return f"filing_{topic}_{role}"
+    if topic == "legal_contingencies":
+        before = summary[max(0, match.start() - 180) : match.start()].casefold()
+        after = summary[match.end() : match.end() + 120].casefold()
+        if re.search(r"\b(?:verdict|award(?:ed|ing)?)\b", before):
+            return "filing_legal_contingencies_verdict_damages"
+        if re.search(r"\brecorded accrual\b|\baccrual balance\b", before[-100:]):
+            return "filing_legal_contingencies_recorded_accrual"
+        if "range of possible loss" in before:
+            if re.search(r"^\s*to\b", after):
+                return "filing_legal_contingencies_possible_loss_range_low"
+            return "filing_legal_contingencies_possible_loss_range_high"
     following_context = summary[match.end() : match.end() + 90].casefold()
     if re.search(r"holdbacks? related to prior", following_context):
         return f"filing_{topic}_acquisition_prior_period_holdback"

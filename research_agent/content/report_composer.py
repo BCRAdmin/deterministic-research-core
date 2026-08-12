@@ -368,6 +368,7 @@ def _render_investment_thesis(
         f"- Thesis anchor: `{preferred}` follows the measured fundamentals, "
         "valuation status and financial-risk screen. Technical evidence is a "
         "separate timing overlay.",
+        f"- Evidence anchor: `ROOM16_{data_packet.ticker}_DETERMINISTIC_CALCULATIONS`.",
     ]
     if revenue is not None:
         parts.append(f"- Fundamental basis: revenue scale is `{_fmt_money(revenue, currency)}`.")

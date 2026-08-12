@@ -317,3 +317,22 @@ def _build_mdb_fixture_ledger():
             ),
         ],
     )
+
+def test_evidence_item_infers_per_share_dimension_from_currency_unit() -> None:
+    item = EvidenceItem(
+        evidence_id="TEST_EPS_GUIDANCE",
+        ticker="TEST",
+        claim_type="guidance",
+        source_id="TEST_SOURCE",
+        source_type="sec_filing",
+        authority_rank=1,
+        statement="Adjusted EPS guidance is $5.45 to $5.60.",
+        value=5.6,
+        unit="USD_per_share",
+        supports_metrics=["guidance_adjusted_eps_high"],
+    )
+
+    assert item.dimension == "per_share"
+    assert item.currency == "USD"
+    assert item.display_unit == "USD_per_share"
+    assert item.period_kind == "guidance"

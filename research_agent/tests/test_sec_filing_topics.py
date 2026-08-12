@@ -103,6 +103,63 @@ def test_filing_topic_scanner_prioritizes_specific_current_legal_disclosures() -
     assert len({event["source_id"] for event in events}) == 3
 
 
+def test_separate_legal_excerpts_cannot_reuse_one_fact_metric_name() -> None:
+    payload = build_sec_filing_topic_payload(
+        ticker="TEST",
+        cik="123456",
+        accession_number="0000123456-26-000004",
+        filing_date="2026-07-29",
+        primary_document="test.htm",
+        html="""
+        <p>The first lawsuit seeks damages of $495 million and remains pending
+        before the district court.</p>
+        <p>A separate environmental proceeding seeks remediation of $120 million
+        and remains subject to an administrative appeal.</p>
+        """,
+        retrieved_at="2026-08-02T12:00:00Z",
+    )
+
+    legal_metrics = [
+        metric
+        for event in payload["events"]
+        if event["event_type"] == "filing_legal_contingencies"
+        for metric in event["numeric_evidence"]
+    ]
+    assert len(legal_metrics) == 2
+    assert all(metric["mapping_status"] == "unresolved" for metric in legal_metrics)
+    assert all("_event_" not in metric["metric_name"] for metric in legal_metrics)
+
+
+def test_legal_numbers_map_verdict_loss_range_and_recorded_accrual() -> None:
+    payload = build_sec_filing_topic_payload(
+        ticker="TEST",
+        cik="123456",
+        accession_number="0000123456-26-000005",
+        filing_date="2026-07-29",
+        primary_document="test.htm",
+        html="""
+        <p>The lawsuit produced a plaintiff verdict awarding $495 million in
+        damages, and the matter remains on appeal.</p>
+        <p>For these legal proceedings, the company estimates the range of possible loss to be from
+        approximately $120 million to $530 million. The recorded accrual
+        balance was approximately $510 million.</p>
+        """,
+        retrieved_at="2026-08-02T12:00:00Z",
+    )
+
+    metrics = {
+        metric["metric_name"]: metric
+        for event in payload["events"]
+        if event["event_type"] == "filing_legal_contingencies"
+        for metric in event["numeric_evidence"]
+    }
+    assert metrics["filing_legal_contingencies_verdict_damages_usd"]["value"] == 495_000_000
+    assert metrics["filing_legal_contingencies_possible_loss_range_low_usd"]["value"] == 120_000_000
+    assert metrics["filing_legal_contingencies_possible_loss_range_high_usd"]["value"] == 530_000_000
+    assert metrics["filing_legal_contingencies_recorded_accrual_usd"]["value"] == 510_000_000
+    assert all(metric["mapping_status"] == "mapped" for metric in metrics.values())
+
+
 def test_topic_numbers_keep_semantic_cardinality_and_distinct_debt_coupons() -> None:
     payload = build_sec_filing_topic_payload(
         ticker="WM",

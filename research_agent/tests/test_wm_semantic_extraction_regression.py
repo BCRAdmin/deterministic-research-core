@@ -67,6 +67,7 @@ def test_wm_dividend_rates_periods_signs_and_run_rates_are_typed():
 
     prior_dividend = next(item for item in facts if item["value"] == 669_000_000)
     rate_2025 = next(item for item in facts if item["value"] == 0.825)
+    rate_2026 = next(item for item in facts if item["value"] == 0.945)
     reduction = next(item for item in facts if item["raw_value"] == 0.6)
     headwind = next(item for item in facts if item["raw_value"] == 70)
     run_rate = next(item for item in facts if item["value"] == 123_000_000)
@@ -80,6 +81,11 @@ def test_wm_dividend_rates_periods_signs_and_run_rates_are_typed():
         "rate",
         "per_share_per_quarter",
     )
+    assert "cash_dividends" in rate_2025["metric_name"]
+    assert "fy2025" in rate_2025["metric_name"]
+    assert "cash_dividends" in rate_2026["metric_name"]
+    assert "fy2026" in rate_2026["metric_name"]
+    assert rate_2026["mapping_status"] == "mapped"
     assert (reduction["value"], reduction["direction"], reduction["impact"]) == (
         -0.006,
         "decrease",
