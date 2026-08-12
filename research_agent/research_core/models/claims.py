@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -13,6 +13,9 @@ class ResearchClaim(BaseModel):
     evidence_metrics: List[str]
     metric_refs: List[str] = Field(default_factory=list)
     metric_values: Dict[str, float] = Field(default_factory=dict)
+    numeric_mentions: List[str] = Field(default_factory=list)
+    numeric_bindings: List[Dict[str, Any]] = Field(default_factory=list)
+    render_disposition: str = "included_main_report"
     evidence_ids: List[str] = Field(default_factory=list)
     source_ids: List[str]
     confidence: str

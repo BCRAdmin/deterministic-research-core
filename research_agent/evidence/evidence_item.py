@@ -48,6 +48,13 @@ class EvidenceItem(BaseModel):
     formula_operands: Dict[str, float] = Field(default_factory=dict)
     raw_value: Optional[float] = None
     normalized_value: Optional[float] = None
+    fact_type: Optional[str] = None
+    raw_text: Optional[str] = None
+    normalized_magnitude: Optional[float] = None
+    signed_value: Optional[float] = None
+    direction: str = "neutral"
+    impact: str = "neutral"
+    rate_basis: Optional[str] = None
     source_scale: Optional[str] = None
     source_unit: Optional[str] = None
     source_sign: Optional[Literal[-1, 1]] = None
@@ -57,6 +64,14 @@ class EvidenceItem(BaseModel):
     column_metric: Optional[str] = None
     segment: Optional[str] = None
     source_cell_status: Optional[str] = None
+    table_id: Optional[str] = None
+    cell_id: Optional[str] = None
+    row_key: Optional[str] = None
+    column_key: Optional[str] = None
+    source_locator: Optional[str] = None
+    is_zero: bool = False
+    is_not_applicable: bool = False
+    is_missing: bool = False
     source_accession_number: Optional[str] = None
     source_document: Optional[str] = None
     source_document_role: Optional[str] = None
@@ -91,6 +106,7 @@ class EvidenceItem(BaseModel):
             "comparison",
             "trailing_twelve_months",
             "guidance",
+            "rate",
             "not_applicable",
             "unknown",
         ]
@@ -103,6 +119,8 @@ class EvidenceItem(BaseModel):
             "period_over_period_comparison",
             "trailing_twelve_months",
             "guidance_range",
+            "effective_rate",
+            "annualized_run_rate",
             "not_applicable",
             "unknown",
         ]
@@ -199,7 +217,26 @@ class EvidenceItem(BaseModel):
                 "comparison": "period_over_period_comparison",
                 "trailing_twelve_months": "trailing_twelve_months",
                 "guidance": "guidance_range",
+                "rate": (
+                    "annualized_run_rate"
+                    if self.fact_type == "annualized_run_rate"
+                    else "effective_rate"
+                ),
                 "not_applicable": "not_applicable",
                 "unknown": "unknown",
             }[self.period_kind]
+        if self.normalized_magnitude is None and self.value is not None:
+            self.normalized_magnitude = abs(float(self.value))
+        if self.signed_value is None and self.value is not None:
+            self.signed_value = float(self.value)
+        if self.raw_text is None:
+            self.raw_text = self.statement
+        if self.source_cell_status == "not_applicable_dash":
+            self.is_not_applicable = True
+        if self.is_not_applicable:
+            if any(value is not None for value in (self.value, self.raw_value, self.normalized_value, self.normalized_magnitude, self.signed_value)):
+                raise ValueError("not_applicable_zero_collision")
+            self.is_zero = False
+        elif self.value == 0:
+            self.is_zero = True
         return self

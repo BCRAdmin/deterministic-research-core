@@ -28,6 +28,7 @@ from research_agent.content.publish_composer import (
     _final_rating_section,
     _fcf_definition_reconciliation,
     _generic_investment_thesis,
+    _measurement_window,
     _current_kpi_claims,
     _operating_driver_claims,
     _fmt_money as _publish_money,
@@ -50,6 +51,12 @@ from research_agent.research_core.models.data_packet import (
 )
 from research_agent.research_core.models.metrics_packet import MetricsPacket, ValuationScenario
 from research_agent.research_core.models.validation_report import ValidationReport
+
+
+def test_measurement_window_converts_internal_interval_syntax() -> None:
+    assert _measurement_window(None, None, "2025-07-01..2026-06-30") == (
+        "2025-07-01 to 2026-06-30"
+    )
 
 
 def _load_packet(ticker: str):
@@ -523,6 +530,8 @@ def test_fcf_definition_table_deduplicates_the_same_guidance_bound() -> None:
 
     assert table.count("$3.75B") == 1
     assert table.count("$3.85B") == 1
+    assert "2026-01-01 to 2026-12-31" in table
+    assert "2026-01-01..2026-12-31" not in table
 
 
 def _add_exact_metric_evidence(data, metrics, ledger):
@@ -2572,7 +2581,8 @@ def test_named_ticker_uses_generic_authority_report_without_legacy_copy():
     final_section = report.partition("## Final Rating & Review Conditions")[2].partition(
         "## Evidence Appendix"
     )[0]
-    assert f"Claim `{rating_claim.claim_id}`" in final_section
+    assert f"room16-lineage claim={rating_claim.claim_id}" in final_section
+    assert f"Claim `{rating_claim.claim_id}`" not in final_section
     assert rating_claim.claim not in final_section
     assert "$12.35B" in report
     assert "$2.35B" in report

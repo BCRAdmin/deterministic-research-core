@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -52,6 +52,23 @@ class ExtractedNumericClaim(BaseModel):
     line_number: int
     possible_metric: Optional[str] = None
     period_hint: Optional[str] = None
+    audit_method: str = "unresolved"
+    claim_id: Optional[str] = None
+    fact_id: Optional[str] = None
+    evidence_id: Optional[str] = None
+    metric_id: Optional[str] = None
+    source_id: Optional[str] = None
+    source_locator: Optional[str] = None
+    period_start: Optional[str] = None
+    period_end: Optional[str] = None
+    comparison_period_start: Optional[str] = None
+    comparison_period_end: Optional[str] = None
+    currency: Optional[str] = None
+    scale: Optional[str] = None
+    direction: Optional[str] = None
+    signed_value: Optional[float] = None
+    derivation: Optional[dict[str, Any]] = None
+    source_start: Optional[int] = None
 
 
 class AuditIssue(BaseModel):

@@ -245,8 +245,8 @@ def _render_claim_section(grouped: dict[str, list[ResearchClaim]], section: str)
     for claim in claims:
         evidence_ids = ", ".join(claim.evidence_ids)
         lines.append(
-            f"- {claim.claim} Claim ID: `{claim.claim_id}`. "
-            f"Evidence IDs: `{evidence_ids}`."
+            f"- {claim.claim} <!-- room16-lineage claim={claim.claim_id} "
+            f"evidence={evidence_ids.replace(' ', '')} -->"
         )
         if claim.counterargument:
             lines.append(f"  Counterargument: {claim.counterargument}")

@@ -46,6 +46,7 @@ def _extract_line_claims(line: str, line_number: int) -> list[ExtractedNumericCl
                 unit="date",
                 nearby_text=nearby,
                 line_number=line_number,
+                source_start=match.start(),
             )
         )
 
@@ -67,6 +68,7 @@ def _extract_line_claims(line: str, line_number: int) -> list[ExtractedNumericCl
                 nearby_text=nearby,
                 line_number=line_number,
                 metric_context=_metric_context(line, match.start(), match.end()),
+                source_start=match.start(),
             )
         )
 
@@ -83,6 +85,7 @@ def _extract_line_claims(line: str, line_number: int) -> list[ExtractedNumericCl
                 nearby_text=nearby,
                 line_number=line_number,
                 metric_context=metric_context,
+                source_start=match.start(),
             )
         )
 
@@ -95,10 +98,11 @@ def _extract_line_claims(line: str, line_number: int) -> list[ExtractedNumericCl
                 nearby_text=nearby,
                 line_number=line_number,
                 metric_context=_metric_context(line, match.start(), match.end()),
+                source_start=match.start(),
             )
         )
 
-    return claims
+    return sorted(claims, key=lambda item: item.source_start or 0)
 
 
 def _inherited_currency_scale(
@@ -149,6 +153,7 @@ def _claim(
     nearby_text: str,
     line_number: int,
     metric_context: Optional[str] = None,
+    source_start: Optional[int] = None,
 ) -> ExtractedNumericClaim:
     return ExtractedNumericClaim(
         raw_text=raw_text,
@@ -161,6 +166,7 @@ def _claim(
             unit=unit,
         ),
         period_hint=_infer_period_hint(nearby_text),
+        source_start=source_start,
     )
 
 
@@ -256,9 +262,14 @@ def _infer_period_hint(text: str) -> str:
 
 def _dedupe_claims(claims: list[ExtractedNumericClaim]) -> list[ExtractedNumericClaim]:
     deduped: list[ExtractedNumericClaim] = []
-    seen: set[tuple[int, str, str]] = set()
+    seen: set[tuple[int, int | None, str, str]] = set()
     for claim in claims:
-        key = (claim.line_number, claim.raw_text, claim.unit or "")
+        key = (
+            claim.line_number,
+            claim.source_start,
+            claim.raw_text,
+            claim.unit or "",
+        )
         if key in seen:
             continue
         seen.add(key)

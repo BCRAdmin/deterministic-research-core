@@ -1120,7 +1120,10 @@ def _claim_evidence_reference(claim: ResearchClaim, limit: int | None = None) ->
         return ""
     selected = evidence_ids if limit is None else evidence_ids[:limit]
     claim_id = str(claim.claim_id or "UNIDENTIFIED_CLAIM")
-    return f"Claim `{claim_id}` · Evidence: `{', '.join(selected)}`."
+    return (
+        f"<!-- room16-lineage claim={claim_id} "
+        f"evidence={','.join(selected)} -->"
+    )
 
 
 def _combined_evidence_reference(
@@ -1422,18 +1425,17 @@ def _issuer_specific_operating_test(
     is_confirmation = "confirmation" in heading.casefold()
     observations: list[str] = []
     for label, claim in preferred:
-        metric_names = [
-            str(metric).replace("operating_kpi_", "").replace("_", " ")
-            for metric in claim.metric_values
-        ]
-        metric_basis = ", ".join(metric_names[:2]) or "source-bound operating disclosure"
+        source_text = _clean_internal_text(_claim_text(claim))
+        source_text = re.split(r"(?<=[.!?])\s+", source_text, maxsplit=1)[0].strip()
+        source_text = source_text.rstrip(".!?")
         observations.append(
-            f"**{label}:** `{claim.claim_id}` "
+            f"**{label}:** Reported evidence: {source_text}; "
             + (
-                "must confirm the operating direction."
+                "The next comparable filing must confirm that direction."
                 if is_confirmation
-                else f"tests {metric_basis}."
+                else "This is the source-bound operating test for the thesis."
             )
+            + f" {_claim_evidence_reference(claim)}"
         )
     conclusion = (
         "A stronger case requires these issuer-bound signals to confirm one another "
@@ -1442,7 +1444,9 @@ def _issuer_specific_operating_test(
         else "The thesis weakens if these source-bound drivers stop persisting or no "
         "longer translate into cash conversion."
     )
-    return f"**{heading}.** " + " ".join(observations) + f" {conclusion}"
+    return "\n".join(
+        [f"**{heading}.**", *observations, conclusion]
+    )
 
 
 def _final_rating_section(
@@ -1804,9 +1808,9 @@ def _valuation_scenario_table(
         if any(metric.startswith("dcf_") for metric in item.supports_metrics)
     ]
     lines.append(
-        "Table claim `DCF_SCENARIO_VIEW` · Evidence: `"
-        + ", ".join(dict.fromkeys(evidence_ids))
-        + "`."
+        "<!-- room16-table-lineage id=DCF_SCENARIO_VIEW evidence="
+        + ",".join(dict.fromkeys(evidence_ids))
+        + " -->"
     )
     return "\n".join(lines)
 
@@ -2004,6 +2008,17 @@ def _table_text(text: str) -> str:
     return _clean_text(text).replace("|", "\\|")
 
 
+def _measurement_window(start: str | None, end: str | None, fallback: str) -> str:
+    """Render an interval as reader-facing prose, not internal range syntax."""
+    if start and end:
+        return f"{start} to {end}"
+    return re.sub(
+        r"\b(\d{4}-\d{2}-\d{2})\.\.(\d{4}-\d{2}-\d{2})\b",
+        r"\1 to \2",
+        fallback,
+    )
+
+
 def _fcf_definition_reconciliation(
     evidence_ledger: EvidenceLedger,
     *,
@@ -2033,15 +2048,46 @@ def _fcf_definition_reconciliation(
     ]
     if normalized:
         item = sorted(normalized, key=lambda value: value.evidence_id)[0]
+        normalized_window = _measurement_window(
+            item.period_start,
+            item.period_end,
+            item.period or "TTM",
+        )
         lines.append(
             "| Room16 normalized FCF (operating cash flow minus capital expenditure) "
-            f"| {item.period or 'TTM'} | {_fmt_money(item.value, item.currency or currency)} "
+            f"| {normalized_window} | {_fmt_money(item.value, item.currency or currency)} "
             "| Valuation denominator and normalized cash-conversion analysis |"
         )
     else:
         lines.append(
             "| Room16 normalized FCF | unavailable | unavailable | Not used until the formula is source-bound |"
         )
+    guidance_items = [
+        item
+        for item in issuer
+        if item.period_kind == "guidance"
+        and any("guidance" in metric for metric in item.supports_metrics)
+    ]
+    guidance_by_window: dict[tuple[str, str, str], list[EvidenceItem]] = {}
+    for item in guidance_items:
+        key = (
+            str(item.period_start or ""),
+            str(item.period_end or item.date or ""),
+            str(item.currency or currency).upper(),
+        )
+        guidance_by_window.setdefault(key, []).append(item)
+    guidance_used_ids: set[str] = set()
+    for (start, end, row_currency), items in sorted(guidance_by_window.items(), reverse=True):
+        values = sorted({float(item.value) for item in items if item.value is not None})
+        if len(values) < 2:
+            continue
+        guidance_used_ids.update(item.evidence_id for item in items)
+        lines.append(
+            f"| Issuer-defined FCF guidance | {_measurement_window(start, end, 'period not mapped')} | "
+            f"{_fmt_money(values[0], row_currency)}–{_fmt_money(values[-1], row_currency)} | "
+            "Forward-looking issuer range; not substituted for normalized TTM FCF |"
+        )
+
     seen_issuer_rows: set[tuple[str, float, str]] = set()
     issuer_rows: list[EvidenceItem] = []
     for item in sorted(
@@ -2049,6 +2095,8 @@ def _fcf_definition_reconciliation(
         key=lambda value: (value.period_end or value.date or "", value.evidence_id),
         reverse=True,
     ):
+        if item.evidence_id in guidance_used_ids:
+            continue
         row_key = (
             str(item.period_end or item.date or "period not mapped"),
             float(item.value),
@@ -2061,9 +2109,14 @@ def _fcf_definition_reconciliation(
         if len(issuer_rows) == 3:
             break
     for item in issuer_rows:
+        measurement_window = _measurement_window(
+            item.period_start,
+            item.period_end,
+            item.period or item.period_kind or "period not mapped",
+        )
         lines.append(
             "| Issuer-defined FCF | "
-            f"{item.period or item.period_kind or 'period not mapped'} | "
+            f"{measurement_window} | "
             f"{_fmt_money(item.value, item.currency or currency)} | "
             "Issuer presentation only; not substituted for normalized TTM FCF without a period-matched bridge |"
         )
@@ -2071,14 +2124,12 @@ def _fcf_definition_reconciliation(
         "Room16 and issuer-defined FCF are separate measures. Differences can reflect measurement windows, "
         "capital-expenditure definitions, sustainability investments or other issuer adjustments."
     )
-    evidence_ids = [
-        item.evidence_id for item in [*normalized[:1], *issuer_rows]
-    ]
+    evidence_ids = [item.evidence_id for item in [*normalized[:1], *guidance_items, *issuer_rows]]
     if evidence_ids:
         lines.append(
-            "Table claim `FCF_DEFINITION_RECONCILIATION` · Evidence: `"
-            + ", ".join(evidence_ids)
-            + "`."
+            "<!-- room16-table-lineage id=FCF_DEFINITION_RECONCILIATION evidence="
+            + ",".join(evidence_ids)
+            + " -->"
         )
     return "\n".join(lines)
 
@@ -2158,9 +2209,9 @@ def _projected_fcf_guidance_bridge(
         )
     )
     lines.append(
-        "Table claim `PROJECTED_FCF_GUIDANCE_BRIDGE` · Evidence: `"
-        + ", ".join(evidence_ids)
-        + "`."
+        "<!-- room16-table-lineage id=PROJECTED_FCF_GUIDANCE_BRIDGE evidence="
+        + ",".join(evidence_ids)
+        + " -->"
     )
     return "\n".join(lines)
 

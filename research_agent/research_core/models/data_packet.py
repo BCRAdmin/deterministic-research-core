@@ -32,9 +32,16 @@ class EventInfo(BaseModel):
 
 class OperatingKpiEvidence(BaseModel):
     metric_name: str
-    value: float
+    value: Optional[float] = None
+    fact_type: Optional[str] = None
+    raw_text: Optional[str] = None
+    normalized_magnitude: Optional[float] = None
+    signed_value: Optional[float] = None
+    direction: str = "neutral"
+    impact: str = "neutral"
+    rate_basis: Optional[str] = None
     raw_value: Optional[float] = None
-    unit: str
+    unit: Optional[str] = None
     source_scale: Optional[str] = None
     source_unit: Optional[str] = None
     source_sign: Optional[Literal[-1, 1]] = None
@@ -44,6 +51,14 @@ class OperatingKpiEvidence(BaseModel):
     column_metric: Optional[str] = None
     segment: Optional[str] = None
     source_cell_status: Optional[str] = None
+    table_id: Optional[str] = None
+    cell_id: Optional[str] = None
+    row_key: Optional[str] = None
+    column_key: Optional[str] = None
+    source_locator: Optional[str] = None
+    is_zero: bool = False
+    is_not_applicable: bool = False
+    is_missing: bool = False
     dimension: Optional[str] = None
     display_unit: Optional[str] = None
     period_kind: Optional[str] = None
@@ -83,6 +98,7 @@ class MaterialNewsEvent(BaseModel):
     source_content_sha256: Optional[str] = None
     source_content_bytes: Optional[int] = None
     legal_context: Optional[dict] = None
+    table_contracts: List[dict] = Field(default_factory=list)
     numeric_evidence: List[OperatingKpiEvidence] = Field(default_factory=list)
 
 

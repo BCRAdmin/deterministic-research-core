@@ -235,6 +235,78 @@ def test_primary_event_statement_supports_unstructured_numeric_details():
     assert altered.has_issue("NUMERIC_MISMATCH")
 
 
+def test_structured_lineage_uses_render_order_for_equal_and_near_values():
+    claim = ResearchClaim(
+        claim_id="WM_CLAIM_TEST",
+        agent="deterministic_content_generator",
+        claim=(
+            "3M ended 2026-06-30: $123.0M; 6M ended 2026-06-30: $123.0M; "
+            "close $226.85; 50-SMA $226.81."
+        ),
+        evidence_metrics=["metric_3m", "metric_6m", "close", "sma_50"],
+        metric_values={
+            "metric_3m": 123_000_000,
+            "metric_6m": 123_000_000,
+            "close": 226.85,
+            "sma_50": 226.8112,
+        },
+        evidence_ids=["E1", "E2", "E3", "E4"],
+        source_ids=["SOURCE-1"],
+        numeric_mentions=["$123.0M", "$123.0M", "$226.85", "$226.81"],
+        numeric_bindings=[
+            {"span_id": f"WM_CLAIM_TEST:number-{index}", "metric_id": metric, "fact_id": f"F{index}", "evidence_id": f"E{index}", "source_id": "SOURCE-1", "source_locator": f"cell:{index}", "report_text": text}
+            for index, (metric, text) in enumerate(
+                [("metric_3m", "$123.0M"), ("metric_6m", "$123.0M"), ("close", "$226.85"), ("sma_50", "$226.81")],
+                start=1,
+            )
+        ],
+        confidence="high",
+    )
+    values = [123_000_000, 123_000_000, 226.85, 226.8112]
+    units = ["USD", "USD", "USD", "USD"]
+    ledger = EvidenceLedger(
+        ticker="WM",
+        as_of_date="2026-08-11",
+        evidence_items=[
+            EvidenceItem(
+                evidence_id=f"E{index}",
+                ticker="WM",
+                claim_type="financial_metric",
+                source_id="SOURCE-1",
+                source_type="sec_filing",
+                authority_rank=1,
+                statement="Bound number.",
+                value=value,
+                unit=unit,
+                supports_metrics=[metric],
+            )
+            for index, (value, unit, metric) in enumerate(
+                zip(values, units, ["metric_3m", "metric_6m", "close", "sma_50"]),
+                start=1,
+            )
+        ],
+    )
+    markdown = (
+        claim.claim
+        + " <!-- room16-lineage claim=WM_CLAIM_TEST evidence=E1,E2,E3,E4 -->"
+    )
+
+    audit = audit_markdown_report(
+        markdown=markdown,
+        metrics_packet=simple_metrics(ticker="WM"),
+        evidence_ledger=ledger,
+        research_claims=[claim],
+    )
+
+    assert not audit.has_issue("MISSING_EVIDENCE_FOR_HARD_CLAIM")
+    assert [item.evidence_id for item in audit.numeric_claims if item.unit != "date"] == [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+    ]
+
+
 def test_dcf_assumptions_and_risk_coverage_map_to_their_own_metrics():
     markdown = (
         "The standardized reverse DCF implies a five-year FCF growth rate of "

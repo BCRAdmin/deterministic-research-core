@@ -18,7 +18,7 @@ from research_agent.research_core.models.data_packet import DataPacket
 
 
 FACT_LEDGER_CONTRACT_ID = "room16-canonical-fact-ledger"
-FACT_LEDGER_CONTRACT_VERSION = 4
+FACT_LEDGER_CONTRACT_VERSION = 5
 
 
 class FactLedgerError(ValueError):
@@ -103,10 +103,21 @@ def build_fact_ledger(
             period_kind=str(period_metadata["period_kind"]),
         )
         fact = {
+            "fact_id": f"{data_packet.ticker.upper()}_FACT_{metric_name.upper()}",
             "claim_id": f"{data_packet.ticker.upper()}_FACT_{metric_name.upper()}",
             "label": metric_name.replace("_", " "),
             "metric": metric_name,
             "value": metric_use["value"],
+            "fact_type": evidence.fact_type or _infer_fact_type(metric_name, evidence),
+            "raw_text": evidence.raw_text or evidence.statement,
+            "normalized_magnitude": evidence.normalized_magnitude,
+            "signed_value": evidence.signed_value if evidence.signed_value is not None else metric_use["value"],
+            "direction": evidence.direction,
+            "impact": evidence.impact,
+            "rate_basis": evidence.rate_basis,
+            "is_zero": evidence.is_zero,
+            "is_not_applicable": evidence.is_not_applicable,
+            "is_missing": evidence.is_missing,
             "unit": display_unit,
             "display_unit": display_unit,
             "dimension": dimension,
@@ -134,6 +145,11 @@ def build_fact_ledger(
             "column_metric": evidence.column_metric,
             "segment": evidence.segment,
             "source_cell_status": evidence.source_cell_status,
+            "table_id": evidence.table_id,
+            "cell_id": evidence.cell_id,
+            "source_locator": evidence.source_locator,
+            "mapping_status": "mapped",
+            "confidence": evidence.confidence,
             "source_accession_number": evidence.source_accession_number,
             "source_document": evidence.source_document,
             "source_document_role": evidence.source_document_role,
@@ -178,10 +194,21 @@ def build_fact_ledger(
         period_metadata = _period_metadata(metric_name, evidence)
         dimension, display_unit, currency = _typed_unit(evidence)
         fact = {
+            "fact_id": f"{data_packet.ticker.upper()}_FACT_{metric_name.upper()}",
             "claim_id": f"{data_packet.ticker.upper()}_FACT_{metric_name.upper()}",
             "label": metric_name.replace("_", " "),
             "metric": metric_name,
-            "value": 0.0,
+            "value": None,
+            "fact_type": evidence.fact_type or "reconciliation_component",
+            "raw_text": evidence.raw_text or "—",
+            "normalized_magnitude": None,
+            "signed_value": None,
+            "direction": evidence.direction,
+            "impact": evidence.impact,
+            "rate_basis": evidence.rate_basis,
+            "is_zero": False,
+            "is_not_applicable": True,
+            "is_missing": False,
             "unit": display_unit,
             "display_unit": display_unit,
             "dimension": dimension,
@@ -209,6 +236,11 @@ def build_fact_ledger(
             "column_metric": evidence.column_metric,
             "segment": evidence.segment,
             "source_cell_status": evidence.source_cell_status,
+            "table_id": evidence.table_id,
+            "cell_id": evidence.cell_id,
+            "source_locator": evidence.source_locator,
+            "mapping_status": "mapped",
+            "confidence": evidence.confidence,
             "source_accession_number": evidence.source_accession_number,
             "source_document": evidence.source_document,
             "source_document_role": evidence.source_document_role,
@@ -330,6 +362,8 @@ def _resolve_registered_source_ids(
 
 
 def _period_type(metric_name: str, evidence: EvidenceItem) -> str:
+    if evidence.period_kind == "rate":
+        return "run_rate" if evidence.fact_type == "annualized_run_rate" else "rate"
     if evidence.period_kind == "guidance":
         return "range"
     if evidence.period_kind == "comparison":
@@ -379,6 +413,14 @@ def _period_metadata(metric_name: str, evidence: EvidenceItem) -> dict[str, Any]
             )
         return {
             "period_kind": "guidance",
+            "period_start": evidence.period_start,
+            "period_end": evidence.period_end or evidence.date,
+        }
+    if evidence.period_kind == "rate":
+        if not evidence.period_start or not (evidence.period_end or evidence.date):
+            raise FactLedgerError(f"rate fact {metric_name} lacks an effective period")
+        return {
+            "period_kind": "rate",
             "period_start": evidence.period_start,
             "period_end": evidence.period_end or evidence.date,
         }
@@ -520,6 +562,7 @@ def _presentation_basis(
             "comparison": "period_over_period_comparison",
             "trailing_twelve_months": "trailing_twelve_months",
             "guidance": "guidance_range",
+            "rate": {"effective_rate", "annualized_run_rate"},
         }.get(period_kind)
         if isinstance(expected, set):
             if evidence.presentation_basis in expected:
@@ -533,6 +576,8 @@ def _presentation_basis(
         return "trailing_twelve_months"
     if period_kind == "guidance":
         return "guidance_range"
+    if period_kind == "rate":
+        return "annualized_run_rate" if evidence.fact_type == "annualized_run_rate" else "effective_rate"
     if period_kind == "duration":
         if evidence.duration_days is None:
             return "period_total"
@@ -611,8 +656,26 @@ def _validate_typed_facts(facts: list[dict[str, Any]]) -> None:
                 raise FactLedgerError(
                     f"comparison fact {metric} generic period is not the current period"
                 )
+        if period_kind == "rate" and basis not in {"effective_rate", "annualized_run_rate"}:
+            raise FactLedgerError(
+                f"rate fact {metric} has incompatible presentation basis {basis}"
+            )
         if fact.get("dimension") == "currency" and not fact.get("currency"):
             raise FactLedgerError(f"currency fact {metric} lacks ISO currency")
+
+
+def _infer_fact_type(metric_name: str, evidence: EvidenceItem) -> str:
+    if evidence.period_kind == "instant":
+        return "instant_value"
+    if evidence.period_kind == "guidance":
+        return "guidance_range"
+    if evidence.period_kind == "comparison":
+        return "year_over_year_change"
+    if evidence.period_kind == "rate":
+        return "per_share_rate" if evidence.dimension == "per_share" else "annual_rate"
+    if metric_name.endswith("_ttm"):
+        return "flow_value"
+    return "period_total"
 
 
 def _canonical_unit(

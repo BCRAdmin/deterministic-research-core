@@ -209,14 +209,32 @@ def _material_table_bindings(markdown: str) -> list[dict[str, object]]:
         trailer = " ".join(lines[index : min(len(lines), index + 4)])
         claim_match = re.search(r"Table claim\s+`([^`]+)`", trailer)
         evidence_match = re.search(r"Evidence:\s*`([^`]+)`", trailer)
+        hidden_match = re.search(
+            r"room16-table-lineage\s+id=([^\s>]+)\s+evidence=([^\s>]+)",
+            trailer,
+        )
+        table_claim_id = (
+            claim_match.group(1)
+            if claim_match
+            else hidden_match.group(1)
+            if hidden_match
+            else ""
+        )
+        evidence_text = (
+            evidence_match.group(1)
+            if evidence_match
+            else hidden_match.group(2)
+            if hidden_match
+            else ""
+        )
         bindings.append(
             {
                 "table_header": block[0][:120],
                 "trailer": trailer[:240],
-                "claim_id": claim_match.group(1) if claim_match else "",
+                "claim_id": table_claim_id,
                 "evidence_ids": (
-                    [value.strip() for value in evidence_match.group(1).split(",") if value.strip()]
-                    if evidence_match
+                    [value.strip() for value in evidence_text.split(",") if value.strip()]
+                    if evidence_text
                     else []
                 ),
             }

@@ -183,3 +183,32 @@ def test_visible_citation_gate_blocks_truncated_evidence_join():
 
     with pytest.raises(ValueError, match="EVIDENCE-002"):
         validate_visible_citation_completeness(markdown, [claim])
+
+
+def test_visible_citation_gate_accepts_hidden_table_lineage():
+    markdown = """| Metric | Value |
+|---|---:|
+| Revenue | $100 million |
+
+<!-- room16-table-lineage id=REVENUE_TABLE evidence=EVIDENCE-001 -->
+"""
+    ledger = EvidenceLedger(
+        ticker="WM",
+        as_of_date="2026-08-11",
+        evidence_items=[
+            EvidenceItem(
+                evidence_id="EVIDENCE-001",
+                ticker="WM",
+                claim_type="financial_metric",
+                source_id="SOURCE-001",
+                source_type="sec_filing",
+                authority_rank=1,
+                statement="Revenue evidence.",
+                supports_metrics=["revenue_ttm"],
+            )
+        ],
+    )
+
+    report = validate_visible_citation_completeness(markdown, [], ledger)
+
+    assert report["rendered_material_table_count"] == 1

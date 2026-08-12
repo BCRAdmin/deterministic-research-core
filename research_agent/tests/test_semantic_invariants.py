@@ -35,7 +35,13 @@ def _fixture():
         ),
         calibration_mode="standardized_uncalibrated",
         decision_inputs=[
-            SimpleNamespace(input_id="RISK-001")
+            SimpleNamespace(
+                input_id="RISK-001",
+                transmission="A reserve change can reduce cash flow.",
+                review_trigger="Reassess after the next issuer update.",
+                included_in_score=False,
+                exclusion_reason="No validated cross-company severity calibration.",
+            )
         ],
     )
     event = SimpleNamespace(
@@ -83,10 +89,12 @@ def test_semantic_invariant_allows_source_bound_structural_dash_fact():
             "source_cell_status": "not_applicable_dash",
             "evidence_ids": ["EVIDENCE-001"],
             "claim_bound_evidence_ids": [],
-            "value": 0.0,
-            "source_value": 0.0,
-            "source_scale": "million",
-            "source_sign": 1,
+            "value": None,
+            "source_value": None,
+            "source_scale": None,
+            "source_sign": None,
+            "is_not_applicable": True,
+            "is_zero": False,
         }
     )
 

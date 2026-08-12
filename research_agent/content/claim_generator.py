@@ -13,7 +13,11 @@ from research_agent.evidence.evidence_item import EvidenceItem
 from research_agent.evidence.evidence_ledger import EvidenceLedger, unit_for_metric
 from research_agent.reconciliation.canonical_financials import CanonicalFinancials
 from research_agent.research_core.models.claims import ResearchClaim
-from research_agent.research_core.models.data_packet import DataPacket, MaterialNewsEvent
+from research_agent.research_core.models.data_packet import (
+    DataPacket,
+    MaterialNewsEvent,
+    OperatingKpiEvidence,
+)
 from research_agent.research_core.models.metrics_packet import MetricsPacket
 from research_agent.research_core.models.validation_report import ValidationReport
 from research_agent.research_core.calculations.fundamentals import (
@@ -281,6 +285,28 @@ def _event_display_statement(statement: str) -> str:
     normalized = re.sub(r"^[•●·]+\s*", "", normalized)
     normalized = re.sub(r"\s*\([a-z]\)\s*$", "", normalized, flags=re.IGNORECASE)
     return normalized.strip()
+
+
+def _numeric_binding(
+    *,
+    ticker: str,
+    claim_id: str,
+    metric: OperatingKpiEvidence,
+    evidence: EvidenceItem,
+    span_index: int,
+) -> dict[str, object]:
+    """Bind one visible number to one exact fact/evidence/source chain."""
+
+    return {
+        "span_id": f"{claim_id}:number-{span_index}",
+        "report_text": str(metric.raw_text or metric.raw_value or metric.value),
+        "fact_id": f"{ticker.upper()}_FACT_{metric.metric_name.upper()}",
+        "evidence_id": evidence.evidence_id,
+        "metric_id": metric.metric_name,
+        "source_id": evidence.source_id,
+        "source_locator": evidence.source_locator or evidence.url or evidence.evidence_id,
+        "derivation": None,
+    }
 
 
 def _labeled_numeric_event_statement(
@@ -601,7 +627,7 @@ class _ClaimBuilder:
                     "This is not a probability of loss; "
                     "qualitative business-risk severity remains a human-review item."
                 ),
-                ["financial_risk_score"],
+                ["financial_risk_score", "financial_risk_coverage"],
                 "medium",
                 "high",
                 counterargument=(
@@ -1630,7 +1656,13 @@ class _ClaimBuilder:
         if numeric_event and not all(
             any(
                 metric.metric_name in evidence_item.supports_metrics
-                and evidence_item.value is not None
+                and (
+                    evidence_item.value is not None
+                    or (
+                        metric.is_not_applicable
+                        and evidence_item.is_not_applicable
+                    )
+                )
                 for evidence_item in evidence
             )
             for metric in event.numeric_evidence
@@ -1654,6 +1686,7 @@ class _ClaimBuilder:
         ]
         metric_values = {
             metric.metric_name: metric.value for metric in visible_metrics
+            if metric.value is not None
         }
         visible_metric_names = set(metric_values)
         evidence = [
@@ -1688,6 +1721,27 @@ class _ClaimBuilder:
                 evidence_metrics=list(metric_values),
                 metric_refs=list(metric_values),
                 metric_values=metric_values,
+                numeric_mentions=[
+                    str(metric.raw_text or metric.raw_value or metric.value)
+                    for metric in visible_metrics
+                    if metric.value is not None
+                ],
+                numeric_bindings=[
+                    _numeric_binding(
+                        ticker=self.data_packet.ticker,
+                        claim_id=claim_id,
+                        metric=metric,
+                        evidence=next(
+                            item
+                            for item in evidence
+                            if metric.metric_name in item.supports_metrics
+                        ),
+                        span_index=index,
+                    )
+                    for index, metric in enumerate(visible_metrics, start=1)
+                    if metric.value is not None
+                ],
+                render_disposition="included_main_report",
                 evidence_ids=[item.evidence_id for item in evidence],
                 source_ids=list(dict.fromkeys(item.source_id for item in evidence)),
                 confidence="high",
@@ -1824,6 +1878,40 @@ class _ClaimBuilder:
                     for metric, value in resolved_metric_values.items()
                     if value is not None
                 },
+                numeric_mentions=[str(value) for value in resolved_metric_values.values() if value is not None],
+                numeric_bindings=[
+                    {
+                        "span_id": f"{claim_id}:number-{index}",
+                        "report_text": str(resolved_metric_values[metric]),
+                        "fact_id": f"{self.data_packet.ticker.upper()}_FACT_{metric.upper()}",
+                        "evidence_id": next(
+                            item.evidence_id
+                            for item in evidence
+                            if metric in item.supports_metrics
+                            and item.value is not None
+                            and abs(float(item.value) - float(resolved_metric_values[metric])) <= max(1e-9, abs(float(resolved_metric_values[metric])) * 1e-9)
+                        ),
+                        "metric_id": metric,
+                        "source_id": next(
+                            item.source_id
+                            for item in evidence
+                            if metric in item.supports_metrics
+                            and item.value is not None
+                            and abs(float(item.value) - float(resolved_metric_values[metric])) <= max(1e-9, abs(float(resolved_metric_values[metric])) * 1e-9)
+                        ),
+                        "source_locator": next(
+                            (item.source_locator or item.url or item.evidence_id)
+                            for item in evidence
+                            if metric in item.supports_metrics
+                            and item.value is not None
+                            and abs(float(item.value) - float(resolved_metric_values[metric])) <= max(1e-9, abs(float(resolved_metric_values[metric])) * 1e-9)
+                        ),
+                        "derivation": None,
+                    }
+                    for index, metric in enumerate(metrics, start=1)
+                    if resolved_metric_values[metric] is not None
+                ],
+                render_disposition="included_main_report",
                 evidence_ids=[item.evidence_id for item in evidence],
                 source_ids=list(dict.fromkeys(item.source_id for item in evidence)),
                 confidence=confidence,
@@ -1862,6 +1950,8 @@ class _ClaimBuilder:
         if metric_name == "financial_risk_score":
             value = self.metrics.risk.financial_risk_score
             return float(value) if value is not None else None
+        if metric_name == "financial_risk_coverage":
+            return float(self.metrics.risk.coverage_ratio)
         if metric_name == "reverse_dcf_implied_fcf_growth":
             value = self.metrics.valuation.sensitivity.reverse_dcf_implied_fcf_growth
             return float(value) if value is not None else None
@@ -3145,8 +3235,15 @@ def _final_rating_metric_refs(metrics: MetricsPacket) -> list[str]:
 def _event_metric_is_visible(metric, text: str) -> bool:
     """Return True only when a source number survives into rendered claim prose."""
 
+    if metric.source_cell_status == "not_applicable_dash" or metric.is_not_applicable:
+        return "— (not applicable in source table)" in text
+    raw_text = _event_display_statement(str(metric.raw_text or ""))
+    if raw_text and raw_text.casefold() in _event_display_statement(text).casefold():
+        return True
     raw = metric.raw_value
     if raw is None:
+        if metric.value is None:
+            return False
         raw = metric.value * 100 if metric.unit == "percent" else metric.value
     token = f"{float(raw):.12g}"
     if "." in token:

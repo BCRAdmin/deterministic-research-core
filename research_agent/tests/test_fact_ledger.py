@@ -248,14 +248,15 @@ def test_fact_ledger_preserves_unclaimed_not_applicable_table_cells() -> None:
             source_type="sec_filing",
             authority_rank=1,
             statement="Integration costs table reports a dash for collection.",
-            value=0.0,
-            raw_value=0.0,
-            unit="currency",
-            currency="USD",
-            dimension="currency",
-            display_unit="USD",
-            source_scale="million",
-            source_sign=1,
+            value=None,
+            raw_value=None,
+            raw_text="—",
+            unit=None,
+            currency=None,
+            dimension="text",
+            display_unit=None,
+            source_scale=None,
+            source_sign=None,
             row_metric="integration_costs",
             column_metric="collection",
             segment="collection",
@@ -277,7 +278,10 @@ def test_fact_ledger_preserves_unclaimed_not_applicable_table_cells() -> None:
     )
 
     fact = next(item for item in payload["claims"] if item["metric"] == metric)
-    assert fact["value"] == 0.0
+    assert fact["value"] is None
+    assert fact["is_not_applicable"] is True
+    assert fact["is_zero"] is False
+    assert fact["currency"] is None
     assert fact["source_cell_status"] == "not_applicable_dash"
     assert fact["column_metric"] == "collection"
     assert fact["research_claim_ids"] == []

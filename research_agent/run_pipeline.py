@@ -339,6 +339,7 @@ def run_research_pipeline(
         ),
         decision_inputs=_decision_inputs(data_packet),
     )
+    _attach_material_event_decision_lineage(decision_packet, data_packet)
     decision_packet_path = save_json_packet(
         decision_packet, "decision_packet", ticker, as_of_date, packet_root=packet_root
     )
@@ -497,6 +498,39 @@ def run_research_pipeline(
         raise RuntimeError(
             "Material topic propagation gate rejected report generation: "
             + ", ".join(material_topic_coverage["blocking_claim_ids"])
+        )
+    _apply_claim_render_dispositions(
+        claims=claims,
+        material_events=data_packet.news_coverage.material_events,
+        coverage=material_topic_coverage,
+    )
+    analyst_claims_path = save_research_claims(
+        claims,
+        manifest_output_dir / "analyst_claims.json",
+    )
+    data_packet_path = save_json_packet(
+        data_packet,
+        "data_packet",
+        ticker,
+        as_of_date,
+        packet_root=packet_root,
+    )
+    semantic_invariant_report = verify_semantic_invariants(
+        fact_ledger=fact_ledger_payload,
+        evidence_ledger=evidence_ledger,
+        source_registry=source_registry,
+        claims=claims,
+        decision_packet=decision_packet,
+        material_events=data_packet.news_coverage.material_events,
+    )
+    semantic_invariant_report_path.write_text(
+        json.dumps(semantic_invariant_report, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    if not semantic_invariant_report["semantic_integrity_passed"]:
+        raise RuntimeError(
+            "Post-render semantic invariant gate rejected report generation: "
+            + ", ".join(semantic_invariant_report["blocking_failures"])
         )
     material_topic_coverage_path = manifest_output_dir / "material_topic_report_coverage.json"
     material_topic_coverage_path.parent.mkdir(parents=True, exist_ok=True)
@@ -1063,6 +1097,53 @@ def _material_topic_report_coverage(
     }
 
 
+def _apply_claim_render_dispositions(
+    *,
+    claims: Iterable[ResearchClaim],
+    material_events: Iterable[Any],
+    coverage: dict[str, Any],
+) -> None:
+    """Derive source disposition from actual claim render locations."""
+
+    state_to_disposition = {
+        "included_main_body": "included_main_report",
+        "appendix_only": "included_appendix",
+        "excluded_with_reason": "excluded_outside_scope",
+    }
+    disposition_by_claim = {
+        str(item.get("claim_id") or ""): state_to_disposition[str(item["render_state"])]
+        for item in coverage.get("claim_render_dispositions") or []
+    }
+    claim_list = list(claims)
+    for claim in claim_list:
+        claim.render_disposition = disposition_by_claim.get(
+            str(claim.claim_id or ""),
+            "excluded_outside_scope",
+        )
+    for event in material_events:
+        event_claims = [
+            claim
+            for claim in claim_list
+            if event.source_id in claim.source_ids
+        ]
+        if not event_claims:
+            continue
+        dispositions = {claim.render_disposition for claim in event_claims}
+        if "included_main_report" in dispositions:
+            event.report_disposition = "included_main_report"
+        elif "included_appendix" in dispositions:
+            event.report_disposition = "included_appendix"
+        elif "superseded" in dispositions:
+            event.report_disposition = "superseded"
+        else:
+            event.report_disposition = "excluded_outside_scope"
+        event.report_disposition_reason = (
+            "Aggregated deterministically from actual claim render locations: "
+            + ", ".join(sorted(dispositions))
+            + "."
+        )
+
+
 def _coverage_status_message(coverage_gaps: list[str]) -> str:
     if coverage_gaps == ["missing_risk_analysis"]:
         return (
@@ -1121,6 +1202,50 @@ def _decision_inputs(data_packet: DataPacket) -> list[dict[str, Any]]:
             }
         )
     return inputs
+
+
+def _attach_material_event_decision_lineage(decision_packet, data_packet: DataPacket) -> None:
+    """Propagate issuer-specific risk/driver evidence into the decision packet."""
+
+    event_by_id = {
+        event.source_id: event
+        for event in data_packet.news_coverage.material_events
+    }
+    for decision_input in decision_packet.decision_inputs:
+        event = event_by_id.get(decision_input.input_id)
+        if event is None:
+            continue
+        if decision_input.input_type == "current_risk":
+            summary = " ".join(str(event.summary or event.headline).split())
+            decision_packet.key_risks.append(
+                f"Issuer-specific material risk ({event.source_id}): {summary[:420]}"
+            )
+            decision_packet.triggered_rules.extend(
+                [
+                    f"current_material_risk_visible:{event.source_id}",
+                    (
+                        f"risk_excluded_from_score_pending_validated_severity_calibration:"
+                        f"{event.source_id}"
+                    ),
+                ]
+            )
+        else:
+            adverse_metrics = [
+                metric.metric_name
+                for metric in event.numeric_evidence
+                if metric.impact == "adverse" or metric.direction == "decrease"
+            ]
+            if adverse_metrics:
+                decision_packet.key_risks.append(
+                    "Issuer operating counter-signal: "
+                    + ", ".join(adverse_metrics)
+                    + f" ({event.source_id}); visible but unweighted pending calibration."
+                )
+                decision_packet.triggered_rules.append(
+                    f"current_operating_counter_signal_visible:{event.source_id}"
+                )
+    decision_packet.key_risks = list(dict.fromkeys(decision_packet.key_risks))
+    decision_packet.triggered_rules = list(dict.fromkeys(decision_packet.triggered_rules))
 
 
 def _issuer_management_counterposition(summary: str) -> str | None:

@@ -365,6 +365,7 @@ def _lint_numeric_claims(
         item.evidence_id: item
         for item in evidence_ledger.evidence_items
     } if evidence_ledger is not None else {}
+    claim_number_ordinals: dict[tuple[int, str], int] = {}
     for claim in claims:
         if claim.unit == "date" or _is_comparison_threshold(claim):
             continue
@@ -397,6 +398,34 @@ def _lint_numeric_claims(
             continue
         bound_claim = _research_claim_for_rendered_number(claim, claims_by_id)
         if bound_claim is not None:
+            ordinal_key = (claim.line_number, str(bound_claim.claim_id))
+            binding_ordinal = claim_number_ordinals.get(ordinal_key, 0)
+            claim_number_ordinals[ordinal_key] = binding_ordinal + 1
+            _attach_structured_numeric_lineage(
+                claim,
+                bound_claim,
+                evidence_by_id,
+                binding_ordinal=binding_ordinal,
+            )
+            if (
+                getattr(bound_claim, "numeric_bindings", None)
+                and claim.audit_method != "structured_lineage"
+            ):
+                issues.append(
+                    AuditIssue(
+                        severity="error",
+                        code="MISSING_EVIDENCE_FOR_HARD_CLAIM",
+                        metric="claim_bound_numeric_value",
+                        reported=claim.normalized_value,
+                        message=(
+                            f"Report number {claim.raw_text} has no unique "
+                            f"claim/fact/evidence/source lineage in {bound_claim.claim_id}."
+                        ),
+                        line_number=claim.line_number,
+                        raw_text=claim.raw_text,
+                    )
+                )
+                continue
             claim.possible_metric = _bound_metric_for_number(
                 claim,
                 bound_claim,
@@ -496,7 +525,110 @@ def _research_claim_for_rendered_number(
     claims_by_id: dict[str, object],
 ):
     match = re.search(r"\bClaim\s+`([^`]+)`", claim.nearby_text)
+    if not match:
+        match = re.search(r"room16-lineage\s+claim=([A-Za-z0-9_.:-]+)", claim.nearby_text)
     return claims_by_id.get(match.group(1)) if match else None
+
+
+def _attach_structured_numeric_lineage(
+    extracted: ExtractedNumericClaim,
+    research_claim,
+    evidence_by_id: dict[str, object],
+    *,
+    binding_ordinal: int | None = None,
+) -> None:
+    """Attach identity through explicit IDs; never infer identity from prose."""
+
+    if extracted.normalized_value is None:
+        return
+    bindings = list(getattr(research_claim, "numeric_bindings", []) or [])
+    candidates: list[tuple[dict[str, Any], object]] = []
+    for binding in bindings:
+        evidence = evidence_by_id.get(str(binding.get("evidence_id") or ""))
+        if evidence is None or evidence.value is None:
+            continue
+        if _numbers_close_for_evidence(
+            float(extracted.normalized_value),
+            float(evidence.value),
+            reported_unit=extracted.unit,
+            evidence_unit=evidence.unit,
+            nearby_text=extracted.nearby_text,
+        ):
+            candidates.append((binding, evidence))
+    if binding_ordinal is not None and binding_ordinal < len(bindings):
+        ordered_binding = bindings[binding_ordinal]
+        ordered_evidence = evidence_by_id.get(
+            str(ordered_binding.get("evidence_id") or "")
+        )
+        if (
+            ordered_evidence is not None
+            and ordered_evidence.value is not None
+            and _numbers_close_for_evidence(
+                float(extracted.normalized_value),
+                float(ordered_evidence.value),
+                reported_unit=extracted.unit,
+                evidence_unit=ordered_evidence.unit,
+                nearby_text=extracted.nearby_text,
+            )
+        ):
+            candidates = [(ordered_binding, ordered_evidence)]
+    identities = {
+        (
+            str(binding.get("fact_id") or ""),
+            str(binding.get("evidence_id") or ""),
+            str(binding.get("metric_id") or ""),
+        )
+        for binding, _ in candidates
+    }
+    if len(identities) > 1:
+        distances = [
+            (
+                abs(float(extracted.normalized_value) - float(evidence.value)),
+                binding,
+                evidence,
+            )
+            for binding, evidence in candidates
+        ]
+        best_distance = min(item[0] for item in distances)
+        nearest = [
+            (binding, evidence)
+            for distance, binding, evidence in distances
+            if math.isclose(distance, best_distance, rel_tol=1e-12, abs_tol=1e-9)
+        ]
+        if len(nearest) == 1:
+            candidates = nearest
+            identities = {
+                (
+                    str(nearest[0][0].get("fact_id") or ""),
+                    str(nearest[0][0].get("evidence_id") or ""),
+                    str(nearest[0][0].get("metric_id") or ""),
+                )
+            }
+    if len(identities) != 1:
+        extracted.audit_method = "structured_lineage_ambiguous" if candidates else "structured_lineage_missing"
+        return
+    binding, evidence = candidates[0]
+    extracted.audit_method = "structured_lineage"
+    extracted.claim_id = str(research_claim.claim_id)
+    extracted.fact_id = str(binding.get("fact_id") or "") or None
+    extracted.evidence_id = str(binding.get("evidence_id") or "") or None
+    extracted.metric_id = str(binding.get("metric_id") or "") or None
+    extracted.source_id = str(binding.get("source_id") or evidence.source_id or "") or None
+    extracted.source_locator = str(
+        binding.get("source_locator")
+        or getattr(evidence, "source_locator", None)
+        or getattr(evidence, "url", None)
+        or ""
+    ) or None
+    extracted.period_start = getattr(evidence, "period_start", None)
+    extracted.period_end = getattr(evidence, "period_end", None)
+    extracted.comparison_period_start = getattr(evidence, "comparison_period_start", None)
+    extracted.comparison_period_end = getattr(evidence, "comparison_period_end", None)
+    extracted.currency = getattr(evidence, "currency", None)
+    extracted.scale = getattr(evidence, "source_scale", None)
+    extracted.direction = getattr(evidence, "direction", None)
+    extracted.signed_value = getattr(evidence, "signed_value", None)
+    extracted.derivation = binding.get("derivation")
 
 
 def _number_matches_bound_claim_evidence(
@@ -637,6 +769,8 @@ def _table_evidence_line_map(markdown: str) -> dict[int, set[str]]:
             index += 1
         trailer = " ".join(lines[index : min(len(lines), index + 4)])
         match = re.search(r"Table claim\s+`[^`]+`\s+·\s+Evidence:\s*`([^`]+)`", trailer)
+        if not match:
+            match = re.search(r"room16-table-lineage\s+id=\S+\s+evidence=([^\s]+)", trailer)
         if not match:
             continue
         ids = {value.strip() for value in match.group(1).split(",") if value.strip()}
@@ -802,6 +936,8 @@ def _lint_evidence_grounding(
     issues: list[AuditIssue] = []
     seen: set[tuple[str, str]] = set()
     for claim in claims:
+        if claim.audit_method == "structured_lineage":
+            continue
         mapped = map_claim_to_metric(claim, metrics_packet)
         if mapped is None or mapped.metric_name is None:
             if _looks_like_unverified_hard_metric(claim):

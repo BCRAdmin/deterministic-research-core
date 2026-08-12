@@ -81,11 +81,10 @@ def test_early_commercial_internal_best_report_is_readable_without_claim_ids_in_
         assert section in report
 
     main_body = report.split("## Evidence Appendix", 1)[0]
-    # Main-body assertions must remain auditable without forcing the reader to
-    # reconstruct joins from the appendix.  Every rendered claim therefore
-    # carries its stable claim id and exact evidence ids beside the prose.
-    assert "Claim `RKLB_CLAIM_" in main_body
-    assert "Evidence: `SEC_" in main_body
+    # Stable lineage remains machine-readable without leaking implementation
+    # identifiers into the reader-facing prose.
+    assert "room16-lineage claim=RKLB_CLAIM_" in main_body
+    assert "Claim `RKLB_CLAIM_" not in main_body
     assert "Manual Review / Hold Pending FCF and Execution Evidence" in main_body
     assert "Buy" in main_body and "Accumulate" in main_body
     assert "clean Buy" in main_body

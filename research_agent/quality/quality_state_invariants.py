@@ -12,12 +12,18 @@ def verify_quality_state(
 ) -> dict:
     checks: list[dict[str, object]] = []
 
-    def check(check_id: str, passed: bool, detail: str) -> None:
+    def check(
+        check_id: str,
+        passed: bool,
+        detail: str,
+        *,
+        blocking: bool = True,
+    ) -> None:
         checks.append(
             {
                 "check_id": check_id,
                 "status": "pass" if passed else "fail",
-                "blocking": True,
+                "blocking": blocking,
                 "detail": detail,
             }
         )
@@ -71,7 +77,7 @@ def verify_quality_state(
     failures = [
         str(item["check_id"])
         for item in checks
-        if item["status"] != "pass"
+        if item["status"] != "pass" and item["blocking"]
     ]
     semantic_passed = bool(
         not semantic_invariant_report
@@ -81,8 +87,23 @@ def verify_quality_state(
         not visible_citation_completeness
         or visible_citation_completeness.get("status") == "pass"
     )
+    semantic_numeric_audit_codes = {
+        "MISSING_EVIDENCE_FOR_HARD_CLAIM",
+        "NUMERIC_MISMATCH",
+        "PERIOD_MISMATCH",
+    }
+    semantic_numeric_audit_passed = not any(
+        issue.code in semantic_numeric_audit_codes
+        for issue in audit_report.issues
+    )
+    check(
+        "rendered_numeric_lineage_complete",
+        semantic_numeric_audit_passed,
+        "Every rendered hard number has unique claim/fact/evidence/source lineage.",
+        blocking=False,
+    )
     integrity_passed = not failures and semantic_passed and citations_passed
-    internally_reviewable = integrity_passed
+    internally_reviewable = integrity_passed and semantic_numeric_audit_passed
     release_candidate = bool(
         integrity_passed
         and not audit_report.has_blocking_errors
@@ -93,6 +114,34 @@ def verify_quality_state(
     publication_allowed = bool(
         release_candidate and quality_report.status == "publishable"
     )
+    quality_state = "passed" if integrity_passed else "blocked"
+    internal_review_state = "ready" if internally_reviewable else "blocked"
+    release_state = "candidate" if release_candidate else "blocked"
+    publication_state = (
+        "allowed"
+        if publication_allowed
+        else "awaiting_operator_review"
+        if release_candidate
+        else "blocked"
+    )
+    state_conflict = publication_allowed and not release_candidate
+    check(
+        "release_publication_state_consistent",
+        not state_conflict,
+        (
+            f"release_state={release_state} publication_state={publication_state} "
+            f"release_candidate={release_candidate} publication_allowed={publication_allowed}"
+        ),
+    )
+    if state_conflict:
+        integrity_passed = False
+        quality_state = "blocked"
+        internal_review_state = "blocked"
+    failures = [
+        str(item["check_id"])
+        for item in checks
+        if item["status"] != "pass" and item["blocking"]
+    ]
     return {
         "contract_id": "room16.quality_state_integrity",
         "contract_version": 3,
@@ -100,9 +149,13 @@ def verify_quality_state(
         "integrity_contract_passed": integrity_passed,
         "internally_reviewable": internally_reviewable,
         "release_candidate": release_candidate,
-        "release_allowed": release_candidate,
+        "release_allowed": publication_allowed,
         "report_publishable": bool(quality_report.publishable),
         "publication_allowed": publication_allowed,
+        "quality_state": quality_state,
+        "internal_review_state": internal_review_state,
+        "release_state": release_state,
+        "publication_state": publication_state,
         "quality_status": quality_report.status,
         "checks": checks,
         "blocking_failures": [
@@ -110,4 +163,9 @@ def verify_quality_state(
             *([] if semantic_passed else ["semantic_invariant_report"]),
             *([] if citations_passed else ["visible_citation_completeness"]),
         ],
+        "internal_review_blockers": (
+            []
+            if semantic_numeric_audit_passed
+            else ["rendered_numeric_lineage_complete"]
+        ),
     }
