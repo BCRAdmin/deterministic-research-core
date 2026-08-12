@@ -445,6 +445,10 @@ def _numeric_evidence(
             "£": "GBP",
             "¥": "JPY",
         }.get(str(match.group("currency") or "")) or ("USD" if inherited_currency else None)
+        # A table-level monetary scale may surround non-monetary cells.  A
+        # percentage or basis-point cell must never inherit that currency.
+        if percent or basis_points:
+            currency = None
         distance, owner = min(
             (
                 _semantic_distance(match.span(), label_range),
@@ -523,12 +527,12 @@ def _numeric_evidence(
                 "dimension": (
                     "per_share"
                     if unit == "currency_per_share"
-                    else "currency"
-                    if currency
                     else "basis_points"
                     if basis_points
                     else "percent"
                     if percent
+                    else "currency"
+                    if currency
                     else "count"
                 ),
                 "source_scale": (

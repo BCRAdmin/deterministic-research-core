@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import re
 from pathlib import Path
 from typing import Any, Optional, Union
@@ -534,7 +535,7 @@ def _bound_metric_for_number(
     if extracted.normalized_value is None:
         return None
     metric_values = dict(getattr(research_claim, "metric_values", {}) or {})
-    candidates: list[str] = []
+    candidates: list[tuple[float, str]] = []
     for evidence_id in getattr(research_claim, "evidence_ids", []) or []:
         evidence = evidence_by_id.get(str(evidence_id))
         if evidence is None or evidence.value is None:
@@ -547,11 +548,12 @@ def _bound_metric_for_number(
             nearby_text=extracted.nearby_text,
         ):
             continue
+        distance = abs(float(extracted.normalized_value) - float(evidence.value))
         candidates.extend(
-            sorted(set(evidence.supports_metrics).intersection(metric_values))
+            (distance, metric)
+            for metric in sorted(set(evidence.supports_metrics).intersection(metric_values))
         )
-    unique = list(dict.fromkeys(candidates))
-    return unique[0] if len(unique) == 1 else None
+    return _nearest_unique_metric(candidates)
 
 
 def _number_matches_evidence_ids(
@@ -582,7 +584,7 @@ def _bound_metric_for_evidence_ids(
 ) -> Optional[str]:
     if extracted.normalized_value is None:
         return None
-    candidates: list[str] = []
+    candidates: list[tuple[float, str]] = []
     for evidence_id in evidence_ids:
         evidence = evidence_by_id.get(evidence_id)
         if evidence is None or evidence.value is None:
@@ -594,9 +596,32 @@ def _bound_metric_for_evidence_ids(
             evidence_unit=evidence.unit,
             nearby_text=extracted.nearby_text,
         ):
-            candidates.extend(evidence.supports_metrics)
-    unique = list(dict.fromkeys(candidates))
-    return unique[0] if len(unique) == 1 else None
+            distance = abs(float(extracted.normalized_value) - float(evidence.value))
+            candidates.extend((distance, metric) for metric in evidence.supports_metrics)
+    return _nearest_unique_metric(candidates)
+
+
+def _nearest_unique_metric(candidates: list[tuple[float, str]]) -> Optional[str]:
+    """Choose the uniquely closest bound metric inside the audit tolerance.
+
+    Closely spaced guidance endpoints can both fall inside the permitted
+    display-rounding tolerance.  Treating that as an unresolved ambiguity
+    discards the exact claim/evidence label even when one endpoint is an exact
+    match.  A real distance tie remains unresolved.
+    """
+
+    if not candidates:
+        return None
+    best_by_metric: dict[str, float] = {}
+    for distance, metric in candidates:
+        best_by_metric[metric] = min(distance, best_by_metric.get(metric, math.inf))
+    best_distance = min(best_by_metric.values())
+    nearest = [
+        metric
+        for metric, distance in best_by_metric.items()
+        if math.isclose(distance, best_distance, rel_tol=1e-12, abs_tol=1e-9)
+    ]
+    return nearest[0] if len(nearest) == 1 else None
 
 
 def _table_evidence_line_map(markdown: str) -> dict[int, set[str]]:

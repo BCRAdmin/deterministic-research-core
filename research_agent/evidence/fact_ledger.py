@@ -149,6 +149,78 @@ def build_fact_ledger(
             fact["formula_operands"] = dict(sorted(evidence.formula_operands.items()))
         facts.append(fact)
 
+    # Explicit dashes are table facts, not numeric zero claims.  They are
+    # intentionally excluded from prose metric values, but still belong in
+    # the canonical ledger so a reviewer can distinguish "not applicable"
+    # from a missing column or an actual zero.
+    represented_metrics = {str(fact["metric"]) for fact in facts}
+    for evidence in sorted(
+        evidence_ledger.evidence_items,
+        key=lambda item: (str(item.row_metric or ""), str(item.column_metric or "")),
+    ):
+        metric_names = sorted(set(evidence.supports_metrics))
+        if (
+            evidence.source_cell_status != "not_applicable_dash"
+            or not evidence.row_metric
+            or len(metric_names) != 1
+            or metric_names[0] in represented_metrics
+        ):
+            continue
+        metric_name = metric_names[0]
+        source_ids = _resolve_registered_source_ids(
+            [evidence.source_id, *evidence.source_lineage],
+            registry_by_id,
+        )
+        if evidence.source_id not in source_ids:
+            raise FactLedgerError(
+                f"evidence source {evidence.source_id} for {metric_name} is not registered"
+            )
+        period_metadata = _period_metadata(metric_name, evidence)
+        dimension, display_unit, currency = _typed_unit(evidence)
+        fact = {
+            "claim_id": f"{data_packet.ticker.upper()}_FACT_{metric_name.upper()}",
+            "label": metric_name.replace("_", " "),
+            "metric": metric_name,
+            "value": 0.0,
+            "unit": display_unit,
+            "display_unit": display_unit,
+            "dimension": dimension,
+            "currency": currency,
+            "period_type": _period_type(metric_name, evidence),
+            **period_metadata,
+            "fiscal_label": evidence.period,
+            "presentation_basis": _presentation_basis(
+                metric_name,
+                evidence,
+                period_kind=str(period_metadata["period_kind"]),
+            ),
+            "asof": max(evidence.effective_asof_dates)
+            if evidence.effective_asof_dates
+            else evidence.date or data_packet.as_of_date,
+            "effective_asof_dates": list(evidence.effective_asof_dates),
+            "source_id": evidence.source_id,
+            "source_ids": source_ids,
+            "evidence_ids": [evidence.evidence_id],
+            "claim_bound_evidence_ids": [],
+            "source_value": evidence.raw_value,
+            "source_scale": evidence.source_scale,
+            "source_sign": evidence.source_sign,
+            "row_metric": evidence.row_metric,
+            "column_metric": evidence.column_metric,
+            "segment": evidence.segment,
+            "source_cell_status": evidence.source_cell_status,
+            "source_accession_number": evidence.source_accession_number,
+            "source_document": evidence.source_document,
+            "source_document_role": evidence.source_document_role,
+            "source_snapshot_path": evidence.source_snapshot_path,
+            "source_content_sha256": evidence.source_content_sha256,
+            "source_content_bytes": evidence.source_content_bytes,
+            "research_claim_ids": [],
+        }
+        facts.append(fact)
+        represented_metrics.add(metric_name)
+        used_source_ids.extend(source_ids)
+
     _validate_typed_facts(facts)
 
     sources = [

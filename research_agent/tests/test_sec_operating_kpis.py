@@ -23,6 +23,7 @@ from research_agent.research_core.models.metrics_packet import (
 )
 from research_agent.research_core.models.validation_report import ValidationReport
 from research_agent.sources.sec.sec_operating_kpis import (
+    _numeric_evidence,
     build_sec_operating_kpi_payload,
 )
 
@@ -262,6 +263,24 @@ def test_segment_table_preserves_dash_columns_and_exact_source_document() -> Non
         "recycling_processing_and_sales",
         "renewable_energy",
     }
+
+
+def test_non_monetary_cell_does_not_inherit_table_currency() -> None:
+    rows = _numeric_evidence(
+        "Adjusted operating EBITDA margin guidance increased 20 basis points.",
+        kpi_ids=["operating_ebitda"],
+        event_index=0,
+        context_scale="million",
+        filing_date="2026-07-29",
+        report_date="2026-06-30",
+        report_period_months=3,
+    )
+
+    row = next(item for item in rows if item["source_scale"] == "basis_points")
+    assert row["unit"] == "basis_points"
+    assert row["dimension"] == "basis_points"
+    assert row["display_unit"] == "basis_points"
+    assert row["currency"] is None
 
 
 def test_all_visible_hard_numbers_in_emitted_statement_are_bound() -> None:

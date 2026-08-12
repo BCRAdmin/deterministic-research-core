@@ -236,6 +236,54 @@ def test_fact_ledger_binds_exact_values_formulas_and_sources():
     }
 
 
+def test_fact_ledger_preserves_unclaimed_not_applicable_table_cells() -> None:
+    data_packet, claims, evidence, registry = _fact_inputs()
+    metric = "operating_kpi_integration_costs_current_collection"
+    evidence.evidence_items.append(
+        EvidenceItem(
+            evidence_id="GENERIC_INTEGRATION_DASH",
+            ticker="GENERIC",
+            claim_type="financial_metric",
+            source_id="SEC_GENERIC_DERIVED_TTM",
+            source_type="sec_filing",
+            authority_rank=1,
+            statement="Integration costs table reports a dash for collection.",
+            value=0.0,
+            raw_value=0.0,
+            unit="currency",
+            currency="USD",
+            dimension="currency",
+            display_unit="USD",
+            source_scale="million",
+            source_sign=1,
+            row_metric="integration_costs",
+            column_metric="collection",
+            segment="collection",
+            source_cell_status="not_applicable_dash",
+            period_kind="duration",
+            presentation_basis="period_total",
+            period_start="2026-04-01",
+            period_end="2026-06-30",
+            date="2026-07-01",
+            supports_metrics=[metric],
+        )
+    )
+
+    payload = build_fact_ledger(
+        data_packet=data_packet,
+        claims=claims,
+        evidence_ledger=evidence,
+        source_registry=registry,
+    )
+
+    fact = next(item for item in payload["claims"] if item["metric"] == metric)
+    assert fact["value"] == 0.0
+    assert fact["source_cell_status"] == "not_applicable_dash"
+    assert fact["column_metric"] == "collection"
+    assert fact["research_claim_ids"] == []
+    assert fact["claim_bound_evidence_ids"] == []
+
+
 def test_fact_ledger_preserves_comparison_periods_and_ratio_units():
     data_packet, claims, evidence, registry = _fact_inputs()
     claims[0].metric_values["diluted_share_count_yoy"] = 0.02

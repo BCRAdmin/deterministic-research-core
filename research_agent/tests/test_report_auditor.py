@@ -329,6 +329,70 @@ def test_numeric_extractor_maps_each_adjacent_wm_anchor_to_its_own_metric():
     ]
 
 
+def test_claim_bound_guidance_range_uses_uniquely_nearest_endpoint() -> None:
+    low = 26_275_000_000.0
+    high = 26_475_000_000.0
+    claim = ResearchClaim(
+        claim_id="WM_CLAIM_GUIDANCE",
+        agent="deterministic_content_generator",
+        claim="Revenue guidance is between $26.275 and $26.475 billion.",
+        evidence_metrics=["guidance_revenue_low", "guidance_revenue_high"],
+        metric_refs=["guidance_revenue_low", "guidance_revenue_high"],
+        metric_values={"guidance_revenue_low": low, "guidance_revenue_high": high},
+        evidence_ids=["WM_GUIDANCE_LOW", "WM_GUIDANCE_HIGH"],
+        source_ids=["WM_SEC"],
+        confidence="high",
+    )
+    ledger = EvidenceLedger(
+        ticker="WM",
+        as_of_date="2026-08-11",
+        evidence_items=[
+            EvidenceItem(
+                evidence_id=evidence_id,
+                ticker="WM",
+                claim_type="guidance",
+                source_id="WM_SEC",
+                source_type="sec_filing",
+                authority_rank=1,
+                statement="Revenue guidance range.",
+                value=value,
+                unit="currency",
+                currency="USD",
+                dimension="currency",
+                display_unit="USD",
+                period_kind="guidance",
+                period_start="2026-01-01",
+                period_end="2026-12-31",
+                date="2026-07-29",
+                supports_metrics=[metric],
+            )
+            for evidence_id, value, metric in (
+                ("WM_GUIDANCE_LOW", low, "guidance_revenue_low"),
+                ("WM_GUIDANCE_HIGH", high, "guidance_revenue_high"),
+            )
+        ],
+    )
+
+    audit = audit_markdown_report(
+        "Revenue guidance is between $26.275 and $26.475 billion. "
+        "Claim `WM_CLAIM_GUIDANCE` · Evidence: `WM_GUIDANCE_LOW, WM_GUIDANCE_HIGH`.",
+        simple_metrics(ticker="WM"),
+        evidence_ledger=ledger,
+        research_claims=[claim],
+        ticker="WM",
+    )
+    guidance = [
+        item for item in audit.numeric_claims
+        if item.normalized_value in {low, high}
+    ]
+
+    assert [item.possible_metric for item in guidance] == [
+        "guidance_revenue_low",
+        "guidance_revenue_high",
+    ]
+    assert not audit.has_issue("NUMERIC_MISMATCH")
+
+
 def test_direct_percent_evidence_normalizes_single_digit_percentage():
     metrics = simple_metrics(ticker="MCD")
     ledger = EvidenceLedger(
