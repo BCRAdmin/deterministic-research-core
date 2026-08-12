@@ -355,6 +355,19 @@ def _topic_numeric_evidence(
         metric_occurrences[metric_name] = metric_occurrences.get(metric_name, 0) + 1
         if metric_occurrences[metric_name] > 1:
             metric_name = f"{metric_name}_occurrence_{metric_occurrences[metric_name]:02d}"
+        effective_asof_dates = (
+            _effective_asof_dates(summary)
+            if "legal_reserve" in metric_name
+            else []
+        )
+        metric_period_contract = dict(period_contract)
+        if effective_asof_dates:
+            metric_period_contract = {
+                "period_kind": "instant",
+                "presentation_basis": "point_in_time",
+                "period_start": None,
+                "period_end": max(effective_asof_dates),
+            }
         values.append(
             {
                 "metric_name": metric_name,
@@ -367,12 +380,8 @@ def _topic_numeric_evidence(
                 "source_sign": 1,
                 "currency": currency,
                 "column_label": None,
-                "effective_asof_dates": (
-                    _effective_asof_dates(summary)
-                    if "legal_reserve" in metric_name
-                    else []
-                ),
-                **period_contract,
+                "effective_asof_dates": effective_asof_dates,
+                **metric_period_contract,
             }
         )
     return values

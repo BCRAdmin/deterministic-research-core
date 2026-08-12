@@ -27,8 +27,8 @@ from research_agent.sources.sec.sec_material_events import (
 
 
 SOURCE_SNAPSHOT_CONTRACT_ID = "room16.source_snapshot_manifest"
-SOURCE_SNAPSHOT_CONTRACT_VERSION = 3
-SNAPSHOT_PARSER_VERSION = "room16.source_snapshot_parser@3"
+SOURCE_SNAPSHOT_CONTRACT_VERSION = 4
+SNAPSHOT_PARSER_VERSION = "room16.source_snapshot_parser@4"
 DEFAULT_CODE_VERSION = "research_agent_v0.1.0"
 DERIVED_SOURCE_TYPES = {"deterministic_calculation"}
 TEXT_SUFFIXES = {".csv", ".htm", ".html", ".json", ".md", ".txt", ".xml"}
@@ -170,6 +170,37 @@ def _artifact_matches_source(
 ) -> bool:
     source_id = str(source.source_id or "")
     url = str(source.url or "")
+    if source.source_type == "sec_filing":
+        accessions = _normalized_accessions(f"{source_id} {url}")
+        document = url.rstrip("/").rsplit("/", 1)[-1]
+        document_is_file = Path(document).suffix.casefold() in {".htm", ".html", ".txt"}
+        relative = path.as_posix()
+        if len(accessions) == 1:
+            accession = next(iter(accessions))
+            raw_accession_match = (
+                "/raw_sec_filings/" in relative
+                and f"/raw_sec_filings/{accession}/" in relative
+                and (not document_is_file or path.name.casefold() == document.casefold())
+            )
+            companyfacts_match = (
+                not document_is_file
+                and "/sec_companyfacts/" in relative
+                and path.suffix.lower() == ".json"
+                and path.stem.upper() == ticker
+                and accession in text.replace("-", "")
+            )
+            return raw_accession_match or companyfacts_match
+        # Synthetic and non-EDGAR adapters can expose a raw SEC authority
+        # fixture without an accession URL. Keep that fallback confined to the
+        # raw ``sec`` directory so derived KPI/event JSON can never satisfy the
+        # source binding merely by repeating a source ID.
+        return (
+            "/sec/" in relative
+            and path.suffix.lower() == ".json"
+            and path.stem.upper() == ticker
+            and bool(source_id)
+            and source_id in text
+        )
     if source_id and source_id in text:
         return True
     if url and url in text:
@@ -477,6 +508,7 @@ def verify_source_snapshot_manifest(
         failures.append("source_artifacts_present")
         artifacts = []
     material_event_paths: list[Path] = []
+    operating_kpi_paths: list[Path] = []
     has_sec_submissions_snapshot = False
     for item in artifacts:
         if not isinstance(item, Mapping):
@@ -537,6 +569,34 @@ def verify_source_snapshot_manifest(
                             failures.append(
                                 f"material_event_dependency_invalid:{dependency_relative or relative}"
                             )
+        if relative.startswith("sec_operating_kpis/") and path.suffix.lower() == ".json":
+            operating_kpi_paths.append(path)
+            try:
+                operating_payload = json.loads(path.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                failures.append(f"operating_kpi_payload_invalid:{relative}")
+            else:
+                for event in operating_payload.get("events") or []:
+                    if not isinstance(event, Mapping):
+                        failures.append(f"operating_kpi_dependency_schema:{relative}")
+                        continue
+                    dependency_relative = str(event.get("source_snapshot_path") or "")
+                    dependency_path = (root / dependency_relative).resolve()
+                    accession = str(event.get("source_accession_number") or "").replace("-", "")
+                    document = str(event.get("source_document") or "")
+                    expected_prefix = f"raw_sec_filings/{accession}/"
+                    if (
+                        not dependency_relative.startswith(expected_prefix)
+                        or Path(dependency_relative).name != document
+                        or root not in dependency_path.parents
+                        or not dependency_path.is_file()
+                        or dependency_path.stat().st_size != event.get("source_content_bytes")
+                        or file_sha256(dependency_path)
+                        != str(event.get("source_content_sha256") or "")
+                    ):
+                        failures.append(
+                            f"operating_kpi_dependency_invalid:{dependency_relative or relative}"
+                        )
 
     dispositions = manifest.get("source_dispositions")
     if not isinstance(dispositions, list) or not dispositions:

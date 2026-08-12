@@ -869,6 +869,7 @@ def _generic_publish_report(
                 rating,
                 metrics_packet,
                 decision_packet,
+                operating_driver_claims=operating_driver_claims,
                 currency=currency,
             ),
             _paragraphs(
@@ -948,7 +949,17 @@ def _generic_publish_report(
         _paragraphs(grouped.get("Technical Setup", []), limit=3),
         "",
         "## Bull Case",
-        _paragraphs(grouped.get("Bull Case", []), limit=3),
+        "\n\n".join(
+            part
+            for part in (
+                _paragraphs(grouped.get("Bull Case", []), limit=3),
+                _issuer_specific_operating_test(
+                    operating_driver_claims,
+                    heading="Issuer-specific confirmation path",
+                ),
+            )
+            if part
+        ),
         "",
         "## Bear Case",
         _paragraphs(grouped.get("Bear Case", []), limit=3),
@@ -969,14 +980,24 @@ def _generic_publish_report(
         _paragraphs(grouped.get("Catalysts & Triggers", []), limit=4),
         "",
         "## Final Rating & Review Conditions",
-        _final_rating_section(
-            ticker,
-            rating,
-            f,
-            v,
-            t,
-            decision_packet,
-            currency=currency,
+        "\n\n".join(
+            part
+            for part in (
+                _final_rating_section(
+                    ticker,
+                    rating,
+                    f,
+                    v,
+                    t,
+                    decision_packet,
+                    currency=currency,
+                ),
+                _paragraphs(
+                    grouped.get("Final Rating & Action Plan", []),
+                    limit=2,
+                ),
+            )
+            if part
         ),
         "",
         "## Evidence Appendix",
@@ -1287,6 +1308,7 @@ def _generic_investment_thesis(
     metrics: MetricsPacket,
     decision: DecisionPacket,
     *,
+    operating_driver_claims: list[tuple[str, ResearchClaim]] | None = None,
     currency: str = "USD",
 ) -> str:
     fundamentals = metrics.fundamentals
@@ -1360,10 +1382,48 @@ def _generic_investment_thesis(
             f"{valuation_text} valuation evidence. Technical inputs are excluded "
             "from rating and timing because the price-series adjustment is unconfirmed."
         )
-    return (
+    core = (
         f"{ticker}'s central investment debate is whether revenue scale of "
         f"{_fmt_money(fundamentals.revenue_ttm, currency)} can translate into durable cash "
         f"generation; {cash_text}. {evidence_mix}"
+    )
+    operating_test = _issuer_specific_operating_test(
+        operating_driver_claims or [],
+        heading="Issuer-specific proof test",
+    )
+    return "\n\n".join(part for part in (core, operating_test) if part)
+
+
+def _issuer_specific_operating_test(
+    selected: list[tuple[str, ResearchClaim]],
+    *,
+    heading: str,
+) -> str:
+    preferred = [
+        item
+        for item in selected
+        if item[0] in {"Pricing / yield", "Volume", "Margin", "Integration effects"}
+    ][:4]
+    if not preferred:
+        preferred = selected[:3]
+    if not preferred:
+        return ""
+    observations: list[str] = []
+    for label, claim in preferred:
+        metric_names = [
+            str(metric).replace("operating_kpi_", "").replace("_", " ")
+            for metric in claim.metric_values
+        ]
+        metric_basis = ", ".join(metric_names[:2]) or "source-bound operating disclosure"
+        observations.append(
+            f"**{label}:** `{claim.claim_id}` tests {metric_basis}. "
+            f"{_claim_evidence_reference(claim)}"
+        )
+    return (
+        f"**{heading}.** "
+        + " ".join(observations)
+        + " The constructive case weakens if these source-bound operating drivers "
+        "fail to persist or stop translating into cash conversion."
     )
 
 

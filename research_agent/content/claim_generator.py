@@ -298,7 +298,9 @@ def _labeled_numeric_event_statement(
         label = "Reported operating KPI"
     values: list[str] = []
     for metric in metrics:
-        if metric.unit == "percent":
+        if metric.source_cell_status == "not_applicable_dash":
+            value = "— (not applicable in source table)"
+        elif metric.unit == "percent":
             value = f"{metric.value:.1%}"
         elif metric.unit == "currency":
             value = _money(

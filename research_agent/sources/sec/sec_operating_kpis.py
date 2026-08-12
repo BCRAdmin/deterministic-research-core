@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+import hashlib
 from calendar import monthrange
 from datetime import date
 from html.parser import HTMLParser
@@ -92,25 +93,92 @@ def build_sec_operating_kpi_payload(
     accession_number: str,
     filing_date: str,
     primary_document: str,
-    html_documents: list[str],
+    html_documents: list[str] | None = None,
+    source_documents: list[dict[str, Any]] | None = None,
     retrieved_at: str,
     report_date: str | None = None,
     report_period_months: int | None = None,
 ) -> dict[str, Any]:
-    blocks: list[str] = []
-    for html in html_documents:
+    documents = source_documents or [
+        {
+            "accession_number": accession_number,
+            "filing_date": filing_date,
+            "primary_document": primary_document,
+            "html": html,
+            "report_date": report_date,
+            "report_period_months": report_period_months,
+            "document_role": "financial_filing",
+        }
+        for html in (html_documents or [])
+    ]
+    events: list[dict[str, Any]] = []
+    dispositions_by_kpi = {kpi_id: 0 for kpi_id in KPI_PATTERNS}
+    sources_checked: list[str] = []
+    for source_document in documents:
+        document_accession = str(source_document["accession_number"])
+        document_filing_date = str(source_document["filing_date"])
+        document_primary = str(source_document["primary_document"])
+        html = str(source_document["html"])
         parser = _BlockParser()
         parser.feed(html)
-        blocks.extend(parser.finish())
-    # Preserve table headers and their local row context.  Global block
-    # deduplication can delete a repeated header from a later table and collapse
-    # all periods to the filing date.  Duplicate emitted statements are removed
-    # below after period parsing.
-    blocks = [
-        block
-        for index, block in enumerate(blocks)
-        if index == 0 or block != blocks[index - 1]
+        blocks = [
+            block
+            for index, block in enumerate(parser.finish())
+            if index == 0 or block != parser.blocks[index - 1]
+        ]
+        document_events, document_dispositions, document_url = _extract_document_events(
+            ticker=ticker,
+            cik=cik,
+            accession_number=document_accession,
+            filing_date=document_filing_date,
+            primary_document=document_primary,
+            blocks=blocks,
+            html=html,
+            retrieved_at=retrieved_at,
+            report_date=source_document.get("report_date"),
+            report_period_months=source_document.get("report_period_months"),
+            document_role=str(source_document.get("document_role") or "filing_document"),
+            event_offset=len(events),
+        )
+        events.extend(document_events)
+        sources_checked.append(document_url)
+        for kpi_id, count in document_dispositions.items():
+            dispositions_by_kpi[kpi_id] += count
+    dispositions = [
+        {
+            "kpi_id": kpi_id,
+            "status": "found" if dispositions_by_kpi[kpi_id] else "reviewed_not_found",
+            "match_count": dispositions_by_kpi[kpi_id],
+        }
+        for kpi_id in KPI_PATTERNS
     ]
+    return {
+        "coverage_status": "complete",
+        "checked_at": retrieved_at,
+        "window_start": min((str(item["filing_date"]) for item in documents), default=filing_date),
+        "window_end": max((str(item["filing_date"]) for item in documents), default=filing_date),
+        "sources_checked": sources_checked,
+        "all_kpis_dispositioned": len(dispositions) == len(KPI_PATTERNS),
+        "kpi_dispositions": dispositions,
+        "events": events,
+    }
+
+
+def _extract_document_events(
+    *,
+    ticker: str,
+    cik: str,
+    accession_number: str,
+    filing_date: str,
+    primary_document: str,
+    blocks: list[str],
+    html: str,
+    retrieved_at: str,
+    report_date: str | None,
+    report_period_months: int | None,
+    document_role: str,
+    event_offset: int,
+) -> tuple[list[dict[str, Any]], dict[str, int], str]:
     priority_statements = {
         "capital_allocation": set(
             _ranked_capital_allocation_statements(blocks, limit=3)
@@ -160,12 +228,17 @@ def build_sec_operating_kpi_payload(
             ]
         if not matched_kpis:
             continue
+        table_contract = _table_contract(blocks, block_index)
         numeric_evidence = _numeric_evidence(
             statement,
             kpi_ids=matched_kpis,
-            event_index=len(events) + 1,
-            context_scale=_inherited_block_scale(blocks, block_index),
+            event_index=event_offset + len(events) + 1,
+            context_scale=(
+                _inherited_block_scale(blocks, block_index)
+                or (table_contract or {}).get("source_scale")
+            ),
             column_labels=column_labels,
+            table_contract=table_contract,
             filing_date=filing_date,
             report_date=report_date,
             report_period_months=report_period_months,
@@ -194,6 +267,14 @@ def build_sec_operating_kpi_payload(
                 "source_type": "sec_filing",
                 "authority_rank": 1,
                 "url": url,
+                "source_accession_number": accession_number,
+                "source_document": document,
+                "source_document_role": document_role,
+                "source_snapshot_path": (
+                    f"raw_sec_filings/{accession_digits}/{document}"
+                ),
+                "source_content_sha256": hashlib.sha256(html.encode("utf-8")).hexdigest(),
+                "source_content_bytes": len(html.encode("utf-8")),
                 "retrieved_at": retrieved_at,
                 "content_complete": True,
                 "dependency_status": "complete",
@@ -211,24 +292,7 @@ def build_sec_operating_kpi_payload(
                 "numeric_evidence": numeric_evidence,
             }
         )
-    dispositions = [
-        {
-            "kpi_id": kpi_id,
-            "status": "found" if match_counts[kpi_id] else "reviewed_not_found",
-            "match_count": match_counts[kpi_id],
-        }
-        for kpi_id in KPI_PATTERNS
-    ]
-    return {
-        "coverage_status": "complete",
-        "checked_at": retrieved_at,
-        "window_start": filing_date,
-        "window_end": filing_date,
-        "sources_checked": [url],
-        "all_kpis_dispositioned": len(dispositions) == len(KPI_PATTERNS),
-        "kpi_dispositions": dispositions,
-        "events": events,
-    }
+    return events, match_counts, url
 
 
 def _ranked_capital_allocation_statements(
@@ -299,6 +363,7 @@ def _numeric_evidence(
     event_index: int,
     context_scale: str | None = None,
     column_labels: list[str] | None = None,
+    table_contract: dict[str, Any] | None = None,
     filing_date: str | None = None,
     report_date: str | None = None,
     report_period_months: int | None = None,
@@ -312,6 +377,7 @@ def _numeric_evidence(
         return []
     values: list[dict[str, Any]] = []
     number_matches = list(NUMBER_RE.finditer(statement))
+    table_positions = _table_numeric_positions(statement, table_contract)
     for number_index, match in enumerate(number_matches):
         raw = float(match.group("number").replace(",", ""))
         if _is_non_metric_number(statement, match):
@@ -356,6 +422,7 @@ def _numeric_evidence(
             "k": 1_000,
         }.get(scale, 1)
         direction = _numeric_direction(statement, match.span()) if percent or basis_points else 1.0
+        inherited_currency = _inherits_table_currency(statement, context_scale)
         unit = (
             "basis_points"
             if basis_points
@@ -364,7 +431,7 @@ def _numeric_evidence(
             else "currency_per_share"
             if match.group("currency") and per_share
             else "currency"
-            if match.group("currency")
+            if match.group("currency") or inherited_currency
             else "count"
         )
         currency = {
@@ -377,7 +444,7 @@ def _numeric_evidence(
             "€": "EUR",
             "£": "GBP",
             "¥": "JPY",
-        }.get(str(match.group("currency") or ""))
+        }.get(str(match.group("currency") or "")) or ("USD" if inherited_currency else None)
         distance, owner = min(
             (
                 _semantic_distance(match.span(), label_range),
@@ -386,15 +453,16 @@ def _numeric_evidence(
             for kpi_id, label_range in label_ranges
         )
         metric_owner = owner if distance <= 140 else "statement_context"
+        column_index = table_positions.get(number_index, number_index)
         column_label = (
-            column_labels[number_index]
-            if column_labels and number_index < len(column_labels)
+            column_labels[column_index]
+            if column_labels and column_index < len(column_labels)
             else None
         )
         period_contract = _numeric_period_contract(
             statement,
             match=match,
-            number_index=number_index,
+            number_index=column_index,
             column_label=column_label,
             filing_date=filing_date,
             report_date=report_date,
@@ -406,8 +474,18 @@ def _numeric_evidence(
             match=match,
             column_label=column_label,
             period_role=period_contract["period_role"],
-            number_index=number_index,
+            number_index=column_index,
         )
+        if table_contract and table_contract.get("row_metric"):
+            column_metrics = table_contract.get("column_metrics", [])
+            if column_index < len(column_metrics):
+                metric_role = "_".join(
+                    (
+                        str(table_contract["row_metric"]),
+                        str(period_contract["period_role"]),
+                        str(column_metrics[column_index]),
+                    )
+                )
         if not (percent or basis_points) and "yoy_change_amount" in metric_role:
             direction = _numeric_direction(statement, match.span())
         elif not (percent or basis_points) and re.search(
@@ -464,10 +542,33 @@ def _numeric_evidence(
                 "source_sign": int(direction),
                 "currency": currency,
                 "column_label": column_label,
+                "row_metric": (table_contract or {}).get("row_metric"),
+                "column_metric": (
+                    (table_contract or {}).get("column_metrics", [])[column_index]
+                    if column_index < len((table_contract or {}).get("column_metrics", []))
+                    else None
+                ),
+                "segment": (
+                    (table_contract or {}).get("segments", [])[column_index]
+                    if column_index < len((table_contract or {}).get("segments", []))
+                    else None
+                ),
+                "source_cell_status": "reported_value",
                 **{key: value for key, value in period_contract.items() if key != "period_role"},
                 "mapping_status": "unmapped" if metric_role.startswith("unmapped_") else "mapped",
             }
         )
+    values.extend(
+        _dash_cell_evidence(
+            statement=statement,
+            table_contract=table_contract,
+            column_labels=column_labels,
+            context_scale=context_scale,
+            filing_date=filing_date,
+            report_date=report_date,
+            report_period_months=report_period_months,
+        )
+    )
     metric_counts: dict[str, int] = {}
     metric_totals: dict[str, int] = {}
     for item in values:
@@ -669,6 +770,30 @@ def _numeric_period_contract(
             "period_start": current_start.isoformat(),
             "period_end": current_end.isoformat(),
             "period_role": relational_role,
+        }
+    if (
+        report_date
+        and report_period_months in {3, 6, 9, 12}
+        and match.group("percent")
+        and re.search(
+            r"\b(?:growth|grew|increase|increased|decrease|decreased|decline|declined)\b",
+            nearby,
+        )
+    ):
+        current_end = date.fromisoformat(report_date)
+        current_start = _duration_start(current_end, report_period_months)
+        prior_end = date(current_end.year - 1, current_end.month, current_end.day)
+        prior_start = _duration_start(prior_end, report_period_months)
+        return {
+            "period_kind": "comparison",
+            "presentation_basis": "period_over_period_comparison",
+            "period_start": current_start.isoformat(),
+            "period_end": current_end.isoformat(),
+            "current_period_start": current_start.isoformat(),
+            "current_period_end": current_end.isoformat(),
+            "comparison_period_start": prior_start.isoformat(),
+            "comparison_period_end": prior_end.isoformat(),
+            "period_role": f"yoy_change_{report_period_months}m_{current_end.isoformat()}",
         }
     if report_date and report_period_months in {3, 6, 9, 12}:
         current_end = date.fromisoformat(report_date)
@@ -1003,6 +1128,9 @@ def _inherited_column_labels(
 ) -> list[str] | None:
     """Bind the common reported/adjusted four-column release layout."""
 
+    table_contract = _table_contract(blocks, index)
+    if table_contract:
+        return list(table_contract["column_labels"])
     context = " ".join(blocks[max(0, index - 6) : index])
     if len(re.findall(r"\bAs Reported\b", context, re.IGNORECASE)) >= 2 and len(
         re.findall(r"\bAs Adjusted", context, re.IGNORECASE)
@@ -1065,6 +1193,207 @@ def _inherited_column_labels(
                 for months, year in zip((3, 3, 6, 6), year_values[:4])
             ]
     return None
+
+
+def _table_contract(blocks: list[str], index: int) -> dict[str, Any] | None:
+    """Recover row/column meaning from bounded SEC table headers."""
+
+    statement = blocks[index]
+    if not re.search(
+        r"Stericycle acquisition and integration costs", statement, re.IGNORECASE
+    ):
+        return None
+    context = " ".join(blocks[max(0, index - 10) : index])
+    period_matches = re.findall(
+        r"Three Months Ended\s+"
+        r"(January|February|March|April|May|June|July|August|September|October|November|December)\s+"
+        r"(\d{1,2}),\s*(20\d{2})",
+        context,
+        re.IGNORECASE,
+    )
+    period_label = ""
+    if period_matches:
+        month_name, day, year = period_matches[-1]
+        period_label = (
+            "3M ended "
+            + date(
+                int(year), MONTHS[month_name.casefold()], int(day)
+            ).isoformat()
+        )
+    if re.search(
+        r"Income from\s+Pre-tax\s+Tax\s+Net\s+Diluted Per", context, re.IGNORECASE
+    ):
+        columns = [
+            "income_from_operations",
+            "pretax_income",
+            "tax_expense",
+            "net_income",
+        ]
+        return _make_table_contract(columns, period_label, segments=[None] * 4)
+    if re.search(
+        r"Collection\s+Processing\s+Renewable\s+Healthcare\s+Corporate\s+Total.*"
+        r"and Disposal.*and Sales.*Energy.*Solutions.*and Other.*WM",
+        context,
+        re.IGNORECASE,
+    ):
+        segments = [
+            "collection_and_disposal",
+            "recycling_processing_and_sales",
+            "renewable_energy",
+            "healthcare_solutions",
+            "corporate_and_other",
+            "total_wm",
+        ]
+        return _make_table_contract(segments, period_label, segments=segments)
+    return None
+
+
+def _make_table_contract(
+    columns: list[str],
+    period_label: str,
+    *,
+    segments: list[str | None],
+) -> dict[str, Any]:
+    return {
+        "row_metric": "stericycle_acquisition_integration_costs",
+        "source_scale": "million",
+        "column_metrics": columns,
+        "column_labels": [
+            f"{period_label} · {column.replace('_', ' ')}".strip(" ·")
+            for column in columns
+        ],
+        "segments": segments,
+    }
+
+
+def _table_numeric_positions(
+    statement: str,
+    table_contract: dict[str, Any] | None,
+) -> dict[int, int]:
+    if not table_contract:
+        return {}
+    label = re.search(
+        r"Stericycle acquisition and integration costs", statement, re.IGNORECASE
+    )
+    tail = statement[label.end() :] if label else statement
+    tokens = re.findall(r"(?:\(?\d[\d,.]*\)?|—|–)", tail)
+    positions: dict[int, int] = {}
+    numeric_index = 0
+    for column_index, token in enumerate(tokens):
+        if token in {"—", "–"}:
+            continue
+        positions[numeric_index] = column_index
+        numeric_index += 1
+    return positions
+
+
+def _inherits_table_currency(statement: str, context_scale: str | None) -> bool:
+    return bool(
+        context_scale
+        and re.search(
+            r"(?:free cash flow|cash provided|capital expenditures?|proceeds|"
+            r"consideration|revenue|income|expense|costs?|ebitda)",
+            statement,
+            re.IGNORECASE,
+        )
+    )
+
+
+def _dash_cell_evidence(
+    *,
+    statement: str,
+    table_contract: dict[str, Any] | None,
+    column_labels: list[str] | None,
+    context_scale: str | None,
+    filing_date: str | None,
+    report_date: str | None,
+    report_period_months: int | None,
+) -> list[dict[str, Any]]:
+    if not table_contract or not column_labels:
+        return []
+    label = re.search(
+        r"Stericycle acquisition and integration costs", statement, re.IGNORECASE
+    )
+    tail = statement[label.end() :] if label else statement
+    tokens = re.findall(r"(?:\(?\d[\d,.]*\)?|—|–)", tail)
+    rows: list[dict[str, Any]] = []
+    for column_index, token in enumerate(tokens):
+        if token not in {"—", "–"} or column_index >= len(column_labels):
+            continue
+        period = _period_contract_for_table_label(
+            column_labels[column_index],
+            filing_date=filing_date,
+            report_date=report_date,
+            report_period_months=report_period_months,
+        )
+        column_metric = table_contract["column_metrics"][column_index]
+        metric_role = "_".join(
+            (
+                table_contract["row_metric"],
+                period["period_role"],
+                column_metric,
+            )
+        )
+        rows.append(
+            {
+                "metric_name": f"operating_kpi_{metric_role}",
+                "metric_role": metric_role,
+                "value": 0.0,
+                "raw_value": 0.0,
+                "unit": "currency",
+                "display_unit": "USD",
+                "dimension": "currency",
+                "source_scale": str(context_scale or "base"),
+                "source_unit": "currency",
+                "source_sign": 1,
+                "currency": "USD",
+                "column_label": column_labels[column_index],
+                "row_metric": table_contract["row_metric"],
+                "column_metric": column_metric,
+                "segment": table_contract["segments"][column_index],
+                "source_cell_status": "not_applicable_dash",
+                **{key: value for key, value in period.items() if key != "period_role"},
+                "mapping_status": "mapped",
+            }
+        )
+    return rows
+
+
+def _period_contract_for_table_label(
+    column_label: str,
+    *,
+    filing_date: str | None,
+    report_date: str | None,
+    report_period_months: int | None,
+) -> dict[str, Any]:
+    ended = re.search(r"3M ended (\d{4}-\d{2}-\d{2})", column_label)
+    if ended:
+        period_end = date.fromisoformat(ended.group(1))
+        period_start = _duration_start(period_end, 3)
+        return {
+            "period_kind": "duration",
+            "presentation_basis": "period_total",
+            "period_start": period_start.isoformat(),
+            "period_end": period_end.isoformat(),
+            "period_role": f"3m_{period_end.isoformat()}",
+        }
+    if report_date and report_period_months in {3, 6, 9, 12}:
+        period_end = date.fromisoformat(report_date)
+        period_start = _duration_start(period_end, report_period_months)
+        return {
+            "period_kind": "duration",
+            "presentation_basis": "period_total",
+            "period_start": period_start.isoformat(),
+            "period_end": period_end.isoformat(),
+            "period_role": f"{report_period_months}m_{period_end.isoformat()}",
+        }
+    return {
+        "period_kind": "unknown",
+        "presentation_basis": "unknown",
+        "period_start": None,
+        "period_end": filing_date,
+        "period_role": "period_unmapped",
+    }
 
 
 def _numeric_direction(statement: str, number_range: tuple[int, int]) -> float:

@@ -129,7 +129,10 @@ def test_material_topic_propagation_requires_direct_topic_claim_not_rating_synth
     )
 
     result = _material_topic_report_coverage(
-        markdown="# Report\n\nThe issuer disclosed a material regulatory order.\n",
+        markdown=(
+            "# Report\n\nTEST_CLAIM_001 — The issuer disclosed a material "
+            "regulatory order.\n"
+        ),
         claims=[direct, synthesis],
         report_kind="full_research_report",
     )

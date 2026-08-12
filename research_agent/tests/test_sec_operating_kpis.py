@@ -134,7 +134,10 @@ def test_multiple_values_inside_one_kpi_row_receive_lossless_unique_metric_ids()
         primary_document="test.htm",
         html_documents=[
             """
-            <p>(in millions)</p>
+            <p>(in millions, except per share amounts)</p>
+            <p>Three Months Ended June 30, 2026</p>
+            <p>Income from Pre-tax Tax Net Diluted Per</p>
+            <p>Operations Income Expense Income(a) Share Amount</p>
             <p>Stericycle acquisition and integration costs 24 24 6 18</p>
             """
         ],
@@ -154,6 +157,72 @@ def test_multiple_values_inside_one_kpi_row_receive_lossless_unique_metric_ids()
         6_000_000,
         18_000_000,
     ]
+    assert [item["column_metric"] for item in event["numeric_evidence"]] == [
+        "income_from_operations",
+        "pretax_income",
+        "tax_expense",
+        "net_income",
+    ]
+    assert all(item["unit"] == "currency" for item in event["numeric_evidence"])
+    assert all("_event_" not in item["metric_name"] for item in event["numeric_evidence"])
+
+
+def test_segment_table_preserves_dash_columns_and_exact_source_document() -> None:
+    html = """
+    <p>(in millions)</p>
+    <p>Three Months Ended June 30, 2026</p>
+    <p>Collection Processing Renewable Healthcare Corporate Total</p>
+    <p>and Disposal(a)(b) and Sales(a) Energy(b) Solutions and Other WM</p>
+    <p>Stericycle acquisition and integration costs — — — 14 10 24</p>
+    """
+    payload = build_sec_operating_kpi_payload(
+        ticker="WM",
+        cik="823768",
+        accession_number="0001104659-26-087575",
+        filing_date="2026-07-29",
+        primary_document="tm2621414d1_ex99-1.htm",
+        source_documents=[
+            {
+                "accession_number": "0001104659-26-087575",
+                "filing_date": "2026-07-29",
+                "primary_document": "tm2621414d1_ex99-1.htm",
+                "html": html,
+                "report_date": "2026-06-30",
+                "report_period_months": 3,
+                "document_role": "earnings_release_exhibit",
+            }
+        ],
+        retrieved_at="2026-08-02T12:00:00Z",
+        report_date="2026-06-30",
+        report_period_months=3,
+    )
+    event = payload["events"][0]
+    records = event["numeric_evidence"]
+
+    assert event["source_accession_number"] == "0001104659-26-087575"
+    assert event["source_document"] == "tm2621414d1_ex99-1.htm"
+    assert event["source_document_role"] == "earnings_release_exhibit"
+    assert event["source_snapshot_path"].endswith(
+        "000110465926087575/tm2621414d1_ex99-1.htm"
+    )
+    assert len(records) == 6
+    assert {item["column_metric"] for item in records} == {
+        "collection_and_disposal",
+        "recycling_processing_and_sales",
+        "renewable_energy",
+        "healthcare_solutions",
+        "corporate_and_other",
+        "total_wm",
+    }
+    assert {
+        item["column_metric"]
+        for item in records
+        if item["source_cell_status"] == "not_applicable_dash"
+    } == {
+        "collection_and_disposal",
+        "recycling_processing_and_sales",
+        "renewable_energy",
+    }
 
 
 def test_all_visible_hard_numbers_in_emitted_statement_are_bound() -> None:
@@ -271,6 +340,27 @@ def test_declining_amounts_and_growth_rates_keep_direction_and_comparison_period
     ]
     assert [item["period_kind"] for item in growth] == ["comparison", "comparison"]
     assert all(item["presentation_basis"] == "period_over_period_comparison" for item in growth)
+
+
+def test_growth_quote_without_explicit_duration_uses_report_period_comparison() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="WM",
+        cik="823768",
+        accession_number="0001104659-26-087575",
+        filing_date="2026-07-29",
+        primary_document="ex99-1.htm",
+        html_documents=[
+            "<p>Adjusted operating EBITDA grew 5.5%, or 9.1% when removing "
+            "contributions from wildfire cleanup activities in the prior year.</p>"
+        ],
+        retrieved_at="2026-08-02T12:00:00Z",
+        report_date="2026-06-30",
+        report_period_months=3,
+    )
+    records = payload["events"][0]["numeric_evidence"]
+    assert [item["period_kind"] for item in records] == ["comparison", "comparison"]
+    assert all(item["current_period_end"] == "2026-06-30" for item in records)
+    assert all(item["comparison_period_end"] == "2025-06-30" for item in records)
 
 
 def test_capital_allocation_is_extracted_as_source_bound_operating_kpi() -> None:
@@ -456,6 +546,15 @@ def test_adjusted_fcf_variant_is_semantically_distinct_from_plain_issuer_fcf() -
         and "ex_sustainability_growth" not in metric
         for metric in metrics
     )
+    adjusted = [
+        item
+        for event in payload["events"]
+        for item in event["numeric_evidence"]
+        if "free_cash_flow_ex_sustainability_growth_actual" in item["metric_name"]
+    ]
+    assert len(adjusted) == 4
+    assert all(item["unit"] == "currency" for item in adjusted)
+    assert all(item["currency"] == "USD" for item in adjusted)
 
 
 def test_free_cash_flow_guidance_rows_are_not_promoted_as_actuals() -> None:

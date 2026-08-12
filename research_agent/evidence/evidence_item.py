@@ -53,6 +53,16 @@ class EvidenceItem(BaseModel):
     source_sign: Optional[Literal[-1, 1]] = None
     currency: Optional[str] = None
     column_label: Optional[str] = None
+    row_metric: Optional[str] = None
+    column_metric: Optional[str] = None
+    segment: Optional[str] = None
+    source_cell_status: Optional[str] = None
+    source_accession_number: Optional[str] = None
+    source_document: Optional[str] = None
+    source_document_role: Optional[str] = None
+    source_snapshot_path: Optional[str] = None
+    source_content_sha256: Optional[str] = None
+    source_content_bytes: Optional[int] = None
     source_lineage: List[str] = Field(default_factory=list)
     duration_days: Optional[int] = None
     audited: Optional[bool] = None

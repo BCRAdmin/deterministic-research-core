@@ -128,6 +128,16 @@ def build_fact_ledger(
             "source_value": evidence.raw_value,
             "source_scale": evidence.source_scale,
             "source_sign": evidence.source_sign,
+            "row_metric": evidence.row_metric,
+            "column_metric": evidence.column_metric,
+            "segment": evidence.segment,
+            "source_cell_status": evidence.source_cell_status,
+            "source_accession_number": evidence.source_accession_number,
+            "source_document": evidence.source_document,
+            "source_document_role": evidence.source_document_role,
+            "source_snapshot_path": evidence.source_snapshot_path,
+            "source_content_sha256": evidence.source_content_sha256,
+            "source_content_bytes": evidence.source_content_bytes,
             "research_claim_ids": sorted(metric_use["research_claim_ids"]),
         }
         if evidence.period:

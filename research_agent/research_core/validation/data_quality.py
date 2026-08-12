@@ -102,12 +102,19 @@ def validate_earnings_date(
     next_earnings_date: Optional[str],
     confirmed: bool,
     source: Optional[str],
+    limitation_detail: Optional[str] = None,
 ):
     if next_earnings_date is None:
         return {
             "severity": "warning",
             "code": "EARNINGS_DATE_UNAVAILABLE",
-            "message": "Next earnings date is unavailable; report must state that it is unconfirmed.",
+            "message": (
+                "Next earnings date is unavailable. "
+                + (
+                    limitation_detail
+                    or "No confirmed issuer or exchange date was captured."
+                )
+            ),
         }
     if not confirmed or not source:
         return {
@@ -136,6 +143,7 @@ def validate_data_packet(data_packet: DataPacket) -> list[dict]:
             data_packet.next_events.next_earnings_date,
             data_packet.next_events.confirmed,
             data_packet.next_events.source,
+            data_packet.next_events.limitation_detail,
         ),
     ]:
         if issue is not None:

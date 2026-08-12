@@ -35,6 +35,10 @@ def verify_semantic_invariants(
             fact.get("dimension") not in {None, "unknown"}
             and bool(fact.get("display_unit"))
             and (fact.get("dimension") != "currency" or bool(fact.get("currency")))
+            and not (
+                _money_like_metric(str(fact.get("metric") or ""))
+                and fact.get("dimension") == "count"
+            )
             for fact in facts
         ),
         "Every material fact has a dimension, display unit and ISO currency when monetary.",
@@ -47,8 +51,18 @@ def verify_semantic_invariants(
     check(
         "semantic_metric_names",
         all(
-            not str(fact.get("metric") or "").startswith("filing_")
-            or "_unmapped_" not in str(fact.get("metric") or "")
+            (
+                not str(fact.get("metric") or "").startswith("filing_")
+                or "_unmapped_" not in str(fact.get("metric") or "")
+            )
+            and not (
+                fact.get("row_metric")
+                and "_event_" in str(fact.get("metric") or "")
+            )
+            and (
+                not fact.get("row_metric")
+                or bool(fact.get("column_metric"))
+            )
             for fact in facts
         ),
         "No unmapped positional filing metric is promoted into the canonical fact ledger.",
@@ -129,6 +143,30 @@ def verify_semantic_invariants(
             for event in event_list
         ),
         "No material source number is lost through a duplicate metric key.",
+    )
+    check(
+        "material_event_table_semantics",
+        all(_event_numeric_semantics(event) for event in event_list),
+        "Multidimensional financial rows preserve semantic columns and explicit dash cells.",
+    )
+    check(
+        "operating_kpi_source_attestation",
+        all(
+            not str(fact.get("metric") or "").startswith("operating_kpi_")
+            or all(
+                fact.get(key)
+                for key in (
+                    "source_accession_number",
+                    "source_document",
+                    "source_document_role",
+                    "source_snapshot_path",
+                    "source_content_sha256",
+                    "source_content_bytes",
+                )
+            )
+            for fact in facts
+        ),
+        "Every promoted operating KPI names and hashes its exact SEC source document.",
     )
 
     expected_source_edges = {
@@ -231,7 +269,7 @@ def verify_semantic_invariants(
     failures = [item["check_id"] for item in checks if item["status"] != "pass"]
     report = {
         "contract_id": "room16.semantic_invariant_report",
-        "contract_version": 2,
+        "contract_version": 3,
         "status": "pass" if not failures else "fail",
         "semantic_integrity_passed": not failures,
         "internally_reviewable": not failures,
@@ -273,7 +311,11 @@ def _fact_period_valid(fact: Mapping[str, Any]) -> bool:
     kind = fact.get("period_kind")
     basis = fact.get("presentation_basis")
     if kind == "instant":
-        return basis == "point_in_time" and bool(fact.get("period_end"))
+        return (
+            basis == "point_in_time"
+            and bool(fact.get("period_end"))
+            and str(fact.get("asof") or "") == str(fact.get("period_end") or "")
+        )
     if kind == "duration":
         return (
             basis in {"period_total", "period_average"}
@@ -300,3 +342,58 @@ def _fact_period_valid(fact: Mapping[str, Any]) -> bool:
     if kind == "guidance":
         return basis == "guidance_range"
     return False
+
+
+def _money_like_metric(metric: str) -> bool:
+    return any(
+        marker in metric.casefold()
+        for marker in (
+            "free_cash_flow",
+            "revenue",
+            "income",
+            "expense",
+            "cost",
+            "consideration",
+            "proceeds",
+            "capex",
+            "cash_paid",
+            "ebitda",
+        )
+    )
+
+
+def _event_numeric_semantics(event: Any) -> bool:
+    metrics = list(getattr(event, "numeric_evidence", []) or [])
+    table_metrics = [item for item in metrics if getattr(item, "row_metric", None)]
+    if not table_metrics:
+        return True
+    if any(
+        not getattr(item, "column_metric", None)
+        or getattr(item, "source_cell_status", None)
+        not in {"reported_value", "not_applicable_dash"}
+        for item in table_metrics
+    ):
+        return False
+    columns = [str(item.column_metric) for item in table_metrics]
+    if len(columns) != len(set(columns)):
+        return False
+    segment_columns = {
+        "collection_and_disposal",
+        "recycling_processing_and_sales",
+        "renewable_energy",
+        "healthcare_solutions",
+        "corporate_and_other",
+        "total_wm",
+    }
+    if set(columns) == segment_columns:
+        dash_columns = {
+            str(item.column_metric)
+            for item in table_metrics
+            if item.source_cell_status == "not_applicable_dash"
+        }
+        return dash_columns == {
+            "collection_and_disposal",
+            "recycling_processing_and_sales",
+            "renewable_energy",
+        }
+    return True

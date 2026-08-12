@@ -180,3 +180,6 @@ def test_legal_topic_preserves_preceding_issuer_assessment_and_effective_dates()
         "2026-06-30",
         "2025-12-31",
     ]
+    assert reserve["numeric_evidence"][0]["period_kind"] == "instant"
+    assert reserve["numeric_evidence"][0]["presentation_basis"] == "point_in_time"
+    assert reserve["numeric_evidence"][0]["period_end"] == "2026-06-30"

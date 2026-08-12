@@ -360,6 +360,7 @@ def run_current_research(
     inline_companyfacts_backfill_count = 0
     raw_sec_filings: dict[tuple[str, str], str] = {}
     results_html_snapshot: Optional[str] = None
+    results_document: Optional[str] = None
     if issuer is not None:
         assert sec is not None
         cik = str(issuer["cik"])
@@ -784,22 +785,47 @@ def run_current_research(
                 html=latest_financial_html,
                 retrieved_at=retrieved_at,
             )
+            financial_period_months = (
+                3 if latest_financial_reference.form == "10-Q" else 12
+                if latest_financial_reference.form == "10-K" else None
+            )
+            operating_source_documents = [
+                {
+                    "accession_number": latest_financial_reference.accession_number,
+                    "filing_date": latest_financial_reference.filing_date,
+                    "primary_document": latest_financial_reference.primary_document,
+                    "html": latest_financial_html,
+                    "report_date": latest_financial_reference.report_date,
+                    "report_period_months": financial_period_months,
+                    "document_role": "financial_filing",
+                }
+            ]
+            if (
+                results_html_snapshot
+                and latest_results_filing is not None
+                and results_document
+            ):
+                operating_source_documents.append(
+                    {
+                        "accession_number": latest_results_filing["accession_number"],
+                        "filing_date": latest_results_filing["filing_date"],
+                        "primary_document": results_document,
+                        "html": results_html_snapshot,
+                        "report_date": latest_financial_reference.report_date,
+                        "report_period_months": financial_period_months,
+                        "document_role": "earnings_release_exhibit",
+                    }
+                )
             operating_kpis_payload = build_sec_operating_kpi_payload(
                 ticker=symbol,
                 cik=cik,
                 accession_number=latest_financial_reference.accession_number,
                 filing_date=latest_financial_reference.filing_date,
                 primary_document=latest_financial_reference.primary_document,
-                html_documents=[
-                    latest_financial_html,
-                    *([results_html_snapshot] if results_html_snapshot else []),
-                ],
+                source_documents=operating_source_documents,
                 retrieved_at=retrieved_at,
                 report_date=latest_financial_reference.report_date,
-                report_period_months=(
-                    3 if latest_financial_reference.form == "10-Q" else 12
-                    if latest_financial_reference.form == "10-K" else None
-                ),
+                report_period_months=financial_period_months,
             )
             operating_kpis_path = operating_kpis_dir / f"{symbol}.json"
         filing_topics_path = filing_topics_dir / f"{symbol}.json"

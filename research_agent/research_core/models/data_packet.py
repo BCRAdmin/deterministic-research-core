@@ -23,6 +23,11 @@ class EventInfo(BaseModel):
     confirmed: bool = False
     source: Optional[str] = None
     status: str = "unavailable"
+    coverage_status: Optional[str] = None
+    capture_method: Optional[str] = None
+    transport_assurance: Optional[str] = None
+    origin_response_verified: Optional[bool] = None
+    limitation_detail: Optional[str] = None
 
 
 class OperatingKpiEvidence(BaseModel):
@@ -35,6 +40,10 @@ class OperatingKpiEvidence(BaseModel):
     source_sign: Optional[Literal[-1, 1]] = None
     currency: Optional[str] = None
     column_label: Optional[str] = None
+    row_metric: Optional[str] = None
+    column_metric: Optional[str] = None
+    segment: Optional[str] = None
+    source_cell_status: Optional[str] = None
     dimension: Optional[str] = None
     display_unit: Optional[str] = None
     period_kind: Optional[str] = None
@@ -67,6 +76,12 @@ class MaterialNewsEvent(BaseModel):
     materiality_rationale: Optional[str] = None
     inventory_filter_reason: Optional[str] = None
     semantic_disposition: Optional[str] = None
+    source_accession_number: Optional[str] = None
+    source_document: Optional[str] = None
+    source_document_role: Optional[str] = None
+    source_snapshot_path: Optional[str] = None
+    source_content_sha256: Optional[str] = None
+    source_content_bytes: Optional[int] = None
     legal_context: Optional[dict] = None
     numeric_evidence: List[OperatingKpiEvidence] = Field(default_factory=list)
 

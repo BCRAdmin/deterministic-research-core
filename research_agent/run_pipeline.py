@@ -184,6 +184,7 @@ def run_research_pipeline(
         jurisdiction=config.jurisdiction,
         isin=config.isin,
         wkn=config.wkn,
+        calendar_context=_calendar_context(config.earnings_calendar_path),
     )
     freshness = evaluate_price_freshness(
         data_packet.price_basis.date,
@@ -994,6 +995,27 @@ def _material_topic_report_coverage(
     claims: Iterable[ResearchClaim],
     report_kind: str,
 ) -> dict[str, Any]:
+    main_body, _, appendix = markdown.partition("## Evidence Appendix")
+    all_claim_dispositions = []
+    for claim in claims:
+        claim_id = str(claim.claim_id or "")
+        if claim_id and claim_id in main_body:
+            state = "included_main_body"
+            reason = "The exact claim ID is visible in the report body."
+        elif claim_id and claim_id in appendix:
+            state = "appendix_only"
+            reason = "The exact claim ID is retained only in the evidence appendix."
+        else:
+            state = "excluded_with_reason"
+            reason = "The claim is not rendered on either visible report surface."
+        all_claim_dispositions.append(
+            {
+                "claim_id": claim_id,
+                "section": claim.section,
+                "render_state": state,
+                "reason": reason,
+            }
+        )
     required = [
         claim
         for claim in claims
@@ -1007,7 +1029,7 @@ def _material_topic_report_coverage(
             "source_ids": list(claim.source_ids),
             "disposition": (
                 "included_main_report"
-                if str(claim.claim_text or claim.claim).strip() in markdown
+                if str(claim.claim_id or "") in main_body
                 else "blocked_missing_propagation"
             ),
         }
@@ -1020,13 +1042,24 @@ def _material_topic_report_coverage(
     ]
     return {
         "contract_id": "room16.material_topic_report_coverage",
-        "contract_version": 1,
+        "contract_version": 2,
         "report_kind": report_kind,
         "status": "pass" if not blocking else "fail",
         "required_claim_count": len(dispositions),
         "included_claim_count": len(dispositions) - len(blocking),
         "blocking_claim_ids": blocking,
         "dispositions": dispositions,
+        "claim_render_dispositions": all_claim_dispositions,
+        "claim_render_state_counts": {
+            state: sum(
+                1 for item in all_claim_dispositions if item["render_state"] == state
+            )
+            for state in (
+                "included_main_body",
+                "appendix_only",
+                "excluded_with_reason",
+            )
+        },
     }
 
 
@@ -1114,6 +1147,7 @@ def build_data_packet(
     jurisdiction: str | None = None,
     isin: str | None = None,
     wkn: str | None = None,
+    calendar_context: dict[str, Any] | None = None,
 ) -> DataPacket:
     latest_price = prices.iloc[-1]
     latest_event = _next_earnings_event(news)
@@ -1140,6 +1174,12 @@ def build_data_packet(
             superseded_by=item.get("superseded_by"),
             inventory_filter_reason=item.get("inventory_filter_reason"),
             semantic_disposition=item.get("semantic_disposition"),
+            source_accession_number=item.get("source_accession_number"),
+            source_document=item.get("source_document"),
+            source_document_role=item.get("source_document_role"),
+            source_snapshot_path=item.get("source_snapshot_path"),
+            source_content_sha256=item.get("source_content_sha256"),
+            source_content_bytes=item.get("source_content_bytes"),
             legal_context=item.get("legal_context"),
             numeric_evidence=item.get("numeric_evidence") or [],
         )
@@ -1185,6 +1225,7 @@ def build_data_packet(
             confirmed=event_confirmed,
             source=(latest_event.get("source_id") or latest_event.get("source")) if latest_event else None,
             status=(latest_event.get("status") or ("confirmed" if event_confirmed else "unconfirmed")) if latest_event else "unavailable",
+            **(calendar_context or {}),
         ),
         news_coverage=NewsCoverage(
             status=str(coverage_record.get("status") or "unavailable"),
@@ -1204,6 +1245,39 @@ def build_data_packet(
             for item in fundamentals.get("company_guidance_metrics") or []
         ],
     )
+
+
+def _calendar_context(path: str | Path | None) -> dict[str, Any]:
+    if not path:
+        return {}
+    source = Path(path).expanduser().resolve()
+    try:
+        payload = json.loads(source.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    method = str(payload.get("capture_method") or "")
+    proxy_origin_unverified = "origin_unverified" in method
+    return {
+        "coverage_status": payload.get("coverage_status"),
+        "capture_method": method or None,
+        "transport_assurance": (
+            "proxy_observation_origin_response_unverified"
+            if proxy_origin_unverified
+            else "origin_response_verified"
+            if method
+            else None
+        ),
+        "origin_response_verified": False if proxy_origin_unverified else None,
+        "limitation_detail": (
+            "The official investor-relations page was observed through a read-only "
+            "render proxy after the origin returned HTTP 403. No future earnings "
+            "date was visible in that captured page. This is bounded negative "
+            "evidence from the rendered snapshot, not proof that the origin "
+            "published no future date."
+            if proxy_origin_unverified
+            else None
+        ),
+    }
 
 
 def _material_event_state(item: dict[str, Any]) -> dict[str, Any]:

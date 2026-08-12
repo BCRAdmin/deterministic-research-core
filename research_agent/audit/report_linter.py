@@ -369,6 +369,11 @@ def _lint_numeric_claims(
             continue
         table_evidence_ids = (table_evidence_by_line or {}).get(claim.line_number)
         if table_evidence_ids is not None:
+            claim.possible_metric = _bound_metric_for_evidence_ids(
+                claim,
+                table_evidence_ids,
+                evidence_by_id,
+            )
             if not _number_matches_evidence_ids(
                 claim,
                 table_evidence_ids,
@@ -391,6 +396,11 @@ def _lint_numeric_claims(
             continue
         bound_claim = _research_claim_for_rendered_number(claim, claims_by_id)
         if bound_claim is not None:
+            claim.possible_metric = _bound_metric_for_number(
+                claim,
+                bound_claim,
+                evidence_by_id,
+            )
             if not _number_matches_bound_claim_evidence(
                 claim,
                 bound_claim,
@@ -514,6 +524,36 @@ def _number_matches_bound_claim_evidence(
     return False
 
 
+def _bound_metric_for_number(
+    extracted: ExtractedNumericClaim,
+    research_claim,
+    evidence_by_id: dict[str, object],
+) -> Optional[str]:
+    """Resolve the audit label from the claim/evidence graph, never prose."""
+
+    if extracted.normalized_value is None:
+        return None
+    metric_values = dict(getattr(research_claim, "metric_values", {}) or {})
+    candidates: list[str] = []
+    for evidence_id in getattr(research_claim, "evidence_ids", []) or []:
+        evidence = evidence_by_id.get(str(evidence_id))
+        if evidence is None or evidence.value is None:
+            continue
+        if not _numbers_close_for_evidence(
+            float(extracted.normalized_value),
+            float(evidence.value),
+            reported_unit=extracted.unit,
+            evidence_unit=evidence.unit,
+            nearby_text=extracted.nearby_text,
+        ):
+            continue
+        candidates.extend(
+            sorted(set(evidence.supports_metrics).intersection(metric_values))
+        )
+    unique = list(dict.fromkeys(candidates))
+    return unique[0] if len(unique) == 1 else None
+
+
 def _number_matches_evidence_ids(
     extracted: ExtractedNumericClaim,
     evidence_ids: set[str],
@@ -533,6 +573,30 @@ def _number_matches_evidence_ids(
         )
         for evidence in (evidence_by_id.get(value) for value in evidence_ids)
     )
+
+
+def _bound_metric_for_evidence_ids(
+    extracted: ExtractedNumericClaim,
+    evidence_ids: set[str],
+    evidence_by_id: dict[str, object],
+) -> Optional[str]:
+    if extracted.normalized_value is None:
+        return None
+    candidates: list[str] = []
+    for evidence_id in evidence_ids:
+        evidence = evidence_by_id.get(evidence_id)
+        if evidence is None or evidence.value is None:
+            continue
+        if _numbers_close_for_evidence(
+            float(extracted.normalized_value),
+            float(evidence.value),
+            reported_unit=extracted.unit,
+            evidence_unit=evidence.unit,
+            nearby_text=extracted.nearby_text,
+        ):
+            candidates.extend(evidence.supports_metrics)
+    unique = list(dict.fromkeys(candidates))
+    return unique[0] if len(unique) == 1 else None
 
 
 def _table_evidence_line_map(markdown: str) -> dict[int, set[str]]:
