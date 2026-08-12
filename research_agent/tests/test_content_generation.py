@@ -2565,6 +2565,15 @@ def test_named_ticker_uses_generic_authority_report_without_legacy_copy():
 
     assert report.startswith("# CRM Research Report")
     assert "## Final Rating & Review Conditions" in report
+    rating_claim = next(
+        claim for claim in claims
+        if claim.section == "Final Rating & Action Plan"
+    )
+    final_section = report.partition("## Final Rating & Review Conditions")[2].partition(
+        "## Evidence Appendix"
+    )[0]
+    assert f"Claim `{rating_claim.claim_id}`" in final_section
+    assert rating_claim.claim not in final_section
     assert "$12.35B" in report
     assert "$2.35B" in report
     assert "FY2026 revenue of $41.5B" not in report

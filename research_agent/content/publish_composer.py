@@ -992,7 +992,7 @@ def _generic_publish_report(
                     decision_packet,
                     currency=currency,
                 ),
-                _paragraphs(
+                _required_claim_bindings(
                     grouped.get("Final Rating & Action Plan", []),
                     limit=2,
                 ),
@@ -1080,6 +1080,17 @@ def _paragraphs(claims: list[ResearchClaim], limit: int) -> str:
             text = f"{text} {evidence_reference}"
         paragraphs.append(text)
     return "\n\n".join(paragraphs)
+
+
+def _required_claim_bindings(claims: list[ResearchClaim], limit: int) -> str:
+    """Render required section-local provenance without duplicating synthesis."""
+
+    bindings = [
+        f"**Formal rating evidence binding:** {_claim_evidence_reference(claim)}"
+        for claim in claims
+        if claim.claim_id and claim.evidence_ids
+    ][:limit]
+    return "\n\n".join(bindings)
 
 
 def _internal_paragraphs(claims: list[ResearchClaim], limit: int) -> str:
