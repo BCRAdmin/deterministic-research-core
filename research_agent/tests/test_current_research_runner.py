@@ -9,6 +9,7 @@ import pytest
 from research_agent.current import runner
 from research_agent.current.runner import (
     _bound_price_history_after_corporate_actions,
+    _resolve_sec_issuer,
     CurrentResearchError,
     CurrentResearchRequest,
     run_current_research,
@@ -55,6 +56,21 @@ class _FakeSec:
 
     def get_submissions(self, cik):
         return {"filings": {"recent": {"filingDate": ["2026-07-20"]}}}
+
+
+def test_sec_issuer_name_drops_edgar_registration_marker() -> None:
+    issuer = _resolve_sec_issuer(
+        {
+            "0": {
+                "ticker": "COST",
+                "cik_str": 909832,
+                "title": "COSTCO WHOLESALE CORP /NEW",
+            }
+        },
+        "COST",
+    )
+
+    assert issuer == {"cik": "909832", "company_name": "COSTCO WHOLESALE CORP"}
 
 
 def test_companyfacts_filing_period_prefers_current_over_equal_weight_comparison():

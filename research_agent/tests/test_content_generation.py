@@ -12,6 +12,7 @@ from research_agent.content.claim_generator import (
     _issuer_operating_result_specs,
     _labeled_numeric_event_statement,
     _money,
+    _number,
     claim_coverage_gaps,
     claim_quality_metrics,
     generate_research_claims,
@@ -57,6 +58,11 @@ def test_measurement_window_converts_internal_interval_syntax() -> None:
     assert _measurement_window(None, None, "2025-07-01..2026-06-30") == (
         "2025-07-01 to 2026-06-30"
     )
+
+
+def test_readable_numbers_group_integer_counts_without_fake_decimals() -> None:
+    assert _number(81000.0) == "81,000"
+    assert _number(48.15) == "48.15"
 
 
 def _load_packet(ticker: str):

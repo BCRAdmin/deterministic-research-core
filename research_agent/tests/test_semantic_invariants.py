@@ -103,6 +103,44 @@ def test_semantic_invariant_allows_source_bound_structural_dash_fact():
     assert "fact_evidence_is_claim_bound" not in report["blocking_failures"]
 
 
+def _numeric_event_item(mapping_status: str):
+    return SimpleNamespace(
+        metric_name="operating_kpi_test_current_period_ratio",
+        table_id=None,
+        row_key=None,
+        column_key=None,
+        period_start="2026-04-01",
+        period_end="2026-06-30",
+        fact_type="year_over_year_change",
+        source_locator=None,
+        mapping_status=mapping_status,
+    )
+
+
+def test_semantic_invariant_blocks_duplicate_mapped_event_identities() -> None:
+    fixture = _fixture()
+    fixture["material_events"][0].numeric_evidence = [
+        _numeric_event_item("mapped"),
+        _numeric_event_item("mapped"),
+    ]
+
+    report = verify_semantic_invariants(**fixture)
+
+    assert "material_event_numeric_cardinality" in report["blocking_failures"]
+
+
+def test_semantic_invariant_allows_duplicate_unresolved_inventory_identities() -> None:
+    fixture = _fixture()
+    fixture["material_events"][0].numeric_evidence = [
+        _numeric_event_item("unresolved"),
+        _numeric_event_item("unresolved"),
+    ]
+
+    report = verify_semantic_invariants(**fixture)
+
+    assert "material_event_numeric_cardinality" not in report["blocking_failures"]
+
+
 def test_semantic_invariant_negative_mutants_are_blocked():
     mutations = {
         "typed_fact_units": lambda fixture: fixture["fact_ledger"]["claims"][0].update(

@@ -96,6 +96,22 @@ OPERATING_DRIVER_PATTERNS = {
         r"\bacquired\s+annualized\s+revenue\b",
         re.IGNORECASE,
     ),
+    "Members / cardholders": re.compile(
+        r"\b(?:paid members?|paid memberships?|cardholders?)\b",
+        re.IGNORECASE,
+    ),
+    "Renewal rate": re.compile(r"\brenewal rates?\b", re.IGNORECASE),
+    "Comparable sales / traffic / ticket": re.compile(
+        r"\b(?:comparable sales|comp sales)\b.{0,520}"
+        r"\b(?:traffic|frequency)\b.{0,160}\b(?:ticket|basket)\b|"
+        r"\b(?:comparable sales|comp sales)\b.{0,520}"
+        r"\b(?:ticket|basket)\b.{0,160}\b(?:traffic|frequency)\b",
+        re.IGNORECASE,
+    ),
+    "Digital sales": re.compile(
+        r"\b(?:digital(?:ly-enabled)?|e-?commerce)\b",
+        re.IGNORECASE,
+    ),
 }
 
 OPERATING_DRIVER_METRIC_MARKERS = {
@@ -111,6 +127,14 @@ OPERATING_DRIVER_METRIC_MARKERS = {
     "Internalization": ("internalization",),
     "Landfill depletable tons": ("landfill_depletable_tons",),
     "Acquired annualized revenue": ("acquired_annualized_revenue",),
+    "Members / cardholders": ("paid_members", "cardholders"),
+    "Renewal rate": ("renewal_rate",),
+    "Comparable sales / traffic / ticket": (
+        "comparable_sales",
+        "traffic_frequency",
+        "average_ticket",
+    ),
+    "Digital sales": ("digital_sales",),
 }
 
 
@@ -1246,6 +1270,11 @@ def _operating_driver_claims(
             for claim in candidates
             if claim.claim_id not in used_claim_ids
             and pattern.search(_claim_text(claim)) is not None
+            and any(
+                marker in metric
+                for metric in claim.metric_refs
+                for marker in OPERATING_DRIVER_METRIC_MARKERS[label]
+            )
         ]
         if not matching:
             continue

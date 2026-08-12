@@ -4,6 +4,7 @@ from research_agent.content.claim_generator import generate_research_claims
 from research_agent.content.claim_generator import (
     _event_display_statement,
     _event_catalyst_summary,
+    _event_metric_is_visible,
     _is_operating_catalyst_event,
 )
 from research_agent.decision.rating_engine import build_decision_packet
@@ -13,6 +14,7 @@ from research_agent.research_core.models.data_packet import (
     DataPacket,
     MaterialNewsEvent,
     NewsCoverage,
+    OperatingKpiEvidence,
     PriceBasis,
 )
 from research_agent.research_core.models.metrics_packet import (
@@ -71,6 +73,34 @@ def test_readable_event_statement_removes_filing_list_and_footnote_artifacts() -
     )
 
 
+def test_event_metric_visibility_recognizes_source_thousands_separators() -> None:
+    metric = OperatingKpiEvidence(
+        metric_name="filing_financing_debt_principal_usd",
+        value=5259.0,
+        raw_value=5259.0,
+        unit="USD",
+    )
+
+    assert _event_metric_is_visible(metric, "Debt fair value was $5,259.")
+
+
+def test_page_break_parenthetical_tail_is_not_promoted_as_operating_context() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="TEST",
+        cik="123456",
+        accession_number="0000123456-26-000001",
+        filing_date="2026-08-01",
+        primary_document="test.htm",
+        html_documents=[
+            "<p>installation) and other businesses (e-commerce and travel). "
+            "Comparable sales increased 2%.</p>"
+        ],
+        retrieved_at="2026-08-02T12:00:00Z",
+    )
+
+    assert payload["events"] == []
+
+
 def test_operating_kpi_numbers_are_owned_by_the_nearest_semantic_label() -> None:
     payload = _cost_payload()
     metric_values = {
@@ -84,6 +114,199 @@ def test_operating_kpi_numbers_are_owned_by_the_nearest_semantic_label() -> None
     assert any("comparable_sales" in key and value == 0.057 for key, value in metric_values.items())
     assert any("traffic_frequency" in key and value == 0.049 for key, value in metric_values.items())
     assert any("average_ticket" in key and value == 0.008 for key, value in metric_values.items())
+
+
+def test_net_sales_total_is_not_owned_by_a_later_comparable_sales_explanation() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="TEST",
+        cik="123456",
+        accession_number="0000123456-26-000001",
+        filing_date="2026-06-03",
+        primary_document="test.htm",
+        html_documents=[
+            "<p>Net sales increased 12% to $69,154, driven by an increase in "
+            "comparable sales and new locations.</p>"
+        ],
+        retrieved_at="2026-08-12T12:00:00Z",
+        report_date="2026-05-10",
+        report_period_months=3,
+    )
+    records = payload["events"][0]["numeric_evidence"]
+
+    assert [item["metric_role"] for item in records] == [
+        "revenue_yoy_change_3m_2026-05-10_ratio",
+        "revenue_3m_2026-05-10_amount",
+    ]
+    assert [item["fact_type"] for item in records] == [
+        "year_over_year_change",
+        "period_total",
+    ]
+    assert [item["value"] for item in records] == [0.12, 69_154.0]
+
+
+def test_paired_quarter_and_year_to_date_prose_keeps_metric_and_period_identity() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="TEST",
+        cik="123456",
+        accession_number="0000123456-26-000001",
+        filing_date="2026-06-03",
+        primary_document="test.htm",
+        html_documents=[
+            "<p>Net sales increased $7,189 or 12%, and $17,894 or 10% during "
+            "the third quarter and first thirty-six weeks of 2026. The "
+            "improvement was primarily attributable to an increase in comparable "
+            "sales of $6,055 or 10% and $14,553 or 8% during the third quarter "
+            "and thirty-six weeks of 2026. Comparable sales were positively "
+            "impacted by increases of approximately 7% and 5% in average ticket "
+            "and 2% and 3% in shopping frequency in the third quarter and first "
+            "thirty-six weeks of 2026.</p>"
+        ],
+        retrieved_at="2026-08-12T12:00:00Z",
+        report_date="2026-05-10",
+        report_period_months=3,
+    )
+    records = payload["events"][0]["numeric_evidence"]
+    by_value = {(item["metric_role"], item["value"]): item for item in records}
+
+    expected = {
+        ("revenue_yoy_change_12w_2026-05-10_amount", 7_189.0): "2026-02-16",
+        ("revenue_yoy_change_12w_2026-05-10_ratio", 0.12): "2026-02-16",
+        ("revenue_yoy_change_36w_2026-05-10_amount", 17_894.0): "2025-09-01",
+        ("revenue_yoy_change_36w_2026-05-10_ratio", 0.10): "2025-09-01",
+        ("comparable_sales_yoy_change_12w_2026-05-10_amount", 6_055.0): "2026-02-16",
+        ("comparable_sales_yoy_change_12w_2026-05-10_ratio", 0.10): "2026-02-16",
+        ("comparable_sales_yoy_change_36w_2026-05-10_amount", 14_553.0): "2025-09-01",
+        ("comparable_sales_yoy_change_36w_2026-05-10_ratio", 0.08): "2025-09-01",
+        ("average_ticket_yoy_change_12w_2026-05-10_ratio", 0.07): "2026-02-16",
+        ("average_ticket_yoy_change_36w_2026-05-10_ratio", 0.05): "2025-09-01",
+        ("traffic_frequency_yoy_change_12w_2026-05-10_ratio", 0.02): "2026-02-16",
+        ("traffic_frequency_yoy_change_36w_2026-05-10_ratio", 0.03): "2025-09-01",
+    }
+    assert set(by_value) == set(expected)
+    for key, period_start in expected.items():
+        assert by_value[key]["period_start"] == period_start
+        assert by_value[key]["mapping_status"] == "mapped"
+
+
+def test_digitally_enabled_comparable_sales_remains_distinct_and_multi_period_value_is_unresolved() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="TEST",
+        cik="123456",
+        accession_number="0000123456-26-000001",
+        filing_date="2026-06-03",
+        primary_document="test.htm",
+        html_documents=[
+            "<p>Digitally-enabled comparable sales increased 21% and 22% during "
+            "the third quarter and first thirty-six weeks of 2026 and increased "
+            "21% for each period excluding foreign currencies.</p>"
+        ],
+        retrieved_at="2026-08-12T12:00:00Z",
+        report_date="2026-05-10",
+        report_period_months=3,
+    )
+    records = payload["events"][0]["numeric_evidence"]
+
+    assert [item["metric_role"] for item in records[:2]] == [
+        "digital_sales_yoy_change_12w_2026-05-10_ratio",
+        "digital_sales_yoy_change_36w_2026-05-10_ratio",
+    ]
+    assert [item["mapping_status"] for item in records] == [
+        "mapped",
+        "mapped",
+        "unresolved",
+    ]
+
+
+def test_split_membership_table_rows_preserve_years_counts_and_scale() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="TEST",
+        cik="123456",
+        accession_number="0000123456-26-000001",
+        filing_date="2025-10-08",
+        primary_document="test.htm",
+        html_documents=[
+            "<p>Membership at year end was as follows (in thousands):</p>"
+            "<p>202520242023</p>"
+            "<p>Total paid members<sup>1</sup></p>"
+            "<p>81,000 76,200 71,000</p>"
+            "<p>Total cardholders145,200 136,800 127,900</p>"
+        ],
+        retrieved_at="2026-08-13T12:00:00Z",
+        report_date="2025-08-31",
+        report_period_months=12,
+    )
+    records = [
+        item
+        for event in payload["events"]
+        for item in event["numeric_evidence"]
+    ]
+    paid = [item for item in records if item.get("row_metric") == "total_paid_members"]
+    cardholders = [item for item in records if item.get("row_metric") == "total_cardholders"]
+
+    assert [item["value"] for item in paid] == [81_000_000, 76_200_000, 71_000_000]
+    assert [item["value"] for item in cardholders] == [145_200_000, 136_800_000, 127_900_000]
+    assert [item["period_end"] for item in paid] == [
+        "2025-08-31",
+        "2024-08-31",
+        "2023-08-31",
+    ]
+    assert all(item["unit"] == "count" and item["mapping_status"] == "mapped" for item in paid + cardholders)
+
+
+def test_membership_fee_and_reward_caps_do_not_inherit_document_millions_scale() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="TEST",
+        cik="123456",
+        accession_number="0000123456-26-000001",
+        filing_date="2025-10-08",
+        primary_document="test.htm",
+        html_documents=[
+            "<p>(amounts in millions)</p>"
+            "<p>Paid members may upgrade for an additional annual fee of $65. "
+            "Executive members earn a 2% reward up to a maximum reward of "
+            "$1,250 per year.</p>"
+        ],
+        retrieved_at="2026-08-13T12:00:00Z",
+        report_date="2025-08-31",
+        report_period_months=12,
+    )
+    records = payload["events"][0]["numeric_evidence"]
+
+    assert [(item["metric_role"].split("_12m", 1)[0], item["value"]) for item in records] == [
+        ("membership_annual_fee", 65.0),
+        ("membership_reward_rate", 0.02),
+        ("membership_reward_cap", 1250.0),
+    ]
+
+
+def test_annual_revenue_change_amount_is_distinct_from_annual_revenue_total() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="TEST",
+        cik="123456",
+        accession_number="0000123456-26-000001",
+        filing_date="2025-10-08",
+        primary_document="test.htm",
+        html_documents=[
+            "<p>(amounts in millions)</p>"
+            "<p>Net sales increased 8% to $269,912, driven by comparable sales.</p>"
+            "<p>Net sales increased $20,287 or 8% during 2025, driven by comparable sales.</p>"
+        ],
+        retrieved_at="2026-08-13T12:00:00Z",
+        report_date="2025-08-31",
+        report_period_months=12,
+    )
+    records = [item for event in payload["events"] for item in event["numeric_evidence"]]
+
+    assert any(
+        item["metric_role"] == "revenue_12m_2025-08-31_amount"
+        and item["value"] == 269_912_000_000
+        for item in records
+    )
+    assert any(
+        item["metric_role"] == "revenue_yoy_change_12m_2025-08-31_amount"
+        and item["value"] == 20_287_000_000
+        for item in records
+    )
 
 
 def test_operating_kpi_extractor_does_not_mislabel_a_year_as_a_kpi_value() -> None:
@@ -163,6 +386,39 @@ def test_repeated_kpi_statements_have_distinct_fact_ledger_metric_ids() -> None:
 
     assert len(metric_ids) == 2
     assert len(metric_ids) == len(set(metric_ids))
+
+
+def test_current_and_previous_quarter_language_uses_known_report_period() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="TEST",
+        cik="123456",
+        accession_number="0000123456-26-000001",
+        filing_date="2026-08-01",
+        primary_document="test.htm",
+        html_documents=[
+            "<p>Collection and disposal yield contributed $254 million this quarter.</p>"
+            "<p>Collection and disposal yield contributed $102 million last quarter.</p>"
+        ],
+        retrieved_at="2026-08-02T12:00:00Z",
+        report_date="2026-06-30",
+        report_period_months=3,
+    )
+    records = [
+        item
+        for event in payload["events"]
+        for item in event["numeric_evidence"]
+    ]
+    current = next(item for item in records if item["value"] == 254_000_000)
+    previous = next(item for item in records if item["value"] == 102_000_000)
+
+    assert (current["period_start"], current["period_end"]) == (
+        "2026-04-01",
+        "2026-06-30",
+    )
+    assert (previous["period_start"], previous["period_end"]) == (
+        "2026-01-01",
+        "2026-03-31",
+    )
 
 
 def test_multiple_values_inside_one_kpi_row_receive_lossless_unique_metric_ids() -> None:
@@ -671,11 +927,7 @@ def test_per_share_values_do_not_inherit_million_scale() -> None:
     assert any(item["raw_value"] == 764 and item["value"] == 764_000_000 for item in values)
 
 
-def test_numeric_operating_kpi_event_is_not_dropped_from_claims() -> None:
-    payload = _cost_payload()
-    event_payload = next(
-        event for event in payload["events"] if "paid_members" in event["source_id"].lower()
-    )
+def _claims_for_operating_event(event_payload: dict):
     evidence = news_evidence_items("TEST", [event_payload])
     data = DataPacket(
         ticker="TEST",
@@ -706,7 +958,7 @@ def test_numeric_operating_kpi_event_is_not_dropped_from_claims() -> None:
         issues=[],
     )
     decision = build_decision_packet(metrics, validation)
-    claims = generate_research_claims(
+    return generate_research_claims(
         data_packet=data,
         metrics_packet=metrics,
         evidence_ledger=EvidenceLedger(
@@ -716,11 +968,31 @@ def test_numeric_operating_kpi_event_is_not_dropped_from_claims() -> None:
         validation_report=validation,
     )
 
+
+def test_numeric_operating_kpi_event_is_not_dropped_from_claims() -> None:
+    payload = _cost_payload()
+    event_payload = next(
+        event for event in payload["events"] if "paid_members" in event["source_id"].lower()
+    )
+    claims = _claims_for_operating_event(event_payload)
+
     operating_claim = next(
         claim for claim in claims if "82.9 million" in claim.claim_text
     )
     assert operating_claim.metric_refs
     assert operating_claim.evidence_ids
+
+
+def test_event_with_any_unresolved_numeric_identity_is_not_promoted_to_claims() -> None:
+    payload = _cost_payload()
+    event_payload = next(
+        event for event in payload["events"] if "paid_members" in event["source_id"].lower()
+    )
+    event_payload["numeric_evidence"][0]["mapping_status"] = "unresolved"
+
+    claims = _claims_for_operating_event(event_payload)
+
+    assert not any("82.9 million" in claim.claim_text for claim in claims)
 
 
 def test_guidance_bearing_operating_event_is_also_a_catalyst() -> None:

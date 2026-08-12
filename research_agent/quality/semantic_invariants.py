@@ -225,16 +225,22 @@ def verify_semantic_invariants(
     check(
         "material_event_numeric_cardinality",
         all(
-            len(getattr(event, "numeric_evidence", []) or [])
+            len(
+                mapped_items := [
+                    item
+                    for item in (getattr(event, "numeric_evidence", []) or [])
+                    if getattr(item, "mapping_status", "mapped") == "mapped"
+                ]
+            )
             == len(
                 {
                     _event_numeric_identity(item)
-                    for item in (getattr(event, "numeric_evidence", []) or [])
+                    for item in mapped_items
                 }
             )
             for event in event_list
         ),
-        "No material source number is lost through a duplicate metric key.",
+        "No mapped material source number is lost through a duplicate metric key; unresolved numbers remain inventory-only.",
     )
     check(
         "material_event_table_semantics",

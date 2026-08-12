@@ -66,6 +66,22 @@ def test_structured_numeric_matching_respects_display_rounding_and_semantic_sign
         evidence_unit="USD",
         nearby_text="Revenue increased $22 million.",
     )
+    assert _numbers_close_for_evidence(
+        69_154,
+        69_154_000_000,
+        reported_unit="usd",
+        evidence_unit="currency",
+        evidence_raw_value=69_154,
+        evidence_source_scale="million",
+    )
+    assert not _numbers_close_for_evidence(
+        69_155,
+        69_154_000_000,
+        reported_unit="usd",
+        evidence_unit="currency",
+        evidence_raw_value=69_154,
+        evidence_source_scale="base",
+    )
 
 
 def load_fixture(name, filename):

@@ -68,7 +68,7 @@ GUIDANCE_UNAVAILABLE_RE = re.compile(
     r"(?:"
     r"guidance unavailable|company guidance unavailable|missing company guidance|"
     r"no (?:company|management) guidance|metric unavailable|"
-    r"not (?:a )?company forecast|not (?:company|management) guidance|"
+    r"not (?:a )?company forecast|not (?:company|management|issuer) guidance|"
     r"does not (?:represent|constitute).{0,40}(?:guidance|outlook|forecast)"
     r")",
     re.IGNORECASE,
@@ -552,6 +552,8 @@ def _attach_structured_numeric_lineage(
             float(evidence.value),
             reported_unit=extracted.unit,
             evidence_unit=evidence.unit,
+            evidence_raw_value=getattr(evidence, "raw_value", None),
+            evidence_source_scale=getattr(evidence, "source_scale", None),
             nearby_text=extracted.nearby_text,
         ):
             candidates.append((binding, evidence))
@@ -568,6 +570,8 @@ def _attach_structured_numeric_lineage(
                 float(ordered_evidence.value),
                 reported_unit=extracted.unit,
                 evidence_unit=ordered_evidence.unit,
+                evidence_raw_value=getattr(ordered_evidence, "raw_value", None),
+                evidence_source_scale=getattr(ordered_evidence, "source_scale", None),
                 nearby_text=extracted.nearby_text,
             )
         ):
@@ -651,6 +655,8 @@ def _number_matches_bound_claim_evidence(
             float(evidence.value),
             reported_unit=extracted.unit,
             evidence_unit=evidence.unit,
+            evidence_raw_value=getattr(evidence, "raw_value", None),
+            evidence_source_scale=getattr(evidence, "source_scale", None),
             nearby_text=extracted.nearby_text,
         ):
             return True
@@ -677,6 +683,8 @@ def _bound_metric_for_number(
             float(evidence.value),
             reported_unit=extracted.unit,
             evidence_unit=evidence.unit,
+            evidence_raw_value=getattr(evidence, "raw_value", None),
+            evidence_source_scale=getattr(evidence, "source_scale", None),
             nearby_text=extracted.nearby_text,
         ):
             continue
@@ -703,6 +711,8 @@ def _number_matches_evidence_ids(
             float(evidence.value),
             reported_unit=extracted.unit,
             evidence_unit=evidence.unit,
+            evidence_raw_value=getattr(evidence, "raw_value", None),
+            evidence_source_scale=getattr(evidence, "source_scale", None),
             nearby_text=extracted.nearby_text,
         )
         for evidence in (evidence_by_id.get(value) for value in evidence_ids)
@@ -726,6 +736,8 @@ def _bound_metric_for_evidence_ids(
             float(evidence.value),
             reported_unit=extracted.unit,
             evidence_unit=evidence.unit,
+            evidence_raw_value=getattr(evidence, "raw_value", None),
+            evidence_source_scale=getattr(evidence, "source_scale", None),
             nearby_text=extracted.nearby_text,
         ):
             distance = abs(float(extracted.normalized_value) - float(evidence.value))
@@ -1026,6 +1038,8 @@ def _has_direct_evidence_for_numeric_claim(
             float(item.value),
             reported_unit=claim.unit,
             evidence_unit=item.unit,
+            evidence_raw_value=getattr(item, "raw_value", None),
+            evidence_source_scale=getattr(item, "source_scale", None),
         ):
             continue
         haystack = " ".join(
@@ -1053,6 +1067,8 @@ def _numbers_close_for_evidence(
     *,
     reported_unit: Optional[str] = None,
     evidence_unit: Optional[str] = None,
+    evidence_raw_value: Optional[float] = None,
+    evidence_source_scale: Optional[str] = None,
     nearby_text: str = "",
 ) -> bool:
     if evidence_value == 0:
@@ -1069,7 +1085,16 @@ def _numbers_close_for_evidence(
         return abs(reported - evidence_value) <= 0.0005 + 1e-12
     if evidence_value < 0 and reported >= 0 and _text_encodes_negative_value(nearby_text):
         reported = -reported
-    return abs(reported - evidence_value) / abs(evidence_value) <= 0.015
+    if abs(reported - evidence_value) / abs(evidence_value) <= 0.015:
+        return True
+    if (
+        evidence_raw_value is not None
+        and str(evidence_source_scale or "").casefold()
+        in {"thousand", "k", "million", "mn", "m", "billion", "bn"}
+        and evidence_raw_value != 0
+    ):
+        return abs(reported - float(evidence_raw_value)) / abs(float(evidence_raw_value)) <= 0.015
+    return False
 
 
 def _text_encodes_negative_value(value: str) -> bool:

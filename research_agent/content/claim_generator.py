@@ -1626,6 +1626,14 @@ class _ClaimBuilder:
         source_statement = str(event.summary or event.headline).strip()
         statement = _event_display_statement(source_statement)
         numeric_event = bool(event.numeric_evidence)
+        if numeric_event and any(
+            metric.mapping_status != "mapped" for metric in event.numeric_evidence
+        ):
+            # A mixed event cannot safely become report prose: its original
+            # sentence still exposes every number, including values whose
+            # metric, period or segment identity is unresolved. Keep the event
+            # in the evidence inventory, but do not promote it as a hard claim.
+            return
         if not statement or (
             any(character.isdigit() for character in source_statement)
             and not numeric_event
@@ -2208,6 +2216,8 @@ def _multiple(value: Optional[float]) -> str:
 def _number(value: Optional[float]) -> str:
     if value is None:
         return "not available in evidence set"
+    if float(value).is_integer():
+        return f"{int(value):,}"
     return f"{value:.2f}"
 
 
@@ -3256,6 +3266,9 @@ def _event_metric_is_visible(metric, text: str) -> bool:
         )
     else:
         token_pattern = re.escape(token)
+        if token.isdigit() and len(token) >= 4:
+            grouped = f"{int(token):,}"
+            token_pattern = rf"(?:{token_pattern}|{re.escape(grouped)})"
     if re.search(rf"(?<![\d.]){token_pattern}(?!\d)", text):
         return True
     if metric.unit == "currency":

@@ -801,6 +801,28 @@ def run_current_research(
                 }
             ]
             if (
+                annual_filing is not None
+                and annual_html is not None
+                and annual_filing.accession_number
+                != latest_financial_reference.accession_number
+            ):
+                # Stable business-model KPIs such as member and cardholder
+                # counts are commonly disclosed only in the annual filing.
+                # Keep that issuer baseline alongside the latest quarter with
+                # its own accession and fiscal period instead of calling it
+                # missing or borrowing the quarter's dates.
+                operating_source_documents.append(
+                    {
+                        "accession_number": annual_filing.accession_number,
+                        "filing_date": annual_filing.filing_date,
+                        "primary_document": annual_filing.primary_document,
+                        "html": annual_html,
+                        "report_date": annual_filing.report_date,
+                        "report_period_months": 12,
+                        "document_role": "annual_business_model_filing",
+                    }
+                )
+            if (
                 results_html_snapshot
                 and latest_results_filing is not None
                 and results_document
@@ -1785,9 +1807,15 @@ def _resolve_sec_issuer(payload: dict[str, Any], ticker: str) -> Optional[dict[s
             return None
         return {
             "cik": str(int(cik)),
-            "company_name": str(row.get("title") or ticker),
+            "company_name": _clean_sec_company_name(str(row.get("title") or ticker)),
         }
     return None
+
+
+def _clean_sec_company_name(value: str) -> str:
+    """Remove EDGAR registration markers that are not part of the legal name."""
+
+    return re.sub(r"\s+/(?:NEW|DE|MD|NV)\s*$", "", value, flags=re.IGNORECASE).strip()
 
 
 def _latest_filing_date(
