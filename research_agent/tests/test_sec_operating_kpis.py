@@ -99,6 +99,45 @@ def test_operating_kpi_extractor_does_not_mislabel_a_year_as_a_kpi_value() -> No
     assert [item["value"] for item in event["numeric_evidence"]] == [82_900_000]
 
 
+def test_remaining_repurchase_authorization_is_not_reported_as_period_repurchases() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="TEST",
+        cik="123456",
+        accession_number="0000123456-26-000001",
+        filing_date="2026-07-29",
+        primary_document="test.htm",
+        html_documents=[
+            """
+            <p>As of June 30, 2026, the Company has remaining authorization for
+            $2.0 billion of future share repurchases.</p>
+            <p>The Company returned $1.04 billion to shareholders in the second
+            quarter, consisting of $659 million in share repurchases and $379
+            million in cash dividends.</p>
+            """
+        ],
+        retrieved_at="2026-08-02T12:00:00Z",
+        report_date="2026-06-30",
+        report_period_months=3,
+    )
+    facts = [
+        item
+        for event in payload["events"]
+        for item in event["numeric_evidence"]
+    ]
+    authorization = next(
+        item
+        for item in facts
+        if item["value"] == 2_000_000_000
+    )
+    repurchases = next(item for item in facts if item["value"] == 659_000_000)
+
+    assert "share_repurchase_authorization_remaining" in authorization["metric_name"]
+    assert authorization["period_kind"] == "instant"
+    assert authorization["period_end"] == "2026-06-30"
+    assert "share_repurchases" in repurchases["metric_name"]
+    assert repurchases["period_kind"] == "duration"
+
+
 def test_repeated_kpi_statements_have_distinct_fact_ledger_metric_ids() -> None:
     payload = build_sec_operating_kpi_payload(
         ticker="TEST",

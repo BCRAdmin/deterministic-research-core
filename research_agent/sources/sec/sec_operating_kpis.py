@@ -670,6 +670,21 @@ def _numeric_period_contract(
             int(ended.group(2)),
         )
     nearby = statement[max(0, match.start() - 180) : match.end() + 180].casefold()
+    if (
+        period_end
+        and "as of" in nearby
+        and re.search(
+            r"\bremaining (?:authorization|(?:share )?repurchase authorization)\b",
+            nearby,
+        )
+    ):
+        return {
+            "period_kind": "instant",
+            "presentation_basis": "point_in_time",
+            "period_start": None,
+            "period_end": period_end.isoformat(),
+            "period_role": f"asof_{period_end.isoformat()}",
+        }
     if "last quarter" in nearby:
         return {
             "period_kind": "unknown",
@@ -1030,6 +1045,11 @@ def _component_metric_override(
     before = statement[max(0, match.start() - 70) : match.start()].casefold()
     next_number = NUMBER_RE.search(after)
     component_window = after[: next_number.start()] if next_number else after
+    if re.search(
+        r"\bremaining (?:authorization|(?:share )?repurchase authorization)\b",
+        f"{before} {component_window}",
+    ):
+        return "share_repurchase_authorization_remaining"
     component_rules = (
         ("share_repurchases", r"\b(?:share|stock) repurchases?\b"),
         ("cash_dividends", r"\bcash dividends?\b"),
