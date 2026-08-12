@@ -116,7 +116,9 @@ def build_fact_ledger(
             "fiscal_label": evidence.period,
             "presentation_basis": presentation_basis,
             "asof": (
-                max(evidence.effective_asof_dates)
+                period_metadata["period_end"]
+                if period_metadata["period_kind"] == "instant"
+                else max(evidence.effective_asof_dates)
                 if evidence.effective_asof_dates
                 else evidence.date or data_packet.as_of_date
             ),

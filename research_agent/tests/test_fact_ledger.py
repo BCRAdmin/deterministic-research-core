@@ -322,6 +322,45 @@ def test_fact_ledger_never_labels_a_duration_fact_as_spot() -> None:
     assert fact["presentation_basis"] == "period_total"
 
 
+def test_fact_ledger_uses_period_end_as_asof_for_instant_fact() -> None:
+    data_packet, claims, evidence, registry = _fact_inputs()
+    metric = "share_repurchase_authorization_remaining"
+    claims[0].metric_values[metric] = 2_000_000_000.0
+    evidence.evidence_items.append(
+        EvidenceItem(
+            evidence_id="GENERIC_REPURCHASE_AUTHORIZATION",
+            ticker="GENERIC",
+            claim_type="financial_metric",
+            source_id="SEC_GENERIC_DERIVED_TTM",
+            source_type="sec_filing",
+            authority_rank=1,
+            statement="Remaining authorization as of June 30, 2026.",
+            value=2_000_000_000.0,
+            unit="USD",
+            currency="USD",
+            period="as of 2026-06-30",
+            period_kind="instant",
+            presentation_basis="point_in_time",
+            period_end="2026-06-30",
+            date="2026-07-29",
+            supports_metrics=[metric],
+            raw_value=2.0,
+            source_scale="billion",
+        )
+    )
+
+    payload = build_fact_ledger(
+        data_packet=data_packet,
+        claims=claims,
+        evidence_ledger=evidence,
+        source_registry=registry,
+    )
+
+    fact = next(item for item in payload["claims"] if item["metric"] == metric)
+    assert fact["period_kind"] == "instant"
+    assert fact["period_end"] == fact["asof"] == "2026-06-30"
+
+
 def test_fact_ledger_resolves_compact_sec_lineage_to_registered_source_id():
     data_packet, claims, evidence, registry = _fact_inputs()
     revenue = next(
