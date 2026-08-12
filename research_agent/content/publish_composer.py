@@ -1419,6 +1419,7 @@ def _issuer_specific_operating_test(
         preferred = selected[:3]
     if not preferred:
         return ""
+    is_confirmation = "confirmation" in heading.casefold()
     observations: list[str] = []
     for label, claim in preferred:
         metric_names = [
@@ -1427,15 +1428,21 @@ def _issuer_specific_operating_test(
         ]
         metric_basis = ", ".join(metric_names[:2]) or "source-bound operating disclosure"
         observations.append(
-            f"**{label}:** `{claim.claim_id}` tests {metric_basis}. "
-            f"{_claim_evidence_reference(claim)}"
+            f"**{label}:** `{claim.claim_id}` "
+            + (
+                "must confirm the operating direction."
+                if is_confirmation
+                else f"tests {metric_basis}."
+            )
         )
-    return (
-        f"**{heading}.** "
-        + " ".join(observations)
-        + " The constructive case weakens if these source-bound operating drivers "
-        "fail to persist or stop translating into cash conversion."
+    conclusion = (
+        "A stronger case requires these issuer-bound signals to confirm one another "
+        "and continue converting into cash."
+        if is_confirmation
+        else "The thesis weakens if these source-bound drivers stop persisting or no "
+        "longer translate into cash conversion."
     )
+    return f"**{heading}.** " + " ".join(observations) + f" {conclusion}"
 
 
 def _final_rating_section(
