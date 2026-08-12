@@ -66,6 +66,35 @@ def test_semantic_invariant_fixture_passes():
     assert report["blocking_failures"] == []
 
 
+def test_semantic_invariant_allows_source_bound_structural_dash_fact():
+    fixture = _fixture()
+    fixture["fact_ledger"]["claims"].append(
+        {
+            "metric": "operating_kpi_integration_costs_collection",
+            "dimension": "currency",
+            "display_unit": "USD",
+            "currency": "USD",
+            "period_kind": "duration",
+            "period_start": "2026-04-01",
+            "period_end": "2026-06-30",
+            "presentation_basis": "period_total",
+            "row_metric": "integration_costs",
+            "column_metric": "collection",
+            "source_cell_status": "not_applicable_dash",
+            "evidence_ids": ["EVIDENCE-001"],
+            "claim_bound_evidence_ids": [],
+            "value": 0.0,
+            "source_value": 0.0,
+            "source_scale": "million",
+            "source_sign": 1,
+        }
+    )
+
+    report = verify_semantic_invariants(**fixture)
+
+    assert "fact_evidence_is_claim_bound" not in report["blocking_failures"]
+
+
 def test_semantic_invariant_negative_mutants_are_blocked():
     mutations = {
         "typed_fact_units": lambda fixture: fixture["fact_ledger"]["claims"][0].update(

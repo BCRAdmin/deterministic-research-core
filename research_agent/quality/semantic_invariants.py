@@ -75,12 +75,17 @@ def verify_semantic_invariants(
     check(
         "fact_evidence_is_claim_bound",
         all(
-            set(fact.get("evidence_ids") or []).issubset(
+            (
+                fact.get("source_cell_status") == "not_applicable_dash"
+                and bool(fact.get("row_metric"))
+                and bool(fact.get("column_metric"))
+            )
+            or set(fact.get("evidence_ids") or []).issubset(
                 set(fact.get("claim_bound_evidence_ids") or [])
             )
             for fact in facts
         ),
-        "A fact may use only evidence explicitly bound to the originating claim.",
+        "A numeric fact may use only claim-bound evidence; explicit table dashes may retain structural source evidence without a numeric claim.",
     )
 
     evidence_items = list(evidence_ledger.evidence_items)
