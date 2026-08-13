@@ -898,10 +898,10 @@ def test_current_prior_and_change_tuple_gets_semantic_period_contracts() -> None
     records = payload["events"][0]["numeric_evidence"]
 
     assert [item["metric_role"] for item in records] == [
-        "revenue_current_period_value",
-        "revenue_prior_year_value",
-        "revenue_yoy_change_amount",
-        "revenue_yoy_change_percent",
+        "revenue_current_period_value_3m_2026-06-30",
+        "revenue_prior_year_value_3m_2025-06-30",
+        "revenue_yoy_change_amount_3m_2026-06-30",
+        "revenue_yoy_change_percent_3m_2026-06-30",
     ]
     assert records[0]["period_start"] == "2026-04-01"
     assert records[0]["period_end"] == "2026-06-30"
@@ -911,6 +911,45 @@ def test_current_prior_and_change_tuple_gets_semantic_period_contracts() -> None
     assert records[2]["comparison_period_end"] == "2025-06-30"
     assert records[2]["value"] == 254_000_000
     assert records[2]["source_sign"] == 1
+
+
+def test_same_metric_in_quarter_and_fiscal_year_gets_distinct_metric_ids() -> None:
+    quarter = build_sec_operating_kpi_payload(
+        ticker="TEST",
+        cik="123456",
+        accession_number="0000123456-26-000001",
+        filing_date="2026-07-29",
+        report_date="2026-06-30",
+        report_period_months=3,
+        primary_document="q2.htm",
+        html_documents=[
+            "<p>Revenues of $6,684 million, compared to $6,430 million in the "
+            "prior year period, an increase of $254 million, or 4.0%, driven "
+            "by higher collection and disposal yield.</p>"
+        ],
+        retrieved_at="2026-08-02T12:00:00Z",
+    )
+    year = build_sec_operating_kpi_payload(
+        ticker="TEST",
+        cik="123456",
+        accession_number="0000123456-26-000002",
+        filing_date="2026-02-09",
+        report_date="2025-12-31",
+        report_period_months=12,
+        primary_document="fy.htm",
+        html_documents=[
+            "<p>Revenues of $25,204 million for 2025 compared with $22,063 "
+            "million in 2024, an increase of $3,141 million, or 14.2%, driven "
+            "by higher collection and disposal yield.</p>"
+        ],
+        retrieved_at="2026-08-02T12:00:00Z",
+    )
+
+    quarter_metric = quarter["events"][0]["numeric_evidence"][0]["metric_name"]
+    year_metric = year["events"][0]["numeric_evidence"][0]["metric_name"]
+    assert quarter_metric == "operating_kpi_revenue_current_period_value_3m_2026-06-30"
+    assert year_metric == "operating_kpi_revenue_current_period_value_12m_2025-12-31"
+    assert quarter_metric != year_metric
 
 
 def test_declining_percentages_are_bound_with_the_reported_direction() -> None:

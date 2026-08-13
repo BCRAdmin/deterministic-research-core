@@ -1237,7 +1237,10 @@ def _numeric_period_contract(
                 "presentation_basis": "period_total",
                 "period_start": prior_start.isoformat(),
                 "period_end": prior_end.isoformat(),
-                "period_role": relational_role,
+                "period_role": (
+                    f"{relational_role}_{report_period_months}m_"
+                    f"{prior_end.isoformat()}"
+                ),
             }
         if relational_role.startswith("yoy_change"):
             return {
@@ -1249,14 +1252,20 @@ def _numeric_period_contract(
                 "current_period_end": current_end.isoformat(),
                 "comparison_period_start": prior_start.isoformat(),
                 "comparison_period_end": prior_end.isoformat(),
-                "period_role": relational_role,
+                "period_role": (
+                    f"{relational_role}_{report_period_months}m_"
+                    f"{current_end.isoformat()}"
+                ),
             }
         return {
             "period_kind": "duration",
             "presentation_basis": "period_total",
             "period_start": current_start.isoformat(),
             "period_end": current_end.isoformat(),
-            "period_role": relational_role,
+            "period_role": (
+                f"{relational_role}_{report_period_months}m_"
+                f"{current_end.isoformat()}"
+            ),
         }
     if (
         report_date
@@ -1428,7 +1437,7 @@ def _numeric_metric_role(
         label_role = ""
     variant = (
         ""
-        if period_role.endswith(("_value", "_ratio", "_amount", "_percent"))
+        if re.search(r"_(?:value|ratio|amount|percent)(?:_|$)", period_role)
         else _numeric_metric_variant(statement, match, number_index)
     )
     unit_variant = (
