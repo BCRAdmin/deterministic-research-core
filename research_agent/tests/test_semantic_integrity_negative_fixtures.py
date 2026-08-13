@@ -142,6 +142,31 @@ def _error_codes(*, facts=(), tables=(), claims=(), sources=()):
             {"facts": [_fact(metric_id="event_12_value_01", mapping_status="unresolved", confidence="high")]},
             {"facts": [_fact(metric_id="collection_disposal_yield_pct", mapping_status="mapped", confidence="high", fact_type="year_over_year_change", unit="percent", currency=None, period_kind="comparison", comparison_period_start="2025-01-01", comparison_period_end="2025-06-30")]},
         ),
+        (
+            "fact_type_presentation_basis_mismatch",
+            {"facts": [_fact(metric_id="free_cash_flow_guidance_range", fact_type="guidance_range", period_kind="guidance", presentation_basis="period_total")]},
+            {"facts": [_fact(metric_id="free_cash_flow_guidance_range", fact_type="guidance_range", period_kind="guidance", presentation_basis="guidance_range")]},
+        ),
+        (
+            "rate_currency_contract_violation",
+            {"facts": [_fact(metric_id="issued_interest_rate_usd", fact_type="instant_value", raw_text="3.875% senior notes", unit="percent", currency="USD", period_kind="instant", presentation_basis="point_in_time")]},
+            {"facts": [_fact(metric_id="issued_interest_rate", fact_type="instant_value", raw_text="3.875% senior notes", unit="percent", currency=None, period_kind="instant", presentation_basis="point_in_time")]},
+        ),
+        (
+            "categorical_token_promoted_as_money",
+            {"facts": [_fact(metric_id="debt_principal_usd", raw_text="Level 2 inputs", signed_value=2_000_000.0)]},
+            {"facts": [_fact(metric_id="debt_principal_usd", raw_text="$2 million principal", signed_value=2_000_000.0)]},
+        ),
+        (
+            "metric_source_role_conflict",
+            {"facts": [_fact(metric_id="paid_members_fy2025", raw_text="Executive members represented 38,700") ]},
+            {"facts": [_fact(metric_id="executive_members_fy2025", raw_text="Executive members represented 38,700") ]},
+        ),
+        (
+            "cross_adapter_duplicate_aggregation",
+            {"facts": [_fact(metric_id="capital_allocation_acquisition_cash_current_period", fact_type="reconciliation_component", formula_operands={"filing_transactions_acquisition_net_cash_paid_usd": 85_000_000, "operating_kpi_acquisition_net_cash_paid_6m_2026_amount": 85_000_000})]},
+            {"facts": [_fact(metric_id="capital_allocation_acquisition_cash_current_period", fact_type="reconciliation_component", formula_operands={"filing_transactions_acquisition_net_cash_paid_usd": 85_000_000, "filing_transactions_acquisition_prior_period_holdback_usd": 13_000_000})]},
+        ),
     ],
 )
 def test_semantic_integrity_negative_fixture(error, broken, corrected):
@@ -150,4 +175,3 @@ def test_semantic_integrity_negative_fixture(error, broken, corrected):
 
     assert error in broken_codes
     assert error not in corrected_codes
-

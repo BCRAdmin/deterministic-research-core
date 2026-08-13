@@ -8,7 +8,11 @@ from research_agent.run_pipeline import _material_topic_report_coverage
 
 def _fixture():
     fact = {
+        "fact_id": "FACT-001",
         "metric": "revenue_ttm",
+        "value": 100_000_000.0,
+        "evidence_ids": ["EVIDENCE-001"],
+        "claim_bound_evidence_ids": ["EVIDENCE-001"],
         "dimension": "currency",
         "display_unit": "USD",
         "currency": "USD",
@@ -78,7 +82,7 @@ def test_semantic_invariant_audits_visible_material_tables() -> None:
         "# Report\n\n"
         "| Metric | Value |\n"
         "|---|---:|\n"
-        "| Paid members | 81.0 million |\n"
+        "| Revenue | $100.0M |\n"
         "<!-- room16-table-lineage id=TABLE_001 evidence=EVIDENCE-001 -->\n"
     )
 
@@ -92,12 +96,30 @@ def test_semantic_invariant_audits_visible_material_tables() -> None:
 def test_semantic_invariant_blocks_visible_table_without_lineage() -> None:
     fixture = _fixture()
     fixture["rendered_markdown"] = (
-        "| Metric | Value |\n|---|---:|\n| Paid members | 81.0 million |\n"
+        "| Metric | Value |\n|---|---:|\n| Revenue | $100.0M |\n"
     )
 
     report = verify_semantic_invariants(**fixture)
 
     assert "rendered_tables_audited" in report["blocking_failures"]
+
+
+def test_semantic_invariant_blocks_aggregate_lineage_when_cell_value_does_not_match() -> None:
+    fixture = _fixture()
+    fixture["rendered_markdown"] = (
+        "# Report\n\n"
+        "| Metric | Value |\n"
+        "|---|---:|\n"
+        "| Revenue | $999.0M |\n"
+        "<!-- room16-table-lineage id=TABLE_001 evidence=EVIDENCE-001 -->\n"
+    )
+
+    report = verify_semantic_invariants(**fixture)
+
+    assert "rendered_tables_audited" in report["blocking_failures"]
+    table = report["rendered_table_contracts"][0]
+    assert table["lineage_complete"] is False
+    assert table["cell_lineage_complete_count"] == 0
 
 
 def test_semantic_invariant_allows_source_bound_structural_dash_fact():

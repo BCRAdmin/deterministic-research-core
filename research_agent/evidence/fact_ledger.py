@@ -257,6 +257,97 @@ def build_fact_ledger(
         represented_metrics.add(metric_name)
         used_source_ids.extend(source_ids)
 
+    # Material report tables can contain source-bound reconciliation cells
+    # that are not repeated in prose claims. They still require first-class
+    # Fact → Evidence lineage in the canonical ledger.
+    for evidence in sorted(evidence_ledger.evidence_items, key=lambda item: item.evidence_id):
+        metric_names = sorted(set(evidence.supports_metrics))
+        if (
+            evidence.value is None
+            or len(metric_names) != 1
+            or metric_names[0] in represented_metrics
+            or not (
+                metric_names[0].startswith("guidance_fcf_bridge_")
+                or (
+                    metric_names[0].startswith("dcf_")
+                    and evidence.period_kind == "instant"
+                )
+            )
+        ):
+            continue
+        metric_name = metric_names[0]
+        source_ids = _resolve_registered_source_ids(
+            [evidence.source_id, *evidence.source_lineage],
+            registry_by_id,
+        )
+        if evidence.source_id not in source_ids:
+            raise FactLedgerError(
+                f"evidence source {evidence.source_id} for {metric_name} is not registered"
+            )
+        period_metadata = _period_metadata(metric_name, evidence)
+        dimension, display_unit, currency = _typed_unit(evidence)
+        facts.append(
+            {
+                "fact_id": f"{data_packet.ticker.upper()}_FACT_{metric_name.upper()}",
+                "claim_id": f"{data_packet.ticker.upper()}_FACT_{metric_name.upper()}",
+                "label": metric_name.replace("_", " "),
+                "metric": metric_name,
+                "value": float(evidence.value),
+                "fact_type": (
+                    "guidance_component"
+                    if metric_name.startswith("guidance_fcf_bridge_")
+                    else "instant_value"
+                ),
+                "raw_text": evidence.raw_text or evidence.statement,
+                "normalized_magnitude": evidence.normalized_magnitude,
+                "signed_value": evidence.signed_value if evidence.signed_value is not None else float(evidence.value),
+                "direction": evidence.direction,
+                "impact": evidence.impact,
+                "rate_basis": evidence.rate_basis,
+                "is_zero": evidence.is_zero,
+                "is_not_applicable": False,
+                "is_missing": False,
+                "unit": display_unit,
+                "display_unit": display_unit,
+                "dimension": dimension,
+                "currency": currency,
+                "period_type": _period_type(metric_name, evidence),
+                **period_metadata,
+                "fiscal_label": evidence.period,
+                "presentation_basis": _presentation_basis(
+                    metric_name, evidence, period_kind=str(period_metadata["period_kind"])
+                ),
+                "asof": evidence.date or data_packet.as_of_date,
+                "effective_asof_dates": list(evidence.effective_asof_dates),
+                "source_id": evidence.source_id,
+                "source_ids": source_ids,
+                "evidence_ids": [evidence.evidence_id],
+                "claim_bound_evidence_ids": [evidence.evidence_id],
+                "source_value": evidence.raw_value,
+                "source_scale": evidence.source_scale,
+                "source_sign": evidence.source_sign,
+                "row_metric": evidence.row_metric,
+                "column_metric": evidence.column_metric,
+                "segment": evidence.segment,
+                "source_cell_status": evidence.source_cell_status,
+                "table_id": evidence.table_id,
+                "cell_id": evidence.cell_id,
+                "source_locator": evidence.source_locator,
+                "mapping_status": "mapped",
+                "confidence": evidence.confidence,
+                "source_accession_number": evidence.source_accession_number,
+                "source_document": evidence.source_document,
+                "source_document_role": evidence.source_document_role,
+                "source_snapshot_path": evidence.source_snapshot_path,
+                "source_content_sha256": evidence.source_content_sha256,
+                "source_content_bytes": evidence.source_content_bytes,
+                "research_claim_ids": [],
+                "render_bound_only": True,
+            }
+        )
+        represented_metrics.add(metric_name)
+        used_source_ids.extend(source_ids)
+
     _validate_typed_facts(facts)
 
     sources = [

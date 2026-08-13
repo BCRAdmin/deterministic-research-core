@@ -430,6 +430,16 @@ def test_operating_driver_selection_is_generic_complete_and_prefers_specific_cla
         "Gross annualized revenue acquired was $123 million.",
         ["operating_kpi_acquired_annualized_revenue_09_01"],
     )
+    segment_growth = claim(
+        "SEGMENT_GROWTH",
+        "Medical Devices segment sales grew 11.9% in the latest filed year.",
+        ["operating_kpi_revenue_yoy_change_10_01"],
+    )
+    transaction_financing = claim(
+        "TRANSACTION_FINANCING",
+        "The acquisition was funded primarily through $20.0 billion of long-term debt.",
+        ["operating_kpi_acquisition_debt_issued_11_01"],
+    )
 
     selected = _operating_driver_claims(
         [
@@ -442,6 +452,8 @@ def test_operating_driver_selection_is_generic_complete_and_prefers_specific_cla
             internalization,
             landfill_tons,
             acquired_revenue,
+            segment_growth,
+            transaction_financing,
         ]
     )
 
@@ -453,6 +465,8 @@ def test_operating_driver_selection_is_generic_complete_and_prefers_specific_cla
         ("Internalization", "INTERNALIZATION"),
         ("Landfill depletable tons", "LANDFILL_TONS"),
         ("Acquired annualized revenue", "ACQUIRED_REVENUE"),
+        ("Segment growth", "SEGMENT_GROWTH"),
+        ("Transaction financing", "TRANSACTION_FINANCING"),
     ]
 
     data, metrics, _, ledger, decision = _load_packet("SNOW")
@@ -471,6 +485,8 @@ def test_operating_driver_selection_is_generic_complete_and_prefers_specific_cla
                 internalization,
                 landfill_tons,
                 acquired_revenue,
+                segment_growth,
+                transaction_financing,
             ]
         },
         metrics,
@@ -485,6 +501,8 @@ def test_operating_driver_selection_is_generic_complete_and_prefers_specific_cla
             internalization,
             landfill_tons,
             acquired_revenue,
+            segment_growth,
+            transaction_financing,
         ],
         ledger,
     )
@@ -538,6 +556,87 @@ def test_fcf_definition_table_deduplicates_the_same_guidance_bound() -> None:
     assert table.count("$3.85B") == 1
     assert "2026-01-01 to 2026-12-31" in table
     assert "2026-01-01..2026-12-31" not in table
+
+
+def test_fcf_definition_table_does_not_mislabel_pre_growth_fcf_as_issuer_fcf() -> None:
+    items = [
+        EvidenceItem(
+            evidence_id="PRE_GROWTH",
+            ticker="WM",
+            claim_type="financial_metric",
+            source_id="WM_SEC",
+            source_type="sec_filing",
+            authority_rank=1,
+            statement="Free cash flow without sustainability growth investments.",
+            value=2_160_000_000,
+            unit="USD",
+            currency="USD",
+            period="2026-01-01..2026-06-30",
+            period_start="2026-01-01",
+            period_end="2026-06-30",
+            date="2026-06-30",
+            supports_metrics=["operating_kpi_free_cash_flow_ex_sustainability_growth_actual_6m_2026"],
+            raw_value=2_160_000_000,
+        ),
+        EvidenceItem(
+            evidence_id="ISSUER_FCF",
+            ticker="WM",
+            claim_type="financial_metric",
+            source_id="WM_SEC",
+            source_type="sec_filing",
+            authority_rank=1,
+            statement="Issuer free cash flow.",
+            value=2_024_000_000,
+            unit="USD",
+            currency="USD",
+            period="2026-01-01..2026-06-30",
+            period_start="2026-01-01",
+            period_end="2026-06-30",
+            date="2026-06-30",
+            supports_metrics=["operating_kpi_free_cash_flow_6m_2026"],
+            raw_value=2_024_000_000,
+        ),
+    ]
+
+    table = _fcf_definition_reconciliation(
+        EvidenceLedger(ticker="WM", as_of_date="2026-08-11", evidence_items=items),
+        currency="USD",
+    )
+
+    pre_growth_row = next(line for line in table.splitlines() if "$2.16B" in line)
+    issuer_row = next(line for line in table.splitlines() if "$2.02B" in line)
+    assert "FCF before sustainability growth" in pre_growth_row
+    assert "Issuer-defined FCF" not in pre_growth_row
+    assert "Issuer-defined FCF" in issuer_row
+
+
+def test_fcf_definition_table_rejects_unscaled_projected_table_cells() -> None:
+    item = EvidenceItem(
+        evidence_id="UNSCALED_SCENARIO",
+        ticker="WM",
+        claim_type="financial_metric",
+        source_id="WM_SEC",
+        source_type="sec_filing",
+        authority_rank=1,
+        statement="Projected free cash flow scenario table cell.",
+        value=4_100,
+        unit="currency",
+        dimension="currency",
+        currency="USD",
+        period="Q2 2026",
+        period_start="2026-04-01",
+        period_end="2026-06-30",
+        date="2026-06-30",
+        supports_metrics=["operating_kpi_free_cash_flow_ex_sustainability_growth_actual_q2_2026_as_adjusted_amount"],
+        raw_value=4_100,
+    )
+
+    table = _fcf_definition_reconciliation(
+        EvidenceLedger(ticker="WM", as_of_date="2026-08-11", evidence_items=[item]),
+        currency="USD",
+    )
+
+    assert "$4100.00" not in table
 
 
 def _add_exact_metric_evidence(data, metrics, ledger):

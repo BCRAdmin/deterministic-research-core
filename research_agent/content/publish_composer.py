@@ -121,6 +121,23 @@ OPERATING_DRIVER_PATTERNS = {
         r"pro forma|goodwill|intangible assets?)\b",
         re.IGNORECASE,
     ),
+    "Segment growth": re.compile(
+        r"\b(?:segment|medical devices|diagnostic(?:s| products?)?|"
+        r"nutritional products?|established pharmaceutical products?|"
+        r"core laboratory)\b.{0,180}\b(?:sales|revenue|earnings)\b"
+        r".{0,100}\b(?:growth|grew|increase(?:d)?)\b|"
+        r"\b(?:growth|grew|increase(?:d)?)\b.{0,100}\b(?:sales|revenue|earnings)\b"
+        r".{0,180}\b(?:segment|medical devices|diagnostic(?:s| products?)?|"
+        r"nutritional products?|established pharmaceutical products?|"
+        r"core laboratory)\b",
+        re.IGNORECASE,
+    ),
+    "Transaction financing": re.compile(
+        r"\b(?:acquisition|transaction)\b.{0,220}"
+        r"\b(?:debt|funded|financ|consideration|purchase price)\b|"
+        r"\b(?:debt|funded|financ)\b.{0,220}\b(?:acquisition|transaction)\b",
+        re.IGNORECASE,
+    ),
 }
 
 OPERATING_DRIVER_METRIC_MARKERS = {
@@ -152,6 +169,18 @@ OPERATING_DRIVER_METRIC_MARKERS = {
         "goodwill",
         "intangible",
         "pro_forma",
+    ),
+    "Segment growth": (
+        "segment_growth",
+        "revenue_yoy_change",
+        "revenue_current_period",
+    ),
+    "Transaction financing": (
+        "acquisition_total_consideration",
+        "acquisition_debt_issued",
+        "acquisition_purchase_price",
+        "acquisition_assumed_debt",
+        "transaction_financing",
     ),
 }
 
@@ -1511,7 +1540,7 @@ def _issuer_specific_operating_test(
         observations.append(
             f"**{label}:** Reported evidence: {source_text}; "
             + (
-                "The next comparable filing must confirm that direction."
+                "The next comparable filing must confirm the stated improvement."
                 if is_confirmation
                 else "This is the source-bound operating test for the thesis."
             )
@@ -2115,6 +2144,10 @@ def _fcf_definition_reconciliation(
         item
         for item in evidence_ledger.evidence_items
         if item.value is not None
+        and (
+            str(item.dimension or "") != "currency"
+            or abs(float(item.value)) >= 1_000_000
+        )
         and item.provenance_class == "primary_source"
         and any(
             "free_cash_flow" in metric
@@ -2194,11 +2227,22 @@ def _fcf_definition_reconciliation(
             item.period_end,
             item.period or item.period_kind or "period not mapped",
         )
+        metric_names = " ".join(item.supports_metrics).casefold()
+        definition_label = (
+            "FCF before sustainability growth"
+            if "ex_sustainability_growth" in metric_names
+            else "Issuer-defined FCF"
+        )
+        use_label = (
+            "Issuer presentation before sustainability-growth investment; not substituted for normalized TTM FCF"
+            if "ex_sustainability_growth" in metric_names
+            else "Issuer presentation only; not substituted for normalized TTM FCF without a period-matched bridge"
+        )
         lines.append(
-            "| Issuer-defined FCF | "
+            f"| {definition_label} | "
             f"{measurement_window} | "
             f"{_fmt_money(item.value, item.currency or currency)} | "
-            "Issuer presentation only; not substituted for normalized TTM FCF without a period-matched bridge |"
+            f"{use_label} |"
         )
     lines.append(
         "Room16 and issuer-defined FCF are separate measures. Differences can reflect measurement windows, "

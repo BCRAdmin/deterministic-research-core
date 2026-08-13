@@ -1,6 +1,7 @@
 import pytest
 
 from research_agent.sources.sec.sec_filing_topics import (
+    _topic_numeric_evidence,
     build_sec_filing_topic_payload,
 )
 
@@ -328,3 +329,87 @@ def test_transaction_topic_preserves_ppa_and_pro_forma_rows() -> None:
     assert any("acquisition_intangible_assets" in name for name in metrics)
     assert any("acquisition_pro_forma_net_sales" in name for name in metrics)
     assert any(item["value"] == 17_153_000_000 for item in metrics.values())
+
+
+def test_categorical_fair_value_levels_are_not_promoted_as_money() -> None:
+    facts = _topic_numeric_evidence(
+        "The fair value hierarchy included Level 2 inputs and Level 3 inputs. "
+        "The company issued $6.0 billion of senior notes.",
+        "financing",
+        filing_date="2026-07-28",
+        document_currency_scale="million",
+    )
+
+    assert [fact["value"] for fact in facts] == [6_000_000_000]
+    assert facts[0]["metric_name"] == "filing_financing_debt_principal_usd"
+
+
+def test_financing_rates_have_no_currency_and_use_economic_event_date() -> None:
+    facts = _topic_numeric_evidence(
+        "On September 15, 2025, the company issued 3.875% senior notes with "
+        "a principal amount of $3.0 billion.",
+        "financing",
+        filing_date="2026-07-28",
+    )
+    rate = next(fact for fact in facts if fact["unit"] == "percent")
+    principal = next(fact for fact in facts if fact["dimension"] == "currency")
+
+    assert rate["currency"] is None
+    assert not rate["metric_name"].endswith("_usd")
+    assert rate["period_end"] == "2025-09-15"
+    assert principal["period_end"] == "2025-09-15"
+
+
+def test_financing_repayment_is_debt_principal_not_legal_payment() -> None:
+    facts = _topic_numeric_evidence(
+        "On September 15, 2025, the company repaid the $500 million outstanding "
+        "principal amount of its 3.875% Notes upon maturity.",
+        "financing",
+        filing_date="2026-07-28",
+    )
+    repayment = next(fact for fact in facts if fact["dimension"] == "currency")
+
+    assert "debt_repayment_principal" in repayment["metric_name"]
+    assert "legal_payment" not in repayment["metric_name"]
+    assert repayment["period_end"] == "2025-09-15"
+
+
+def test_pro_forma_respectively_pair_keeps_metric_and_period_axes() -> None:
+    facts = _topic_numeric_evidence(
+        "Pro forma net sales were $12.4 billion and $25.9 billion for the "
+        "three and six months ended June 30, 2026, respectively. Pro forma "
+        "earnings were $1.1 billion and $2.3 billion for the three and six "
+        "months ended June 30, 2026, respectively.",
+        "transactions",
+        filing_date="2026-07-28",
+    )
+    mapped = {
+        ("net_sales" if "pro_forma_net_sales" in fact["metric_name"] else "earnings", fact["period_start"]): fact["value"]
+        for fact in facts
+        if fact["mapping_status"] == "mapped" and "pro_forma" in fact["metric_name"]
+    }
+
+    assert mapped[("net_sales", "2026-04-01")] == 12_400_000_000
+    assert mapped[("net_sales", "2026-01-01")] == 25_900_000_000
+    assert mapped[("earnings", "2026-04-01")] == 1_100_000_000
+    assert mapped[("earnings", "2026-01-01")] == 2_300_000_000
+
+
+def test_pro_forma_adjustments_do_not_steal_or_lose_metric_roles() -> None:
+    facts = _topic_numeric_evidence(
+        "Unaudited pro forma earnings before taxes for the six months ended "
+        "June 30, 2025, would have been approximately $2.3 billion, reflecting "
+        "transaction-related costs of approximately $0.5 billion, interest "
+        "expense of approximately $0.5 billion, and amortization expense related "
+        "to acquired intangible assets of approximately $0.5 billion. Pro forma "
+        "net sales for the three months ended June 30, 2026 were $12.6 billion.",
+        "transactions",
+        filing_date="2026-07-28",
+    )
+    roles = [(fact["metric_name"], fact["value"]) for fact in facts]
+
+    assert any("pro_forma_earnings" in name and value == 2_300_000_000 for name, value in roles)
+    assert any("transaction_costs" in name and value == 500_000_000 for name, value in roles)
+    assert any("interest_expense" in name and value == 500_000_000 for name, value in roles)
+    assert any("amortization_expense" in name and value == 500_000_000 for name, value in roles)
+    assert any("pro_forma_net_sales" in name and value == 12_600_000_000 for name, value in roles)

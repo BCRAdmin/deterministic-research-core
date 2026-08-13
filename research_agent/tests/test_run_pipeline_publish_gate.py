@@ -2,6 +2,7 @@ from types import SimpleNamespace
 
 from research_agent.audit.audit_report import AuditIssue, AuditReport
 from research_agent.run_pipeline import (
+    _apply_canonical_business_kpi_truth,
     _apply_readable_report_audit_failure,
     _empty_publish_quality_payload,
     _manual_review_report,
@@ -99,3 +100,63 @@ def test_readable_report_audit_failure_blocks_the_readable_surface():
     assert quality.internal_research_quality_score == 60
     assert quality.manual_review_reasons == ["NUMERIC_MISMATCH"]
     assert quality.status == "Needs manual review"
+
+
+def test_readable_derivative_cannot_override_canonical_kpi_coverage() -> None:
+    canonical = AuditReport.from_issues(
+        [
+            AuditIssue(
+                severity="warning",
+                code="BUSINESS_MODEL_KPI_COVERAGE_INCOMPLETE",
+                message="Required business-model KPIs are missing: segment_growth",
+            )
+        ],
+        ticker="ABT",
+    )
+    readable = AuditReport.from_issues(
+        [
+            AuditIssue(
+                severity="warning",
+                code="BUSINESS_MODEL_KPI_COVERAGE_INCOMPLETE",
+                message=(
+                    "Required business-model KPIs are missing: segment_growth, "
+                    "transaction_financing"
+                ),
+            )
+        ],
+        ticker="ABT",
+    )
+
+    merged = _merge_audit_reports(canonical, readable)
+
+    assert [issue.message for issue in merged.issues] == [
+        "Required business-model KPIs are missing: segment_growth"
+    ]
+
+
+def test_quality_kpi_metadata_is_rebound_to_canonical_report_assessment() -> None:
+    quality = SimpleNamespace(
+        required_business_kpis=["segment_growth"],
+        missing_business_kpis=[],
+        business_model_kpi_gap_count=0,
+        business_model_kpi_coverage_complete=True,
+        manual_review_reasons=[],
+        publishable=True,
+        internal_research_quality_score=92,
+        status="Pass",
+    )
+    assessment = SimpleNamespace(
+        required_business_kpis=["segment_growth", "transaction_financing"],
+        missing_business_kpis=["segment_growth", "transaction_financing"],
+    )
+
+    _apply_canonical_business_kpi_truth(quality, assessment)
+
+    assert quality.missing_business_kpis == [
+        "segment_growth",
+        "transaction_financing",
+    ]
+    assert quality.business_model_kpi_gap_count == 2
+    assert quality.business_model_kpi_coverage_complete is False
+    assert quality.publishable is False
+    assert quality.internal_research_quality_score == 70

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 from math import isclose
 from pathlib import Path
 from typing import Any, Iterable, Optional
@@ -974,6 +975,15 @@ def run_research_pipeline(
             audit_report,
             manifest_output_dir / "audit_report.json",
         )
+        canonical_business_model_assessment = assess_speculative_deep_tech_manual_review(
+            markdown=report,
+            metrics_packet=metrics_packet,
+            source_registry=source_registry,
+        )
+        _apply_canonical_business_kpi_truth(
+            quality_report,
+            canonical_business_model_assessment,
+        )
     quality_state_integrity = verify_quality_state(
         quality_report=quality_report,
         audit_report=audit_report,
@@ -1312,7 +1322,8 @@ def _attach_material_event_decision_lineage(decision_packet, data_packet: DataPa
         if decision_input.input_type == "current_risk":
             summary = " ".join(str(event.summary or event.headline).split())
             decision_packet.key_risks.append(
-                f"Issuer-specific material risk ({event.source_id}): {summary[:420]}"
+                f"Issuer-specific material risk ({event.source_id}): "
+                f"{_complete_risk_summary(summary, limit=420)}"
             )
             decision_packet.triggered_rules.extend(
                 [
@@ -1340,6 +1351,22 @@ def _attach_material_event_decision_lineage(decision_packet, data_packet: DataPa
                 )
     decision_packet.key_risks = list(dict.fromkeys(decision_packet.key_risks))
     decision_packet.triggered_rules = list(dict.fromkeys(decision_packet.triggered_rules))
+
+
+def _complete_risk_summary(summary: str, *, limit: int = 420) -> str:
+    """Keep a concise complete sentence; never cut a machine-readable risk mid-word."""
+
+    normalized = " ".join(str(summary or "").split())
+    if len(normalized) <= limit:
+        return normalized
+    complete = [
+        match.end()
+        for match in re.finditer(r"[.!?](?=\s|$)", normalized[: limit + 1])
+    ]
+    if complete:
+        return normalized[: complete[-1]].strip()
+    words = normalized[: limit + 1].split()
+    return " ".join(words[:-1] if words and len(" ".join(words)) > limit else words).rstrip(" ,;:") + "."
 
 
 def _issuer_management_counterposition(summary: str) -> str | None:
@@ -2481,14 +2508,24 @@ def _count_audit_code(audit_report, code: str) -> int:
 
 
 def _merge_audit_reports(*reports: AuditReport) -> AuditReport:
+    canonical_only_codes = {
+        "BUSINESS_MODEL_KPI_COVERAGE_INCOMPLETE",
+        "UNKNOWN_OR_LOW_CONFIDENCE_ARCHETYPE",
+    }
     issues = []
     numeric_claims = []
     issue_keys = set()
     numeric_keys = set()
     ticker = None
-    for report in reports:
+    for report_index, report in enumerate(reports):
         ticker = ticker or report.ticker
         for issue in report.issues:
+            # Whole-report coverage and archetype truth belong to the
+            # canonical report. A shorter publish/readable derivative may
+            # legitimately omit detail and must not overwrite canonical
+            # quality metadata with a second, contradictory truth.
+            if report_index > 0 and issue.code in canonical_only_codes:
+                continue
             key = (
                 issue.code,
                 issue.message,
@@ -2537,6 +2574,31 @@ def _apply_readable_report_audit_failure(quality_report, audit_report) -> None:
         "The readable report failed the deterministic report audit and remains "
         "unavailable until the reported issues are corrected."
     )
+
+
+def _apply_canonical_business_kpi_truth(quality_report, assessment) -> None:
+    """Bind quality metadata to the exact final canonical report bytes."""
+
+    required = list(assessment.required_business_kpis or [])
+    missing = list(assessment.missing_business_kpis or [])
+    quality_report.required_business_kpis = required
+    quality_report.missing_business_kpis = missing
+    quality_report.business_model_kpi_gap_count = len(missing)
+    quality_report.business_model_kpi_coverage_complete = not missing
+    reason = "BUSINESS_MODEL_KPI_COVERAGE_INCOMPLETE"
+    if missing:
+        if reason not in quality_report.manual_review_reasons:
+            quality_report.manual_review_reasons.append(reason)
+        quality_report.publishable = False
+        quality_report.internal_research_quality_score = min(
+            quality_report.internal_research_quality_score,
+            70,
+        )
+        quality_report.status = "Needs manual review"
+    else:
+        quality_report.manual_review_reasons = [
+            item for item in quality_report.manual_review_reasons if item != reason
+        ]
 
 
 def _empty_publish_quality_payload() -> dict[str, int]:

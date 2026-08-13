@@ -53,7 +53,10 @@ def verify_semantic_invariants(
         for event in event_list
         for table in (getattr(event, "table_contracts", []) or [])
     ]
-    rendered_tables = _rendered_markdown_table_contracts(rendered_markdown or "")
+    rendered_tables = _rendered_markdown_table_contracts(
+        rendered_markdown or "",
+        facts=semantic_facts,
+    )
     semantic_tables = [*source_tables, *rendered_tables]
     semantic_sources = [
         {
@@ -425,7 +428,7 @@ def verify_semantic_invariants(
     failures = [item["check_id"] for item in checks if item["status"] != "pass"]
     report = {
         "contract_id": "room16.semantic_invariant_report",
-        "contract_version": 4,
+        "contract_version": 5,
         "status": "pass" if not failures else "fail",
         "semantic_integrity_passed": not failures,
         "internally_reviewable": not failures,
@@ -442,11 +445,16 @@ def verify_semantic_invariants(
         "canonical_report_sha256": rendered_report_sha256,
         "source_table_count": len(source_tables),
         "rendered_material_table_count": len(rendered_tables),
+        "rendered_table_contracts": rendered_tables,
     }
     return report
 
 
-def _rendered_markdown_table_contracts(markdown: str) -> list[dict[str, Any]]:
+def _rendered_markdown_table_contracts(
+    markdown: str,
+    *,
+    facts: Iterable[Mapping[str, Any]] = (),
+) -> list[dict[str, Any]]:
     """Bind each visible material Markdown table to its explicit lineage.
 
     Source-table contracts prove extraction fidelity.  This second inventory
@@ -458,6 +466,7 @@ def _rendered_markdown_table_contracts(markdown: str) -> list[dict[str, Any]]:
     main_body = markdown.partition("## Evidence Appendix")[0]
     lines = main_body.splitlines()
     contracts: list[dict[str, Any]] = []
+    fact_list = list(facts)
     index = 0
     while index + 1 < len(lines):
         if not lines[index].lstrip().startswith("|") or not re.match(
@@ -510,15 +519,26 @@ def _rendered_markdown_table_contracts(markdown: str) -> list[dict[str, Any]]:
                     if column_index < len(headers)
                     else f"column_{column_index + 1}"
                 )
-                cells.append(
-                    {
+                cell = {
                         "cell_id": f"{table_id}_r{row_index + 1}_c{column_index + 1}",
                         "table_id": table_id,
                         "row_key": row_key or f"row_{row_index + 1}",
                         "column_key": column_key or f"column_{column_index + 1}",
                         "raw_text": value,
                     }
+                cell.update(
+                    _rendered_cell_binding(
+                        value,
+                        facts=fact_list,
+                        allowed_evidence_ids=set(evidence_ids),
+                    )
                 )
+                cells.append(cell)
+        material_numeric_cells = [
+            cell
+            for cell in cells
+            if _material_non_date_tokens(str(cell.get("raw_text") or ""))
+        ]
         contracts.append(
             {
                 "table_id": table_id,
@@ -537,11 +557,88 @@ def _rendered_markdown_table_contracts(markdown: str) -> list[dict[str, Any]]:
                 "value_role": "visible_report_value",
                 "table_semantic_type": "rendered_markdown",
                 "cells": cells,
-                "lineage_complete": bool(lineage and evidence_ids),
+                "lineage_complete": bool(lineage and evidence_ids)
+                and all(cell.get("lineage_complete") for cell in material_numeric_cells),
                 "evidence_ids": evidence_ids,
+                "material_numeric_cell_count": len(material_numeric_cells),
+                "cell_lineage_complete_count": sum(
+                    cell.get("lineage_complete") is True
+                    for cell in material_numeric_cells
+                ),
             }
         )
     return contracts
+
+
+def _material_non_date_tokens(value: str) -> list[str]:
+    without_dates = re.sub(r"\b20\d{2}-\d{2}-\d{2}\b", "", value)
+    return re.findall(
+        r"-?\$?\d[\d,]*(?:\.\d+)?(?:[BMK]|%)?",
+        without_dates,
+        re.IGNORECASE,
+    )
+
+
+def _fact_display_tokens(fact: Mapping[str, Any]) -> set[str]:
+    value = fact.get("value")
+    if value is None:
+        return set()
+    number = float(value)
+    magnitude = abs(number)
+    sign = "-" if number < 0 else ""
+    dimension = str(fact.get("dimension") or "").casefold()
+    currency = str(fact.get("currency") or "").upper()
+    tokens: set[str] = set()
+    if dimension in {"percent", "ratio", "basis_points"} or str(fact.get("unit") or "").casefold() in {"percent", "basis_points"}:
+        percent = magnitude * 100 if magnitude <= 1 else magnitude
+        tokens.update({f"{sign}{percent:.1f}%", f"{sign}{percent:.2f}%"})
+    if currency:
+        prefix = "$" if currency == "USD" else ""
+        if magnitude >= 1_000_000_000:
+            tokens.add(f"{sign}{prefix}{magnitude / 1_000_000_000:.2f}B")
+        elif magnitude >= 1_000_000:
+            tokens.update({f"{sign}{prefix}{magnitude / 1_000_000:.1f}M", f"{sign}{prefix}{magnitude / 1_000_000:.2f}M"})
+        else:
+            tokens.update({f"{sign}{prefix}{magnitude:.2f}", f"{sign}{prefix}{magnitude:g}"})
+    tokens.update(
+        {
+            f"{number:g}",
+            f"{number:.1f}",
+            f"{number:.2f}",
+            f"{number:,.0f}",
+            f"{number:,.1f}",
+            f"{number:,.2f}",
+        }
+    )
+    return {token.casefold() for token in tokens}
+
+
+def _rendered_cell_binding(
+    value: str,
+    *,
+    facts: Iterable[Mapping[str, Any]],
+    allowed_evidence_ids: set[str],
+) -> dict[str, Any]:
+    tokens = [token.casefold() for token in _material_non_date_tokens(value)]
+    if not tokens:
+        return {"fact_ids": [], "evidence_ids": [], "lineage_complete": True}
+    matches: dict[str, tuple[str, list[str]]] = {}
+    for fact in facts:
+        evidence_ids = [str(item) for item in fact.get("evidence_ids") or [] if str(item) in allowed_evidence_ids]
+        if not evidence_ids:
+            continue
+        for token in tokens:
+            if token in _fact_display_tokens(fact):
+                matches[token] = (
+                    str(fact.get("fact_id") or fact.get("claim_id") or ""),
+                    evidence_ids,
+                )
+    return {
+        "fact_ids": list(dict.fromkeys(match[0] for match in matches.values() if match[0])),
+        "evidence_ids": list(dict.fromkeys(evidence_id for _, evidence in matches.values() for evidence_id in evidence)),
+        "lineage_complete": len(matches) == len(set(tokens)),
+        "unresolved_tokens": sorted(set(tokens) - set(matches)),
+    }
 
 
 def _markdown_cells(line: str) -> list[str]:

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import re
+
 
 def verify_quality_state(
     *,
@@ -60,6 +62,26 @@ def verify_quality_state(
         (
             f"complete={quality_report.business_model_kpi_coverage_complete} "
             f"gap_count={quality_report.business_model_kpi_gap_count}"
+        ),
+    )
+    audit_missing_business_kpis: set[str] = set()
+    for issue in audit_report.issues:
+        if issue.code != "BUSINESS_MODEL_KPI_COVERAGE_INCOMPLETE":
+            continue
+        match = re.search(r"missing:\s*(.+)$", issue.message, re.IGNORECASE)
+        if match:
+            audit_missing_business_kpis.update(
+                value.strip()
+                for value in match.group(1).split(",")
+                if value.strip()
+            )
+    quality_missing_business_kpis = set(quality_report.missing_business_kpis or [])
+    check(
+        "business_kpi_coverage_matches_canonical_audit",
+        audit_missing_business_kpis == quality_missing_business_kpis,
+        (
+            f"canonical_audit_missing={sorted(audit_missing_business_kpis)} "
+            f"quality_missing={sorted(quality_missing_business_kpis)}"
         ),
     )
     mismatch_count = sum(
@@ -150,7 +172,7 @@ def verify_quality_state(
     ]
     return {
         "contract_id": "room16.quality_state_integrity",
-        "contract_version": 3,
+        "contract_version": 4,
         "status": "pass" if integrity_passed else "fail",
         "integrity_contract_passed": integrity_passed,
         "internally_reviewable": internally_reviewable,

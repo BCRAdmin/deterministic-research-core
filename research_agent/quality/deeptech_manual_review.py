@@ -754,6 +754,7 @@ def _archetype_confidence(
         CompanyArchetype.MEMBERSHIP_RETAIL,
         CompanyArchetype.DIVERSIFIED_MEDICAL_DEVICES_DIAGNOSTICS,
     }:
+        rendered_context = (text or "").lower()
         requirement_count = len(
             BUSINESS_MODEL_KPI_REQUIREMENTS.get(archetype.value, {})
         )
@@ -762,7 +763,7 @@ def _archetype_confidence(
             for pattern in BUSINESS_MODEL_KPI_REQUIREMENTS.get(
                 archetype.value, {}
             ).values()
-            if re.search(pattern, context, flags=re.IGNORECASE)
+            if re.search(pattern, rendered_context, flags=re.IGNORECASE)
         )
         return round(0.7 + 0.3 * (matched / max(requirement_count, 1)), 3)
     if archetype == CompanyArchetype.MEGA_CAP_PLATFORM:
@@ -803,6 +804,7 @@ def _explain_non_deeptech_archetype(
             "diagnostic products",
         ),
     }.get(archetype, ())
+    rendered_context = (text or "").lower()
     rules.extend(
         f"identity_term:{term.replace(' ', '_')}"
         for term in identity_terms
@@ -814,7 +816,7 @@ def _explain_non_deeptech_archetype(
             archetype.value,
             {},
         ).items()
-        if re.search(pattern, context, flags=re.IGNORECASE)
+        if re.search(pattern, rendered_context, flags=re.IGNORECASE)
     )
     return rules
 
@@ -828,7 +830,9 @@ def _business_model_kpi_coverage(
     requirements = BUSINESS_MODEL_KPI_REQUIREMENTS.get(archetype.value, {})
     if not requirements:
         return [], []
-    context = _context_text(text, source_registry)
+    # Coverage is a property of the rendered candidate, not of unused source
+    # inventory. A KPI that exists only in the registry remains a visible gap.
+    context = (text or "").lower()
     required = sorted(requirements)
     missing = sorted(
         name

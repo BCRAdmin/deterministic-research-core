@@ -167,7 +167,11 @@ def _plain_number_is_non_material(line: str, match: re.Match[str]) -> bool:
         return True
     if re.search(r"(?:^|\s)\d+[.)]\s*$", line[: match.end()]):
         return True
-    if re.search(r"\b(?:CIK|ISIN|WKN|accession|claim|evidence|source)\s*[:#-]?\s*$", before, re.IGNORECASE):
+    if re.search(
+        r"\b(?:CIK|ISIN|WKN|accession|claim|evidence|source|note)\s*[:#-]?\s*$",
+        before,
+        re.IGNORECASE,
+    ):
         return True
     return False
 
@@ -253,7 +257,7 @@ def _normalize_number(number_text: str, scale_text: Optional[str]) -> float:
         return value * 1_000_000_000
     if scale in {"m", "mio", "million"}:
         return value * 1_000_000
-    if scale == "k":
+    if scale in {"k", "thousand"}:
         return value * 1_000
     return value
 

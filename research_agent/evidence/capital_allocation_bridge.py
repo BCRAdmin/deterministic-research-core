@@ -31,7 +31,7 @@ def build_capital_allocation_bridge_evidence(
     if room16_fcf is None or distributions is None:
         return []
 
-    acquisition_components = [
+    acquisition_components = _deduplicate_acquisition_components([
         item
         for item in evidence_items
         if item.value is not None
@@ -42,7 +42,7 @@ def build_capital_allocation_bridge_evidence(
             for metric in item.supports_metrics
         )
         and _period_matches(item, period_start, period_end)
-    ]
+    ])
     issuer_fcf = _issuer_defined_fcf(
         evidence_items,
         period_start=period_start,
@@ -166,6 +166,34 @@ def build_capital_allocation_bridge_evidence(
             ]
         )
     return results
+
+
+def _deduplicate_acquisition_components(items: list[EvidenceItem]) -> list[EvidenceItem]:
+    """Collapse one economic cash fact emitted by more than one SEC adapter."""
+
+    chosen: dict[tuple[str, float, str, str], EvidenceItem] = {}
+    for item in items:
+        metric = " ".join(item.supports_metrics).casefold()
+        role = (
+            "prior_period_holdback"
+            if "prior_period_holdback" in metric
+            else "net_cash_paid"
+        )
+        key = (
+            role,
+            float(item.value or 0.0),
+            str(item.period_start or ""),
+            str(item.period_end or ""),
+        )
+        current = chosen.get(key)
+        # The filing-topic adapter carries the explicit transaction role and
+        # wins deterministically over a duplicate broad operating-KPI scan.
+        if current is None or (
+            "filing_transactions_" in metric
+            and "filing_transactions_" not in " ".join(current.supports_metrics).casefold()
+        ):
+            chosen[key] = item
+    return sorted(chosen.values(), key=lambda item: item.evidence_id)
 
 
 def _exact_metric(

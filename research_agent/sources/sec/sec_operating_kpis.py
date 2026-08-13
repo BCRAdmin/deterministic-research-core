@@ -11,6 +11,7 @@ from typing import Any
 
 
 KPI_PATTERNS = {
+    "executive_members": r"\bexecutive members?\b",
     "paid_members": r"\bpaid members(?:hips?)?\b",
     "cardholders": r"\bcardholders?\b",
     "renewal_rate": r"\brenewal rates?\b",
@@ -195,6 +196,9 @@ def _extract_document_events(
     priority_statements = {
         "capital_allocation": set(
             _ranked_capital_allocation_statements(blocks, limit=3)
+        ),
+        "executive_members": set(
+            _ranked_kpi_statements(blocks, "executive_members", limit=3)
         ),
         "paid_members": set(_ranked_kpi_statements(blocks, "paid_members", limit=3)),
         "cardholders": set(_ranked_kpi_statements(blocks, "cardholders", limit=3)),
@@ -688,6 +692,19 @@ def _numeric_evidence(
             semantic_periods = table_contract.get("semantic_periods") or []
             if column_index < len(semantic_periods):
                 period_contract.update(semantic_periods[column_index])
+            column_metric = str(
+                column_metrics[column_index]
+                if column_index < len(column_metrics)
+                else ""
+            )
+            if column_metric.startswith("year_over_year_change"):
+                direction = 1.0
+                direction_label = "increase"
+                impact = (
+                    "adverse"
+                    if "expense" in str(table_contract.get("row_metric") or "").casefold()
+                    else "positive"
+                )
         if not (percent or basis_points) and "yoy_change_amount" in metric_role:
             direction, direction_label, impact = _numeric_direction_contract(
                 statement,
@@ -1137,6 +1154,22 @@ def _numeric_period_contract(
         )
     nearby = statement[max(0, match.start() - 180) : match.end() + 180].casefold()
     if (
+        report_date
+        and "renewal rate" in statement.casefold()
+        and not re.search(
+            r"\b(?:increase|increased|decrease|decreased|change|changed|higher|lower)\b",
+            nearby,
+            re.IGNORECASE,
+        )
+    ):
+        return {
+            "period_kind": "instant",
+            "presentation_basis": "point_in_time",
+            "period_start": None,
+            "period_end": report_date,
+            "period_role": f"asof_{report_date}",
+        }
+    if (
         period_end
         and "as of" in nearby
         and re.search(
@@ -1359,6 +1392,7 @@ def _numeric_metric_role(
         else _statement_metric_base(statement)
     )
     semantic_rules = (
+        ("executive_members", r"executive members?"),
         ("membership_fee_revenue", r"membership fee revenue"),
         ("reported_sales", r"reported sales growth|sales (?:increased|growth).{0,24}reported basis"),
         ("digital_sales", r"digital sales|e-?commerce sales|digitally-enabled comparable sales"),
@@ -2467,8 +2501,13 @@ def _numeric_direction_contract(
     number_range: tuple[int, int],
 ) -> tuple[float, str, str]:
     immediate_after = statement[number_range[1] : number_range[1] + 35]
+    local_before = statement[max(0, number_range[0] - 150) : number_range[0]]
     if re.search(r"\b(?:headwind|adverse)\b", immediate_after, re.IGNORECASE):
         return -1.0, "decrease", "adverse"
+    if re.search(r"positively impacted by increases of", local_before, re.IGNORECASE):
+        return 1.0, "increase", "positive"
+    if re.search(r"\byield growth\b", local_before, re.IGNORECASE):
+        return 1.0, "increase", "positive"
     directions: list[tuple[int, float]] = []
     for pattern, multiplier in (
         (
@@ -2487,11 +2526,15 @@ def _numeric_direction_contract(
     distance, multiplier = min(directions, key=lambda item: item[0])
     if distance > 90:
         return 1.0, "neutral", "neutral"
-    return (
-        (multiplier, "decrease", "adverse")
-        if multiplier < 0
-        else (multiplier, "increase", "positive")
+    if multiplier < 0:
+        return multiplier, "decrease", "adverse"
+    local = statement[max(0, number_range[0] - 120) : number_range[1] + 60]
+    impact = (
+        "adverse"
+        if re.search(r"\b(?:operating expenses?|expenses?|costs?)\b", local, re.IGNORECASE)
+        else "positive"
     )
+    return multiplier, "increase", impact
 
 
 def _source_numeric_clause(
@@ -2559,10 +2602,14 @@ def _semantic_fact_contract(
     if per_share:
         return {"fact_type": "per_share_rate", "rate_basis": "per_share"}
     if period_contract.get("period_kind") == "guidance":
-        if direction == "decrease" or re.search(r"\b(?:increase|raised|higher)\b", lowered):
-            return {"fact_type": "guidance_change", "rate_basis": None}
-        if "range_low" in role or "range_high" in role:
+        if (
+            period_contract.get("presentation_basis") == "guidance_range"
+            or "range_low" in role
+            or "range_high" in role
+        ):
             return {"fact_type": "guidance_range", "rate_basis": None}
+        if direction == "decrease" or re.search(r"\b(?:increase|increased|raised|higher)\b", lowered):
+            return {"fact_type": "guidance_change", "rate_basis": None}
     if "share_of_total" in role or "% of total" in lowered:
         return {"fact_type": "percentage_of_total", "rate_basis": None}
     if unit == "basis_points":

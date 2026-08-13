@@ -335,6 +335,22 @@ def test_structured_lineage_uses_render_order_for_equal_and_near_values():
     ]
 
 
+def test_plain_thousand_scale_is_normalized_for_structured_lineage() -> None:
+    claims = extract_numeric_claims("Volume was 300.0 thousand customers.")
+
+    assert len(claims) == 1
+    assert claims[0].normalized_value == 300_000.0
+    assert claims[0].unit == "count"
+
+
+def test_note_reference_is_not_promoted_as_a_hard_number() -> None:
+    claims = extract_numeric_claims(
+        "We repurchased 10 million shares. See Note 11 to the financial statements."
+    )
+
+    assert [item.raw_text for item in claims] == ["10 million"]
+
+
 def test_dcf_assumptions_and_risk_coverage_map_to_their_own_metrics():
     markdown = (
         "The standardized reverse DCF implies a five-year FCF growth rate of "

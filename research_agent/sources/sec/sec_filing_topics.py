@@ -418,7 +418,7 @@ def _topic_numeric_evidence(
             "£": "GBP",
             "¥": "JPY",
         }.get(str(match.group("currency") or ""))
-        if not currency and scale and topic in {"transactions", "financing", "legal_contingencies"}:
+        if not percent and not currency and scale and topic in {"transactions", "financing", "legal_contingencies"}:
             currency = "USD"
         metric_name = _topic_metric_name(
             summary,
@@ -439,13 +439,19 @@ def _topic_numeric_evidence(
             if "legal_reserve" in metric_name
             else []
         )
-        metric_period_contract = dict(period_contract)
+        metric_period_contract = _topic_period_contract_for_match(
+            summary,
+            match,
+            filing_date=filing_date,
+        ) or dict(period_contract)
         transaction_date = (
             _nearest_preceding_date(summary, match)
-            if topic == "transactions"
+            if topic in {"transactions", "financing"}
             else None
         )
         if transaction_date and (
+            topic == "financing"
+            or
             not metric_period_contract
             or any(
                 marker in metric_name
@@ -524,6 +530,10 @@ def _topic_context_scale(summary: str, match: re.Match[str]) -> str | None:
 def _topic_number_is_non_metric(summary: str, match: re.Match[str]) -> bool:
     before = summary[max(0, match.start() - 24) : match.start()]
     after = summary[match.end() : match.end() + 18]
+    if re.search(r"\bLevel\s*$", before, re.IGNORECASE) and re.match(
+        r"\s*inputs?\b", after, re.IGNORECASE
+    ):
+        return True
     if re.search(
         r"\b(?:January|February|March|April|May|June|July|August|September|October|November|December)$",
         before,
@@ -642,6 +652,94 @@ def _topic_period_contract(
     }
 
 
+def _duration_period_contract(months: int, month_name: str, day: str, year: str) -> dict[str, Any]:
+    from datetime import date
+
+    month = {
+        name.casefold(): index
+        for index, name in enumerate(
+            ("", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
+        )
+        if name
+    }[month_name.casefold()]
+    period_end = date(int(year), month, int(day))
+    start_month_index = period_end.year * 12 + period_end.month - months
+    start_year, month_zero = divmod(start_month_index, 12)
+    return {
+        "period_kind": "duration",
+        "presentation_basis": "period_total",
+        "period_start": date(start_year, month_zero + 1, 1).isoformat(),
+        "period_end": period_end.isoformat(),
+    }
+
+
+def _topic_period_contract_for_match(
+    summary: str,
+    match: re.Match[str],
+    *,
+    filing_date: str | None,
+) -> dict[str, Any]:
+    """Bind a number to its own duration in multi-column prose disclosures."""
+
+    month_names = (
+        "January|February|March|April|May|June|July|August|September|October|November|December"
+    )
+    prior_boundaries = list(
+        re.finditer(r"\.(?=\s+[A-Z])|;", summary[: match.start()])
+    )
+    sentence_start = prior_boundaries[-1].end() if prior_boundaries else 0
+    following_boundaries = list(
+        re.finditer(r"\.(?=\s+[A-Z]|\s*$)|;", summary[match.end() :])
+    )
+    sentence_end_candidates = [
+        match.end() + boundary.start() for boundary in following_boundaries[:1]
+    ]
+    sentence_end = min(sentence_end_candidates) if sentence_end_candidates else len(summary)
+    sentence = summary[sentence_start:sentence_end]
+    local_start = match.start() - sentence_start
+
+    paired = re.search(
+        rf"\b(three|six|nine|twelve) and (three|six|nine|twelve) months ended "
+        rf"({month_names}) (\d{{1,2}}), (20\d{{2}}),? respectively\b",
+        sentence,
+        re.IGNORECASE,
+    )
+    if paired and local_start < paired.start():
+        prior = [
+            item for item in _TOPIC_NUMBER_RE.finditer(sentence[: paired.start()])
+            if not _topic_number_is_non_metric(sentence, item)
+            and (item.group("currency") or item.group("scale") or item.group("percent"))
+        ]
+        current = next(
+            (
+                index
+                for index, item in enumerate(prior)
+                if item.start() <= local_start <= item.end()
+                or local_start <= item.start() <= local_start + 1
+            ),
+            None,
+        )
+        if current is not None and len(prior) >= 2 and current >= len(prior) - 2:
+            word = paired.group(1) if current == len(prior) - 2 else paired.group(2)
+            months = {"three": 3, "six": 6, "nine": 9, "twelve": 12}[word.casefold()]
+            return _duration_period_contract(
+                months, paired.group(3), paired.group(4), paired.group(5)
+            )
+
+    direct = re.search(
+        rf"\b(three|six|nine|twelve) months ended "
+        rf"({month_names}) (\d{{1,2}}), (20\d{{2}})\b",
+        sentence,
+        re.IGNORECASE,
+    )
+    if direct:
+        months = {"three": 3, "six": 6, "nine": 9, "twelve": 12}[direct.group(1).casefold()]
+        return _duration_period_contract(
+            months, direct.group(2), direct.group(3), direct.group(4)
+        )
+    return {}
+
+
 def _topic_metric_name(
     summary: str,
     *,
@@ -680,12 +778,15 @@ def _topic_metric_name(
         ("acquisition_pro_forma_net_sales", r"\bpro forma.{0,80}\b(?:net sales|revenue)\b"),
         ("acquisition_pro_forma_earnings", r"\bpro forma.{0,80}\b(?:earnings|income before taxes)\b"),
         ("acquisition_transaction_costs", r"\btransaction-related costs?\b"),
+        ("acquisition_interest_expense", r"\binterest expense\b"),
+        ("acquisition_amortization_expense", r"\bamortization expense\b"),
         ("acquisition_total_consideration", r"total consideration|purchase price"),
         ("acquisition_net_cash_paid", r"net cash paid"),
         ("acquisition_prior_period_holdback", r"holdbacks? related to prior"),
         ("acquisition_other_consideration", r"other consideration"),
         ("acquisition_stock_consideration", r"shares?.{0,55}(?:valued|value)"),
         ("acquisition_holdback", r"holdbacks?"),
+        ("debt_repayment_principal", r"\brepaid\b.{0,90}\b(?:outstanding )?principal\b|\bredeem(?:ed|ing)?\b.{0,90}\b(?:outstanding )?principal\b"),
         ("debt_net_proceeds", r"net proceeds"),
         ("debt_redemption_principal", r"redeem|outstanding"),
         ("debt_principal", r"issued|senior notes"),
@@ -697,17 +798,44 @@ def _topic_metric_name(
     candidates: list[tuple[int, int, str]] = []
     for priority, (name, pattern) in enumerate(rules):
         for label in re.finditer(pattern, summary, re.IGNORECASE):
+            if name == "acquisition_intangible_assets" and re.search(
+                r"\bamortization expense\b",
+                summary[max(0, label.start() - 90) : label.start()],
+                re.IGNORECASE,
+            ):
+                continue
+            if not _same_topic_sentence(summary, label.span(), match.span()):
+                continue
             if label.end() <= match.start():
                 distance = match.start() - label.end()
+                direction_penalty = 0
             elif match.end() <= label.start():
                 distance = label.start() - match.end()
+                bridge = summary[match.end() : label.start()]
+                direction_penalty = (
+                    0
+                    if re.fullmatch(r"\s*(?:in|of|for)\s+", bridge, re.IGNORECASE)
+                    else 180
+                )
             else:
                 distance = 0
+                direction_penalty = 0
             if distance <= 120:
-                candidates.append((distance, priority, name))
+                candidates.append((distance + direction_penalty, priority, name))
     if candidates:
         return f"filing_{topic}_{min(candidates)[2]}"
     return f"filing_{topic}_unmapped_{ordinal:02d}"
+
+
+def _same_topic_sentence(
+    text: str,
+    left: tuple[int, int],
+    right: tuple[int, int],
+) -> bool:
+    start = min(left[1], right[1])
+    end = max(left[0], right[0])
+    between = text[start:end]
+    return re.search(r"\.(?=\s+[A-Z])|;", between) is None
 
 
 def _legal_context(summary: str) -> dict[str, Any]:

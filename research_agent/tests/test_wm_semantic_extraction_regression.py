@@ -152,3 +152,11 @@ def test_wm_distinguishes_landfill_yield_from_collection_disposal_yield():
     assert any("landfill_average_yield" in name for name in names)
     assert any("collection_disposal_yield" in name for name in names)
     assert len(names) == len(set(names))
+    landfill = [
+        item
+        for event in payload["events"]
+        for item in event["numeric_evidence"]
+        if "landfill_average_yield" in item["metric_name"]
+    ]
+    assert all(item["direction"] == "increase" for item in landfill)
+    assert all(item["impact"] == "positive" for item in landfill)

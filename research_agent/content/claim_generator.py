@@ -2036,8 +2036,18 @@ class _ClaimBuilder:
         if metric_name == "reverse_dcf_implied_fcf_growth":
             value = self.metrics.valuation.sensitivity.reverse_dcf_implied_fcf_growth
             return float(value) if value is not None else None
-        if metric_name.startswith("dcf_") and metric_name.endswith("_equity_value"):
-            scenario_name = metric_name.removeprefix("dcf_").removesuffix("_equity_value")
+        scenario_fields = {
+            "equity_value": "equity_value",
+            "free_cash_flow_growth_rate": "free_cash_flow_growth_rate",
+            "discount_rate": "discount_rate",
+            "terminal_growth_rate": "terminal_growth_rate",
+            "terminal_value_share": "terminal_value_share",
+        }
+        for suffix, attribute in scenario_fields.items():
+            marker = f"_{suffix}"
+            if not metric_name.startswith("dcf_") or not metric_name.endswith(marker):
+                continue
+            scenario_name = metric_name.removeprefix("dcf_").removesuffix(marker)
             scenario = next(
                 (
                     item
@@ -2046,20 +2056,8 @@ class _ClaimBuilder:
                 ),
                 None,
             )
-            return float(scenario.equity_value) if scenario is not None else None
-        if metric_name.startswith("dcf_") and metric_name.endswith("_terminal_value_share"):
-            scenario_name = metric_name.removeprefix("dcf_").removesuffix(
-                "_terminal_value_share"
-            )
-            scenario = next(
-                (
-                    item
-                    for item in self.metrics.valuation.sensitivity.scenarios
-                    if item.name == scenario_name
-                ),
-                None,
-            )
-            return float(scenario.terminal_value_share) if scenario is not None else None
+            value = getattr(scenario, attribute, None) if scenario is not None else None
+            return float(value) if value is not None else None
         return _canonical_value(self.canonical, metric_name)
 
     def _money(self, value: Optional[float]) -> str:
@@ -3352,6 +3350,9 @@ def _final_rating_metric_refs(metrics: MetricsPacket) -> list[str]:
         metric_refs.extend(
             [
                 f"dcf_{scenario.name}_equity_value",
+                f"dcf_{scenario.name}_free_cash_flow_growth_rate",
+                f"dcf_{scenario.name}_discount_rate",
+                f"dcf_{scenario.name}_terminal_growth_rate",
                 f"dcf_{scenario.name}_terminal_value_share",
             ]
         )

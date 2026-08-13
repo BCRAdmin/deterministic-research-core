@@ -21,6 +21,7 @@ FACT_TYPES = {
     "basis_point_change",
     "guidance_range",
     "guidance_change",
+    "guidance_component",
     "contribution_to_change",
     "percentage_of_total",
     "reconciliation_component",
@@ -52,6 +53,7 @@ FACT_TYPE_PERIOD_KINDS = {
     "percentage_of_total": {"duration", "trailing_twelve_months", "instant"},
     "guidance_range": {"guidance"},
     "guidance_change": {"guidance", "comparison"},
+    "guidance_component": {"guidance"},
     "quarterly_rate": {"rate"},
     "annual_rate": {"rate"},
     "annualized_run_rate": {"rate"},
@@ -119,6 +121,9 @@ def audit_semantic_records(
         impact = str(fact.get("impact") or "neutral")
         signed_value = fact.get("signed_value", fact.get("value"))
         raw_text = str(fact.get("raw_text") or "")
+        presentation_basis = str(fact.get("presentation_basis") or "")
+        currency = fact.get("currency")
+        unit = str(fact.get("unit") or fact.get("display_unit") or "").casefold()
 
         if fact_type and fact_type not in FACT_TYPES:
             fail("fact_type_invalid", record_id=fact_id, detail=f"Unknown fact_type={fact_type}.")
@@ -146,6 +151,45 @@ def audit_semantic_records(
                 record_id=fact_id,
                 detail="A guidance range is not typed as a guidance period.",
             )
+        if fact_type == "guidance_range" and presentation_basis != "guidance_range":
+            fail(
+                "fact_type_presentation_basis_mismatch",
+                record_id=fact_id,
+                detail=f"guidance_range requires presentation_basis=guidance_range, found {presentation_basis or 'missing'}.",
+            )
+        if unit in {"percent", "basis_points"} and currency:
+            fail(
+                "rate_currency_contract_violation",
+                record_id=fact_id,
+                detail=f"A {unit} fact cannot carry currency={currency}.",
+            )
+        if re.search(r"\bLevel\s+[1-3]\s+inputs?\b", raw_text, re.IGNORECASE) and (
+            currency or "currency" in unit or metric_id.endswith("_usd")
+        ):
+            fail(
+                "categorical_token_promoted_as_money",
+                record_id=fact_id,
+                detail="A fair-value hierarchy level was promoted as a monetary amount.",
+            )
+        if "executive member" in raw_text.casefold() and "paid_members" in metric_id.casefold():
+            fail(
+                "metric_source_role_conflict",
+                record_id=fact_id,
+                detail="Executive-member subtype evidence is labeled as total paid members.",
+            )
+        operands = fact.get("formula_operands") or {}
+        if "acquisition_cash" in metric_id.casefold() and isinstance(operands, Mapping):
+            net_cash = [
+                float(value)
+                for key, value in operands.items()
+                if "acquisition_net_cash_paid" in str(key) and value is not None
+            ]
+            if len(net_cash) != len(set(net_cash)):
+                fail(
+                    "cross_adapter_duplicate_aggregation",
+                    record_id=fact_id,
+                    detail="The same acquisition cash fact is included more than once across adapters.",
+                )
         if fact_type == "annualized_run_rate" and period_kind != "rate":
             fail(
                 "metric_period_role_mismatch",

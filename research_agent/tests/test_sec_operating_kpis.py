@@ -25,6 +25,7 @@ from research_agent.research_core.models.metrics_packet import (
 )
 from research_agent.research_core.models.validation_report import ValidationReport
 from research_agent.sources.sec.sec_operating_kpis import (
+    _numeric_direction_contract,
     _numeric_evidence,
     build_sec_operating_kpi_payload,
 )
@@ -310,6 +311,17 @@ def test_paired_quarter_and_year_to_date_prose_keeps_metric_and_period_identity(
     for key, period_start in expected.items():
         assert by_value[key]["period_start"] == period_start
         assert by_value[key]["mapping_status"] == "mapped"
+        if key[0].startswith(("average_ticket", "traffic_frequency")):
+            assert by_value[key]["direction"] == "increase"
+            assert by_value[key]["impact"] == "positive"
+
+
+def test_increased_operating_expense_is_directionally_adverse() -> None:
+    statement = "Operating expenses increased $152 million during the six months ended June 30, 2026."
+    start = statement.index("$152")
+    result = _numeric_direction_contract(statement, (start, start + len("$152 million")))
+
+    assert result == (1.0, "increase", "adverse")
 
 
 def test_digitally_enabled_comparable_sales_remains_distinct_and_multi_period_value_is_unresolved() -> None:
@@ -432,10 +444,12 @@ def test_current_renewal_rates_keep_distinct_geographic_roles() -> None:
     records = payload["events"][0]["numeric_evidence"]
 
     assert [item["metric_role"] for item in records] == [
-        "renewal_rate_12w_2026-05-10_us_canada_ratio",
-        "renewal_rate_12w_2026-05-10_worldwide_ratio",
+        "renewal_rate_asof_2026-05-10_us_canada_ratio",
+        "renewal_rate_asof_2026-05-10_worldwide_ratio",
     ]
     assert all(item["mapping_status"] == "mapped" for item in records)
+    assert all(item["fact_type"] == "instant_value" for item in records)
+    assert all(item["period_kind"] == "instant" for item in records)
 
 
 def test_membership_fee_and_reward_caps_do_not_inherit_document_millions_scale() -> None:
@@ -482,12 +496,36 @@ def test_executive_member_footnote_is_not_promoted_and_years_remain_aligned() ->
         report_period_months=12,
     )
 
-    values = [
-        item["value"]
+    records = [
+        item
         for event in payload["events"]
         for item in event["numeric_evidence"]
     ]
-    assert values == [38_700_000, 35_400_000, 32_300_000]
+    assert [item["value"] for item in records] == [38_700_000, 35_400_000, 32_300_000]
+    assert all("executive_members" in item["metric_role"] for item in records)
+    assert all("paid_members" not in item["metric_role"] for item in records)
+
+
+def test_guidance_range_endpoints_keep_range_fact_type() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="TEST",
+        cik="123456",
+        accession_number="0000123456-26-000001",
+        filing_date="2026-07-29",
+        primary_document="test.htm",
+        html_documents=[
+            "<p>We increased free cash flow guidance to a range of "
+            "$2.9 billion to $3.1 billion for fiscal 2026.</p>"
+        ],
+        retrieved_at="2026-08-13T12:00:00Z",
+        report_date="2026-06-30",
+        report_period_months=3,
+    )
+    records = [item for event in payload["events"] for item in event["numeric_evidence"]]
+
+    assert len(records) == 2
+    assert all(item["presentation_basis"] == "guidance_range" for item in records)
+    assert all(item["fact_type"] == "guidance_range" for item in records)
 
 
 def test_acquisition_cash_flow_row_keeps_six_month_period_and_scale() -> None:
