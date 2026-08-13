@@ -961,6 +961,29 @@ def test_sequential_basis_point_change_uses_comparison_period() -> None:
     assert row["current_period_end"] == "2026-06-30"
     assert row["comparison_period_start"] == "2026-01-01"
     assert row["comparison_period_end"] == "2026-03-31"
+    assert row["signed_value"] == 210.0
+    assert row["direction"] == "increase"
+    assert row["impact"] == "positive"
+
+
+def test_paired_change_amount_inherits_direction_across_and() -> None:
+    rows = _numeric_evidence(
+        "The improvement was primarily attributable to an increase in comparable "
+        "sales of $6,055 or 10% and $14,553 or 8% during the third quarter and "
+        "thirty-six weeks of 2026.",
+        kpi_ids=["comparable_sales"],
+        event_index=0,
+        context_scale="million",
+        filing_date="2026-06-03",
+        report_date="2026-05-10",
+        report_period_months=9,
+    )
+
+    row = next(item for item in rows if item["raw_value"] == 14_553.0)
+    assert row["fact_type"] == "year_over_year_change"
+    assert row["signed_value"] == 14_553_000_000.0
+    assert row["direction"] == "increase"
+    assert row["impact"] == "positive"
 
 
 def test_all_visible_hard_numbers_in_emitted_statement_are_bound() -> None:

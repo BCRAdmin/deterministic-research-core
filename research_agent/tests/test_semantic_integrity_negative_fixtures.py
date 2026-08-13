@@ -189,8 +189,8 @@ def _error_codes(*, facts=(), tables=(), claims=(), sources=()):
         ),
         (
             "transaction_cost_metric_owner_mismatch",
-            {"facts": [_fact(metric_id="acquisition_amortization_expense", raw_text="transaction-related expenses of $0.5 billion", signed_value=500_000_000)]},
-            {"facts": [_fact(metric_id="acquisition_transaction_costs", raw_text="transaction-related expenses of $0.5 billion", signed_value=500_000_000)]},
+            {"facts": [_fact(metric_id="acquisition_amortization_expense", raw_text="transaction-related expenses of $0.5 billion", normalized_magnitude=500_000_000, signed_value=500_000_000)]},
+            {"facts": [_fact(metric_id="acquisition_transaction_costs", raw_text="transaction-related expenses of $0.5 billion", normalized_magnitude=500_000_000, signed_value=500_000_000)]},
         ),
     ],
 )
@@ -200,6 +200,23 @@ def test_semantic_integrity_negative_fixture(error, broken, corrected):
 
     assert error in broken_codes
     assert error not in corrected_codes
+
+
+def test_amortization_amount_is_not_stolen_by_later_transaction_clause() -> None:
+    fact = _fact(
+        metric_id="acquisition_amortization_expense",
+        raw_text=(
+            "amortization expense related to acquired intangible assets of "
+            "approximately $0.2 billion, and excluding transaction-related "
+            "expenses of $0.5 billion"
+        ),
+        normalized_magnitude=200_000_000.0,
+        signed_value=200_000_000.0,
+    )
+
+    assert "transaction_cost_metric_owner_mismatch" not in _error_codes(
+        facts=[fact]
+    )
 
 
 def test_economic_event_period_duplicate_is_rejected() -> None:

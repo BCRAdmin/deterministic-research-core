@@ -652,6 +652,11 @@ def _numeric_evidence(
             r"\b(?:grew|increased?|decreased?|declined?|reduced?|reduction|headwind)\b.{0,30}$",
             change_prefix,
             re.IGNORECASE,
+        ) is not None or re.search(
+            r"\b(?:increase|improvement|decrease|decline|reduction)\b"
+            r"[^.;]{0,120}\bof\b[^.;]{0,100}\band\s*$",
+            statement[max(0, match.start() - 150) : match.start()],
+            re.IGNORECASE,
         ) is not None
         if not (percent or basis_points or explicit_change_amount):
             direction = 1.0
@@ -2749,6 +2754,23 @@ def _numeric_direction_contract(
         return 1.0, "increase", "positive"
     if re.search(r"\byield growth\b", local_before, re.IGNORECASE):
         return 1.0, "increase", "positive"
+    paired_change = re.search(
+        r"\b(?P<direction>increase|improvement|decrease|decline|reduction)\b"
+        r"[^.;]{0,120}\bof\b[^.;]{0,100}\band\s*$",
+        local_before,
+        re.IGNORECASE,
+    )
+    if paired_change:
+        adverse = paired_change.group("direction").casefold() in {
+            "decrease",
+            "decline",
+            "reduction",
+        }
+        return (
+            (-1.0, "decrease", "adverse")
+            if adverse
+            else (1.0, "increase", "positive")
+        )
     directions: list[tuple[int, float]] = []
     for pattern, multiplier in (
         (
@@ -2756,7 +2778,11 @@ def _numeric_direction_contract(
             r"reduce|reduced|reduction|headwind|adverse)\b",
             -1.0,
         ),
-        (r"\b(?:growth|grew|increase|increased|rose|higher)\b", 1.0),
+        (
+            r"\b(?:growth|grew|increase|increased|rose|higher|"
+            r"improve|improved|improving|improvement)\b",
+            1.0,
+        ),
     ):
         directions.extend(
             (_semantic_distance(number_range, match.span()), multiplier)

@@ -202,7 +202,7 @@ def audit_semantic_records(
                 detail="An absolute renewal rate is typed as a year-over-year change.",
             )
         if (
-            "transaction-related expense" in raw_text.casefold()
+            _transaction_expense_amount_matches_fact(raw_text, fact)
             and "amortization" in metric_id.casefold()
         ):
             fail(
@@ -390,6 +390,41 @@ def audit_semantic_records(
 def _is_zero(value: Any) -> bool:
     try:
         return abs(float(value)) <= 1e-15
+    except (TypeError, ValueError):
+        return False
+
+
+def _transaction_expense_amount_matches_fact(
+    raw_text: str,
+    fact: Mapping[str, Any],
+) -> bool:
+    """Bind the ownership check to the transaction-cost number itself."""
+
+    match = re.search(
+        r"transaction-related (?:costs?|expenses?)\s+of\s+"
+        r"(?:approximately\s+)?(?:US\s*)?\$\s*"
+        r"(?P<number>\d[\d,]*(?:\.\d+)?)\s*"
+        r"(?P<scale>billion|million|bn|mn)?\b",
+        raw_text,
+        re.IGNORECASE,
+    )
+    if not match:
+        return False
+    multiplier = {
+        "billion": 1_000_000_000,
+        "bn": 1_000_000_000,
+        "million": 1_000_000,
+        "mn": 1_000_000,
+    }.get(str(match.group("scale") or "").casefold(), 1)
+    transaction_amount = float(match.group("number").replace(",", "")) * multiplier
+    fact_amount = fact.get("normalized_magnitude")
+    if fact_amount is None:
+        fact_amount = fact.get("signed_value")
+    try:
+        return abs(abs(float(fact_amount)) - transaction_amount) <= max(
+            1e-9,
+            transaction_amount * 1e-12,
+        )
     except (TypeError, ValueError):
         return False
 
