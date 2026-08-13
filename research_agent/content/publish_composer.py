@@ -1334,6 +1334,12 @@ def _operating_driver_claims(
     selected: list[tuple[str, ResearchClaim]] = []
     used_claim_ids: set[str] = set()
     for label, pattern in OPERATING_DRIVER_PATTERNS.items():
+        if label == "Segment growth" and any(
+            selected_label
+            in {"Reported segment growth", "Comparable segment growth"}
+            for selected_label, _claim in selected
+        ):
+            continue
         matching = [
             claim
             for claim in candidates
@@ -1581,7 +1587,12 @@ def _issuer_specific_operating_test(
             if item[0] in {"Pricing / yield", "Volume", "Margin", "Integration effects"}
         ][:4]
     if not preferred:
-        preferred = selected[:3]
+        preferred = [
+            item
+            for item in selected
+            if item[0]
+            not in {"Reported segment growth", "Comparable segment growth"}
+        ][:3]
     if not preferred:
         return ""
     is_confirmation = "confirmation" in heading.casefold()

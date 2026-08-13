@@ -480,7 +480,6 @@ def test_operating_driver_selection_is_generic_complete_and_prefers_specific_cla
         ("Acquired annualized revenue", "ACQUIRED_REVENUE"),
         ("Reported segment growth", "REPORTED_SEGMENT_GROWTH"),
         ("Comparable segment growth", "COMPARABLE_SEGMENT_GROWTH"),
-        ("Segment growth", "SEGMENT_GROWTH"),
         ("Transaction financing", "TRANSACTION_FINANCING"),
     ]
 
