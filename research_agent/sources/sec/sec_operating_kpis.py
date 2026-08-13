@@ -721,21 +721,37 @@ def _numeric_evidence(
             impact=impact,
         )
         if (
-            fact_contract["fact_type"] in {"year_over_year_change", "contribution_to_change"}
+            fact_contract["fact_type"] in {
+                "year_over_year_change",
+                "contribution_to_change",
+                "basis_point_change",
+            }
             and period_contract.get("period_kind") == "duration"
             and period_contract.get("period_start")
             and period_contract.get("period_end")
         ):
             current_start = date.fromisoformat(str(period_contract["period_start"]))
             current_end = date.fromisoformat(str(period_contract["period_end"]))
+            if re.search(r"\bsequential(?:ly)?\b", statement, re.IGNORECASE):
+                comparison_end = current_start - timedelta(days=1)
+                duration_months = (
+                    (current_end.year - current_start.year) * 12
+                    + current_end.month
+                    - current_start.month
+                    + 1
+                )
+                comparison_start = _duration_start(comparison_end, duration_months)
+            else:
+                comparison_start = current_start.replace(year=current_start.year - 1)
+                comparison_end = current_end.replace(year=current_end.year - 1)
             period_contract.update(
                 {
                     "period_kind": "comparison",
                     "presentation_basis": "period_over_period_comparison",
                     "current_period_start": current_start.isoformat(),
                     "current_period_end": current_end.isoformat(),
-                    "comparison_period_start": current_start.replace(year=current_start.year - 1).isoformat(),
-                    "comparison_period_end": current_end.replace(year=current_end.year - 1).isoformat(),
+                    "comparison_period_start": comparison_start.isoformat(),
+                    "comparison_period_end": comparison_end.isoformat(),
                 }
             )
         if (

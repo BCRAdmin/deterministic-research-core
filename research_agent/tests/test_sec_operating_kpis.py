@@ -848,6 +848,27 @@ def test_non_monetary_cell_does_not_inherit_table_currency() -> None:
     assert row["currency"] is None
 
 
+def test_sequential_basis_point_change_uses_comparison_period() -> None:
+    rows = _numeric_evidence(
+        "Collection and Disposal volume declined 1.8%, primarily due to prior "
+        "year wildfire cleanup. Residential volume losses have begun to slow, "
+        "with losses improving sequentially by 210 basis points.",
+        kpi_ids=["volume"],
+        event_index=0,
+        filing_date="2026-07-29",
+        report_date="2026-06-30",
+        report_period_months=3,
+    )
+
+    row = next(item for item in rows if item["source_scale"] == "basis_points")
+    assert row["fact_type"] == "basis_point_change"
+    assert row["period_kind"] == "comparison"
+    assert row["current_period_start"] == "2026-04-01"
+    assert row["current_period_end"] == "2026-06-30"
+    assert row["comparison_period_start"] == "2026-01-01"
+    assert row["comparison_period_end"] == "2026-03-31"
+
+
 def test_all_visible_hard_numbers_in_emitted_statement_are_bound() -> None:
     payload = build_sec_operating_kpi_payload(
         ticker="TEST",
