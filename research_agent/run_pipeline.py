@@ -819,6 +819,16 @@ def run_research_pipeline(
             json.dumps(material_topic_coverage, indent=2, sort_keys=True) + "\n",
             encoding="utf-8",
         )
+        # The internal composer intentionally promotes only the strongest
+        # current-period claims into the main body.  Reconcile the claim
+        # dispositions with that exact report before visible-citation QA;
+        # otherwise a correctly appendix-routed older claim can retain a stale
+        # ``included_main_report`` flag and produce a false blocking failure.
+        _apply_claim_render_dispositions(
+            claims=claims,
+            material_events=data_packet.news_coverage.material_events,
+            coverage=material_topic_coverage,
+        )
         citation_completeness = validate_visible_citation_completeness(
             internal_best_report,
             claims,
