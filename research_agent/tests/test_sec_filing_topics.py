@@ -240,3 +240,91 @@ def test_legal_topic_preserves_preceding_issuer_assessment_and_effective_dates()
     assert reserve["numeric_evidence"][0]["period_kind"] == "instant"
     assert reserve["numeric_evidence"][0]["presentation_basis"] == "point_in_time"
     assert reserve["numeric_evidence"][0]["period_end"] == "2026-06-30"
+
+
+def test_document_million_scale_applies_to_unscaled_debt_values() -> None:
+    payload = build_sec_filing_topic_payload(
+        ticker="TEST",
+        cik="123456",
+        accession_number="0000123456-26-000006",
+        filing_date="2026-06-03",
+        primary_document="test.htm",
+        html="""
+        <p>(amounts in millions)</p>
+        <p>In March 2026, the subsidiary repaid $69 of its senior debt.
+        The fair value of long-term debt was approximately $5,259 and $5,370.</p>
+        """,
+        retrieved_at="2026-08-13T12:00:00Z",
+    )
+
+    financing = next(
+        event for event in payload["events"]
+        if event["event_type"] == "filing_financing"
+    )
+    assert [item["value"] for item in financing["numeric_evidence"]] == [
+        69_000_000,
+        5_259_000_000,
+        5_370_000_000,
+    ]
+
+
+def test_current_legal_class_actions_are_not_displaced_by_heading_or_fragment() -> None:
+    payload = build_sec_filing_topic_payload(
+        ticker="TEST",
+        cik="123456",
+        accession_number="0000123456-26-000007",
+        filing_date="2026-06-03",
+        primary_document="test.htm",
+        html="""
+        <p>Legal Proceedings</p>
+        <p>Corp., No. C23-02416, remains pending before the court.</p>
+        <p>In October and November 2025, two class actions were filed alleging
+        consumer-protection violations involving tequila products. The Company
+        filed a motion to dismiss in April 2026.</p>
+        <p>In March 2026, four class actions were filed seeking refunds of IEEPA
+        tariffs passed on through higher prices. The Company filed motions to dismiss.</p>
+        """,
+        retrieved_at="2026-08-13T12:00:00Z",
+    )
+
+    summaries = "\n".join(
+        event["summary"]
+        for event in payload["events"]
+        if event["event_type"] == "filing_legal_contingencies"
+    )
+    assert "tequila" in summaries
+    assert "IEEPA" in summaries
+    assert "Legal Proceedings" not in summaries
+    assert "Corp., No." not in summaries
+
+
+def test_transaction_topic_preserves_ppa_and_pro_forma_rows() -> None:
+    payload = build_sec_filing_topic_payload(
+        ticker="TEST",
+        cik="1800",
+        accession_number="0001628280-26-050134",
+        filing_date="2026-07-28",
+        primary_document="test.htm",
+        html="""
+        <p>(dollars in millions)</p>
+        <p>On March 23, 2026, the company completed the business combination.</p>
+        <p>The following table summarizes the preliminary allocation of fair value.</p>
+        <tr><td>Goodwill</td><td>17,153</td></tr>
+        <tr><td>Acquired intangible assets</td><td>12,800</td></tr>
+        <p>Pro forma consolidated net sales for the six months ended June 30, 2026
+        were $25,900.</p>
+        """,
+        retrieved_at="2026-08-13T12:00:00Z",
+    )
+
+    metrics = {
+        item["metric_name"]: item
+        for event in payload["events"]
+        if event["event_type"] == "filing_transactions"
+        for item in event["numeric_evidence"]
+        if item["mapping_status"] == "mapped"
+    }
+    assert any("acquisition_goodwill" in name for name in metrics)
+    assert any("acquisition_intangible_assets" in name for name in metrics)
+    assert any("acquisition_pro_forma_net_sales" in name for name in metrics)
+    assert any(item["value"] == 17_153_000_000 for item in metrics.values())

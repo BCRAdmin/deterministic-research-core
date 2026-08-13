@@ -96,8 +96,12 @@ OPERATING_DRIVER_PATTERNS = {
         r"\bacquired\s+annualized\s+revenue\b",
         re.IGNORECASE,
     ),
-    "Members / cardholders": re.compile(
-        r"\b(?:paid members?|paid memberships?|cardholders?)\b",
+    "Paid members": re.compile(
+        r"\b(?:paid members?|paid memberships?)\b",
+        re.IGNORECASE,
+    ),
+    "Cardholders": re.compile(
+        r"\bcardholders?\b",
         re.IGNORECASE,
     ),
     "Renewal rate": re.compile(r"\brenewal rates?\b", re.IGNORECASE),
@@ -110,6 +114,11 @@ OPERATING_DRIVER_PATTERNS = {
     ),
     "Digital sales": re.compile(
         r"\b(?:digital(?:ly-enabled)?|e-?commerce)\b",
+        re.IGNORECASE,
+    ),
+    "Integration effects": re.compile(
+        r"\b(?:integration costs?|purchase accounting|acquisition-related amortization|"
+        r"pro forma|goodwill|intangible assets?)\b",
         re.IGNORECASE,
     ),
 }
@@ -127,7 +136,8 @@ OPERATING_DRIVER_METRIC_MARKERS = {
     "Internalization": ("internalization",),
     "Landfill depletable tons": ("landfill_depletable_tons",),
     "Acquired annualized revenue": ("acquired_annualized_revenue",),
-    "Members / cardholders": ("paid_members", "cardholders"),
+    "Paid members": ("paid_members",),
+    "Cardholders": ("cardholders",),
     "Renewal rate": ("renewal_rate",),
     "Comparable sales / traffic / ticket": (
         "comparable_sales",
@@ -135,6 +145,14 @@ OPERATING_DRIVER_METRIC_MARKERS = {
         "average_ticket",
     ),
     "Digital sales": ("digital_sales",),
+    "Integration effects": (
+        "integration_effects",
+        "acquisition_total_consideration",
+        "acquisition_net_cash_paid",
+        "goodwill",
+        "intangible",
+        "pro_forma",
+    ),
 }
 
 
@@ -1287,7 +1305,7 @@ def _operating_driver_claims(
 def _operating_driver_score(
     label: str,
     claim: ResearchClaim,
-) -> tuple[int, float, int, int, int]:
+) -> tuple[int, int, float, int, int, int]:
     metric_markers = OPERATING_DRIVER_METRIC_MARKERS[label]
     operating_metrics = [
         metric for metric in claim.metric_refs if metric.startswith("operating_kpi_")
@@ -1330,7 +1348,25 @@ def _operating_driver_score(
             re.IGNORECASE,
         )
     )
-    return category_materiality, direct_ratio, term_count, -len(text), numeric_count
+    return (
+        category_materiality,
+        _operating_driver_recency(claim),
+        direct_ratio,
+        term_count,
+        numeric_count,
+        -len(text),
+    )
+
+
+def _operating_driver_recency(claim: ResearchClaim) -> int:
+    values = re.findall(
+        r"\b(20\d{2})(?:-(\d{2})-(\d{2}))?\b",
+        " ".join([*claim.metric_refs, _claim_text(claim)]),
+    )
+    return max(
+        (int(year) * 10_000 + int(month or 12) * 100 + int(day or 31) for year, month, day in values),
+        default=0,
+    )
 
 
 def _operating_driver_section(
@@ -1442,11 +1478,21 @@ def _issuer_specific_operating_test(
     *,
     heading: str,
 ) -> str:
-    preferred = [
-        item
-        for item in selected
-        if item[0] in {"Pricing / yield", "Volume", "Margin", "Integration effects"}
-    ][:4]
+    membership_labels = {
+        "Paid members",
+        "Cardholders",
+        "Renewal rate",
+        "Comparable sales / traffic / ticket",
+        "Digital sales",
+    }
+    if any(label in membership_labels for label, _ in selected):
+        preferred = [item for item in selected if item[0] in membership_labels][:4]
+    else:
+        preferred = [
+            item
+            for item in selected
+            if item[0] in {"Pricing / yield", "Volume", "Margin", "Integration effects"}
+        ][:4]
     if not preferred:
         preferred = selected[:3]
     if not preferred:
@@ -1455,7 +1501,12 @@ def _issuer_specific_operating_test(
     observations: list[str] = []
     for label, claim in preferred:
         source_text = _clean_internal_text(_claim_text(claim))
-        source_text = re.split(r"(?<=[.!?])\s+", source_text, maxsplit=1)[0].strip()
+        if label == "Renewal rate" and (renewal_excerpt := re.match(
+            r"^.*?\bworldwide\.", source_text, re.IGNORECASE
+        )):
+            source_text = renewal_excerpt.group(0).strip()
+        else:
+            source_text = re.split(r"(?<=[.!?])\s+", source_text, maxsplit=1)[0].strip()
         source_text = source_text.rstrip(".!?")
         observations.append(
             f"**{label}:** Reported evidence: {source_text}; "

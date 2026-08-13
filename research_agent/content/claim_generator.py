@@ -283,7 +283,11 @@ def _event_display_statement(statement: str) -> str:
 
     normalized = " ".join(str(statement or "").split())
     normalized = re.sub(r"^[•●·]+\s*", "", normalized)
+    normalized = re.sub(r"^\(\d+\)\s*", "", normalized)
     normalized = re.sub(r"\s*\([a-z]\)\s*$", "", normalized, flags=re.IGNORECASE)
+    if normalized.rstrip().endswith((",", ";", ":")):
+        complete = list(re.finditer(r"[.!?](?=\s|$)", normalized))
+        normalized = normalized[: complete[-1].end()] if complete else ""
     return normalized.strip()
 
 
@@ -294,12 +298,13 @@ def _numeric_binding(
     metric: OperatingKpiEvidence,
     evidence: EvidenceItem,
     span_index: int,
+    report_text: str,
 ) -> dict[str, object]:
     """Bind one visible number to one exact fact/evidence/source chain."""
 
     return {
         "span_id": f"{claim_id}:number-{span_index}",
-        "report_text": str(metric.raw_text or metric.raw_value or metric.value),
+        "report_text": report_text,
         "fact_id": f"{ticker.upper()}_FACT_{metric.metric_name.upper()}",
         "evidence_id": evidence.evidence_id,
         "metric_id": metric.metric_name,
@@ -328,29 +333,95 @@ def _labeled_numeric_event_statement(
             value = "— (not applicable in source table)"
         elif metric.unit == "percent":
             value = f"{metric.value:.1%}"
-        elif metric.unit == "currency":
-            value = _money(
-                metric.value,
-                metric.currency or default_currency,
-            )
-        elif metric.raw_value is not None and metric.source_scale in {
-            "thousand",
-            "k",
-            "million",
-            "mn",
-            "m",
-            "billion",
-            "bn",
-        }:
-            # Count KPIs are normalized to base units for calculations, but a
-            # source-labelled table must display the source-scale value.  This
-            # prevents a base value such as 33,500,000 from appearing under an
-            # "in millions" heading.
-            value = _number(metric.raw_value)
+        elif metric.dimension == "currency":
+            value = _source_scaled_money(metric, default_currency=default_currency)
+        elif metric.dimension == "count":
+            value = _count(metric.value)
         else:
             value = _number(metric.value)
         values.append(f"{metric.column_label}: {value}")
     return f"{label}: " + "; ".join(values) + "."
+
+
+def _normalized_numeric_event_statement(
+    event: MaterialNewsEvent,
+    statement: str,
+    *,
+    default_currency: str,
+) -> str:
+    """Render source-scaled money in base-unit-safe readable form."""
+
+    rendered = statement
+    cursor = 0
+    for metric in event.numeric_evidence:
+        if metric.value is None or metric.dimension != "currency":
+            continue
+        scale = str(metric.source_scale or "").casefold()
+        if scale not in {"thousand", "k", "million", "mn", "m", "billion", "bn"}:
+            continue
+        raw = metric.raw_value
+        if raw is None:
+            continue
+        raw_number = f"{float(raw):,.12g}"
+        raw_plain = f"{float(raw):.12g}"
+        number_pattern = rf"(?:{re.escape(raw_number)}|{re.escape(raw_plain)})"
+        match = re.search(
+            rf"(?:C\$|US\$|A\$|HK\$|S\$|[$€£¥])\s*{number_pattern}(?![\d,.])",
+            rendered[cursor:],
+            re.IGNORECASE,
+        )
+        if not match:
+            continue
+        absolute_start = cursor + match.start()
+        absolute_end = cursor + match.end()
+        trailing = rendered[absolute_end : absolute_end + 14]
+        if re.match(r"\s*(?:billion|million|thousand|bn|mn|m|k)\b", trailing, re.IGNORECASE):
+            cursor = absolute_end
+            continue
+        replacement = _source_scaled_money(metric, default_currency=default_currency)
+        rendered = rendered[:absolute_start] + replacement + rendered[absolute_end:]
+        cursor = absolute_start + len(replacement)
+    return rendered
+
+
+def _visible_metric_token(metric, text: str) -> str:
+    candidates = []
+    if metric.dimension == "currency":
+        candidates.append(_source_scaled_money(metric, default_currency=metric.currency or "USD"))
+        candidates.append(_money(metric.value, metric.currency or "USD"))
+    elif metric.dimension == "count":
+        candidates.append(_count(metric.value))
+    elif metric.unit == "percent":
+        candidates.append(f"{metric.value:.1%}")
+    for candidate in candidates:
+        if candidate and candidate in text:
+            return candidate
+    raw = str(metric.raw_text or "").strip()
+    if raw and raw in text:
+        return raw
+    return str(metric.raw_value if metric.raw_value is not None else metric.value)
+
+
+def _source_scaled_money(metric, *, default_currency: str) -> str:
+    currency = str(metric.currency or default_currency or "USD").upper()
+    raw = float(metric.raw_value) if metric.raw_value is not None else None
+    scale = str(metric.source_scale or "").casefold()
+    sign = "-" if float(metric.value or 0) < 0 else ""
+    symbol = "$" if currency == "USD" else ""
+    suffix = "" if currency == "USD" else f" {currency}"
+    if raw is not None and scale in {"million", "mn", "m"}:
+        if abs(raw) >= 1_000:
+            amount = f"{abs(raw) / 1_000:.3f}".rstrip("0").rstrip(".") + "B"
+        else:
+            amount = f"{abs(raw):.3f}".rstrip("0").rstrip(".") + "M"
+        return f"{sign}{symbol}{amount}{suffix}"
+    if raw is not None and scale in {"billion", "bn"}:
+        amount = f"{abs(raw):.3f}".rstrip("0").rstrip(".") + "B"
+        return f"{sign}{symbol}{amount}{suffix}"
+    if raw is not None and scale in {"thousand", "k"}:
+        amount = f"{abs(raw):.3f}".rstrip("0").rstrip(".") + "K"
+        return f"{sign}{symbol}{amount}{suffix}"
+    return _money(metric.value, currency)
 
 
 class _ClaimBuilder:
@@ -1654,6 +1725,11 @@ class _ClaimBuilder:
             statement,
             default_currency=self.data_packet.price_basis.currency,
         )
+        statement = _normalized_numeric_event_statement(
+            event,
+            statement,
+            default_currency=self.data_packet.price_basis.currency,
+        )
         metric_values = {
             metric.metric_name: metric.value for metric in event.numeric_evidence
         }
@@ -1726,7 +1802,7 @@ class _ClaimBuilder:
                 metric_refs=list(metric_values),
                 metric_values=metric_values,
                 numeric_mentions=[
-                    str(metric.raw_text or metric.raw_value or metric.value)
+                    _visible_metric_token(metric, claim_statement)
                     for metric in visible_metrics
                     if metric.value is not None
                 ],
@@ -1741,6 +1817,7 @@ class _ClaimBuilder:
                             if metric.metric_name in item.supports_metrics
                         ),
                         span_index=index,
+                        report_text=_visible_metric_token(metric, claim_statement),
                     )
                     for index, metric in enumerate(visible_metrics, start=1)
                     if metric.value is not None
@@ -2215,6 +2292,20 @@ def _number(value: Optional[float]) -> str:
     if float(value).is_integer():
         return f"{int(value):,}"
     return f"{value:.2f}"
+
+
+def _count(value: Optional[float]) -> str:
+    if value is None:
+        return "not available in evidence set"
+    magnitude = abs(float(value))
+    sign = "-" if float(value) < 0 else ""
+    if magnitude >= 1_000_000_000:
+        return f"{sign}{magnitude / 1_000_000_000:.1f} billion"
+    if magnitude >= 1_000_000:
+        return f"{sign}{magnitude / 1_000_000:.1f} million"
+    if magnitude >= 1_000:
+        return f"{sign}{magnitude / 1_000:.1f} thousand"
+    return f"{int(value):,}" if float(value).is_integer() else f"{value:.2f}"
 
 
 def _valuation_status_sentence(status: str) -> str:
@@ -3150,6 +3241,16 @@ def named_current_risk_label(summary: str, *, fallback: str) -> str:
         return "Delaware environmental order and pending appeal."
     if "deferred prosecution" in folded or "stericycle" in folded:
         return "Stericycle deferred-prosecution and continuing-compliance obligations."
+    if "tequila" in folded:
+        return "Kirkland Signature tequila consumer class actions and dismissal motions."
+    if "international emergency economic powers act" in folded or "ieepa" in folded:
+        return "IEEPA tariff-refund consumer class actions and dismissal motions."
+    if "necrotizing enterocolitis" in folded or "preterm infant formula" in folded:
+        return "Preterm infant-formula NEC litigation and appeals."
+    if "qui tam" in folded or "false claims act" in folded:
+        return "Sturgis infant-formula qui tam litigation and recorded legal-loss range."
+    if "shareholder derivative" in folded:
+        return "Infant-formula shareholder derivative litigation and settlement."
     cleaned = re.sub(
         r"(?:[$€£¥]\s*\d[\d,.]*(?:\s*(?:million|billion|mn|bn|m|k))?|\b\d+(?:[.,]\d+)?%|\b\d{4}\b)",
         "",
@@ -3157,7 +3258,12 @@ def named_current_risk_label(summary: str, *, fallback: str) -> str:
         flags=re.IGNORECASE,
     )
     cleaned = " ".join(cleaned.split()).strip(" ,;:-")
-    return (cleaned[:220].rsplit(" ", 1)[0] + "...") if len(cleaned) > 220 else cleaned
+    first_sentence = re.split(r"(?<=[.!?])\s+", cleaned, maxsplit=1)[0].strip()
+    if first_sentence and first_sentence[-1] not in ".!?":
+        first_sentence += "."
+    if len(first_sentence) <= 220:
+        return first_sentence
+    return fallback.rstrip(". ") + "."
 
 
 def _valuation_reconciliation_text(metrics: MetricsPacket, currency: str) -> str:
@@ -3283,10 +3389,19 @@ def _event_metric_is_visible(metric, text: str) -> bool:
             token_pattern = rf"(?:{token_pattern}|{re.escape(grouped)})"
     if re.search(rf"(?<![\d.]){token_pattern}(?!\d)", text):
         return True
-    if metric.unit == "currency":
-        return _money(metric.value, metric.currency or "USD") in text
+    if metric.dimension == "currency":
+        return (
+            _source_scaled_money(
+                metric,
+                default_currency=metric.currency or "USD",
+            )
+            in text
+            or _money(metric.value, metric.currency or "USD") in text
+        )
     if metric.unit == "percent":
         return f"{metric.value:.1%}" in text
+    if metric.dimension == "count":
+        return _count(metric.value) in text
     return _number(metric.value) in text
 
 

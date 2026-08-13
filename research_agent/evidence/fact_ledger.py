@@ -108,7 +108,11 @@ def build_fact_ledger(
             "label": metric_name.replace("_", " "),
             "metric": metric_name,
             "value": metric_use["value"],
-            "fact_type": evidence.fact_type or _infer_fact_type(metric_name, evidence),
+            "fact_type": evidence.fact_type or _infer_fact_type(
+                metric_name,
+                evidence,
+                period_kind=str(period_metadata["period_kind"]),
+            ),
             "raw_text": evidence.raw_text or evidence.statement,
             "normalized_magnitude": evidence.normalized_magnitude,
             "signed_value": evidence.signed_value if evidence.signed_value is not None else metric_use["value"],
@@ -664,16 +668,22 @@ def _validate_typed_facts(facts: list[dict[str, Any]]) -> None:
             raise FactLedgerError(f"currency fact {metric} lacks ISO currency")
 
 
-def _infer_fact_type(metric_name: str, evidence: EvidenceItem) -> str:
-    if evidence.period_kind == "instant":
+def _infer_fact_type(
+    metric_name: str,
+    evidence: EvidenceItem,
+    *,
+    period_kind: str | None = None,
+) -> str:
+    kind = period_kind or evidence.period_kind
+    if kind == "instant":
         return "instant_value"
-    if evidence.period_kind == "guidance":
+    if kind == "guidance":
         return "guidance_range"
-    if evidence.period_kind == "comparison":
+    if kind == "comparison":
         return "year_over_year_change"
-    if evidence.period_kind == "rate":
+    if kind == "rate":
         return "per_share_rate" if evidence.dimension == "per_share" else "annual_rate"
-    if metric_name.endswith("_ttm"):
+    if kind == "trailing_twelve_months" or metric_name.endswith("_ttm"):
         return "flow_value"
     return "period_total"
 

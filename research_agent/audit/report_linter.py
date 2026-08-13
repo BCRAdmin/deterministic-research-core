@@ -59,6 +59,11 @@ HARD_METRIC_RE = re.compile(
     r"(?:fcf|free cash|cashflow|margin|marge|sbc|revenue|umsatz|kgv|p/e|sma|debt|cash|eps)",
     re.IGNORECASE,
 )
+COUNT_METRIC_RE = re.compile(
+    r"(?:members?|cardholders?|customers?|subscribers?|warehouses?|stores?|"
+    r"locations?|shares?|employees?|units?|patients?)",
+    re.IGNORECASE,
+)
 GUIDANCE_CLAIM_RE = re.compile(
     r"\b(?:guidance|outlook|guided|expects|erwartet|prognose)\b|"
     r"\b(?:company|management|issuer)\s+forecasts?\b",
@@ -461,7 +466,7 @@ def _lint_numeric_claims(
                     continue
                 issues.append(
                     AuditIssue(
-                        severity="warning",
+                        severity="error",
                         code="UNVERIFIED_HARD_METRIC",
                         message="Report contains a hard numeric metric that could not be mapped to MetricsPacket.",
                         line_number=claim.line_number,
@@ -485,7 +490,7 @@ def _lint_numeric_claims(
         if mapped.validated_value is None or claim.normalized_value is None:
             issues.append(
                 AuditIssue(
-                    severity="warning",
+                    severity="error",
                     code="UNVERIFIED_HARD_METRIC",
                     metric=mapped.metric_name,
                     message="Mapped metric is unavailable in validated MetricsPacket.",
@@ -524,7 +529,9 @@ def _research_claim_for_rendered_number(
     claim: ExtractedNumericClaim,
     claims_by_id: dict[str, object],
 ):
-    match = re.search(r"\bClaim\s+`([^`]+)`", claim.nearby_text)
+    match = re.search(r"\bClaim(?: ID)?\s*:\s*`([^`]+)`", claim.nearby_text)
+    if not match:
+        match = re.search(r"\bClaim\s+`([^`]+)`", claim.nearby_text)
     if not match:
         match = re.search(r"room16-lineage\s+claim=([A-Za-z0-9_.:-]+)", claim.nearby_text)
     return claims_by_id.get(match.group(1)) if match else None
@@ -2290,8 +2297,12 @@ def _base_metric_name(metric_name: str) -> str:
 
 
 def _looks_like_unverified_hard_metric(claim: ExtractedNumericClaim) -> bool:
-    return claim.unit in {"usd", "huf", "percent", "multiple"} and bool(
-        HARD_METRIC_RE.search(claim.nearby_text)
+    return (
+        claim.unit in {"usd", "huf", "percent", "multiple"}
+        and bool(HARD_METRIC_RE.search(claim.nearby_text))
+    ) or (
+        claim.unit == "count"
+        and bool(COUNT_METRIC_RE.search(claim.nearby_text))
     )
 
 

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import hashlib
+import re
 from typing import Any, Iterable, Mapping
 
 from research_agent.quality.semantic_contracts import audit_semantic_records
@@ -15,6 +17,7 @@ def verify_semantic_invariants(
     claims: Iterable[Any],
     decision_packet: Any,
     material_events: Iterable[Any] = (),
+    rendered_markdown: str | None = None,
 ) -> dict[str, Any]:
     claim_list = list(claims)
     event_list = list(material_events)
@@ -45,11 +48,13 @@ def verify_semantic_invariants(
         claim.model_dump() if hasattr(claim, "model_dump") else dict(vars(claim))
         for claim in claim_list
     ]
-    semantic_tables = [
+    source_tables = [
         table
         for event in event_list
         for table in (getattr(event, "table_contracts", []) or [])
     ]
+    rendered_tables = _rendered_markdown_table_contracts(rendered_markdown or "")
+    semantic_tables = [*source_tables, *rendered_tables]
     semantic_sources = [
         {
             "source_id": event.source_id,
@@ -65,6 +70,29 @@ def verify_semantic_invariants(
         sources=semantic_sources,
     )
     semantic_error_codes = set(semantic_audit["error_codes"])
+    rendered_report_sha256 = (
+        "sha256:" + hashlib.sha256(rendered_markdown.encode("utf-8")).hexdigest()
+        if rendered_markdown is not None
+        else ""
+    )
+    check(
+        "rendered_report_bound",
+        rendered_markdown is None or bool(rendered_report_sha256),
+        (
+            f"canonical_report_sha256={rendered_report_sha256}"
+            if rendered_markdown is not None
+            else "Pre-render gate; canonical report binding is evaluated post-render."
+        ),
+    )
+    check(
+        "rendered_tables_audited",
+        rendered_markdown is None
+        or all(table.get("lineage_complete") is True for table in rendered_tables),
+        (
+            f"rendered_material_tables={len(rendered_tables)} "
+            f"lineage_complete={sum(table.get('lineage_complete') is True for table in rendered_tables)}"
+        ),
+    )
     check(
         "typed_fact_units",
         all(
@@ -84,8 +112,9 @@ def verify_semantic_invariants(
     )
     check(
         "typed_fact_periods",
-        all(_fact_period_valid(fact) for fact in facts),
-        "Period kind, presentation basis and current/comparison bounds are mutually consistent.",
+        all(_fact_period_valid(fact) for fact in facts)
+        and "fact_type_period_kind_mismatch" not in semantic_error_codes,
+        "Fact type, period kind, presentation basis and current/comparison bounds are mutually consistent.",
     )
     check(
         "semantic_metric_names",
@@ -396,7 +425,7 @@ def verify_semantic_invariants(
     failures = [item["check_id"] for item in checks if item["status"] != "pass"]
     report = {
         "contract_id": "room16.semantic_invariant_report",
-        "contract_version": 3,
+        "contract_version": 4,
         "status": "pass" if not failures else "fail",
         "semantic_integrity_passed": not failures,
         "internally_reviewable": not failures,
@@ -410,8 +439,114 @@ def verify_semantic_invariants(
         "checks": checks,
         "blocking_failures": failures,
         "semantic_numeric_audit": semantic_audit,
+        "canonical_report_sha256": rendered_report_sha256,
+        "source_table_count": len(source_tables),
+        "rendered_material_table_count": len(rendered_tables),
     }
     return report
+
+
+def _rendered_markdown_table_contracts(markdown: str) -> list[dict[str, Any]]:
+    """Bind each visible material Markdown table to its explicit lineage.
+
+    Source-table contracts prove extraction fidelity.  This second inventory
+    proves that the tables a reviewer actually sees were also inspected.
+    """
+
+    if not markdown:
+        return []
+    main_body = markdown.partition("## Evidence Appendix")[0]
+    lines = main_body.splitlines()
+    contracts: list[dict[str, Any]] = []
+    index = 0
+    while index + 1 < len(lines):
+        if not lines[index].lstrip().startswith("|") or not re.match(
+            r"^\s*\|(?:\s*:?-+:?\s*\|)+\s*$",
+            lines[index + 1],
+        ):
+            index += 1
+            continue
+        start = index
+        table_lines: list[str] = []
+        while index < len(lines) and lines[index].lstrip().startswith("|"):
+            table_lines.append(lines[index])
+            index += 1
+        headers = _markdown_cells(table_lines[0])
+        rows = [
+            _markdown_cells(line)
+            for line in table_lines[2:]
+            if _markdown_cells(line)
+        ]
+        first_header = (headers[0] if headers else "").casefold()
+        visible_text = " ".join(" ".join(row) for row in rows)
+        is_material = bool(re.search(r"\d", visible_text)) and first_header not in {
+            "identity field",
+            "field",
+        }
+        if not is_material:
+            continue
+        trailer = " ".join(lines[index : min(len(lines), index + 4)])
+        lineage = re.search(
+            r"room16-table-lineage\s+id=([^\s]+)\s+evidence=([^\s]+)",
+            trailer,
+        )
+        if not lineage:
+            lineage = re.search(
+                r"Table claim\s+`([^`]+)`\s+·\s+Evidence:\s*`([^`]+)`",
+                trailer,
+            )
+        table_id = lineage.group(1) if lineage else f"rendered_table_line_{start + 1}"
+        evidence_ids = (
+            [item.strip() for item in lineage.group(2).split(",") if item.strip()]
+            if lineage
+            else []
+        )
+        cells = []
+        for row_index, row in enumerate(rows):
+            row_key = row[0] if row else f"row_{row_index + 1}"
+            for column_index, value in enumerate(row[1:], start=1):
+                column_key = (
+                    headers[column_index]
+                    if column_index < len(headers)
+                    else f"column_{column_index + 1}"
+                )
+                cells.append(
+                    {
+                        "cell_id": f"{table_id}_r{row_index + 1}_c{column_index + 1}",
+                        "table_id": table_id,
+                        "row_key": row_key or f"row_{row_index + 1}",
+                        "column_key": column_key or f"column_{column_index + 1}",
+                        "raw_text": value,
+                    }
+                )
+        contracts.append(
+            {
+                "table_id": table_id,
+                "source_id": ",".join(evidence_ids),
+                "source_locator": f"canonical_report.md#L{start + 1}",
+                "header_rows": [headers],
+                "row_headers": [row[0] for row in rows if row],
+                "column_headers": headers[1:],
+                "row_dimension": "rendered_row",
+                "column_dimension": "rendered_column",
+                "period_axis": [],
+                "metric_axis": headers[1:],
+                "unit_axis": [],
+                "currency_axis": [],
+                "comparison_axis": [],
+                "value_role": "visible_report_value",
+                "table_semantic_type": "rendered_markdown",
+                "cells": cells,
+                "lineage_complete": bool(lineage and evidence_ids),
+                "evidence_ids": evidence_ids,
+            }
+        )
+    return contracts
+
+
+def _markdown_cells(line: str) -> list[str]:
+    stripped = line.strip().strip("|")
+    return [cell.strip() for cell in stripped.split("|")] if stripped else []
 
 
 def _fact_value_matches_source_contract(fact: Mapping[str, Any]) -> bool:

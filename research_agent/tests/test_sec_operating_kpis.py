@@ -377,6 +377,67 @@ def test_split_membership_table_rows_preserve_years_counts_and_scale() -> None:
     assert all(item["unit"] == "count" and item["mapping_status"] == "mapped" for item in paid + cardholders)
 
 
+def test_split_fiscal_week_membership_table_keeps_current_counts_and_dates() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="TEST",
+        cik="123456",
+        accession_number="0000123456-26-000001",
+        filing_date="2026-06-03",
+        primary_document="test.htm",
+        html_documents=[
+            "<p>Membership Fees</p>"
+            "<p>12 Weeks Ended36 Weeks Ended</p>"
+            "<p>May 10,</p><p>2026May 11,</p><p>2025May 10,</p><p>2026May 11,</p><p>2025</p>"
+            "<p>Total paid members (000s)82,900 79,600 — —</p>"
+            "<p>Total cardholders (000s)148,500 142,800 — —</p>"
+        ],
+        retrieved_at="2026-08-13T12:00:00Z",
+        report_date="2026-05-10",
+        report_period_months=3,
+    )
+    records = [
+        item
+        for event in payload["events"]
+        for item in event["numeric_evidence"]
+    ]
+    paid = [item for item in records if item["metric_role"].startswith("paid_members_")]
+    cardholders = [item for item in records if item["metric_role"].startswith("cardholders_")]
+
+    assert [(item["value"], item["period_end"]) for item in paid] == [
+        (82_900_000, "2026-05-10"),
+        (79_600_000, "2025-05-11"),
+    ]
+    assert [(item["value"], item["period_end"]) for item in cardholders] == [
+        (148_500_000, "2026-05-10"),
+        (142_800_000, "2025-05-11"),
+    ]
+    assert all(item["period_kind"] == "instant" for item in paid + cardholders)
+
+
+def test_current_renewal_rates_keep_distinct_geographic_roles() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="TEST",
+        cik="123456",
+        accession_number="0000123456-26-000001",
+        filing_date="2026-06-03",
+        primary_document="test.htm",
+        html_documents=[
+            "<p>At the end of the third quarter of 2026, our renewal rates were "
+            "92.2% in the U.S. and Canada and 89.7% worldwide.</p>"
+        ],
+        retrieved_at="2026-08-13T12:00:00Z",
+        report_date="2026-05-10",
+        report_period_months=3,
+    )
+    records = payload["events"][0]["numeric_evidence"]
+
+    assert [item["metric_role"] for item in records] == [
+        "renewal_rate_12w_2026-05-10_us_canada_ratio",
+        "renewal_rate_12w_2026-05-10_worldwide_ratio",
+    ]
+    assert all(item["mapping_status"] == "mapped" for item in records)
+
+
 def test_membership_fee_and_reward_caps_do_not_inherit_document_millions_scale() -> None:
     payload = build_sec_operating_kpi_payload(
         ticker="TEST",
@@ -401,6 +462,130 @@ def test_membership_fee_and_reward_caps_do_not_inherit_document_millions_scale()
         ("membership_reward_rate", 0.02),
         ("membership_reward_cap", 1250.0),
     ]
+
+
+def test_executive_member_footnote_is_not_promoted_and_years_remain_aligned() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="TEST",
+        cik="123456",
+        accession_number="0000123456-26-000001",
+        filing_date="2025-10-08",
+        primary_document="test.htm",
+        html_documents=[
+            "<p>(in thousands)</p>"
+            "<p>2025 2024 2023</p>"
+            "<p>(1) Executive members represented 38,700, 35,400, and 32,300 "
+            "of total paid members in 2025, 2024, and 2023.</p>"
+        ],
+        retrieved_at="2026-08-13T12:00:00Z",
+        report_date="2025-08-31",
+        report_period_months=12,
+    )
+
+    values = [
+        item["value"]
+        for event in payload["events"]
+        for item in event["numeric_evidence"]
+    ]
+    assert values == [38_700_000, 35_400_000, 32_300_000]
+
+
+def test_acquisition_cash_flow_row_keeps_six_month_period_and_scale() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="TEST",
+        cik="1800",
+        accession_number="0001628280-26-050134",
+        filing_date="2026-07-28",
+        primary_document="test.htm",
+        html_documents=[
+            "<p>(dollars in millions)</p>"
+            "<p>Six Months Ended June 30</p>"
+            "<p>2026 2025</p>"
+            "<tr><td>Acquisitions of businesses and technologies, net of cash acquired</td>"
+            "<td>(19,962)</td><td>(30)</td></tr>"
+        ],
+        retrieved_at="2026-08-13T12:00:00Z",
+        report_date="2026-06-30",
+        report_period_months=3,
+    )
+
+    records = payload["events"][0]["numeric_evidence"]
+    assert [item["value"] for item in records] == [19_962_000_000, 30_000_000]
+    assert [item["period_start"] for item in records] == ["2026-01-01", "2025-01-01"]
+    assert all(item["dimension"] == "currency" for item in records)
+    assert all(item["currency"] == "USD" for item in records)
+    assert all("acquisition_net_cash_paid" in item["metric_name"] for item in records)
+
+
+def test_transaction_amounts_use_nearest_economic_event_date() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="TEST",
+        cik="1800",
+        accession_number="0001628280-26-050134",
+        filing_date="2026-07-28",
+        primary_document="test.htm",
+        html_documents=[
+            "<p>On March 23, 2026, Abbott completed the acquisition for "
+            "approximately $20.6 billion and paid $105 per common share.</p>"
+        ],
+        retrieved_at="2026-08-13T12:00:00Z",
+        report_date="2026-06-30",
+        report_period_months=3,
+    )
+
+    records = payload["events"][0]["numeric_evidence"]
+    assert all(item["period_kind"] == "instant" for item in records)
+    assert all(item["period_end"] == "2026-03-23" for item in records)
+    per_share = next(item for item in records if item["value"] == 105)
+    assert per_share["fact_type"] == "stock_value"
+
+
+def test_material_warehouse_count_is_not_mislabeled_as_revenue() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="TEST",
+        cik="123456",
+        accession_number="0000123456-26-000001",
+        filing_date="2026-06-03",
+        primary_document="test.htm",
+        html_documents=[
+            "<p>Net sales increased 12% to $69,154, driven by comparable sales and sales at "
+            "23 net new warehouses opened since the prior-year quarter.</p>"
+        ],
+        retrieved_at="2026-08-13T12:00:00Z",
+        report_date="2026-05-10",
+        report_period_months=3,
+    )
+
+    warehouse = next(
+        item
+        for event in payload["events"]
+        for item in event["numeric_evidence"]
+        if "net_new_warehouses" in item["metric_name"]
+    )
+    assert warehouse["value"] == 23
+    assert warehouse["dimension"] == "count"
+
+
+def test_accounting_policy_words_do_not_create_operating_kpis() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="TEST",
+        cik="1800",
+        accession_number="0001628280-26-050134",
+        filing_date="2026-07-28",
+        primary_document="test.htm",
+        html_documents=[
+            "<p>Transactions involving intangible assets occur with some frequency. "
+            "The $24 billion goodwill balance is reviewed for impairment.</p>"
+            "<p>An in-process asset of $15 million remains indefinite-lived until "
+            "regulatory approval or discontinuation.</p>"
+            "<p>The company operates 928 warehouses and e-commerce sites.</p>"
+        ],
+        retrieved_at="2026-08-13T12:00:00Z",
+        report_date="2026-06-30",
+        report_period_months=3,
+    )
+
+    assert payload["events"] == []
 
 
 def test_annual_revenue_change_amount_is_distinct_from_annual_revenue_total() -> None:

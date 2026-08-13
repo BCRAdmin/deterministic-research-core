@@ -12,6 +12,9 @@ TOPIC_PATTERNS = {
         r"\b(?:completed|closed|entered into|agreed to|acquired|sold|disposed of)\b.{0,120}"
         r"\b(?:acquisition|merger|business combination|transaction|subsidiary|assets?)\b",
         r"\b(?:purchase price|purchase consideration|business combination)\b.{0,120}\$",
+        r"\b(?:preliminary allocation of (?:the )?fair value|purchase price allocation)\b",
+        r"\bpro forma (?:condensed |consolidated )?(?:net sales|revenue|earnings)\b",
+        r"\b(?:goodwill|acquired intangible assets?)\b.{0,160}\bbusiness combination\b",
     ),
     "financing": (
         r"\b(?:entered into|amended|refinanced|issued|borrowed|repaid)\b.{0,120}"
@@ -19,7 +22,7 @@ TOPIC_PATTERNS = {
         r"\b(?:principal amount|borrowings outstanding)\b.{0,120}\$",
     ),
     "legal_contingencies": (
-        r"\b(?:legal proceedings|litigation|lawsuit|government investigation|regulatory investigation)\b",
+        r"\b(?:legal proceedings|litigation|lawsuits?|class actions?|complaints?|government investigation|regulatory investigation)\b",
         r"\b(?:environmental remediation|environmental liability|contingent liabilities|commitments and contingencies)\b",
         r"\b(?:settled|settlement|fine|penalty|consent decree)\b.{0,120}\$",
         r"\b(?:environmental protection agency|epa|superfund|administrative order|"
@@ -38,7 +41,7 @@ TOPIC_HEADLINES = {
     "legal_contingencies": "Current filing contains a legal or contingency disclosure",
 }
 TOPIC_CONTRACT_ID = "room16.sec_filing_topics"
-TOPIC_CONTRACT_VERSION = 2
+TOPIC_CONTRACT_VERSION = 3
 
 
 class _TextParser(HTMLParser):
@@ -57,13 +60,13 @@ class _TextParser(HTMLParser):
     def handle_starttag(self, tag: str, attrs) -> None:
         if tag in {"script", "style"}:
             self.hidden += 1
-        elif not self.hidden and tag in {"br", "div", "p", "li", "tr", "h1", "h2", "h3"}:
+        elif not self.hidden and tag in {"br", "div", "p", "li", "tr", "td", "th", "h1", "h2", "h3"}:
             self._flush()
 
     def handle_endtag(self, tag: str) -> None:
         if tag in {"script", "style"}:
             self.hidden = max(0, self.hidden - 1)
-        elif not self.hidden and tag in {"div", "p", "li", "tr", "h1", "h2", "h3"}:
+        elif not self.hidden and tag in {"div", "p", "li", "tr", "td", "th", "h1", "h2", "h3"}:
             self._flush()
 
     def handle_data(self, data: str) -> None:
@@ -98,6 +101,7 @@ def build_sec_filing_topic_payload(
     parser = _TextParser()
     parser.feed(html)
     blocks = parser.finish()
+    document_currency_scale = _document_currency_scale(blocks)
     cik_digits = str(int(cik)).zfill(10)
     accession_digits = accession_number.replace("-", "")
     url = (
@@ -124,11 +128,7 @@ def build_sec_filing_topic_payload(
                     ),
                 )
             )
-        matches = list(
-            dict.fromkeys(
-                excerpt for _, _, excerpt in sorted(candidates, reverse=True)
-            )
-        )[:3]
+        matches = _distinct_topic_excerpts(candidates, limit=3)
         status = "found_specific_disclosure" if matches else "reviewed_no_specific_disclosure"
         source_id = f"SEC_CIK{cik_digits}_{accession_digits}_TOPIC_{topic.upper()}"
         dispositions.append(
@@ -180,6 +180,7 @@ def build_sec_filing_topic_payload(
                         summary,
                         topic,
                         filing_date=filing_date,
+                        document_currency_scale=document_currency_scale,
                     ),
                     "legal_context": (
                         _legal_context(summary)
@@ -244,6 +245,25 @@ def _condense_topic_excerpt(text: str, *, limit: int = 950) -> str:
     return summary[:limit].rstrip()
 
 
+def _distinct_topic_excerpts(
+    candidates: list[tuple[int, int, str]],
+    *,
+    limit: int,
+) -> list[str]:
+    selected: list[str] = []
+    for _score, _source_order, excerpt in sorted(
+        candidates,
+        key=lambda item: (item[0], len(item[2]), item[1]),
+        reverse=True,
+    ):
+        if any(excerpt in existing or existing in excerpt for existing in selected):
+            continue
+        selected.append(excerpt)
+        if len(selected) == limit:
+            break
+    return selected
+
+
 def _topic_context_excerpt(
     blocks: list[str],
     *,
@@ -254,6 +274,17 @@ def _topic_context_excerpt(
     """Preserve an immediately preceding issuer assessment for legal topics."""
 
     context = block
+    if topic == "transactions" and re.search(
+        r"\b(?:preliminary allocation|purchase price allocation|pro forma|goodwill|"
+        r"acquired intangible assets?)\b",
+        block,
+        re.IGNORECASE,
+    ):
+        # Purchase-accounting tables are split into adjacent HTML rows.  Keep
+        # the heading and following rows together so PPA and pro-forma facts
+        # cannot disappear between block boundaries.
+        start = max(0, source_index - 1)
+        context = " ".join(blocks[start : min(len(blocks), source_index + 14)])
     if topic == "legal_contingencies" and source_index > 0:
         preceding = " ".join(str(blocks[source_index - 1] or "").split())
         assessment = re.search(
@@ -269,6 +300,17 @@ def _topic_context_excerpt(
 
 def _topic_match_score(topic: str, text: str, patterns: tuple[str, ...]) -> int:
     folded = text.casefold()
+    if topic == "legal_contingencies" and (
+        "forward-looking statements" in folded
+        and "can be identified because they contain words" in folded
+    ):
+        return 0
+    if topic == "legal_contingencies" and (
+        len(folded.strip()) < 60
+        or folded.strip() in {"legal proceedings", "commitments and contingencies"}
+        or re.match(r"^(?:corp\.,?\s+no\.|et al\.?\s+v\.)", folded.strip())
+    ):
+        return 0
     matched = sum(
         1 for pattern in patterns if re.search(pattern, folded, flags=re.IGNORECASE)
     )
@@ -276,6 +318,12 @@ def _topic_match_score(topic: str, text: str, patterns: tuple[str, ...]) -> int:
         return 0
     score = matched * 10
     if topic == "legal_contingencies":
+        if "class actions were filed" in folded:
+            score += 50
+        if re.search(r"\bmotions? to dismiss\b", folded):
+            score += 25
+        if "tequila" in folded or "ieepa" in folded:
+            score += 20
         score += 5 * len(
             re.findall(
                 r"\b(?:order|agreement|investigation|proceeding|lawsuit|settlement|"
@@ -328,13 +376,24 @@ def _topic_numeric_evidence(
     topic: str,
     *,
     filing_date: str | None = None,
+    document_currency_scale: str | None = None,
 ) -> list[dict[str, Any]]:
     values: list[dict[str, Any]] = []
     metric_occurrences: dict[str, int] = {}
     period_contract = _topic_period_contract(summary, filing_date=filing_date)
     for match in _TOPIC_NUMBER_RE.finditer(summary):
         raw = float(match.group("number").replace(",", ""))
+        if _topic_number_is_non_metric(summary, match):
+            continue
         scale = str(match.group("scale") or "").casefold()
+        contextual_scale = _topic_context_scale(summary, match)
+        if (
+            not scale
+            and (contextual_scale or document_currency_scale)
+            and not _topic_is_base_currency_value(summary, match)
+            and not (raw.is_integer() and 1900 <= raw <= 2100)
+        ):
+            scale = contextual_scale or document_currency_scale or ""
         percent = bool(match.group("percent"))
         if not (match.group("currency") or scale or percent):
             continue
@@ -359,6 +418,8 @@ def _topic_numeric_evidence(
             "£": "GBP",
             "¥": "JPY",
         }.get(str(match.group("currency") or ""))
+        if not currency and scale and topic in {"transactions", "financing", "legal_contingencies"}:
+            currency = "USD"
         metric_name = _topic_metric_name(
             summary,
             topic=topic,
@@ -379,6 +440,29 @@ def _topic_numeric_evidence(
             else []
         )
         metric_period_contract = dict(period_contract)
+        transaction_date = (
+            _nearest_preceding_date(summary, match)
+            if topic == "transactions"
+            else None
+        )
+        if transaction_date and (
+            not metric_period_contract
+            or any(
+                marker in metric_name
+                for marker in (
+                    "acquisition_goodwill",
+                    "acquisition_intangible_assets",
+                    "acquisition_deferred_tax",
+                    "acquisition_total_consideration",
+                )
+            )
+        ):
+            metric_period_contract = {
+                "period_kind": "instant",
+                "presentation_basis": "point_in_time",
+                "period_start": None,
+                "period_end": transaction_date,
+            }
         if effective_asof_dates:
             metric_period_contract = {
                 "period_kind": "instant",
@@ -411,6 +495,78 @@ def _topic_numeric_evidence(
             }
         )
     return values
+
+
+def _document_currency_scale(blocks: list[str]) -> str | None:
+    declarations = [
+        match.group("scale").casefold().removesuffix("s")
+        for block in blocks
+        for match in re.finditer(
+            r"\b(?:amounts?|dollars)\s+in\s+(?P<scale>billions?|millions?|thousands?)\b",
+            block,
+            re.IGNORECASE,
+        )
+    ]
+    return declarations[0] if declarations and len(set(declarations)) == 1 else None
+
+
+def _topic_context_scale(summary: str, match: re.Match[str]) -> str | None:
+    declarations = list(
+        re.finditer(
+            r"\b(?:amounts?|dollars)\s+in\s+(?P<scale>billions?|millions?|thousands?)\b",
+            summary[: match.start()],
+            re.IGNORECASE,
+        )
+    )
+    return declarations[-1].group("scale").casefold().removesuffix("s") if declarations else None
+
+
+def _topic_number_is_non_metric(summary: str, match: re.Match[str]) -> bool:
+    before = summary[max(0, match.start() - 24) : match.start()]
+    after = summary[match.end() : match.end() + 18]
+    if re.search(
+        r"\b(?:January|February|March|April|May|June|July|August|September|October|November|December)$",
+        before,
+        re.IGNORECASE,
+    ) and re.match(r",\s*20\d{2}\b", after):
+        return True
+    if (
+        match.start() > 0
+        and summary[match.start() - 1] == "("
+        and re.match(r"\)\s*", after)
+        and "," not in match.group("number")
+        and float(match.group("number")) <= 99
+    ):
+        return True
+    return False
+
+
+def _nearest_preceding_date(summary: str, match: re.Match[str]) -> str | None:
+    from datetime import datetime
+
+    dates = list(
+        re.finditer(
+            r"\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+"
+            r"\d{1,2},\s+20\d{2}\b",
+            summary[: match.start()],
+            re.IGNORECASE,
+        )
+    )
+    if not dates:
+        return None
+    try:
+        return datetime.strptime(dates[-1].group(0), "%B %d, %Y").date().isoformat()
+    except ValueError:
+        return None
+
+
+def _topic_is_base_currency_value(summary: str, match: re.Match[str]) -> bool:
+    nearby = summary[max(0, match.start() - 70) : match.end() + 70]
+    return re.search(
+        r"\b(?:per (?:common )?share|annual fee|maximum reward)\b",
+        nearby,
+        re.IGNORECASE,
+    ) is not None
 
 
 def _topic_numeric_clause(summary: str, match: re.Match[str]) -> str:
@@ -518,6 +674,12 @@ def _topic_metric_name(
     if re.search(r"holdbacks? related to prior", following_context):
         return f"filing_{topic}_acquisition_prior_period_holdback"
     rules = (
+        ("acquisition_goodwill", r"\bgoodwill\b"),
+        ("acquisition_intangible_assets", r"\b(?:acquired )?intangible assets?\b"),
+        ("acquisition_deferred_tax", r"\bdeferred (?:income )?tax"),
+        ("acquisition_pro_forma_net_sales", r"\bpro forma.{0,80}\b(?:net sales|revenue)\b"),
+        ("acquisition_pro_forma_earnings", r"\bpro forma.{0,80}\b(?:earnings|income before taxes)\b"),
+        ("acquisition_transaction_costs", r"\btransaction-related costs?\b"),
         ("acquisition_total_consideration", r"total consideration|purchase price"),
         ("acquisition_net_cash_paid", r"net cash paid"),
         ("acquisition_prior_period_holdback", r"holdbacks? related to prior"),

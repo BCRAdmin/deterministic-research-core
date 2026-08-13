@@ -522,6 +522,7 @@ def run_research_pipeline(
         claims=claims,
         decision_packet=decision_packet,
         material_events=data_packet.news_coverage.material_events,
+        rendered_markdown=report,
     )
     semantic_invariant_report_path.write_text(
         json.dumps(semantic_invariant_report, indent=2, sort_keys=True) + "\n",
@@ -885,6 +886,84 @@ def run_research_pipeline(
                     manifest_output_dir / "internal_best_report.md",
                 )
             )
+    if internal_best_report_path:
+        # There is exactly one canonical report surface.  The review-oriented
+        # report is not an alternate truth beside final_report.md: it becomes
+        # final_report.md, and every downstream gate is rerun against those
+        # exact bytes.
+        report = internal_best_report
+        report_path.write_text(report, encoding="utf-8")
+        material_topic_coverage = _material_topic_report_coverage(
+            markdown=report,
+            claims=claims,
+            report_kind="canonical_internal_report",
+        )
+        if material_topic_coverage["status"] != "pass":
+            raise RuntimeError(
+                "Material topic propagation gate rejected the canonical report: "
+                + ", ".join(material_topic_coverage["blocking_claim_ids"])
+            )
+        _apply_claim_render_dispositions(
+            claims=claims,
+            material_events=data_packet.news_coverage.material_events,
+            coverage=material_topic_coverage,
+        )
+        analyst_claims_path = save_research_claims(
+            claims,
+            manifest_output_dir / "analyst_claims.json",
+        )
+        data_packet_path = save_json_packet(
+            data_packet,
+            "data_packet",
+            ticker,
+            as_of_date,
+            packet_root=packet_root,
+        )
+        material_topic_coverage_path.write_text(
+            json.dumps(material_topic_coverage, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        visible_citation_completeness = validate_visible_citation_completeness(
+            report,
+            claims,
+            evidence_ledger,
+        )
+        visible_citation_completeness_path.write_text(
+            json.dumps(visible_citation_completeness, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        semantic_invariant_report = verify_semantic_invariants(
+            fact_ledger=fact_ledger_payload,
+            evidence_ledger=evidence_ledger,
+            source_registry=source_registry,
+            claims=claims,
+            decision_packet=decision_packet,
+            material_events=data_packet.news_coverage.material_events,
+            rendered_markdown=report,
+        )
+        semantic_invariant_report_path.write_text(
+            json.dumps(semantic_invariant_report, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        if not semantic_invariant_report["semantic_integrity_passed"]:
+            raise RuntimeError(
+                "Canonical-report semantic invariant gate rejected report generation: "
+                + ", ".join(semantic_invariant_report["blocking_failures"])
+            )
+        canonical_file_hash = file_sha256(report_path)
+        canonical_semantic_hash = str(
+            semantic_invariant_report.get("canonical_report_sha256") or ""
+        )
+        if canonical_semantic_hash != canonical_file_hash:
+            raise RuntimeError(
+                "Canonical-report byte binding failed after writing final_report.md: "
+                f"semantic={canonical_semantic_hash} file={canonical_file_hash}"
+            )
+        audit_report = internal_best_audit
+        audit_report_path = _save_model_json(
+            audit_report,
+            manifest_output_dir / "audit_report.json",
+        )
     quality_state_integrity = verify_quality_state(
         quality_report=quality_report,
         audit_report=audit_report,
@@ -993,6 +1072,11 @@ def run_research_pipeline(
                 authority_bundle_dir / "authority_manifest.json"
             ),
             "final_report_sha256": file_sha256(final_report_path),
+            "canonical_report_path": final_report_path,
+            "canonical_report_kind": (
+                "internal_best_report" if internal_best_report_path else "full_research_report"
+            ),
+            "canonical_report_sha256": file_sha256(final_report_path),
             "internal_best_report_sha256": (
                 file_sha256(internal_best_report_path)
                 if internal_best_report_path

@@ -15,7 +15,7 @@ KPI_PATTERNS = {
     "cardholders": r"\bcardholders?\b",
     "renewal_rate": r"\brenewal rates?\b",
     "comparable_sales": r"\b(?:comparable sales|comp sales)\b",
-    "traffic_frequency": r"\b(?:traffic|frequency)\b",
+    "traffic_frequency": r"\b(?:customer traffic|shopping frequency|traffic)\b",
     "average_ticket": r"\b(?:average ticket|ticket|basket)\b",
     "digital_sales": r"\b(?:digital sales|e-?commerce|digitally-enabled comparable sales)\b",
     "collection_disposal_yield": r"\b(?:collection and disposal yield|yield)\b",
@@ -34,7 +34,15 @@ KPI_PATTERNS = {
     "organic_comparable_growth": r"\b(?:organic|comparable)\b.{0,80}\bgrowth\b|\bgrowth\b.{0,80}\b(?:organic|comparable)\b",
     "segment_growth": r"\bsegment\b.{0,100}\bgrowth\b|\bgrowth\b.{0,100}\bsegment\b",
     "adjusted_eps_guidance": r"\badjusted eps\b.{0,120}\b(?:guidance|outlook|range)\b|\b(?:guidance|outlook|range)\b.{0,120}\badjusted eps\b",
-    "transaction_financing": r"\b(?:acquisition|transaction)\b.{0,160}\b(?:debt|financ|consideration|purchase price)\b|\b(?:debt|financ)\b.{0,160}\b(?:acquisition|transaction)\b",
+    "transaction_financing": (
+        r"\b(?:acquisition|transaction)\b.{0,160}"
+        r"\b(?:debt|financ|consideration|purchase price|per (?:common )?share)\b|"
+        r"\b(?:debt|financ)\b.{0,160}\b(?:acquisition|transaction)\b"
+    ),
+    "acquisition_cash": (
+        r"\bacquisitions? of businesses(?: and technologies)?(?:, net of cash acquired)?\b|"
+        r"\bnet cash paid\b.{0,120}\bacquisitions?\b"
+    ),
     "integration_effects": (
         r"\b(?:integration costs?|purchase accounting|acquisition-related amortization)\b|"
         r"\b(?:acquisition|transaction|integration)\b.{0,180}"
@@ -214,6 +222,7 @@ def _extract_document_events(
             kpi_id
             for kpi_id, pattern in KPI_PATTERNS.items()
             if re.search(pattern, statement, flags=re.IGNORECASE)
+            and _kpi_statement_is_semantic_match(kpi_id, statement)
             and match_counts[kpi_id] < 3
             and (
                 kpi_id not in priority_statements
@@ -228,6 +237,11 @@ def _extract_document_events(
             filing_year=filing_year,
         )
         if column_labels and not _looks_like_table_value_row(statement):
+            column_labels = None
+        if re.search(r"\b20\d{2}\s*:\s*(?:C\$|US\$|A\$|HK\$|S\$|[$€£¥])", statement):
+            # Inline year/value pairs own their own periods.  A stale table
+            # header from a preceding row must never shift the first value to
+            # the prior year.
             column_labels = None
         # A row beginning with "Free cash flow" is not automatically an
         # actual-period table.  Issuer guidance tables often use the same row
@@ -402,11 +416,52 @@ def _ranked_kpi_statements(
     )[:limit]
 
 
+def _kpi_statement_is_semantic_match(kpi_id: str, statement: str) -> bool:
+    """Reject lexical matches that do not assert the requested KPI.
+
+    Broad filing vocabulary such as ``frequency``, ``e-commerce`` and
+    ``regulatory approval`` also appears in accounting policies and company
+    descriptions.  Those passages are context, not operating KPI evidence.
+    """
+
+    folded = statement.casefold()
+    if kpi_id == "digital_sales":
+        return bool(
+            re.search(
+                r"\b(?:digital sales|digitally-enabled comparable sales|"
+                r"e-?commerce (?:net )?sales|sales for e-?commerce)\b",
+                folded,
+            )
+        )
+    if kpi_id == "product_regulatory_catalyst":
+        if re.search(
+            r"\b(?:intangible assets?|impairment|purchase accounting)\b.{0,180}"
+            r"\bregulatory approval\b",
+            folded,
+        ):
+            return False
+        return bool(
+            re.search(
+                r"\b(?:received|granted|obtained|announced|launched|achieved|"
+                r"expects?|seeks?)\b.{0,100}"
+                r"\b(?:approval|clearance|product launch|clinical milestone)\b|"
+                r"\b(?:approval|clearance|product launch|clinical milestone)\b"
+                r".{0,100}\b(?:received|granted|obtained|announced|launched)\b",
+                folded,
+            )
+        )
+    return True
+
+
 def _merge_split_kpi_table_rows(blocks: list[str]) -> list[str]:
     """Rejoin SEC rows whose footnote split separates label from values."""
 
     merged = [
-        re.sub(r"(?<=[A-Za-z])(?=\d{1,3},\d{3}\b)", " ", block)
+        re.sub(
+            r"(20\d{2})(?=20\d{2})",
+            r"\1 ",
+            re.sub(r"(?<=[A-Za-z])(?=\d{1,3},\d{3}\b)", " ", block),
+        )
         for block in blocks
     ]
     for index in range(len(merged) - 1):
@@ -505,6 +560,7 @@ def _numeric_evidence(
             )
         )
         percent = bool(match.group("percent"))
+        material_count = _is_material_operating_count(statement, match)
         basis_points = bool(
             re.match(
                 r"\s*(?:-|–|—)?\s*basis points?\b",
@@ -523,7 +579,13 @@ def _numeric_evidence(
         # Every monetary, percentage or explicitly scaled value in an emitted
         # source statement is a hard report claim.  Binding only the value
         # nearest the KPI label leaves the other visible numbers unverifiable.
-        if not (match.group("currency") or percent or basis_points or scale):
+        if not (
+            match.group("currency")
+            or percent
+            or basis_points
+            or scale
+            or material_count
+        ):
             continue
         multiplier = {
             "billion": 1_000_000_000,
@@ -583,7 +645,12 @@ def _numeric_evidence(
             for kpi_id, label_range in label_ranges
         )
         metric_owner = owner if distance <= 140 else "statement_context"
-        column_index = table_positions.get(number_index, number_index)
+        semantic_number_index = number_index - sum(
+            1
+            for prior in number_matches[:number_index]
+            if _is_non_metric_number(statement, prior)
+        )
+        column_index = table_positions.get(number_index, semantic_number_index)
         column_label = (
             column_labels[column_index]
             if column_labels and column_index < len(column_labels)
@@ -654,7 +721,7 @@ def _numeric_evidence(
             impact=impact,
         )
         if (
-            fact_contract["fact_type"] == "year_over_year_change"
+            fact_contract["fact_type"] in {"year_over_year_change", "contribution_to_change"}
             and period_contract.get("period_kind") == "duration"
             and period_contract.get("period_start")
             and period_contract.get("period_end")
@@ -914,6 +981,16 @@ def _numeric_period_contract(
     report_date: str | None = None,
     report_period_months: int | None = None,
 ) -> dict[str, Any]:
+    economic_event_date = _economic_event_date(statement, match)
+    if economic_event_date:
+        return {
+            "period_kind": "instant",
+            "presentation_basis": "point_in_time",
+            "period_start": None,
+            "period_end": economic_event_date.isoformat(),
+            "asof": economic_event_date.isoformat(),
+            "period_role": f"event_{economic_event_date.isoformat()}",
+        }
     inline_year = re.search(
         r"\b(20\d{2})\s*:\s*(?:C\$|US\$|A\$|HK\$|S\$|[$€£¥])?\s*$",
         statement[max(0, match.start() - 30) : match.start()],
@@ -932,6 +1009,35 @@ def _numeric_period_contract(
             "period_role": f"{report_period_months}m_{period_end.isoformat()}",
         }
     label = str(column_label or "")
+    ended_weeks = re.search(
+        r"\b(\d+)W\s+ended\s+(20\d{2})-(\d{2})-(\d{2})\b",
+        label,
+        re.IGNORECASE,
+    )
+    if ended_weeks:
+        weeks = int(ended_weeks.group(1))
+        end = date(
+            int(ended_weeks.group(2)),
+            int(ended_weeks.group(3)),
+            int(ended_weeks.group(4)),
+        )
+        if re.search(r"\btotal\s+(?:paid members|cardholders)\b", statement, re.IGNORECASE):
+            return {
+                "period_kind": "instant",
+                "presentation_basis": "point_in_time",
+                "period_start": None,
+                "period_end": end.isoformat(),
+                "asof": end.isoformat(),
+                "period_role": f"asof_{end.isoformat()}",
+            }
+        start = end - timedelta(days=weeks * 7 - 1)
+        return {
+            "period_kind": "duration",
+            "presentation_basis": "period_total",
+            "period_start": start.isoformat(),
+            "period_end": end.isoformat(),
+            "period_role": f"{weeks}w_{end.isoformat()}",
+        }
     ended_label = re.search(
         r"\b(3|6|9|12)M\s+ended\s+(20\d{2})-(\d{2})-(\d{2})\b",
         label,
@@ -1178,13 +1284,26 @@ def _numeric_period_contract(
         }
     if report_date and report_period_months in {3, 6, 9, 12}:
         current_end = date.fromisoformat(report_date)
-        current_start = _duration_start(current_end, report_period_months)
+        fiscal_week_quarter = (
+            report_period_months == 3
+            and current_end.day != monthrange(current_end.year, current_end.month)[1]
+            and re.search(r"\b(?:first|second|third|fourth) quarter\b", nearby, re.IGNORECASE)
+        )
+        current_start = (
+            current_end - timedelta(days=12 * 7 - 1)
+            if fiscal_week_quarter
+            else _duration_start(current_end, report_period_months)
+        )
         return {
             "period_kind": "duration",
             "presentation_basis": "period_total",
             "period_start": current_start.isoformat(),
             "period_end": current_end.isoformat(),
-            "period_role": f"{report_period_months}m_{current_end.isoformat()}",
+            "period_role": (
+                f"12w_{current_end.isoformat()}"
+                if fiscal_week_quarter
+                else f"{report_period_months}m_{current_end.isoformat()}"
+            ),
         }
     return {
         "period_kind": "unknown",
@@ -1215,10 +1334,13 @@ def _numeric_metric_role(
         else _statement_metric_base(statement)
     )
     semantic_rules = (
+        ("membership_fee_revenue", r"membership fee revenue"),
+        ("reported_sales", r"reported sales growth|sales (?:increased|growth).{0,24}reported basis"),
         ("digital_sales", r"digital sales|e-?commerce sales|digitally-enabled comparable sales"),
         ("comparable_sales", r"comparable sales|comp sales"),
         ("traffic_frequency", r"(?:shopping\s+)?frequency|\btraffic\b"),
         ("average_ticket", r"average ticket|average basket"),
+        ("net_new_warehouses", r"net new warehouses?|new warehouses?"),
         ("internalization", r"internalization"),
         ("landfill_depletable_tons", r"depletable tons"),
         ("acquired_annualized_revenue", r"annualized revenue"),
@@ -1241,6 +1363,10 @@ def _numeric_metric_role(
         ("landfill_volume", r"landfill volumes?"),
         ("residential_volume", r"residential volume"),
         ("basis_point_change", r"basis points?"),
+        (
+            "acquisition_net_cash_paid",
+            r"acquisitions? of businesses(?: and technologies)?(?:, net of cash acquired)?|net cash paid",
+        ),
     )
     closest_metric = _closest_semantic_metric(statement, match, semantic_rules)
     generic_owners = {
@@ -1264,9 +1390,11 @@ def _numeric_metric_role(
         else:
             metric = owner if owner != "statement_context" else None
     if closest_metric in {
+        "reported_sales",
         "comparable_sales",
         "traffic_frequency",
         "average_ticket",
+        "net_new_warehouses",
         "digital_sales",
         "internalization",
         "landfill_depletable_tons",
@@ -1275,6 +1403,7 @@ def _numeric_metric_role(
         "landfill_average_yield",
         "collection_disposal_yield",
         "core_price",
+        "acquisition_net_cash_paid",
     } and _metric_label_is_local(statement, match, semantic_rules, closest_metric):
         metric = closest_metric
     component_metric = _component_metric_override(statement, match)
@@ -1356,6 +1485,34 @@ def _duration_start(period_end: date, months: int) -> date:
     return date(year, month_zero + 1, 1)
 
 
+def _economic_event_date(statement: str, match: re.Match[str]) -> date | None:
+    """Return the nearest preceding transaction date for an economic event."""
+
+    if not re.search(
+        r"\b(?:acquisition|acquired|transaction|issued|repaid|redeemed)\b",
+        statement,
+        re.IGNORECASE,
+    ):
+        return None
+    candidates = list(
+        re.finditer(
+            r"\b(?:On\s+)?"
+            r"(January|February|March|April|May|June|July|August|September|October|November|December)\s+"
+            r"(\d{1,2}),\s*(20\d{2})\b",
+            statement[: match.start()],
+            re.IGNORECASE,
+        )
+    )
+    if not candidates:
+        return None
+    selected = candidates[-1]
+    return date(
+        int(selected.group(3)),
+        MONTHS[selected.group(1).casefold()],
+        int(selected.group(2)),
+    )
+
+
 def _closest_semantic_metric(
     statement: str,
     match: re.Match[str],
@@ -1394,6 +1551,12 @@ def _numeric_metric_variant(
 ) -> str:
     before = statement[max(0, match.start() - 170) : match.start()].casefold()
     after = statement[match.end() : match.end() + 100].casefold()
+    if "renewal rate" in statement.casefold():
+        local_after = statement[match.end() : match.end() + 45]
+        if re.search(r"\b(?:u\.s\.|united states).{0,20}canada\b", local_after, re.IGNORECASE):
+            return "us_canada"
+        if re.search(r"\bworldwide\b", local_after, re.IGNORECASE):
+            return "worldwide"
     if "between" in before:
         prior_range_values = list(NUMBER_RE.finditer(before.rsplit("between", 1)[-1]))
         if not prior_range_values:
@@ -1429,6 +1592,34 @@ def _numeric_metric_variant(
 def _is_non_metric_number(statement: str, match: re.Match[str]) -> bool:
     before = statement[max(0, match.start() - 24) : match.start()]
     after = statement[match.end() : match.end() + 16]
+    if (
+        match.start() > 0
+        and statement[match.start() - 1] == "("
+        and re.match(r"s\)\s*", after, re.IGNORECASE)
+        and set(match.group("number").replace(",", "")) == {"0"}
+    ):
+        # Presentation-scale markers such as ``(000s)`` describe the row;
+        # their zeroes are not a table cell and must not shift column binding.
+        return True
+    if (
+        match.start() > 0
+        and statement[match.start() - 1] == "("
+        and re.match(r"\)\s*", statement[match.end() :])
+        and match.start() <= 3
+        and "," not in match.group("number")
+        and float(match.group("number")) <= 99
+        and not match.group("currency")
+        and not match.group("scale")
+        and not match.group("percent")
+    ):
+        return True
+    if (
+        match.start() > 0
+        and statement[match.start() - 1] in {"%", ")"}
+        and re.match(r"\s*(?:[.,;:]|$)", after)
+    ):
+        # SEC footnote anchors such as ``7.5%1`` are not standalone facts.
+        return True
     if re.search(
         r"\b(?:January|February|March|April|May|June|July|August|September|October|November|December)$",
         before.rstrip(),
@@ -1438,6 +1629,16 @@ def _is_non_metric_number(statement: str, match: re.Match[str]) -> bool:
     if re.search(r"\b(?:Note|Item|Form)$", before.rstrip(), re.IGNORECASE):
         return True
     return False
+
+
+def _is_material_operating_count(statement: str, match: re.Match[str]) -> bool:
+    local = statement[max(0, match.start() - 45) : match.end() + 55]
+    return re.search(
+        r"\b(?:net new warehouses?|new warehouses?|paid members?|cardholders?|"
+        r"stores?|locations?|customers?|subscribers?|employees?)\b",
+        local,
+        re.IGNORECASE,
+    ) is not None
 
 
 def _is_forward_looking_boilerplate(statement: str) -> bool:
@@ -1479,6 +1680,8 @@ def _component_metric_override(
     component_window = after[: next_number.start()] if next_number else after
     local = f"{before} {component_window}"
     transaction_context = statement.casefold()
+    if re.search(r"\b(?:net new warehouses?|new warehouses?)\b", local):
+        return "net_new_warehouses"
     if _is_per_share_value(statement, match) and re.search(
         r"\b(?:acquisition|purchase price|transaction)\b",
         transaction_context,
@@ -1616,7 +1819,7 @@ def _inherited_block_scale(blocks: list[str], index: int) -> str | None:
     # SEC tables frequently split scale, duration headers, years and spacer
     # cells into separate HTML blocks.  Use the same bounded lookback as the
     # period-label parser while still stopping at intervening prose.
-    for prior in reversed(blocks[max(0, index - 12) : index]):
+    for prior in reversed(blocks[max(0, index - 20) : index]):
         inherited = _scale_from_text(prior)
         if inherited:
             return inherited
@@ -1637,6 +1840,8 @@ def _looks_like_table_value_row(statement: str) -> bool:
 
 
 def _scale_from_text(value: str) -> str | None:
+    if re.search(r"\(\s*0{3}s\s*\)", value, flags=re.IGNORECASE):
+        return "thousand"
     match = re.search(
         r"\b(?:in\s+)?(?P<scale>billions?|millions?|thousands?)\b",
         value,
@@ -1680,7 +1885,38 @@ def _inherited_column_labels(
     table_contract = _table_contract(blocks, index)
     if table_contract:
         return list(table_contract["column_labels"])
-    context = " ".join(blocks[max(0, index - 6) : index])
+    context = " ".join(blocks[max(0, index - 20) : index])
+    fiscal_week_header = re.search(
+        r"(?P<short>\d+)\s+Weeks\s+Ended\s*(?P<long>\d+)\s+Weeks\s+Ended",
+        context,
+        re.IGNORECASE,
+    )
+    if fiscal_week_header:
+        header_tail = context[fiscal_week_header.start() :]
+        dates = [
+            date(
+                int(match.group(3)),
+                MONTHS[match.group(1).casefold()],
+                int(match.group(2)),
+            )
+            for match in re.finditer(
+                r"(January|February|March|April|May|June|July|August|September|October|November|December)\s+"
+                r"(\d{1,2}),?\s*(20\d{2})",
+                header_tail,
+                re.IGNORECASE,
+            )
+        ]
+        if len(dates) >= 4:
+            weeks = (
+                int(fiscal_week_header.group("short")),
+                int(fiscal_week_header.group("short")),
+                int(fiscal_week_header.group("long")),
+                int(fiscal_week_header.group("long")),
+            )
+            return [
+                f"{week_count}W ended {period_end.isoformat()}"
+                for week_count, period_end in zip(weeks, dates[:4])
+            ]
     if len(re.findall(r"\bAs Reported\b", context, re.IGNORECASE)) >= 2 and len(
         re.findall(r"\bAs Adjusted", context, re.IGNORECASE)
     ) >= 2:
@@ -1705,7 +1941,30 @@ def _inherited_column_labels(
             f"{months}M ended {date(year, month, day).isoformat()}"
             for months, year in zip((3, 3, 6, 6), years)
         ]
-    prior_blocks = blocks[max(0, index - 10) : index]
+    single_duration_header = re.search(
+        r"(Three|Six|Nine|Twelve) Months Ended\s+"
+        r"(January|February|March|April|May|June|July|August|September|October|November|December)\s+"
+        r"(\d{1,2}).*?(20\d{2})\s+(20\d{2})",
+        context,
+        re.IGNORECASE,
+    )
+    if single_duration_header and not (
+        re.search(r"Three Months Ended", context, re.IGNORECASE)
+        and re.search(r"Six Months Ended", context, re.IGNORECASE)
+    ):
+        duration_months = {
+            "three": 3,
+            "six": 6,
+            "nine": 9,
+            "twelve": 12,
+        }[single_duration_header.group(1).casefold()]
+        month = MONTHS[single_duration_header.group(2).casefold()]
+        day = int(single_duration_header.group(3))
+        return [
+            f"{duration_months}M ended {date(int(year), month, day).isoformat()}"
+            for year in single_duration_header.group(4, 5)
+        ]
+    prior_blocks = blocks[max(0, index - 20) : index]
     if (
         any(re.search(r"Three Months Ended", value, re.IGNORECASE) for value in prior_blocks)
         and any(re.search(r"Six Months Ended", value, re.IGNORECASE) for value in prior_blocks)
@@ -2041,7 +2300,7 @@ def _inherits_table_currency(statement: str, context_scale: str | None) -> bool:
     return bool(
         context_scale
         and re.search(
-            r"(?:free cash flow|cash provided|capital expenditures?|proceeds|"
+            r"(?:free cash flow|cash provided|acquisitions? of businesses|capital expenditures?|proceeds|"
             r"consideration|revenue|income|expense|costs?|ebitda)",
             statement,
             re.IGNORECASE,
@@ -2131,6 +2390,18 @@ def _period_contract_for_table_label(
     report_date: str | None,
     report_period_months: int | None,
 ) -> dict[str, Any]:
+    ended_weeks = re.search(r"(\d+)W ended (\d{4}-\d{2}-\d{2})", column_label)
+    if ended_weeks:
+        weeks = int(ended_weeks.group(1))
+        period_end = date.fromisoformat(ended_weeks.group(2))
+        period_start = period_end - timedelta(days=weeks * 7 - 1)
+        return {
+            "period_kind": "duration",
+            "presentation_basis": "period_total",
+            "period_start": period_start.isoformat(),
+            "period_end": period_end.isoformat(),
+            "period_role": f"{weeks}w_{period_end.isoformat()}",
+        }
     ended = re.search(r"(3|6|9|12)M ended (\d{4}-\d{2}-\d{2})", column_label)
     if ended:
         months = int(ended.group(1))
@@ -2248,6 +2519,8 @@ def _semantic_fact_contract(
 ) -> dict[str, Any]:
     lowered = statement.casefold()
     role = metric_role.casefold()
+    if per_share and re.search(r"\b(?:acquisition|purchase price|transaction)\b", lowered):
+        return {"fact_type": "stock_value", "rate_basis": None}
     if "annualized_revenue" in role or "annualized revenue" in lowered:
         return {
             "fact_type": "annualized_run_rate",

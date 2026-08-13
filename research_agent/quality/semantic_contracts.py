@@ -38,6 +38,25 @@ CHANGE_FACT_TYPES = {
     "guidance_change",
     "contribution_to_change",
 }
+FACT_TYPE_PERIOD_KINDS = {
+    "instant_value": {"instant"},
+    "balance_value": {"instant"},
+    "stock_value": {"instant"},
+    "period_total": {"duration", "trailing_twelve_months"},
+    "flow_value": {"duration", "trailing_twelve_months"},
+    "reconciliation_component": {"duration", "comparison"},
+    "year_over_year_change": {"comparison"},
+    "sequential_change": {"comparison"},
+    "basis_point_change": {"comparison"},
+    "contribution_to_change": {"comparison"},
+    "percentage_of_total": {"duration", "trailing_twelve_months", "instant"},
+    "guidance_range": {"guidance"},
+    "guidance_change": {"guidance", "comparison"},
+    "quarterly_rate": {"rate"},
+    "annual_rate": {"rate"},
+    "annualized_run_rate": {"rate"},
+    "per_share_rate": {"rate"},
+}
 POSITIONAL_METRIC_RE = re.compile(r"(?:^|_)(?:event|value)_?\d+(?:_|$)", re.IGNORECASE)
 ADVERSE_WORD_RE = re.compile(
     r"\b(?:reduced?|lowered|decreas(?:e|ed)|declin(?:e|ed)|headwind|adverse|fell)\b",
@@ -103,6 +122,16 @@ def audit_semantic_records(
 
         if fact_type and fact_type not in FACT_TYPES:
             fail("fact_type_invalid", record_id=fact_id, detail=f"Unknown fact_type={fact_type}.")
+        allowed_period_kinds = FACT_TYPE_PERIOD_KINDS.get(fact_type)
+        if allowed_period_kinds is not None and period_kind not in allowed_period_kinds:
+            fail(
+                "fact_type_period_kind_mismatch",
+                record_id=fact_id,
+                detail=(
+                    f"fact_type={fact_type} requires period_kind in "
+                    f"{sorted(allowed_period_kinds)}, found {period_kind}."
+                ),
+            )
         if rate_basis and (fact_type not in RATE_FACT_TYPES or period_kind not in {"rate", "guidance"}):
             fail(
                 "rate_period_kind_mismatch",

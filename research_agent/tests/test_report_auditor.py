@@ -171,6 +171,18 @@ def test_markdown_numeric_extractor_normalizes_german_cash_claim():
     assert huf_claim.unit == "huf"
 
 
+def test_markdown_numeric_extractor_includes_material_plain_counts() -> None:
+    claims = extract_numeric_claims(
+        "Paid members reached 81.0 million in fiscal 2025. "
+        "<!-- room16-lineage claim=CLAIM-001 -->"
+    )
+
+    counts = [claim for claim in claims if claim.unit == "count"]
+    assert [(claim.raw_text, claim.normalized_value) for claim in counts] == [
+        ("81.0 million", 81_000_000.0)
+    ]
+
+
 def test_currency_range_lower_bound_inherits_explicit_upper_bound_scale():
     claims = extract_numeric_claims(
         "Guidance calls for adjusted EBITDA between $8.15 and $8.25 billion, "

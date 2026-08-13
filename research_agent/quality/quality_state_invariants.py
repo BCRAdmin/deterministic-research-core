@@ -91,6 +91,7 @@ def verify_quality_state(
         "MISSING_EVIDENCE_FOR_HARD_CLAIM",
         "NUMERIC_MISMATCH",
         "PERIOD_MISMATCH",
+        "UNVERIFIED_HARD_METRIC",
     }
     semantic_numeric_audit_passed = not any(
         issue.code in semantic_numeric_audit_codes
@@ -100,8 +101,13 @@ def verify_quality_state(
         "rendered_numeric_lineage_complete",
         semantic_numeric_audit_passed,
         "Every rendered hard number has unique claim/fact/evidence/source lineage.",
-        blocking=False,
+        blocking=True,
     )
+    failures = [
+        str(item["check_id"])
+        for item in checks
+        if item["status"] != "pass" and item["blocking"]
+    ]
     integrity_passed = not failures and semantic_passed and citations_passed
     internally_reviewable = integrity_passed and semantic_numeric_audit_passed
     release_candidate = bool(

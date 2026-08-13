@@ -72,6 +72,34 @@ def test_semantic_invariant_fixture_passes():
     assert report["blocking_failures"] == []
 
 
+def test_semantic_invariant_audits_visible_material_tables() -> None:
+    fixture = _fixture()
+    fixture["rendered_markdown"] = (
+        "# Report\n\n"
+        "| Metric | Value |\n"
+        "|---|---:|\n"
+        "| Paid members | 81.0 million |\n"
+        "<!-- room16-table-lineage id=TABLE_001 evidence=EVIDENCE-001 -->\n"
+    )
+
+    report = verify_semantic_invariants(**fixture)
+
+    assert report["rendered_material_table_count"] == 1
+    assert report["semantic_numeric_audit"]["counts"]["tables"] == 1
+    assert "rendered_tables_audited" not in report["blocking_failures"]
+
+
+def test_semantic_invariant_blocks_visible_table_without_lineage() -> None:
+    fixture = _fixture()
+    fixture["rendered_markdown"] = (
+        "| Metric | Value |\n|---|---:|\n| Paid members | 81.0 million |\n"
+    )
+
+    report = verify_semantic_invariants(**fixture)
+
+    assert "rendered_tables_audited" in report["blocking_failures"]
+
+
 def test_semantic_invariant_allows_source_bound_structural_dash_fact():
     fixture = _fixture()
     fixture["fact_ledger"]["claims"].append(

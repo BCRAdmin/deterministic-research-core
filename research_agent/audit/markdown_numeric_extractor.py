@@ -7,9 +7,20 @@ from research_agent.audit.audit_report import ExtractedNumericClaim
 from research_agent.audit.claim_mapper import infer_possible_metric
 
 
-DATE_RE = re.compile(r"\b(?:\d{4}-\d{2}-\d{2}|\d{1,2}\.\d{1,2}\.\d{4})\b")
+DATE_RE = re.compile(
+    r"\b(?:\d{4}-\d{2}-\d{2}|\d{1,2}\.\d{1,2}\.\d{4}|"
+    r"(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|June?|July?|"
+    r"Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\.?\s+"
+    r"\d{1,2},\s*\d{4})\b",
+    re.IGNORECASE,
+)
 PERCENT_RE = re.compile(r"(?<![\w$])([+-]?\d+(?:[.,]\d+)?)\s*(?:%|Prozent)", re.IGNORECASE)
 MULTIPLE_RE = re.compile(r"(?<![\w$])([+-]?\d+(?:[.,]\d+)?)\s*-?\s*(?:x|faches|fach|fache)\b", re.IGNORECASE)
+PLAIN_NUMBER_RE = re.compile(
+    r"(?<![\w$])(?P<number>[+-]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?)\s*"
+    r"(?P<scale>billion|million|thousand|bn|mn|m|k)?(?![\w])",
+    re.IGNORECASE,
+)
 CURRENCY_PREFIX_RE = re.compile(
     r"(?P<leading_sign>[+-]?)\s*(?:(?P<symbol>\$)|(?P<currency>USD|HUF)\s*)\s*"
     r"(?P<number>[+-]?\d+(?:[.,]\d{1,3})*)\s*"
@@ -20,6 +31,11 @@ CURRENCY_SUFFIX_RE = re.compile(
     r"(?<![\w])(?P<number>[+-]?\d+(?:[.,]\d{1,3})*)\s*"
     r"(?P<scale>B|bn|billion|Mrd\.?|Mio\.?|million|M|k)?\s*"
     r"(?:(?P<symbol>\$)|(?P<currency>USD|HUF)|US-Dollar)(?=\W|$)",
+    re.IGNORECASE,
+)
+PLAIN_COUNT_CONTEXT_RE = re.compile(
+    r"\b(?:members?|cardholders?|customers?|subscribers?|warehouses?|stores?|"
+    r"locations?|shares?|employees?|units?|patients?)\b",
     re.IGNORECASE,
 )
 
@@ -102,7 +118,58 @@ def _extract_line_claims(line: str, line_number: int) -> list[ExtractedNumericCl
             )
         )
 
+    occupied = [
+        item.span()
+        for regex in (DATE_RE, PERCENT_RE, MULTIPLE_RE)
+        for item in regex.finditer(line)
+    ]
+    occupied.extend(match.span() for match, _ in currency_matches)
+    occupied.extend(match.span() for match in re.finditer(r"`[^`]*`|<!--.*?-->", line))
+    for match in PLAIN_NUMBER_RE.finditer(line):
+        if any(_spans_overlap(match.span(), span) for span in occupied):
+            continue
+        if _plain_number_is_non_material(line, match):
+            continue
+        claims.append(
+            _claim(
+                raw_text=match.group(0).strip(),
+                value=_normalize_number(match.group("number"), match.group("scale")),
+                unit="count",
+                nearby_text=nearby,
+                line_number=line_number,
+                metric_context=_metric_context(line, match.start(), match.end()),
+                source_start=match.start(),
+            )
+        )
+
     return sorted(claims, key=lambda item: item.source_start or 0)
+
+
+def _spans_overlap(left: tuple[int, int], right: tuple[int, int]) -> bool:
+    return left[0] < right[1] and right[0] < left[1]
+
+
+def _plain_number_is_non_material(line: str, match: re.Match[str]) -> bool:
+    value = float(match.group("number").replace(",", ""))
+    before = line[max(0, match.start() - 30) : match.start()]
+    after = line[match.end() : match.end() + 24]
+    if not match.group("scale") and not PLAIN_COUNT_CONTEXT_RE.search(line):
+        return True
+    if str(match.group("scale") or "").casefold() == "m" and re.match(
+        r"\s+(?:ended|period|results?)\b",
+        after,
+        re.IGNORECASE,
+    ):
+        return True
+    if not match.group("scale") and value.is_integer() and 1900 <= value <= 2100:
+        return True
+    if re.match(r"\s*(?:-|–|—)?\s*(?:SMA|week|weeks|day|days|month|months|year|years)\b", after, re.IGNORECASE):
+        return True
+    if re.search(r"(?:^|\s)\d+[.)]\s*$", line[: match.end()]):
+        return True
+    if re.search(r"\b(?:CIK|ISIN|WKN|accession|claim|evidence|source)\s*[:#-]?\s*$", before, re.IGNORECASE):
+        return True
+    return False
 
 
 def _inherited_currency_scale(
