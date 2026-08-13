@@ -2347,6 +2347,10 @@ def _calculation_evidence(
     claim_type: str = "financial_metric",
     source_lineage: Optional[list[str]] = None,
 ) -> EvidenceItem:
+    direction, impact, fact_type = _derived_semantic_contract(
+        metric_name,
+        value,
+    )
     return EvidenceItem(
         evidence_id=(
             f"{ticker.upper()}_DETERMINISTIC_"
@@ -2372,6 +2376,11 @@ def _calculation_evidence(
         formula_id=formula_id,
         formula_operands=operands,
         normalized_value=float(value),
+        normalized_magnitude=abs(float(value)),
+        signed_value=float(value),
+        direction=direction,
+        impact=impact,
+        fact_type=fact_type,
         source_lineage=(
             list(dict.fromkeys(source_lineage))
             if source_lineage is not None
@@ -2382,6 +2391,22 @@ def _calculation_evidence(
             )
         ),
     )
+
+
+def _derived_semantic_contract(
+    metric_name: str,
+    value: float,
+) -> tuple[str, str, str | None]:
+    if not re.search(r"(?:growth|change)_yoy$|_yoy$", metric_name):
+        return "neutral", "neutral", None
+    if math.isclose(float(value), 0.0, abs_tol=1e-15):
+        return "neutral", "neutral", "year_over_year_change"
+    direction = "increase" if value > 0 else "decrease"
+    if metric_name == "diluted_share_count_yoy":
+        impact = "adverse" if value > 0 else "positive"
+    else:
+        impact = "positive" if value > 0 else "adverse"
+    return direction, impact, "year_over_year_change"
 
 
 def _division_matches(

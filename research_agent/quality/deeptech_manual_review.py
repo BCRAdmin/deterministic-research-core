@@ -51,7 +51,7 @@ BUSINESS_MODEL_KPI_REQUIREMENTS = {
         "adjusted_eps_guidance": r"\badjusted eps\b.{0,120}\b(?:guidance|outlook|range)\b|\b(?:guidance|outlook|range)\b.{0,120}\badjusted eps\b",
         "transaction_financing": r"\b(?:acquisition|transaction)\b.{0,140}\b(?:debt|financ|consideration|purchase price)\b|\b(?:debt|financ)\b.{0,140}\b(?:acquisition|transaction)\b",
         "integration_effects": r"\b(?:integration costs?|amortization|purchase accounting)\b",
-        "product_or_regulatory_catalyst": r"\b(?:approval|clearance|regulatory|product launch|clinical)\b",
+        "product_or_regulatory_catalyst": r"\b(?:approval|clearance|regulatory|product launch|clinical|pivotal trial|CE Mark|FDA submission)\b",
     },
 }
 

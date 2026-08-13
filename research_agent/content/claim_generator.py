@@ -325,6 +325,13 @@ def _labeled_numeric_event_statement(
         return fallback
     label = re.split(r"\s+[$€£]?\d", fallback, maxsplit=1)[0]
     label = re.sub(r"\s*\([a-z]\)", "", label, flags=re.IGNORECASE).strip(" :-")
+    row_metrics = {
+        str(metric.row_metric or "")
+        for metric in metrics
+        if metric.row_metric
+    }
+    if len(row_metrics) == 1 and next(iter(row_metrics)).endswith("sales_growth"):
+        label = next(iter(row_metrics)).replace("_", " ").title()
     if not label:
         label = "Reported operating KPI"
     values: list[str] = []
@@ -3243,6 +3250,16 @@ def named_current_risk_label(summary: str, *, fallback: str) -> str:
         return "Kirkland Signature tequila consumer class actions and dismissal motions."
     if "international emergency economic powers act" in folded or "ieepa" in folded:
         return "IEEPA tariff-refund consumer class actions and dismissal motions."
+    if (
+        ("necrotizing enterocolitis" in folded or "preterm infant formula" in folded)
+        and ("missouri" in folded or "gill" in folded)
+    ):
+        return "Gill NEC verdict affirmed; Missouri Supreme Court review sought."
+    if (
+        ("necrotizing enterocolitis" in folded or "preterm infant formula" in folded)
+        and ("multidistrict litigation" in folded or "bellwether" in folded)
+    ):
+        return "Broader NEC litigation with mixed state outcomes, federal bellwether wins, and no recorded reserve."
     if "necrotizing enterocolitis" in folded or "preterm infant formula" in folded:
         return "Preterm infant-formula NEC litigation and appeals."
     if "qui tam" in folded or "false claims act" in folded:

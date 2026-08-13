@@ -96,6 +96,61 @@ def verify_quality_state(
             f"audit_count={mismatch_count}"
         ),
     )
+    metadata_consistent = getattr(
+        quality_report,
+        "quality_metadata_consistent",
+        None,
+    )
+    canonical_current_kpi_count = int(
+        getattr(quality_report, "canonical_current_kpi_count", 0) or 0
+    )
+    main_body_kpi_count = int(
+        getattr(quality_report, "current_period_kpi_claim_count_main_body", 0)
+        or 0
+    )
+    risk_profiles = list(getattr(quality_report, "risk_profiles", []) or [])
+    canonical_risk_profile_count = int(
+        getattr(quality_report, "canonical_risk_profile_count", 0) or 0
+    )
+    data_limitation_claim_count = int(
+        getattr(quality_report, "data_limitation_claim_count", 0) or 0
+    )
+    canonical_data_limitation_count = int(
+        getattr(quality_report, "canonical_data_limitation_count", 0) or 0
+    )
+    check(
+        "canonical_quality_metadata_consistent",
+        metadata_consistent is None
+        or (
+            bool(metadata_consistent)
+            and canonical_current_kpi_count == main_body_kpi_count
+            and canonical_risk_profile_count == len(risk_profiles)
+            and canonical_data_limitation_count == data_limitation_claim_count
+        ),
+        (
+            f"canonical_kpis={canonical_current_kpi_count} "
+            f"canonical_risks={canonical_risk_profile_count} "
+            f"canonical_limitations={canonical_data_limitation_count}"
+        ),
+    )
+    check(
+        "manual_review_blocks_current_report",
+        quality_report.status == "publishable"
+        or getattr(quality_report, "current_report_allowed", False) is False,
+        (
+            f"status={quality_report.status} "
+            f"current_report_allowed={getattr(quality_report, 'current_report_allowed', False)}"
+        ),
+    )
+    check(
+        "publish_counters_match_artifact_state",
+        bool(getattr(quality_report, "publish_report_exists", 0))
+        or int(getattr(quality_report, "publish_current_kpi_count", 0) or 0) == 0,
+        (
+            f"publish_report_exists={getattr(quality_report, 'publish_report_exists', 0)} "
+            f"publish_current_kpi_count={getattr(quality_report, 'publish_current_kpi_count', 0)}"
+        ),
+    )
     failures = [
         str(item["check_id"])
         for item in checks

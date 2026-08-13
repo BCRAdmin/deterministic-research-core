@@ -172,6 +172,8 @@ OPERATING_DRIVER_METRIC_MARKERS = {
     ),
     "Segment growth": (
         "segment_growth",
+        "segment_reported_sales_growth",
+        "comparable_sales_growth",
         "revenue_yoy_change",
         "revenue_current_period",
     ),

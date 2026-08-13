@@ -984,6 +984,7 @@ def run_research_pipeline(
             quality_report,
             canonical_business_model_assessment,
         )
+    _reconcile_canonical_quality_metadata(quality_report)
     quality_state_integrity = verify_quality_state(
         quality_report=quality_report,
         audit_report=audit_report,
@@ -1428,6 +1429,7 @@ def build_data_packet(
             source_content_bytes=item.get("source_content_bytes"),
             legal_context=item.get("legal_context"),
             numeric_evidence=item.get("numeric_evidence") or [],
+            table_contracts=item.get("table_contracts") or [],
         )
         for item in news
         if item.get("event_type") != "coverage_manifest"
@@ -2660,6 +2662,49 @@ def _apply_publish_quality_to_report(quality_report, payload: dict[str, int]) ->
     quality_report.publish_valuation_sensitivity_present = int(payload.get("publish_valuation_sensitivity_present") or 0)
     quality_report.publish_action_plan_trigger_count = int(payload.get("publish_action_plan_trigger_count") or 0)
     quality_report.publish_report_quality_score = int(payload.get("publish_report_quality_score") or 0)
+
+
+def _reconcile_canonical_quality_metadata(quality_report) -> None:
+    """Keep review metadata bound to the canonical report, not a removed draft."""
+
+    quality_report.risk_profiles = list(
+        dict.fromkeys(
+            [
+                *quality_report.risk_profiles,
+                *quality_report.manual_review_reasons,
+            ]
+        )
+    )
+    quality_report.canonical_current_kpi_count = int(
+        quality_report.current_period_kpi_claim_count_main_body or 0
+    )
+    quality_report.canonical_risk_profile_count = len(
+        quality_report.risk_profiles
+    )
+    quality_report.data_limitation_claim_count = max(
+        int(quality_report.data_limitation_claim_count or 0),
+        len(quality_report.manual_review_reasons),
+    )
+    quality_report.canonical_data_limitation_count = int(
+        quality_report.data_limitation_claim_count
+    )
+    quality_report.publication_artifact_state = (
+        "present" if quality_report.publish_report_exists else "withheld"
+    )
+    if quality_report.status != "publishable" or not quality_report.publishable:
+        quality_report.current_report_allowed = False
+    quality_report.quality_metadata_consistent = bool(
+        quality_report.canonical_current_kpi_count
+        == quality_report.current_period_kpi_claim_count_main_body
+        and quality_report.canonical_risk_profile_count
+        == len(quality_report.risk_profiles)
+        and quality_report.canonical_data_limitation_count
+        == quality_report.data_limitation_claim_count
+        and (
+            quality_report.publish_report_exists
+            or quality_report.publish_current_kpi_count == 0
+        )
+    )
 
 
 def _apply_empty_required_section_cap(quality_report, empty_required_sections: int) -> None:

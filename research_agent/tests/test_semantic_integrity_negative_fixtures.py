@@ -167,6 +167,31 @@ def _error_codes(*, facts=(), tables=(), claims=(), sources=()):
             {"facts": [_fact(metric_id="capital_allocation_acquisition_cash_current_period", fact_type="reconciliation_component", formula_operands={"filing_transactions_acquisition_net_cash_paid_usd": 85_000_000, "operating_kpi_acquisition_net_cash_paid_6m_2026_amount": 85_000_000})]},
             {"facts": [_fact(metric_id="capital_allocation_acquisition_cash_current_period", fact_type="reconciliation_component", formula_operands={"filing_transactions_acquisition_net_cash_paid_usd": 85_000_000, "filing_transactions_acquisition_prior_period_holdback_usd": 13_000_000})]},
         ),
+        (
+            "expense_increase_marked_positive",
+            {"facts": [_fact(metric_id="operating_expenses_yoy_change", fact_type="year_over_year_change", raw_text="$152 million increase in operating expenses", signed_value=152_000_000.0, direction="increase", impact="positive", period_kind="comparison", comparison_period_start="2025-04-01", comparison_period_end="2025-06-30")]},
+            {"facts": [_fact(metric_id="operating_expenses_yoy_change", fact_type="year_over_year_change", raw_text="$152 million increase in operating expenses", signed_value=152_000_000.0, direction="increase", impact="adverse", period_kind="comparison", comparison_period_start="2025-04-01", comparison_period_end="2025-06-30")]},
+        ),
+        (
+            "nonzero_change_direction_neutral",
+            {"facts": [_fact(metric_id="revenue_growth_yoy", fact_type="year_over_year_change", signed_value=0.08, direction="neutral", period_kind="comparison", unit="percent", currency=None, comparison_period_start="2025-04-01", comparison_period_end="2025-06-30")]},
+            {"facts": [_fact(metric_id="revenue_growth_yoy", fact_type="year_over_year_change", signed_value=0.08, direction="increase", impact="positive", period_kind="comparison", unit="percent", currency=None, comparison_period_start="2025-04-01", comparison_period_end="2025-06-30")]},
+        ),
+        (
+            "membership_stock_modeled_as_period_total",
+            {"facts": [_fact(metric_id="executive_members_fy2025", raw_text="Executive members 38,700", signed_value=38_700_000, fact_type="period_total", period_kind="duration")]},
+            {"facts": [_fact(metric_id="executive_members_fy2025", raw_text="38,700 [FY2025]", signed_value=38_700_000, fact_type="stock_value", period_kind="instant", period_start=None, period_end="2025-08-31")]},
+        ),
+        (
+            "absolute_rate_modeled_as_change",
+            {"facts": [_fact(metric_id="renewal_rate_yoy_change", raw_text="renewal rates were 92.3%", signed_value=0.923, fact_type="year_over_year_change", period_kind="comparison", unit="percent", currency=None, comparison_period_start="2024-09-01", comparison_period_end="2025-08-31")]},
+            {"facts": [_fact(metric_id="renewal_rate_asof_2025_08_31", raw_text="renewal rates were 92.3%", signed_value=0.923, fact_type="instant_value", period_kind="instant", period_start=None, period_end="2025-08-31", unit="percent", currency=None)]},
+        ),
+        (
+            "transaction_cost_metric_owner_mismatch",
+            {"facts": [_fact(metric_id="acquisition_amortization_expense", raw_text="transaction-related expenses of $0.5 billion", signed_value=500_000_000)]},
+            {"facts": [_fact(metric_id="acquisition_transaction_costs", raw_text="transaction-related expenses of $0.5 billion", signed_value=500_000_000)]},
+        ),
     ],
 )
 def test_semantic_integrity_negative_fixture(error, broken, corrected):
@@ -175,3 +200,22 @@ def test_semantic_integrity_negative_fixture(error, broken, corrected):
 
     assert error in broken_codes
     assert error not in corrected_codes
+
+
+def test_economic_event_period_duplicate_is_rejected() -> None:
+    common = {
+        "metric_id": "acquisition_assumed_debt",
+        "raw_text": "assumed approximately $2.8 billion of debt",
+        "signed_value": 2_800_000_000.0,
+        "value": 2_800_000_000.0,
+    }
+    broken = [
+        _fact(**common, fact_id="EVENT", fact_type="instant_value", period_kind="instant", period_start=None, period_end="2026-03-23"),
+        _fact(**common, fact_id="QUARTER", fact_type="period_total", period_kind="duration", period_start="2026-04-01", period_end="2026-06-30"),
+    ]
+    assert "economic_event_duplicated_as_period_total" in _error_codes(facts=broken)
+
+
+def test_table_derived_fact_requires_matching_source_table() -> None:
+    fact = _fact(table_id="TABLE-001")
+    assert "fact_source_table_missing" in _error_codes(facts=[fact])

@@ -59,3 +59,32 @@ def test_official_risk_event_becomes_risk_evidence():
 
     assert evidence[0].claim_type == "risk"
     assert "issuer_risk_disclosure" in evidence[0].supports_categories
+
+
+def test_load_news_prefers_event_date_over_reporting_quarter_duplicate(tmp_path: Path):
+    payload = {
+        "events": [
+            {
+                "event_type": "operating_kpi",
+                "numeric_evidence": [{
+                    "metric_name": "operating_kpi_acquisition_assumed_debt_3m_2026",
+                    "value": 2_800_000_000,
+                    "raw_text": "assumed approximately $2.8 billion of debt",
+                    "period_kind": "duration",
+                }],
+            },
+            {
+                "event_type": "operating_kpi",
+                "numeric_evidence": [{
+                    "metric_name": "operating_kpi_acquisition_assumed_debt_event_2026_03_23",
+                    "value": 2_800_000_000,
+                    "raw_text": "assumed approximately $2.8 billion of debt",
+                    "period_kind": "instant",
+                }],
+            },
+        ]
+    }
+    (tmp_path / "ABT_news.json").write_text(__import__("json").dumps(payload))
+    events = load_news("ABT", tmp_path)[1:]
+    assert events[0]["numeric_evidence"] == []
+    assert len(events[1]["numeric_evidence"]) == 1

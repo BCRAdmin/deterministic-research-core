@@ -504,6 +504,62 @@ def test_executive_member_footnote_is_not_promoted_and_years_remain_aligned() ->
     assert [item["value"] for item in records] == [38_700_000, 35_400_000, 32_300_000]
     assert all("executive_members" in item["metric_role"] for item in records)
     assert all("paid_members" not in item["metric_role"] for item in records)
+    assert all(item["period_kind"] == "instant" for item in records)
+    assert [item["period_end"] for item in records] == [
+        "2025-08-31",
+        "2024-08-31",
+        "2023-08-31",
+    ]
+    assert [item["raw_text"] for item in records] == [
+        "38,700 [FY2025]",
+        "35,400 [FY2024]",
+        "32,300 [FY2023]",
+    ]
+
+
+def test_healthcare_release_extracts_current_segment_axes_and_catalysts() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="TEST",
+        cik="1800",
+        accession_number="0001628280-26-048377",
+        filing_date="2026-07-16",
+        primary_document="test.htm",
+        html_documents=[
+            "<p>Sales 2Q26 ($ in millions)</p>"
+            "<p>Total Company Nutrition Diagnostics Established Pharmaceuticals Medical Devices</p>"
+            "<p>Total reported13.0 (3.1)42.3 8.4 9.0</p>"
+            "<p>Comparable sales growth4.8 (3.6)2.9 8.7 8.4</p>"
+            "<p>In May, Abbott announced it secured CE Mark for Libre Duo, the world's first dual glucose-ketone biowearable sensor.</p>"
+        ],
+        retrieved_at="2026-08-13T12:00:00Z",
+        report_date="2026-06-30",
+        report_period_months=3,
+    )
+    facts = [
+        item
+        for event in payload["events"]
+        for item in event["numeric_evidence"]
+    ]
+    expected = {
+        ("segment_reported_sales_growth", "diagnostics"): 0.423,
+        ("comparable_sales_growth", "diagnostics"): 0.029,
+        ("comparable_sales_growth", "established_pharmaceuticals"): 0.087,
+        ("comparable_sales_growth", "medical_devices"): 0.084,
+    }
+    for (metric, segment), value in expected.items():
+        fact = next(
+            item
+            for item in facts
+            if metric in item["metric_name"] and item["segment"] == segment
+        )
+        assert fact["value"] == pytest.approx(value)
+        assert fact["period_kind"] == "comparison"
+    catalyst = next(
+        event
+        for event in payload["events"]
+        if "PRODUCT_REGULATORY_CATALYST" in event["source_id"]
+    )
+    assert catalyst["numeric_evidence"] == []
 
 
 def test_guidance_range_endpoints_keep_range_fact_type() -> None:

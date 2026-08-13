@@ -413,3 +413,16 @@ def test_pro_forma_adjustments_do_not_steal_or_lose_metric_roles() -> None:
     assert any("interest_expense" in name and value == 500_000_000 for name, value in roles)
     assert any("amortization_expense" in name and value == 500_000_000 for name, value in roles)
     assert any("pro_forma_net_sales" in name and value == 12_600_000_000 for name, value in roles)
+
+
+def test_transaction_expense_after_amortization_keeps_its_local_owner() -> None:
+    facts = _topic_numeric_evidence(
+        "Pro forma earnings excluded amortization expense of $0.2 billion, "
+        "and excluding transaction-related expenses of $0.5 billion that were "
+        "directly attributable to the acquisition.",
+        "transactions",
+        filing_date="2026-07-28",
+    )
+    half_billion = next(item for item in facts if item["value"] == 500_000_000)
+    assert "transaction_costs" in half_billion["metric_name"]
+    assert "amortization" not in half_billion["metric_name"]

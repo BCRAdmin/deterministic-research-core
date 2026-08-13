@@ -34,6 +34,7 @@ KPI_PATTERNS = {
     "acquired_annualized_revenue": r"\b(?:gross )?annualized revenue acquired\b|\bacquired annualized revenue\b",
     "organic_comparable_growth": r"\b(?:organic|comparable)\b.{0,80}\bgrowth\b|\bgrowth\b.{0,80}\b(?:organic|comparable)\b",
     "segment_growth": r"\bsegment\b.{0,100}\bgrowth\b|\bgrowth\b.{0,100}\bsegment\b",
+    "segment_reported_growth": r"^\s*Total reported(?=\s|[-(0-9])",
     "adjusted_eps_guidance": r"\badjusted eps\b.{0,120}\b(?:guidance|outlook|range)\b|\b(?:guidance|outlook|range)\b.{0,120}\badjusted eps\b",
     "transaction_financing": (
         r"\b(?:acquisition|transaction)\b.{0,160}"
@@ -50,7 +51,10 @@ KPI_PATTERNS = {
         r"\bsynerg(?:y|ies)\b|\bsynerg(?:y|ies)\b.{0,180}"
         r"\b(?:acquisition|transaction|integration)\b"
     ),
-    "product_regulatory_catalyst": r"\b(?:approval|clearance|product launch|clinical milestone)\b",
+    "product_regulatory_catalyst": (
+        r"\b(?:approval|clearance|product launch|clinical milestone|"
+        r"clinical trials?|pivotal trial|CE Mark|FDA submission)\b"
+    ),
 }
 
 NUMBER_RE = re.compile(
@@ -202,6 +206,16 @@ def _extract_document_events(
         ),
         "paid_members": set(_ranked_kpi_statements(blocks, "paid_members", limit=3)),
         "cardholders": set(_ranked_kpi_statements(blocks, "cardholders", limit=3)),
+        "comparable_sales": set(
+            _ranked_kpi_statements(blocks, "comparable_sales", limit=3)
+        ),
+        "segment_reported_growth": set(
+            _ranked_kpi_statements(
+                blocks,
+                "segment_reported_growth",
+                limit=2,
+            )
+        ),
     }
     cik_digits = str(int(cik)).zfill(10)
     accession_digits = accession_number.replace("-", "")
@@ -278,7 +292,11 @@ def _extract_document_events(
             report_period_months=report_period_months,
             document_currency_scale=document_currency_scale,
         )
-        if not numeric_evidence:
+        narrative_only_catalyst = (
+            not numeric_evidence
+            and matched_kpis == ["product_regulatory_catalyst"]
+        )
+        if not numeric_evidence and not narrative_only_catalyst:
             continue
         emitted_statements.add(statement)
         for kpi_id in matched_kpis:
@@ -407,10 +425,15 @@ def _ranked_kpi_statements(
             or "," in match.group("number")
             for match in NUMBER_RE.finditer(statement)
         )
+        or (
+            kpi_id in {"comparable_sales", "segment_reported_growth"}
+            and _looks_like_segment_growth_table_row(statement)
+        )
     ]
     return sorted(
         candidates,
         key=lambda statement: (
+            int(_looks_like_segment_growth_table_row(statement)),
             int(re.search(rf"^\s*(?:total\s+)?{pattern}", statement, re.IGNORECASE) is not None),
             int(len(statement) <= 220),
             len(list(NUMBER_RE.finditer(statement))),
@@ -447,13 +470,18 @@ def _kpi_statement_is_semantic_match(kpi_id: str, statement: str) -> bool:
         return bool(
             re.search(
                 r"\b(?:received|granted|obtained|announced|launched|achieved|"
-                r"expects?|seeks?)\b.{0,100}"
-                r"\b(?:approval|clearance|product launch|clinical milestone)\b|"
-                r"\b(?:approval|clearance|product launch|clinical milestone)\b"
-                r".{0,100}\b(?:received|granted|obtained|announced|launched)\b",
+                r"expects?|seeks?|seeking|secured|completed|submitted)\b.{0,140}"
+                r"\b(?:approval|clearance|product launch|clinical milestone|"
+                r"clinical trials?|pivotal trial|ce mark|fda submission)\b|"
+                r"\b(?:approval|clearance|product launch|clinical milestone|"
+                r"clinical trials?|pivotal trial|ce mark|fda submission)\b"
+                r".{0,140}\b(?:received|granted|obtained|announced|launched|"
+                r"secured|completed|submitted)\b",
                 folded,
             )
         )
+    if kpi_id == "segment_reported_growth":
+        return _looks_like_segment_growth_table_row(statement)
     return True
 
 
@@ -563,7 +591,13 @@ def _numeric_evidence(
                 else ""
             )
         )
-        percent = bool(match.group("percent"))
+        table_column_index = table_positions.get(number_index, number_index)
+        table_percent = bool(
+            table_contract
+            and table_column_index < len(table_contract.get("unit_axis", []))
+            and table_contract["unit_axis"][table_column_index] == "percent"
+        )
+        percent = bool(match.group("percent")) or table_percent
         material_count = _is_material_operating_count(statement, match)
         basis_points = bool(
             re.match(
@@ -604,6 +638,15 @@ def _numeric_evidence(
             statement,
             match.span(),
         )
+        if table_percent:
+            parenthesized = (
+                match.start() > 0
+                and statement[match.start() - 1] == "("
+                and re.match(r"\s*\)", statement[match.end() :])
+            )
+            direction = -1.0 if parenthesized else 1.0
+            direction_label = "decrease" if parenthesized else "increase"
+            impact = "adverse" if parenthesized else "positive"
         change_prefix = statement[max(0, match.start() - 55) : match.start()]
         explicit_change_amount = re.search(
             r"\b(?:grew|increased?|decreased?|declined?|reduced?|reduction|headwind)\b.{0,30}$",
@@ -728,6 +771,12 @@ def _numeric_evidence(
             direction_label = "neutral"
             impact = "neutral"
 
+        if re.search(r"(?:^|_)(?:operating_)?(?:expenses?|costs?)(?:_|$)", metric_role, re.IGNORECASE):
+            if direction_label == "increase":
+                impact = "adverse"
+            elif direction_label == "decrease":
+                impact = "positive"
+
         fact_contract = _semantic_fact_contract(
             statement=statement,
             metric_role=metric_role,
@@ -840,7 +889,12 @@ def _numeric_evidence(
                 "metric_name": f"operating_kpi_{metric_role}",
                 "metric_role": metric_role,
                 "value": value,
-                "raw_text": _source_numeric_clause(statement, match.span()),
+                "raw_text": _source_numeric_text(
+                    statement,
+                    match,
+                    metric_role=metric_role,
+                    column_label=column_label,
+                ),
                 "normalized_magnitude": abs(value),
                 "signed_value": value,
                 "direction": direction_label,
@@ -1024,6 +1078,31 @@ def _numeric_period_contract(
             "asof": economic_event_date.isoformat(),
             "period_role": f"event_{economic_event_date.isoformat()}",
         }
+    label = str(column_label or "")
+    point_in_time_date = _point_in_time_date_for_label(
+        label,
+        report_date=report_date,
+    )
+    if _is_absolute_renewal_rate(statement, match):
+        asof = point_in_time_date or report_date or filing_date
+        return {
+            "period_kind": "instant",
+            "presentation_basis": "point_in_time",
+            "period_start": None,
+            "period_end": asof,
+            "asof": asof,
+            "period_role": f"asof_{asof}" if asof else "asof_unmapped",
+        }
+    if _is_membership_stock_value(statement, match, column_label=label):
+        asof = point_in_time_date or report_date or filing_date
+        return {
+            "period_kind": "instant",
+            "presentation_basis": "point_in_time",
+            "period_start": None,
+            "period_end": asof,
+            "asof": asof,
+            "period_role": f"asof_{asof}" if asof else "asof_unmapped",
+        }
     inline_year = re.search(
         r"\b(20\d{2})\s*:\s*(?:C\$|US\$|A\$|HK\$|S\$|[$€£¥])?\s*$",
         statement[max(0, match.start() - 30) : match.start()],
@@ -1041,7 +1120,6 @@ def _numeric_period_contract(
             "period_end": period_end.isoformat(),
             "period_role": f"{report_period_months}m_{period_end.isoformat()}",
         }
-    label = str(column_label or "")
     ended_weeks = re.search(
         r"\b(\d+)W\s+ended\s+(20\d{2})-(\d{2})-(\d{2})\b",
         label,
@@ -1370,6 +1448,63 @@ def _numeric_period_contract(
         "period_end": None,
         "period_role": "period_unmapped",
     }
+
+
+def _point_in_time_date_for_label(
+    label: str,
+    *,
+    report_date: str | None,
+) -> str | None:
+    ended = re.search(
+        r"\b(?:\d+W|\d+M)\s+ended\s+(20\d{2}-\d{2}-\d{2})\b",
+        label,
+        re.IGNORECASE,
+    )
+    if ended:
+        return ended.group(1)
+    fiscal_year = re.fullmatch(r"FY(20\d{2})", label, re.IGNORECASE)
+    if fiscal_year and report_date:
+        return date.fromisoformat(report_date).replace(
+            year=int(fiscal_year.group(1))
+        ).isoformat()
+    return None
+
+
+def _is_absolute_renewal_rate(statement: str, match: re.Match[str]) -> bool:
+    anchors = list(
+        re.finditer(r"\brenewal rates?\b", statement[: match.end()], re.IGNORECASE)
+    )
+    if not anchors:
+        return False
+    scope = statement[anchors[-1].start() : match.end() + 40]
+    return bool(
+        re.search(r"\b(?:was|were|is|are)\b", scope, re.IGNORECASE)
+        and not re.search(
+            r"\b(?:increase|increased|decrease|decreased|change|changed|higher|lower)\b",
+            scope,
+            re.IGNORECASE,
+        )
+    )
+
+
+def _is_membership_stock_value(
+    statement: str,
+    match: re.Match[str],
+    *,
+    column_label: str,
+) -> bool:
+    if match.group("percent"):
+        return False
+    if not re.search(r"\b(?:paid|executive) members?\b", statement, re.IGNORECASE):
+        return False
+    return bool(
+        re.fullmatch(r"FY20\d{2}", column_label, re.IGNORECASE)
+        or re.search(
+            r"\b(?:\d+W|\d+M)\s+ended\s+20\d{2}-\d{2}-\d{2}\b",
+            column_label,
+            re.IGNORECASE,
+        )
+    )
 
 
 def _numeric_metric_role(
@@ -1898,6 +2033,27 @@ def _looks_like_table_value_row(statement: str) -> bool:
     return len(list(NUMBER_RE.finditer(normalized))) >= 2
 
 
+def _looks_like_segment_growth_table_row(statement: str) -> bool:
+    if not re.match(
+        r"^\s*(?:comparable sales growth|total reported)",
+        statement,
+        re.IGNORECASE,
+    ):
+        return False
+    matches = [
+        match
+        for match in NUMBER_RE.finditer(statement)
+        if not _is_non_metric_number(statement, match)
+    ]
+    if len(matches) != 5:
+        return False
+    if statement.lstrip().casefold().startswith("total reported"):
+        return "," not in statement and all(
+            float(match.group("number")) < 200 for match in matches
+        )
+    return True
+
+
 def _scale_from_text(value: str) -> str | None:
     if re.search(r"\(\s*0{3}s\s*\)", value, flags=re.IGNORECASE):
         return "thousand"
@@ -2087,6 +2243,91 @@ def _table_contract(
     table_id = "TABLE_" + hashlib.sha256(
         f"{accession_number or ''}|{index}|{statement}".encode("utf-8")
     ).hexdigest()[:16].upper()
+
+    if _looks_like_segment_growth_table_row(statement):
+        context = " ".join(blocks[max(0, index - 14) : index])
+        header = re.search(
+            r"Sales\s+([1-4]Q|1H)(\d{2}).{0,260}"
+            r"Total Company\s*Nutrition\s*Diagnostics\s*"
+            r"Established Pharmaceuticals\s*Medical Devices",
+            context,
+            re.IGNORECASE,
+        )
+        if header:
+            period_code = header.group(1).upper()
+            year = 2000 + int(header.group(2))
+            months = 6 if period_code == "1H" else 3
+            quarter = None if period_code == "1H" else int(period_code[0])
+            start_month = 1 if quarter is None else (quarter - 1) * 3 + 1
+            end_month = start_month + months - 1
+            period_start = date(year, start_month, 1).isoformat()
+            period_end = date(
+                year,
+                end_month,
+                monthrange(year, end_month)[1],
+            ).isoformat()
+            comparison_start = date(year - 1, start_month, 1).isoformat()
+            comparison_end = date(
+                year - 1,
+                end_month,
+                monthrange(year - 1, end_month)[1],
+            ).isoformat()
+            segments = [
+                "total_company",
+                "nutrition",
+                "diagnostics",
+                "established_pharmaceuticals",
+                "medical_devices",
+            ]
+            labels = [
+                f"{months}M ended {period_end} · {segment}"
+                for segment in segments
+            ]
+            semantic_period = {
+                "period_kind": "comparison",
+                "presentation_basis": "period_over_period_comparison",
+                "period_start": period_start,
+                "period_end": period_end,
+                "current_period_start": period_start,
+                "current_period_end": period_end,
+                "comparison_period_start": comparison_start,
+                "comparison_period_end": comparison_end,
+                "period_role": f"yoy_change_{months}m_{period_end}",
+            }
+            row_metric = (
+                "comparable_sales_growth"
+                if statement.lstrip().casefold().startswith("comparable sales growth")
+                else "segment_reported_sales_growth"
+            )
+            period_label = f"1H{year}" if quarter is None else f"Q{quarter}_{year}"
+            return {
+                "table_id": table_id,
+                "source_id": None,
+                "source_locator": source_locator,
+                "title": row_metric.replace("_", " ").title(),
+                "subtitle": period_label,
+                "header_rows": [["Total Company", "Nutrition", "Diagnostics", "Established Pharmaceuticals", "Medical Devices"]],
+                "row_headers": [row_metric.replace("_", " ")],
+                "column_headers": labels,
+                "row_dimension": "metric",
+                "column_dimension": "segment",
+                "period_axis": [period_label],
+                "metric_axis": [row_metric],
+                "unit_axis": ["percent"] * len(segments),
+                "currency_axis": [None] * len(segments),
+                "comparison_axis": [
+                    f"1H{year - 1}" if quarter is None else f"Q{quarter}_{year - 1}"
+                ] * len(segments),
+                "value_role": ["year_over_year_change"] * len(segments),
+                "table_semantic_type": "segment_growth_comparison",
+                "row_metric": row_metric,
+                "source_scale": "percent",
+                "column_metrics": segments,
+                "column_labels": labels,
+                "segments": segments,
+                "semantic_periods": [dict(semantic_period) for _ in segments],
+                "cells": [],
+            }
 
     number_matches = [
         match for match in NUMBER_RE.finditer(statement)
@@ -2573,6 +2814,27 @@ def _source_numeric_clause(
         if conjunction:
             right = min(right, number_range[1] + conjunction.start())
     return statement[left + 1 : right].strip()
+
+
+def _source_numeric_text(
+    statement: str,
+    match: re.Match[str],
+    *,
+    metric_role: str,
+    column_label: str | None,
+) -> str:
+    clause = _source_numeric_clause(statement, match.span())
+    if (
+        re.search(r"(?:^|_)(?:total_paid|executive)_members(?:_|$)", metric_role)
+        and column_label
+    ):
+        return f"{match.group(0).strip()} [{column_label}]"
+    if (
+        re.search(r"(?:comparable|segment_reported)_sales_growth", metric_role)
+        and column_label
+    ):
+        return f"{match.group(0).strip()}% [{column_label}]"
+    return clause
 
 
 def _semantic_fact_contract(

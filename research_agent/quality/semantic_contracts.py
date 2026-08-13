@@ -177,6 +177,39 @@ def audit_semantic_records(
                 record_id=fact_id,
                 detail="Executive-member subtype evidence is labeled as total paid members.",
             )
+        if (
+            re.search(r"(?:paid|executive)_members", metric_id, re.IGNORECASE)
+            and fact_type == "period_total"
+            and period_kind == "duration"
+        ):
+            fail(
+                "membership_stock_modeled_as_period_total",
+                record_id=fact_id,
+                detail="Paid and executive member counts are point-in-time stock values.",
+            )
+        if (
+            "renewal_rate" in metric_id.casefold()
+            and fact_type == "year_over_year_change"
+            and not re.search(
+                r"\b(?:increase|increased|decrease|decreased|change|changed|higher|lower)\b",
+                raw_text,
+                re.IGNORECASE,
+            )
+        ):
+            fail(
+                "absolute_rate_modeled_as_change",
+                record_id=fact_id,
+                detail="An absolute renewal rate is typed as a year-over-year change.",
+            )
+        if (
+            "transaction-related expense" in raw_text.casefold()
+            and "amortization" in metric_id.casefold()
+        ):
+            fail(
+                "transaction_cost_metric_owner_mismatch",
+                record_id=fact_id,
+                detail="A transaction-related expense is owned by an amortization metric.",
+            )
         operands = fact.get("formula_operands") or {}
         if "acquisition_cash" in metric_id.casefold() and isinstance(operands, Mapping):
             net_cash = [
@@ -222,6 +255,27 @@ def audit_semantic_records(
                 record_id=fact_id,
                 detail="direction=increase requires a non-negative signed value.",
             )
+        if (
+            fact_type in CHANGE_FACT_TYPES
+            and signed_value is not None
+            and not _is_zero(signed_value)
+            and direction == "neutral"
+        ):
+            fail(
+                "nonzero_change_direction_neutral",
+                record_id=fact_id,
+                detail="A non-zero change fact must encode its direction.",
+            )
+        if (
+            direction == "increase"
+            and impact == "positive"
+            and re.search(r"(?:^|_)(?:operating_)?(?:expenses?|costs?)(?:_|$)", metric_id, re.IGNORECASE)
+        ):
+            fail(
+                "expense_increase_marked_positive",
+                record_id=fact_id,
+                detail="An increase in an expense or cost metric is economically adverse.",
+            )
         if ADVERSE_WORD_RE.search(raw_text) and (direction not in {"decrease", "negative"} or impact != "adverse"):
             code = "impact_direction_missing" if "headwind" in raw_text.casefold() else "direction_sign_mismatch"
             fail(code, record_id=fact_id, detail="Adverse source language is not encoded in direction and impact.")
@@ -242,6 +296,45 @@ def audit_semantic_records(
                 "unresolved_metric_promoted",
                 record_id=fact_id,
                 detail=f"Unresolved metric {metric_id!r} was promoted at high confidence.",
+            )
+
+    table_ids = {str(table.get("table_id") or "") for table in table_list}
+    for fact in fact_list:
+        fact_table_id = str(fact.get("table_id") or "")
+        if fact_table_id and fact_table_id not in table_ids:
+            fail(
+                "fact_source_table_missing",
+                record_id=str(fact.get("fact_id") or fact.get("metric") or "") or None,
+                detail=f"Fact references table_id={fact_table_id}, but no matching table contract was supplied.",
+            )
+
+    event_identity: dict[tuple[str, float, str], list[Mapping[str, Any]]] = {}
+    for fact in fact_list:
+        metric = str(
+            fact.get("metric") or fact.get("metric_id") or ""
+        ).casefold()
+        concept = next(
+            (
+                item
+                for item in (
+                    "acquisition_assumed_debt",
+                    "acquisition_total_consideration",
+                    "acquisition_net_cash_paid",
+                )
+                if item in metric
+            ),
+            None,
+        )
+        if concept and fact.get("value") is not None and fact.get("raw_text"):
+            raw = re.sub(r"\s+", " ", str(fact["raw_text"]).casefold()).strip()
+            event_identity.setdefault((concept, float(fact["value"]), raw), []).append(fact)
+    for event_facts in event_identity.values():
+        period_kinds = {str(item.get("period_kind") or "") for item in event_facts}
+        if "instant" in period_kinds and "duration" in period_kinds:
+            fail(
+                "economic_event_duplicated_as_period_total",
+                record_id=str(event_facts[0].get("fact_id") or "") or None,
+                detail="The same economic event is represented as both an instant and a duration fact.",
             )
 
     for claim in claim_list:
@@ -292,6 +385,13 @@ def audit_semantic_records(
             "errors": len(errors),
         },
     }
+
+
+def _is_zero(value: Any) -> bool:
+    try:
+        return abs(float(value)) <= 1e-15
+    except (TypeError, ValueError):
+        return False
 
 
 def _table_contract_complete(table: Mapping[str, Any]) -> bool:

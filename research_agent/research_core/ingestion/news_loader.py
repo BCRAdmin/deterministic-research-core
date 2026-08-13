@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from typing import Any, Union
 
@@ -13,7 +14,7 @@ def load_news(ticker: str, raw_dir: Union[str, Path] = "research_agent/data/raw"
         return []
     payload = json.loads(path.read_text(encoding="utf-8"))
     if isinstance(payload, list):
-        return payload
+        return _deduplicate_economic_event_facts(payload)
     if not isinstance(payload, dict):
         raise ValueError(f"news input must be a list or object: {path}")
     events = payload.get("events") or []
@@ -27,7 +28,63 @@ def load_news(ticker: str, raw_dir: Union[str, Path] = "research_agent/data/raw"
         "window_end": payload.get("window_end"),
         "sources_checked": payload.get("sources_checked") or [],
     }
-    return [coverage, *events]
+    return [coverage, *_deduplicate_economic_event_facts(events)]
+
+
+def _deduplicate_economic_event_facts(
+    events: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Prefer exact event-date facts over reporting-period restatements."""
+
+    instant_keys = {
+        key
+        for event in events
+        for numeric in (event.get("numeric_evidence") or [])
+        if isinstance(numeric, dict)
+        and numeric.get("period_kind") == "instant"
+        and (key := _economic_event_fact_key(numeric)) is not None
+    }
+    canonical: list[dict[str, Any]] = []
+    for event in events:
+        copied = dict(event)
+        numeric_evidence = event.get("numeric_evidence") or []
+        copied["numeric_evidence"] = [
+            numeric
+            for numeric in numeric_evidence
+            if not (
+                isinstance(numeric, dict)
+                and numeric.get("period_kind") != "instant"
+                and _economic_event_fact_key(numeric) in instant_keys
+            )
+        ]
+        canonical.append(copied)
+    return canonical
+
+
+def _economic_event_fact_key(numeric: dict[str, Any]) -> tuple[Any, ...] | None:
+    metric = str(numeric.get("metric_name") or "").casefold()
+    concept = next(
+        (
+            item
+            for item in (
+                "acquisition_assumed_debt",
+                "acquisition_total_consideration",
+                "acquisition_net_cash_paid",
+            )
+            if item in metric
+        ),
+        None,
+    )
+    if not concept or numeric.get("value") is None:
+        return None
+    raw_text = re.sub(
+        r"\s+",
+        " ",
+        str(numeric.get("raw_text") or "").casefold(),
+    ).strip()
+    if not raw_text:
+        return None
+    return concept, float(numeric["value"]), raw_text
 
 
 def news_evidence_items(

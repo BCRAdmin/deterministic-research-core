@@ -41,6 +41,11 @@ class QualityReport(BaseModel):
     publish_report_quality_score: int = 0
     publish_mechanical_language_count: int = 0
     publish_current_kpi_count: int = 0
+    canonical_current_kpi_count: int = 0
+    canonical_risk_profile_count: int = 0
+    canonical_data_limitation_count: int = 0
+    publication_artifact_state: str = "not_evaluated"
+    quality_metadata_consistent: bool = False
     publish_evidence_appendix_exists: int = 0
     publish_claim_id_main_body_count: int = 0
     publish_valuation_sensitivity_present: int = 0

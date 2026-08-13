@@ -73,6 +73,16 @@ def verify_semantic_invariants(
         sources=semantic_sources,
     )
     semantic_error_codes = set(semantic_audit["error_codes"])
+    source_table_ids = {
+        str(table.get("table_id") or "")
+        for table in source_tables
+        if table.get("table_id")
+    }
+    fact_source_table_ids = {
+        str(fact.get("table_id") or "")
+        for fact in semantic_facts
+        if fact.get("table_id")
+    }
     rendered_report_sha256 = (
         "sha256:" + hashlib.sha256(rendered_markdown.encode("utf-8")).hexdigest()
         if rendered_markdown is not None
@@ -94,6 +104,15 @@ def verify_semantic_invariants(
         (
             f"rendered_material_tables={len(rendered_tables)} "
             f"lineage_complete={sum(table.get('lineage_complete') is True for table in rendered_tables)}"
+        ),
+    )
+    check(
+        "source_table_contract_coverage",
+        fact_source_table_ids.issubset(source_table_ids),
+        (
+            f"fact_source_table_ids={len(fact_source_table_ids)} "
+            f"source_table_ids={len(source_table_ids)} "
+            f"missing={sorted(fact_source_table_ids - source_table_ids)}"
         ),
     )
     check(

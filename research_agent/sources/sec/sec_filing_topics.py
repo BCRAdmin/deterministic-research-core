@@ -747,6 +747,9 @@ def _topic_metric_name(
     match: re.Match[str],
     ordinal: int,
 ) -> str:
+    local_owner = _local_topic_metric_owner(summary, match)
+    if local_owner:
+        return f"filing_{topic}_{local_owner}"
     if match.group("percent"):
         preceding = summary[max(0, match.start() - 160) : match.start()].casefold()
         following = summary[match.end() : match.end() + 100].casefold()
@@ -777,7 +780,7 @@ def _topic_metric_name(
         ("acquisition_deferred_tax", r"\bdeferred (?:income )?tax"),
         ("acquisition_pro_forma_net_sales", r"\bpro forma.{0,80}\b(?:net sales|revenue)\b"),
         ("acquisition_pro_forma_earnings", r"\bpro forma.{0,80}\b(?:earnings|income before taxes)\b"),
-        ("acquisition_transaction_costs", r"\btransaction-related costs?\b"),
+        ("acquisition_transaction_costs", r"\btransaction-related (?:costs?|expenses?)\b"),
         ("acquisition_interest_expense", r"\binterest expense\b"),
         ("acquisition_amortization_expense", r"\bamortization expense\b"),
         ("acquisition_total_consideration", r"total consideration|purchase price"),
@@ -825,6 +828,35 @@ def _topic_metric_name(
     if candidates:
         return f"filing_{topic}_{min(candidates)[2]}"
     return f"filing_{topic}_unmapped_{ordinal:02d}"
+
+
+def _local_topic_metric_owner(
+    summary: str,
+    match: re.Match[str],
+) -> str | None:
+    """Bind one value to the nearest governing phrase in its own clause."""
+
+    clause_start = max(
+        summary.rfind(mark, 0, match.start())
+        for mark in (".", ";", ",")
+    )
+    preceding = summary[clause_start + 1 : match.start()].casefold()
+    local_rules = (
+        (
+            "acquisition_transaction_costs",
+            r"\btransaction-related (?:costs?|expenses?)\b",
+        ),
+        ("acquisition_amortization_expense", r"\bamortization expense\b"),
+    )
+    candidates: list[tuple[int, str]] = []
+    for name, pattern in local_rules:
+        matches = list(re.finditer(pattern, preceding, re.IGNORECASE))
+        if matches:
+            candidates.append((len(preceding) - matches[-1].end(), name))
+    if not candidates:
+        return None
+    distance, name = min(candidates)
+    return name if distance <= 80 else None
 
 
 def _same_topic_sentence(
