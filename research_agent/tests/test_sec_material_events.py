@@ -384,3 +384,33 @@ def test_routine_compensation_filing_is_condensed_and_routed_to_appendix() -> No
     assert event["report_disposition"] == "immaterial_with_reason"
     assert len(event["summary"]) < 250
     assert "no new named leadership transition" in event["summary"]
+
+
+def test_routine_compensation_source_summary_can_keep_issuer_wording() -> None:
+    filing = {
+        "filing_date": "2026-03-06",
+        "accession_number": "0001104659-26-030002",
+        "primary_document": "compensation.htm",
+        "items": "5.02",
+    }
+    payload = build_material_event_payload(
+        ticker="TEST",
+        cik="123456",
+        filings=[
+            (
+                filing,
+                "<p>Item 5.02 Annual incentive awards were granted on March 3, "
+                "2026, to the Chief Executive Officer, Chief Financial Officer "
+                "and each of the other currently-serving named executive officers "
+                "pursuant to action by the compensation committee.</p>",
+            )
+        ],
+        retrieved_at="2026-08-13T12:00:00Z",
+        as_of_date="2026-08-13",
+        filing_documents=_captured_documents(filing),
+    )
+
+    event = payload["events"][0]
+    assert event["content_profile"] == "routine_compensation"
+    assert event["report_disposition"] == "immaterial_with_reason"
+    assert verify_material_event_payload(payload)["status"] == "pass"

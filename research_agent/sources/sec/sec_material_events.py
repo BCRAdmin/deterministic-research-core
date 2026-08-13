@@ -510,10 +510,19 @@ def _verify_document_dependencies(event: dict[str, Any]) -> bool:
 def _event_item_content_complete(event: dict[str, Any], item: str) -> bool:
     summary = str(event.get("summary") or "")
     if item == "5.02" and event.get("content_profile") == "routine_compensation":
+        disposition_context = " ".join(
+            str(event.get(key) or "")
+            for key in ("summary", "materiality_rationale", "report_disposition_reason")
+        ).casefold()
         return (
             event.get("report_disposition")
             in {"included_appendix", "immaterial_with_reason"}
-            and "no new named leadership transition" in summary.casefold()
+            and bool(
+                re.search(
+                    r"\b(?:no|without a) new named leadership transition\b",
+                    disposition_context,
+                )
+            )
             and any(
                 token in summary.casefold()
                 for token in ("compensation", "award", "vesting")
