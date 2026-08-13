@@ -121,6 +121,19 @@ OPERATING_DRIVER_PATTERNS = {
         r"pro forma|goodwill|intangible assets?)\b",
         re.IGNORECASE,
     ),
+    "Reported segment growth": re.compile(
+        r"\bsegment reported sales growth\b|"
+        r"\breported sales growth\b.{0,240}\b(?:segment|medical devices|diagnostics|"
+        r"nutrition|established pharmaceuticals)\b",
+        re.IGNORECASE,
+    ),
+    "Comparable segment growth": re.compile(
+        r"\bcomparable sales growth\b.{0,240}\b(?:segment|medical devices|diagnostics|"
+        r"nutrition|established pharmaceuticals)\b|"
+        r"\b(?:segment|medical devices|diagnostics|nutrition|established pharmaceuticals)\b"
+        r".{0,240}\bcomparable sales growth\b",
+        re.IGNORECASE,
+    ),
     "Segment growth": re.compile(
         r"\b(?:segment|medical devices|diagnostic(?:s| products?)?|"
         r"nutritional products?|established pharmaceutical products?|"
@@ -170,6 +183,8 @@ OPERATING_DRIVER_METRIC_MARKERS = {
         "intangible",
         "pro_forma",
     ),
+    "Reported segment growth": ("segment_reported_sales_growth",),
+    "Comparable segment growth": ("comparable_sales_growth",),
     "Segment growth": (
         "segment_growth",
         "segment_reported_sales_growth",
@@ -1050,7 +1065,12 @@ def _generic_publish_report(
         _paragraphs(grouped.get("Key Risks", []), limit=5),
         "",
         "## Catalysts",
-        _paragraphs(grouped.get("Catalysts & Triggers", []), limit=4),
+        _paragraphs(
+            _deduplicated_catalyst_claims(
+                grouped.get("Catalysts & Triggers", [])
+            ),
+            limit=6,
+        ),
         "",
         "## Final Rating & Review Conditions",
         "\n\n".join(
@@ -1330,6 +1350,42 @@ def _operating_driver_claims(
         claim = max(matching, key=lambda item: _operating_driver_score(label, item))
         selected.append((label, claim))
         used_claim_ids.add(claim.claim_id)
+    return selected
+
+
+def _deduplicated_catalyst_claims(
+    claims: list[ResearchClaim],
+) -> list[ResearchClaim]:
+    """Keep distinct catalyst evidence while collapsing repeated issuer wording."""
+
+    selected: list[ResearchClaim] = []
+    signatures: list[set[str]] = []
+    for claim in claims:
+        tokens = {
+            token
+            for token in re.findall(r"[a-z][a-z0-9-]{3,}", _claim_text(claim).casefold())
+            if token
+            not in {
+                "operating",
+                "catalyst",
+                "under",
+                "review",
+                "issuer",
+                "filed",
+                "announced",
+                "management",
+            }
+        }
+        duplicate = any(
+            existing
+            and tokens
+            and len(existing & tokens) / min(len(existing), len(tokens)) >= 0.65
+            for existing in signatures
+        )
+        if duplicate:
+            continue
+        selected.append(claim)
+        signatures.append(tokens)
     return selected
 
 

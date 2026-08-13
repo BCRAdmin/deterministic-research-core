@@ -26,6 +26,7 @@ from research_agent.content.publish_composer import (
     _cash_and_marketable_securities,
     _clean_text,
     _constructive_cash_conversion_trigger,
+    _deduplicated_catalyst_claims,
     _final_rating_section,
     _fcf_definition_reconciliation,
     _generic_investment_thesis,
@@ -435,6 +436,16 @@ def test_operating_driver_selection_is_generic_complete_and_prefers_specific_cla
         "Medical Devices segment sales grew 11.9% in the latest filed year.",
         ["operating_kpi_revenue_yoy_change_10_01"],
     )
+    reported_segment_growth = claim(
+        "REPORTED_SEGMENT_GROWTH",
+        "Segment Reported Sales Growth: diagnostics 42.3% and medical devices 9.0%.",
+        ["operating_kpi_segment_reported_sales_growth_3m_diagnostics"],
+    )
+    comparable_segment_growth = claim(
+        "COMPARABLE_SEGMENT_GROWTH",
+        "Comparable Sales Growth: diagnostics 2.9% and medical devices 8.4%.",
+        ["operating_kpi_comparable_sales_growth_3m_diagnostics"],
+    )
     transaction_financing = claim(
         "TRANSACTION_FINANCING",
         "The acquisition was funded primarily through $20.0 billion of long-term debt.",
@@ -452,6 +463,8 @@ def test_operating_driver_selection_is_generic_complete_and_prefers_specific_cla
             internalization,
             landfill_tons,
             acquired_revenue,
+            reported_segment_growth,
+            comparable_segment_growth,
             segment_growth,
             transaction_financing,
         ]
@@ -465,6 +478,8 @@ def test_operating_driver_selection_is_generic_complete_and_prefers_specific_cla
         ("Internalization", "INTERNALIZATION"),
         ("Landfill depletable tons", "LANDFILL_TONS"),
         ("Acquired annualized revenue", "ACQUIRED_REVENUE"),
+        ("Reported segment growth", "REPORTED_SEGMENT_GROWTH"),
+        ("Comparable segment growth", "COMPARABLE_SEGMENT_GROWTH"),
         ("Segment growth", "SEGMENT_GROWTH"),
         ("Transaction financing", "TRANSACTION_FINANCING"),
     ]
@@ -483,9 +498,11 @@ def test_operating_driver_selection_is_generic_complete_and_prefers_specific_cla
                 repurchases_only,
                 capital,
                 internalization,
-                landfill_tons,
-                acquired_revenue,
-                segment_growth,
+                    landfill_tons,
+                    acquired_revenue,
+                    reported_segment_growth,
+                    comparable_segment_growth,
+                    segment_growth,
                 transaction_financing,
             ]
         },
@@ -501,6 +518,8 @@ def test_operating_driver_selection_is_generic_complete_and_prefers_specific_cla
             internalization,
             landfill_tons,
             acquired_revenue,
+            reported_segment_growth,
+            comparable_segment_growth,
             segment_growth,
             transaction_financing,
         ],
@@ -516,6 +535,46 @@ def test_operating_driver_selection_is_generic_complete_and_prefers_specific_cla
         assert f"**{label}:**" in main_body
         assert main_body.count(item.claim) == 1
     assert mixed.claim in main_body
+
+
+def test_catalyst_selection_collapses_repeated_product_milestone() -> None:
+    def catalyst(claim_id: str, text: str) -> ResearchClaim:
+        return ResearchClaim(
+            claim_id=claim_id,
+            section="Catalysts & Triggers",
+            claim_type="news",
+            agent="test",
+            claim=text,
+            claim_text=text,
+            evidence_metrics=[],
+            metric_refs=[],
+            metric_values={},
+            evidence_ids=[f"{claim_id}_EVIDENCE"],
+            source_ids=[f"{claim_id}_SOURCE"],
+            confidence="high",
+            importance="high",
+        )
+
+    concise = catalyst(
+        "LIBRE_LATEST",
+        "Operating catalyst under review: Abbott secured CE Mark for Libre Duo, "
+        "its dual glucose-ketone biowearable sensor.",
+    )
+    repeated = catalyst(
+        "LIBRE_OLDER",
+        "Operating catalyst under review: Abbott announced it secured CE Mark for "
+        "Libre Duo, the dual glucose-ketone biowearable sensor for diabetes.",
+    )
+    distinct = catalyst(
+        "AMULET",
+        "Operating catalyst under review: Abbott submitted the Amulet 360 device "
+        "to the FDA for approval.",
+    )
+
+    assert [
+        claim.claim_id
+        for claim in _deduplicated_catalyst_claims([concise, repeated, distinct])
+    ] == ["LIBRE_LATEST", "AMULET"]
 
 
 def test_fcf_definition_table_deduplicates_the_same_guidance_bound() -> None:

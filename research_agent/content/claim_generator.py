@@ -265,14 +265,25 @@ def _is_operating_catalyst_event(event: MaterialNewsEvent) -> bool:
     text = f"{event.headline} {event.summary or ''}".casefold()
     return re.search(
         r"\b(?:guidance|outlook|expects?|expected|reaffirmed|remains confident|"
-        r"approval|clearance|product launch|closing of the transaction)\b",
+        r"closing of the transaction)\b|"
+        r"\bcompleted enrollment\b.{0,100}\bpivotal trial\b|"
+        r"\b(?:completed (?:its )?submission|submitted)\b.{0,100}\bfda\b|"
+        r"\bsecured\b.{0,100}\bce mark\b|"
+        r"\b(?:received|obtained|granted)\b.{0,100}\b(?:approval|clearance|ce mark)\b|"
+        r"\blaunch(?:ed)?\b.{0,100}\b(?:product|device|sensor)\b",
         text,
     ) is not None
 
 
 def _event_catalyst_summary(statement: str) -> str:
     normalized = _event_display_statement(statement)
-    first_sentence = re.split(r"(?<=[.!?])\s+", normalized, maxsplit=1)[0].strip()
+    protected = re.sub(
+        r"\b(?P<left>[A-Z])\.(?P<right>[A-Z])\.",
+        r"\g<left><ROOM16_DOT>\g<right><ROOM16_DOT>",
+        normalized,
+    )
+    first_sentence = re.split(r"(?<=[.!?])\s+", protected, maxsplit=1)[0].strip()
+    first_sentence = first_sentence.replace("<ROOM16_DOT>", ".")
     if first_sentence and first_sentence[-1] not in ".!?":
         first_sentence = f"{first_sentence}."
     return f"Operating catalyst under review: {first_sentence}"
@@ -1712,6 +1723,7 @@ class _ClaimBuilder:
             any(character.isdigit() for character in source_statement)
             and not numeric_event
             and not as_risk
+            and not as_catalyst
             and not allow_source_bound_numbers
         ):
             return

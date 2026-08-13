@@ -1504,3 +1504,36 @@ def test_guidance_bearing_operating_event_is_also_a_catalyst() -> None:
         "Operating catalyst under review: Free cash flow guidance remains "
         "$3.75 billion to $3.85 billion."
     )
+
+
+def test_product_milestone_is_catalyst_but_generic_regulatory_risk_is_not() -> None:
+    milestone = MaterialNewsEvent(
+        date="2026-07-16",
+        headline="Issuer product update",
+        event_type="operating_kpi",
+        source_id="TEST_PRODUCT_CATALYST",
+        source_type="sec_filing",
+        summary=(
+            "Abbott completed its submission to the U.S. Food and Drug "
+            "Administration (FDA) seeking approval for the Amulet 360 left "
+            "atrial appendage device."
+        ),
+    )
+    generic_risk = milestone.model_copy(
+        update={
+            "source_id": "TEST_GENERIC_REGULATORY_RISK",
+            "summary": (
+                "No assurance can be given that the issuer will remain in "
+                "compliance after regulatory approval has been obtained."
+            ),
+        }
+    )
+
+    assert _is_operating_catalyst_event(milestone) is True
+    assert _is_operating_catalyst_event(generic_risk) is False
+    claims = _claims_for_operating_event(milestone.model_dump())
+    assert any(
+        claim.section == "Catalysts & Triggers"
+        and "Amulet 360 left atrial appendage device" in claim.claim_text
+        for claim in claims
+    )
