@@ -130,8 +130,12 @@ def validate_visible_citation_completeness(
     """Require a complete evidence join beside every rendered material claim."""
 
     missing: list[dict[str, str]] = []
+    claim_texts = [
+        str(getattr(item, "claim_text", None) or getattr(item, "claim", "") or "").strip()
+        for item in claims
+    ]
     checked = 0
-    for claim in claims:
+    for claim_index, claim in enumerate(claims):
         claim_id = str(getattr(claim, "claim_id", "") or "")
         claim_text = str(
             getattr(claim, "claim_text", None)
@@ -140,7 +144,18 @@ def validate_visible_citation_completeness(
         ).strip()
         if not claim_id or not claim_text:
             continue
-        anchor = claim_text[: min(len(claim_text), 90)]
+        anchor_length = min(len(claim_text), 90)
+        while anchor_length < min(len(claim_text), 360):
+            prefix = claim_text[:anchor_length]
+            collisions = sum(
+                text.startswith(prefix)
+                for index, text in enumerate(claim_texts)
+                if index != claim_index and text
+            )
+            if not collisions:
+                break
+            anchor_length = min(len(claim_text), anchor_length + 30)
+        anchor = claim_text[:anchor_length]
         positions: list[int] = []
         cursor = 0
         while (position := markdown.find(anchor, cursor)) >= 0:

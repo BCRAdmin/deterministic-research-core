@@ -205,6 +205,45 @@ def test_visible_citation_gate_accepts_later_bound_duplicate_text():
     assert report["status"] == "pass"
 
 
+def test_visible_citation_gate_distinguishes_claims_with_long_shared_prefix():
+    shared = (
+        "Issuer-filed business context: Our revenues from volume excluding "
+        "acquisitions and divestitures "
+    )
+    current = ResearchClaim(
+        claim_id="WM_CLAIM_018",
+        agent="deterministic_content_generator",
+        claim=shared + "decreased in the current quarter.",
+        claim_text=shared + "decreased in the current quarter.",
+        section="Business & Segment Context",
+        claim_type="news",
+        evidence_ids=["E_CURRENT"],
+        evidence_metrics=["operating_kpi_volume_current"],
+        source_ids=["S_CURRENT"],
+        confidence="high",
+    )
+    annual = ResearchClaim(
+        claim_id="WM_CLAIM_022",
+        agent="deterministic_content_generator",
+        claim=shared + "increased in fiscal 2025.",
+        claim_text=shared + "increased in fiscal 2025.",
+        section="Business & Segment Context",
+        claim_type="news",
+        evidence_ids=["E_ANNUAL"],
+        evidence_metrics=["operating_kpi_volume_annual"],
+        source_ids=["S_ANNUAL"],
+        confidence="high",
+    )
+    markdown = (
+        f"{current.claim_text} <!-- room16-lineage claim=WM_CLAIM_018 evidence=E_CURRENT -->\n\n"
+        f"{annual.claim_text} <!-- room16-lineage claim=WM_CLAIM_022 evidence=E_ANNUAL -->"
+    )
+
+    report = validate_visible_citation_completeness(markdown, [current, annual])
+
+    assert report["status"] == "pass"
+
+
 def test_visible_citation_gate_accepts_hidden_table_lineage():
     markdown = """| Metric | Value |
 |---|---:|
