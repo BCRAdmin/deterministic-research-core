@@ -257,7 +257,6 @@ def _is_operating_catalyst_event(event: MaterialNewsEvent) -> bool:
         for marker in (
             "guidance",
             "outlook",
-            "product_regulatory_catalyst",
             "transaction_financing",
         )
     ):
@@ -269,7 +268,8 @@ def _is_operating_catalyst_event(event: MaterialNewsEvent) -> bool:
         r"\bcompleted enrollment\b.{0,100}\bpivotal trial\b|"
         r"\b(?:completed (?:its )?submission|submitted)\b.{0,100}\bfda\b|"
         r"\bsecured\b.{0,100}\bce mark\b|"
-        r"\b(?:received|obtained|granted)\b.{0,100}\b(?:approval|clearance|ce mark)\b|"
+        r"\b(?:received|obtained|granted)\b\s+(?:an?\s+)?(?:regulatory\s+)?"
+        r"(?:fda\s+)?\b(?:approval|clearance|ce mark)\b|"
         r"\blaunch(?:ed)?\b.{0,100}\b(?:product|device|sensor)\b",
         text,
     ) is not None
@@ -300,6 +300,24 @@ def _event_display_statement(statement: str) -> str:
         complete = list(re.finditer(r"[.!?](?=\s|$)", normalized))
         normalized = normalized[: complete[-1].end()] if complete else ""
     return normalized.strip()
+
+
+def _catalyst_narrative_has_no_hard_numeric_claim(statement: str) -> bool:
+    """Allow dates and product model identifiers, never unbound financial values."""
+
+    if re.search(
+        r"[$€£]|\b(?:usd|eur|huf|billion|million|thousand|basis points?)\b|%",
+        statement,
+        re.IGNORECASE,
+    ):
+        return False
+    residue = re.sub(r"\b20\d{2}\b", "", statement)
+    residue = re.sub(
+        r"\b[A-Za-z][A-Za-z®™-]{2,}\s+\d{1,4}\b",
+        "",
+        residue,
+    )
+    return not any(character.isdigit() for character in residue)
 
 
 def _numeric_binding(
@@ -1723,7 +1741,12 @@ class _ClaimBuilder:
             any(character.isdigit() for character in source_statement)
             and not numeric_event
             and not as_risk
-            and not as_catalyst
+            and not (
+                as_catalyst
+                and _catalyst_narrative_has_no_hard_numeric_claim(
+                    source_statement
+                )
+            )
             and not allow_source_bound_numbers
         ):
             return

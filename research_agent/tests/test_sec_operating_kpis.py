@@ -1537,3 +1537,19 @@ def test_product_milestone_is_catalyst_but_generic_regulatory_risk_is_not() -> N
         and "Amulet 360 left atrial appendage device" in claim.claim_text
         for claim in claims
     )
+
+    unbound_guidance = milestone.model_copy(
+        update={
+            "source_id": "TEST_UNBOUND_GUIDANCE",
+            "summary": (
+                "Management updated guidance: adjusted EBITDA from "
+                "8150000000.00 USD to 8250000000.00 USD and margin from "
+                "31.0% to 31.2%."
+            ),
+        }
+    )
+    assert _is_operating_catalyst_event(unbound_guidance) is True
+    assert not any(
+        claim.section == "Catalysts & Triggers"
+        for claim in _claims_for_operating_event(unbound_guidance.model_dump())
+    )
