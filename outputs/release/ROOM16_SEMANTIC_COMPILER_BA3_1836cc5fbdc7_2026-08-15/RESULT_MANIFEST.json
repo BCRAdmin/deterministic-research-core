@@ -1,0 +1,34 @@
+{
+  "contract_id": "room16.compiler.ba3_evidence_manifest",
+  "contract_version": 1,
+  "file_count_excluding_manifest": 5,
+  "files": [
+    {
+      "bytes": 414,
+      "path": "00_EXECUTIVE_SUMMARY.md",
+      "sha256": "99b7d778061531687a59f4c933416666095f07c81f211e662186e42ece64bc3f"
+    },
+    {
+      "bytes": 622,
+      "path": "01_CONTRACTS_AND_BOUNDARIES.md",
+      "sha256": "19b08bccd85754d6bcd31ef94359672441a5bf4cc7e102051ed80a1c09b89f55"
+    },
+    {
+      "bytes": 257,
+      "path": "02_TEST_RESULTS.md",
+      "sha256": "2372f4d1ddad69d8a9a1e0c650733638be9d5ec5a00b9f03ff7c56f3266e2fa8"
+    },
+    {
+      "bytes": 3447,
+      "path": "03_WM_COST_ABT_SHADOW_REPLAYS.json",
+      "sha256": "17204e583f442c9194b55f679bd9be1bdacc331716e4396e93828e6a7e4294ed"
+    },
+    {
+      "bytes": 1094,
+      "path": "04_BA3_VERDICT.json",
+      "sha256": "a8289aaa5dbbb738d69dcc41c9ff196607123430f4e4abb516e36e8cd26a91f2"
+    }
+  ],
+  "research_commit": "1836cc5fbdc742068b3e52aabf36783f5d6e5627",
+  "verdict": "ba3_complete_shadow_strangler"
+}
