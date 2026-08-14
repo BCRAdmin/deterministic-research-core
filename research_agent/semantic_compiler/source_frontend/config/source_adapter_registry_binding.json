@@ -1,0 +1,43 @@
+{
+  "contract_id": "room16.compiler.ba3_source_adapter_registry_binding",
+  "contract_version": 1,
+  "binding_mode": "consume_existing_registry_without_foundation_mutation",
+  "source_registry": {
+    "contract_id": "room16.market_capability_registry",
+    "contract_version": 1,
+    "owner": "research",
+    "path": "research_agent/capabilities/market_capabilities.json",
+    "sha256": "214ac512317bd1a179f8815e152ff3e1a5649fd2ccdf3ae39494d73a2a278d9f"
+  },
+  "foundation_source_registry": {
+    "registry_id": "room16.registry.source",
+    "registry_version": 1,
+    "authority_sha256": "3cbaea421c51e6a3f1b5dad14fc619fd66d1b5420322b619b76455ac9416a239",
+    "allowed_source_type_ids": [
+      "company_ir",
+      "exchange_ohlcv",
+      "sec_filing",
+      "trusted_market_data_vendor"
+    ]
+  },
+  "provider_source_type_bindings": {
+    "bse": [
+      "company_ir",
+      "exchange_ohlcv"
+    ],
+    "massive": [
+      "exchange_ohlcv"
+    ],
+    "nasdaq": [
+      "exchange_ohlcv"
+    ],
+    "sec": [
+      "company_ir",
+      "sec_filing"
+    ]
+  },
+  "unknown_provider_policy": "fail_closed",
+  "unknown_source_type_policy": "fail_closed",
+  "automatic_paid_provider_selection_allowed": false,
+  "automatic_provider_fallback_allowed": false
+}

@@ -1,0 +1,75 @@
+{
+  "contract_id": "room16.compiler.ba3_source_frontend_pass_set",
+  "contract_version": 1,
+  "foundation_version": "1.0.0",
+  "foundation_version_lock_sha256": "8b9b7b2f59aa2cfed8280389f14c0e4edd11846d56c1d78e0dbf2c574da7d518",
+  "passes": [
+    {
+      "pass_id": "ba3.l0.freeze_compile_request",
+      "pass_version": 1,
+      "layer": "L0_compile_intake",
+      "ordinal": 0,
+      "input_contract": "product.resolved_instrument@1",
+      "output_contract": "room16.compiler.compile_request_ir@1",
+      "registry_dependencies": [],
+      "side_effect_contract": "none",
+      "determinism_contract": "pure_same_input_same_output",
+      "cache_contract": "content_addressed",
+      "replay_contract": "hash_verified",
+      "failure_contract": "fail_closed_diagnostic",
+      "skippable": false
+    },
+    {
+      "pass_id": "ba3.l1.plan_source_acquisition",
+      "pass_version": 1,
+      "layer": "L1_source_acquisition",
+      "ordinal": 1,
+      "input_contract": "room16.compiler.compile_request_ir@1",
+      "output_contract": "room16.compiler.source_acquisition_ir@1",
+      "registry_dependencies": [
+        "room16.market_capability_registry@1",
+        "room16.registry.source@1"
+      ],
+      "side_effect_contract": "read_hash_bound_capability_registry",
+      "determinism_contract": "same_request_and_registry_same_plan",
+      "cache_contract": "content_addressed",
+      "replay_contract": "hash_verified",
+      "failure_contract": "fail_closed_diagnostic",
+      "skippable": false
+    },
+    {
+      "pass_id": "ba3.l1.bind_retrieval_receipts",
+      "pass_version": 1,
+      "layer": "L1_source_acquisition",
+      "ordinal": 2,
+      "input_contract": "room16.compiler.source_acquisition_ir@1+retrieved_bytes",
+      "output_contract": "room16.compiler.retrieval_receipt_ir@1",
+      "registry_dependencies": [
+        "room16.registry.source@1"
+      ],
+      "side_effect_contract": "network_or_offline_read_to_untrusted_staging",
+      "determinism_contract": "receipt_binds_exact_returned_bytes_and_times",
+      "cache_contract": "no_implicit_network_cache",
+      "replay_contract": "offline_receipt_and_payload_hash_verified",
+      "failure_contract": "fail_closed_diagnostic",
+      "skippable": false
+    },
+    {
+      "pass_id": "ba3.l2.freeze_source_snapshot",
+      "pass_version": 1,
+      "layer": "L2_source_snapshot",
+      "ordinal": 3,
+      "input_contract": "room16.compiler.retrieval_receipt_ir@1+verified_payload_bytes",
+      "output_contract": "room16.compiler.source_snapshot_ir@1",
+      "registry_dependencies": [
+        "room16.registry.source@1"
+      ],
+      "side_effect_contract": "content_addressed_snapshot_write_only",
+      "determinism_contract": "same_verified_bytes_and_receipts_same_snapshot_hash",
+      "cache_contract": "content_addressed",
+      "replay_contract": "all_bytes_rehashed_before_replay",
+      "failure_contract": "fail_closed_diagnostic",
+      "skippable": false
+    }
+  ]
+}

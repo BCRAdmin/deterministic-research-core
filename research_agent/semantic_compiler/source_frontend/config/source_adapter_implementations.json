@@ -1,0 +1,56 @@
+{
+  "contract_id": "room16.compiler.ba3_source_adapter_implementations",
+  "contract_version": 1,
+  "adapters": [
+    {
+      "provider_id": "bse",
+      "implementation_ref": "research_agent.sources.bse.bse_provider:BseIssuerProvider",
+      "required_methods": [
+        "build_earnings_calendar",
+        "build_financial_payload",
+        "build_news_payload",
+        "get_history",
+        "resolve"
+      ],
+      "network_side_effect": "official_bse_http_read",
+      "raw_bytes_must_be_staged": true,
+      "retrieval_receipt_required": true
+    },
+    {
+      "provider_id": "massive",
+      "implementation_ref": "research_agent.sources.prices.massive_price_provider:MassivePriceProvider",
+      "required_methods": [
+        "get_history"
+      ],
+      "network_side_effect": "authenticated_provider_http_read",
+      "raw_bytes_must_be_staged": true,
+      "retrieval_receipt_required": true
+    },
+    {
+      "provider_id": "nasdaq",
+      "implementation_ref": "research_agent.sources.prices.nasdaq_price_provider:NasdaqPriceProvider",
+      "required_methods": [
+        "get_history"
+      ],
+      "network_side_effect": "public_nasdaq_http_read",
+      "raw_bytes_must_be_staged": true,
+      "retrieval_receipt_required": true
+    },
+    {
+      "provider_id": "sec",
+      "implementation_ref": "research_agent.sources.sec.sec_client:SecClient",
+      "required_methods": [
+        "get_company_tickers",
+        "get_companyfacts",
+        "get_filing_html",
+        "get_submissions"
+      ],
+      "network_side_effect": "official_sec_http_read",
+      "raw_bytes_must_be_staged": true,
+      "retrieval_receipt_required": true
+    }
+  ],
+  "live_execution_authority": "existing_current_runner_until_strangler_cutover",
+  "ba3_authoritative_execution_mode": "offline_receipt_replay",
+  "implicit_fallback_allowed": false
+}
