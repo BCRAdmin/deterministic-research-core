@@ -486,6 +486,24 @@ def test_membership_fee_and_reward_caps_do_not_inherit_document_millions_scale()
     assert by_role["membership_reward_cap"]["period_kind"] == "instant"
 
 
+def test_policy_cells_keep_own_type_inside_mixed_membership_paragraph() -> None:
+    rows = _numeric_evidence(
+        "Executive members earn a 2% reward on qualified purchases, generally "
+        "up to a maximum reward of $1,250 per year. The sales penetration of "
+        "Executive members represented 73.6% of worldwide net sales in 2025.",
+        kpi_ids=["executive_members"],
+        event_index=1,
+        filing_date="2025-10-08",
+        report_date="2025-08-31",
+        report_period_months=12,
+    )
+    by_role = {item["metric_role"].split("_12m", 1)[0]: item for item in rows}
+
+    assert by_role["membership_reward_rate"]["fact_type"] == "annual_rate"
+    assert by_role["membership_reward_cap"]["fact_type"] == "annual_cap"
+    assert by_role["executive_member_sales_penetration"]["fact_type"] == "percentage_of_total"
+
+
 def test_uncontracted_mixed_measure_volume_row_is_not_promoted() -> None:
     payload = build_sec_operating_kpi_payload(
         ticker="WM",

@@ -2957,9 +2957,7 @@ def _semantic_fact_contract(
 ) -> dict[str, Any]:
     lowered = statement.casefold()
     role = metric_role.casefold()
-    if "executive_member_sales_penetration" in role or (
-        "sales penetration" in lowered and "%" in lowered
-    ):
+    if "executive_member_sales_penetration" in role:
         return {"fact_type": "percentage_of_total", "rate_basis": None}
     if "membership_reward_rate" in role:
         return {
