@@ -1,0 +1,24 @@
+{
+  "architecture_frozen": true,
+  "authority_bundle_contract_version": 3,
+  "authority_bundle_v3_unchanged": true,
+  "ba3_started": false,
+  "canaries_unchanged": true,
+  "compiler_kernel_implemented": true,
+  "contract_id": "room16.compiler.foundation_wave_verdict",
+  "contract_version": 1,
+  "foundation_id": "e8eca8e080f8",
+  "legacy_output_unchanged": true,
+  "product_parallel_truth_absent": true,
+  "publication_allowed": false,
+  "registry_authority_established": true,
+  "release_ready": false,
+  "scope": [
+    "BA0",
+    "BA1",
+    "BA2"
+  ],
+  "semantic_compiler_wave_ready": true,
+  "shadow_replay_passed": true,
+  "verdict": "pass"
+}

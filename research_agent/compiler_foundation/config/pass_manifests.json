@@ -1,0 +1,262 @@
+{
+  "contract_id": "room16.compiler.pass_manifest_set",
+  "contract_version": 1,
+  "execution_mode": "shadow_only",
+  "legacy_orchestrator_invocation_allowed": false,
+  "passes": [
+    {
+      "cache_contract": "content_addressed",
+      "contract_id": "room16.compiler.pass_manifest",
+      "contract_version": 1,
+      "determinism_contract": "pure_same_input_same_output",
+      "failure_contract": "fail_closed_diagnostic",
+      "input_ir_types": [
+        "legacy.frozen_candidate"
+      ],
+      "layer": "L0_compile_intake",
+      "ordinal": 0,
+      "output_ir_type": "shadow.compile_request_ir",
+      "pass_id": "foundation.l0_compile_intake_observe",
+      "pass_version": 1,
+      "registry_dependencies": [],
+      "replay_contract": "hash_verified",
+      "side_effect_contract": "none",
+      "skippable": false
+    },
+    {
+      "cache_contract": "content_addressed",
+      "contract_id": "room16.compiler.pass_manifest",
+      "contract_version": 1,
+      "determinism_contract": "pure_same_input_same_output",
+      "failure_contract": "fail_closed_diagnostic",
+      "input_ir_types": [
+        "shadow.compile_request_ir"
+      ],
+      "layer": "L1_source_acquisition",
+      "ordinal": 1,
+      "output_ir_type": "shadow.source_acquisition_ir",
+      "pass_id": "foundation.l1_source_acquisition_observe",
+      "pass_version": 1,
+      "registry_dependencies": [
+        "room16.registry.source"
+      ],
+      "replay_contract": "hash_verified",
+      "side_effect_contract": "none",
+      "skippable": false
+    },
+    {
+      "cache_contract": "content_addressed",
+      "contract_id": "room16.compiler.pass_manifest",
+      "contract_version": 1,
+      "determinism_contract": "pure_same_input_same_output",
+      "failure_contract": "fail_closed_diagnostic",
+      "input_ir_types": [
+        "shadow.source_acquisition_ir"
+      ],
+      "layer": "L2_source_snapshot",
+      "ordinal": 2,
+      "output_ir_type": "shadow.source_snapshot_ir",
+      "pass_id": "foundation.l2_source_snapshot_observe",
+      "pass_version": 1,
+      "registry_dependencies": [
+        "room16.registry.source"
+      ],
+      "replay_contract": "hash_verified",
+      "side_effect_contract": "none",
+      "skippable": false
+    },
+    {
+      "cache_contract": "content_addressed",
+      "contract_id": "room16.compiler.pass_manifest",
+      "contract_version": 1,
+      "determinism_contract": "pure_same_input_same_output",
+      "failure_contract": "fail_closed_diagnostic",
+      "input_ir_types": [
+        "shadow.source_snapshot_ir"
+      ],
+      "layer": "L3_parse_discover",
+      "ordinal": 3,
+      "output_ir_type": "shadow.parsed_document_ir",
+      "pass_id": "foundation.l3_parse_discover_observe",
+      "pass_version": 1,
+      "registry_dependencies": [
+        "room16.registry.table"
+      ],
+      "replay_contract": "hash_verified",
+      "side_effect_contract": "none",
+      "skippable": false
+    },
+    {
+      "cache_contract": "content_addressed",
+      "contract_id": "room16.compiler.pass_manifest",
+      "contract_version": 1,
+      "determinism_contract": "pure_same_input_same_output",
+      "failure_contract": "fail_closed_diagnostic",
+      "input_ir_types": [
+        "shadow.parsed_document_ir"
+      ],
+      "layer": "L4_normalize_reconcile",
+      "ordinal": 4,
+      "output_ir_type": "shadow.normalized_record_ir",
+      "pass_id": "foundation.l4_normalize_reconcile_observe",
+      "pass_version": 1,
+      "registry_dependencies": [
+        "room16.registry.table",
+        "room16.registry.typed_fact"
+      ],
+      "replay_contract": "hash_verified",
+      "side_effect_contract": "none",
+      "skippable": false
+    },
+    {
+      "cache_contract": "content_addressed",
+      "contract_id": "room16.compiler.pass_manifest",
+      "contract_version": 1,
+      "determinism_contract": "pure_same_input_same_output",
+      "failure_contract": "fail_closed_diagnostic",
+      "input_ir_types": [
+        "shadow.normalized_record_ir"
+      ],
+      "layer": "L5_typed_fact",
+      "ordinal": 5,
+      "output_ir_type": "shadow.typed_fact_ir",
+      "pass_id": "foundation.l5_typed_fact_observe",
+      "pass_version": 1,
+      "registry_dependencies": [
+        "room16.registry.typed_fact"
+      ],
+      "replay_contract": "hash_verified",
+      "side_effect_contract": "none",
+      "skippable": false
+    },
+    {
+      "cache_contract": "content_addressed",
+      "contract_id": "room16.compiler.pass_manifest",
+      "contract_version": 1,
+      "determinism_contract": "pure_same_input_same_output",
+      "failure_contract": "fail_closed_diagnostic",
+      "input_ir_types": [
+        "shadow.typed_fact_ir"
+      ],
+      "layer": "L6_metric_formula",
+      "ordinal": 6,
+      "output_ir_type": "shadow.metric_ir",
+      "pass_id": "foundation.l6_metric_formula_observe",
+      "pass_version": 1,
+      "registry_dependencies": [
+        "room16.registry.formula",
+        "room16.registry.metric"
+      ],
+      "replay_contract": "hash_verified",
+      "side_effect_contract": "none",
+      "skippable": false
+    },
+    {
+      "cache_contract": "content_addressed",
+      "contract_id": "room16.compiler.pass_manifest",
+      "contract_version": 1,
+      "determinism_contract": "pure_same_input_same_output",
+      "failure_contract": "fail_closed_diagnostic",
+      "input_ir_types": [
+        "shadow.metric_ir"
+      ],
+      "layer": "L7_evidence_graph",
+      "ordinal": 7,
+      "output_ir_type": "shadow.evidence_graph_ir",
+      "pass_id": "foundation.l7_evidence_graph_observe",
+      "pass_version": 1,
+      "registry_dependencies": [
+        "room16.registry.evidence_policy"
+      ],
+      "replay_contract": "hash_verified",
+      "side_effect_contract": "none",
+      "skippable": false
+    },
+    {
+      "cache_contract": "content_addressed",
+      "contract_id": "room16.compiler.pass_manifest",
+      "contract_version": 1,
+      "determinism_contract": "pure_same_input_same_output",
+      "failure_contract": "fail_closed_diagnostic",
+      "input_ir_types": [
+        "shadow.evidence_graph_ir"
+      ],
+      "layer": "L8_claim_graph",
+      "ordinal": 8,
+      "output_ir_type": "shadow.claim_graph_ir",
+      "pass_id": "foundation.l8_claim_graph_observe",
+      "pass_version": 1,
+      "registry_dependencies": [
+        "room16.registry.claim"
+      ],
+      "replay_contract": "hash_verified",
+      "side_effect_contract": "none",
+      "skippable": false
+    },
+    {
+      "cache_contract": "content_addressed",
+      "contract_id": "room16.compiler.pass_manifest",
+      "contract_version": 1,
+      "determinism_contract": "pure_same_input_same_output",
+      "failure_contract": "fail_closed_diagnostic",
+      "input_ir_types": [
+        "shadow.claim_graph_ir"
+      ],
+      "layer": "L9_decision_graph",
+      "ordinal": 9,
+      "output_ir_type": "shadow.decision_graph_ir",
+      "pass_id": "foundation.l9_decision_graph_observe",
+      "pass_version": 1,
+      "registry_dependencies": [
+        "room16.registry.decision"
+      ],
+      "replay_contract": "hash_verified",
+      "side_effect_contract": "none",
+      "skippable": false
+    },
+    {
+      "cache_contract": "content_addressed",
+      "contract_id": "room16.compiler.pass_manifest",
+      "contract_version": 1,
+      "determinism_contract": "pure_same_input_same_output",
+      "failure_contract": "fail_closed_diagnostic",
+      "input_ir_types": [
+        "shadow.decision_graph_ir"
+      ],
+      "layer": "L10_verification",
+      "ordinal": 10,
+      "output_ir_type": "shadow.compile_verdict_ir",
+      "pass_id": "foundation.l10_verification_observe",
+      "pass_version": 1,
+      "registry_dependencies": [
+        "room16.registry.diagnostic",
+        "room16.registry.verdict"
+      ],
+      "replay_contract": "hash_verified",
+      "side_effect_contract": "none",
+      "skippable": false
+    },
+    {
+      "cache_contract": "content_addressed",
+      "contract_id": "room16.compiler.pass_manifest",
+      "contract_version": 1,
+      "determinism_contract": "pure_same_input_same_output",
+      "failure_contract": "fail_closed_diagnostic",
+      "input_ir_types": [
+        "shadow.compile_verdict_ir"
+      ],
+      "layer": "L11_emit",
+      "ordinal": 11,
+      "output_ir_type": "shadow.compiler_artifact_bundle",
+      "pass_id": "foundation.l11_emit_observe",
+      "pass_version": 1,
+      "registry_dependencies": [
+        "room16.registry.verdict"
+      ],
+      "replay_contract": "hash_verified",
+      "side_effect_contract": "none",
+      "skippable": false
+    }
+  ],
+  "renderer_is_downstream_backend": true
+}

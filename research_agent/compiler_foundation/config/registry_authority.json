@@ -1,0 +1,735 @@
+{
+  "authority_scope": "sources_tables_typed_facts_formulas_metrics_evidence_policies_claims_decisions_diagnostics_verdicts",
+  "authority_sha256": "3cbaea421c51e6a3f1b5dad14fc619fd66d1b5420322b619b76455ac9416a239",
+  "contract_id": "room16.compiler.registry_authority",
+  "contract_version": 1,
+  "legacy_behavior_changed": false,
+  "operational_product_registries_excluded": [
+    "renderer",
+    "canary_archetype",
+    "release_interaction"
+  ],
+  "owner": "research",
+  "registries": [
+    {
+      "compatibility": {
+        "contract_id": "room16.compiler.compatibility_policy",
+        "contract_version": 1,
+        "current_major": 1,
+        "current_minor": 0,
+        "major_change_policy": "explicit_migration_required",
+        "maximum_reader_major": 1,
+        "minimum_reader_major": 1,
+        "minor_change_policy": "additive_only",
+        "unknown_field_policy": "fail_closed",
+        "unknown_id_policy": "fail_closed"
+      },
+      "content_sha256": "53635c9f0001a8828ae562d20aab905737de139578825fce10d6a8490840e75e",
+      "contract_id": "room16.compiler.registry_envelope",
+      "contract_version": 1,
+      "entries": [
+        {
+          "definition": {
+            "canonical_name": "causal",
+            "legacy_compatible": true,
+            "semantic_kind": "claim"
+          },
+          "entry_id": "causal",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "comparison",
+            "legacy_compatible": true,
+            "semantic_kind": "claim"
+          },
+          "entry_id": "comparison",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "numeric",
+            "legacy_compatible": true,
+            "semantic_kind": "claim"
+          },
+          "entry_id": "numeric",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "outlook",
+            "legacy_compatible": true,
+            "semantic_kind": "claim"
+          },
+          "entry_id": "outlook",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "trend",
+            "legacy_compatible": true,
+            "semantic_kind": "claim"
+          },
+          "entry_id": "trend",
+          "entry_version": 1,
+          "status": "active"
+        }
+      ],
+      "owner": "research",
+      "registry_id": "room16.registry.claim",
+      "registry_kind": "claim",
+      "registry_version": 1
+    },
+    {
+      "compatibility": {
+        "contract_id": "room16.compiler.compatibility_policy",
+        "contract_version": 1,
+        "current_major": 1,
+        "current_minor": 0,
+        "major_change_policy": "explicit_migration_required",
+        "maximum_reader_major": 1,
+        "minimum_reader_major": 1,
+        "minor_change_policy": "additive_only",
+        "unknown_field_policy": "fail_closed",
+        "unknown_id_policy": "fail_closed"
+      },
+      "content_sha256": "64815ca913f4c42e3e5bb62ca95c79389ec5c0ede198f698d3df402b9e755007",
+      "contract_id": "room16.compiler.registry_envelope",
+      "contract_version": 1,
+      "entries": [
+        {
+          "definition": {
+            "canonical_name": "confidence",
+            "legacy_compatible": true,
+            "semantic_kind": "decision"
+          },
+          "entry_id": "confidence",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "rating",
+            "legacy_compatible": true,
+            "semantic_kind": "decision"
+          },
+          "entry_id": "rating",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "scenario",
+            "legacy_compatible": true,
+            "semantic_kind": "decision"
+          },
+          "entry_id": "scenario",
+          "entry_version": 1,
+          "status": "active"
+        }
+      ],
+      "owner": "research",
+      "registry_id": "room16.registry.decision",
+      "registry_kind": "decision",
+      "registry_version": 1
+    },
+    {
+      "compatibility": {
+        "contract_id": "room16.compiler.compatibility_policy",
+        "contract_version": 1,
+        "current_major": 1,
+        "current_minor": 0,
+        "major_change_policy": "explicit_migration_required",
+        "maximum_reader_major": 1,
+        "minimum_reader_major": 1,
+        "minor_change_policy": "additive_only",
+        "unknown_field_policy": "fail_closed",
+        "unknown_id_policy": "fail_closed"
+      },
+      "content_sha256": "1773140e676182e4a22f067fc0be252d6e1c4cf524c93bcd034aedea32b130ea",
+      "contract_id": "room16.compiler.registry_envelope",
+      "contract_version": 1,
+      "entries": [
+        {
+          "definition": {
+            "canonical_name": "canary_hash_changed",
+            "legacy_compatible": true,
+            "semantic_kind": "diagnostic"
+          },
+          "entry_id": "canary_hash_changed",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "contract_hash_mismatch",
+            "legacy_compatible": true,
+            "semantic_kind": "diagnostic"
+          },
+          "entry_id": "contract_hash_mismatch",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "legacy_output_changed",
+            "legacy_compatible": true,
+            "semantic_kind": "diagnostic"
+          },
+          "entry_id": "legacy_output_changed",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "pass_order_invalid",
+            "legacy_compatible": true,
+            "semantic_kind": "diagnostic"
+          },
+          "entry_id": "pass_order_invalid",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "product_parallel_truth_detected",
+            "legacy_compatible": true,
+            "semantic_kind": "diagnostic"
+          },
+          "entry_id": "product_parallel_truth_detected",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "replay_hash_mismatch",
+            "legacy_compatible": true,
+            "semantic_kind": "diagnostic"
+          },
+          "entry_id": "replay_hash_mismatch",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "unknown_registry_id",
+            "legacy_compatible": true,
+            "semantic_kind": "diagnostic"
+          },
+          "entry_id": "unknown_registry_id",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "version_unsupported",
+            "legacy_compatible": true,
+            "semantic_kind": "diagnostic"
+          },
+          "entry_id": "version_unsupported",
+          "entry_version": 1,
+          "status": "active"
+        }
+      ],
+      "owner": "research",
+      "registry_id": "room16.registry.diagnostic",
+      "registry_kind": "diagnostic",
+      "registry_version": 1
+    },
+    {
+      "compatibility": {
+        "contract_id": "room16.compiler.compatibility_policy",
+        "contract_version": 1,
+        "current_major": 1,
+        "current_minor": 0,
+        "major_change_policy": "explicit_migration_required",
+        "maximum_reader_major": 1,
+        "minimum_reader_major": 1,
+        "minor_change_policy": "additive_only",
+        "unknown_field_policy": "fail_closed",
+        "unknown_id_policy": "fail_closed"
+      },
+      "content_sha256": "506348352a0151c6ae664d9aec847b5202c8400676ca9d370ca11ef1cdcdf0fc",
+      "contract_id": "room16.compiler.registry_envelope",
+      "contract_version": 1,
+      "entries": [
+        {
+          "definition": {
+            "canonical_name": "calculation_trace_required",
+            "legacy_compatible": true,
+            "semantic_kind": "evidence_policy"
+          },
+          "entry_id": "calculation_trace_required",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "snapshot_required",
+            "legacy_compatible": true,
+            "semantic_kind": "evidence_policy"
+          },
+          "entry_id": "snapshot_required",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "source_locator_required",
+            "legacy_compatible": true,
+            "semantic_kind": "evidence_policy"
+          },
+          "entry_id": "source_locator_required",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "table_cell_binding_required",
+            "legacy_compatible": true,
+            "semantic_kind": "evidence_policy"
+          },
+          "entry_id": "table_cell_binding_required",
+          "entry_version": 1,
+          "status": "active"
+        }
+      ],
+      "owner": "research",
+      "registry_id": "room16.registry.evidence_policy",
+      "registry_kind": "evidence_policy",
+      "registry_version": 1
+    },
+    {
+      "compatibility": {
+        "contract_id": "room16.compiler.compatibility_policy",
+        "contract_version": 1,
+        "current_major": 1,
+        "current_minor": 0,
+        "major_change_policy": "explicit_migration_required",
+        "maximum_reader_major": 1,
+        "minimum_reader_major": 1,
+        "minor_change_policy": "additive_only",
+        "unknown_field_policy": "fail_closed",
+        "unknown_id_policy": "fail_closed"
+      },
+      "content_sha256": "d55d4b99069a26f1c670802f85753ff60da506cec487decfd8fc85786902bae6",
+      "contract_id": "room16.compiler.registry_envelope",
+      "contract_version": 1,
+      "entries": [
+        {
+          "definition": {
+            "canonical_name": "difference",
+            "legacy_compatible": true,
+            "semantic_kind": "formula"
+          },
+          "entry_id": "difference",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "growth_rate",
+            "legacy_compatible": true,
+            "semantic_kind": "formula"
+          },
+          "entry_id": "growth_rate",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "margin",
+            "legacy_compatible": true,
+            "semantic_kind": "formula"
+          },
+          "entry_id": "margin",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "ratio",
+            "legacy_compatible": true,
+            "semantic_kind": "formula"
+          },
+          "entry_id": "ratio",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "sum",
+            "legacy_compatible": true,
+            "semantic_kind": "formula"
+          },
+          "entry_id": "sum",
+          "entry_version": 1,
+          "status": "active"
+        }
+      ],
+      "owner": "research",
+      "registry_id": "room16.registry.formula",
+      "registry_kind": "formula",
+      "registry_version": 1
+    },
+    {
+      "compatibility": {
+        "contract_id": "room16.compiler.compatibility_policy",
+        "contract_version": 1,
+        "current_major": 1,
+        "current_minor": 0,
+        "major_change_policy": "explicit_migration_required",
+        "maximum_reader_major": 1,
+        "minimum_reader_major": 1,
+        "minor_change_policy": "additive_only",
+        "unknown_field_policy": "fail_closed",
+        "unknown_id_policy": "fail_closed"
+      },
+      "content_sha256": "3d0f6cb64c660e3574011d589527c9b6e873f0ccbcc10a1aabaa6bac1a21d628",
+      "contract_id": "room16.compiler.registry_envelope",
+      "contract_version": 1,
+      "entries": [
+        {
+          "definition": {
+            "canonical_name": "close",
+            "legacy_compatible": true,
+            "semantic_kind": "metric"
+          },
+          "entry_id": "close",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "free_cash_flow_ttm",
+            "legacy_compatible": true,
+            "semantic_kind": "metric"
+          },
+          "entry_id": "free_cash_flow_ttm",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "net_income_ttm",
+            "legacy_compatible": true,
+            "semantic_kind": "metric"
+          },
+          "entry_id": "net_income_ttm",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "revenue_ttm",
+            "legacy_compatible": true,
+            "semantic_kind": "metric"
+          },
+          "entry_id": "revenue_ttm",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "total_debt",
+            "legacy_compatible": true,
+            "semantic_kind": "metric"
+          },
+          "entry_id": "total_debt",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "trailing_pe",
+            "legacy_compatible": true,
+            "semantic_kind": "metric"
+          },
+          "entry_id": "trailing_pe",
+          "entry_version": 1,
+          "status": "active"
+        }
+      ],
+      "owner": "research",
+      "registry_id": "room16.registry.metric",
+      "registry_kind": "metric",
+      "registry_version": 1
+    },
+    {
+      "compatibility": {
+        "contract_id": "room16.compiler.compatibility_policy",
+        "contract_version": 1,
+        "current_major": 1,
+        "current_minor": 0,
+        "major_change_policy": "explicit_migration_required",
+        "maximum_reader_major": 1,
+        "minimum_reader_major": 1,
+        "minor_change_policy": "additive_only",
+        "unknown_field_policy": "fail_closed",
+        "unknown_id_policy": "fail_closed"
+      },
+      "content_sha256": "e82c69b729e444e348d72d50bc824e4589db5d2cff4a74c313464947593e96ef",
+      "contract_id": "room16.compiler.registry_envelope",
+      "contract_version": 1,
+      "entries": [
+        {
+          "definition": {
+            "canonical_name": "company_ir",
+            "legacy_compatible": true,
+            "semantic_kind": "source"
+          },
+          "entry_id": "company_ir",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "exchange_ohlcv",
+            "legacy_compatible": true,
+            "semantic_kind": "source"
+          },
+          "entry_id": "exchange_ohlcv",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "sec_filing",
+            "legacy_compatible": true,
+            "semantic_kind": "source"
+          },
+          "entry_id": "sec_filing",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "trusted_market_data_vendor",
+            "legacy_compatible": true,
+            "semantic_kind": "source"
+          },
+          "entry_id": "trusted_market_data_vendor",
+          "entry_version": 1,
+          "status": "active"
+        }
+      ],
+      "owner": "research",
+      "registry_id": "room16.registry.source",
+      "registry_kind": "source",
+      "registry_version": 1
+    },
+    {
+      "compatibility": {
+        "contract_id": "room16.compiler.compatibility_policy",
+        "contract_version": 1,
+        "current_major": 1,
+        "current_minor": 0,
+        "major_change_policy": "explicit_migration_required",
+        "maximum_reader_major": 1,
+        "minimum_reader_major": 1,
+        "minor_change_policy": "additive_only",
+        "unknown_field_policy": "fail_closed",
+        "unknown_id_policy": "fail_closed"
+      },
+      "content_sha256": "57ee7713d07a5c891df1508e236ce12a061c9a53f7b3e0007036298c2e2c6f71",
+      "contract_id": "room16.compiler.registry_envelope",
+      "contract_version": 1,
+      "entries": [
+        {
+          "definition": {
+            "canonical_name": "financial_statement",
+            "legacy_compatible": true,
+            "semantic_kind": "table"
+          },
+          "entry_id": "financial_statement",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "guidance",
+            "legacy_compatible": true,
+            "semantic_kind": "table"
+          },
+          "entry_id": "guidance",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "operating_kpi",
+            "legacy_compatible": true,
+            "semantic_kind": "table"
+          },
+          "entry_id": "operating_kpi",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "source_register",
+            "legacy_compatible": true,
+            "semantic_kind": "table"
+          },
+          "entry_id": "source_register",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "valuation",
+            "legacy_compatible": true,
+            "semantic_kind": "table"
+          },
+          "entry_id": "valuation",
+          "entry_version": 1,
+          "status": "active"
+        }
+      ],
+      "owner": "research",
+      "registry_id": "room16.registry.table",
+      "registry_kind": "table",
+      "registry_version": 1
+    },
+    {
+      "compatibility": {
+        "contract_id": "room16.compiler.compatibility_policy",
+        "contract_version": 1,
+        "current_major": 1,
+        "current_minor": 0,
+        "major_change_policy": "explicit_migration_required",
+        "maximum_reader_major": 1,
+        "minimum_reader_major": 1,
+        "minor_change_policy": "additive_only",
+        "unknown_field_policy": "fail_closed",
+        "unknown_id_policy": "fail_closed"
+      },
+      "content_sha256": "bf0875ff07a9311f326136c0fd80f6a313919dfb65ffa97afeb32c70bb9ee9cb",
+      "contract_id": "room16.compiler.registry_envelope",
+      "contract_version": 1,
+      "entries": [
+        {
+          "definition": {
+            "canonical_name": "duration",
+            "legacy_compatible": true,
+            "semantic_kind": "typed_fact"
+          },
+          "entry_id": "duration",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "flow",
+            "legacy_compatible": true,
+            "semantic_kind": "typed_fact"
+          },
+          "entry_id": "flow",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "guidance_range",
+            "legacy_compatible": true,
+            "semantic_kind": "typed_fact"
+          },
+          "entry_id": "guidance_range",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "instant",
+            "legacy_compatible": true,
+            "semantic_kind": "typed_fact"
+          },
+          "entry_id": "instant",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "qualitative",
+            "legacy_compatible": true,
+            "semantic_kind": "typed_fact"
+          },
+          "entry_id": "qualitative",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "ratio",
+            "legacy_compatible": true,
+            "semantic_kind": "typed_fact"
+          },
+          "entry_id": "ratio",
+          "entry_version": 1,
+          "status": "active"
+        }
+      ],
+      "owner": "research",
+      "registry_id": "room16.registry.typed_fact",
+      "registry_kind": "typed_fact",
+      "registry_version": 1
+    },
+    {
+      "compatibility": {
+        "contract_id": "room16.compiler.compatibility_policy",
+        "contract_version": 1,
+        "current_major": 1,
+        "current_minor": 0,
+        "major_change_policy": "explicit_migration_required",
+        "maximum_reader_major": 1,
+        "minimum_reader_major": 1,
+        "minor_change_policy": "additive_only",
+        "unknown_field_policy": "fail_closed",
+        "unknown_id_policy": "fail_closed"
+      },
+      "content_sha256": "8f0c40bea612f0b10459f93db124d6b6f4848436c5b5290e83a4b4adcd3712bd",
+      "contract_id": "room16.compiler.registry_envelope",
+      "contract_version": 1,
+      "entries": [
+        {
+          "definition": {
+            "canonical_name": "compile_allowed",
+            "legacy_compatible": true,
+            "semantic_kind": "verdict"
+          },
+          "entry_id": "compile_allowed",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "release_allowed",
+            "legacy_compatible": true,
+            "semantic_kind": "verdict"
+          },
+          "entry_id": "release_allowed",
+          "entry_version": 1,
+          "status": "active"
+        },
+        {
+          "definition": {
+            "canonical_name": "review_required",
+            "legacy_compatible": true,
+            "semantic_kind": "verdict"
+          },
+          "entry_id": "review_required",
+          "entry_version": 1,
+          "status": "active"
+        }
+      ],
+      "owner": "research",
+      "registry_id": "room16.registry.verdict",
+      "registry_kind": "verdict",
+      "registry_version": 1
+    }
+  ]
+}

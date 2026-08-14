@@ -1,0 +1,35 @@
+{
+  "contract_id": "room16.compiler.cross_language_conformance",
+  "contract_version": 1,
+  "canonicalization": "sorted_object_keys_compact_utf8_arrays_ordered_negative_zero_to_zero_nonfinite_forbidden",
+  "document_fixtures": {
+    "pass_manifests.json": "3d6e53fab54cc3cb8c9754635280efc1e3bb4cf0967e278c94b8328f0b68f35e",
+    "registry_authority.json": "9bc8663ff7e6c7b9c6cfd97edccc61254793312a5528713fd7d4cb334f975005"
+  },
+  "fixtures": [
+    {
+      "fixture_id": "empty_object",
+      "value": {},
+      "canonical_json": "{}",
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "fixture_id": "key_order_utf8",
+      "value": {"z": 2, "ä": "Größe", "a": 1},
+      "canonical_json": "{\"a\":1,\"z\":2,\"ä\":\"Größe\"}",
+      "sha256": "b816284d7eff1059f122a16629c2cd766ea7287573309da3ae7a602144229a06"
+    },
+    {
+      "fixture_id": "nested_array",
+      "value": {"b": [true, null, {"y": 0, "x": "v"}], "a": -0.0},
+      "canonical_json": "{\"a\":0,\"b\":[true,null,{\"x\":\"v\",\"y\":0}]}",
+      "sha256": "1c4a1c098a2cfb58fb4eae97cf35c7b53913024800106e3953affe3caa7b7986"
+    },
+    {
+      "fixture_id": "utf16_key_order",
+      "value": {"": 2, "😀": 1},
+      "canonical_json": "{\"😀\":1,\"\":2}",
+      "sha256": "04208f6cdb854e2ab1b07dd3633a39dec854344fe72824cf7f2fdb4e2e33129e"
+    }
+  ]
+}

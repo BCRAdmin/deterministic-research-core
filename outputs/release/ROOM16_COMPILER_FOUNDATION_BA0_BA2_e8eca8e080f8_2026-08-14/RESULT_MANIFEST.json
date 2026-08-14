@@ -1,0 +1,80 @@
+{
+  "all_required_files_present": true,
+  "contract_id": "room16.compiler.foundation_evidence_manifest",
+  "contract_version": 1,
+  "file_count_excluding_manifest": 14,
+  "files": [
+    {
+      "bytes": 860,
+      "path": "00_EXECUTIVE_SUMMARY.md",
+      "sha256": "955325fc9621ba5a22d051d839438c3975b5e46177652f3d11bb99b1828851cd"
+    },
+    {
+      "bytes": 1072,
+      "path": "01_ARCHITECTURE_DECISION_RECORDS.md",
+      "sha256": "4044a608e58d190dcdfc9df1a8a35f46c4969acf3803519d0abd7f7aa9fe0815"
+    },
+    {
+      "bytes": 1928,
+      "path": "02_LAYER_AND_OWNERSHIP_CONSTITUTION.md",
+      "sha256": "b1adc0450511dcd341b903f528ad0014d397e0e943bc594f4c5b8256a2f2e350"
+    },
+    {
+      "bytes": 910,
+      "path": "03_IR_CONTRACTS.md",
+      "sha256": "61ed189f9d65c29aad4dc604bd8cf00b36e7082096ac1d4c74a7c9be364ed167"
+    },
+    {
+      "bytes": 2008,
+      "path": "04_PASS_PROTOCOL.md",
+      "sha256": "4a920baa7a6b3e1391315a18ebc8a2c4a04a844fb732ef60db65b70dd63df91b"
+    },
+    {
+      "bytes": 1633,
+      "path": "05_REGISTRY_AUTHORITY.md",
+      "sha256": "05578d4a236f7d4d32bc0c6684bb05dcb97b87ef731c51b1ac6ca0ff22ad7f75"
+    },
+    {
+      "bytes": 521,
+      "path": "06_DIAGNOSTIC_AND_VERDICT_CONTRACT.md",
+      "sha256": "46baafaa6a0d220a3cdad8b6c784bfe349d736f667dd7dd6e0c1a0714b31abfb"
+    },
+    {
+      "bytes": 692,
+      "path": "07_COMPATIBILITY_AND_VERSIONING_POLICY.md",
+      "sha256": "923a236e6f30a836b1b285951a56940a2f20a416d6c869efb68204f510ae93fb"
+    },
+    {
+      "bytes": 1759,
+      "path": "08_CHANGED_FILES.md",
+      "sha256": "f918b964dc150112b94e39b4085beac9f7b67cb102207216a6978385fd8e0b66"
+    },
+    {
+      "bytes": 4069,
+      "path": "09_TEST_RESULTS.md",
+      "sha256": "caa9d32d7e9404b76a13bdf9f7b5746864cd4f4f5a21718b8485bbf29a2a9cea"
+    },
+    {
+      "bytes": 61612,
+      "path": "10_SHADOW_REPLAY_RESULTS.md",
+      "sha256": "45c9c4931a5bebe809ecec3e8a166070a5bf113afa0eadca1523c8c1c5dcbbf3"
+    },
+    {
+      "bytes": 881,
+      "path": "11_WM_COST_ABT_CANARY_DIFFS.md",
+      "sha256": "815453c7506035f85297716c1252b167cd68d69577157f8a528c3eadc09fdab6"
+    },
+    {
+      "bytes": 736,
+      "path": "12_PRODUCT_MIRROR_CONFORMANCE.md",
+      "sha256": "fcc2dfe968edfafe5c382573b1e9652a98473de7e914e16e77585bc8a43fc952"
+    },
+    {
+      "bytes": 649,
+      "path": "13_FOUNDATION_WAVE_VERDICT.json",
+      "sha256": "1758d3d59468fb41eb03ff046d4bb8d5a2817d3b563e904bdcb59e2441e64815"
+    }
+  ],
+  "foundation_id": "e8eca8e080f8",
+  "manifest_self_hash_policy": "manifest_is_bound_by_deterministic_zip_sha256"
+}
