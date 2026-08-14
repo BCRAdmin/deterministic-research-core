@@ -898,7 +898,7 @@ def _numeric_evidence(
             period_contract.update(
                 {
                     "period_kind": "instant",
-                    "presentation_basis": "policy_effective_value",
+                    "presentation_basis": "point_in_time",
                     "period_start": None,
                     "period_end": effective_date,
                     "effective_asof_dates": [effective_date] if effective_date else [],

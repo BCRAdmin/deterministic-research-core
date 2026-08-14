@@ -304,17 +304,13 @@ def verify_semantic_invariants(
     check(
         "unmapped_numeric_claim_quarantine",
         all(
-            not set(getattr(claim, "source_ids", []) or []).intersection(
-                unsafe_numeric_source_ids
-            )
-            or (
-                getattr(claim, "claim_type", None) == "risk"
-                and not (getattr(claim, "metric_refs", []) or [])
-                and not (getattr(claim, "metric_values", {}) or {})
+            not any(
+                str(binding.get("source_id") or "") in unsafe_numeric_source_ids
+                for binding in (getattr(claim, "numeric_bindings", []) or [])
             )
             for claim in claim_list
         ),
-        "Unmapped source numbers remain inventory-only; qualitative risk claims carry no numeric refs.",
+        "Unmapped source numbers remain inventory-only; qualitative source edges cannot support numeric bindings.",
     )
     unsafe_kpi_source_ids = {
         str(event.source_id)
