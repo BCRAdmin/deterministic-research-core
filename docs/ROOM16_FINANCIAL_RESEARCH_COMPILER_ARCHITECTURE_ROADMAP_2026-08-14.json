@@ -1,0 +1,78 @@
+{
+  "contract_id": "room16.compiler_architecture_roadmap",
+  "contract_version": 1,
+  "date": "2026-08-14",
+  "status": "operator_gated_architecture_candidate",
+  "implementation_started": false,
+  "fit_review_status": "fit_reviewed_adopted_as_target_architecture_operator_gated",
+  "source": {
+    "path": "/Users/BjornRosinger/Downloads/ROOM16_COMPILER_TRANSITION_MASTERPACK_v2_2026-08-14.zip",
+    "sha256": "25c262779d6f45b8933b1a04fc46476cdf738bb0142fac6d8fb145ef711087a6",
+    "architecture_spec_sha256": "414f971ae273fe4577303a263c68bc1fe0fd56bc3c8fbaec388ee9ed6d9df255"
+  },
+  "baseline": {
+    "research_commit": "f691c4584ac9f03f6e1d459ac3c37cbe5ce12716",
+    "product_current_commit": "66493c0ee2739da2e756767301a6cfe4d248c275",
+    "product_frozen_commit": "93416c689d4ae8c25c478a502157640f7714cacb",
+    "canary_release_id": "8cf064d75c8c-20260814-115448",
+    "version_lock_sha256": "8cf064d75c8cc3bf23f947189f25ee2de3f2bd0c5356b51d5d7f37d631085333",
+    "canaries": ["WM", "COST", "ABT"],
+    "acceptance_archive_sha256": "de4a6f50c13b668b6a47cc51ea11a0543696a17910ddbb73c2ae798c22ac8a97"
+  },
+  "ownership": {
+    "compiler_core": "research-agent-ops",
+    "product_shell": "company-dossier-lab",
+    "truth_rule": "product_consumes_compiler_truth_without_parallel_metric_fact_claim_or_decision_authority"
+  },
+  "layers": [
+    {"id": "L0", "name": "compile_intake", "output": "CompileRequestIR@1"},
+    {"id": "L1", "name": "source_acquisition", "output": "SourceAcquisitionIR@1"},
+    {"id": "L2", "name": "source_snapshot", "output": "SourceSnapshotIR@1"},
+    {"id": "L3", "name": "parse_and_discover", "output": "ParsedDocumentIR@1+CanonicalTableIR@1"},
+    {"id": "L4", "name": "normalize_and_reconcile", "output": "NormalizedRecordIR@1"},
+    {"id": "L5", "name": "typed_facts", "output": "TypedFactIR@1"},
+    {"id": "L6", "name": "metric_and_formula_evaluation", "output": "MetricIR@1+FormulaEvaluationIR@1"},
+    {"id": "L7", "name": "evidence_graph", "output": "EvidenceGraphIR@1"},
+    {"id": "L8", "name": "claim_graph", "output": "ClaimGraphIR@1"},
+    {"id": "L9", "name": "decision_graph", "output": "DecisionGraphIR@1"},
+    {"id": "L10", "name": "verification", "output": "DiagnosticIR@1+CompileVerdictIR@1"},
+    {"id": "L11", "name": "emit", "output": "CompilerArtifactBundle@1"}
+  ],
+  "migration_rules": [
+    "no_big_bang_rewrite",
+    "authority_bundle_v3_remains_transition_abi",
+    "new_passes_run_shadow_first",
+    "frozen_canary_archives_are_immutable",
+    "facts_exist_before_claims",
+    "one_owner_per_registry",
+    "unknown_metric_or_fact_type_is_not_implicitly_valid",
+    "renderer_cannot_create_financial_truth",
+    "publication_and_compile_verdict_remain_separate"
+  ],
+  "build_sections": [
+    {"id": "BA0", "name": "architecture_freeze", "layers": ["L0-L11"], "status": "pending_operator_approval", "depends_on": [], "canary_impact": "none", "dod": "operator_approves_architecture"},
+    {"id": "BA1", "name": "compiler_kernel_pass_protocol_diagnostics", "layers": ["L0-L11"], "status": "not_started", "depends_on": ["BA0"], "canary_impact": "shadow_only", "dod": "legacy_run_bound_as_pass_chain_without_output_change"},
+    {"id": "BA2", "name": "registry_authority_type_system", "layers": ["L1-L10"], "status": "not_started", "depends_on": ["BA1"], "canary_impact": "metric_registry_breaking_change_trigger", "dod": "all_canary_definitions_registered_single_owner"},
+    {"id": "BA3", "name": "source_acquisition_snapshot_frontend", "layers": ["L0", "L1", "L2"], "status": "not_started", "depends_on": ["BA2"], "canary_impact": "frozen_inputs_only", "dod": "offline_reproducible_snapshot_complete_frontend"},
+    {"id": "BA4", "name": "parser_table_discovery", "layers": ["L3"], "status": "not_started", "depends_on": ["BA3"], "canary_impact": "table_parser_rereview_trigger", "dod": "all_canary_cells_have_stable_table_cell_ids_and_locators"},
+    {"id": "BA5", "name": "normalization_reconciliation_typed_fact_ir", "layers": ["L4", "L5"], "status": "not_started", "depends_on": ["BA4"], "canary_impact": "semantic_schema_rereview_trigger", "dod": "claims_consume_preexisting_typed_facts"},
+    {"id": "BA6", "name": "metric_formula_evaluation", "layers": ["L6"], "status": "not_started", "depends_on": ["BA5"], "canary_impact": "numeric_gate_rereview_trigger", "dod": "every_derived_value_has_formula_operands_dimension_rounding_hash"},
+    {"id": "BA7", "name": "evidence_claim_graphs", "layers": ["L7", "L8"], "status": "not_started", "depends_on": ["BA6"], "canary_impact": "human_review_on_visible_change", "dod": "claims_do_not_control_fact_existence"},
+    {"id": "BA8", "name": "decision_graph_permission_layer", "layers": ["L9"], "status": "not_started", "depends_on": ["BA7"], "canary_impact": "human_review_on_decision_change", "dod": "all_decisions_trace_to_registered_rules_and_graph_nodes"},
+    {"id": "BA9", "name": "verification_plan_diagnostics", "layers": ["L10"], "status": "not_started", "depends_on": ["BA8"], "canary_impact": "release_gate_rereview_trigger", "dod": "compile_verdict_derived_only_from_bound_diagnostics"},
+    {"id": "BA10", "name": "artifact_abi_renderer_isolation", "layers": ["L11", "renderer"], "status": "not_started", "depends_on": ["BA9"], "canary_impact": "abi_renderer_full_review", "dod": "one_canonical_bundle_pure_backends_cross_language_conformance"},
+    {"id": "BA11", "name": "generic_canary_release_governance", "layers": ["release_control"], "status": "not_started", "depends_on": ["BA10"], "canary_impact": "preserve_existing_freeze", "dod": "ordinary_change_auto_compares_breaking_change_blocks"},
+    {"id": "BA12", "name": "archetype_qualification", "layers": ["L0-L11"], "status": "not_started", "depends_on": ["BA11"], "canary_impact": "existing_canaries_always_run", "dod": "development_and_untouched_holdout_pass_same_lock_without_regression"}
+  ],
+  "approval_items": [
+    "twelve_layer_model_and_repo_ownership",
+    "authority_bundle_v3_as_transition_abi",
+    "facts_before_claims",
+    "single_research_registry_authority",
+    "shadow_strangler_migration",
+    "immutable_wm_cost_abt_canaries",
+    "independent_rereview_on_breaking_triggers",
+    "development_holdout_archetype_strategy"
+  ],
+  "next_state": "blocked_operator_architecture_approval"
+}
