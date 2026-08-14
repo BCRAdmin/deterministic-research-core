@@ -352,6 +352,7 @@ def run_current_research(
     isin: Optional[str] = request.isin
     companyfacts: Optional[dict[str, Any]] = None
     submissions: Optional[dict[str, Any]] = None
+    issuer_exchange: Optional[str] = None
     latest_financial_filing: Optional[dict[str, str]] = None
     bse_financial_payload: Optional[dict[str, Any]] = None
     bse_news_payload: Optional[dict[str, Any]] = None
@@ -367,6 +368,14 @@ def run_current_research(
         company_name = str(issuer["company_name"])
         companyfacts = sec.get_companyfacts(cik)
         submissions = sec.get_submissions(cik)
+        issuer_exchange = next(
+            (
+                str(value).strip()
+                for value in submissions.get("exchanges") or []
+                if str(value).strip()
+            ),
+            None,
+        )
         incorporation_state = str(
             submissions.get("stateOfIncorporation")
             or submissions.get("stateOfIncorporationDescription")
@@ -944,7 +953,12 @@ def run_current_research(
         _save_raw_sec_filing_snapshots(raw_sec_filings_dir, raw_sec_filings)
         _write_json(
             cik_records_path,
-            [{"ticker": symbol, "cik": cik, "company_name": company_name}],
+            [{
+                "ticker": symbol,
+                "cik": cik,
+                "company_name": company_name,
+                "exchange": issuer_exchange,
+            }],
         )
         if risk_factors_path is not None:
             assert risk_filing_to_save is not None
@@ -1095,7 +1109,11 @@ def run_current_research(
         ticker=symbol,
         as_of_date=request.as_of_date,
         cik=cik,
-        exchange=(request.exchange or ("BSE" if jurisdiction == "HU" else None)),
+        exchange=(
+            request.exchange
+            or issuer_exchange
+            or ("BSE" if jurisdiction == "HU" else None)
+        ),
         incorporation_state=incorporation_state,
         jurisdiction=jurisdiction,
         isin=isin,

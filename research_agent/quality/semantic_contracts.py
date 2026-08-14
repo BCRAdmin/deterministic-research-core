@@ -29,6 +29,8 @@ FACT_TYPES = {
     "stock_value",
     "flow_value",
     "balance_value",
+    "policy_value",
+    "annual_cap",
 }
 
 RATE_FACT_TYPES = {"quarterly_rate", "annual_rate", "annualized_run_rate", "per_share_rate"}
@@ -43,6 +45,8 @@ FACT_TYPE_PERIOD_KINDS = {
     "instant_value": {"instant"},
     "balance_value": {"instant"},
     "stock_value": {"instant"},
+    "policy_value": {"instant"},
+    "annual_cap": {"instant"},
     "period_total": {"duration", "trailing_twelve_months"},
     "flow_value": {"duration", "trailing_twelve_months"},
     "reconciliation_component": {"duration", "comparison"},
@@ -178,14 +182,14 @@ def audit_semantic_records(
                 detail="Executive-member subtype evidence is labeled as total paid members.",
             )
         if (
-            re.search(r"(?:paid|executive)_members", metric_id, re.IGNORECASE)
+            re.search(r"(?:paid|executive)_members|cardholders?", metric_id, re.IGNORECASE)
             and fact_type == "period_total"
             and period_kind == "duration"
         ):
             fail(
                 "membership_stock_modeled_as_period_total",
                 record_id=fact_id,
-                detail="Paid and executive member counts are point-in-time stock values.",
+                detail="Member and cardholder counts are point-in-time stock values.",
             )
         if (
             "renewal_rate" in metric_id.casefold()
@@ -291,11 +295,21 @@ def audit_semantic_records(
                 detail="Not-applicable cells must not contain a numeric zero or value.",
             )
         unresolved = str(fact.get("mapping_status") or "mapped") != "mapped" or bool(POSITIONAL_METRIC_RE.search(metric_id))
-        if unresolved and str(fact.get("confidence") or "high") == "high":
+        if unresolved:
             fail(
                 "unresolved_metric_promoted",
                 record_id=fact_id,
-                detail=f"Unresolved metric {metric_id!r} was promoted at high confidence.",
+                detail=f"Unresolved metric {metric_id!r} was promoted into canonical truth.",
+            )
+        if re.search(
+            r"\b(?:FASB\s+)?ASC(?:\s+No\.)?\s*\d+|\b(?:Note|Item|Section)\s+\d+|\b\d+(?:st|nd|rd|th)\b|\b(?:10|8)-[KQ]\b",
+            raw_text,
+            re.IGNORECASE,
+        ) and (currency or "currency" in unit or metric_id.endswith("_usd")):
+            fail(
+                "reference_token_promoted_as_fact",
+                record_id=fact_id,
+                detail="A standard, section, ordinal or filing-form token was promoted as a numeric fact.",
             )
 
     table_ids = {str(table.get("table_id") or "") for table in table_list}
@@ -339,6 +353,17 @@ def audit_semantic_records(
 
     for claim in claim_list:
         claim_id = str(claim.get("claim_id") or "") or None
+        metric_refs = [str(item) for item in claim.get("metric_refs") or []]
+        if any(
+            POSITIONAL_METRIC_RE.search(metric)
+            or re.search(r"(?:^|_)(?:unmapped|unresolved|statement_context)(?:_|$)", metric, re.IGNORECASE)
+            for metric in metric_refs
+        ):
+            fail(
+                "unresolved_metric_in_claim",
+                record_id=claim_id,
+                detail="A claim references an unresolved, positional or statement-context metric.",
+            )
         mentions = list(claim.get("numeric_mentions") or [])
         bindings = list(claim.get("numeric_bindings") or [])
         complete_bindings = [

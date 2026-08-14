@@ -277,6 +277,37 @@ def _extract_document_events(
             column_labels=column_labels,
             accession_number=accession_number,
         )
+        if (
+            table_contract is None
+            and column_labels
+            and _looks_like_table_value_row(statement)
+            and (
+                (
+                    len(_table_material_number_matches(statement)) >= 2
+                    and all(
+                        match.start() > 0
+                        and statement[match.start() - 1] == "("
+                        and re.match(r"\s*\)", statement[match.end() :])
+                        for match in _table_material_number_matches(statement)
+                    )
+                    and any(
+                        "." in match.group("number")
+                        for match in _table_material_number_matches(statement)
+                    )
+                )
+                or (
+                    len(_table_material_number_matches(statement))
+                    + len(re.findall(r"(?:^|\s)[—–-](?=\s|$)", statement))
+                    != len(column_labels)
+                )
+            )
+        ):
+            # A compact multi-value row is not ordinary prose.  Without a
+            # complete row/column contract, scale, sign and measure roles are
+            # unknown.  Fail closed instead of promoting positional cells as
+            # apparently mapped facts.  A future generic table adapter may
+            # add the contract; until then the row remains source inventory.
+            continue
         numeric_evidence = _numeric_evidence(
             statement,
             kpi_ids=matched_kpis,
@@ -862,6 +893,17 @@ def _numeric_evidence(
                         "effective_asof_dates": [date(year, 1, 1).isoformat()],
                     }
                 )
+        elif fact_contract["fact_type"] in {"policy_value", "annual_cap"}:
+            effective_date = report_date or filing_date
+            period_contract.update(
+                {
+                    "period_kind": "instant",
+                    "presentation_basis": "policy_effective_value",
+                    "period_start": None,
+                    "period_end": effective_date,
+                    "effective_asof_dates": [effective_date] if effective_date else [],
+                }
+            )
         elif "prior_period" in metric_role and period_contract.get("period_start") and period_contract.get("period_end"):
             prior_start = date.fromisoformat(str(period_contract["period_start"]))
             prior_end = date.fromisoformat(str(period_contract["period_end"]))
@@ -1500,7 +1542,11 @@ def _is_membership_stock_value(
 ) -> bool:
     if match.group("percent"):
         return False
-    if not re.search(r"\b(?:paid|executive) members?\b", statement, re.IGNORECASE):
+    if not re.search(
+        r"\b(?:(?:paid|executive) members?|(?:total )?cardholders?)\b",
+        statement,
+        re.IGNORECASE,
+    ):
         return False
     return bool(
         re.fullmatch(r"FY20\d{2}", column_label, re.IGNORECASE)
@@ -1789,8 +1835,8 @@ def _numeric_metric_variant(
 
 
 def _is_non_metric_number(statement: str, match: re.Match[str]) -> bool:
-    before = statement[max(0, match.start() - 24) : match.start()]
-    after = statement[match.end() : match.end() + 16]
+    before = statement[max(0, match.start() - 48) : match.start()]
+    after = statement[match.end() : match.end() + 32]
     if (
         match.start() > 0
         and statement[match.start() - 1] == "("
@@ -1825,7 +1871,23 @@ def _is_non_metric_number(statement: str, match: re.Match[str]) -> bool:
         re.IGNORECASE,
     ) and re.match(r",\s*20\d{2}\b", after):
         return True
-    if re.search(r"\b(?:Note|Item|Form)$", before.rstrip(), re.IGNORECASE):
+    if re.search(
+        r"\b(?:Note|Item|Form|Section|ASC(?:\s+No\.)?|FASB\s+ASC(?:\s+No\.)?)\s*$",
+        before.rstrip(),
+        re.IGNORECASE,
+    ):
+        return True
+    if re.match(r"(?:st|nd|rd|th)\b", after, re.IGNORECASE):
+        return True
+    if re.search(r"\b(?:Form\s+)?(?:10|8)\s*[-–]\s*$", before, re.IGNORECASE) and re.match(
+        r"[KQ]\b", after, re.IGNORECASE
+    ):
+        return True
+    if re.match(
+        r"\s*(?:to\s+\d+(?:\.\d+)?\s+)?(?:calendar\s+|business\s+)?(?:days?|months?|years?)\b",
+        after,
+        re.IGNORECASE,
+    ):
         return True
     return False
 
@@ -2036,6 +2098,26 @@ def _looks_like_table_value_row(statement: str) -> bool:
     if re.search(r"\b(?:we|our|company|during|respectively|primarily due)\b", normalized, re.IGNORECASE):
         return False
     return len(list(NUMBER_RE.finditer(normalized))) >= 2
+
+
+def _table_material_number_matches(statement: str) -> list[re.Match[str]]:
+    """Return candidate cells, excluding headers, dates and footnote markers."""
+
+    result: list[re.Match[str]] = []
+    for match in NUMBER_RE.finditer(statement):
+        if _is_non_metric_number(statement, match):
+            continue
+        raw = float(match.group("number").replace(",", ""))
+        if (
+            not match.group("currency")
+            and not match.group("scale")
+            and not match.group("percent")
+            and raw.is_integer()
+            and 1900 <= raw <= 2100
+        ):
+            continue
+        result.append(match)
+    return result
 
 
 def _looks_like_segment_growth_table_row(statement: str) -> bool:
@@ -2875,6 +2957,19 @@ def _semantic_fact_contract(
 ) -> dict[str, Any]:
     lowered = statement.casefold()
     role = metric_role.casefold()
+    if "executive_member_sales_penetration" in role or (
+        "sales penetration" in lowered and "%" in lowered
+    ):
+        return {"fact_type": "percentage_of_total", "rate_basis": None}
+    if "membership_reward_rate" in role:
+        return {
+            "fact_type": "annual_rate",
+            "rate_basis": "membership_reward_rate_per_qualified_purchase",
+        }
+    if "membership_annual_fee" in role:
+        return {"fact_type": "policy_value", "rate_basis": None}
+    if "membership_reward_cap" in role:
+        return {"fact_type": "annual_cap", "rate_basis": None}
     if per_share and re.search(r"\b(?:acquisition|purchase price|transaction)\b", lowered):
         return {"fact_type": "stock_value", "rate_basis": None}
     if "annualized_revenue" in role or "annualized revenue" in lowered:

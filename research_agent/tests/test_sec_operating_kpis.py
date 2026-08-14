@@ -424,6 +424,7 @@ def test_split_fiscal_week_membership_table_keeps_current_counts_and_dates() -> 
         (142_800_000, "2025-05-11"),
     ]
     assert all(item["period_kind"] == "instant" for item in paid + cardholders)
+    assert all(item["fact_type"] == "instant_value" for item in paid + cardholders)
 
 
 def test_current_renewal_rates_keep_distinct_geographic_roles() -> None:
@@ -476,6 +477,61 @@ def test_membership_fee_and_reward_caps_do_not_inherit_document_millions_scale()
         ("membership_reward_rate", 0.02),
         ("membership_reward_cap", 1250.0),
     ]
+    by_role = {item["metric_role"].split("_12m", 1)[0]: item for item in records}
+    assert by_role["membership_annual_fee"]["fact_type"] == "policy_value"
+    assert by_role["membership_annual_fee"]["period_kind"] == "instant"
+    assert by_role["membership_reward_rate"]["fact_type"] == "annual_rate"
+    assert by_role["membership_reward_rate"]["period_kind"] == "rate"
+    assert by_role["membership_reward_cap"]["fact_type"] == "annual_cap"
+    assert by_role["membership_reward_cap"]["period_kind"] == "instant"
+
+
+def test_uncontracted_mixed_measure_volume_row_is_not_promoted() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="WM",
+        cik="823768",
+        accession_number="0001104659-26-087575",
+        filing_date="2026-07-29",
+        primary_document="ex99-1.htm",
+        html_documents=[
+            "<p>(in millions)</p>"
+            "<p>Three Months Ended June 30, Six Months Ended June 30</p>"
+            "<p>2026 2025 2026 2025</p>"
+            "<p>Volume(d) (22) (0.3) (10) (0.1)</p>"
+        ],
+        retrieved_at="2026-08-14T12:00:00Z",
+        report_date="2026-06-30",
+        report_period_months=3,
+    )
+
+    assert not any(
+        event["summary"].startswith("Volume") for event in payload["events"]
+    )
+
+
+def test_incomplete_free_cash_flow_table_axes_are_not_guessed() -> None:
+    payload = build_sec_operating_kpi_payload(
+        ticker="WM",
+        cik="823768",
+        accession_number="0001104659-26-087575",
+        filing_date="2026-07-29",
+        primary_document="ex99-1.htm",
+        html_documents=[
+            "<p>(in millions)</p>"
+            "<p>As Reported As Adjusted As Reported As Adjusted</p>"
+            "<p>Free cash flow without sustainability growth investments $4,000 $4,100</p>"
+        ],
+        retrieved_at="2026-08-14T12:00:00Z",
+        report_date="2026-06-30",
+        report_period_months=3,
+    )
+
+    assert not any(
+        "free_cash_flow_ex_sustainability_growth_actual"
+        in item["metric_name"]
+        for event in payload["events"]
+        for item in event["numeric_evidence"]
+    )
 
 
 def test_executive_member_footnote_is_not_promoted_and_years_remain_aligned() -> None:

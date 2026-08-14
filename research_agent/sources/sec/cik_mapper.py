@@ -11,6 +11,7 @@ class CikRecord(BaseModel):
     ticker: str
     cik: str
     company_name: str
+    exchange: Optional[str] = None
 
 
 class CikMapper:
@@ -28,6 +29,10 @@ class CikMapper:
     def get_company_name(self, ticker: str) -> Optional[str]:
         record = self.by_ticker.get(ticker.upper())
         return record.company_name if record else None
+
+    def get_exchange(self, ticker: str) -> Optional[str]:
+        record = self.by_ticker.get(ticker.upper())
+        return record.exchange if record else None
 
 
 def load_cik_mapper(path: Union[str, Path]) -> CikMapper:

@@ -152,7 +152,7 @@ def build_fact_ledger(
             "table_id": evidence.table_id,
             "cell_id": evidence.cell_id,
             "source_locator": evidence.source_locator,
-            "mapping_status": "mapped",
+            "mapping_status": evidence.mapping_status,
             "confidence": evidence.confidence,
             "source_accession_number": evidence.source_accession_number,
             "source_document": evidence.source_document,
@@ -180,6 +180,8 @@ def build_fact_ledger(
     ):
         metric_names = sorted(set(evidence.supports_metrics))
         if (
+            evidence.mapping_status != "mapped"
+            or
             evidence.source_cell_status != "not_applicable_dash"
             or not evidence.row_metric
             or len(metric_names) != 1
@@ -243,7 +245,7 @@ def build_fact_ledger(
             "table_id": evidence.table_id,
             "cell_id": evidence.cell_id,
             "source_locator": evidence.source_locator,
-            "mapping_status": "mapped",
+            "mapping_status": evidence.mapping_status,
             "confidence": evidence.confidence,
             "source_accession_number": evidence.source_accession_number,
             "source_document": evidence.source_document,
@@ -263,7 +265,8 @@ def build_fact_ledger(
     for evidence in sorted(evidence_ledger.evidence_items, key=lambda item: item.evidence_id):
         metric_names = sorted(set(evidence.supports_metrics))
         if (
-            evidence.value is None
+            evidence.mapping_status != "mapped"
+            or evidence.value is None
             or len(metric_names) != 1
             or metric_names[0] in represented_metrics
             or not (
@@ -333,7 +336,7 @@ def build_fact_ledger(
                 "table_id": evidence.table_id,
                 "cell_id": evidence.cell_id,
                 "source_locator": evidence.source_locator,
-                "mapping_status": "mapped",
+                "mapping_status": evidence.mapping_status,
                 "confidence": evidence.confidence,
                 "source_accession_number": evidence.source_accession_number,
                 "source_document": evidence.source_document,
@@ -397,6 +400,7 @@ def _select_exact_evidence(
         item
         for item in evidence_ledger.evidence_items
         if (not allowed_evidence_ids or item.evidence_id in allowed_evidence_ids)
+        and item.mapping_status == "mapped"
         and metric_name in item.supports_metrics
         and item.value is not None
         and _same_number(float(item.value), value)

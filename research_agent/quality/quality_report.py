@@ -74,6 +74,9 @@ class QualityReport(BaseModel):
     deeptech_sec_ir_current_period_evidence_complete: bool = False
     deeptech_quality_score_cap: int = 0
     risk_profiles: list[str] = Field(default_factory=list)
+    issuer_risk_profiles: list[str] = Field(default_factory=list)
+    data_limitations: list[str] = Field(default_factory=list)
+    review_blockers: list[str] = Field(default_factory=list)
     manual_review_reasons: list[str] = Field(default_factory=list)
     external_display_rating: Optional[str] = None
     company_archetype: str = "UNKNOWN"

@@ -158,6 +158,11 @@ def _error_codes(*, facts=(), tables=(), claims=(), sources=()):
             {"facts": [_fact(metric_id="debt_principal_usd", raw_text="$2 million principal", signed_value=2_000_000.0)]},
         ),
         (
+            "reference_token_promoted_as_fact",
+            {"facts": [_fact(metric_id="legal_penalty_usd", raw_text="FASB ASC No. 450, Contingencies", signed_value=450_000_000.0)]},
+            {"facts": [_fact(metric_id="legal_accrual_usd", raw_text="$510 million recorded accrual", signed_value=510_000_000.0)]},
+        ),
+        (
             "metric_source_role_conflict",
             {"facts": [_fact(metric_id="paid_members_fy2025", raw_text="Executive members represented 38,700") ]},
             {"facts": [_fact(metric_id="executive_members_fy2025", raw_text="Executive members represented 38,700") ]},

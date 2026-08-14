@@ -180,7 +180,7 @@ def run_research_pipeline(
         news=normalized_news,
         price_currency=config.price_currency,
         cik=config.cik,
-        exchange=config.exchange,
+        exchange=config.exchange or fundamentals.get("exchange"),
         incorporation_state=config.incorporation_state,
         jurisdiction=config.jurisdiction,
         isin=config.isin,
@@ -984,7 +984,7 @@ def run_research_pipeline(
             quality_report,
             canonical_business_model_assessment,
         )
-    _reconcile_canonical_quality_metadata(quality_report)
+    _reconcile_canonical_quality_metadata(quality_report, claims=claims)
     quality_state_integrity = verify_quality_state(
         quality_report=quality_report,
         audit_report=audit_report,
@@ -1272,6 +1272,18 @@ def _decision_inputs(data_packet: DataPacket) -> list[dict[str, Any]]:
         is_kpi = event.event_type in {"operating_kpi", "company_outlook", "guidance"}
         if not (is_risk or is_kpi):
             continue
+        if is_kpi and any(
+            metric.mapping_status != "mapped"
+            for metric in event.numeric_evidence
+        ):
+            # Unresolved source numbers remain in the evidence inventory but
+            # cannot enter decision lineage under a qualitative label.
+            continue
+        decision_summary = (
+            _qualitative_risk_summary(event.summary or event.headline)
+            if is_risk
+            else event.summary
+        )
         inputs.append(
             {
                 "input_id": event.source_id,
@@ -1288,7 +1300,7 @@ def _decision_inputs(data_packet: DataPacket) -> list[dict[str, Any]]:
                     "standardized score uses only validated rule inputs and does not invent a weight."
                 ),
                 "label": event.headline,
-                "summary": event.summary,
+                "summary": decision_summary,
                 "transmission": (
                     "Remediation, penalties, operating restrictions or reserve changes can reduce cash flow or constrain operations."
                     if is_risk
@@ -1321,7 +1333,9 @@ def _attach_material_event_decision_lineage(decision_packet, data_packet: DataPa
         if event is None:
             continue
         if decision_input.input_type == "current_risk":
-            summary = " ".join(str(event.summary or event.headline).split())
+            summary = " ".join(
+                str(decision_input.summary or event.headline).split()
+            )
             decision_packet.key_risks.append(
                 f"Issuer-specific material risk ({event.source_id}): "
                 f"{_complete_risk_summary(summary, limit=420)}"
@@ -1339,7 +1353,13 @@ def _attach_material_event_decision_lineage(decision_packet, data_packet: DataPa
             adverse_metrics = [
                 metric.metric_name
                 for metric in event.numeric_evidence
-                if metric.impact == "adverse" or metric.direction == "decrease"
+                if metric.mapping_status == "mapped"
+                and not re.search(
+                    r"(?:^|_)(?:unmapped|unresolved|statement_context|event_?\d+|value_?\d+)(?:_|$)",
+                    metric.metric_name,
+                    re.IGNORECASE,
+                )
+                and (metric.impact == "adverse" or metric.direction == "decrease")
             ]
             if adverse_metrics:
                 decision_packet.key_risks.append(
@@ -1368,6 +1388,32 @@ def _complete_risk_summary(summary: str, *, limit: int = 420) -> str:
         return normalized[: complete[-1]].strip()
     words = normalized[: limit + 1].split()
     return " ".join(words[:-1] if words and len(" ".join(words)) > limit else words).rstrip(" ,;:") + "."
+
+
+def _qualitative_risk_summary(summary: str) -> str:
+    """Preserve the named risk while quarantining unresolved numeric tokens."""
+
+    value = " ".join(str(summary or "").split())
+    value = re.sub(
+        r"\b(?:Case|Form|Item|Note|Section|ASC)(?:\s+No\.)?\s+[\w:.-]+",
+        "",
+        value,
+        flags=re.IGNORECASE,
+    )
+    value = re.sub(
+        r"\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},?\s+20\d{2}\b",
+        "",
+        value,
+        flags=re.IGNORECASE,
+    )
+    value = re.sub(
+        r"[$€£¥]?\d[\d,.:/-]*(?:%|\s*(?:million|billion|days?|months?|years?))?",
+        "",
+        value,
+        flags=re.IGNORECASE,
+    )
+    value = " ".join(value.split()).strip(" ,;:-")
+    return value or "The issuer disclosed a material risk that requires human review."
 
 
 def _issuer_management_counterposition(summary: str) -> str | None:
@@ -1617,6 +1663,7 @@ def _load_source_ingestion_inputs(ticker: str, as_of_date: str, config: ReportCo
     if config.cik_records_path:
         cik_mapper = load_cik_mapper(config.cik_records_path)
         fundamentals["company_name"] = cik_mapper.get_company_name(ticker)
+        fundamentals["exchange"] = cik_mapper.get_exchange(ticker)
         if config.sec_companyfacts_path:
             raw = json.loads(Path(config.sec_companyfacts_path).read_text(encoding="utf-8"))
             sec_metrics, sec_evidence_items = build_sec_fundamentals_from_companyfacts(
@@ -2664,26 +2711,31 @@ def _apply_publish_quality_to_report(quality_report, payload: dict[str, int]) ->
     quality_report.publish_report_quality_score = int(payload.get("publish_report_quality_score") or 0)
 
 
-def _reconcile_canonical_quality_metadata(quality_report) -> None:
+def _reconcile_canonical_quality_metadata(quality_report, *, claims=()) -> None:
     """Keep review metadata bound to the canonical report, not a removed draft."""
 
-    quality_report.risk_profiles = list(
+    legacy_limitations = list(quality_report.risk_profiles)
+    quality_report.issuer_risk_profiles = list(
         dict.fromkeys(
             [
-                *quality_report.risk_profiles,
-                *quality_report.manual_review_reasons,
+                str(claim.claim_id or claim.claim_text or claim.claim)
+                for claim in claims
+                if getattr(claim, "claim_type", None) == "risk"
             ]
         )
+    )
+    quality_report.risk_profiles = list(quality_report.issuer_risk_profiles)
+    quality_report.data_limitations = list(
+        dict.fromkeys([*legacy_limitations, *quality_report.manual_review_reasons])
+    )
+    quality_report.review_blockers = list(
+        dict.fromkeys(quality_report.manual_review_reasons)
     )
     quality_report.canonical_current_kpi_count = int(
         quality_report.current_period_kpi_claim_count_main_body or 0
     )
     quality_report.canonical_risk_profile_count = len(
         quality_report.risk_profiles
-    )
-    quality_report.data_limitation_claim_count = max(
-        int(quality_report.data_limitation_claim_count or 0),
-        len(quality_report.manual_review_reasons),
     )
     quality_report.canonical_data_limitation_count = int(
         quality_report.data_limitation_claim_count

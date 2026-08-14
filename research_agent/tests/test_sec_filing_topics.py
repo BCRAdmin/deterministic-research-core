@@ -161,6 +161,23 @@ def test_legal_numbers_map_verdict_loss_range_and_recorded_accrual() -> None:
     assert all(metric["mapping_status"] == "mapped" for metric in metrics.values())
 
 
+def test_accounting_standard_number_is_never_promoted_as_legal_money() -> None:
+    metrics = _topic_numeric_evidence(
+        (
+            "The company evaluates contingencies under FASB ASC No. 450, "
+            "Contingencies. The recorded accrual balance at June 30, 2026, "
+            "was approximately $510 million."
+        ),
+        "legal_contingencies",
+        filing_date="2026-07-28",
+    )
+
+    assert not any(item["raw_value"] == 450 for item in metrics)
+    accrual = next(item for item in metrics if "recorded_accrual" in item["metric_name"])
+    assert accrual["period_end"] == "2026-06-30"
+    assert accrual["effective_asof_dates"] == ["2026-06-30"]
+
+
 def test_topic_numbers_keep_semantic_cardinality_and_distinct_debt_coupons() -> None:
     payload = build_sec_filing_topic_payload(
         ticker="WM",

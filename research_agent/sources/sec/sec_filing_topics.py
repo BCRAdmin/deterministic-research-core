@@ -436,7 +436,10 @@ def _topic_numeric_evidence(
             metric_name = f"{metric_name}_occurrence_{metric_occurrences[metric_name]:02d}"
         effective_asof_dates = (
             _effective_asof_dates(summary)
-            if "legal_reserve" in metric_name
+            if any(
+                marker in metric_name
+                for marker in ("legal_reserve", "recorded_accrual", "accrual_balance")
+            )
             else []
         )
         metric_period_contract = _topic_period_contract_for_match(
@@ -528,8 +531,8 @@ def _topic_context_scale(summary: str, match: re.Match[str]) -> str | None:
 
 
 def _topic_number_is_non_metric(summary: str, match: re.Match[str]) -> bool:
-    before = summary[max(0, match.start() - 24) : match.start()]
-    after = summary[match.end() : match.end() + 18]
+    before = summary[max(0, match.start() - 48) : match.start()]
+    after = summary[match.end() : match.end() + 32]
     if re.search(r"\bLevel\s*$", before, re.IGNORECASE) and re.match(
         r"\s*inputs?\b", after, re.IGNORECASE
     ):
@@ -546,6 +549,24 @@ def _topic_number_is_non_metric(summary: str, match: re.Match[str]) -> bool:
         and re.match(r"\)\s*", after)
         and "," not in match.group("number")
         and float(match.group("number")) <= 99
+    ):
+        return True
+    if re.search(
+        r"\b(?:Note|Item|Form|Section|ASC(?:\s+No\.)?|FASB\s+ASC(?:\s+No\.)?)\s*$",
+        before.rstrip(),
+        re.IGNORECASE,
+    ):
+        return True
+    if re.match(r"(?:st|nd|rd|th)\b", after, re.IGNORECASE):
+        return True
+    if re.search(r"\b(?:Form\s+)?(?:10|8)\s*[-–]\s*$", before, re.IGNORECASE) and re.match(
+        r"[KQ]\b", after, re.IGNORECASE
+    ):
+        return True
+    if re.match(
+        r"\s*(?:to\s+\d+(?:\.\d+)?\s+)?(?:calendar\s+|business\s+)?(?:days?|months?|years?)\b",
+        after,
+        re.IGNORECASE,
     ):
         return True
     return False

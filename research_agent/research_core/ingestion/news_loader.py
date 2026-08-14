@@ -201,6 +201,7 @@ def news_evidence_items(
                     comparison_period_start=numeric.get("comparison_period_start"),
                     comparison_period_end=numeric.get("comparison_period_end"),
                     effective_asof_dates=numeric.get("effective_asof_dates") or [],
+                    mapping_status=numeric.get("mapping_status") or "mapped",
                     date=event_date,
                     url=event.get("url"),
                     retrieved_at=event.get("retrieved_at"),

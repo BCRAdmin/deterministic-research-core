@@ -130,6 +130,7 @@ class EvidenceItem(BaseModel):
     comparison_period_start: Optional[str] = None
     comparison_period_end: Optional[str] = None
     effective_asof_dates: List[str] = Field(default_factory=list)
+    mapping_status: Literal["mapped", "unmapped", "unresolved"] = "mapped"
     provenance_class: Optional[
         Literal[
             "primary_source",

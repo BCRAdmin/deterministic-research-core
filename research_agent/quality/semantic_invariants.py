@@ -293,6 +293,42 @@ def verify_semantic_invariants(
         ),
         "No mapped material source number is lost through a duplicate metric key; unresolved numbers remain inventory-only.",
     )
+    unsafe_numeric_source_ids = {
+        str(event.source_id)
+        for event in event_list
+        if any(
+            getattr(item, "mapping_status", "mapped") != "mapped"
+            for item in (getattr(event, "numeric_evidence", []) or [])
+        )
+    }
+    check(
+        "unmapped_numeric_claim_quarantine",
+        all(
+            not set(getattr(claim, "source_ids", []) or []).intersection(
+                unsafe_numeric_source_ids
+            )
+            or (
+                getattr(claim, "claim_type", None) == "risk"
+                and not (getattr(claim, "metric_refs", []) or [])
+                and not (getattr(claim, "metric_values", {}) or {})
+            )
+            for claim in claim_list
+        ),
+        "Unmapped source numbers remain inventory-only; qualitative risk claims carry no numeric refs.",
+    )
+    unsafe_kpi_source_ids = {
+        str(event.source_id)
+        for event in event_list
+        if event.event_type in {"operating_kpi", "company_outlook", "guidance"}
+        and str(event.source_id) in unsafe_numeric_source_ids
+    }
+    check(
+        "unmapped_numeric_decision_quarantine",
+        not unsafe_kpi_source_ids.intersection(
+            {str(item.input_id) for item in decision_packet.decision_inputs}
+        ),
+        "An unresolved operating KPI cannot enter decision inputs or counter-signals.",
+    )
     check(
         "material_event_table_semantics",
         all(_event_numeric_semantics(event) for event in event_list),

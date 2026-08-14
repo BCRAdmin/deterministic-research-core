@@ -109,6 +109,15 @@ def verify_quality_state(
         or 0
     )
     risk_profiles = list(getattr(quality_report, "risk_profiles", []) or [])
+    issuer_risk_profiles = list(
+        getattr(quality_report, "issuer_risk_profiles", []) or []
+    )
+    data_limitations = list(
+        getattr(quality_report, "data_limitations", []) or []
+    )
+    review_blockers = list(
+        getattr(quality_report, "review_blockers", []) or []
+    )
     canonical_risk_profile_count = int(
         getattr(quality_report, "canonical_risk_profile_count", 0) or 0
     )
@@ -131,6 +140,17 @@ def verify_quality_state(
             f"canonical_kpis={canonical_current_kpi_count} "
             f"canonical_risks={canonical_risk_profile_count} "
             f"canonical_limitations={canonical_data_limitation_count}"
+        ),
+    )
+    check(
+        "quality_metadata_roles_separated",
+        risk_profiles == issuer_risk_profiles
+        and not set(risk_profiles).intersection(data_limitations)
+        and set(review_blockers).issubset(set(data_limitations)),
+        (
+            f"issuer_risks={len(issuer_risk_profiles)} "
+            f"data_limitations={len(data_limitations)} "
+            f"review_blockers={len(review_blockers)}"
         ),
     )
     check(

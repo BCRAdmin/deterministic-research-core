@@ -302,6 +302,43 @@ def _event_display_statement(statement: str) -> str:
     return normalized.strip()
 
 
+def _risk_narrative_summary(statement: str) -> str:
+    """Create a source-bound risk claim without promoting unresolved numbers."""
+
+    normalized = _event_display_statement(statement)
+    first_sentence = re.split(r"(?<=[.!?])\s+", normalized, maxsplit=1)[0]
+    first_sentence = re.sub(
+        r"\b(?:Case|Form|Item|Note|Section|ASC)(?:\s+No\.)?\s+[\w:.-]+",
+        "",
+        first_sentence,
+        flags=re.IGNORECASE,
+    )
+    first_sentence = re.sub(
+        r"\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},?\s+20\d{2}\b",
+        "",
+        first_sentence,
+        flags=re.IGNORECASE,
+    )
+    first_sentence = re.sub(
+        r"\b(?:In\s+)?(?:January|February|March|April|May|June|July|August|September|October|November|December)(?:\s+and\s+(?:January|February|March|April|May|June|July|August|September|October|November|December))?\s+20\d{2},?",
+        "",
+        first_sentence,
+        flags=re.IGNORECASE,
+    )
+    first_sentence = re.sub(
+        r"[$€£¥]?\d[\d,.:/-]*(?:%|\s*(?:million|billion))?",
+        "",
+        first_sentence,
+        flags=re.IGNORECASE,
+    )
+    first_sentence = " ".join(first_sentence.split()).strip(" ,;:-")
+    return (
+        f"{first_sentence}."
+        if first_sentence
+        else "The issuer disclosed a legal contingency that requires human review."
+    )
+
+
 def _catalyst_narrative_has_no_hard_numeric_claim(statement: str) -> bool:
     """Allow dates and product model identifiers, never unbound financial values."""
 
@@ -1729,14 +1766,18 @@ class _ClaimBuilder:
         source_statement = str(event.summary or event.headline).strip()
         statement = _event_display_statement(source_statement)
         numeric_event = bool(event.numeric_evidence)
-        if numeric_event and any(
+        unsafe_numeric_event = numeric_event and any(
             metric.mapping_status != "mapped" for metric in event.numeric_evidence
-        ):
+        )
+        if unsafe_numeric_event:
             # A mixed event cannot safely become report prose: its original
             # sentence still exposes every number, including values whose
             # metric, period or segment identity is unresolved. Keep the event
             # in the evidence inventory, but do not promote it as a hard claim.
-            return
+            if not as_risk:
+                return
+            statement = _risk_narrative_summary(source_statement)
+            numeric_event = False
         if not statement or (
             any(character.isdigit() for character in source_statement)
             and not numeric_event
@@ -1762,6 +1803,10 @@ class _ClaimBuilder:
         ]
         if not evidence:
             return
+        if unsafe_numeric_event:
+            evidence = [item for item in evidence if item.value is None]
+            if not evidence:
+                return
         statement = _labeled_numeric_event_statement(
             event,
             statement,
