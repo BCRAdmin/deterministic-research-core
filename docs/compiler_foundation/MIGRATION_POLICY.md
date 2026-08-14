@@ -1,0 +1,58 @@
+# Compiler Foundation Migration Policy
+
+## Purpose
+
+This policy protects Compiler Foundation v1 while BA3–BA12 replace legacy
+pipeline behavior through a shadow/strangler migration.
+
+## Normal development
+
+Normal development occurs above the Foundation. A new compiler wave must:
+
+1. consume versioned Foundation contracts;
+2. define its own input, output, side-effect, determinism, cache, replay and
+   failure contracts;
+3. run in shadow mode before gaining authority;
+4. preserve Authority Bundle v3 and legacy output until an explicit ABI migration;
+5. use frozen source inputs for WM/COST/ABT differential tests;
+6. fail closed for unknown IDs, unsupported versions, tamper and incomplete input;
+7. remain company-agnostic.
+
+## RFC boundary
+
+An RFC is mandatory when a proposed change affects any frozen layer,
+ownership, registry, pass, IR or ABI contract. The RFC must include:
+
+- problem and general root cause;
+- alternatives and why normal BA3+ extension is insufficient;
+- compatibility classification and proposed version bump;
+- affected hashes, mirrors, caches and replay records;
+- migration and rollback procedure;
+- positive, negative, tamper, versioning, unknown-ID, order, skip, replay and
+  cross-language tests where applicable;
+- WM/COST/ABT differential results and independent-review trigger decision.
+
+No RFC is approved merely because one company does not fit. A company may
+expose a missing general contract, but the resulting proposal must be valid
+without naming that company.
+
+## ABI migration
+
+Authority Bundle v3 remains the transition ABI. A successor requires an
+approved RFC, dual-read compatibility window, deterministic v3-to-successor
+migration, Product consumer verification, full canary replay and explicit
+operator acceptance. There is no silent in-place reinterpretation of v3.
+
+## Registry migration
+
+Research remains the only registry authority. Additive entries require the
+compatibility rules of the active Registry Envelope. Removing, renaming or
+semantically changing an ID is breaking and requires RFC approval. Product
+mirrors are generated or copied from Research and accepted only after exact
+hash verification.
+
+## Completion rule
+
+A semantic compiler wave may become authoritative only when shadow replay,
+legacy parity, contract tests, canary regression and required human review all
+pass on the same version lock. Passing a single company is insufficient.

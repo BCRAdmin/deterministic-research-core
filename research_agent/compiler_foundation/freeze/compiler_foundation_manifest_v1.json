@@ -1,0 +1,114 @@
+{
+  "contract_id": "room16.compiler.foundation_manifest",
+  "contract_version": 1,
+  "compiler_foundation_version": "1.0.0",
+  "status": "accepted_frozen",
+  "accepted_on": "2026-08-15",
+  "scope": [
+    "BA0",
+    "BA1",
+    "BA2"
+  ],
+  "layers": [
+    "L0_compile_intake",
+    "L1_source_acquisition",
+    "L2_source_snapshot",
+    "L3_parse_discover",
+    "L4_normalize_reconcile",
+    "L5_typed_fact",
+    "L6_metric_formula",
+    "L7_evidence_graph",
+    "L8_claim_graph",
+    "L9_decision_graph",
+    "L10_verification",
+    "L11_emit"
+  ],
+  "ownership": {
+    "semantic_truth_owner": "research",
+    "product_role": "consumer_runtime_queue_ui_renderer_release_interaction",
+    "product_parallel_truth_allowed": false
+  },
+  "git": {
+    "tag": "room16-compiler-foundation-v1.0.0",
+    "research_commit": "e8b75cca33bc8436640872a5ccd7698b43a01e56",
+    "research_tag_object": "47cf2b4bd9d4e405ff5ee0a8a1a89b07b8c9f336",
+    "product_commit": "089982f039d96065d61537f60591777cd985f14c",
+    "product_tag_object": "6e06408829d6e04a1830cb2efe794c7c544777b2"
+  },
+  "registry_authority": {
+    "contract_id": "room16.compiler.registry_authority",
+    "contract_version": 1,
+    "registry_version": 1,
+    "authority_sha256": "3cbaea421c51e6a3f1b5dad14fc619fd66d1b5420322b619b76455ac9416a239",
+    "canonical_document_sha256": "9bc8663ff7e6c7b9c6cfd97edccc61254793312a5528713fd7d4cb334f975005",
+    "source_file_sha256": "a1a083bc7643664eb0028a07816350fc3c2b366acb4cf43378705f2fb1e3ca63",
+    "owner": "research",
+    "product_mirror_mode": "hash_verified_read_only"
+  },
+  "authority_bundle": {
+    "contract_id": "room16.research_authority_bundle",
+    "version": 3,
+    "role": "transition_abi",
+    "changed_by_foundation_freeze": false
+  },
+  "canary_freeze": {
+    "baseline_contract_id": "room16.cross_company.canary_baseline",
+    "baseline_contract_version": 1,
+    "baseline_file_sha256": "88795b625b2d9ab892b559d98b6d4d0a0c79364088fe7376dc49a3b8bd796d7f",
+    "version_lock_sha256": "8cf064d75c8cc3bf23f947189f25ee2de3f2bd0c5356b51d5d7f37d631085333",
+    "candidate_sha256": {
+      "ABT": "0926d3cafd312556ec267b2b25214d255ff9352daed77a01b7852addbb48dc45",
+      "COST": "b97e6024855c7a772713ff9af4889987e4a9a8e5a3afca0d56a42a1ba8092ea4",
+      "WM": "a6b6d15ad7004573a56ad057884563cfbeeb2c3162dae0641a1b361b5e416d72"
+    },
+    "rebaseline_allowed": false
+  },
+  "foundation_evidence": {
+    "foundation_id": "e8eca8e080f8",
+    "archive": "outputs/release/ROOM16_COMPILER_FOUNDATION_BA0_BA2_e8eca8e080f8_2026-08-14.zip",
+    "archive_sha256": "76502d2ec914b36ee942acd85d14ae07cf984cbf799ac279f2a1e4a1763b2836",
+    "manifest_contract_id": "room16.compiler.foundation_evidence_manifest",
+    "manifest_contract_version": 1
+  },
+  "foundation_source_files": {
+    "research_agent/compiler_foundation/canonical.py": "399b11568d9ef69db9fb2c3f617c1dc2bb9ecf4037d25f0426f0a22b1c0471e0",
+    "research_agent/compiler_foundation/contracts.py": "38405fc7f9e89faeb757d3ec1789fd7f4fc0c1b61f54ed596acac2d8b81c1955",
+    "research_agent/compiler_foundation/kernel.py": "8abfa84935d9b8b8b5974af7ee67c856a515708741f87356fe16973b7f515e2c",
+    "research_agent/compiler_foundation/registry.py": "709761d8ef8341d5806d7ff4ccb4b138e579f10e0b6882032ddd02279a4c457c",
+    "research_agent/compiler_foundation/shadow.py": "73fc40e5bd2d3a0b198b8b92df5c6eefebfa8f717a2992dc4699efc1945772b5",
+    "research_agent/compiler_foundation/config/cross_language_conformance.json": "a696c7dd8bf91656da7b52c4eaf23d23bbc38c7320443bcf7fce5bdfac54733b",
+    "research_agent/compiler_foundation/config/layer_ownership_constitution.json": "9908bb075edd17e5dc88f2f644997813f74b04268a6b7517d43e2ecac47bf68f",
+    "research_agent/compiler_foundation/config/pass_manifests.json": "6bc8edc5a83fffb7d9f406805ed0dc6fee506330dbb2cc374b3bf0d3880dd210",
+    "research_agent/compiler_foundation/config/registry_authority.json": "a1a083bc7643664eb0028a07816350fc3c2b366acb4cf43378705f2fb1e3ca63"
+  },
+  "version_lock_inputs": {
+    "authority_bundle_version": 3,
+    "canary_version_lock_sha256": "8cf064d75c8cc3bf23f947189f25ee2de3f2bd0c5356b51d5d7f37d631085333",
+    "compiler_foundation_version": "1.0.0",
+    "evidence_zip_sha256": "76502d2ec914b36ee942acd85d14ae07cf984cbf799ac279f2a1e4a1763b2836",
+    "layer_constitution_sha256": "9908bb075edd17e5dc88f2f644997813f74b04268a6b7517d43e2ecac47bf68f",
+    "pass_manifest_set_sha256": "6bc8edc5a83fffb7d9f406805ed0dc6fee506330dbb2cc374b3bf0d3880dd210",
+    "product_commit": "089982f039d96065d61537f60591777cd985f14c",
+    "product_tag": "room16-compiler-foundation-v1.0.0",
+    "registry_authority_sha256": "3cbaea421c51e6a3f1b5dad14fc619fd66d1b5420322b619b76455ac9416a239",
+    "registry_authority_version": 1,
+    "research_commit": "e8b75cca33bc8436640872a5ccd7698b43a01e56",
+    "research_tag": "room16-compiler-foundation-v1.0.0"
+  },
+  "version_lock_sha256": "8b9b7b2f59aa2cfed8280389f14c0e4edd11846d56c1d78e0dbf2c574da7d518",
+  "rfc_required_for": [
+    "abi_change",
+    "ir_change",
+    "layer_change",
+    "ownership_change",
+    "pass_change",
+    "registry_change"
+  ],
+  "development_boundary": {
+    "foundation_changes_without_rfc_allowed": false,
+    "future_changes_via_compiler_contracts_only": true,
+    "company_specific_architecture_changes_allowed": false,
+    "companies_validate_architecture": true,
+    "next_build_section": "BA3"
+  }
+}

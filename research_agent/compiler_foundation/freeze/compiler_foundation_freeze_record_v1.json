@@ -1,0 +1,34 @@
+{
+  "contract_id": "room16.compiler.foundation_freeze_record",
+  "contract_version": 1,
+  "compiler_foundation_version": "1.0.0",
+  "status": "accepted_frozen",
+  "operator_acceptance_date": "2026-08-15",
+  "accepted_build_sections": [
+    "BA0",
+    "BA1",
+    "BA2"
+  ],
+  "foundation_manifest": "compiler_foundation_manifest_v1.json",
+  "foundation_manifest_sha256": "82621d0c02596e16e144b7934f1d7594deee87ff8ccc047c071ea0a795104f32",
+  "foundation_version_lock_sha256": "8b9b7b2f59aa2cfed8280389f14c0e4edd11846d56c1d78e0dbf2c574da7d518",
+  "git_tag": "room16-compiler-foundation-v1.0.0",
+  "research_commit": "e8b75cca33bc8436640872a5ccd7698b43a01e56",
+  "product_commit": "089982f039d96065d61537f60591777cd985f14c",
+  "registry_authority_version": 1,
+  "authority_bundle_version": 3,
+  "foundation_evidence_sha256": "76502d2ec914b36ee942acd85d14ae07cf984cbf799ac279f2a1e4a1763b2836",
+  "canary_version_lock_sha256": "8cf064d75c8cc3bf23f947189f25ee2de3f2bd0c5356b51d5d7f37d631085333",
+  "rfc_required": true,
+  "rfc_triggers": [
+    "abi_change",
+    "ir_change",
+    "layer_change",
+    "ownership_change",
+    "pass_change",
+    "registry_change"
+  ],
+  "next_build_section": "BA3",
+  "foundation_reentry_without_rfc_allowed": false,
+  "company_specific_architecture_change_allowed": false
+}
