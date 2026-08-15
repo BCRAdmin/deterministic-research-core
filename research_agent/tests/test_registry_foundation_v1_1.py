@@ -120,10 +120,15 @@ def test_formula_alias_collision_and_unknown_id_fail_closed() -> None:
         collision.bind_formula(alias)
 
 
-def test_metric_dimension_mismatch_is_blocked() -> None:
+@pytest.mark.parametrize(
+    "mutation", [{"dimension": "duration_weeks"}, {"period_kind": "future_guess"}]
+)
+def test_metric_dimension_and_period_mismatch_are_blocked(
+    mutation: dict[str, object]
+) -> None:
     with pytest.raises(SemanticRegistryError, match="metric_contract_mismatch"):
         metric_instance_from_legacy(
-            _metric_fact(dimension="duration_weeks"), SemanticRegistryAuthority.load()
+            _metric_fact(**mutation), SemanticRegistryAuthority.load()
         )
 
 
@@ -154,6 +159,12 @@ def test_unknown_claim_and_decision_definition_fail_closed() -> None:
         authority.bind_claim_kind("invented")
     with pytest.raises(SemanticRegistryError, match="unknown_decision_node"):
         authority.require_decision_definition("decision.invented")
+    with pytest.raises(SemanticRegistryError, match="unknown_risk_definition"):
+        authority.require_risk_definition("risk.invented")
+    with pytest.raises(
+        SemanticRegistryError, match="unknown_permission_corridor_definition"
+    ):
+        authority.require_permission_definition("permission.invented")
 
 
 def test_instance_contract_hashes_detect_tampering() -> None:
@@ -193,6 +204,27 @@ def test_instance_contract_hashes_detect_tampering() -> None:
     with pytest.raises(ValidationError, match="decision node hash mismatch"):
         DecisionNodeInstance.model_validate(
             {**decision.model_dump(mode="json"), "payload": {"value": 2}}
+        )
+
+
+def test_quarantined_identifier_cannot_be_promoted_to_executable() -> None:
+    with pytest.raises(
+        ValidationError, match="quarantined or colliding metric cannot be executable"
+    ):
+        MetricInstance.create(
+            legacy_id="unknown_metric",
+            canonical_definition_id="metric.quarantined_unknown",
+            binding_type="quarantined_unknown",
+            source_adapter="accepted_authority_v3",
+            dimension="currency",
+            fact_type="flow_value",
+            unit="USD",
+            period_kind="duration",
+            scale="million",
+            currency="USD",
+            status="active",
+            collision_state="none",
+            migration_action="promote",
         )
 
 

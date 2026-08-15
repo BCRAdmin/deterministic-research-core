@@ -1,0 +1,23 @@
+{
+  "contract_id": "room16.compiler.semantic_negative_fixture_catalog",
+  "contract_version": 1,
+  "release_rule": "defective_fails_corrected_passes_reintroduction_blocks",
+  "fixtures": [
+    {"fixture_id": "unknown_metric_id", "defect": "unknown executable metric", "expected_gate": "unexecutable_metric", "test": "test_ba5_blocks_value_state_collision_unknown_metric_and_duplicate_fact"},
+    {"fixture_id": "unknown_formula_id", "defect": "formula without Registry definition", "expected_gate": "unknown_formula_id", "test": "test_formula_alias_collision_and_unknown_id_fail_closed"},
+    {"fixture_id": "metric_alias_collision", "defect": "one metric instance matches two definitions", "expected_gate": "semantic_collision", "test": "test_overlapping_metric_patterns_are_a_semantic_collision"},
+    {"fixture_id": "metric_dimension_mismatch", "defect": "metric dimension outside definition", "expected_gate": "metric_contract_mismatch", "test": "test_metric_dimension_and_period_mismatch_are_blocked"},
+    {"fixture_id": "metric_period_mismatch", "defect": "metric period outside definition", "expected_gate": "metric_contract_mismatch", "test": "test_metric_dimension_and_period_mismatch_are_blocked"},
+    {"fixture_id": "formula_operand_mismatch", "defect": "formula operand role outside alias contract", "expected_gate": "formula_operand_role_mismatch", "test": "test_formula_operand_and_result_dimension_mismatches_are_blocked"},
+    {"fixture_id": "formula_result_dimension_mismatch", "defect": "formula result dimension differs from definition", "expected_gate": "formula_result_dimension_mismatch", "test": "test_formula_operand_and_result_dimension_mismatches_are_blocked"},
+    {"fixture_id": "claim_instance_without_kind", "defect": "claim kind absent from Registry", "expected_gate": "claims_without_definition", "test": "test_ba8_claim_graph_requires_kind_evidence_and_known_facts"},
+    {"fixture_id": "decision_input_without_definition", "defect": "unknown Decision input kind", "expected_gate": "unknown_decision_input_kind", "test": "test_ba9_decision_graph_roundtrip_and_permission_corridor_are_fail_closed"},
+    {"fixture_id": "risk_node_without_definition", "defect": "risk definition absent", "expected_gate": "unknown_risk_definition", "test": "test_unknown_claim_and_decision_definition_fail_closed"},
+    {"fixture_id": "permission_corridor_loss", "defect": "required permission field removed", "expected_gate": "decision_rating_permission_fields_missing", "test": "test_ba9_decision_graph_roundtrip_and_permission_corridor_are_fail_closed"},
+    {"fixture_id": "product_mirror_tamper", "defect": "Product mirror diverges from Research", "expected_gate": "product_mirror_conformance_failed", "test": "test_product_mirror_is_exact_and_tamper_fails"},
+    {"fixture_id": "foundation_v1_mutation_attempt", "defect": "frozen Foundation version lock differs from manifest", "expected_gate": "foundation_version_lock", "test": "test_foundation_freeze_rejects_version_lock_tamper"},
+    {"fixture_id": "canary_specific_registry_branch", "defect": "WM-specific Registry namespace", "expected_gate": "canary_specific_registry_branch", "test": "test_canary_specific_registry_branch_is_blocked"},
+    {"fixture_id": "lossy_legacy_roundtrip", "defect": "Decision payload changes during graph roundtrip", "expected_gate": "decision_roundtrip_payload_tamper", "test": "test_ba9_decision_graph_roundtrip_and_permission_corridor_are_fail_closed"},
+    {"fixture_id": "quarantined_identifier_promoted", "defect": "quarantined identifier marked executable", "expected_gate": "quarantined or colliding metric cannot be executable", "test": "test_quarantined_identifier_cannot_be_promoted_to_executable"}
+  ]
+}
