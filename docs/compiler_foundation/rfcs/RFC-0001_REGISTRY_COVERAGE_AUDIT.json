@@ -1,0 +1,85 @@
+{
+  "audit_contract_id": "room16.compiler.semantic_registry_coverage_audit",
+  "audit_contract_version": 1,
+  "as_of_date": "2026-08-15",
+  "authority_bundle_version": 3,
+  "canary_release_id": "8cf064d75c8c-20260814-115448",
+  "foundation": {
+    "git_tag": "room16-compiler-foundation-v1.0.0",
+    "registry_authority_sha256": "3cbaea421c51e6a3f1b5dad14fc619fd66d1b5420322b619b76455ac9416a239",
+    "version": "1.0.0",
+    "version_lock_sha256": "8b9b7b2f59aa2cfed8280389f14c0e4edd11846d56c1d78e0dbf2c574da7d518"
+  },
+  "frozen_registry_counts": {
+    "claim": 5,
+    "decision": 3,
+    "formula": 5,
+    "metric": 6,
+    "table": 5,
+    "typed_fact": 6
+  },
+  "cross_company_observed": {
+    "claim_types": 7,
+    "decision_input_types": 2,
+    "formula_ids": 32,
+    "legacy_fact_subtypes": 17,
+    "metric_ids": 282,
+    "period_kinds": 6,
+    "triggered_rule_ids": 28,
+    "value_dimensions": 8
+  },
+  "cross_company_uncovered": {
+    "claim_types": [
+      "financial_metric",
+      "guidance",
+      "news",
+      "rating",
+      "risk",
+      "technical_metric",
+      "valuation_metric"
+    ],
+    "decision_input_types": [
+      "current_risk",
+      "operating_kpi"
+    ],
+    "formula_id_count": 32,
+    "metric_id_count": 276,
+    "triggered_rule_id_count": 28,
+    "typed_fact_binding_authoritative": false
+  },
+  "per_canary": {
+    "ABT": {
+      "claim_count": 58,
+      "fact_count": 116,
+      "formula_ids": 27,
+      "metric_ids": 116,
+      "triggered_rule_ids": 11
+    },
+    "COST": {
+      "claim_count": 44,
+      "fact_count": 95,
+      "formula_ids": 26,
+      "metric_ids": 95,
+      "triggered_rule_ids": 7
+    },
+    "WM": {
+      "claim_count": 60,
+      "fact_count": 171,
+      "formula_ids": 28,
+      "metric_ids": 171,
+      "triggered_rule_ids": 12
+    }
+  },
+  "candidate_sha256": {
+    "ABT": "0926d3cafd312556ec267b2b25214d255ff9352daed77a01b7852addbb48dc45",
+    "COST": "b97e6024855c7a772713ff9af4889987e4a9a8e5a3afca0d56a42a1ba8092ea4",
+    "WM": "a6b6d15ad7004573a56ad057884563cfbeeb2c3162dae0641a1b361b5e416d72"
+  },
+  "result": {
+    "foundation_change_required": true,
+    "lossless_mapping_to_frozen_registry_possible": false,
+    "parallel_registry_allowed": false,
+    "rfc_required": true,
+    "semantic_wave_must_stop": true
+  }
+}
