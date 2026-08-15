@@ -233,6 +233,20 @@ Renderer-Cutover, Release und Publication bleiben gesperrt.
     _text(staging / "11_WM_COST_ABT_RESULTS.md", "# WM / COST / ABT Results\n\n" + "\n".join(f"- {ticker}: archive={item['archive_sha256_before']}, unchanged={item['archive_sha256_before'] == item['archive_sha256_after']}, replay={item['replay_sha256']}, double_replay={double_replay[ticker]['equal']}" for ticker, item in replays.items()))
     _text(staging / "12_PRODUCT_REGRESSION_STATUS.md", f"# Product Regression Status\n\nStatus: `{product_status}`.\n\nExit code: `{product_verify['exit_code']}`. Full log: `TEST_RESULTS/product_verify.log`. Product remains a consumer; no Product code or registry truth was changed by RFC-0002.")
     _json(staging / "13_SEMANTIC_WAVE_COMPLETION_VERDICT.json", final_verdict)
+    closure = [
+        {"finding_id": "SCW-001", "status": "closed_pending_independent_review", "proof": "pass_chain_ends_with_ba9_l10_verification"},
+        {"finding_id": "SCW-002", "status": "closed_pending_independent_review", "proof": "connected_ir_spine_and_explicit_compatibility_diagnostic"},
+        {"finding_id": "SCW-003", "status": "closed_pending_independent_review", "proof": "table_detected_equals_registered_plus_excluded"},
+        {"finding_id": "SCW-004", "status": "closed_pending_independent_review", "proof": "narrow_metric_signature_authority_and_valid_but_wrong_fixtures"},
+        {"finding_id": "SCW-005", "status": "closed_pending_independent_review", "proof": "computed_cross_company_gates_and_reintroduction_fixture"},
+        {"finding_id": "SCW-006", "status": "closed_pending_independent_review", "proof": "claim_fact_evidence_source_locator_lineage"},
+        {"finding_id": "SCW-007", "status": "closed_pending_independent_review", "proof": "decision_reconstructed_from_nodes_and_edges"},
+        {"finding_id": "SCW-008", "status": "closed_pending_independent_review", "proof": "self_contained_51_entry_ir_archive"},
+        {"finding_id": "SCW-009", "status": "closed_pending_independent_review", "proof": f"{len(fixture_proofs)}_fixture_specific_red_green_reintroduction_proofs"},
+        {"finding_id": "SCW-010", "status": "closed_as_explicit_conditional_status" if product_status != "full_pass" else "closed_full_pass", "proof": "product_status_not_overstated_and_full_log_bound"},
+    ]
+    _json(staging / "14_FINDINGS_CLOSURE_MATRIX.json", closure)
+    _text(staging / "14_FINDINGS_CLOSURE_MATRIX.md", "# Findings Closure Matrix\n\n" + "\n".join(f"- {item['finding_id']}: {item['status']} — {item['proof']}" for item in closure))
 
     manifest_files = {}
     for path in sorted(staging.rglob("*")):

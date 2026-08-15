@@ -243,7 +243,7 @@ def test_cross_company_gates_are_computed_from_bound_artifacts() -> None:
 
 def test_finding_specific_fixture_proofs_are_red_green_and_reintroduction_safe() -> None:
     proofs = build_negative_fixture_proofs()
-    assert len(proofs) == 11
+    assert len(proofs) == 16
     for proof in proofs:
         assert proof["defective_result"]["gate_allowed"] is False
         assert proof["corrected_result"]["gate_allowed"] is True
