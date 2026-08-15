@@ -1,0 +1,1956 @@
+{
+  "authority_bundle_changed": false,
+  "authority_bundle_version": 3,
+  "authority_sha256": "55585f2242f32da4cc401455cd3186a97bf74f2c4a7feb5078e00d6a6e1ea5fb",
+  "claim_kind_definitions": [
+    {
+      "allowed_evidence_edges": [
+        "derived_from",
+        "supported_by"
+      ],
+      "citation_requirements": "every_numeric_binding_and_material_assertion",
+      "claim_kind_id": "claim.financial_metric",
+      "decision_eligibility": "eligible",
+      "materiality_contract": "explicit_or_inherited_from_bound_facts",
+      "optional_fact_roles": [
+        "counterevidence",
+        "uncertainty"
+      ],
+      "quarantine_behavior": "fail_closed",
+      "rendering_eligibility": "requires_complete_citation_lineage",
+      "required_fact_roles": [
+        "numeric_fact"
+      ]
+    },
+    {
+      "allowed_evidence_edges": [
+        "derived_from",
+        "supported_by"
+      ],
+      "citation_requirements": "every_numeric_binding_and_material_assertion",
+      "claim_kind_id": "claim.guidance",
+      "decision_eligibility": "eligible_with_uncertainty",
+      "materiality_contract": "explicit_or_inherited_from_bound_facts",
+      "optional_fact_roles": [
+        "counterevidence",
+        "uncertainty"
+      ],
+      "quarantine_behavior": "fail_closed",
+      "rendering_eligibility": "requires_complete_citation_lineage",
+      "required_fact_roles": [
+        "guidance_fact"
+      ]
+    },
+    {
+      "allowed_evidence_edges": [
+        "derived_from",
+        "supported_by"
+      ],
+      "citation_requirements": "every_numeric_binding_and_material_assertion",
+      "claim_kind_id": "claim.news",
+      "decision_eligibility": "context_only",
+      "materiality_contract": "explicit_or_inherited_from_bound_facts",
+      "optional_fact_roles": [
+        "counterevidence",
+        "uncertainty"
+      ],
+      "quarantine_behavior": "fail_closed",
+      "rendering_eligibility": "requires_complete_citation_lineage",
+      "required_fact_roles": []
+    },
+    {
+      "allowed_evidence_edges": [
+        "derived_from",
+        "supported_by"
+      ],
+      "citation_requirements": "every_numeric_binding_and_material_assertion",
+      "claim_kind_id": "claim.rating",
+      "decision_eligibility": "decision_output",
+      "materiality_contract": "explicit_or_inherited_from_bound_facts",
+      "optional_fact_roles": [
+        "counterevidence",
+        "uncertainty"
+      ],
+      "quarantine_behavior": "fail_closed",
+      "rendering_eligibility": "requires_complete_citation_lineage",
+      "required_fact_roles": [
+        "permission_corridor"
+      ]
+    },
+    {
+      "allowed_evidence_edges": [
+        "derived_from",
+        "supported_by"
+      ],
+      "citation_requirements": "every_numeric_binding_and_material_assertion",
+      "claim_kind_id": "claim.risk",
+      "decision_eligibility": "eligible",
+      "materiality_contract": "explicit_or_inherited_from_bound_facts",
+      "optional_fact_roles": [
+        "counterevidence",
+        "uncertainty"
+      ],
+      "quarantine_behavior": "fail_closed",
+      "rendering_eligibility": "requires_complete_citation_lineage",
+      "required_fact_roles": [
+        "risk_fact"
+      ]
+    },
+    {
+      "allowed_evidence_edges": [
+        "derived_from",
+        "supported_by"
+      ],
+      "citation_requirements": "every_numeric_binding_and_material_assertion",
+      "claim_kind_id": "claim.technical_metric",
+      "decision_eligibility": "timing_only",
+      "materiality_contract": "explicit_or_inherited_from_bound_facts",
+      "optional_fact_roles": [
+        "counterevidence",
+        "uncertainty"
+      ],
+      "quarantine_behavior": "fail_closed",
+      "rendering_eligibility": "requires_complete_citation_lineage",
+      "required_fact_roles": [
+        "market_fact"
+      ]
+    },
+    {
+      "allowed_evidence_edges": [
+        "derived_from",
+        "supported_by"
+      ],
+      "citation_requirements": "every_numeric_binding_and_material_assertion",
+      "claim_kind_id": "claim.valuation_metric",
+      "decision_eligibility": "eligible_if_measured",
+      "materiality_contract": "explicit_or_inherited_from_bound_facts",
+      "optional_fact_roles": [
+        "counterevidence",
+        "uncertainty"
+      ],
+      "quarantine_behavior": "fail_closed",
+      "rendering_eligibility": "requires_complete_citation_lineage",
+      "required_fact_roles": [
+        "valuation_fact"
+      ]
+    }
+  ],
+  "compatibility": "additive_successor_of_1.0.0",
+  "contract_id": "room16.compiler.registry_foundation",
+  "contract_version": 1,
+  "decision_node_definitions": [
+    {
+      "allowed_input_kinds": [
+        "current_risk",
+        "financial_metric",
+        "operating_kpi",
+        "policy",
+        "score",
+        "text"
+      ],
+      "compatibility": "additive_v1",
+      "decision_node_definition_id": "decision.counterevidence",
+      "node_semantics": "Evidence that constrains or opposes a decision input.",
+      "required_lineage": [
+        "legacy_decision_packet"
+      ]
+    },
+    {
+      "allowed_input_kinds": [
+        "current_risk",
+        "financial_metric",
+        "operating_kpi",
+        "policy",
+        "score",
+        "text"
+      ],
+      "compatibility": "additive_v1",
+      "decision_node_definition_id": "decision.input.operating_signal",
+      "node_semantics": "Operating KPI input with score-inclusion state.",
+      "required_lineage": [
+        "legacy_decision_packet"
+      ]
+    },
+    {
+      "allowed_input_kinds": [
+        "current_risk",
+        "financial_metric",
+        "operating_kpi",
+        "policy",
+        "score",
+        "text"
+      ],
+      "compatibility": "additive_v1",
+      "decision_node_definition_id": "decision.input.risk",
+      "node_semantics": "Current issuer-risk input with calibration boundary.",
+      "required_lineage": [
+        "legacy_decision_packet"
+      ]
+    },
+    {
+      "allowed_input_kinds": [
+        "current_risk",
+        "financial_metric",
+        "operating_kpi",
+        "policy",
+        "score",
+        "text"
+      ],
+      "compatibility": "additive_v1",
+      "decision_node_definition_id": "decision.non_advice_boundary",
+      "node_semantics": "Boundary preventing personalized action language.",
+      "required_lineage": [
+        "legacy_decision_packet"
+      ]
+    },
+    {
+      "allowed_input_kinds": [
+        "current_risk",
+        "financial_metric",
+        "operating_kpi",
+        "policy",
+        "score",
+        "text"
+      ],
+      "compatibility": "additive_v1",
+      "decision_node_definition_id": "decision.permission_corridor",
+      "node_semantics": "Allowed and blocked rating corridor.",
+      "required_lineage": [
+        "legacy_decision_packet"
+      ]
+    },
+    {
+      "allowed_input_kinds": [
+        "current_risk",
+        "financial_metric",
+        "operating_kpi",
+        "policy",
+        "score",
+        "text"
+      ],
+      "compatibility": "additive_v1",
+      "decision_node_definition_id": "decision.rating_permission",
+      "node_semantics": "Exact legacy rating permission state.",
+      "required_lineage": [
+        "legacy_decision_packet"
+      ]
+    },
+    {
+      "allowed_input_kinds": [
+        "current_risk",
+        "financial_metric",
+        "operating_kpi",
+        "policy",
+        "score",
+        "text"
+      ],
+      "compatibility": "additive_v1",
+      "decision_node_definition_id": "decision.rationale",
+      "node_semantics": "Reason or risk contributing to the conclusion.",
+      "required_lineage": [
+        "legacy_decision_packet"
+      ]
+    },
+    {
+      "allowed_input_kinds": [
+        "current_risk",
+        "financial_metric",
+        "operating_kpi",
+        "policy",
+        "score",
+        "text"
+      ],
+      "compatibility": "additive_v1",
+      "decision_node_definition_id": "decision.rule",
+      "node_semantics": "Generic deterministic decision rule instance.",
+      "required_lineage": [
+        "legacy_decision_packet"
+      ]
+    },
+    {
+      "allowed_input_kinds": [
+        "current_risk",
+        "financial_metric",
+        "operating_kpi",
+        "policy",
+        "score",
+        "text"
+      ],
+      "compatibility": "additive_v1",
+      "decision_node_definition_id": "decision.score_contribution",
+      "node_semantics": "Named score component and inclusion state.",
+      "required_lineage": [
+        "legacy_decision_packet"
+      ]
+    },
+    {
+      "allowed_input_kinds": [
+        "current_risk",
+        "financial_metric",
+        "operating_kpi",
+        "policy",
+        "score",
+        "text"
+      ],
+      "compatibility": "additive_v1",
+      "decision_node_definition_id": "decision.timing_state",
+      "node_semantics": "Timing overlay isolated from fundamental judgment.",
+      "required_lineage": [
+        "legacy_decision_packet"
+      ]
+    }
+  ],
+  "formula_definitions": [
+    {
+      "determinism_contract": "pure_same_input_same_output",
+      "expression_contract": "sum(all component operands)",
+      "formula_definition_id": "formula.add_components",
+      "formula_version": 1,
+      "legacy_aliases": [
+        "buybacks_current_period_plus_dividends_paid_current_period",
+        "buybacks_ttm_plus_dividends_paid_ttm"
+      ],
+      "legacy_operand_contracts": {
+        "buybacks_current_period_plus_dividends_paid_current_period": {
+          "allowed_role_patterns": [
+            "^(buybacks_current_period|dividends_paid_current_period)$"
+          ],
+          "max_operands": 2,
+          "min_operands": 2,
+          "required_roles": [
+            "buybacks_current_period",
+            "dividends_paid_current_period"
+          ]
+        },
+        "buybacks_ttm_plus_dividends_paid_ttm": {
+          "allowed_role_patterns": [
+            "^(buybacks|dividends_paid)$"
+          ],
+          "max_operands": 2,
+          "min_operands": 2,
+          "required_roles": [
+            "buybacks",
+            "dividends_paid"
+          ]
+        }
+      },
+      "missing_operand_policy": "fail_closed",
+      "operand_dimensions": [
+        "same"
+      ],
+      "operand_roles": [
+        "component_a",
+        "component_b"
+      ],
+      "provenance_policy": "all_operands_required",
+      "result_dimension": "same",
+      "rounding_policy": "preserve_binary64_then_renderer_rounds",
+      "zero_division_policy": "fail_closed"
+    },
+    {
+      "determinism_contract": "pure_same_input_same_output",
+      "expression_contract": "free_cash_flow - shareholder_distributions - acquisition_cash",
+      "formula_definition_id": "formula.capital_residual",
+      "formula_version": 1,
+      "legacy_aliases": [
+        "issuer_fcf_less_distributions_and_acquisition_cash",
+        "room16_fcf_less_distributions_and_acquisition_cash"
+      ],
+      "legacy_operand_contracts": {
+        "issuer_fcf_less_distributions_and_acquisition_cash": {
+          "allowed_role_patterns": [
+            "^(acquisition_cash|issuer_defined_fcf|shareholder_distributions)$"
+          ],
+          "max_operands": 3,
+          "min_operands": 3,
+          "required_roles": [
+            "acquisition_cash",
+            "issuer_defined_fcf",
+            "shareholder_distributions"
+          ]
+        },
+        "room16_fcf_less_distributions_and_acquisition_cash": {
+          "allowed_role_patterns": [
+            "^(acquisition_cash|room16_normalized_fcf|shareholder_distributions)$"
+          ],
+          "max_operands": 3,
+          "min_operands": 3,
+          "required_roles": [
+            "acquisition_cash",
+            "room16_normalized_fcf",
+            "shareholder_distributions"
+          ]
+        }
+      },
+      "missing_operand_policy": "fail_closed",
+      "operand_dimensions": [
+        "currency",
+        "currency",
+        "currency"
+      ],
+      "operand_roles": [
+        "acquisition_cash",
+        "free_cash_flow",
+        "shareholder_distributions"
+      ],
+      "provenance_policy": "all_operands_required",
+      "result_dimension": "currency",
+      "rounding_policy": "preserve_binary64_then_renderer_rounds",
+      "zero_division_policy": "fail_closed"
+    },
+    {
+      "determinism_contract": "pure_same_input_same_output",
+      "expression_contract": "current_assets / current_liabilities",
+      "formula_definition_id": "formula.current_ratio",
+      "formula_version": 1,
+      "legacy_aliases": [
+        "current_assets_divided_by_current_liabilities"
+      ],
+      "legacy_operand_contracts": {
+        "current_assets_divided_by_current_liabilities": {
+          "allowed_role_patterns": [
+            "^(current_assets|current_liabilities)$"
+          ],
+          "max_operands": 2,
+          "min_operands": 2,
+          "required_roles": [
+            "current_assets",
+            "current_liabilities"
+          ]
+        }
+      },
+      "missing_operand_policy": "fail_closed",
+      "operand_dimensions": [
+        "currency",
+        "currency"
+      ],
+      "operand_roles": [
+        "current_assets",
+        "current_liabilities"
+      ],
+      "provenance_policy": "all_operands_required",
+      "result_dimension": "multiple",
+      "rounding_policy": "preserve_binary64_then_renderer_rounds",
+      "zero_division_policy": "not_applicable"
+    },
+    {
+      "determinism_contract": "pure_same_input_same_output",
+      "expression_contract": "identity binding for one registered DCF policy parameter",
+      "formula_definition_id": "formula.dcf_policy_parameter",
+      "formula_version": 1,
+      "legacy_aliases": [
+        "equity_dcf_sensitivity_policy_v1"
+      ],
+      "legacy_operand_contracts": {
+        "equity_dcf_sensitivity_policy_v1": {
+          "allowed_role_patterns": [
+            "^dcf_base_(discount_rate|terminal_growth_rate)$"
+          ],
+          "max_operands": 1,
+          "min_operands": 1,
+          "required_roles": []
+        }
+      },
+      "missing_operand_policy": "fail_closed",
+      "operand_dimensions": [
+        "same"
+      ],
+      "operand_roles": [
+        "policy_parameter"
+      ],
+      "provenance_policy": "all_operands_required",
+      "result_dimension": "same",
+      "rounding_policy": "preserve_binary64_then_renderer_rounds",
+      "zero_division_policy": "fail_closed"
+    },
+    {
+      "determinism_contract": "pure_same_input_same_output",
+      "expression_contract": "discounted explicit cash flows plus discounted terminal value",
+      "formula_definition_id": "formula.dcf_sensitivity",
+      "formula_version": 1,
+      "legacy_aliases": [
+        "equity_dcf_sensitivity_v1"
+      ],
+      "legacy_operand_contracts": {
+        "equity_dcf_sensitivity_v1": {
+          "allowed_role_patterns": [
+            "^(discount_rate|forecast_years|free_cash_flow_growth_rate|starting_free_cash_flow|terminal_growth_rate)$"
+          ],
+          "max_operands": 5,
+          "min_operands": 5,
+          "required_roles": [
+            "discount_rate",
+            "forecast_years",
+            "free_cash_flow_growth_rate",
+            "starting_free_cash_flow",
+            "terminal_growth_rate"
+          ]
+        }
+      },
+      "missing_operand_policy": "fail_closed",
+      "operand_dimensions": [
+        "percent",
+        "count",
+        "percent",
+        "currency",
+        "percent"
+      ],
+      "operand_roles": [
+        "discount_rate",
+        "forecast_years",
+        "free_cash_flow_growth_rate",
+        "starting_free_cash_flow",
+        "terminal_growth_rate"
+      ],
+      "provenance_policy": "all_operands_required",
+      "result_dimension": "currency",
+      "rounding_policy": "preserve_binary64_then_renderer_rounds",
+      "zero_division_policy": "fail_closed"
+    },
+    {
+      "determinism_contract": "pure_same_input_same_output",
+      "expression_contract": "present_value_terminal_value / equity_value",
+      "formula_definition_id": "formula.dcf_terminal_share",
+      "formula_version": 1,
+      "legacy_aliases": [
+        "dcf_terminal_value_share_v1"
+      ],
+      "legacy_operand_contracts": {
+        "dcf_terminal_value_share_v1": {
+          "allowed_role_patterns": [
+            "^(equity_value|present_value_terminal_value)$"
+          ],
+          "max_operands": 2,
+          "min_operands": 2,
+          "required_roles": [
+            "equity_value",
+            "present_value_terminal_value"
+          ]
+        }
+      },
+      "missing_operand_policy": "fail_closed",
+      "operand_dimensions": [
+        "currency",
+        "currency"
+      ],
+      "operand_roles": [
+        "equity_value",
+        "present_value_terminal_value"
+      ],
+      "provenance_policy": "all_operands_required",
+      "result_dimension": "percent",
+      "rounding_policy": "preserve_binary64_then_renderer_rounds",
+      "zero_division_policy": "not_applicable"
+    },
+    {
+      "determinism_contract": "pure_same_input_same_output",
+      "expression_contract": "market_cap + debt - liquid_assets",
+      "formula_definition_id": "formula.enterprise_value",
+      "formula_version": 1,
+      "legacy_aliases": [
+        "market_cap_plus_debt_minus_liquid_assets"
+      ],
+      "legacy_operand_contracts": {
+        "market_cap_plus_debt_minus_liquid_assets": {
+          "allowed_role_patterns": [
+            "^(cash_and_equivalents|market_cap|marketable_securities|short_term_investments|total_debt)$"
+          ],
+          "max_operands": 5,
+          "min_operands": 3,
+          "required_roles": [
+            "market_cap",
+            "total_debt"
+          ]
+        }
+      },
+      "missing_operand_policy": "fail_closed",
+      "operand_dimensions": [
+        "currency",
+        "currency",
+        "currency"
+      ],
+      "operand_roles": [
+        "debt",
+        "liquid_assets",
+        "market_cap"
+      ],
+      "provenance_policy": "all_operands_required",
+      "result_dimension": "currency",
+      "rounding_policy": "preserve_binary64_then_renderer_rounds",
+      "zero_division_policy": "fail_closed"
+    },
+    {
+      "determinism_contract": "pure_same_input_same_output",
+      "expression_contract": "operating_cash_flow - capital_expenditure",
+      "formula_definition_id": "formula.fcf",
+      "formula_version": 1,
+      "legacy_aliases": [
+        "cfo_minus_capex",
+        "current_period_cfo_minus_capex"
+      ],
+      "legacy_operand_contracts": {
+        "cfo_minus_capex": {
+          "allowed_role_patterns": [
+            "^(capex_ttm|operating_cash_flow_ttm)$"
+          ],
+          "max_operands": 2,
+          "min_operands": 2,
+          "required_roles": [
+            "capex_ttm",
+            "operating_cash_flow_ttm"
+          ]
+        },
+        "current_period_cfo_minus_capex": {
+          "allowed_role_patterns": [
+            "^(capex|operating_cash_flow)$"
+          ],
+          "max_operands": 2,
+          "min_operands": 2,
+          "required_roles": [
+            "capex",
+            "operating_cash_flow"
+          ]
+        }
+      },
+      "missing_operand_policy": "fail_closed",
+      "operand_dimensions": [
+        "currency",
+        "currency"
+      ],
+      "operand_roles": [
+        "capital_expenditure",
+        "operating_cash_flow"
+      ],
+      "provenance_policy": "all_operands_required",
+      "result_dimension": "currency",
+      "rounding_policy": "preserve_binary64_then_renderer_rounds",
+      "zero_division_policy": "fail_closed"
+    },
+    {
+      "determinism_contract": "pure_same_input_same_output",
+      "expression_contract": "issuer_defined_fcf - room16_normalized_fcf",
+      "formula_definition_id": "formula.fcf_definition_difference",
+      "formula_version": 1,
+      "legacy_aliases": [
+        "issuer_defined_fcf_minus_room16_normalized_fcf"
+      ],
+      "legacy_operand_contracts": {
+        "issuer_defined_fcf_minus_room16_normalized_fcf": {
+          "allowed_role_patterns": [
+            "^(issuer_defined_fcf|room16_normalized_fcf)$"
+          ],
+          "max_operands": 2,
+          "min_operands": 2,
+          "required_roles": [
+            "issuer_defined_fcf",
+            "room16_normalized_fcf"
+          ]
+        }
+      },
+      "missing_operand_policy": "fail_closed",
+      "operand_dimensions": [
+        "currency",
+        "currency"
+      ],
+      "operand_roles": [
+        "issuer_defined_fcf",
+        "room16_normalized_fcf"
+      ],
+      "provenance_policy": "all_operands_required",
+      "result_dimension": "currency",
+      "rounding_policy": "preserve_binary64_then_renderer_rounds",
+      "zero_division_policy": "fail_closed"
+    },
+    {
+      "determinism_contract": "pure_same_input_same_output",
+      "expression_contract": "(current - prior) / abs(prior)",
+      "formula_definition_id": "formula.growth",
+      "formula_version": 1,
+      "legacy_aliases": [
+        "matching_period_diluted_share_count_yoy_change",
+        "matching_quarter_yoy_growth"
+      ],
+      "legacy_operand_contracts": {
+        "matching_period_diluted_share_count_yoy_change": {
+          "allowed_role_patterns": [
+            "^(current_diluted_share_count|prior_diluted_share_count)$"
+          ],
+          "max_operands": 2,
+          "min_operands": 2,
+          "required_roles": [
+            "current_diluted_share_count",
+            "prior_diluted_share_count"
+          ]
+        },
+        "matching_quarter_yoy_growth": {
+          "allowed_role_patterns": [
+            "^current_[a-z0-9_]+$",
+            "^prior_[a-z0-9_]+$"
+          ],
+          "max_operands": 2,
+          "min_operands": 2,
+          "required_roles": []
+        }
+      },
+      "missing_operand_policy": "fail_closed",
+      "operand_dimensions": [
+        "same",
+        "same"
+      ],
+      "operand_roles": [
+        "current",
+        "prior"
+      ],
+      "provenance_policy": "all_operands_required",
+      "result_dimension": "percent",
+      "rounding_policy": "preserve_binary64_then_renderer_rounds",
+      "zero_division_policy": "not_applicable"
+    },
+    {
+      "determinism_contract": "pure_same_input_same_output",
+      "expression_contract": "reported operand without arithmetic transformation",
+      "formula_definition_id": "formula.identity",
+      "formula_version": 1,
+      "legacy_aliases": [
+        "identity_from_period_matched_issuer_fcf",
+        "reported_current_period_buybacks",
+        "reported_current_period_dividends_paid"
+      ],
+      "legacy_operand_contracts": {
+        "identity_from_period_matched_issuer_fcf": {
+          "allowed_role_patterns": [
+            "^issuer_defined_fcf$"
+          ],
+          "max_operands": 1,
+          "min_operands": 1,
+          "required_roles": [
+            "issuer_defined_fcf"
+          ]
+        },
+        "reported_current_period_buybacks": {
+          "allowed_role_patterns": [
+            "^buybacks$"
+          ],
+          "max_operands": 1,
+          "min_operands": 1,
+          "required_roles": [
+            "buybacks"
+          ]
+        },
+        "reported_current_period_dividends_paid": {
+          "allowed_role_patterns": [
+            "^dividends_paid$"
+          ],
+          "max_operands": 1,
+          "min_operands": 1,
+          "required_roles": [
+            "dividends_paid"
+          ]
+        }
+      },
+      "missing_operand_policy": "fail_closed",
+      "operand_dimensions": [
+        "same"
+      ],
+      "operand_roles": [
+        "reported_value"
+      ],
+      "provenance_policy": "all_operands_required",
+      "result_dimension": "same",
+      "rounding_policy": "preserve_binary64_then_renderer_rounds",
+      "zero_division_policy": "fail_closed"
+    },
+    {
+      "determinism_contract": "pure_same_input_same_output",
+      "expression_contract": "earnings_measure / interest_expense",
+      "formula_definition_id": "formula.interest_coverage",
+      "formula_version": 1,
+      "legacy_aliases": [
+        "free_cash_flow_interest_coverage",
+        "operating_income_interest_coverage"
+      ],
+      "legacy_operand_contracts": {
+        "free_cash_flow_interest_coverage": {
+          "allowed_role_patterns": [
+            "^(free_cash_flow_ttm|interest_expense_ttm)$"
+          ],
+          "max_operands": 2,
+          "min_operands": 2,
+          "required_roles": [
+            "free_cash_flow_ttm",
+            "interest_expense_ttm"
+          ]
+        },
+        "operating_income_interest_coverage": {
+          "allowed_role_patterns": [
+            "^(interest_expense_ttm|operating_income_ttm)$"
+          ],
+          "max_operands": 2,
+          "min_operands": 2,
+          "required_roles": [
+            "interest_expense_ttm",
+            "operating_income_ttm"
+          ]
+        }
+      },
+      "missing_operand_policy": "fail_closed",
+      "operand_dimensions": [
+        "currency",
+        "currency"
+      ],
+      "operand_roles": [
+        "earnings_measure",
+        "interest_expense"
+      ],
+      "provenance_policy": "all_operands_required",
+      "result_dimension": "multiple",
+      "rounding_policy": "preserve_binary64_then_renderer_rounds",
+      "zero_division_policy": "not_applicable"
+    },
+    {
+      "determinism_contract": "pure_same_input_same_output",
+      "expression_contract": "close * point_in_time_shares",
+      "formula_definition_id": "formula.market_cap",
+      "formula_version": 1,
+      "legacy_aliases": [
+        "close_times_point_in_time_shares"
+      ],
+      "legacy_operand_contracts": {
+        "close_times_point_in_time_shares": {
+          "allowed_role_patterns": [
+            "^.*share_count$",
+            "^close$"
+          ],
+          "max_operands": 2,
+          "min_operands": 2,
+          "required_roles": [
+            "close"
+          ]
+        }
+      },
+      "missing_operand_policy": "fail_closed",
+      "operand_dimensions": [
+        "currency_per_share",
+        "shares"
+      ],
+      "operand_roles": [
+        "close",
+        "point_in_time_shares"
+      ],
+      "provenance_policy": "all_operands_required",
+      "result_dimension": "currency",
+      "rounding_policy": "preserve_binary64_then_renderer_rounds",
+      "zero_division_policy": "fail_closed"
+    },
+    {
+      "determinism_contract": "pure_same_input_same_output",
+      "expression_contract": "liquid_assets - total_debt",
+      "formula_definition_id": "formula.net_cash",
+      "formula_version": 1,
+      "legacy_aliases": [
+        "liquid_assets_minus_total_debt"
+      ],
+      "legacy_operand_contracts": {
+        "liquid_assets_minus_total_debt": {
+          "allowed_role_patterns": [
+            "^(cash_and_equivalents|marketable_securities|short_term_investments|total_debt)$"
+          ],
+          "max_operands": 4,
+          "min_operands": 2,
+          "required_roles": [
+            "total_debt"
+          ]
+        }
+      },
+      "missing_operand_policy": "fail_closed",
+      "operand_dimensions": [
+        "currency",
+        "currency"
+      ],
+      "operand_roles": [
+        "liquid_assets",
+        "total_debt"
+      ],
+      "provenance_policy": "all_operands_required",
+      "result_dimension": "currency",
+      "rounding_policy": "preserve_binary64_then_renderer_rounds",
+      "zero_division_policy": "fail_closed"
+    },
+    {
+      "determinism_contract": "pure_same_input_same_output",
+      "expression_contract": "numerator / denominator",
+      "formula_definition_id": "formula.ratio_multiple",
+      "formula_version": 1,
+      "legacy_aliases": [
+        "close_divided_by_trailing_eps",
+        "enterprise_value_divided_by_revenue_ttm",
+        "market_cap_divided_by_free_cash_flow_ttm"
+      ],
+      "legacy_operand_contracts": {
+        "close_divided_by_trailing_eps": {
+          "allowed_role_patterns": [
+            "^(close|trailing_eps)$"
+          ],
+          "max_operands": 2,
+          "min_operands": 2,
+          "required_roles": [
+            "close",
+            "trailing_eps"
+          ]
+        },
+        "enterprise_value_divided_by_revenue_ttm": {
+          "allowed_role_patterns": [
+            "^(enterprise_value|revenue_ttm)$"
+          ],
+          "max_operands": 2,
+          "min_operands": 2,
+          "required_roles": [
+            "enterprise_value",
+            "revenue_ttm"
+          ]
+        },
+        "market_cap_divided_by_free_cash_flow_ttm": {
+          "allowed_role_patterns": [
+            "^(free_cash_flow_ttm|market_cap)$"
+          ],
+          "max_operands": 2,
+          "min_operands": 2,
+          "required_roles": [
+            "free_cash_flow_ttm",
+            "market_cap"
+          ]
+        }
+      },
+      "missing_operand_policy": "fail_closed",
+      "operand_dimensions": [
+        "same"
+      ],
+      "operand_roles": [
+        "denominator",
+        "numerator"
+      ],
+      "provenance_policy": "all_operands_required",
+      "result_dimension": "multiple",
+      "rounding_policy": "preserve_binary64_then_renderer_rounds",
+      "zero_division_policy": "not_applicable"
+    },
+    {
+      "determinism_contract": "pure_same_input_same_output",
+      "expression_contract": "numerator / denominator",
+      "formula_definition_id": "formula.ratio_percent",
+      "formula_version": 1,
+      "legacy_aliases": [
+        "sbc_ttm_divided_by_free_cash_flow_ttm",
+        "sbc_ttm_divided_by_revenue_ttm"
+      ],
+      "legacy_operand_contracts": {
+        "sbc_ttm_divided_by_free_cash_flow_ttm": {
+          "allowed_role_patterns": [
+            "^(free_cash_flow_ttm|sbc_ttm)$"
+          ],
+          "max_operands": 2,
+          "min_operands": 2,
+          "required_roles": [
+            "free_cash_flow_ttm",
+            "sbc_ttm"
+          ]
+        },
+        "sbc_ttm_divided_by_revenue_ttm": {
+          "allowed_role_patterns": [
+            "^(revenue_ttm|sbc_ttm)$"
+          ],
+          "max_operands": 2,
+          "min_operands": 2,
+          "required_roles": [
+            "revenue_ttm",
+            "sbc_ttm"
+          ]
+        }
+      },
+      "missing_operand_policy": "fail_closed",
+      "operand_dimensions": [
+        "same"
+      ],
+      "operand_roles": [
+        "denominator",
+        "numerator"
+      ],
+      "provenance_policy": "all_operands_required",
+      "result_dimension": "percent",
+      "rounding_policy": "preserve_binary64_then_renderer_rounds",
+      "zero_division_policy": "not_applicable"
+    },
+    {
+      "determinism_contract": "pure_same_input_same_output",
+      "expression_contract": "solve growth where discounted equity value equals target equity value",
+      "formula_definition_id": "formula.reverse_dcf",
+      "formula_version": 1,
+      "legacy_aliases": [
+        "reverse_equity_dcf_growth_solver_v1"
+      ],
+      "legacy_operand_contracts": {
+        "reverse_equity_dcf_growth_solver_v1": {
+          "allowed_role_patterns": [
+            "^(discount_rate|forecast_years|starting_free_cash_flow|target_equity_value|terminal_growth_rate)$"
+          ],
+          "max_operands": 5,
+          "min_operands": 5,
+          "required_roles": [
+            "discount_rate",
+            "forecast_years",
+            "starting_free_cash_flow",
+            "target_equity_value",
+            "terminal_growth_rate"
+          ]
+        }
+      },
+      "missing_operand_policy": "fail_closed",
+      "operand_dimensions": [
+        "percent",
+        "count",
+        "currency",
+        "currency",
+        "percent"
+      ],
+      "operand_roles": [
+        "discount_rate",
+        "forecast_years",
+        "starting_free_cash_flow",
+        "target_equity_value",
+        "terminal_growth_rate"
+      ],
+      "provenance_policy": "all_operands_required",
+      "result_dimension": "percent",
+      "rounding_policy": "preserve_binary64_then_renderer_rounds",
+      "zero_division_policy": "fail_closed"
+    },
+    {
+      "determinism_contract": "pure_same_input_same_output",
+      "expression_contract": "measured risk weight / total risk weight",
+      "formula_definition_id": "formula.risk_coverage",
+      "formula_version": 1,
+      "legacy_aliases": [
+        "issuer_financial_risk_coverage_v1"
+      ],
+      "legacy_operand_contracts": {
+        "issuer_financial_risk_coverage_v1": {
+          "allowed_role_patterns": [
+            "^(capital_allocation|cash_flow_durability|dilution|financial_resilience)$"
+          ],
+          "max_operands": 4,
+          "min_operands": 4,
+          "required_roles": [
+            "capital_allocation",
+            "cash_flow_durability",
+            "dilution",
+            "financial_resilience"
+          ]
+        }
+      },
+      "missing_operand_policy": "fail_closed",
+      "operand_dimensions": [
+        "index"
+      ],
+      "operand_roles": [
+        "capital_allocation",
+        "cash_flow_durability",
+        "dilution",
+        "financial_resilience"
+      ],
+      "provenance_policy": "all_operands_required",
+      "result_dimension": "percent",
+      "rounding_policy": "preserve_binary64_then_renderer_rounds",
+      "zero_division_policy": "not_applicable"
+    },
+    {
+      "determinism_contract": "pure_same_input_same_output",
+      "expression_contract": "weighted measured risk components",
+      "formula_definition_id": "formula.risk_score",
+      "formula_version": 1,
+      "legacy_aliases": [
+        "issuer_financial_risk_v1"
+      ],
+      "legacy_operand_contracts": {
+        "issuer_financial_risk_v1": {
+          "allowed_role_patterns": [
+            "^(capital_allocation|cash_flow_durability|dilution|financial_resilience)$"
+          ],
+          "max_operands": 4,
+          "min_operands": 4,
+          "required_roles": [
+            "capital_allocation",
+            "cash_flow_durability",
+            "dilution",
+            "financial_resilience"
+          ]
+        }
+      },
+      "missing_operand_policy": "fail_closed",
+      "operand_dimensions": [
+        "index"
+      ],
+      "operand_roles": [
+        "capital_allocation",
+        "cash_flow_durability",
+        "dilution",
+        "financial_resilience"
+      ],
+      "provenance_policy": "all_operands_required",
+      "result_dimension": "index",
+      "rounding_policy": "preserve_binary64_then_renderer_rounds",
+      "zero_division_policy": "fail_closed"
+    },
+    {
+      "determinism_contract": "pure_same_input_same_output",
+      "expression_contract": "left - right",
+      "formula_definition_id": "formula.subtract_components",
+      "formula_version": 1,
+      "legacy_aliases": [
+        "shareholder_distributions_current_period_minus_free_cash_flow_current_period",
+        "shareholder_distributions_ttm_minus_free_cash_flow_ttm"
+      ],
+      "legacy_operand_contracts": {
+        "shareholder_distributions_current_period_minus_free_cash_flow_current_period": {
+          "allowed_role_patterns": [
+            "^(free_cash_flow_current_period|shareholder_distributions_current_period)$"
+          ],
+          "max_operands": 2,
+          "min_operands": 2,
+          "required_roles": [
+            "free_cash_flow_current_period",
+            "shareholder_distributions_current_period"
+          ]
+        },
+        "shareholder_distributions_ttm_minus_free_cash_flow_ttm": {
+          "allowed_role_patterns": [
+            "^(free_cash_flow_ttm|shareholder_distributions_ttm)$"
+          ],
+          "max_operands": 2,
+          "min_operands": 2,
+          "required_roles": [
+            "free_cash_flow_ttm",
+            "shareholder_distributions_ttm"
+          ]
+        }
+      },
+      "missing_operand_policy": "fail_closed",
+      "operand_dimensions": [
+        "same"
+      ],
+      "operand_roles": [
+        "left",
+        "right"
+      ],
+      "provenance_policy": "all_operands_required",
+      "result_dimension": "same",
+      "rounding_policy": "preserve_binary64_then_renderer_rounds",
+      "zero_division_policy": "fail_closed"
+    },
+    {
+      "determinism_contract": "pure_same_input_same_output",
+      "expression_contract": "sum available interest-bearing debt components",
+      "formula_definition_id": "formula.sum_debt",
+      "formula_version": 1,
+      "legacy_aliases": [
+        "sum_available_interest_bearing_debt_components"
+      ],
+      "legacy_operand_contracts": {
+        "sum_available_interest_bearing_debt_components": {
+          "allowed_role_patterns": [
+            "^debt_[a-z0-9_]+$"
+          ],
+          "max_operands": 16,
+          "min_operands": 1,
+          "required_roles": []
+        }
+      },
+      "missing_operand_policy": "fail_closed",
+      "operand_dimensions": [
+        "currency"
+      ],
+      "operand_roles": [
+        "component"
+      ],
+      "provenance_policy": "all_operands_required",
+      "result_dimension": "currency",
+      "rounding_policy": "preserve_binary64_then_renderer_rounds",
+      "zero_division_policy": "fail_closed"
+    },
+    {
+      "determinism_contract": "pure_same_input_same_output",
+      "expression_contract": "sum period-matched acquisition cash components",
+      "formula_definition_id": "formula.sum_period_components",
+      "formula_version": 1,
+      "legacy_aliases": [
+        "sum_period_matched_acquisition_cash_components"
+      ],
+      "legacy_operand_contracts": {
+        "sum_period_matched_acquisition_cash_components": {
+          "allowed_role_patterns": [
+            "^[A-Za-z0-9_.:-]+$"
+          ],
+          "max_operands": 32,
+          "min_operands": 1,
+          "required_roles": []
+        }
+      },
+      "missing_operand_policy": "fail_closed",
+      "operand_dimensions": [
+        "currency"
+      ],
+      "operand_roles": [
+        "component"
+      ],
+      "provenance_policy": "all_operands_required",
+      "result_dimension": "currency",
+      "rounding_policy": "preserve_binary64_then_renderer_rounds",
+      "zero_division_policy": "fail_closed"
+    },
+    {
+      "determinism_contract": "pure_same_input_same_output",
+      "expression_contract": "annual - prior_interim + current_interim",
+      "formula_definition_id": "formula.ttm_bridge",
+      "formula_version": 1,
+      "legacy_aliases": [
+        "annual_minus_prior_interim_plus_current_interim"
+      ],
+      "legacy_operand_contracts": {
+        "annual_minus_prior_interim_plus_current_interim": {
+          "allowed_role_patterns": [
+            "^(annual|current_interim|prior_interim)$"
+          ],
+          "max_operands": 3,
+          "min_operands": 3,
+          "required_roles": [
+            "annual",
+            "current_interim",
+            "prior_interim"
+          ]
+        }
+      },
+      "missing_operand_policy": "fail_closed",
+      "operand_dimensions": [
+        "same"
+      ],
+      "operand_roles": [
+        "annual",
+        "current_interim",
+        "prior_interim"
+      ],
+      "provenance_policy": "all_operands_required",
+      "result_dimension": "same",
+      "rounding_policy": "preserve_binary64_then_renderer_rounds",
+      "zero_division_policy": "fail_closed"
+    }
+  ],
+  "identifier_policies": {
+    "blocked_executable_prefixes": [
+      "event_",
+      "positional_",
+      "unknown_",
+      "unmapped_"
+    ],
+    "definition_instance_separation_required": true,
+    "single_definition_binding_required": true,
+    "ticker_specific_definitions_allowed": false,
+    "unknown_executable_ids_allowed": false
+  },
+  "metric_definitions": [
+    {
+      "allowed_currencies": [
+        "CAD",
+        "USD",
+        "none"
+      ],
+      "allowed_fact_types": [
+        "annual_cap",
+        "annual_rate",
+        "annualized_run_rate",
+        "basis_point_change",
+        "contribution_to_change",
+        "flow_value",
+        "guidance_component",
+        "guidance_range",
+        "instant_value",
+        "per_share_rate",
+        "percentage_of_total",
+        "period_total",
+        "policy_value",
+        "quarterly_rate",
+        "reconciliation_component",
+        "stock_value",
+        "year_over_year_change"
+      ],
+      "allowed_period_kinds": [
+        "comparison",
+        "duration",
+        "guidance",
+        "instant",
+        "rate",
+        "trailing_twelve_months"
+      ],
+      "allowed_scales": [
+        "base",
+        "basis_points",
+        "billion",
+        "million",
+        "none",
+        "percent",
+        "thousand"
+      ],
+      "allowed_units": [
+        "CAD",
+        "USD",
+        "USD/share",
+        "USD_per_share",
+        "basis_points",
+        "count",
+        "index",
+        "multiple",
+        "percent",
+        "ratio",
+        "score_0_100",
+        "shares",
+        "text"
+      ],
+      "compatibility": "additive_v1",
+      "definition_id": "metric.capital_allocation",
+      "definition_version": 1,
+      "dimensions": [
+        "basis_points",
+        "count",
+        "currency",
+        "index",
+        "multiple",
+        "per_share",
+        "percent",
+        "text"
+      ],
+      "instance_patterns": [
+        "^(buybacks_current_period|capital_allocation_.*|dividends_paid_current_period|fcf_definition_difference_current_period|free_cash_flow_current_period|issuer_defined_fcf_current_period|shareholder_distributions.*)$"
+      ],
+      "semantic_description": "Capital-allocation flow, residual or reconciliation metric."
+    },
+    {
+      "allowed_currencies": [
+        "CAD",
+        "USD",
+        "none"
+      ],
+      "allowed_fact_types": [
+        "annual_cap",
+        "annual_rate",
+        "annualized_run_rate",
+        "basis_point_change",
+        "contribution_to_change",
+        "flow_value",
+        "guidance_component",
+        "guidance_range",
+        "instant_value",
+        "per_share_rate",
+        "percentage_of_total",
+        "period_total",
+        "policy_value",
+        "quarterly_rate",
+        "reconciliation_component",
+        "stock_value",
+        "year_over_year_change"
+      ],
+      "allowed_period_kinds": [
+        "comparison",
+        "duration",
+        "guidance",
+        "instant",
+        "rate",
+        "trailing_twelve_months"
+      ],
+      "allowed_scales": [
+        "base",
+        "basis_points",
+        "billion",
+        "million",
+        "none",
+        "percent",
+        "thousand"
+      ],
+      "allowed_units": [
+        "CAD",
+        "USD",
+        "USD/share",
+        "USD_per_share",
+        "basis_points",
+        "count",
+        "index",
+        "multiple",
+        "percent",
+        "ratio",
+        "score_0_100",
+        "shares",
+        "text"
+      ],
+      "compatibility": "additive_v1",
+      "definition_id": "metric.core_financial",
+      "definition_version": 1,
+      "dimensions": [
+        "basis_points",
+        "count",
+        "currency",
+        "index",
+        "multiple",
+        "per_share",
+        "percent",
+        "text"
+      ],
+      "instance_patterns": [
+        "^(capex|current_period_.*|current_ratio|diluted_share_count_yoy|free_cash_flow_ttm|lease_liability_noncurrent|net_cash|net_income|net_income_ttm|operating_cash_flow|operating_income|revenue|revenue_ttm|sbc_to_fcf|sbc_to_revenue|total_debt)$"
+      ],
+      "semantic_description": "Reported or deterministically normalized core financial metric."
+    },
+    {
+      "allowed_currencies": [
+        "CAD",
+        "USD",
+        "none"
+      ],
+      "allowed_fact_types": [
+        "annual_cap",
+        "annual_rate",
+        "annualized_run_rate",
+        "basis_point_change",
+        "contribution_to_change",
+        "flow_value",
+        "guidance_component",
+        "guidance_range",
+        "instant_value",
+        "per_share_rate",
+        "percentage_of_total",
+        "period_total",
+        "policy_value",
+        "quarterly_rate",
+        "reconciliation_component",
+        "stock_value",
+        "year_over_year_change"
+      ],
+      "allowed_period_kinds": [
+        "comparison",
+        "duration",
+        "guidance",
+        "instant",
+        "rate",
+        "trailing_twelve_months"
+      ],
+      "allowed_scales": [
+        "base",
+        "basis_points",
+        "billion",
+        "million",
+        "none",
+        "percent",
+        "thousand"
+      ],
+      "allowed_units": [
+        "CAD",
+        "USD",
+        "USD/share",
+        "USD_per_share",
+        "basis_points",
+        "count",
+        "index",
+        "multiple",
+        "percent",
+        "ratio",
+        "score_0_100",
+        "shares",
+        "text"
+      ],
+      "compatibility": "additive_v1",
+      "definition_id": "metric.filing_numeric",
+      "definition_version": 1,
+      "dimensions": [
+        "basis_points",
+        "count",
+        "currency",
+        "index",
+        "multiple",
+        "per_share",
+        "percent",
+        "text"
+      ],
+      "instance_patterns": [
+        "^filing_.*$"
+      ],
+      "semantic_description": "Numeric disclosure instance extracted from a filing topic."
+    },
+    {
+      "allowed_currencies": [
+        "CAD",
+        "USD",
+        "none"
+      ],
+      "allowed_fact_types": [
+        "annual_cap",
+        "annual_rate",
+        "annualized_run_rate",
+        "basis_point_change",
+        "contribution_to_change",
+        "flow_value",
+        "guidance_component",
+        "guidance_range",
+        "instant_value",
+        "per_share_rate",
+        "percentage_of_total",
+        "period_total",
+        "policy_value",
+        "quarterly_rate",
+        "reconciliation_component",
+        "stock_value",
+        "year_over_year_change"
+      ],
+      "allowed_period_kinds": [
+        "comparison",
+        "duration",
+        "guidance",
+        "instant",
+        "rate",
+        "trailing_twelve_months"
+      ],
+      "allowed_scales": [
+        "base",
+        "basis_points",
+        "billion",
+        "million",
+        "none",
+        "percent",
+        "thousand"
+      ],
+      "allowed_units": [
+        "CAD",
+        "USD",
+        "USD/share",
+        "USD_per_share",
+        "basis_points",
+        "count",
+        "index",
+        "multiple",
+        "percent",
+        "ratio",
+        "score_0_100",
+        "shares",
+        "text"
+      ],
+      "compatibility": "additive_v1",
+      "definition_id": "metric.guidance",
+      "definition_version": 1,
+      "dimensions": [
+        "basis_points",
+        "count",
+        "currency",
+        "index",
+        "multiple",
+        "per_share",
+        "percent",
+        "text"
+      ],
+      "instance_patterns": [
+        "^guidance_.*$"
+      ],
+      "semantic_description": "Issuer guidance range or guidance component."
+    },
+    {
+      "allowed_currencies": [
+        "CAD",
+        "USD",
+        "none"
+      ],
+      "allowed_fact_types": [
+        "annual_cap",
+        "annual_rate",
+        "annualized_run_rate",
+        "basis_point_change",
+        "contribution_to_change",
+        "flow_value",
+        "guidance_component",
+        "guidance_range",
+        "instant_value",
+        "per_share_rate",
+        "percentage_of_total",
+        "period_total",
+        "policy_value",
+        "quarterly_rate",
+        "reconciliation_component",
+        "stock_value",
+        "year_over_year_change"
+      ],
+      "allowed_period_kinds": [
+        "comparison",
+        "duration",
+        "guidance",
+        "instant",
+        "rate",
+        "trailing_twelve_months"
+      ],
+      "allowed_scales": [
+        "base",
+        "basis_points",
+        "billion",
+        "million",
+        "none",
+        "percent",
+        "thousand"
+      ],
+      "allowed_units": [
+        "CAD",
+        "USD",
+        "USD/share",
+        "USD_per_share",
+        "basis_points",
+        "count",
+        "index",
+        "multiple",
+        "percent",
+        "ratio",
+        "score_0_100",
+        "shares",
+        "text"
+      ],
+      "compatibility": "additive_v1",
+      "definition_id": "metric.operating_kpi",
+      "definition_version": 1,
+      "dimensions": [
+        "basis_points",
+        "count",
+        "currency",
+        "index",
+        "multiple",
+        "per_share",
+        "percent",
+        "text"
+      ],
+      "instance_patterns": [
+        "^operating_kpi_.*$"
+      ],
+      "semantic_description": "Issuer operating KPI instance with period and optional segment parameters."
+    },
+    {
+      "allowed_currencies": [
+        "CAD",
+        "USD",
+        "none"
+      ],
+      "allowed_fact_types": [
+        "annual_cap",
+        "annual_rate",
+        "annualized_run_rate",
+        "basis_point_change",
+        "contribution_to_change",
+        "flow_value",
+        "guidance_component",
+        "guidance_range",
+        "instant_value",
+        "per_share_rate",
+        "percentage_of_total",
+        "period_total",
+        "policy_value",
+        "quarterly_rate",
+        "reconciliation_component",
+        "stock_value",
+        "year_over_year_change"
+      ],
+      "allowed_period_kinds": [
+        "comparison",
+        "duration",
+        "guidance",
+        "instant",
+        "rate",
+        "trailing_twelve_months"
+      ],
+      "allowed_scales": [
+        "base",
+        "basis_points",
+        "billion",
+        "million",
+        "none",
+        "percent",
+        "thousand"
+      ],
+      "allowed_units": [
+        "CAD",
+        "USD",
+        "USD/share",
+        "USD_per_share",
+        "basis_points",
+        "count",
+        "index",
+        "multiple",
+        "percent",
+        "ratio",
+        "score_0_100",
+        "shares",
+        "text"
+      ],
+      "compatibility": "additive_v1",
+      "definition_id": "metric.risk",
+      "definition_version": 1,
+      "dimensions": [
+        "basis_points",
+        "count",
+        "currency",
+        "index",
+        "multiple",
+        "per_share",
+        "percent",
+        "text"
+      ],
+      "instance_patterns": [
+        "^financial_risk_.*$"
+      ],
+      "semantic_description": "Deterministic issuer-risk score or coverage measurement."
+    },
+    {
+      "allowed_currencies": [
+        "CAD",
+        "USD",
+        "none"
+      ],
+      "allowed_fact_types": [
+        "annual_cap",
+        "annual_rate",
+        "annualized_run_rate",
+        "basis_point_change",
+        "contribution_to_change",
+        "flow_value",
+        "guidance_component",
+        "guidance_range",
+        "instant_value",
+        "per_share_rate",
+        "percentage_of_total",
+        "period_total",
+        "policy_value",
+        "quarterly_rate",
+        "reconciliation_component",
+        "stock_value",
+        "year_over_year_change"
+      ],
+      "allowed_period_kinds": [
+        "comparison",
+        "duration",
+        "guidance",
+        "instant",
+        "rate",
+        "trailing_twelve_months"
+      ],
+      "allowed_scales": [
+        "base",
+        "basis_points",
+        "billion",
+        "million",
+        "none",
+        "percent",
+        "thousand"
+      ],
+      "allowed_units": [
+        "CAD",
+        "USD",
+        "USD/share",
+        "USD_per_share",
+        "basis_points",
+        "count",
+        "index",
+        "multiple",
+        "percent",
+        "ratio",
+        "score_0_100",
+        "shares",
+        "text"
+      ],
+      "compatibility": "additive_v1",
+      "definition_id": "metric.scenario",
+      "definition_version": 1,
+      "dimensions": [
+        "basis_points",
+        "count",
+        "currency",
+        "index",
+        "multiple",
+        "per_share",
+        "percent",
+        "text"
+      ],
+      "instance_patterns": [
+        "^(dcf_.*|reverse_dcf_.*)$"
+      ],
+      "semantic_description": "Illustrative valuation scenario input or result excluded from rating logic unless separately permitted."
+    },
+    {
+      "allowed_currencies": [
+        "CAD",
+        "USD",
+        "none"
+      ],
+      "allowed_fact_types": [
+        "annual_cap",
+        "annual_rate",
+        "annualized_run_rate",
+        "basis_point_change",
+        "contribution_to_change",
+        "flow_value",
+        "guidance_component",
+        "guidance_range",
+        "instant_value",
+        "per_share_rate",
+        "percentage_of_total",
+        "period_total",
+        "policy_value",
+        "quarterly_rate",
+        "reconciliation_component",
+        "stock_value",
+        "year_over_year_change"
+      ],
+      "allowed_period_kinds": [
+        "comparison",
+        "duration",
+        "guidance",
+        "instant",
+        "rate",
+        "trailing_twelve_months"
+      ],
+      "allowed_scales": [
+        "base",
+        "basis_points",
+        "billion",
+        "million",
+        "none",
+        "percent",
+        "thousand"
+      ],
+      "allowed_units": [
+        "CAD",
+        "USD",
+        "USD/share",
+        "USD_per_share",
+        "basis_points",
+        "count",
+        "index",
+        "multiple",
+        "percent",
+        "ratio",
+        "score_0_100",
+        "shares",
+        "text"
+      ],
+      "compatibility": "additive_v1",
+      "definition_id": "metric.technical",
+      "definition_version": 1,
+      "dimensions": [
+        "basis_points",
+        "count",
+        "currency",
+        "index",
+        "multiple",
+        "per_share",
+        "percent",
+        "text"
+      ],
+      "instance_patterns": [
+        "^(close|rsi_14|sma_50|sma_200)$"
+      ],
+      "semantic_description": "Deterministic market or technical observation."
+    },
+    {
+      "allowed_currencies": [
+        "CAD",
+        "USD",
+        "none"
+      ],
+      "allowed_fact_types": [
+        "annual_cap",
+        "annual_rate",
+        "annualized_run_rate",
+        "basis_point_change",
+        "contribution_to_change",
+        "flow_value",
+        "guidance_component",
+        "guidance_range",
+        "instant_value",
+        "per_share_rate",
+        "percentage_of_total",
+        "period_total",
+        "policy_value",
+        "quarterly_rate",
+        "reconciliation_component",
+        "stock_value",
+        "year_over_year_change"
+      ],
+      "allowed_period_kinds": [
+        "comparison",
+        "duration",
+        "guidance",
+        "instant",
+        "rate",
+        "trailing_twelve_months"
+      ],
+      "allowed_scales": [
+        "base",
+        "basis_points",
+        "billion",
+        "million",
+        "none",
+        "percent",
+        "thousand"
+      ],
+      "allowed_units": [
+        "CAD",
+        "USD",
+        "USD/share",
+        "USD_per_share",
+        "basis_points",
+        "count",
+        "index",
+        "multiple",
+        "percent",
+        "ratio",
+        "score_0_100",
+        "shares",
+        "text"
+      ],
+      "compatibility": "additive_v1",
+      "definition_id": "metric.valuation",
+      "definition_version": 1,
+      "dimensions": [
+        "basis_points",
+        "count",
+        "currency",
+        "index",
+        "multiple",
+        "per_share",
+        "percent",
+        "text"
+      ],
+      "instance_patterns": [
+        "^(enterprise_value|ev_to_sales|market_cap|price_to_fcf|trailing_pe)$"
+      ],
+      "semantic_description": "Point-in-time valuation measurement."
+    }
+  ],
+  "owner": "research",
+  "parent_foundation_version": "1.0.0",
+  "parent_registry_authority_sha256": "3cbaea421c51e6a3f1b5dad14fc619fd66d1b5420322b619b76455ac9416a239",
+  "permission_corridor_definitions": [
+    {
+      "allowed_rating_contract": "allowed_ratings_subset_with_preferred_rating",
+      "non_advice_boundary_required": true,
+      "permission_corridor_definition_id": "permission.rating_corridor",
+      "publication_contract": "legacy_publication_permission_preserved"
+    }
+  ],
+  "product_role": "hash_verified_consumer_only",
+  "risk_definitions": [
+    {
+      "counterevidence_required": true,
+      "risk_definition_id": "risk.current_issuer_risk",
+      "score_eligibility": "calibrated_only",
+      "semantic_description": "Current issuer risk separated from data and review limitations."
+    }
+  ],
+  "version": "1.1.0"
+}
