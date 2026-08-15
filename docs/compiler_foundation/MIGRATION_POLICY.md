@@ -1,5 +1,25 @@
 # Compiler Foundation Migration Policy
 
+## Registry Foundation 1.1.0
+
+Registry Foundation 1.1.0 ist ein additiver Strangler-Layer oberhalb der
+unveränderten Foundation 1.0.0. Legacy-IDs werden nicht still umbenannt oder
+gelöscht, sondern eindeutig an generische Definitionen gebunden, als Alias bzw.
+Instanz klassifiziert oder fail closed quarantänisiert. Product darf diese
+Zuordnung weder bearbeiten noch ergänzen.
+
+Ab dem Freeze `room16-registry-foundation-v1.1.0` gilt:
+
+- neue Semantik nur über versionierte Research-Contracts;
+- keine Ticker-, Firmen- oder Canary-spezifischen Definitionen;
+- keine Promotion unbekannter oder quarantänisierter IDs ohne RFC und
+  Negativfixture;
+- keine Formel ohne registrierte Operandrollen, Ergebnisdimension und
+  Reproduktionsprüfung;
+- keine Änderung der neun BA4–BA9-Pass-Contracts ohne RFC;
+- keine Authority-Bundle-v4-Erzeugung in dieser Welle;
+- BA10 erst nach separater Operatorfreigabe.
+
 ## Purpose
 
 This policy protects Compiler Foundation v1 while BA3–BA12 replace legacy

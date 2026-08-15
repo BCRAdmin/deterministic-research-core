@@ -1,5 +1,17 @@
 # Compiler Foundation Changelog
 
+## 2026-08-15 — Registry Foundation 1.1.0 frozen
+
+- RFC-0001 als additive Registry Foundation 1.1.0 umgesetzt.
+- Definition und Instanz für Metric, Formula, Claim und Decision getrennt.
+- 100 Prozent der WM-/COST-/ABT-Identifier klassifiziert; Unknowns und
+  semantische Kollisionen blockieren fail closed.
+- DCF-Policy-Parameter von DCF-Evaluation und Prozentquoten von Multiplikatoren
+  semantisch getrennt.
+- Research Authority und Product Read-only-Mirror mit gemeinsamen Hashes
+  eingefroren.
+- Neun BA4–BA9-Pass-Contracts gebunden; BA10 bleibt unautorisiert.
+
 ## 1.0.0 - 2026-08-15
 
 Status: accepted and frozen.

@@ -1,0 +1,55 @@
+{
+  "contract_id": "room16.compiler.registry_foundation_freeze_manifest",
+  "contract_version": 1,
+  "status": "accepted_frozen",
+  "accepted_on": "2026-08-15",
+  "registry_foundation_version": "1.1.0",
+  "compatibility": "additive_successor_of_1.0.0",
+  "parent_compiler_foundation_version": "1.0.0",
+  "parent_compiler_foundation_lock_sha256": "8b9b7b2f59aa2cfed8280389f14c0e4edd11846d56c1d78e0dbf2c574da7d518",
+  "git": {
+    "tag": "room16-registry-foundation-v1.1.0",
+    "research_commit": "607cdc98e17caf35e47850e73c6b90487bba4193",
+    "research_tag_object": "8dd3d4c2e4d33d3f965a1dcceb09bb894f61f2d2",
+    "product_commit": "82c5525f3291ace4e3d8c0fdeee6bd67348f5a38",
+    "product_tag_object": "d1a6653113fcbfe67e26abb713fd95d7d9a5851a"
+  },
+  "authority": {
+    "owner": "research",
+    "authority_sha256": "55585f2242f32da4cc401455cd3186a97bf74f2c4a7feb5078e00d6a6e1ea5fb",
+    "canonical_document_sha256": "289b39a86f92cb25ad2f270b150bc775a8124eb036ece5f352b323492cb181d5",
+    "authority_file_sha256": "c7f8ae5066d32a533941f87b2552759233f7db2ac81b4102d805737c198577f8",
+    "authority_bundle_version": 3,
+    "authority_bundle_changed": false
+  },
+  "pass_protocol": {
+    "scope": ["BA4", "BA5", "BA6", "BA7", "BA8", "BA9"],
+    "pass_count": 9,
+    "pass_contracts_sha256": "f78cac545eeaa9d61407a61cb1f2ada09088b4e7028e5e620a45d4f374f0b1a0",
+    "pass_contracts_file_sha256": "859ad24826ffe969792a4e65001d4f46c6a6f57604bf5937c9252d834233f27a",
+    "ba10_authorized": false
+  },
+  "product_mirror": {
+    "mode": "hash_verified_read_only",
+    "parallel_truth_allowed": false,
+    "mirror_file_sha256": "c7f8ae5066d32a533941f87b2552759233f7db2ac81b4102d805737c198577f8",
+    "lock_file_sha256": "524a94b521e7b52b6587d76b3fa5f9030a6f712436d14705a3b0323f632785e9"
+  },
+  "canary_hashes": {
+    "WM": "a6b6d15ad7004573a56ad057884563cfbeeb2c3162dae0641a1b361b5e416d72",
+    "COST": "b97e6024855c7a772713ff9af4889987e4a9a8e5a3afca0d56a42a1ba8092ea4",
+    "ABT": "0926d3cafd312556ec267b2b25214d255ff9352daed77a01b7852addbb48dc45"
+  },
+  "rfc_required_for": [
+    "authority_bundle_abi_change",
+    "formula_semantic_change",
+    "identifier_classification_change",
+    "metric_semantic_change",
+    "pass_contract_change",
+    "product_authority_change",
+    "registry_contract_change",
+    "registry_version_change"
+  ],
+  "company_specific_definition_allowed": false,
+  "registry_reentry_without_rfc_allowed": false
+}
