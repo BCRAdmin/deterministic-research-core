@@ -147,10 +147,16 @@ def build_negative_fixture_proofs() -> tuple[dict[str, Any], ...]:
         "provenance": ProvenanceRef(source_id="compat.fixture", artifact_path="fixture.json", sha256=source_hash, locator="fixture://source").model_dump(mode="json"),
     }
     defective_source = {**source_values, "compatibility_adapter_id": None}
+
+    def evaluate_source_input(payload: dict[str, Any]) -> None:
+        values = copy.deepcopy(payload)
+        values["provenance"] = ProvenanceRef.model_validate(values["provenance"])
+        create_hashed(SourceInputIR, **values)
+
     proofs.append(_proof(
         "spine.unlabelled_legacy_bypass", "SCW-002", "LEGACY_COMPATIBILITY_ADAPTER_REQUIRED",
         defective_source, source_values,
-        lambda payload: create_hashed(SourceInputIR, **payload),
+        evaluate_source_input,
     ))
 
     def evaluate_table(text: str) -> None:
