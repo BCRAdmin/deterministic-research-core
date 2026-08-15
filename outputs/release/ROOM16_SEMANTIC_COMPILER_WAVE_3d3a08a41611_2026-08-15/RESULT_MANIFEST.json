@@ -1,0 +1,89 @@
+{
+  "authority_bundle_version": 3,
+  "compiler_foundation_version": "1.0.0",
+  "contract_id": "room16.compiler.semantic_wave_evidence_manifest",
+  "contract_version": 1,
+  "files": {
+    "00_EXECUTIVE_SUMMARY.md": {
+      "sha256": "c115e77d21b35e2dda2f5118ecf74d50650d7160b4392a4b5f16a1483743c21d",
+      "size": 1059
+    },
+    "01_RFC_0001_IMPLEMENTATION_RECORD.md": {
+      "sha256": "4301ef310846b041019ba8beaa528d59908527ae62e10f068430b22c29a50d79",
+      "size": 700
+    },
+    "02_REGISTRY_VERSION_AND_COMPATIBILITY.md": {
+      "sha256": "89faaee15eb438754c4a06900aefe69d4a253a3a33cd5235f5b9b26a1d614e44",
+      "size": 774
+    },
+    "03_METRIC_COVERAGE_MATRIX.json": {
+      "sha256": "9f9121c01408800755b27fbd0e659591dd91a51da57f7b7076cf08f771b9402d",
+      "size": 186418
+    },
+    "03_METRIC_COVERAGE_MATRIX.md": {
+      "sha256": "151d5af7c57e1603c082e11ca4fb26fe02e5eec1cc26eb0ab5b53e3b2d24ef39",
+      "size": 31368
+    },
+    "04_FORMULA_COVERAGE_MATRIX.json": {
+      "sha256": "1ad331e16cbb77fc8f4066b42198a6d5493754f8337473369347441e8e08dc0a",
+      "size": 6187
+    },
+    "04_FORMULA_COVERAGE_MATRIX.md": {
+      "sha256": "542d34b7478a439418049d495f1b6ae4f84a51bfebd79a4a819628b6293f8af0",
+      "size": 3162
+    },
+    "05_CLAIM_KIND_COVERAGE_MATRIX.json": {
+      "sha256": "501cda917c9e946ef21af6f4da0322b8be914796349bc5204c798b37f4a00117",
+      "size": 591
+    },
+    "05_CLAIM_KIND_COVERAGE_MATRIX.md": {
+      "sha256": "bf18cfc2d042ab1fed8cd1119e2d1683cff89731f8a3ee71028392737a94ff04",
+      "size": 289
+    },
+    "06_DECISION_ROUNDTRIP_RESULTS.json": {
+      "sha256": "ce4a0cb8088bb4118d8fa904eabfe8311eff2692ad9ab2b48b57c0e2b94f323f",
+      "size": 1224
+    },
+    "06_DECISION_ROUNDTRIP_RESULTS.md": {
+      "sha256": "650a96bcf1f20a183ee1aaf96b15a7ef9f80476d9b626811b2c7c4898574cd37",
+      "size": 595
+    },
+    "07_UNKNOWN_AND_COLLISION_RESULTS.md": {
+      "sha256": "3d19ab94178ef06a9ba9d571f5c5af49cb741422ddbfd42e2842e66a6dbbcf3f",
+      "size": 426
+    },
+    "08_NEGATIVE_FIXTURE_RESULTS.md": {
+      "sha256": "94518d2b731666579a4e1433375085e01729b0b796e57ced307945463703c1b3",
+      "size": 19020
+    },
+    "09_PRODUCT_MIRROR_CONFORMANCE.md": {
+      "sha256": "b6472831fe5dbd3978b47d41c4abc86b7f592c709b03ee646b0b590e4516c196",
+      "size": 384
+    },
+    "10_FOUNDATION_V1_IMMUTABILITY_PROOF.md": {
+      "sha256": "61796d7df01fa8b84769af523ec6f801e7053c01f699a8aab04787a0e64b0454",
+      "size": 699
+    },
+    "11_WM_COST_ABT_CANARY_RESULTS.md": {
+      "sha256": "61380fc69ffe5901932916113ef3b8aac79d8d22d5b8ebd1807019ebe6c3ceef",
+      "size": 12113
+    },
+    "12_BA4_BA9_RESULTS.md": {
+      "sha256": "ce05b6dcaf70dbad9defeb44454636ae561d10a2428f3537f28d1c392ee870e4",
+      "size": 827
+    },
+    "13_SEMANTIC_COMPILER_WAVE_VERDICT.json": {
+      "sha256": "d7ebbbf0e536b144b6fa02d0fdf1929e3753cc8d006331038bbbfced16d0efb2",
+      "size": 1101
+    },
+    "CHANGED_FILES.json": {
+      "sha256": "3fa01d412ace336110af2bfd71d4b4cb8e25a3844483ee71e83ea43ee4b725c1",
+      "size": 2223
+    }
+  },
+  "product_commit": "82c5525f3291ace4e3d8c0fdeee6bd67348f5a38",
+  "registry_foundation_version": "1.1.0",
+  "research_commit": "3d3a08a41611432050eb8a550493db969498afec",
+  "status": "pass",
+  "verdict_sha256": "d7ebbbf0e536b144b6fa02d0fdf1929e3753cc8d006331038bbbfced16d0efb2"
+}

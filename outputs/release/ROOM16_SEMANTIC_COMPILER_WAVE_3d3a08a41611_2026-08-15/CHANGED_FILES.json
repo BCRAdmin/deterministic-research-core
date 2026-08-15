@@ -1,0 +1,37 @@
+{
+  "product": [
+    "A\tconfig/room16_semantic_registry_mirror_v1_1.json",
+    "A\tconfig/room16_semantic_registry_mirror_v1_1.lock.json",
+    "M\troom16-app/package.json",
+    "A\troom16-app/scripts/test_semantic_registry_mirror.mjs",
+    "A\troom16-app/scripts/verify_semantic_registry_mirror.mjs"
+  ],
+  "research": [
+    "M\tdocs/compiler_foundation/CHANGELOG.md",
+    "M\tdocs/compiler_foundation/MIGRATION_POLICY.md",
+    "A\tdocs/compiler_foundation/REGISTRY_FOUNDATION_V1_1_FREEZE.md",
+    "A\tdocs/compiler_foundation/SEMANTIC_COMPILER_WAVE_BA4_BA9.md",
+    "A\tresearch_agent/semantic_compiler/registry_foundation/__init__.py",
+    "A\tresearch_agent/semantic_compiler/registry_foundation/authority.py",
+    "A\tresearch_agent/semantic_compiler/registry_foundation/config/registry_foundation_v1_1.json",
+    "A\tresearch_agent/semantic_compiler/registry_foundation/contracts.py",
+    "A\tresearch_agent/semantic_compiler/registry_foundation/coverage.py",
+    "A\tresearch_agent/semantic_compiler/registry_foundation/freeze/registry_foundation_manifest_v1_1.json",
+    "A\tresearch_agent/semantic_compiler/semantic_wave/__init__.py",
+    "A\tresearch_agent/semantic_compiler/semantic_wave/config/negative_fixture_catalog.json",
+    "A\tresearch_agent/semantic_compiler/semantic_wave/config/semantic_wave_pass_contracts.json",
+    "A\tresearch_agent/semantic_compiler/semantic_wave/contracts.py",
+    "A\tresearch_agent/semantic_compiler/semantic_wave/graphs.py",
+    "A\tresearch_agent/semantic_compiler/semantic_wave/legacy_replay.py",
+    "A\tresearch_agent/semantic_compiler/semantic_wave/metrics.py",
+    "A\tresearch_agent/semantic_compiler/semantic_wave/parser.py",
+    "A\tresearch_agent/semantic_compiler/semantic_wave/pass_protocol.py",
+    "A\tresearch_agent/semantic_compiler/semantic_wave/release_gates.py",
+    "A\tresearch_agent/semantic_compiler/semantic_wave/typed_facts.py",
+    "A\tresearch_agent/tests/test_registry_foundation_v1_1.py",
+    "A\tresearch_agent/tests/test_semantic_compiler_wave.py",
+    "A\tscripts/ops/build_semantic_compiler_wave_evidence.py",
+    "A\tscripts/ops/generate_semantic_registry_foundation_v1_1.py",
+    "A\tscripts/ops/verify_registry_foundation_freeze.py"
+  ]
+}

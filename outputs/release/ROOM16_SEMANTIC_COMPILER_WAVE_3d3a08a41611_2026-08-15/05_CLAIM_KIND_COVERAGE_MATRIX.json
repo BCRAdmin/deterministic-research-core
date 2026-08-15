@@ -1,0 +1,30 @@
+[
+  {
+    "claim_kind_definition_id": "claim.financial_metric",
+    "status": "active"
+  },
+  {
+    "claim_kind_definition_id": "claim.guidance",
+    "status": "active"
+  },
+  {
+    "claim_kind_definition_id": "claim.news",
+    "status": "active"
+  },
+  {
+    "claim_kind_definition_id": "claim.rating",
+    "status": "active"
+  },
+  {
+    "claim_kind_definition_id": "claim.risk",
+    "status": "active"
+  },
+  {
+    "claim_kind_definition_id": "claim.technical_metric",
+    "status": "active"
+  },
+  {
+    "claim_kind_definition_id": "claim.valuation_metric",
+    "status": "active"
+  }
+]

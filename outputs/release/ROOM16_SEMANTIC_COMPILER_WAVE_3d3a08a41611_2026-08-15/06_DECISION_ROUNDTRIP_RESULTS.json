@@ -1,0 +1,26 @@
+{
+  "ABT": {
+    "decision_graph_sha256": "47086b9a8c1364ee82c31ed16ad07210afda325441392f74c4a4400cd6093f4b",
+    "legacy_payload_sha256": "5ad7c37fdae6d64e4b2428fe294e59c1477d482e4da7391ce2de03505becd791",
+    "lossless": true,
+    "permission_corridor_preserved": true,
+    "rating_permission_preserved": true,
+    "roundtrip_sha256": "5ad7c37fdae6d64e4b2428fe294e59c1477d482e4da7391ce2de03505becd791"
+  },
+  "COST": {
+    "decision_graph_sha256": "d6424e057bcb3674867d0a530b5ca5304fe27f9c28af12df090124d488867d8e",
+    "legacy_payload_sha256": "b3103e364214ecd197cd52d7b0266f6166c97af07686749236fd2280280d5744",
+    "lossless": true,
+    "permission_corridor_preserved": true,
+    "rating_permission_preserved": true,
+    "roundtrip_sha256": "b3103e364214ecd197cd52d7b0266f6166c97af07686749236fd2280280d5744"
+  },
+  "WM": {
+    "decision_graph_sha256": "afe2ddc660ad1d2df18ea5baa961e3b7eb29a4d95df11e6c2efb25fa76363d0c",
+    "legacy_payload_sha256": "459ef4395babcb4c86179dc084d82a1d32df1ff7d4c9288a4236d26e33c4ceed",
+    "lossless": true,
+    "permission_corridor_preserved": true,
+    "rating_permission_preserved": true,
+    "roundtrip_sha256": "459ef4395babcb4c86179dc084d82a1d32df1ff7d4c9288a4236d26e33c4ceed"
+  }
+}
