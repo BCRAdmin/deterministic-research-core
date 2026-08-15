@@ -1,5 +1,16 @@
 # Compiler Foundation Changelog
 
+## RFC-0002 — Semantic IR Spine and Verification Completion
+
+- Externes `CHANGES_REQUIRED` für Stand `3d3a08a4` übernommen.
+- Additive Source→Verdict-Spine im Shadow-/Strangler-Modus ergänzt.
+- BA9/L10 Verification mit DiagnosticIR und CompileVerdictIR implementiert.
+- BA4 Table Grammar, enge Metric Signatures, vollständige Claim-Lineage und
+  graphbasierte Decision-Rekonstruktion ergänzt.
+- Foundation 1.0.0, Registry Foundation 1.1.0, Authority Bundle v3 und Product
+  Mirror unverändert belassen.
+- BA10 bleibt nicht autorisiert.
+
 ## 2026-08-15 — Registry Foundation 1.1.0 frozen
 
 - RFC-0001 als additive Registry Foundation 1.1.0 umgesetzt.

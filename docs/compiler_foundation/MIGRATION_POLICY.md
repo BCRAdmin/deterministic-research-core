@@ -1,5 +1,20 @@
 # Compiler Foundation Migration Policy
 
+## RFC-0002 Semantic Spine
+
+Authority Bundle v3 darf während der Strangler-Migration ausschließlich über
+benannte und hashgebundene Compatibility Source Inputs konsumiert werden. Ein
+Compatibility Adapter darf keine fachliche Parallelwahrheit erzeugen. Nach dem
+Parse-Pass konsumieren alle nachfolgenden Compiler-Pässe ausschließlich
+vorgelagerte IRs.
+
+Der alte BA4–BA9-Shadowpfad bleibt als reproduzierbare Migration Scaffolding
+erhalten, ist aber kein Completion-Gate mehr. Completion wird nur durch den
+RFC-0002-L10-Verification-Pass und berechnete Cross-Company-Gates bestimmt.
+
+BA10, Renderer-Cutover und Publication bleiben bis zu einem expliziten
+unabhängigen Architektur-PASS gesperrt.
+
 ## Registry Foundation 1.1.0
 
 Registry Foundation 1.1.0 ist ein additiver Strangler-Layer oberhalb der
