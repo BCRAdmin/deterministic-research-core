@@ -228,6 +228,23 @@ def build(output_parent: Path) -> tuple[Path, Path]:
     product_test = _run(
         ["npm", "run", "verify:semantic-registry"], PRODUCT_ROOT / "room16-app"
     )
+    research_full = _run(
+        [str(RESEARCH_ROOT / ".venv/bin/python"), "-m", "pytest", "-q"],
+        RESEARCH_ROOT,
+    )
+    product_full = _run(
+        [
+            "env",
+            "ROOM16_VERIFY_SKIP_HARDENING_STATE=1",
+            "npm",
+            "run",
+            "verify",
+        ],
+        PRODUCT_ROOT / "room16-app",
+    )
+    product_typecheck = _run(
+        ["npm", "run", "lint"], PRODUCT_ROOT / "room16-app"
+    )
     ruff = _run(
         [
             str(RESEARCH_ROOT / ".venv/bin/ruff"),
@@ -245,6 +262,9 @@ def build(output_parent: Path) -> tuple[Path, Path]:
         "negative_and_corrected_first": negative_first,
         "negative_reintroduction_second": negative_second,
         "product_cross_language": product_test,
+        "research_full_regression": research_full,
+        "product_full_regression_without_volatile_hardening_age": product_full,
+        "product_typecheck": product_typecheck,
         "ruff": ruff,
     }
     if any(item["status"] != "pass" for item in test_results.values()):
@@ -543,7 +563,10 @@ zu Registry Foundation 1.1.0.
         )
         + f"\n\nPass count: `{len(pass_payload['passes'])}`. Pass hash: `"
         + pass_result["pass_contracts_sha256"]
-        + "`. Side effects: none. Cache: content-addressed. Replay: hash-verified.\n",
+        + "`. Side effects: none. Cache: content-addressed. Replay: hash-verified.\n\n"
+        + "Full Research regression: `PASS`. Product verification: `PASS` with "
+        + "only the volatile hardening-age assertion explicitly skipped; the "
+        + "hardening verdict itself was not regenerated. Product TypeScript: `PASS`.\n",
     )
     _write(output / "13_SEMANTIC_COMPILER_WAVE_VERDICT.json", verdict)
 
