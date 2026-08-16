@@ -1,0 +1,22 @@
+{
+  "contract_id": "room16.compiler.pass_manifest_set",
+  "contract_version": 1,
+  "rfc_id": "RFC-0003",
+  "foundation_version": "1.0.0",
+  "registry_foundation_version": "1.1.0",
+  "authority_bundle_version": 3,
+  "compiler_mode": "compatibility_shadow",
+  "ba10_authorized": false,
+  "passes": [
+    {"pass_id":"ba4.l3.parse_sources","pass_version":3,"layer":"L3_parse_discover","ordinal":4,"input_ir_types":["semantic_compile_state.source_inputs"],"output_ir_type":"semantic_compile_state.parsed","skippable":false,"registry_dependencies":["room16.registry.source"]},
+    {"pass_id":"ba4.l3.discover_tables","pass_version":3,"layer":"L3_parse_discover","ordinal":5,"input_ir_types":["semantic_compile_state.parsed"],"output_ir_type":"semantic_compile_state.tables","skippable":false,"registry_dependencies":["room16.registry.table"]},
+    {"pass_id":"ba5.l4.normalize_reconcile","pass_version":3,"layer":"L4_normalize_reconcile","ordinal":6,"input_ir_types":["semantic_compile_state.tables"],"output_ir_type":"semantic_compile_state.normalized","skippable":false,"registry_dependencies":["room16.registry.typed_fact"]},
+    {"pass_id":"ba5.l5.build_typed_facts","pass_version":3,"layer":"L5_typed_fact","ordinal":7,"input_ir_types":["semantic_compile_state.normalized"],"output_ir_type":"semantic_compile_state.facts","skippable":false,"registry_dependencies":["room16.registry.typed_fact"]},
+    {"pass_id":"ba6.l6.bind_metric_signatures","pass_version":3,"layer":"L6_metric_formula","ordinal":8,"input_ir_types":["semantic_compile_state.facts"],"output_ir_type":"semantic_compile_state.metrics","skippable":false,"registry_dependencies":["room16.registry.metric"]},
+    {"pass_id":"ba6.l6.evaluate_formulas","pass_version":3,"layer":"L6_metric_formula","ordinal":9,"input_ir_types":["semantic_compile_state.metrics"],"output_ir_type":"semantic_compile_state.formulas","skippable":false,"registry_dependencies":["room16.registry.formula"]},
+    {"pass_id":"ba7.l7.build_evidence_graph","pass_version":3,"layer":"L7_evidence_graph","ordinal":10,"input_ir_types":["semantic_compile_state.formulas"],"output_ir_type":"semantic_compile_state.evidence","skippable":false,"registry_dependencies":["room16.registry.evidence_policy"]},
+    {"pass_id":"ba7.l8.build_claim_graph","pass_version":3,"layer":"L8_claim_graph","ordinal":11,"input_ir_types":["semantic_compile_state.evidence"],"output_ir_type":"semantic_compile_state.claims","skippable":false,"registry_dependencies":["room16.registry.claim"]},
+    {"pass_id":"ba8.l9.build_decision_graph","pass_version":3,"layer":"L9_decision_graph","ordinal":12,"input_ir_types":["semantic_compile_state.claims"],"output_ir_type":"semantic_compile_state.decisions","skippable":false,"registry_dependencies":["room16.registry.decision"]},
+    {"pass_id":"ba9.l10.verify_semantics","pass_version":3,"layer":"L10_verification","ordinal":13,"input_ir_types":["semantic_compile_state.decisions"],"output_ir_type":"semantic_compile_state.verified","skippable":false,"registry_dependencies":["room16.registry.diagnostic","room16.registry.verdict"]}
+  ]
+}

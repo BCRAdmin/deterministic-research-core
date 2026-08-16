@@ -19,6 +19,27 @@ from .table_grammar import discover_tables, parse_payload
 from .verification import compute_cross_company_gates
 
 
+def _stable_diagnostic_code(exc: Exception) -> str:
+    """Translate internal failures to the public fixture Diagnostic ABI."""
+    message = str(exc)
+    mappings = (
+        ("metric_signature_contract_mismatch", "METRIC_SIGNATURE_CONTRACT_MISMATCH"),
+        ("pass_contract_", "PASS_PROTOCOL_CONTRACT_VIOLATION"),
+        ("rfc_0002_pass_", "PASS_PROTOCOL_CONTRACT_VIOLATION"),
+        ("l10_verification_pass_", "PASS_PROTOCOL_CONTRACT_VIOLATION"),
+        ("legacy compatibility input requires an explicit adapter", "LEGACY_COMPATIBILITY_ADAPTER_REQUIRED"),
+        ("TABLE_GRAMMAR_COVERAGE_INCOMPLETE", "TABLE_GRAMMAR_COVERAGE_INCOMPLETE"),
+        ("CROSS_COMPANY_GATE_NOT_DERIVED", "CROSS_COMPANY_GATE_NOT_DERIVED"),
+        ("CLAIM_FACT_EVIDENCE_SOURCE_LOCATOR_LINEAGE_INCOMPLETE", "CLAIM_FACT_EVIDENCE_SOURCE_LOCATOR_LINEAGE_INCOMPLETE"),
+        ("decision_packet_fields_missing", "DECISION_GRAPH_ROUNDTRIP_LOSS"),
+        ("DECISION_GRAPH_ROUNDTRIP_LOSS", "DECISION_GRAPH_ROUNDTRIP_LOSS"),
+    )
+    for marker, code in mappings:
+        if marker in message:
+            return code
+    raise ValueError("UNMAPPED_INTERNAL_FIXTURE_FAILURE") from exc
+
+
 def _fact(signature: Any, **changes: str) -> TypedFactSpineIR:
     values = {
         "fact_id": "FACT_FIXTURE",
@@ -50,8 +71,15 @@ def _proof(fixture_id: str, finding_id: str, expected_code: str, defective: Any,
     def run(payload: Any) -> dict[str, Any]:
         try:
             evaluator(payload)
-        except Exception as exc:  # fixture evidence intentionally captures the fail-closed surface
-            return {"gate_allowed": False, "actual_diagnostic": str(exc), "payload_sha256": sha256_json(payload)}
+        except Exception as exc:  # the fixture boundary owns the stable public Diagnostic ABI
+            diagnostic_code = _stable_diagnostic_code(exc)
+            return {
+                "gate_allowed": False,
+                "actual_diagnostic": diagnostic_code,
+                "diagnostic_source": "fixture_boundary",
+                "internal_error_class": type(exc).__name__,
+                "payload_sha256": sha256_json(payload),
+            }
         return {"gate_allowed": True, "actual_diagnostic": None, "payload_sha256": sha256_json(payload)}
 
     defective_result = run(defective)
@@ -59,8 +87,10 @@ def _proof(fixture_id: str, finding_id: str, expected_code: str, defective: Any,
     reintroduced_result = run(copy.deepcopy(defective))
     closed = (
         not defective_result["gate_allowed"]
+        and defective_result["actual_diagnostic"] == expected_code
         and corrected_result["gate_allowed"]
         and not reintroduced_result["gate_allowed"]
+        and reintroduced_result["actual_diagnostic"] == expected_code
     )
     return {
         "fixture_id": fixture_id,
@@ -72,6 +102,8 @@ def _proof(fixture_id: str, finding_id: str, expected_code: str, defective: Any,
         "defective_result": defective_result,
         "corrected_result": corrected_result,
         "reintroduced_result": reintroduced_result,
+        "defective_exact_code_match": defective_result["actual_diagnostic"] == expected_code,
+        "reintroduced_exact_code_match": reintroduced_result["actual_diagnostic"] == expected_code,
         "closure_proven": closed,
     }
 
