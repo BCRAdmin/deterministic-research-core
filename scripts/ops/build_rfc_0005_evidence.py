@@ -9,6 +9,9 @@ import json
 import shutil
 import subprocess
 import tempfile
+import time
+import urllib.error
+import urllib.request
 import zipfile
 from datetime import date
 from pathlib import Path
@@ -95,6 +98,50 @@ def _run(command: list[str], cwd: Path) -> dict[str, Any]:
     }
 
 
+def _product_full_verify() -> dict[str, Any]:
+    server_log = tempfile.TemporaryFile(mode="w+t", encoding="utf-8")
+    server = subprocess.Popen(
+        ["node", "server.mjs", "--static", "--port", "4516"],
+        cwd=APP_ROOT,
+        text=True,
+        stdout=server_log,
+        stderr=subprocess.STDOUT,
+    )
+    try:
+        ready = False
+        for _ in range(60):
+            if server.poll() is not None:
+                break
+            try:
+                with urllib.request.urlopen(
+                    "http://127.0.0.1:4516/api/health", timeout=1
+                ) as response:
+                    ready = response.status == 200
+            except (OSError, urllib.error.URLError):
+                pass
+            if ready:
+                break
+            time.sleep(0.25)
+        if not ready:
+            server_log.seek(0)
+            return {
+                "command": ["npm", "run", "verify"],
+                "cwd": str(APP_ROOT),
+                "exit_code": 1,
+                "output": "managed Product server did not become healthy\n"
+                + server_log.read(),
+            }
+        return _run(["npm", "run", "verify"], APP_ROOT)
+    finally:
+        server.terminate()
+        try:
+            server.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            server.kill()
+            server.wait(timeout=5)
+        server_log.close()
+
+
 def _deterministic_zip(source: Path, target: Path) -> None:
     with zipfile.ZipFile(
         target, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9
@@ -123,7 +170,7 @@ def _authority_source_parity(archive: Path, bridge: dict[str, Any]) -> bool:
 
 
 def _test_commands() -> dict[str, dict[str, Any]]:
-    return {
+    tests = {
         "research_targeted": _run(
             [
                 str(RESEARCH_ROOT / ".venv/bin/python"),
@@ -154,20 +201,22 @@ def _test_commands() -> dict[str, dict[str, Any]]:
             ],
             RESEARCH_ROOT,
         ),
-        "product_verify": _run(["npm", "run", "verify"], APP_ROOT),
-        "product_build": _run(["npm", "run", "build"], APP_ROOT),
-        "product_python": _run(
-            [
-                str(PRODUCT_ROOT / ".venv/bin/python"),
-                "-m",
-                "pytest",
-                "-q",
-                "tests/test_room16_render_determinism.py",
-                "tests/test_room16_render_only_bundle.py",
-            ],
-            PRODUCT_ROOT,
-        ),
+        "product_hardening_once": _run(["npm", "run", "hardening:once"], APP_ROOT),
     }
+    tests["product_verify"] = _product_full_verify()
+    tests["product_build"] = _run(["npm", "run", "build"], APP_ROOT)
+    tests["product_python"] = _run(
+        [
+            str(PRODUCT_ROOT / ".venv/bin/python"),
+            "-m",
+            "pytest",
+            "-q",
+            "tests/test_room16_render_determinism.py",
+            "tests/test_room16_render_only_bundle.py",
+        ],
+        PRODUCT_ROOT,
+    )
+    return tests
 
 
 def main() -> None:
