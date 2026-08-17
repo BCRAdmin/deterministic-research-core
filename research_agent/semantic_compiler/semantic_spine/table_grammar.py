@@ -53,12 +53,12 @@ def _normalize(value: Any) -> int | float | str | bool | None:
     if not text:
         return None
     candidate = text.replace("\u00a0", " ").replace(",", "").replace("$", "").replace("€", "")
+    percent = candidate.endswith("%")
+    if percent:
+        candidate = candidate[:-1].strip()
     negative = candidate.startswith("(") and candidate.endswith(")")
     if negative:
         candidate = candidate[1:-1]
-    percent = candidate.endswith("%")
-    if percent:
-        candidate = candidate[:-1]
     try:
         number = float(candidate)
         number = -number if negative else number
