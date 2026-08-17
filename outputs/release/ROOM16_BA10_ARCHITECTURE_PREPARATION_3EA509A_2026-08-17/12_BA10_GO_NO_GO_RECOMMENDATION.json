@@ -1,0 +1,55 @@
+{
+  "contract_id": "room16.ba10_architecture_recommendation",
+  "contract_version": 1,
+  "recommendation": "BA10_IMPLEMENTATION_READY",
+  "recommendation_scope": "architecture_ready_for_separate_operator_authorization",
+  "baseline": {
+    "foundation_version": "1.0.0",
+    "registry_foundation_version": "1.1.0",
+    "semantic_wave_version": "1.0.0",
+    "semantic_wave_version_lock": "62867ad72cd1a99eee482e75087cbe01449faa650d7cf2c535fd494c5fef30f9",
+    "semantic_wave_tag": "room16-semantic-compiler-wave-v1.0.0",
+    "research_frozen_commit": "b498c5c2835682b3f81dc475a276df6ab58a79fd",
+    "research_review_head": "3ea509a10bbf4a72371cbea6f276016192aa61dd",
+    "product_commit": "82c5525f3291ace4e3d8c0fdeee6bd67348f5a38",
+    "authority_bundle_version": 3
+  },
+  "findings": {
+    "canonical_compiler_artifact_bundle_exists": false,
+    "semantic_compiler_is_product_input": false,
+    "current_live_transport": "room16.research_authority_bundle@3_plus_legacy_research_report_artifacts",
+    "compiler_mode": "compatibility_shadow",
+    "source_native_fact_generation": false,
+    "product_duplicate_or_mixed_semantic_components_exist": true,
+    "frozen_foundation_change_required": false,
+    "frozen_semantic_wave_change_required": false,
+    "new_ba10_rfc_required": true
+  },
+  "required_target": {
+    "contract": "room16.compiler_artifact_bundle@1",
+    "authority_v3_role": "compatibility_view",
+    "product_role": "read_only_consumer_and_operational_governance",
+    "renderer_role": "presentation_only",
+    "llm_interpretation_role": "non_authoritative_annotation"
+  },
+  "status": {
+    "ba10_authorized": false,
+    "ba10_started": false,
+    "ba10_implemented": false,
+    "renderer_cutover": false,
+    "release_ready": false,
+    "publication_allowed": false,
+    "ba11_authorized": false,
+    "ba12_authorized": false
+  },
+  "next_operator_gate": "explicit_authorization_of_rfc_0005_artifact_abi_and_renderer_isolation",
+  "stop_conditions": [
+    "foundation_1_0_0_change_required",
+    "registry_foundation_1_1_0_change_required",
+    "semantic_wave_ba0_ba9_change_required",
+    "authority_bundle_v3_break_required",
+    "wm_cost_abt_canary_change_required",
+    "product_semantic_authority_required",
+    "company_specific_logic_required"
+  ]
+}

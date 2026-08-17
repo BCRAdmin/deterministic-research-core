@@ -1,0 +1,215 @@
+{
+  "nodes": [
+    {
+      "id": "research-group",
+      "type": "group",
+      "x": -1240,
+      "y": -360,
+      "width": 760,
+      "height": 960,
+      "label": "Research — einzige fachliche Wahrheit",
+      "color": "4"
+    },
+    {
+      "id": "product-group",
+      "type": "group",
+      "x": 500,
+      "y": -360,
+      "width": 820,
+      "height": 960,
+      "label": "Product — read-only Consumer und Runtime",
+      "color": "5"
+    },
+    {
+      "id": "sources",
+      "type": "text",
+      "x": -1170,
+      "y": -260,
+      "width": 260,
+      "height": 120,
+      "text": "# L0–L2\nSources, Snapshots, Parse, Tables"
+    },
+    {
+      "id": "semantic",
+      "type": "text",
+      "x": -1170,
+      "y": -40,
+      "width": 260,
+      "height": 210,
+      "text": "# L3–L9\nNormalized Records\nTyped Facts\nMetrics + Formulas\nEvidence + Claims\nDecision Graph"
+    },
+    {
+      "id": "verification",
+      "type": "text",
+      "x": -1170,
+      "y": 270,
+      "width": 260,
+      "height": 150,
+      "text": "# L10 Verification\nDiagnosticIR\nCompileVerdictIR\nfail closed"
+    },
+    {
+      "id": "bundle",
+      "type": "text",
+      "x": -820,
+      "y": -130,
+      "width": 280,
+      "height": 260,
+      "text": "# BA10 L11\n`room16.compiler_artifact_bundle@1`\n\nKanonisch\ncontent-addressed\nhash- und versionsgebunden\nnoch nicht implementiert",
+      "color": "3"
+    },
+    {
+      "id": "bridge",
+      "type": "text",
+      "x": -820,
+      "y": 260,
+      "width": 280,
+      "height": 170,
+      "text": "# Compatibility Bridge\nBundle → Authority Bundle v3 View\n\nShadow-Ursprung bleibt ausdrücklich sichtbar",
+      "color": "6"
+    },
+    {
+      "id": "intake",
+      "type": "text",
+      "x": 570,
+      "y": -250,
+      "width": 260,
+      "height": 150,
+      "text": "# Product Intake\nABI / Hash / Version / Capability prüfen\nKeine Finanzsemantik"
+    },
+    {
+      "id": "renderers",
+      "type": "text",
+      "x": 950,
+      "y": -250,
+      "width": 290,
+      "height": 210,
+      "text": "# Renderer\nPDF · DOCX · Markdown\nJSON · API · UI\n\nAuswählen, ordnen, lokalisieren, layouten"
+    },
+    {
+      "id": "no-new-truth",
+      "type": "text",
+      "x": 950,
+      "y": 70,
+      "width": 290,
+      "height": 220,
+      "text": "# No-New-Truth\nOutput Facts ⊆ Bundle Facts\nOutput Claims ⊆ Bundle Claims\nOutput Decisions ⊆ Bundle Decisions\nJede sichtbare Zahl besitzt Lineage",
+      "color": "1"
+    },
+    {
+      "id": "ops",
+      "type": "text",
+      "x": 570,
+      "y": 340,
+      "width": 270,
+      "height": 170,
+      "text": "# Product Governance\nQueue · UI · Review\nLegal · Editorial · Delivery\nDarf weiter einschränken, nie Compiler-Block lösen"
+    },
+    {
+      "id": "annotations",
+      "type": "text",
+      "x": 950,
+      "y": 390,
+      "width": 290,
+      "height": 150,
+      "text": "# TradingAgents / LLM\nNur non-authoritative Annotation\nKein Fact-, Rating-, Permission- oder Release-Effekt",
+      "color": "2"
+    },
+    {
+      "id": "gate",
+      "type": "text",
+      "x": -330,
+      "y": -80,
+      "width": 520,
+      "height": 260,
+      "text": "# Aktueller Gate-Stand\n`BA10_IMPLEMENTATION_READY`\n\nArchitektur bereit für separates Operator-Go.\nBA10 nicht autorisiert, nicht gestartet.\nRelease und Publication bleiben gesperrt.",
+      "color": "3"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-sources-semantic",
+      "fromNode": "sources",
+      "fromSide": "bottom",
+      "toNode": "semantic",
+      "toSide": "top"
+    },
+    {
+      "id": "e-semantic-verify",
+      "fromNode": "semantic",
+      "fromSide": "bottom",
+      "toNode": "verification",
+      "toSide": "top"
+    },
+    {
+      "id": "e-verify-bundle",
+      "fromNode": "verification",
+      "fromSide": "right",
+      "toNode": "bundle",
+      "toSide": "bottom",
+      "label": "nur verifizierte IR"
+    },
+    {
+      "id": "e-bundle-bridge",
+      "fromNode": "bundle",
+      "fromSide": "bottom",
+      "toNode": "bridge",
+      "toSide": "top",
+      "label": "Compatibility View"
+    },
+    {
+      "id": "e-bundle-gate",
+      "fromNode": "bundle",
+      "fromSide": "right",
+      "toNode": "gate",
+      "toSide": "left",
+      "label": "Review-Ergebnis"
+    },
+    {
+      "id": "e-gate-intake",
+      "fromNode": "gate",
+      "fromSide": "right",
+      "toNode": "intake",
+      "toSide": "left",
+      "label": "erst nach Operator-Go"
+    },
+    {
+      "id": "e-intake-render",
+      "fromNode": "intake",
+      "fromSide": "right",
+      "toNode": "renderers",
+      "toSide": "left"
+    },
+    {
+      "id": "e-render-invariant",
+      "fromNode": "renderers",
+      "fromSide": "bottom",
+      "toNode": "no-new-truth",
+      "toSide": "top",
+      "label": "maschinenprüfbar"
+    },
+    {
+      "id": "e-intake-ops",
+      "fromNode": "intake",
+      "fromSide": "bottom",
+      "toNode": "ops",
+      "toSide": "top"
+    },
+    {
+      "id": "e-intake-annotations",
+      "fromNode": "intake",
+      "fromSide": "bottom",
+      "toNode": "annotations",
+      "toSide": "top",
+      "label": "isolierte Sichtweisen"
+    },
+    {
+      "id": "e-annotations-render",
+      "fromNode": "annotations",
+      "fromSide": "top",
+      "toNode": "renderers",
+      "toSide": "bottom",
+      "label": "nicht kanonisch",
+      "color": "1"
+    }
+  ]
+}
