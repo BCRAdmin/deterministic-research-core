@@ -29,7 +29,9 @@ from research_agent.semantic_compiler.semantic_spine.rfc_0004 import (
 
 from .contracts import (
     REQUIRED_ARTIFACT_KINDS,
+    REQUIRED_BUNDLE_SECTION_IDS,
     ArtifactRecord,
+    BundleSectionRecord,
     CompatibilityState,
     CompileIdentity,
     CompilerArtifactBundleManifest,
@@ -117,6 +119,7 @@ def _record(
     required: bool = True,
     authoritative: bool = True,
     compatibility_only: bool = False,
+    compatibility_rule: str = "exact_hash",
     dependencies: Iterable[str] = (),
     provenance: Iterable[str] = (),
 ) -> ArtifactRecord:
@@ -132,6 +135,7 @@ def _record(
         sha256=sha256_bytes(payload),
         byte_length=len(payload),
         required=required,
+        compatibility_rule=compatibility_rule,
         authoritative=authoritative,
         compatibility_only=compatibility_only,
         dependency_sha256s=tuple(sorted(set(dependencies))),
@@ -152,6 +156,7 @@ def _add_json(
     required: bool = True,
     authoritative: bool = True,
     compatibility_only: bool = False,
+    compatibility_rule: str = "exact_hash",
     dependencies: Iterable[str] = (),
     provenance: Iterable[str] = (),
 ) -> ArtifactRecord:
@@ -169,6 +174,7 @@ def _add_json(
         required=required,
         authoritative=authoritative,
         compatibility_only=compatibility_only,
+        compatibility_rule=compatibility_rule,
         dependencies=dependencies,
         provenance=provenance,
     )
@@ -352,6 +358,7 @@ def _write_v3_compatibility(
                 layer="L11_emit", producer_pass_id="ba10.l11.authority_v3_bridge",
                 media_type="application/json" if relative.endswith(".json") else "application/octet-stream",
                 required=False, authoritative=False, compatibility_only=True,
+                compatibility_rule="byte_identical_compatibility_view",
                 provenance=(f"archive:{archive.name}:{member}",),
             )
             records.append(item)
@@ -410,6 +417,7 @@ def _write_v3_compatibility(
         artifact_kind="authority_v3_bridge", relative_path=BRIDGE_PATH,
         value=bridge, layer="L11_emit", producer_pass_id="ba10.l11.authority_v3_bridge",
         authoritative=False, compatibility_only=True,
+        compatibility_rule="byte_identical_compatibility_view",
         dependencies=(item["sha256"] for item in v3_records),
     )
     return bridge_record, legacy_markdown_sha256, {
@@ -459,32 +467,113 @@ def build_compiler_artifact_bundle(
         records = sorted(records, key=lambda item: item.artifact_id)
         verdict = result["verification_report"]["verdict"]
         compile_allowed = bool(verdict["compile_allowed"])
+        compiler_identity = CompilerIdentity(
+            pass_manifest_sha256=freeze["pass_manifest"]["effective_pass_manifest_sha256"],
+            ir_schema_set_sha256=freeze["ir_schema"]["schema_set_sha256"],
+            registry_authority_sha256=freeze["registry"]["authority_sha256"],
+        ).model_dump(mode="json")
+        compile_identity = CompileIdentity(
+            ticker=result["ticker"], as_of_date=result["as_of_date"],
+            source_archive_sha256=before,
+            final_compile_state_sha256=result["compile_state"]["ir_sha256"],
+            verification_report_sha256=result["verification_report"]["ir_sha256"],
+            replay_sha256=result["replay_sha256"],
+        ).model_dump(mode="json")
+        compatibility = CompatibilityState(
+            mode="authority_v3_compatibility_shadow"
+        ).model_dump(mode="json")
+        artifact_dump = [item.model_dump(mode="json") for item in records]
+        artifact_index_sha256 = sha256_json(artifact_dump)
+        artifact_by_kind: dict[str, list[ArtifactRecord]] = {}
+        for item in records:
+            artifact_by_kind.setdefault(item.artifact_kind, []).append(item)
+
+        def section(
+            section_id: str,
+            value: Any,
+            *,
+            artifact_kinds: tuple[str, ...] = (),
+            compatibility_rule: str = "exact_version",
+        ) -> BundleSectionRecord:
+            artifact_ids = tuple(
+                sorted(
+                    item.artifact_id
+                    for kind in artifact_kinds
+                    for item in artifact_by_kind.get(kind, [])
+                )
+            )
+            return BundleSectionRecord(
+                section_id=section_id,
+                schema_version="1.0.0",
+                sha256=sha256_json(value),
+                compatibility_rule=compatibility_rule,
+                required=True,
+                artifact_ids=artifact_ids,
+            )
+
+        ir_references = {
+            item.artifact_id: item.sha256
+            for item in records
+            if item.authoritative and item.layer.startswith("L")
+        }
+        sections = sorted(
+            (
+                section("compile_identity", compile_identity),
+                section("compiler_version", compiler_identity["compiler_version"]),
+                section(
+                    "foundation_version",
+                    compiler_identity["foundation_version"],
+                    compatibility_rule="immutable_reference",
+                ),
+                section(
+                    "registry_lock",
+                    result["compile_state"]["semantic_registry_lock"],
+                    artifact_kinds=("registry_lock",),
+                    compatibility_rule="immutable_reference",
+                ),
+                section(
+                    "pass_manifest",
+                    compiler_identity["pass_manifest_sha256"],
+                    compatibility_rule="immutable_reference",
+                ),
+                section("source_provenance", artifacts["source_inputs"], artifact_kinds=("source_provenance",)),
+                section("ir_references", ir_references),
+                section("typed_facts", artifacts["typed_facts"], artifact_kinds=("typed_facts",)),
+                section("metrics", artifacts["metrics"], artifact_kinds=("metrics",)),
+                section("formula_evaluations", artifacts["formula_evaluations"], artifact_kinds=("formula_evaluations",)),
+                section("evidence_graph", artifacts["complete_evidence_graph"], artifact_kinds=("evidence_graph",)),
+                section("claim_graph", artifacts["claim_graph"], artifact_kinds=("claim_graph",)),
+                section("decision_graph", artifacts["semantic_decision_graph"], artifact_kinds=("decision_graph",)),
+                section("diagnostics", result["verification_report"]["diagnostics"], artifact_kinds=("diagnostics",)),
+                section("compile_verdict", verdict, artifact_kinds=("compile_verdict",)),
+                section(
+                    "compatibility_state",
+                    compatibility,
+                    artifact_kinds=("authority_v3_bridge",),
+                    compatibility_rule="byte_identical_compatibility_view",
+                ),
+                section("artifact_hashes", artifact_dump),
+            ),
+            key=lambda item: item.section_id,
+        )
+        if tuple(item.section_id for item in sections) != REQUIRED_BUNDLE_SECTION_IDS:
+            raise ArtifactBundleError("ABI_REQUIRED_SECTION_SET_INVALID", "section_index")
         manifest_body = {
             "contract_id": "room16.compiler_artifact_bundle",
             "contract_version": 1,
-            "schema_version": "1.0.0",
+            "schema_version": "1.1.0",
             "canonicalization_profile": "room16.foundation.canonical_json@1",
             "hash_algorithm": "sha256",
-            "compiler_identity": CompilerIdentity(
-                pass_manifest_sha256=freeze["pass_manifest"]["effective_pass_manifest_sha256"],
-                ir_schema_set_sha256=freeze["ir_schema"]["schema_set_sha256"],
-                registry_authority_sha256=freeze["registry"]["authority_sha256"],
-            ).model_dump(mode="json"),
-            "compile_identity": CompileIdentity(
-                ticker=result["ticker"], as_of_date=result["as_of_date"],
-                source_archive_sha256=before,
-                final_compile_state_sha256=result["compile_state"]["ir_sha256"],
-                verification_report_sha256=result["verification_report"]["ir_sha256"],
-                replay_sha256=result["replay_sha256"],
-            ).model_dump(mode="json"),
+            "compiler_identity": compiler_identity,
+            "compile_identity": compile_identity,
             "registry_lock": result["compile_state"]["semantic_registry_lock"],
-            "artifact_index_sha256": sha256_json(
-                [item.model_dump(mode="json") for item in records]
+            "artifact_index_sha256": artifact_index_sha256,
+            "artifacts": artifact_dump,
+            "section_index_sha256": sha256_json(
+                [item.model_dump(mode="json") for item in sections]
             ),
-            "artifacts": [item.model_dump(mode="json") for item in records],
-            "compatibility": CompatibilityState(
-                mode="authority_v3_compatibility_shadow"
-            ).model_dump(mode="json"),
+            "sections": [item.model_dump(mode="json") for item in sections],
+            "compatibility": compatibility,
             "eligibility": EligibilityState(
                 compile_allowed=compile_allowed, renderer_eligible=compile_allowed
             ).model_dump(mode="json"),

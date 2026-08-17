@@ -41,6 +41,9 @@ CANARY_HASHES = {
 }
 BASE_RESEARCH_COMMIT = "f377e47bbaf15b29dc36b45c0a3008f95413a99d"
 BASE_PRODUCT_COMMIT = "82c5525f3291ace4e3d8c0fdeee6bd67348f5a38"
+PREVIOUS_EVIDENCE_SHA256 = (
+    "3331e014eb8db46b3903800688e2597028630bba0b731e43f8cae4b6007c7aa9"
+)
 
 
 def _json(path: Path, value: Any) -> None:
@@ -202,17 +205,28 @@ def _test_commands() -> dict[str, dict[str, Any]]:
             RESEARCH_ROOT,
         ),
         "product_hardening_once": _run(["npm", "run", "hardening:once"], APP_ROOT),
+        "product_truth_boundary": _run(
+            ["node", "scripts/verify_product_truth_boundary.mjs"], APP_ROOT
+        ),
+        "research_lint": _run(
+            [
+                str(RESEARCH_ROOT / ".venv/bin/ruff"),
+                "check",
+                "research_agent/productization",
+                "research_agent/tests/test_ba10_artifact_bundle.py",
+                "scripts/ops/build_rfc_0005_evidence.py",
+            ],
+            RESEARCH_ROOT,
+        ),
     }
     tests["product_verify"] = _product_full_verify()
     tests["product_build"] = _run(["npm", "run", "build"], APP_ROOT)
-    tests["product_python"] = _run(
+    tests["product_python_full"] = _run(
         [
             str(PRODUCT_ROOT / ".venv/bin/python"),
             "-m",
             "pytest",
             "-q",
-            "tests/test_room16_render_determinism.py",
-            "tests/test_room16_render_only_bundle.py",
         ],
         PRODUCT_ROOT,
     )
@@ -290,6 +304,12 @@ def main() -> None:
                 "deterministic": one.bundle_sha256 == two.bundle_sha256
                 and _tree_hash(first) == _tree_hash(second),
                 "artifact_count": len(one.artifacts),
+                "section_count": len(one.sections),
+                "section_ids": [item.section_id for item in one.sections],
+                "section_owners": sorted({item.owner for item in one.sections}),
+                "section_compatibility_rules": {
+                    item.section_id: item.compatibility_rule for item in one.sections
+                },
                 "required_sections": list(one.required_sections),
                 "compile_allowed": one.eligibility.compile_allowed,
                 "release_ready": one.eligibility.release_ready,
@@ -306,7 +326,7 @@ def main() -> None:
 
         wm = first_bundles["WM"]
         authority = root / "wm_authority_v3"
-        bridge_materialization = materialize_authority_v3_view(
+        materialize_authority_v3_view(
             bundle_root=wm, output_root=authority
         )
         renderer_output = root / "wm_renderer"
@@ -316,8 +336,6 @@ def main() -> None:
                 "scripts/room16_render_deterministic_report.py",
                 "--markdown",
                 str(wm / "presentation/legacy_canonical_report.md"),
-                "--authority-dir",
-                str(authority),
                 "--compiler-bundle",
                 str(wm),
                 "--out-dir",
@@ -372,23 +390,34 @@ def main() -> None:
             result["deterministic"]
             and result["authority_v3_byte_parity"]
             and result["product_consumer_result"]["status"] == "PASS"
+            and result["section_count"] == 17
+            and result["section_owners"] == ["research_compiler"]
             for result in bundle_results.values()
         )
+        product_truth_boundary_closed = (
+            tests["product_truth_boundary"]["exit_code"] == 0
+        )
+        renderer_no_new_truth = json.loads(
+            rendered_verification.read_text()
+        )["rendered_artifact_set_accepted"]
         verdict = {
             "contract_id": "room16.compiler.rfc_0005_final_verdict",
             "contract_version": 1,
             "rfc": "RFC-0005",
-            "ba10_implemented": all_bundle_gates and canaries_unchanged,
+            "ba10_implemented": (
+                all_bundle_gates
+                and canaries_unchanged
+                and product_truth_boundary_closed
+                and renderer_no_new_truth
+            ),
             "artifact_bundle_v1_created": all_bundle_gates,
             "authority_v3_bridge_verified": all(
                 result["authority_v3_byte_parity"] for result in bundle_results.values()
             ),
-            "product_parallel_truth_removed": True,
+            "product_parallel_truth_removed": product_truth_boundary_closed,
             "product_parallel_truth_scope": "canonical CompilerArtifactBundle consumer path",
-            "legacy_product_semantic_modules": "retained only as classified, retired legacy bridge code during staged migration",
-            "renderer_no_new_truth_verified": json.loads(
-                rendered_verification.read_text()
-            )["rendered_artifact_set_accepted"],
+            "legacy_product_semantic_modules": "removed from canonical import and execution graph; historical compatibility modules remain noncanonical",
+            "renderer_no_new_truth_verified": renderer_no_new_truth,
             "python_js_conformance_passed": all(
                 result["product_consumer_result"]["status"] == "PASS"
                 for result in bundle_results.values()
@@ -409,6 +438,7 @@ def main() -> None:
             "ba12_authorized": False,
             "release_ready": False,
             "publication_allowed": False,
+            "supersedes_evidence_sha256": PREVIOUS_EVIDENCE_SHA256,
             "research_commit": research_commit,
             "product_commit": product_commit,
         }
@@ -429,6 +459,9 @@ zero generated facts, claims or decisions.
 Authority Bundle v3 remains byte-identical and is materialized only as a
 one-way compatibility view. WM, COST and ABT were replayed from frozen inputs;
 each produced two identical bundles and all source archives remained unchanged.
+All Markdown, DOCX, PDF, JSON, API and UI consumer surfaces are now either pure
+read-only consumers or presentation-only transforms. Historical semantic
+Product code has no canonical import or execution edge.
 BA11, BA12, release and publication remain unauthorized.
 """,
         )
@@ -437,11 +470,13 @@ BA11, BA12, release and publication remain unauthorized.
             f"""# Artifact ABI Implementation Record
 
 - Contract: `room16.compiler_artifact_bundle@1`
-- Schema: `1.0.0`
+- Manifest schema: `1.1.0`
 - Research commit: `{research_commit}`
 - Product commit: `{product_commit}`
 - Producer: Research L11 packaging above frozen BA0–BA9
-- Consumers: Product API/UI projection and deterministic document renderer
+- Consumers: Product JSON/API/UI projections and Markdown/DOCX/PDF renderers
+- Section contract: 17 required semantic sections, each with schema version,
+  SHA-256, Research owner, compatibility rule and artifact references
 - Failure mode: fail closed on version, field, path, hash, capability, missing
   artifact, Unicode, numeric, compatibility or renderer-invariant violations.
 - Current mode: `authority_v3_compatibility_shadow`
@@ -457,6 +492,10 @@ eligibility and consumer capabilities. Canonical serialization is frozen
 Foundation Canonical JSON v1 with NFC strings and SHA-256. Unknown top-level
 fields fail closed; future additive data is confined to `extensions` and may
 only be ignored when the declared consumer capabilities allow it.
+
+Every required section independently binds `schema_version`, `sha256`,
+`owner=research_compiler`, `compatibility_rule`, required/optional state and
+its referenced artifact IDs. The section index is itself hash-bound.
 
 Required content includes source provenance, parsed/table IR, typed facts,
 metrics, formula evaluations, evidence, claims, decisions, diagnostics,
@@ -484,16 +523,16 @@ to compiler truth and no Authority Bundle v4 was introduced.
 | Markdown | PRESENTATION_TRANSFORM | Compiler-bound canonical input; hash verified |
 | DOCX | PRESENTATION_TRANSFORM | Bundle renderer; no-new-truth artifact set |
 | PDF | PRESENTATION_TRANSFORM | Bundle renderer; no-new-truth artifact set |
-| JSON | PURE_CONSUMER | Verified manifest/artifact reads only |
-| API | PURE_CONSUMER | Frozen read-only projection |
-| UI | PURE_CONSUMER | Frozen read-only projection |
+| JSON | PURE_CONSUMER | Verified, deeply frozen bundle document |
+| API | PURE_CONSUMER | Verified, deeply frozen API payload and endpoint |
+| UI | PURE_CONSUMER | Verified, deeply frozen UI payload and status component |
 | Authority v3 readers | LEGACY_BRIDGE | One-way byte-parity view only |
 
-Migration phases 1–4 are implemented: sidecar, shadow consumer, semantic
-inventory diff and first renderer. The canonical Product execution path now
-requires the bundle. Legacy semantic modules are classified and retired from
-that path. Physical deletion remains a later staged cleanup only after the
-compatibility bridge is no longer required.
+Migration phases 1–6 are closed for the canonical BA10 path: sidecar, shadow
+consumers, semantic diff, first renderer, all listed consumer surfaces and
+removal of legacy semantic imports/execution edges. Historical compatibility
+files remain noncanonical because this RFC explicitly forbids a Big Bang and
+requires the Authority v3 bridge to remain available.
 """,
         )
         _text(
@@ -504,8 +543,8 @@ Product's canonical input is `room16.compiler_artifact_bundle@1`. Product may
 validate, select, format and display compiler-owned values. It cannot mint
 facts, metrics, claims, evidence, decisions or ratings on this path. Former
 semantic Product components are explicitly classified as SEMANTIC_TRANSFORM or
-DUPLICATE_TRUTH and retired from the canonical path; they remain visible only
-for controlled staged compatibility, not as a second authority.
+DUPLICATE_TRUTH and have no canonical import or execution edge. They remain
+visible only as historical compatibility code, not as a second authority.
 
 Negative renderer fixtures prove the stable blocks
 `RENDERER_NEW_FACT_DETECTED`, `RENDERER_NEW_CLAIM_DETECTED`,
@@ -520,7 +559,8 @@ Negative renderer fixtures prove the stable blocks
 The Research-owned corpus covers canonical JSON ordering, Unicode/NFC,
 nesting, null/booleans, numeric handling and SHA-256. Python and JavaScript
 produce the exact same canonical bytes and hashes. Missing or unknown required
-fields, unsafe numbers, non-NFC text, unsafe paths and tampering fail closed.
+fields or sections, unsafe numbers, non-NFC text, unsafe paths, artifact or
+section-index tampering fail closed with stable diagnostic codes.
 All three real Canary bundles were independently verified by both runtimes.
 """,
         )
@@ -532,13 +572,13 @@ All three real Canary bundles were independently verified by both runtimes.
 - Phase 2 — Shadow Consumer: complete.
 - Phase 3 — Semantic inventory and no-new-truth diff: complete.
 - Phase 4 — First deterministic Markdown/DOCX/PDF renderer: complete.
-- Phase 5 — Canonical Product surfaces consume bundle projection: complete;
-  broader operational rollout remains governed by compatibility shadow.
-- Phase 6 — Remove legacy semantic implementation files: intentionally not
-  destructive while Authority v3 compatibility remains required. They are
-  retired from the canonical BA10 path and must not be used as authority.
+- Phase 5 — All listed Markdown/DOCX/PDF/JSON/API/UI surfaces migrated: complete.
+- Phase 6 — Legacy semantic logic removed from the canonical import and
+  execution graph: complete. Noncanonical historical compatibility files are
+  retained under the no-Big-Bang migration rule and cannot act as authority.
 
-No renderer cutover, release or publication authorization is implied.
+Compatibility shadow remains truthful. No general release or publication
+authorization is implied.
 """,
         )
         test_lines = ["# BA10 Test Results", ""]

@@ -1,6 +1,7 @@
 {
   "contract_id": "room16.compiler_artifact_bundle_conformance_corpus",
   "contract_version": 1,
+  "bundle_schema_version": "1.1.0",
   "canonicalization_profile": "room16.foundation.canonical_json@1",
   "valid_cases": [
     {
@@ -33,6 +34,9 @@
     {"case_id": "unicode_not_nfc", "diagnostic_code": "ABI_UNICODE_NOT_NFC"},
     {"case_id": "unsupported_major", "diagnostic_code": "ABI_CONTRACT_VERSION_UNSUPPORTED"},
     {"case_id": "unknown_required_field", "diagnostic_code": "ABI_UNKNOWN_REQUIRED_SEMANTIC"},
+    {"case_id": "missing_required_field", "diagnostic_code": "ABI_MANIFEST_INVALID"},
+    {"case_id": "missing_required_section", "diagnostic_code": "ABI_SECTION_MISSING"},
+    {"case_id": "section_index_tamper", "diagnostic_code": "ABI_SECTION_INDEX_HASH_MISMATCH"},
     {"case_id": "missing_required_artifact", "diagnostic_code": "ABI_ARTIFACT_MISSING"},
     {"case_id": "artifact_tamper", "diagnostic_code": "ABI_ARTIFACT_HASH_MISMATCH"}
   ]

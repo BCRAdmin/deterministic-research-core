@@ -17,7 +17,10 @@ from research_agent.productization.artifact_bundle import (
     materialize_authority_v3_view,
     verify_compiler_artifact_bundle,
 )
-from research_agent.productization.contracts import CompilerArtifactBundleManifest
+from research_agent.productization.contracts import (
+    REQUIRED_BUNDLE_SECTION_IDS,
+    CompilerArtifactBundleManifest,
+)
 from research_agent.semantic_compiler.semantic_spine.rfc_0004 import replay_rfc_0004_archive
 
 RESEARCH_ROOT = Path(__file__).resolve().parents[2]
@@ -73,6 +76,10 @@ def test_bundle_is_deterministic_and_contains_every_required_section(wm_bundle) 
     two = verify_compiler_artifact_bundle(second)
     assert (first / "BUNDLE_MANIFEST.json").read_bytes() == (second / "BUNDLE_MANIFEST.json").read_bytes()
     assert one.bundle_sha256 == two.bundle_sha256
+    assert one.schema_version == "1.1.0"
+    assert tuple(section.section_id for section in one.sections) == REQUIRED_BUNDLE_SECTION_IDS
+    assert all(section.owner == "research_compiler" for section in one.sections)
+    assert all(item.owner == "research_compiler" for item in one.artifacts)
     assert one.compatibility.mode == "authority_v3_compatibility_shadow"
     assert one.compatibility.source_native_fact_generation is False
     assert one.eligibility.release_ready is False
@@ -115,3 +122,29 @@ def test_missing_required_artifact_fails_closed(wm_bundle, tmp_path: Path) -> No
     with pytest.raises(ArtifactBundleError) as error:
         verify_compiler_artifact_bundle(clone)
     assert error.value.diagnostic_code == "ABI_ARTIFACT_MISSING"
+
+
+def test_missing_required_section_fails_closed(wm_bundle, tmp_path: Path) -> None:
+    first, _, _ = wm_bundle
+    clone = tmp_path / "missing-section"
+    shutil.copytree(first, clone)
+    manifest_path = clone / "BUNDLE_MANIFEST.json"
+    payload = json.loads(manifest_path.read_text(encoding="utf-8"))
+    payload.pop("sections")
+    manifest_path.write_text(json.dumps(payload), encoding="utf-8")
+    with pytest.raises(ArtifactBundleError) as error:
+        verify_compiler_artifact_bundle(clone)
+    assert error.value.diagnostic_code == "ABI_MANIFEST_INVALID"
+
+
+def test_unknown_manifest_truth_fails_closed(wm_bundle, tmp_path: Path) -> None:
+    first, _, _ = wm_bundle
+    clone = tmp_path / "unknown-truth"
+    shutil.copytree(first, clone)
+    manifest_path = clone / "BUNDLE_MANIFEST.json"
+    payload = json.loads(manifest_path.read_text(encoding="utf-8"))
+    payload["product_generated_rating"] = "buy"
+    manifest_path.write_text(json.dumps(payload), encoding="utf-8")
+    with pytest.raises(ArtifactBundleError) as error:
+        verify_compiler_artifact_bundle(clone)
+    assert error.value.diagnostic_code == "ABI_MANIFEST_INVALID"

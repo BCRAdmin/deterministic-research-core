@@ -29,6 +29,11 @@ class ArtifactRecord(StrictModel):
     sha256: str = Field(pattern=SHA256_PATTERN)
     byte_length: int = Field(ge=0)
     required: bool = True
+    owner: Literal["research_compiler"] = "research_compiler"
+    compatibility_rule: Literal[
+        "exact_hash",
+        "byte_identical_compatibility_view",
+    ] = "exact_hash"
     authoritative: bool
     compatibility_only: bool = False
     dependency_sha256s: tuple[str, ...] = ()
@@ -50,6 +55,27 @@ class ArtifactRecord(StrictModel):
         return self
 
 
+class BundleSectionRecord(StrictModel):
+    section_id: str = Field(pattern=r"^[a-z][a-z0-9_]*$")
+    schema_version: str = Field(pattern=r"^\d+\.\d+\.\d+$")
+    sha256: str = Field(pattern=SHA256_PATTERN)
+    owner: Literal["research_compiler"] = "research_compiler"
+    compatibility_rule: Literal[
+        "exact_version",
+        "same_major_additive",
+        "immutable_reference",
+        "byte_identical_compatibility_view",
+    ]
+    required: bool
+    artifact_ids: tuple[str, ...] = ()
+
+    @model_validator(mode="after")
+    def artifact_ids_are_closed(self) -> "BundleSectionRecord":
+        if self.artifact_ids != tuple(sorted(set(self.artifact_ids))):
+            raise ValueError("section artifact ids must be unique and sorted")
+        return self
+
+
 class CompilerIdentity(StrictModel):
     compiler_name: Literal["Room16 Financial Research Compiler"] = (
         "Room16 Financial Research Compiler"
@@ -57,6 +83,7 @@ class CompilerIdentity(StrictModel):
     foundation_version: Literal["1.0.0"] = "1.0.0"
     registry_foundation_version: Literal["1.1.0"] = "1.1.0"
     semantic_wave_version: Literal["1.0.0"] = "1.0.0"
+    compiler_version: Literal["1.0.0"] = "1.0.0"
     semantic_wave_version_lock: Literal[
         "62867ad72cd1a99eee482e75087cbe01449faa650d7cf2c535fd494c5fef30f9"
     ] = "62867ad72cd1a99eee482e75087cbe01449faa650d7cf2c535fd494c5fef30f9"
@@ -119,7 +146,7 @@ class CompilerArtifactBundleManifest(StrictModel):
         "room16.compiler_artifact_bundle"
     )
     contract_version: Literal[1] = 1
-    schema_version: Literal["1.0.0"] = "1.0.0"
+    schema_version: Literal["1.1.0"] = "1.1.0"
     canonicalization_profile: Literal["room16.foundation.canonical_json@1"] = (
         "room16.foundation.canonical_json@1"
     )
@@ -130,12 +157,14 @@ class CompilerArtifactBundleManifest(StrictModel):
     registry_lock: dict[str, Any]
     artifact_index_sha256: str = Field(pattern=SHA256_PATTERN)
     artifacts: tuple[ArtifactRecord, ...]
+    section_index_sha256: str = Field(pattern=SHA256_PATTERN)
+    sections: tuple[BundleSectionRecord, ...]
     compatibility: CompatibilityState
     eligibility: EligibilityState
     consumer_capabilities: ConsumerCapabilities = ConsumerCapabilities()
     required_sections: tuple[str, ...]
     optional_sections: tuple[str, ...] = ()
-    extensions: dict[str, Any] = {}
+    extensions: dict[str, Any] = Field(default_factory=dict)
 
     @model_validator(mode="after")
     def artifact_index_is_closed(self) -> "CompilerArtifactBundleManifest":
@@ -152,6 +181,32 @@ class CompilerArtifactBundleManifest(StrictModel):
         missing = set(self.required_sections) - required_kinds
         if missing:
             raise ValueError(f"bundle required section missing:{','.join(sorted(missing))}")
+        section_ids = [item.section_id for item in self.sections]
+        if section_ids != sorted(section_ids) or len(section_ids) != len(set(section_ids)):
+            raise ValueError("bundle section ids must be unique and sorted")
+        section_dump = [item.model_dump(mode="json") for item in self.sections]
+        if sha256_json(section_dump) != self.section_index_sha256:
+            raise ValueError("bundle section index hash mismatch")
+        missing_section_ids = set(REQUIRED_BUNDLE_SECTION_IDS) - {
+            item.section_id for item in self.sections if item.required
+        }
+        if missing_section_ids:
+            raise ValueError(
+                "bundle required semantic section missing:"
+                + ",".join(sorted(missing_section_ids))
+            )
+        artifact_ids = set(ids)
+        unknown_artifact_ids = {
+            artifact_id
+            for section in self.sections
+            for artifact_id in section.artifact_ids
+            if artifact_id not in artifact_ids
+        }
+        if unknown_artifact_ids:
+            raise ValueError(
+                "bundle section references unknown artifacts:"
+                + ",".join(sorted(unknown_artifact_ids))
+            )
         return self
 
     def verify_bundle_hash(self) -> None:
@@ -178,4 +233,24 @@ REQUIRED_ARTIFACT_KINDS = (
     "verification_report",
     "authority_v3_bridge",
     "renderer_projection",
+)
+
+REQUIRED_BUNDLE_SECTION_IDS = (
+    "artifact_hashes",
+    "claim_graph",
+    "compatibility_state",
+    "compile_identity",
+    "compile_verdict",
+    "compiler_version",
+    "decision_graph",
+    "diagnostics",
+    "evidence_graph",
+    "formula_evaluations",
+    "foundation_version",
+    "ir_references",
+    "metrics",
+    "pass_manifest",
+    "registry_lock",
+    "source_provenance",
+    "typed_facts",
 )
