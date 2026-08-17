@@ -23,6 +23,7 @@ def main() -> int:
     parser.add_argument("--isin", default=None)
     parser.add_argument("--exchange", default=None)
     parser.add_argument("--wkn", default=None)
+    parser.add_argument("--emit-compiler-artifact-bundle", action="store_true")
     args = parser.parse_args()
     try:
         request = request_from_environment(
@@ -32,6 +33,7 @@ def main() -> int:
             isin=args.isin,
             exchange=args.exchange,
             wkn=args.wkn,
+            emit_compiler_artifact_bundle=args.emit_compiler_artifact_bundle,
         )
         result = run_current_research(request)
     except (ValidationError, CurrentResearchError, RuntimeError, ValueError) as exc:

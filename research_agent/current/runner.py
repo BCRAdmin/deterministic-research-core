@@ -5,6 +5,7 @@ import hashlib
 import os
 import re
 import shutil
+import tempfile
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Optional
@@ -28,6 +29,11 @@ from research_agent.quality.research_scope_coverage import (
     save_research_scope_coverage,
 )
 from research_agent.run_pipeline import run_research_pipeline
+from research_agent.productization.artifact_bundle import (
+    ArtifactBundleError,
+    build_compiler_artifact_bundle,
+    build_current_output_archive,
+)
 from research_agent.sources.bse.bse_provider import BseIssuerProvider
 from research_agent.sources.prices.massive_price_provider import MassivePriceProvider
 from research_agent.sources.prices.nasdaq_price_provider import NasdaqPriceProvider
@@ -123,6 +129,7 @@ class CurrentResearchRequest(BaseModel):
     ir_release_dir: Optional[str] = None
     earnings_calendar_path: Optional[str] = None
     official_news_dir: Optional[str] = None
+    emit_compiler_artifact_bundle: bool = False
 
     @field_validator("ticker")
     @classmethod
@@ -1144,8 +1151,36 @@ def run_current_research(
     )
     run_research_pipeline(symbol, request.as_of_date, config)
 
+    resolved_output_root = Path(request.output_root).expanduser().resolve()
+    compiler_bundle_dir = (
+        resolved_output_root / symbol / request.as_of_date / "compiler_artifact_bundle"
+    )
+    compiler_bundle = None
+    if request.emit_compiler_artifact_bundle:
+        try:
+            with tempfile.TemporaryDirectory(prefix="room16-current-ba10-") as temporary:
+                compatibility_archive = Path(temporary) / (
+                    f"ROOM16_CURRENT_{symbol}_{request.as_of_date}.zip"
+                )
+                build_current_output_archive(
+                    output_dir=resolved_output_root,
+                    ticker=symbol,
+                    as_of_date=request.as_of_date,
+                    archive=compatibility_archive,
+                )
+                compiler_bundle = build_compiler_artifact_bundle(
+                    archive=compatibility_archive,
+                    output_root=compiler_bundle_dir,
+                )
+        except ArtifactBundleError as exc:
+            raise CurrentResearchError(
+                "Der verifizierte Research-Kern konnte kein kanonisches "
+                f"CompilerArtifactBundle erzeugen ({exc.diagnostic_code}). "
+                "Room16 gibt den Lauf nicht an Product weiter."
+            ) from exc
+
     authority_dir = (
-        Path(request.output_root).expanduser().resolve()
+        resolved_output_root
         / symbol
         / request.as_of_date
         / "authority_bundle"
@@ -1191,6 +1226,15 @@ def run_current_research(
         "analysis_allowed": manifest.get("analysis_allowed"),
         "staging_dir": str(staging_dir),
     }
+    if compiler_bundle is not None:
+        result.update(
+            {
+                "compiler_artifact_bundle": str(compiler_bundle_dir),
+                "compiler_artifact_bundle_contract": compiler_bundle.contract_id,
+                "compiler_artifact_bundle_sha256": compiler_bundle.bundle_sha256,
+                "compiler_mode": compiler_bundle.compatibility.compiler_mode,
+            }
+        )
     _write_json(staging_dir / "current_ingestion_result.json", result)
     return result
 
@@ -1600,6 +1644,7 @@ def request_from_environment(
     isin: Optional[str] = None,
     exchange: Optional[str] = None,
     wkn: Optional[str] = None,
+    emit_compiler_artifact_bundle: bool = False,
 ) -> CurrentResearchRequest:
     return CurrentResearchRequest(
         ticker=ticker,
@@ -1608,6 +1653,7 @@ def request_from_environment(
         isin=isin,
         exchange=exchange,
         wkn=wkn,
+        emit_compiler_artifact_bundle=emit_compiler_artifact_bundle,
         sec_user_agent=os.environ.get("ROOM16_SEC_USER_AGENT", ""),
         price_provider=os.environ.get("ROOM16_PRICE_PROVIDER", "auto"),
         price_api_key=(os.environ.get("MASSIVE_API_KEY") or os.environ.get("POLYGON_API_KEY")),

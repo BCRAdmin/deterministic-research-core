@@ -1,0 +1,39 @@
+{
+  "contract_id": "room16.compiler_artifact_bundle_conformance_corpus",
+  "contract_version": 1,
+  "canonicalization_profile": "room16.foundation.canonical_json@1",
+  "valid_cases": [
+    {
+      "case_id": "empty_object",
+      "value": {},
+      "canonical_json": "{}",
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "case_id": "key_order_utf16",
+      "value": {"z": 1, "ä": "Öl", "a": 2},
+      "canonical_json": "{\"a\":2,\"z\":1,\"ä\":\"Öl\"}",
+      "sha256": "e7ad5d8849bfd2f23c1daeb122a4bce168f9ca0a033c97230e85ce2195ec36d3"
+    },
+    {
+      "case_id": "nested_null_order",
+      "value": {"values": [null, false, 0, -0.0], "nested": {"b": 2, "a": 1}},
+      "canonical_json": "{\"nested\":{\"a\":1,\"b\":2},\"values\":[null,false,0,0]}",
+      "sha256": "28864553d47da67c417df234a72ab89989fa140a5cfae6ac1000da89ee06afe3"
+    },
+    {
+      "case_id": "unicode_nfc",
+      "value": {"issuer": "Münchener Rück", "currency": "€"},
+      "canonical_json": "{\"currency\":\"€\",\"issuer\":\"Münchener Rück\"}",
+      "sha256": "7304109c8c23586d5d19f2ffc1ccc512284c21ee21800d963431449b9fa251d4"
+    }
+  ],
+  "invalid_cases": [
+    {"case_id": "unsafe_integer", "diagnostic_code": "ABI_NUMERIC_RANGE_UNSAFE"},
+    {"case_id": "unicode_not_nfc", "diagnostic_code": "ABI_UNICODE_NOT_NFC"},
+    {"case_id": "unsupported_major", "diagnostic_code": "ABI_CONTRACT_VERSION_UNSUPPORTED"},
+    {"case_id": "unknown_required_field", "diagnostic_code": "ABI_UNKNOWN_REQUIRED_SEMANTIC"},
+    {"case_id": "missing_required_artifact", "diagnostic_code": "ABI_ARTIFACT_MISSING"},
+    {"case_id": "artifact_tamper", "diagnostic_code": "ABI_ARTIFACT_HASH_MISMATCH"}
+  ]
+}
