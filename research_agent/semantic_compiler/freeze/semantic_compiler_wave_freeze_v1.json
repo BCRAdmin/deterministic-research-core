@@ -1,0 +1,163 @@
+{
+  "contract_id": "room16.compiler.semantic_wave_freeze_record",
+  "contract_version": 1,
+  "status": "accepted_frozen",
+  "operator_acceptance_date": "2026-08-17",
+  "accepted_build_sections": [
+    "BA3",
+    "BA4",
+    "BA5",
+    "BA6",
+    "BA7",
+    "BA8",
+    "BA9"
+  ],
+  "versions": {
+    "compiler_foundation": "1.0.0",
+    "registry_foundation": "1.1.0",
+    "semantic_compiler_wave": "1.0.0",
+    "authority_bundle": 3
+  },
+  "git": {
+    "tag": "room16-semantic-compiler-wave-v1.0.0",
+    "tag_object": "8b3a33f06745eb7be501731fe71d5f7331f43b83",
+    "research_commit": "b498c5c2835682b3f81dc475a276df6ab58a79fd",
+    "rfc_0004_implementation_commit": "7d8cddabd5dae427bce70db10ee1d032feba3078",
+    "rfc_0004_reproducible_builder_commit": "3b4eedda7bbd270b72293bc3fad892a0ccb6f501",
+    "product_commit": "82c5525f3291ace4e3d8c0fdeee6bd67348f5a38"
+  },
+  "foundation": {
+    "git_tag": "room16-compiler-foundation-v1.0.0",
+    "version_lock_sha256": "8b9b7b2f59aa2cfed8280389f14c0e4edd11846d56c1d78e0dbf2c574da7d518",
+    "unchanged": true
+  },
+  "registry": {
+    "git_tag": "room16-registry-foundation-v1.1.0",
+    "authority_sha256": "55585f2242f32da4cc401455cd3186a97bf74f2c4a7feb5078e00d6a6e1ea5fb",
+    "unchanged": true
+  },
+  "pass_manifest": {
+    "path": "research_agent/semantic_compiler/semantic_spine/config/rfc_0003_pass_manifests.json",
+    "pass_count": 10,
+    "file_sha256": "a75f32566ac0771363562ce74f15d95ef8962e427e2d2ac07ec965d22f54b8ad",
+    "canonical_document_sha256": "b0523f06370180f1b0e78c26446581654668be881bee566f957c1c66d4dd376d",
+    "effective_pass_manifest_sha256": "854abab7764f1a26a26ac2a97585171154aaac52c2eb8ecb848e800d2da02d33",
+    "pass_ids": [
+      "ba4.l3.parse_sources",
+      "ba4.l3.discover_tables",
+      "ba5.l4.normalize_reconcile",
+      "ba5.l5.build_typed_facts",
+      "ba6.l6.bind_metric_signatures",
+      "ba6.l6.evaluate_formulas",
+      "ba7.l7.build_evidence_graph",
+      "ba7.l8.build_claim_graph",
+      "ba8.l9.build_decision_graph",
+      "ba9.l10.verify_semantics"
+    ]
+  },
+  "ir_schema": {
+    "schema_count": 91,
+    "schema_set_sha256": "b7b6194ad05b023c1c1cb1fe2a5cba6d5f830dfd6ee400df954c35c997847f4c",
+    "scope": "foundation, source frontend, registry foundation, semantic wave, semantic spine, RFC-0003 and RFC-0004 Pydantic contracts"
+  },
+  "semantic_source_set": {
+    "path": "research_agent/semantic_compiler",
+    "excluded_paths": [
+      "research_agent/semantic_compiler/freeze"
+    ],
+    "file_count": 45,
+    "source_set_sha256": "a4cf0a112b47fb603b04fa2ff1a816f826b338661290edf91ae6bd05c0623dae"
+  },
+  "canary_baseline": {
+    "product_path": "config/room16_canary_baseline.json",
+    "baseline_file_sha256": "88795b625b2d9ab892b559d98b6d4d0a0c79364088fe7376dc49a3b8bd796d7f",
+    "version_lock_sha256": "8cf064d75c8cc3bf23f947189f25ee2de3f2bd0c5356b51d5d7f37d631085333",
+    "candidate_sha256": {
+      "WM": "a6b6d15ad7004573a56ad057884563cfbeeb2c3162dae0641a1b361b5e416d72",
+      "COST": "b97e6024855c7a772713ff9af4889987e4a9a8e5a3afca0d56a42a1ba8092ea4",
+      "ABT": "0926d3cafd312556ec267b2b25214d255ff9352daed77a01b7852addbb48dc45"
+    },
+    "unchanged": true
+  },
+  "accepted_evidence": {
+    "archive": "outputs/release/ROOM16_RFC_0004_SEMANTIC_CONTRACT_INTEGRITY_3B4EEDDA_2026-08-17.zip",
+    "archive_sha256": "70603e61dc0d1b8b5e982688f966a0b5d0196311b1185a82f0e5d69ad4ea0875",
+    "review_scope": [
+      "RFC3-AR-001",
+      "RFC3-AR-002",
+      "RFC3-AR-003",
+      "RFC3-AR-004",
+      "RFC3-AR-005"
+    ],
+    "independent_review_result": "accepted",
+    "review_record_form": "operator_status_handoff"
+  },
+  "rfc_history": [
+    {
+      "rfc": "RFC-0001",
+      "result": "accepted_frozen",
+      "research_commit": "607cdc98e17caf35e47850e73c6b90487bba4193"
+    },
+    {
+      "rfc": "RFC-0002",
+      "result": "changes_required_superseded_by_rfc_0003",
+      "implementation_commit": "b977395",
+      "evidence_commit": "0facee8"
+    },
+    {
+      "rfc": "RFC-0003",
+      "result": "direction_accepted_findings_superseded_by_rfc_0004",
+      "implementation_commit": "e14dfac",
+      "evidence_commit": "fca8902"
+    },
+    {
+      "rfc": "RFC-0004",
+      "result": "accepted",
+      "implementation_commit": "7d8cddabd5dae427bce70db10ee1d032feba3078",
+      "evidence_commit": "b498c5c2835682b3f81dc475a276df6ab58a79fd"
+    }
+  ],
+  "version_lock_inputs": {
+    "authority_bundle_version": 3,
+    "canary_baseline_file_sha256": "88795b625b2d9ab892b559d98b6d4d0a0c79364088fe7376dc49a3b8bd796d7f",
+    "canary_version_lock_sha256": "8cf064d75c8cc3bf23f947189f25ee2de3f2bd0c5356b51d5d7f37d631085333",
+    "compiler_mode": "compatibility_shadow",
+    "foundation_version": "1.0.0",
+    "foundation_version_lock_sha256": "8b9b7b2f59aa2cfed8280389f14c0e4edd11846d56c1d78e0dbf2c574da7d518",
+    "ir_schema_set_sha256": "b7b6194ad05b023c1c1cb1fe2a5cba6d5f830dfd6ee400df954c35c997847f4c",
+    "pass_manifest_sha256": "854abab7764f1a26a26ac2a97585171154aaac52c2eb8ecb848e800d2da02d33",
+    "product_commit": "82c5525f3291ace4e3d8c0fdeee6bd67348f5a38",
+    "registry_authority_sha256": "55585f2242f32da4cc401455cd3186a97bf74f2c4a7feb5078e00d6a6e1ea5fb",
+    "registry_foundation_version": "1.1.0",
+    "research_commit": "b498c5c2835682b3f81dc475a276df6ab58a79fd",
+    "semantic_evidence_sha256": "70603e61dc0d1b8b5e982688f966a0b5d0196311b1185a82f0e5d69ad4ea0875",
+    "semantic_source_set_sha256": "a4cf0a112b47fb603b04fa2ff1a816f826b338661290edf91ae6bd05c0623dae",
+    "semantic_wave_version": "1.0.0",
+    "tag": "room16-semantic-compiler-wave-v1.0.0"
+  },
+  "version_lock_sha256": "62867ad72cd1a99eee482e75087cbe01449faa650d7cf2c535fd494c5fef30f9",
+  "status_flags": {
+    "rfc_0004_implemented": true,
+    "semantic_compiler_wave_complete": true,
+    "foundation_unchanged": true,
+    "registry_foundation_unchanged": true,
+    "authority_bundle_v3_unchanged": true,
+    "wm_cost_abt_unchanged": true,
+    "release_ready": false,
+    "publication_allowed": false,
+    "ba10_authorized": false,
+    "ba10_started": false
+  },
+  "change_policy": {
+    "rfc_required": true,
+    "company_specific_architecture_change_allowed": false,
+    "renderer_truth_allowed": false,
+    "product_semantic_authority_allowed": false
+  },
+  "next_phase": {
+    "name": "Productization Layer",
+    "next_build_section": "BA10",
+    "build_section_name": "Artifact ABI and Renderer Isolation",
+    "authorization": "separate_operator_go_required"
+  }
+}

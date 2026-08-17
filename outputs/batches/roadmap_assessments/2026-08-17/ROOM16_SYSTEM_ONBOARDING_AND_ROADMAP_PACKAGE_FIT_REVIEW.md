@@ -35,9 +35,9 @@ Compiler Transition MOC, Canvas and full architecture roadmap remain leading.
 ## Required narrowing
 
 1. The package is a pre-RFC-0004-completion snapshot. It describes RFC-0004 as
-   active/current. Current truth is: RFC-0004 is implemented, the internal
-   verdict is green and the narrow independent review of RFC3-AR-001 through
-   RFC3-AR-005 is pending.
+   active/current. Current truth is: RFC-0004 and RFC3-AR-001 through
+   RFC3-AR-005 are accepted; BA0-BA9 are frozen as Semantic Compiler Wave
+   `1.0.0`.
 2. A narrow review PASS does not authorize BA10 automatically. It permits an
    operator decision to freeze BA3–BA9 and then requires a separate explicit
    BA10 authorization.
@@ -53,6 +53,8 @@ Compiler Transition MOC, Canvas and full architecture roadmap remain leading.
 
 - Retain: architecture explanation, ownership map, layer model, working model,
   BA10/BA11/BA12 sequence and readiness separation.
+- Use: roadmap reference for later status questions only; not execution
+  authority.
 - Supersede: RFC-0004 active/current status claims.
 - Operator-gated: Semantic Wave freeze, version lock and BA10 authorization.
 - Reopen before BA12: Software/SaaS development/holdout selection.
@@ -76,7 +78,7 @@ Compiler Transition MOC, Canvas and full architecture roadmap remain leading.
 
 ## Smallest useful next step
 
-Wait for the narrow RFC-0004 review. If it passes, prepare one updated
-onboarding package bound to the accepted Semantic Wave freeze record and a
-separate BA10 decision request. Resolve the invalid ServiceNow holdout choice
-before BA12 planning becomes active.
+Begin BA10 only after a separate operator authorization. If an updated
+onboarding package is needed, bind it to Semantic Compiler Wave Freeze `1.0.0`.
+Resolve the invalid ServiceNow holdout choice before BA12 planning becomes
+active.
