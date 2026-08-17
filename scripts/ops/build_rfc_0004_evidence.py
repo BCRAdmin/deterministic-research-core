@@ -10,6 +10,9 @@ import json
 import shutil
 import subprocess
 import tempfile
+import time
+import urllib.error
+import urllib.request
 import zipfile
 from datetime import date
 from pathlib import Path
@@ -81,6 +84,51 @@ def _run(command: list[str], cwd: Path) -> dict[str, Any]:
         "command": command, "cwd": str(cwd),
         "exit_code": completed.returncode, "output": completed.stdout,
     }
+
+
+def _product_full_verify() -> dict[str, Any]:
+    """Run the unskipped Product verification against a managed local server."""
+    app_root = PRODUCT_ROOT / "room16-app"
+    server_log = tempfile.TemporaryFile(mode="w+t", encoding="utf-8")
+    server = subprocess.Popen(
+        ["node", "server.mjs", "--static", "--port", "4516"],
+        cwd=app_root,
+        text=True,
+        stdout=server_log,
+        stderr=subprocess.STDOUT,
+    )
+    try:
+        ready = False
+        for _ in range(40):
+            if server.poll() is not None:
+                break
+            try:
+                with urllib.request.urlopen(
+                    "http://127.0.0.1:4516/api/health", timeout=1,
+                ) as response:
+                    ready = response.status == 200
+            except (OSError, urllib.error.URLError):
+                pass
+            if ready:
+                break
+            time.sleep(0.25)
+        if not ready:
+            server_log.seek(0)
+            return {
+                "command": ["npm", "run", "verify"],
+                "cwd": str(app_root),
+                "exit_code": 1,
+                "output": "managed Product server did not become healthy\n" + server_log.read(),
+            }
+        return _run(["npm", "run", "verify"], app_root)
+    finally:
+        server.terminate()
+        try:
+            server.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            server.kill()
+            server.wait(timeout=5)
+        server_log.close()
 
 
 def _deterministic_zip(source: Path, target: Path) -> None:
@@ -420,7 +468,8 @@ def main() -> None:
         "ruff": _run([str(RESEARCH_ROOT / ".venv/bin/ruff"), "check", "research_agent", "scripts/ops/build_rfc_0004_evidence.py"], RESEARCH_ROOT),
         "foundation_freeze": _run([str(RESEARCH_ROOT / ".venv/bin/python"), "scripts/ops/verify_compiler_foundation_freeze.py"], RESEARCH_ROOT),
         "registry_freeze": _run([str(RESEARCH_ROOT / ".venv/bin/python"), "scripts/ops/verify_registry_foundation_freeze.py"], RESEARCH_ROOT),
-        "product_full_verify": _run(["npm", "run", "verify"], PRODUCT_ROOT / "room16-app"),
+        "product_hardening_once": _run(["npm", "run", "hardening:once"], PRODUCT_ROOT / "room16-app"),
+        "product_full_verify": _product_full_verify(),
     }
     for test_id, result in tests.items():
         _json(staging / "07_L10_DIAGNOSTICS_AND_VERDICT" / "TEST_RESULTS" / f"{test_id}.json", {
@@ -489,7 +538,7 @@ explicitly narrow independent review.
             f"`{execution_audit[ticker]['final_payload_sha256']}`; strengthened L10 compile verdict PASS."
         )
     _text(staging / "09_WM_COST_ABT_REPLAY_RESULTS.md", "\n".join(replay_lines))
-    _text(staging / "10_PRODUCT_FULL_REGRESSION.md", f"# Product Full Regression\n\nUngeskipptes `npm run verify`: exit `{tests['product_full_verify']['exit_code']}`. Product commit `{product_commit}`. No Product semantic authority or Product code change was introduced by RFC-0004.")
+    _text(staging / "10_PRODUCT_FULL_REGRESSION.md", f"# Product Full Regression\n\nFresh `npm run hardening:once`: exit `{tests['product_hardening_once']['exit_code']}`. The immediately following, unskipped `npm run verify`: exit `{tests['product_full_verify']['exit_code']}`. Product commit `{product_commit}`. No Product semantic authority or Product code change was introduced by RFC-0004.")
     changed = _git(RESEARCH_ROOT, "diff", "--name-only", f"{BASE_COMMIT}..{research_commit}").splitlines()
     _text(staging / "11_FOUNDATION_REGISTRY_ABI_IMMUTABILITY.md", f"# Foundation / Registry / ABI Immutability\n\nFoundation verifier exit `{tests['foundation_freeze']['exit_code']}`; Registry verifier exit `{tests['registry_freeze']['exit_code']}`. Authority Bundle v3 and all three Canary hashes are unchanged. Changed files: {len(changed)}; no file under `research_agent/compiler_foundation/` or `semantic_compiler/registry_foundation/` changed.")
     _json(staging / "12_SEMANTIC_WAVE_FINAL_VERDICT.json", verdict)
