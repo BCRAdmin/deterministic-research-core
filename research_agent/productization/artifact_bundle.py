@@ -423,7 +423,9 @@ def _write_v3_compatibility(
             payload=markdown, contract_id="room16.legacy_canonical_report", contract_version=1,
             layer="L11_emit", producer_pass_id="ba10.l11.render_projection",
             media_type="text/markdown", required=False, authoritative=False,
-            compatibility_only=True, provenance=(f"archive:{archive.name}:{markdown_member}",),
+            compatibility_only=True,
+            compatibility_rule="byte_identical_compatibility_view",
+            provenance=(f"archive:{archive.name}:{markdown_member}",),
         ))
 
         for suffix, fmt in (
