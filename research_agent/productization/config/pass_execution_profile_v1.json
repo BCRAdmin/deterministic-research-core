@@ -1,0 +1,70 @@
+{
+  "contract_id": "room16.compiler.pass_execution_profile",
+  "contract_version": 1,
+  "owner": "research_compiler",
+  "semantic_wave_version": "1.0.0",
+  "semantic_wave_version_lock": "62867ad72cd1a99eee482e75087cbe01449faa650d7cf2c535fd494c5fef30f9",
+  "source_pass_manifest_sha256": "854abab7764f1a26a26ac2a97585171154aaac52c2eb8ecb848e800d2da02d33",
+  "passes": [
+    {
+      "ordinal": 4,
+      "pass_id": "ba4.l3.parse_sources",
+      "pass_version": 3,
+      "status": "executed"
+    },
+    {
+      "ordinal": 5,
+      "pass_id": "ba4.l3.discover_tables",
+      "pass_version": 3,
+      "status": "executed"
+    },
+    {
+      "ordinal": 6,
+      "pass_id": "ba5.l4.normalize_reconcile",
+      "pass_version": 3,
+      "status": "executed"
+    },
+    {
+      "ordinal": 7,
+      "pass_id": "ba5.l5.build_typed_facts",
+      "pass_version": 3,
+      "status": "executed"
+    },
+    {
+      "ordinal": 8,
+      "pass_id": "ba6.l6.bind_metric_signatures",
+      "pass_version": 3,
+      "status": "executed"
+    },
+    {
+      "ordinal": 9,
+      "pass_id": "ba6.l6.evaluate_formulas",
+      "pass_version": 3,
+      "status": "executed"
+    },
+    {
+      "ordinal": 10,
+      "pass_id": "ba7.l7.build_evidence_graph",
+      "pass_version": 3,
+      "status": "executed"
+    },
+    {
+      "ordinal": 11,
+      "pass_id": "ba7.l8.build_claim_graph",
+      "pass_version": 3,
+      "status": "executed"
+    },
+    {
+      "ordinal": 12,
+      "pass_id": "ba8.l9.build_decision_graph",
+      "pass_version": 3,
+      "status": "executed"
+    },
+    {
+      "ordinal": 13,
+      "pass_id": "ba9.l10.verify_semantics",
+      "pass_version": 3,
+      "status": "executed"
+    }
+  ]
+}

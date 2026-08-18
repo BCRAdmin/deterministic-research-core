@@ -1,0 +1,380 @@
+{
+  "contract_id": "room16.compiler.required_artifact_profile",
+  "contract_version": 1,
+  "owner": "research_compiler",
+  "entries": [
+    {
+      "artifact_kind": "compile_state",
+      "required_payload_keys": [
+        "contract_id",
+        "contract_version",
+        "ticker",
+        "as_of_date",
+        "archive_sha256",
+        "ir_sha256",
+        "artifacts",
+        "artifact_sha256s"
+      ],
+      "wrapper_artifact_keys": [
+        "source_inputs",
+        "parsed_payload_refs",
+        "table_discovery_summaries",
+        "table_refs",
+        "cell_refs",
+        "legacy_table_cell_mappings",
+        "normalized_records",
+        "typed_facts",
+        "signatures",
+        "metrics",
+        "formula_operand_facts",
+        "formula_operands",
+        "formula_evaluations",
+        "policy_parameters",
+        "complete_evidence_graph",
+        "claim_graph",
+        "decision_graph",
+        "semantic_decision_graph",
+        "verification_plan",
+        "verification_report",
+        "cell_reference_policy",
+        "compatibility_parsed_documents"
+      ],
+      "cardinality_path": "artifacts",
+      "minimum_cardinality": 1,
+      "authoritative": true,
+      "compatibility_only": false,
+      "compatibility_rule": "exact_hash",
+      "allowed_producer_pass_id": "ba10.l11.emit_bundle",
+      "allowed_layer": "L10_verification"
+    },
+    {
+      "artifact_kind": "diagnostics",
+      "required_payload_keys": [
+        "contract_id",
+        "contract_version",
+        "diagnostics"
+      ],
+      "wrapper_artifact_keys": [],
+      "cardinality_path": "diagnostics",
+      "minimum_cardinality": 1,
+      "authoritative": true,
+      "compatibility_only": false,
+      "compatibility_rule": "exact_hash",
+      "allowed_producer_pass_id": "ba10.l11.emit_bundle",
+      "allowed_layer": "L10_verification"
+    },
+    {
+      "artifact_kind": "compile_verdict",
+      "required_payload_keys": [
+        "contract_id",
+        "contract_version",
+        "diagnostic_codes",
+        "compile_allowed"
+      ],
+      "wrapper_artifact_keys": [],
+      "cardinality_path": "diagnostic_codes",
+      "minimum_cardinality": 1,
+      "authoritative": true,
+      "compatibility_only": false,
+      "compatibility_rule": "exact_hash",
+      "allowed_producer_pass_id": "ba10.l11.emit_bundle",
+      "allowed_layer": "L10_verification"
+    },
+    {
+      "artifact_kind": "execution_attestation",
+      "required_payload_keys": [
+        "contract_id",
+        "contract_version",
+        "ticker",
+        "as_of_date",
+        "pass_execution_complete",
+        "pass_execution_record_sha256s",
+        "final_compile_state_sha256",
+        "verification_report_sha256",
+        "semantic_verdict"
+      ],
+      "wrapper_artifact_keys": [],
+      "cardinality_path": "pass_execution_record_sha256s",
+      "minimum_cardinality": 1,
+      "authoritative": true,
+      "compatibility_only": false,
+      "compatibility_rule": "exact_hash",
+      "allowed_producer_pass_id": "ba10.l11.emit_bundle",
+      "allowed_layer": "L10_verification"
+    },
+    {
+      "artifact_kind": "pass_execution_records",
+      "required_payload_keys": [
+        "contract_id",
+        "contract_version",
+        "records"
+      ],
+      "wrapper_artifact_keys": [],
+      "cardinality_path": "records",
+      "minimum_cardinality": 1,
+      "authoritative": true,
+      "compatibility_only": false,
+      "compatibility_rule": "exact_hash",
+      "allowed_producer_pass_id": "ba10.l11.emit_bundle",
+      "allowed_layer": "L10_verification"
+    },
+    {
+      "artifact_kind": "source_provenance",
+      "required_payload_keys": [
+        "contract_id",
+        "contract_version",
+        "artifacts",
+        "artifact_sha256s"
+      ],
+      "wrapper_artifact_keys": [
+        "source_inputs"
+      ],
+      "cardinality_path": "artifacts",
+      "minimum_cardinality": 1,
+      "authoritative": true,
+      "compatibility_only": false,
+      "compatibility_rule": "exact_hash",
+      "allowed_producer_pass_id": "ba10.l11.emit_bundle",
+      "allowed_layer": "L2_source_snapshot"
+    },
+    {
+      "artifact_kind": "parsed_table_ir",
+      "required_payload_keys": [
+        "contract_id",
+        "contract_version",
+        "artifacts",
+        "artifact_sha256s"
+      ],
+      "wrapper_artifact_keys": [
+        "parsed_payload_refs",
+        "table_discovery_summaries",
+        "table_refs",
+        "cell_refs",
+        "legacy_table_cell_mappings"
+      ],
+      "cardinality_path": "artifacts",
+      "minimum_cardinality": 5,
+      "authoritative": true,
+      "compatibility_only": false,
+      "compatibility_rule": "exact_hash",
+      "allowed_producer_pass_id": "ba10.l11.emit_bundle",
+      "allowed_layer": "L3_parse_discover"
+    },
+    {
+      "artifact_kind": "typed_facts",
+      "required_payload_keys": [
+        "contract_id",
+        "contract_version",
+        "artifacts",
+        "artifact_sha256s"
+      ],
+      "wrapper_artifact_keys": [
+        "normalized_records",
+        "typed_facts"
+      ],
+      "cardinality_path": "artifacts",
+      "minimum_cardinality": 2,
+      "authoritative": true,
+      "compatibility_only": false,
+      "compatibility_rule": "exact_hash",
+      "allowed_producer_pass_id": "ba10.l11.emit_bundle",
+      "allowed_layer": "L5_typed_fact"
+    },
+    {
+      "artifact_kind": "metrics",
+      "required_payload_keys": [
+        "contract_id",
+        "contract_version",
+        "artifacts",
+        "artifact_sha256s"
+      ],
+      "wrapper_artifact_keys": [
+        "signatures",
+        "metrics"
+      ],
+      "cardinality_path": "artifacts",
+      "minimum_cardinality": 2,
+      "authoritative": true,
+      "compatibility_only": false,
+      "compatibility_rule": "exact_hash",
+      "allowed_producer_pass_id": "ba10.l11.emit_bundle",
+      "allowed_layer": "L6_metric_formula"
+    },
+    {
+      "artifact_kind": "formula_evaluations",
+      "required_payload_keys": [
+        "contract_id",
+        "contract_version",
+        "artifacts",
+        "artifact_sha256s"
+      ],
+      "wrapper_artifact_keys": [
+        "formula_operand_facts",
+        "formula_operands",
+        "formula_evaluations",
+        "policy_parameters"
+      ],
+      "cardinality_path": "artifacts",
+      "minimum_cardinality": 4,
+      "authoritative": true,
+      "compatibility_only": false,
+      "compatibility_rule": "exact_hash",
+      "allowed_producer_pass_id": "ba10.l11.emit_bundle",
+      "allowed_layer": "L6_metric_formula"
+    },
+    {
+      "artifact_kind": "evidence_graph",
+      "required_payload_keys": [
+        "contract_id",
+        "contract_version",
+        "artifacts",
+        "artifact_sha256s"
+      ],
+      "wrapper_artifact_keys": [
+        "complete_evidence_graph"
+      ],
+      "cardinality_path": "artifacts",
+      "minimum_cardinality": 1,
+      "authoritative": true,
+      "compatibility_only": false,
+      "compatibility_rule": "exact_hash",
+      "allowed_producer_pass_id": "ba10.l11.emit_bundle",
+      "allowed_layer": "L7_evidence_graph"
+    },
+    {
+      "artifact_kind": "claim_graph",
+      "required_payload_keys": [
+        "contract_id",
+        "contract_version",
+        "artifacts",
+        "artifact_sha256s"
+      ],
+      "wrapper_artifact_keys": [
+        "claim_graph"
+      ],
+      "cardinality_path": "artifacts",
+      "minimum_cardinality": 1,
+      "authoritative": true,
+      "compatibility_only": false,
+      "compatibility_rule": "exact_hash",
+      "allowed_producer_pass_id": "ba10.l11.emit_bundle",
+      "allowed_layer": "L8_claim_graph"
+    },
+    {
+      "artifact_kind": "decision_graph",
+      "required_payload_keys": [
+        "contract_id",
+        "contract_version",
+        "artifacts",
+        "artifact_sha256s"
+      ],
+      "wrapper_artifact_keys": [
+        "decision_graph",
+        "semantic_decision_graph"
+      ],
+      "cardinality_path": "artifacts",
+      "minimum_cardinality": 2,
+      "authoritative": true,
+      "compatibility_only": false,
+      "compatibility_rule": "exact_hash",
+      "allowed_producer_pass_id": "ba10.l11.emit_bundle",
+      "allowed_layer": "L9_decision_graph"
+    },
+    {
+      "artifact_kind": "verification_plan",
+      "required_payload_keys": [
+        "contract_id",
+        "contract_version",
+        "artifacts",
+        "artifact_sha256s"
+      ],
+      "wrapper_artifact_keys": [
+        "verification_plan"
+      ],
+      "cardinality_path": "artifacts",
+      "minimum_cardinality": 1,
+      "authoritative": true,
+      "compatibility_only": false,
+      "compatibility_rule": "exact_hash",
+      "allowed_producer_pass_id": "ba10.l11.emit_bundle",
+      "allowed_layer": "L10_verification"
+    },
+    {
+      "artifact_kind": "verification_report",
+      "required_payload_keys": [
+        "contract_id",
+        "contract_version",
+        "ticker",
+        "as_of_date",
+        "diagnostics",
+        "verdict",
+        "verification_plan_sha256"
+      ],
+      "wrapper_artifact_keys": [],
+      "cardinality_path": "diagnostics",
+      "minimum_cardinality": 1,
+      "authoritative": true,
+      "compatibility_only": false,
+      "compatibility_rule": "exact_hash",
+      "allowed_producer_pass_id": "ba10.l11.emit_bundle",
+      "allowed_layer": "L10_verification"
+    },
+    {
+      "artifact_kind": "authority_v3_bridge",
+      "required_payload_keys": [
+        "contract_id",
+        "contract_version",
+        "files",
+        "source_archive_sha256",
+        "target_contract_id",
+        "target_contract_version"
+      ],
+      "wrapper_artifact_keys": [],
+      "cardinality_path": "files",
+      "minimum_cardinality": 1,
+      "authoritative": false,
+      "compatibility_only": true,
+      "compatibility_rule": "byte_identical_compatibility_view",
+      "allowed_producer_pass_id": "ba10.l11.authority_v3_bridge",
+      "allowed_layer": "L11_emit"
+    },
+    {
+      "artifact_kind": "renderer_projection",
+      "required_payload_keys": [
+        "contract_id",
+        "contract_version",
+        "fact_ids",
+        "claim_ids",
+        "decision_ids",
+        "display_tokens"
+      ],
+      "wrapper_artifact_keys": [],
+      "cardinality_path": "display_tokens",
+      "minimum_cardinality": 1,
+      "authoritative": true,
+      "compatibility_only": false,
+      "compatibility_rule": "exact_hash",
+      "allowed_producer_pass_id": "ba10.l11.render_projection",
+      "allowed_layer": "L11_emit"
+    },
+    {
+      "artifact_kind": "renderer_lineage_expectation",
+      "required_payload_keys": [
+        "contract_id",
+        "contract_version",
+        "display_tokens",
+        "material_spans",
+        "numeric_spans",
+        "source_markdown_sha256"
+      ],
+      "wrapper_artifact_keys": [],
+      "cardinality_path": "material_spans",
+      "minimum_cardinality": 1,
+      "authoritative": true,
+      "compatibility_only": false,
+      "compatibility_rule": "exact_hash",
+      "allowed_producer_pass_id": "ba10.l11.render_projection",
+      "allowed_layer": "L11_emit"
+    }
+  ]
+}

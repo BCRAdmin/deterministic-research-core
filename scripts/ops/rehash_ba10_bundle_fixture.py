@@ -88,6 +88,37 @@ def mutate(root: Path, manifest: dict[str, Any], mutation: str) -> None:
                 item.update(authoritative=True, compatibility_only=False, compatibility_rule="exact_hash")
     elif mutation == "copied_emitter_identity_without_valid_receipt":
         manifest["extensions"] = {"foreign_producer_nonce": "fully-rehashed-copy"}
+    elif mutation in {"truncated_pass_set", "substituted_pass_id", "reordered_passes", "pass_version_drift", "ordinal_shift"}:
+        record_item = artifact(manifest, "pass_execution_records")
+        record_path = root / record_item["relative_path"]
+        record_set = read_json(record_path)
+        records = record_set["records"]
+        if mutation == "truncated_pass_set": records.pop()
+        elif mutation == "substituted_pass_id": records[3]["pass_id"] = "fake.substituted.pass"
+        elif mutation == "reordered_passes":
+            records[0]["pass_id"], records[1]["pass_id"] = records[1]["pass_id"], records[0]["pass_id"]
+        elif mutation == "pass_version_drift": records[4]["pass_version"] = 999
+        elif mutation == "ordinal_shift":
+            for row in records: row["ordinal"] += 100
+        write_json(record_path, record_set)
+        attestation_item = artifact(manifest, "execution_attestation")
+        attestation_path = root / attestation_item["relative_path"]
+        attestation = read_json(attestation_path)
+        attestation["pass_execution_record_sha256s"] = [sha256_json(row) for row in records]
+        write_json(attestation_path, attestation)
+    elif mutation in {"empty_verification_plan_wrapper", "empty_parsed_table_wrapper"}:
+        kind = "verification_plan" if mutation.startswith("empty_verification") else "parsed_table_ir"
+        item = artifact(manifest, kind); value = read_json(root / item["relative_path"])
+        value["artifacts"] = {}; value["artifact_sha256s"] = {}
+        write_json(root / item["relative_path"], value)
+    elif mutation == "missing_required_wrapper_key":
+        item = artifact(manifest, "typed_facts"); value = read_json(root / item["relative_path"])
+        value.pop("artifact_sha256s")
+        write_json(root / item["relative_path"], value)
+    elif mutation == "semantic_artifact_authority_demotion":
+        artifact(manifest, "typed_facts").update(authoritative=False, compatibility_only=True)
+    elif mutation == "producer_or_layer_drift":
+        artifact(manifest, "metrics").update(producer_pass_id="product.fake.pass", layer="L11_emit")
     else:
         raise ValueError(f"unknown mutation:{mutation}")
 
@@ -123,10 +154,18 @@ def semantic_values(root: Path, manifest: dict[str, Any]) -> dict[str, Any]:
 
 
 def rehash(root: Path, manifest: dict[str, Any]) -> None:
+    previous_hashes = {item["sha256"]: item for item in manifest["artifacts"]}
     for item in manifest["artifacts"]:
         data = (root / item["relative_path"]).read_bytes()
         item["sha256"] = hashlib.sha256(data).hexdigest()
         item["byte_length"] = len(data)
+    replacement_hashes = {
+        previous: item["sha256"] for previous, item in previous_hashes.items()
+    }
+    for item in manifest["artifacts"]:
+        item["dependency_sha256s"] = sorted(
+            replacement_hashes.get(value, value) for value in item.get("dependency_sha256s", [])
+        )
     manifest["artifacts"].sort(key=lambda row: row["artifact_id"])
     manifest["artifact_index_sha256"] = sha256_json(manifest["artifacts"])
     values = semantic_values(root, manifest)
