@@ -1,0 +1,223 @@
+{
+  "contract_id": "room16.compiler.ba10_artifact_abi_renderer_freeze_record",
+  "contract_version": 1,
+  "status": "accepted_frozen",
+  "freeze_version": "1.0.0",
+  "accepted_on": "2026-08-18",
+  "independent_acceptance": {
+    "status": "pass",
+    "handoff_type": "EXECUTE / FREEZE_ONLY",
+    "rfc_0005_accepted": true,
+    "rfc_0005_r3_accepted": true,
+    "closed_findings": [
+      "BA10-R2-AR-001",
+      "BA10-R2-AR-002",
+      "BA10-R2-AR-003",
+      "BA10-R2-AR-004"
+    ]
+  },
+  "artifact_abi": {
+    "contract_id": "room16.compiler_artifact_bundle",
+    "public_contract": "room16.compiler_artifact_bundle@1",
+    "contract_major": 1,
+    "schema_version": "1.2.0",
+    "canonical_serialization": "room16.foundation.canonical_json@1",
+    "hash_algorithm": "sha256"
+  },
+  "versions": {
+    "compiler_foundation": "1.0.0",
+    "registry_foundation": "1.1.0",
+    "semantic_compiler_wave": "1.0.0",
+    "authority_bundle": 3
+  },
+  "git": {
+    "tag": "room16-ba10-artifact-abi-renderer-v1.0.0",
+    "tag_object": "78c39bf8c69754f717ef03833add898d69da4979",
+    "research_commit": "e10c8d4454c9ebeef42a7e8f1021aff291225e8c",
+    "product_commit": "de0dfbde1d7e14d081b8da27933f7164c88d0d12",
+    "product_branch": "bcr-report-lab-original-trading-flow"
+  },
+  "foundation": {
+    "manifest_path": "research_agent/compiler_foundation/freeze/compiler_foundation_manifest_v1.json",
+    "manifest_file_sha256": "82621d0c02596e16e144b7934f1d7594deee87ff8ccc047c071ea0a795104f32",
+    "version_lock_sha256": "8b9b7b2f59aa2cfed8280389f14c0e4edd11846d56c1d78e0dbf2c574da7d518",
+    "unchanged": true
+  },
+  "registry": {
+    "manifest_path": "research_agent/semantic_compiler/registry_foundation/freeze/registry_foundation_manifest_v1_1.json",
+    "manifest_file_sha256": "f123bf8d3511a5e6375c37dab3b0669200ddfd7b22f588725742a902b7f4d89e",
+    "authority_sha256": "55585f2242f32da4cc401455cd3186a97bf74f2c4a7feb5078e00d6a6e1ea5fb",
+    "unchanged": true
+  },
+  "semantic_wave": {
+    "freeze_record_path": "research_agent/semantic_compiler/freeze/semantic_compiler_wave_freeze_v1.json",
+    "version_lock_sha256": "62867ad72cd1a99eee482e75087cbe01449faa650d7cf2c535fd494c5fef30f9",
+    "pass_manifest_sha256": "854abab7764f1a26a26ac2a97585171154aaac52c2eb8ecb848e800d2da02d33",
+    "ir_schema_set_sha256": "b7b6194ad05b023c1c1cb1fe2a5cba6d5f830dfd6ee400df954c35c997847f4c",
+    "unchanged": true
+  },
+  "locks": {
+    "consumer_policy": {
+      "research_path": "research_agent/productization/config/consumer_policy_lock_v1.json",
+      "product_path": "room16-app/config/room16_compiler_artifact_consumer_policy_v1.json",
+      "file_sha256": "5429d749fd86edd2b0d4b4d99aba5472b4e9bec79af3eabd2958bb5136195c11",
+      "policy_sha256": "66a08374be21f0a74be0697fd9568edc41e7b5c8462e8f05544ba2cb7cbd2cae"
+    },
+    "receipt_set": {
+      "research_path": "research_agent/productization/config/compiler_artifact_receipt_set_v1.json",
+      "product_path": "room16-app/config/room16_compiler_artifact_receipt_set_v1.json",
+      "file_sha256": "73b6ad0c7b9754ff30d39ca2b5d735bb77c2d83f32656c38f7ada4bd2faf0897",
+      "receipt_set_sha256": "bf2bb816d26771c50d4cce82f36a8d7d7e79f70087bd601f576ba536a0ccde4f"
+    },
+    "pass_execution_profile": {
+      "research_path": "research_agent/productization/config/pass_execution_profile_v1.json",
+      "product_path": "room16-app/config/room16_pass_execution_profile_v1.json",
+      "file_sha256": "d0297b368957cb4d12c89f290f1fe4cddb0bfdfcdee8d3bb5be304ca1c7aa48c",
+      "pass_count": 10
+    },
+    "required_artifact_profile": {
+      "research_path": "research_agent/productization/config/required_artifact_profile_v1.json",
+      "product_path": "room16-app/config/room16_required_artifact_profile_v1.json",
+      "file_sha256": "dbb9155202d0d3dd58e1ebd9c250966725d2213598ae9729c4c46766e4c501d4",
+      "required_artifact_kind_count": 18
+    }
+  },
+  "authority_v3_compatibility_boundary": {
+    "authority_bundle_contract_id": "room16.research_authority_bundle",
+    "authority_bundle_contract_version": 3,
+    "bridge_contract_id": "room16.authority_v3_compatibility_view",
+    "bridge_contract_version": 1,
+    "direction": "compiler_artifact_bundle_to_authority_v3_compatibility_view",
+    "inverse_authority_allowed": false,
+    "compatibility_only": true,
+    "unchanged": true
+  },
+  "canaries": {
+    "product_baseline_path": "config/room16_canary_baseline.json",
+    "product_baseline_file_sha256": "88795b625b2d9ab892b559d98b6d4d0a0c79364088fe7376dc49a3b8bd796d7f",
+    "WM": {
+      "source_archive_path": ".runtime/cross-company-release-current/ROOM16_WM_COST_ABT_CROSS_COMPANY_RC_8cf064d75c8c-20260814-115448/ROOM16_WM_CROSS_COMPANY_RC_8cf064d75c8c-20260814-115448.zip",
+      "source_sha256": "a6b6d15ad7004573a56ad057884563cfbeeb2c3162dae0641a1b361b5e416d72",
+      "accepted_bundle_sha256": "71bc2f1dae367ecfe83f8f84f7a5d4eceffca07954709f2ea4d3caab655ff339",
+      "accepted_bundle_zip_sha256": "deead15c358590c8e5bccfac922dd860db7f28ca3edde334a7daf8a1377ab843",
+      "accepted_renderer_zip_sha256": "cad4e625c88b10df8fe5bce548356891e33ed3a0cd14f9e12ea1f218c15f0cc9",
+      "renderer_accepted": true
+    },
+    "COST": {
+      "source_archive_path": ".runtime/cross-company-release-current/ROOM16_WM_COST_ABT_CROSS_COMPANY_RC_8cf064d75c8c-20260814-115448/ROOM16_COST_CROSS_COMPANY_RC_8cf064d75c8c-20260814-115448.zip",
+      "source_sha256": "b97e6024855c7a772713ff9af4889987e4a9a8e5a3afca0d56a42a1ba8092ea4",
+      "accepted_bundle_sha256": "2c6a35f23011faa7ef1b6f1a401fb184d2b0f602766836df05a6ba66f94bbdd4",
+      "accepted_bundle_zip_sha256": "feced2406db17e64c52602d9e4a80d22b4781a2e48f209ee2ee5141a9003e486",
+      "accepted_renderer_zip_sha256": "ae0479643893f7c15883d754dce993f59bfbd887b4abb20f3762b3495d211607",
+      "renderer_accepted": true
+    },
+    "ABT": {
+      "source_archive_path": ".runtime/cross-company-release-current/ROOM16_WM_COST_ABT_CROSS_COMPANY_RC_8cf064d75c8c-20260814-115448/ROOM16_ABT_CROSS_COMPANY_RC_8cf064d75c8c-20260814-115448.zip",
+      "source_sha256": "0926d3cafd312556ec267b2b25214d255ff9352daed77a01b7852addbb48dc45",
+      "accepted_bundle_sha256": "48a39cf7537d4ed1f807d3a532173847192d6bfe805cd12fd3f5842b8d26383a",
+      "accepted_bundle_zip_sha256": "50c2d76bc9428b3ceb1d62db0230764e099a32cf755f8cf2cc27ce07b36f53b6",
+      "accepted_renderer_zip_sha256": "c3788a5ed4d175ddb444c69d6b478c91bb26f6e8159200a87a454912528934dd",
+      "renderer_accepted": true
+    }
+  },
+  "accepted_evidence": {
+    "archive": "outputs/release/ROOM16_RFC_0005_R3_BA10_FINAL_CLOSURE_E10C8D44_2026-08-18.zip",
+    "archive_sha256": "65055d2db0313aa713ff8af043815827aff960ca52a30d9eb0fab2124b0f8814",
+    "machine_verdict_path": "09_BA10_FINAL_ACCEPTANCE_VERDICT.json",
+    "replay_results_path": "07_WM_COST_ABT_REPLAY_RESULTS.json"
+  },
+  "closures": {
+    "production_trust_api": true,
+    "exact_pass_execution_profile": true,
+    "required_artifact_profile": true,
+    "full_unskipped_regression": true,
+    "ba10_r2_ar_001": true,
+    "ba10_r2_ar_002": true,
+    "ba10_r2_ar_003": true,
+    "ba10_r2_ar_004": true
+  },
+  "migration_state": {
+    "product_parallel_truth_removed_in_canonical_path": true,
+    "legacy_bridge_active": true,
+    "full_renderer_cutover": false,
+    "source_native_fact_generation": false
+  },
+  "status_flags": {
+    "ba10_frozen": true,
+    "rfc_0005_accepted": true,
+    "rfc_0005_r3_accepted": true,
+    "artifact_bundle_v1_frozen": true,
+    "renderer_truth_boundary_frozen": true,
+    "product_consumer_boundary_frozen": true,
+    "release_ready": false,
+    "publication_allowed": false,
+    "ba11_authorized": false,
+    "ba12_authorized": false
+  },
+  "frozen_source_files": {
+    "research": {
+      "research_agent/current/__main__.py": "b804c7c7a08242445e77f2b7b4b661dfe9b10455822a1102b67806456c1fb48a",
+      "research_agent/current/runner.py": "73290fff72975035ee866cd3a3c9e099f0d2b0518f9901849c952e1938f99163",
+      "research_agent/productization/__init__.py": "780ec367a3c3aad5b88ae30fe7d2dc1631bf99e5b338fe06ca4fd635f39f7d4c",
+      "research_agent/productization/artifact_bundle.py": "a285bda787d41b6fc04b450fb2ce7169b40ce9473415fc7f1c0912f547c2b528",
+      "research_agent/productization/contracts.py": "4f703f2d1dccd305bb9809594fc245fb20b4e346cbf81b16473bd2ef0e3799b8",
+      "research_agent/productization/output_lineage.py": "59ecc8c8c19e9a26588e75419274465bedb5e459fbcd1d31e8dc7610358d9d56",
+      "research_agent/productization/trust_receipt.py": "0c922929e0d8822b5e5b3e1388126c25055173b002c67b93a12f2cf1a5c30f57"
+    },
+    "product": {
+      "room16-app/config/room16_product_truth_boundary_v1.json": "5fd8c40c474f66cdd56ec3cdabe1436a2d66f787759202504cb19a0657040407",
+      "room16-app/server-modules/compiler-artifact-bundle.mjs": "d800d22a890f8339f70cc07d6818f919dd3b46d9e0fcd77389a8d4d01487432b",
+      "room16-app/server-modules/deterministic-research-report.mjs": "8c1017ae67e90991af5d716843bde0f62c1b2f39bef29812a4c3b130aaced2f6",
+      "room16-app/server.mjs": "4f3f3381d33ae50891fdd8db33441c9f15a88974156926eb156f891bca398500",
+      "room16-app/src/CompilerArtifactStatus.tsx": "5b2f3625381d1cddf06bc6be659bc5b9264ca5d52192dd1b75c8dbc93e4bc1a5",
+      "scripts/room16_compiler_presentation.py": "3a130b598a63d93666431507cacbba08e6436e211eb1fa2ddd2b19f7a3740e4d",
+      "scripts/room16_render_deterministic_report.py": "465aba7b20c82b557d81fe683e53c0b48128df03e17823970003004fc9baf88f",
+      "scripts/room16_render_public_report.py": "faae31f0b2dab488a552fc7eb618b6f87ea2cc584c505f0c181133b3c170a29b"
+    }
+  },
+  "freeze_rule": {
+    "rfc_required": true,
+    "versioning_decision_required": true,
+    "protected_surfaces": [
+      "compiler_artifact_bundle_contract_behavior",
+      "product_consumer_trust_boundary",
+      "renderer_truth_boundary",
+      "pass_execution_profile",
+      "required_artifact_profile",
+      "authority_v3_bridge_semantics"
+    ]
+  },
+  "freeze_lock_inputs": {
+    "artifact_bundle_contract": "room16.compiler_artifact_bundle@1",
+    "artifact_bundle_schema_version": "1.2.0",
+    "authority_bundle_version": 3,
+    "canary_bundle_sha256": {
+      "ABT": "48a39cf7537d4ed1f807d3a532173847192d6bfe805cd12fd3f5842b8d26383a",
+      "COST": "2c6a35f23011faa7ef1b6f1a401fb184d2b0f602766836df05a6ba66f94bbdd4",
+      "WM": "71bc2f1dae367ecfe83f8f84f7a5d4eceffca07954709f2ea4d3caab655ff339"
+    },
+    "canary_source_sha256": {
+      "ABT": "0926d3cafd312556ec267b2b25214d255ff9352daed77a01b7852addbb48dc45",
+      "COST": "b97e6024855c7a772713ff9af4889987e4a9a8e5a3afca0d56a42a1ba8092ea4",
+      "WM": "a6b6d15ad7004573a56ad057884563cfbeeb2c3162dae0641a1b361b5e416d72"
+    },
+    "consumer_policy_file_sha256": "5429d749fd86edd2b0d4b4d99aba5472b4e9bec79af3eabd2958bb5136195c11",
+    "consumer_policy_sha256": "66a08374be21f0a74be0697fd9568edc41e7b5c8462e8f05544ba2cb7cbd2cae",
+    "foundation_version": "1.0.0",
+    "foundation_version_lock_sha256": "8b9b7b2f59aa2cfed8280389f14c0e4edd11846d56c1d78e0dbf2c574da7d518",
+    "git_tag": "room16-ba10-artifact-abi-renderer-v1.0.0",
+    "pass_execution_profile_sha256": "d0297b368957cb4d12c89f290f1fe4cddb0bfdfcdee8d3bb5be304ca1c7aa48c",
+    "product_commit": "de0dfbde1d7e14d081b8da27933f7164c88d0d12",
+    "receipt_set_file_sha256": "73b6ad0c7b9754ff30d39ca2b5d735bb77c2d83f32656c38f7ada4bd2faf0897",
+    "receipt_set_sha256": "bf2bb816d26771c50d4cce82f36a8d7d7e79f70087bd601f576ba536a0ccde4f",
+    "registry_authority_sha256": "55585f2242f32da4cc401455cd3186a97bf74f2c4a7feb5078e00d6a6e1ea5fb",
+    "registry_foundation_version": "1.1.0",
+    "required_artifact_profile_sha256": "dbb9155202d0d3dd58e1ebd9c250966725d2213598ae9729c4c46766e4c501d4",
+    "research_commit": "e10c8d4454c9ebeef42a7e8f1021aff291225e8c",
+    "rfc_0005_accepted": true,
+    "rfc_0005_r3_accepted": true,
+    "semantic_wave_version": "1.0.0",
+    "semantic_wave_version_lock_sha256": "62867ad72cd1a99eee482e75087cbe01449faa650d7cf2c535fd494c5fef30f9"
+  },
+  "freeze_lock_sha256": "29bc0bf2d00aa22d49fd7bb569cf080cc335778c1773b9e63710ecd61dfebc8e"
+}
