@@ -38,11 +38,18 @@ from .contracts import (
     CompilerIdentity,
     ConsumerCapabilities,
     EligibilityState,
+    EmitterIdentity,
 )
+from .output_lineage import build_rendered_output_lineage
 
 BUNDLE_MANIFEST = "BUNDLE_MANIFEST.json"
 BRIDGE_PATH = "bridge/authority_v3_compatibility_view.json"
 RENDERER_PROJECTION_PATH = "presentation/renderer_projection.json"
+RENDERER_LINEAGE_EXPECTATION_PATH = "presentation/renderer_lineage_expectation.json"
+CONSUMER_POLICY_PATH = (
+    Path(__file__).resolve().parent / "config/consumer_policy_lock_v1.json"
+)
+RESEARCH_ROOT = Path(__file__).resolve().parents[2]
 FREEZE_RECORD = (
     Path(__file__).resolve().parents[1]
     / "semantic_compiler/freeze/semantic_compiler_wave_freeze_v1.json"
@@ -56,6 +63,40 @@ class ArtifactBundleError(ValueError):
         super().__init__(f"{diagnostic_code}:{detail}")
         self.diagnostic_code = diagnostic_code
         self.detail = detail
+
+
+def _load_consumer_policy() -> dict[str, Any]:
+    if not CONSUMER_POLICY_PATH.is_file():
+        raise ArtifactBundleError("ABI_CONSUMER_POLICY_MISSING", str(CONSUMER_POLICY_PATH))
+    try:
+        policy = json.loads(CONSUMER_POLICY_PATH.read_text(encoding="utf-8"))
+        _nfc_required(policy)
+    except Exception as exc:
+        raise ArtifactBundleError("ABI_CONSUMER_POLICY_INVALID", str(exc)) from exc
+    body = {key: value for key, value in policy.items() if key != "policy_sha256"}
+    if (
+        policy.get("contract_id") != "room16.compiler.consumer_policy_lock"
+        or policy.get("contract_version") != 1
+        or policy.get("owner") != "research_compiler"
+        or sha256_json(body) != policy.get("policy_sha256")
+    ):
+        raise ArtifactBundleError("ABI_CONSUMER_POLICY_INVALID", "identity_or_hash")
+    implementation_files = []
+    for item in policy.get("emitter_implementation_files") or []:
+        relative = _safe_relative(str(item.get("path") or ""))
+        path = (RESEARCH_ROOT / relative).resolve()
+        if RESEARCH_ROOT not in path.parents or not path.is_file():
+            raise ArtifactBundleError("ABI_EMITTER_IDENTITY_MISMATCH", relative)
+        implementation_files.append({"path": relative, "sha256": _sha256_file(path)})
+    if (
+        implementation_files != policy.get("emitter_implementation_files")
+        or sha256_json(implementation_files)
+        != policy.get("emitter_implementation_sha256")
+        or _sha256_file(RESEARCH_ROOT / "research_agent/productization/contracts.py")
+        != policy.get("emitter_schema_sha256")
+    ):
+        raise ArtifactBundleError("ABI_EMITTER_IDENTITY_MISMATCH", "implementation")
+    return policy
 
 
 def _sha256_file(path: Path) -> str:
@@ -441,6 +482,7 @@ def build_compiler_artifact_bundle(
     if result.get("compiler_mode") != "compatibility_shadow":
         raise ArtifactBundleError("ABI_COMPATIBILITY_STATE_INVALID", "compiler_mode")
     freeze = json.loads(FREEZE_RECORD.read_text(encoding="utf-8"))
+    consumer_policy = _load_consumer_policy()
     with tempfile.TemporaryDirectory(prefix="room16-ba10-bundle-") as temporary:
         staging = Path(temporary) / "bundle"
         staging.mkdir()
@@ -450,6 +492,43 @@ def build_compiler_artifact_bundle(
             staging, archive, records
         )
         renderer_projection = _semantic_ids(artifacts, legacy_markdown_sha256)
+        legacy_markdown = (staging / "presentation/legacy_canonical_report.md").read_text(
+            encoding="utf-8"
+        )
+        lineage_expectation = build_rendered_output_lineage(
+            legacy_markdown,
+            source_markdown_sha256=str(legacy_markdown_sha256),
+            allowed_fact_ids=renderer_projection["fact_ids"],
+            allowed_claim_ids=renderer_projection["claim_ids"],
+            allowed_decision_ids=renderer_projection["decision_ids"],
+        )
+        lineage_record = _add_json(
+            staging,
+            records,
+            artifact_id="presentation.renderer_lineage_expectation",
+            artifact_kind="renderer_lineage_expectation",
+            relative_path=RENDERER_LINEAGE_EXPECTATION_PATH,
+            value=lineage_expectation,
+            layer="L11_emit",
+            producer_pass_id="ba10.l11.render_projection",
+            dependencies=(str(legacy_markdown_sha256),),
+        )
+        renderer_projection["display_tokens"] = sorted(
+            [*renderer_projection["display_tokens"], *lineage_expectation["display_tokens"]],
+            key=lambda item: item["token_id"],
+        )
+        renderer_projection["rendered_output_lineage_contract"] = (
+            "room16.rendered_output_lineage@1"
+        )
+        renderer_projection["rendered_output_lineage_sha256"] = lineage_expectation[
+            "ir_sha256"
+        ]
+        renderer_projection["visible_material_span_count"] = lineage_expectation[
+            "visible_material_span_count"
+        ]
+        renderer_projection["visible_numeric_span_count"] = lineage_expectation[
+            "visible_numeric_span_count"
+        ]
         renderer_projection["legacy_renderer_outputs"] = renderer_compatibility[
             "legacy_renderer_outputs"
         ]
@@ -462,6 +541,7 @@ def build_compiler_artifact_bundle(
                 written["typed_facts"].sha256,
                 written["claim_graph"].sha256,
                 written["decision_graph"].sha256,
+                lineage_record.sha256,
             ),
         )
         records = sorted(records, key=lambda item: item.artifact_id)
@@ -471,6 +551,17 @@ def build_compiler_artifact_bundle(
             pass_manifest_sha256=freeze["pass_manifest"]["effective_pass_manifest_sha256"],
             ir_schema_set_sha256=freeze["ir_schema"]["schema_set_sha256"],
             registry_authority_sha256=freeze["registry"]["authority_sha256"],
+        ).model_dump(mode="json")
+        emitter_identity = EmitterIdentity(
+            emitter_version=consumer_policy["emitter_version"],
+            emitter_implementation_commit=consumer_policy[
+                "emitter_implementation_commit"
+            ],
+            emitter_implementation_sha256=consumer_policy[
+                "emitter_implementation_sha256"
+            ],
+            emitter_schema_sha256=consumer_policy["emitter_schema_sha256"],
+            consumer_policy_sha256=consumer_policy["policy_sha256"],
         ).model_dump(mode="json")
         compile_identity = CompileIdentity(
             ticker=result["ticker"], as_of_date=result["as_of_date"],
@@ -561,10 +652,11 @@ def build_compiler_artifact_bundle(
         manifest_body = {
             "contract_id": "room16.compiler_artifact_bundle",
             "contract_version": 1,
-            "schema_version": "1.1.0",
+            "schema_version": "1.2.0",
             "canonicalization_profile": "room16.foundation.canonical_json@1",
             "hash_algorithm": "sha256",
             "compiler_identity": compiler_identity,
+            "emitter_identity": emitter_identity,
             "compile_identity": compile_identity,
             "registry_lock": result["compile_state"]["semantic_registry_lock"],
             "artifact_index_sha256": artifact_index_sha256,

@@ -21,6 +21,7 @@ from research_agent.productization.contracts import (
     REQUIRED_BUNDLE_SECTION_IDS,
     CompilerArtifactBundleManifest,
 )
+from research_agent.productization.output_lineage import build_rendered_output_lineage
 from research_agent.semantic_compiler.semantic_spine.rfc_0004 import replay_rfc_0004_archive
 
 RESEARCH_ROOT = Path(__file__).resolve().parents[2]
@@ -42,10 +43,42 @@ def test_research_owned_cross_language_corpus_is_exact_and_nfc() -> None:
     path = RESEARCH_ROOT / "research_agent/productization/config/conformance_corpus_v1.json"
     corpus = json.loads(path.read_text(encoding="utf-8"))
     assert corpus["contract_id"] == "room16.compiler_artifact_bundle_conformance_corpus"
+    assert corpus["bundle_schema_version"] == "1.2.0"
     for case in corpus["valid_cases"]:
         assert canonical_json(case["value"]) == case["canonical_json"]
         assert sha256_json(case["value"]) == case["sha256"]
         assert unicodedata.normalize("NFC", case["canonical_json"]) == case["canonical_json"]
+
+
+def test_visible_output_lineage_binds_material_and_numeric_spans() -> None:
+    markdown = (
+        "# Example\n\nRevenue is $12.5B. "
+        "<!-- room16-lineage claim=ACME_CLAIM_001 evidence=ACME_FACT_REVENUE -->\n"
+    )
+    lineage = build_rendered_output_lineage(
+        markdown,
+        source_markdown_sha256="a" * 64,
+        allowed_fact_ids=(),
+        allowed_claim_ids=("ACME_CLAIM_001",),
+        allowed_decision_ids=(),
+    )
+
+    assert lineage["visible_material_span_count"] == 2
+    assert lineage["visible_numeric_span_count"] == 1
+    assert lineage["unbound_visible_span_count"] == 0
+    assert lineage["material_spans"][1]["claim_refs"] == ["ACME_CLAIM_001"]
+    assert all(item["token_id"].startswith("display.") for item in lineage["display_tokens"])
+
+
+def test_visible_output_lineage_rejects_unknown_claim_reference() -> None:
+    with pytest.raises(ValueError, match="RENDERER_LINEAGE_REFERENCE_UNKNOWN"):
+        build_rendered_output_lineage(
+            "Material. <!-- room16-lineage claim=UNKNOWN_CLAIM_001 -->\n",
+            source_markdown_sha256="b" * 64,
+            allowed_fact_ids=(),
+            allowed_claim_ids=(),
+            allowed_decision_ids=(),
+        )
 
 
 def test_manifest_rejects_unknown_top_level_semantic_field() -> None:
@@ -76,7 +109,8 @@ def test_bundle_is_deterministic_and_contains_every_required_section(wm_bundle) 
     two = verify_compiler_artifact_bundle(second)
     assert (first / "BUNDLE_MANIFEST.json").read_bytes() == (second / "BUNDLE_MANIFEST.json").read_bytes()
     assert one.bundle_sha256 == two.bundle_sha256
-    assert one.schema_version == "1.1.0"
+    assert one.schema_version == "1.2.0"
+    assert one.emitter_identity.emitter_id == "room16.compiler_artifact_bundle_builder"
     assert tuple(section.section_id for section in one.sections) == REQUIRED_BUNDLE_SECTION_IDS
     assert all(section.owner == "research_compiler" for section in one.sections)
     assert all(item.owner == "research_compiler" for item in one.artifacts)

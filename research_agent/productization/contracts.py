@@ -92,6 +92,18 @@ class CompilerIdentity(StrictModel):
     registry_authority_sha256: str = Field(pattern=SHA256_PATTERN)
 
 
+class EmitterIdentity(StrictModel):
+    emitter_id: Literal["room16.compiler_artifact_bundle_builder"] = (
+        "room16.compiler_artifact_bundle_builder"
+    )
+    emitter_version: str = Field(pattern=r"^\d+\.\d+\.\d+(?:-[a-z0-9]+)?$")
+    emitter_implementation_commit: str = Field(pattern=r"^[0-9a-f]{40}$")
+    emitter_implementation_sha256: str = Field(pattern=SHA256_PATTERN)
+    emitter_schema_sha256: str = Field(pattern=SHA256_PATTERN)
+    producer_pass_id: Literal["ba10.l11.emit_bundle"] = "ba10.l11.emit_bundle"
+    consumer_policy_sha256: str = Field(pattern=SHA256_PATTERN)
+
+
 class CompileIdentity(StrictModel):
     ticker: str = Field(pattern=r"^[A-Z0-9.^-]+$")
     as_of_date: str = Field(pattern=r"^\d{4}-\d{2}-\d{2}$")
@@ -146,13 +158,14 @@ class CompilerArtifactBundleManifest(StrictModel):
         "room16.compiler_artifact_bundle"
     )
     contract_version: Literal[1] = 1
-    schema_version: Literal["1.1.0"] = "1.1.0"
+    schema_version: Literal["1.2.0"] = "1.2.0"
     canonicalization_profile: Literal["room16.foundation.canonical_json@1"] = (
         "room16.foundation.canonical_json@1"
     )
     hash_algorithm: Literal["sha256"] = "sha256"
     bundle_sha256: str = Field(pattern=SHA256_PATTERN)
     compiler_identity: CompilerIdentity
+    emitter_identity: EmitterIdentity
     compile_identity: CompileIdentity
     registry_lock: dict[str, Any]
     artifact_index_sha256: str = Field(pattern=SHA256_PATTERN)
@@ -233,6 +246,7 @@ REQUIRED_ARTIFACT_KINDS = (
     "verification_report",
     "authority_v3_bridge",
     "renderer_projection",
+    "renderer_lineage_expectation",
 )
 
 REQUIRED_BUNDLE_SECTION_IDS = (
