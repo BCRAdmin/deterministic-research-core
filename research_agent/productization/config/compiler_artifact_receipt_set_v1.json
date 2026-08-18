@@ -1,0 +1,136 @@
+{
+  "contract_id": "room16.compiler_artifact_bundle_receipt_set",
+  "contract_version": 1,
+  "mirror_mode": "hash_pinned_read_only",
+  "owner": "research_compiler",
+  "receipt_set_sha256": "bf2bb816d26771c50d4cce82f36a8d7d7e79f70087bd601f576ba536a0ccde4f",
+  "receipts": [
+    {
+      "bundle_sha256": "2c6a35f23011faa7ef1b6f1a401fb184d2b0f602766836df05a6ba66f94bbdd4",
+      "compile_identity": {
+        "as_of_date": "2026-08-13",
+        "final_compile_state_sha256": "477257c8ee784870329b87c73a194a889bc856733602209f586b77d4a00d71f6",
+        "replay_sha256": "9ed69a69d09afe56349a43b6e021cea616fd2d5ea1e1ff16c77d04c7d75a3bca",
+        "source_archive_sha256": "b97e6024855c7a772713ff9af4889987e4a9a8e5a3afca0d56a42a1ba8092ea4",
+        "ticker": "COST",
+        "verification_report_sha256": "84468714eef410d42fe37d72b685df6fed3ce5480449f2d91403bbda3356fdcf"
+      },
+      "compiler_identity": {
+        "compiler_name": "Room16 Financial Research Compiler",
+        "compiler_version": "1.0.0",
+        "foundation_version": "1.0.0",
+        "ir_schema_set_sha256": "b7b6194ad05b023c1c1cb1fe2a5cba6d5f830dfd6ee400df954c35c997847f4c",
+        "pass_manifest_sha256": "854abab7764f1a26a26ac2a97585171154aaac52c2eb8ecb848e800d2da02d33",
+        "registry_authority_sha256": "55585f2242f32da4cc401455cd3186a97bf74f2c4a7feb5078e00d6a6e1ea5fb",
+        "registry_foundation_version": "1.1.0",
+        "semantic_wave_version": "1.0.0",
+        "semantic_wave_version_lock": "62867ad72cd1a99eee482e75087cbe01449faa650d7cf2c535fd494c5fef30f9"
+      },
+      "contract_id": "room16.compiler_artifact_bundle_receipt",
+      "contract_version": 1,
+      "emitter_identity": {
+        "consumer_policy_sha256": "66a08374be21f0a74be0697fd9568edc41e7b5c8462e8f05544ba2cb7cbd2cae",
+        "emitter_id": "room16.compiler_artifact_bundle_builder",
+        "emitter_implementation_commit": "b65942f9427fa962857ed822cc7e8623a1f3a88c",
+        "emitter_implementation_sha256": "f3fa7f0d4cc7b73772ee28615055e1d18ccd3ee46f33c28a30c161b8421966da",
+        "emitter_schema_sha256": "4f703f2d1dccd305bb9809594fc245fb20b4e346cbf81b16473bd2ef0e3799b8",
+        "emitter_version": "1.2.0-rfc0005r2",
+        "producer_pass_id": "ba10.l11.emit_bundle"
+      },
+      "issued_by_key_id": "research_git_blob:b65942f9427fa962857ed822cc7e8623a1f3a88c",
+      "policy_identity": {
+        "contract_id": "room16.compiler.consumer_policy_lock",
+        "contract_version": 1,
+        "policy_sha256": "66a08374be21f0a74be0697fd9568edc41e7b5c8462e8f05544ba2cb7cbd2cae"
+      },
+      "receipt_sha256": "663b834affe8c75aa992802d09b5a8d8d8d24d74a3148d55506cac1dfd84a370",
+      "signature": "84d9211d23494d9ce94e73ce5353144d0ecc9a51b3829a87bb3217784f16ec6e",
+      "signature_algorithm": "research_owned_detached_sha256_pin"
+    },
+    {
+      "bundle_sha256": "48a39cf7537d4ed1f807d3a532173847192d6bfe805cd12fd3f5842b8d26383a",
+      "compile_identity": {
+        "as_of_date": "2026-08-13",
+        "final_compile_state_sha256": "f4ad8755a1c79c5ec83b579305727d593e3cff80df4b98daeac277bd1c86c4ab",
+        "replay_sha256": "a16c17bc302b8138287b8de4380ade6a76982c6255ddd737c316f3766e123116",
+        "source_archive_sha256": "0926d3cafd312556ec267b2b25214d255ff9352daed77a01b7852addbb48dc45",
+        "ticker": "ABT",
+        "verification_report_sha256": "1c04478e377ddebc9dbbc05e71157189a82407bf302d81ad54689a3d745b037c"
+      },
+      "compiler_identity": {
+        "compiler_name": "Room16 Financial Research Compiler",
+        "compiler_version": "1.0.0",
+        "foundation_version": "1.0.0",
+        "ir_schema_set_sha256": "b7b6194ad05b023c1c1cb1fe2a5cba6d5f830dfd6ee400df954c35c997847f4c",
+        "pass_manifest_sha256": "854abab7764f1a26a26ac2a97585171154aaac52c2eb8ecb848e800d2da02d33",
+        "registry_authority_sha256": "55585f2242f32da4cc401455cd3186a97bf74f2c4a7feb5078e00d6a6e1ea5fb",
+        "registry_foundation_version": "1.1.0",
+        "semantic_wave_version": "1.0.0",
+        "semantic_wave_version_lock": "62867ad72cd1a99eee482e75087cbe01449faa650d7cf2c535fd494c5fef30f9"
+      },
+      "contract_id": "room16.compiler_artifact_bundle_receipt",
+      "contract_version": 1,
+      "emitter_identity": {
+        "consumer_policy_sha256": "66a08374be21f0a74be0697fd9568edc41e7b5c8462e8f05544ba2cb7cbd2cae",
+        "emitter_id": "room16.compiler_artifact_bundle_builder",
+        "emitter_implementation_commit": "b65942f9427fa962857ed822cc7e8623a1f3a88c",
+        "emitter_implementation_sha256": "f3fa7f0d4cc7b73772ee28615055e1d18ccd3ee46f33c28a30c161b8421966da",
+        "emitter_schema_sha256": "4f703f2d1dccd305bb9809594fc245fb20b4e346cbf81b16473bd2ef0e3799b8",
+        "emitter_version": "1.2.0-rfc0005r2",
+        "producer_pass_id": "ba10.l11.emit_bundle"
+      },
+      "issued_by_key_id": "research_git_blob:b65942f9427fa962857ed822cc7e8623a1f3a88c",
+      "policy_identity": {
+        "contract_id": "room16.compiler.consumer_policy_lock",
+        "contract_version": 1,
+        "policy_sha256": "66a08374be21f0a74be0697fd9568edc41e7b5c8462e8f05544ba2cb7cbd2cae"
+      },
+      "receipt_sha256": "0df9a502e9103d1d6d4c60a1ca1bac790fec823ddf3b8716efbbd1f46539d33d",
+      "signature": "d00c4f866887683e7e8018810495bcfd279509c633676b35efb0ff18545693b3",
+      "signature_algorithm": "research_owned_detached_sha256_pin"
+    },
+    {
+      "bundle_sha256": "71bc2f1dae367ecfe83f8f84f7a5d4eceffca07954709f2ea4d3caab655ff339",
+      "compile_identity": {
+        "as_of_date": "2026-08-11",
+        "final_compile_state_sha256": "c1a23a2e36040294eed8b4767a2b372880941604d549e18ee51ee086565a916d",
+        "replay_sha256": "8c2f554f9623d26b65a07a0c90e44355928b5550602ca2e28cc2cd5ef1fa0d8e",
+        "source_archive_sha256": "a6b6d15ad7004573a56ad057884563cfbeeb2c3162dae0641a1b361b5e416d72",
+        "ticker": "WM",
+        "verification_report_sha256": "6b1a43d6a90b4e0c974f8e13a92f314153181aa8bf5cfead6a9f1baae308411f"
+      },
+      "compiler_identity": {
+        "compiler_name": "Room16 Financial Research Compiler",
+        "compiler_version": "1.0.0",
+        "foundation_version": "1.0.0",
+        "ir_schema_set_sha256": "b7b6194ad05b023c1c1cb1fe2a5cba6d5f830dfd6ee400df954c35c997847f4c",
+        "pass_manifest_sha256": "854abab7764f1a26a26ac2a97585171154aaac52c2eb8ecb848e800d2da02d33",
+        "registry_authority_sha256": "55585f2242f32da4cc401455cd3186a97bf74f2c4a7feb5078e00d6a6e1ea5fb",
+        "registry_foundation_version": "1.1.0",
+        "semantic_wave_version": "1.0.0",
+        "semantic_wave_version_lock": "62867ad72cd1a99eee482e75087cbe01449faa650d7cf2c535fd494c5fef30f9"
+      },
+      "contract_id": "room16.compiler_artifact_bundle_receipt",
+      "contract_version": 1,
+      "emitter_identity": {
+        "consumer_policy_sha256": "66a08374be21f0a74be0697fd9568edc41e7b5c8462e8f05544ba2cb7cbd2cae",
+        "emitter_id": "room16.compiler_artifact_bundle_builder",
+        "emitter_implementation_commit": "b65942f9427fa962857ed822cc7e8623a1f3a88c",
+        "emitter_implementation_sha256": "f3fa7f0d4cc7b73772ee28615055e1d18ccd3ee46f33c28a30c161b8421966da",
+        "emitter_schema_sha256": "4f703f2d1dccd305bb9809594fc245fb20b4e346cbf81b16473bd2ef0e3799b8",
+        "emitter_version": "1.2.0-rfc0005r2",
+        "producer_pass_id": "ba10.l11.emit_bundle"
+      },
+      "issued_by_key_id": "research_git_blob:b65942f9427fa962857ed822cc7e8623a1f3a88c",
+      "policy_identity": {
+        "contract_id": "room16.compiler.consumer_policy_lock",
+        "contract_version": 1,
+        "policy_sha256": "66a08374be21f0a74be0697fd9568edc41e7b5c8462e8f05544ba2cb7cbd2cae"
+      },
+      "receipt_sha256": "81756173cfaa4ce81a6427edc4c8952af26031b133c1bbe022cd2e3413c80471",
+      "signature": "e1bfdcc42dcc4a2e5b25275c83719eda920a059f6ccb76c898955b54191338b9",
+      "signature_algorithm": "research_owned_detached_sha256_pin"
+    }
+  ],
+  "research_commit": "b65942f9427fa962857ed822cc7e8623a1f3a88c"
+}

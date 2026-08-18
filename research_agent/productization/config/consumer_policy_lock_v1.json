@@ -1,17 +1,23 @@
 {
+  "artifact_bundle_contract_id": "room16.compiler_artifact_bundle",
   "artifact_bundle_contract_major": 1,
+  "authority_bundle_contract_id": "room16.research_authority_bundle",
+  "authority_bundle_contract_version": 3,
   "ba11_authorized": false,
   "ba12_authorized": false,
+  "bridge_contract_id": "room16.authority_v3_compatibility_view",
+  "bridge_contract_version": 1,
   "bundle_required_compatibility_shadow": true,
   "canonicalization_profile": "room16.foundation.canonical_json@1",
+  "compiler_version": "1.0.0",
   "contract_id": "room16.compiler.consumer_policy_lock",
   "contract_version": 1,
   "emitter_id": "room16.compiler_artifact_bundle_builder",
-  "emitter_implementation_commit": "79d7e7f9099b3e212aa6273ed79868aa04d61358",
+  "emitter_implementation_commit": "b65942f9427fa962857ed822cc7e8623a1f3a88c",
   "emitter_implementation_files": [
     {
       "path": "research_agent/productization/artifact_bundle.py",
-      "sha256": "e68e2df1be33df667dbd3a3c7998932d47317166e66312cc0dfc9465cbfa5503"
+      "sha256": "a285bda787d41b6fc04b450fb2ce7169b40ce9473415fc7f1c0912f547c2b528"
     },
     {
       "path": "research_agent/productization/contracts.py",
@@ -22,9 +28,10 @@
       "sha256": "59ecc8c8c19e9a26588e75419274465bedb5e459fbcd1d31e8dc7610358d9d56"
     }
   ],
-  "emitter_implementation_sha256": "ef38c3e1456ebb89618e553b541d9a2d92c7bd74c57fdb6d65293c18b89623d6",
+  "emitter_implementation_sha256": "f3fa7f0d4cc7b73772ee28615055e1d18ccd3ee46f33c28a30c161b8421966da",
   "emitter_schema_sha256": "4f703f2d1dccd305bb9809594fc245fb20b4e346cbf81b16473bd2ef0e3799b8",
-  "emitter_version": "1.1.0-rfc0005r1",
+  "emitter_version": "1.2.0-rfc0005r2",
+  "foundation_version": "1.0.0",
   "full_renderer_cutover": false,
   "hash_algorithm": "sha256",
   "ir_schema_set_sha256": "b7b6194ad05b023c1c1cb1fe2a5cba6d5f830dfd6ee400df954c35c997847f4c",
@@ -32,16 +39,19 @@
   "mirror_mode": "hash_verified_read_only",
   "owner": "research_compiler",
   "pass_manifest_sha256": "854abab7764f1a26a26ac2a97585171154aaac52c2eb8ecb848e800d2da02d33",
-  "policy_sha256": "86a2251f55fc2838dd9b1289ee3a4430e6a721bfe6a07cc8642585329b516eaf",
+  "policy_sha256": "66a08374be21f0a74be0697fd9568edc41e7b5c8462e8f05544ba2cb7cbd2cae",
   "producer_pass_id": "ba10.l11.emit_bundle",
   "product_may_edit_semantics": false,
   "product_parallel_truth_removed_globally": false,
   "product_parallel_truth_removed_in_canonical_path": true,
   "publication_allowed": false,
   "registry_authority_sha256": "55585f2242f32da4cc401455cd3186a97bf74f2c4a7feb5078e00d6a6e1ea5fb",
+  "registry_foundation_version": "1.1.0",
   "release_ready": false,
+  "renderer_cutover": false,
   "schema_version_max": "1.2.0",
   "schema_version_min": "1.2.0",
+  "semantic_wave_version": "1.0.0",
   "semantic_wave_version_lock": "62867ad72cd1a99eee482e75087cbe01449faa650d7cf2c535fd494c5fef30f9",
   "source_native_fact_generation": false
 }
