@@ -74,7 +74,7 @@ def main() -> None:
             rz=stage/"NESTED_RENDERED_ARTIFACTS"/f"{ticker}_RENDERED_ARTIFACTS.zip"; deterministic_zip(render,rz)
             replay[ticker]={"source_canary_sha256":expected,"bundle_sha256":manifest["bundle_sha256"],"bundle_zip_sha256":sha(bz),"rendered_zip_sha256":sha(rz),"instance_status":instance[ticker]["status"],"rendered_artifact_set_accepted":instance[ticker]["rendered_artifact_set_accepted"]}
         fixture_path=Path(td)/"fixtures.json"
-        fixture=run(["node","scripts/test_compiler_artifact_bundle_contract_fixtures.mjs","--bundle",str(a.bundles_root/"WM"),"--rehasher",str(ROOT/"scripts/ops/rehash_ba10_bundle_fixture.py"),"--output",str(fixture_path)],APP)
+        fixture=run(["node","scripts/verify_compiler_artifact_bundle_contract_fixtures.mjs","--bundle",str(a.bundles_root/"WM"),"--rehasher",str(ROOT/"scripts/ops/rehash_ba10_bundle_fixture.py"),"--output",str(fixture_path)],APP)
         tests={
           "research_unit":run([str(ROOT/".venv/bin/python"),"-m","pytest","-q","research_agent/tests/test_ba10_trust_receipt.py","research_agent/tests/test_ba10_artifact_bundle.py"],ROOT),
           "product_unit":run(["npm","run","verify:compiler-artifact-bundle"],APP),
