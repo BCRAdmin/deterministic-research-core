@@ -1,0 +1,47 @@
+{
+  "artifact_bundle_contract_major": 1,
+  "ba11_authorized": false,
+  "ba12_authorized": false,
+  "bundle_required_compatibility_shadow": true,
+  "canonicalization_profile": "room16.foundation.canonical_json@1",
+  "contract_id": "room16.compiler.consumer_policy_lock",
+  "contract_version": 1,
+  "emitter_id": "room16.compiler_artifact_bundle_builder",
+  "emitter_implementation_commit": "79d7e7f9099b3e212aa6273ed79868aa04d61358",
+  "emitter_implementation_files": [
+    {
+      "path": "research_agent/productization/artifact_bundle.py",
+      "sha256": "e68e2df1be33df667dbd3a3c7998932d47317166e66312cc0dfc9465cbfa5503"
+    },
+    {
+      "path": "research_agent/productization/contracts.py",
+      "sha256": "4f703f2d1dccd305bb9809594fc245fb20b4e346cbf81b16473bd2ef0e3799b8"
+    },
+    {
+      "path": "research_agent/productization/output_lineage.py",
+      "sha256": "59ecc8c8c19e9a26588e75419274465bedb5e459fbcd1d31e8dc7610358d9d56"
+    }
+  ],
+  "emitter_implementation_sha256": "ef38c3e1456ebb89618e553b541d9a2d92c7bd74c57fdb6d65293c18b89623d6",
+  "emitter_schema_sha256": "4f703f2d1dccd305bb9809594fc245fb20b4e346cbf81b16473bd2ef0e3799b8",
+  "emitter_version": "1.1.0-rfc0005r1",
+  "full_renderer_cutover": false,
+  "hash_algorithm": "sha256",
+  "ir_schema_set_sha256": "b7b6194ad05b023c1c1cb1fe2a5cba6d5f830dfd6ee400df954c35c997847f4c",
+  "legacy_bridge_active": true,
+  "mirror_mode": "hash_verified_read_only",
+  "owner": "research_compiler",
+  "pass_manifest_sha256": "854abab7764f1a26a26ac2a97585171154aaac52c2eb8ecb848e800d2da02d33",
+  "policy_sha256": "86a2251f55fc2838dd9b1289ee3a4430e6a721bfe6a07cc8642585329b516eaf",
+  "producer_pass_id": "ba10.l11.emit_bundle",
+  "product_may_edit_semantics": false,
+  "product_parallel_truth_removed_globally": false,
+  "product_parallel_truth_removed_in_canonical_path": true,
+  "publication_allowed": false,
+  "registry_authority_sha256": "55585f2242f32da4cc401455cd3186a97bf74f2c4a7feb5078e00d6a6e1ea5fb",
+  "release_ready": false,
+  "schema_version_max": "1.2.0",
+  "schema_version_min": "1.2.0",
+  "semantic_wave_version_lock": "62867ad72cd1a99eee482e75087cbe01449faa650d7cf2c535fd494c5fef30f9",
+  "source_native_fact_generation": false
+}
