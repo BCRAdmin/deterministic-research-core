@@ -13,7 +13,7 @@ from typing import Any
 
 from research_agent.canary_governance.archive import build_deterministic_zip
 from research_agent.canary_governance.contracts import EvidenceManifest, EvidencePackageIdentity
-from scripts.ops.verify_ba11_r3_evidence import ORIGINAL_FINDING_IDS, RR2_FINDING_IDS
+from verify_ba11_r3_evidence import ORIGINAL_FINDING_IDS, RR2_FINDING_IDS
 
 
 REQUIRED = {

@@ -24,7 +24,7 @@ from research_agent.canary_governance.archive import (
     build_package_identity,
 )
 from research_agent.compiler_foundation.canonical import sha256_json
-from scripts.ops.verify_ba11_r3_evidence import RR2_FINDING_IDS, verify_candidate
+from verify_ba11_r3_evidence import RR2_FINDING_IDS, verify_candidate
 
 
 ROOT = Path(__file__).resolve().parents[2]
