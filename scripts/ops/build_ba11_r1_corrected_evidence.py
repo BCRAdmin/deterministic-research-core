@@ -13,6 +13,7 @@ import time
 import urllib.error
 import urllib.request
 import zipfile
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
@@ -103,6 +104,51 @@ def normalized_output(value: str) -> str:
     return value
 
 
+def stable_product_verify_output(value: str) -> str:
+    tap_summaries = [
+        {"tests": int(tests), "pass": int(passed), "fail": int(failed)}
+        for tests, passed, failed in re.findall(
+            r"ℹ tests (\d+).*?ℹ pass (\d+).*?ℹ fail (\d+)", value, flags=re.DOTALL
+        )
+    ]
+    markers = {
+        "room16_app_verdict_pass": '"verdict": "pass"' in value,
+        "valuation_calibration_pass": "Valuation calibration status verifier passed." in value,
+        "authority_bindings_unblocked": '"blocking_count": 0' in value,
+        "compiler_truth_boundary_pass": (
+            '"canonicalProductInput": "room16.compiler_artifact_bundle@1"' in value
+        ),
+        "runtime_trust_api_pass": (
+            '"contract_id": "room16.product.runtime_trust_api_scan"' in value
+        ),
+        "canary_mirror_pass": (
+            "product consumes an exact Research snapshot read-only" in value
+        ),
+        "expected_tap_summaries": tap_summaries == [
+            {"tests": 33, "pass": 33, "fail": 0},
+            {"tests": 4, "pass": 4, "fail": 0},
+            {"tests": 3, "pass": 3, "fail": 0},
+        ],
+    }
+    if not all(markers.values()):
+        raise RuntimeError(f"product verify output contract changed: {markers}/{tap_summaries}")
+    return json.dumps(
+        {
+            "contract_id": "room16.normalized_product_verify_receipt@1",
+            "markers": markers,
+            "tap_summaries": tap_summaries,
+            "volatile_fields_excluded": [
+                "timestamps",
+                "durations",
+                "runtime_age_minutes",
+                "live_symbol_resolution_candidates_and_scores",
+            ],
+        },
+        indent=2,
+        sort_keys=True,
+    ) + "\n"
+
+
 def file_hashes(paths: list[Path]) -> dict[str, str]:
     return {
         str(path): sha256_bytes(path.read_bytes())
@@ -117,6 +163,7 @@ def run(
     *,
     input_files: list[Path],
     env: dict[str, str] | None = None,
+    stdout_transform: Callable[[str], str] = normalized_output,
 ) -> dict[str, Any]:
     process = subprocess.run(
         command,
@@ -125,7 +172,7 @@ def run(
         text=True,
         env={**os.environ, **(env or {})},
     )
-    stdout = normalized_output(process.stdout)
+    stdout = stdout_transform(process.stdout)
     stderr = normalized_output(process.stderr)
     inputs = file_hashes(input_files)
     return {
@@ -162,6 +209,7 @@ def run_product_full(app_root: Path, *, input_files: list[Path]) -> dict[str, An
                             app_root,
                             input_files=input_files,
                             env={"ROOM16_APP_BASE_URL": base_url},
+                            stdout_transform=stable_product_verify_output,
                         )
             except (OSError, urllib.error.URLError):
                 time.sleep(0.25)
