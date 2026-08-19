@@ -1,0 +1,11 @@
+{
+  "algorithm": "ed25519",
+  "status": "PASS",
+  "tests": [
+    "tamper",
+    "replay",
+    "scope",
+    "expiry",
+    "revocation-policy"
+  ]
+}

@@ -1,0 +1,823 @@
+{
+  "contract_id": "room16.ba11_r1.contract_deltas@1",
+  "deltas": [
+    {
+      "affected_authority": "research",
+      "affected_code": [
+        "implementation/research/research_agent/canary_governance/__init__.py",
+        "implementation/research/research_agent/canary_governance/approval.py",
+        "implementation/research/research_agent/canary_governance/archive.py",
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/canary_governance/diagnostics.py",
+        "implementation/research/research_agent/canary_governance/ledger.py",
+        "implementation/research/research_agent/canary_governance/storage.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/scripts/ops/generate_ba11_contract_catalog.py",
+        "implementation/research/scripts/ops/verify_ba11_canary_governance.py",
+        "implementation/research/scripts/ops/build_ba11_r1_corrected_evidence.py",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "affected_docs": [
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md"
+      ],
+      "affected_schemas": "implementation/research/schemas",
+      "current_contract": [
+        "04_CANARY_FREEZE_V2_DESIGN.md:21-30",
+        "04_CANARY_FREEZE_V2_DESIGN.md:121-135"
+      ],
+      "delta_id": "CD-P0-FREEZE",
+      "evidence_outputs": [
+        "03_FINDING_CLOSURE_REGISTER.json",
+        "05_TEST_MATRIX_EXECUTED.json"
+      ],
+      "migration_or_backfill": "additive_no_ba0_ba10_mutation",
+      "negative_fixtures": [
+        "test_freeze_is_immutable_and_rejects_future_state_fields"
+      ],
+      "positive_tests": [
+        "test_freeze_is_immutable_and_rejects_future_state_fields"
+      ],
+      "regression_tests": [
+        "research_full",
+        "product_full",
+        "ba10_freeze"
+      ],
+      "required_change": "stale_state und superseded_state aus dem Freeze-Record entfernen oder ausschließlich immutable Null-/Referenzfelder definieren; separate versionierte Event-Verträge und eine deterministische Derived-State-Regel festlegen.",
+      "source_finding_id": "BA11-AR-001"
+    },
+    {
+      "affected_authority": "research",
+      "affected_code": [
+        "implementation/research/research_agent/canary_governance/__init__.py",
+        "implementation/research/research_agent/canary_governance/approval.py",
+        "implementation/research/research_agent/canary_governance/archive.py",
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/canary_governance/diagnostics.py",
+        "implementation/research/research_agent/canary_governance/ledger.py",
+        "implementation/research/research_agent/canary_governance/storage.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/scripts/ops/generate_ba11_contract_catalog.py",
+        "implementation/research/scripts/ops/verify_ba11_canary_governance.py",
+        "implementation/research/scripts/ops/build_ba11_r1_corrected_evidence.py",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "affected_docs": [
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md"
+      ],
+      "affected_schemas": "implementation/research/schemas",
+      "current_contract": [
+        "02_CANARY_REGISTRY_DESIGN.md:7-10",
+        "02_CANARY_REGISTRY_DESIGN.md:113",
+        "05_PROMOTION_GOVERNANCE.md:94-100",
+        "07_STALE_DETECTION_MODEL.md:22-24"
+      ],
+      "delta_id": "CD-P0-AUTHORITY",
+      "evidence_outputs": [
+        "03_FINDING_CLOSURE_REGISTER.json",
+        "05_TEST_MATRIX_EXECUTED.json"
+      ],
+      "migration_or_backfill": "additive_no_ba0_ba10_mutation",
+      "negative_fixtures": [
+        "test_product_mirror_failure_never_changes_research_state",
+        "product_mirror_drift"
+      ],
+      "positive_tests": [
+        "test_product_mirror_failure_never_changes_research_state",
+        "product_mirror_drift"
+      ],
+      "regression_tests": [
+        "research_full",
+        "product_full",
+        "ba10_freeze"
+      ],
+      "required_change": "Research-Baseline und Consumer-Mirror-Zustand trennen. Mirror-Abweichung muss consumer_mirror_invalid/consumer_blocked ergeben, darf aber den kanonischen Research-Freeze nicht stale setzen.",
+      "source_finding_id": "BA11-AR-002"
+    },
+    {
+      "affected_authority": "research",
+      "affected_code": [
+        "implementation/research/research_agent/canary_governance/__init__.py",
+        "implementation/research/research_agent/canary_governance/approval.py",
+        "implementation/research/research_agent/canary_governance/archive.py",
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/canary_governance/diagnostics.py",
+        "implementation/research/research_agent/canary_governance/ledger.py",
+        "implementation/research/research_agent/canary_governance/storage.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/scripts/ops/generate_ba11_contract_catalog.py",
+        "implementation/research/scripts/ops/verify_ba11_canary_governance.py",
+        "implementation/research/scripts/ops/build_ba11_r1_corrected_evidence.py",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "affected_docs": [
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md"
+      ],
+      "affected_schemas": "implementation/research/schemas",
+      "current_contract": [
+        "06_ACCEPTED_DEBT_MODEL.md:11-29",
+        "06_ACCEPTED_DEBT_MODEL.md:39-40",
+        "06_ACCEPTED_DEBT_MODEL.md:51-62"
+      ],
+      "delta_id": "CD-P0-DEBT",
+      "evidence_outputs": [
+        "03_FINDING_CLOSURE_REGISTER.json",
+        "05_TEST_MATRIX_EXECUTED.json"
+      ],
+      "migration_or_backfill": "additive_no_ba0_ba10_mutation",
+      "negative_fixtures": [
+        "test_debt_events_are_append_only_and_membership_is_separate"
+      ],
+      "positive_tests": [
+        "test_debt_events_are_append_only_and_membership_is_separate"
+      ],
+      "regression_tests": [
+        "research_full",
+        "product_full",
+        "ba10_freeze"
+      ],
+      "required_change": "Debt Entry unveränderlich halten; Carry-Forward als Baseline-Membership und Resolution als separaten append-only Resolution Record modellieren. Pflichtfelder und Canonicalization vollständig normieren.",
+      "source_finding_id": "BA11-AR-003"
+    },
+    {
+      "affected_authority": "research",
+      "affected_code": [
+        "implementation/research/research_agent/canary_governance/__init__.py",
+        "implementation/research/research_agent/canary_governance/approval.py",
+        "implementation/research/research_agent/canary_governance/archive.py",
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/canary_governance/diagnostics.py",
+        "implementation/research/research_agent/canary_governance/ledger.py",
+        "implementation/research/research_agent/canary_governance/storage.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/scripts/ops/generate_ba11_contract_catalog.py",
+        "implementation/research/scripts/ops/verify_ba11_canary_governance.py",
+        "implementation/research/scripts/ops/build_ba11_r1_corrected_evidence.py",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "affected_docs": [
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md"
+      ],
+      "affected_schemas": "implementation/research/schemas",
+      "current_contract": [
+        "00_EXECUTIVE_SUMMARY.md:34-38",
+        "04_CANARY_FREEZE_V2_DESIGN.md:65-149",
+        "05_PROMOTION_GOVERNANCE.md:15-16",
+        "11_BA11_DEFINITION_OF_DONE.md:9-14"
+      ],
+      "delta_id": "CD-P0-MACHINE",
+      "evidence_outputs": [
+        "03_FINDING_CLOSURE_REGISTER.json",
+        "05_TEST_MATRIX_EXECUTED.json"
+      ],
+      "migration_or_backfill": "additive_no_ba0_ba10_mutation",
+      "negative_fixtures": [
+        "test_contract_catalog_has_all_required_machine_contracts"
+      ],
+      "positive_tests": [
+        "test_contract_catalog_has_all_required_machine_contracts"
+      ],
+      "regression_tests": [
+        "research_full",
+        "product_full",
+        "ba10_freeze"
+      ],
+      "required_change": "Maschinenlesbaren Contract Catalog mit Schema-Dateien, Versionierung, Canonicalization, Unknown-Field-Policy, Hash-Exclusion-Regeln und Beispiel-/Negativ-Fixtures liefern.",
+      "source_finding_id": "BA11-AR-004"
+    },
+    {
+      "affected_authority": "research",
+      "affected_code": [
+        "implementation/research/research_agent/canary_governance/__init__.py",
+        "implementation/research/research_agent/canary_governance/approval.py",
+        "implementation/research/research_agent/canary_governance/archive.py",
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/canary_governance/diagnostics.py",
+        "implementation/research/research_agent/canary_governance/ledger.py",
+        "implementation/research/research_agent/canary_governance/storage.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/scripts/ops/generate_ba11_contract_catalog.py",
+        "implementation/research/scripts/ops/verify_ba11_canary_governance.py",
+        "implementation/research/scripts/ops/build_ba11_r1_corrected_evidence.py",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "affected_docs": [
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md"
+      ],
+      "affected_schemas": "implementation/research/schemas",
+      "current_contract": [
+        "04_CANARY_FREEZE_V2_DESIGN.md:80-106",
+        "05_PROMOTION_GOVERNANCE.md:40-52"
+      ],
+      "delta_id": "CD-P0-APPROVAL",
+      "evidence_outputs": [
+        "03_FINDING_CLOSURE_REGISTER.json",
+        "05_TEST_MATRIX_EXECUTED.json"
+      ],
+      "migration_or_backfill": "additive_no_ba0_ba10_mutation",
+      "negative_fixtures": [
+        "test_ed25519_approval_replay_scope_expiry_and_tamper"
+      ],
+      "positive_tests": [
+        "test_ed25519_approval_replay_scope_expiry_and_tamper"
+      ],
+      "regression_tests": [
+        "research_full",
+        "product_full",
+        "ba10_freeze"
+      ],
+      "required_change": "Operator-/Reviewer-controlled Signatur oder extern verankerte Attestation festlegen, inklusive Key-ID, Signaturalgorithmus, Nonce, Replay-Schutz, Rollenpolicy und Revocation-/Rotation-Regel.",
+      "source_finding_id": "BA11-AR-005"
+    },
+    {
+      "affected_authority": "research",
+      "affected_code": [
+        "implementation/research/research_agent/canary_governance/__init__.py",
+        "implementation/research/research_agent/canary_governance/approval.py",
+        "implementation/research/research_agent/canary_governance/archive.py",
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/canary_governance/diagnostics.py",
+        "implementation/research/research_agent/canary_governance/ledger.py",
+        "implementation/research/research_agent/canary_governance/storage.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/scripts/ops/generate_ba11_contract_catalog.py",
+        "implementation/research/scripts/ops/verify_ba11_canary_governance.py",
+        "implementation/research/scripts/ops/build_ba11_r1_corrected_evidence.py",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "affected_docs": [
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md"
+      ],
+      "affected_schemas": "implementation/research/schemas",
+      "current_contract": [
+        "04_CANARY_FREEZE_V2_DESIGN.md:55-63",
+        "05_PROMOTION_GOVERNANCE.md:54-66"
+      ],
+      "delta_id": "CD-P0-ATOMIC",
+      "evidence_outputs": [
+        "03_FINDING_CLOSURE_REGISTER.json",
+        "05_TEST_MATRIX_EXECUTED.json"
+      ],
+      "migration_or_backfill": "additive_no_ba0_ba10_mutation",
+      "negative_fixtures": [
+        "test_registry_commit_is_atomic_and_compare_and_swap"
+      ],
+      "positive_tests": [
+        "test_registry_commit_is_atomic_and_compare_and_swap"
+      ],
+      "regression_tests": [
+        "research_full",
+        "product_full",
+        "ba10_freeze"
+      ],
+      "required_change": "Immutable Records zuerst schreiben und verifizieren; anschließend genau einen generationierten registry_head per CAS/atomic rename publizieren. previous_head_sha256, ledger_head_sha256 und rollback/truncation protection binden.",
+      "source_finding_id": "BA11-AR-006"
+    },
+    {
+      "affected_authority": "research",
+      "affected_code": [
+        "implementation/research/research_agent/canary_governance/__init__.py",
+        "implementation/research/research_agent/canary_governance/approval.py",
+        "implementation/research/research_agent/canary_governance/archive.py",
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/canary_governance/diagnostics.py",
+        "implementation/research/research_agent/canary_governance/ledger.py",
+        "implementation/research/research_agent/canary_governance/storage.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/scripts/ops/generate_ba11_contract_catalog.py",
+        "implementation/research/scripts/ops/verify_ba11_canary_governance.py",
+        "implementation/research/scripts/ops/build_ba11_r1_corrected_evidence.py",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "affected_docs": [
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md"
+      ],
+      "affected_schemas": "implementation/research/schemas",
+      "current_contract": [
+        "02_CANARY_REGISTRY_DESIGN.md:58",
+        "04_CANARY_FREEZE_V2_DESIGN.md:29",
+        "06_ACCEPTED_DEBT_MODEL.md:17",
+        "07_STALE_DETECTION_MODEL.md:47",
+        "11_BA11_DEFINITION_OF_DONE.md:41"
+      ],
+      "delta_id": "CD-P0-TIME-ARCHIVE",
+      "evidence_outputs": [
+        "03_FINDING_CLOSURE_REGISTER.json",
+        "05_TEST_MATRIX_EXECUTED.json"
+      ],
+      "migration_or_backfill": "additive_no_ba0_ba10_mutation",
+      "negative_fixtures": [
+        "test_deterministic_archive_and_manifest_self_exclusion"
+      ],
+      "positive_tests": [
+        "test_deterministic_archive_and_manifest_self_exclusion"
+      ],
+      "regression_tests": [
+        "research_full",
+        "product_full",
+        "ba10_freeze"
+      ],
+      "required_change": "Zeitpunkte als bereits attestierte Eingaben behandeln, Build-Zeit aus Hashobjekten ausschließen oder SOURCE_DATE_EPOCH/normalisierte ZIP-Metadaten verbindlich definieren.",
+      "source_finding_id": "BA11-AR-007"
+    },
+    {
+      "affected_authority": "research",
+      "affected_code": [
+        "implementation/research/research_agent/canary_governance/__init__.py",
+        "implementation/research/research_agent/canary_governance/approval.py",
+        "implementation/research/research_agent/canary_governance/archive.py",
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/canary_governance/diagnostics.py",
+        "implementation/research/research_agent/canary_governance/ledger.py",
+        "implementation/research/research_agent/canary_governance/storage.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/scripts/ops/generate_ba11_contract_catalog.py",
+        "implementation/research/scripts/ops/verify_ba11_canary_governance.py",
+        "implementation/research/scripts/ops/build_ba11_r1_corrected_evidence.py",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "affected_docs": [
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md"
+      ],
+      "affected_schemas": "implementation/research/schemas",
+      "current_contract": [
+        "04_CANARY_FREEZE_V2_DESIGN.md:34-53"
+      ],
+      "delta_id": "CD-P1-IDENTITY-SEPARATION",
+      "evidence_outputs": [
+        "03_FINDING_CLOSURE_REGISTER.json",
+        "05_TEST_MATRIX_EXECUTED.json"
+      ],
+      "migration_or_backfill": "additive_no_ba0_ba10_mutation",
+      "negative_fixtures": [
+        "test_technical_identity_is_separate_from_governance_identity"
+      ],
+      "positive_tests": [
+        "test_technical_identity_is_separate_from_governance_identity"
+      ],
+      "regression_tests": [
+        "research_full",
+        "product_full",
+        "ba10_freeze"
+      ],
+      "required_change": "technical_baseline_sha256 und governance_envelope_sha256 trennen; Freeze-Hash bindet beide.",
+      "source_finding_id": "BA11-AR-008"
+    },
+    {
+      "affected_authority": "research",
+      "affected_code": [
+        "implementation/research/research_agent/canary_governance/__init__.py",
+        "implementation/research/research_agent/canary_governance/approval.py",
+        "implementation/research/research_agent/canary_governance/archive.py",
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/canary_governance/diagnostics.py",
+        "implementation/research/research_agent/canary_governance/ledger.py",
+        "implementation/research/research_agent/canary_governance/storage.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/scripts/ops/generate_ba11_contract_catalog.py",
+        "implementation/research/scripts/ops/verify_ba11_canary_governance.py",
+        "implementation/research/scripts/ops/build_ba11_r1_corrected_evidence.py",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "affected_docs": [
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md"
+      ],
+      "affected_schemas": "implementation/research/schemas",
+      "current_contract": [
+        "03_CHANGE_CLASSIFICATION_AND_TRIGGER_MODEL.md:52",
+        "07_STALE_DETECTION_MODEL.md:19-20",
+        "07_STALE_DETECTION_MODEL.md:68-75"
+      ],
+      "delta_id": "CD-P1-RENDERER-LOCK-SPLIT",
+      "evidence_outputs": [
+        "03_FINDING_CLOSURE_REGISTER.json",
+        "05_TEST_MATRIX_EXECUTED.json"
+      ],
+      "migration_or_backfill": "additive_no_ba0_ba10_mutation",
+      "negative_fixtures": [
+        "test_ordinary_change_requires_independent_no_new_truth"
+      ],
+      "positive_tests": [
+        "test_ordinary_change_requires_independent_no_new_truth"
+      ],
+      "regression_tests": [
+        "research_full",
+        "product_full",
+        "ba10_freeze"
+      ],
+      "required_change": "Renderer implementation/artifact, presentation contract und semantic/no-new-truth contract als getrennte Locks klassifizieren und die Transition-Matrix eindeutig machen.",
+      "source_finding_id": "BA11-AR-009"
+    },
+    {
+      "affected_authority": "research",
+      "affected_code": [
+        "implementation/research/research_agent/canary_governance/__init__.py",
+        "implementation/research/research_agent/canary_governance/approval.py",
+        "implementation/research/research_agent/canary_governance/archive.py",
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/canary_governance/diagnostics.py",
+        "implementation/research/research_agent/canary_governance/ledger.py",
+        "implementation/research/research_agent/canary_governance/storage.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/scripts/ops/generate_ba11_contract_catalog.py",
+        "implementation/research/scripts/ops/verify_ba11_canary_governance.py",
+        "implementation/research/scripts/ops/build_ba11_r1_corrected_evidence.py",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "affected_docs": [
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md"
+      ],
+      "affected_schemas": "implementation/research/schemas",
+      "current_contract": [
+        "02_CANARY_REGISTRY_DESIGN.md:33-43",
+        "02_CANARY_REGISTRY_DESIGN.md:115-124"
+      ],
+      "delta_id": "CD-P1-ID-SEMVER",
+      "evidence_outputs": [
+        "03_FINDING_CLOSURE_REGISTER.json",
+        "05_TEST_MATRIX_EXECUTED.json"
+      ],
+      "migration_or_backfill": "additive_no_ba0_ba10_mutation",
+      "negative_fixtures": [
+        "test_deterministic_canary_id_and_semver_rules"
+      ],
+      "positive_tests": [
+        "test_deterministic_canary_id_and_semver_rules"
+      ],
+      "regression_tests": [
+        "research_full",
+        "product_full",
+        "ba10_freeze"
+      ],
+      "required_change": "Exakte ID-Derivation oder CSPRNG-plus-signed-import-receipt definieren; Version monotonicity, Rollback, Skip und Genesis festlegen.",
+      "source_finding_id": "BA11-AR-010"
+    },
+    {
+      "affected_authority": "research",
+      "affected_code": [
+        "implementation/research/research_agent/canary_governance/__init__.py",
+        "implementation/research/research_agent/canary_governance/approval.py",
+        "implementation/research/research_agent/canary_governance/archive.py",
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/canary_governance/diagnostics.py",
+        "implementation/research/research_agent/canary_governance/ledger.py",
+        "implementation/research/research_agent/canary_governance/storage.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/scripts/ops/generate_ba11_contract_catalog.py",
+        "implementation/research/scripts/ops/verify_ba11_canary_governance.py",
+        "implementation/research/scripts/ops/build_ba11_r1_corrected_evidence.py",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "affected_docs": [
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md"
+      ],
+      "affected_schemas": "implementation/research/schemas",
+      "current_contract": [
+        "02_CANARY_REGISTRY_DESIGN.md:42-46",
+        "04_CANARY_FREEZE_V2_DESIGN.md:121-139",
+        "05_PROMOTION_GOVERNANCE.md:3-16"
+      ],
+      "delta_id": "CD-P1-EVENT-FOLD",
+      "evidence_outputs": [
+        "03_FINDING_CLOSURE_REGISTER.json",
+        "05_TEST_MATRIX_EXECUTED.json"
+      ],
+      "migration_or_backfill": "additive_no_ba0_ba10_mutation",
+      "negative_fixtures": [
+        "test_registry_fold_is_append_only_and_transition_checked"
+      ],
+      "positive_tests": [
+        "test_registry_fold_is_append_only_and_transition_checked"
+      ],
+      "regression_tests": [
+        "research_full",
+        "product_full",
+        "ba10_freeze"
+      ],
+      "required_change": "Registry als immutable derived snapshot definieren; deterministischen Event-Fold, Event-Reihenfolge, Tie-Breaker und invalid-transition diagnostics festlegen.",
+      "source_finding_id": "BA11-AR-011"
+    },
+    {
+      "affected_authority": "research",
+      "affected_code": [
+        "implementation/research/research_agent/canary_governance/__init__.py",
+        "implementation/research/research_agent/canary_governance/approval.py",
+        "implementation/research/research_agent/canary_governance/archive.py",
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/canary_governance/diagnostics.py",
+        "implementation/research/research_agent/canary_governance/ledger.py",
+        "implementation/research/research_agent/canary_governance/storage.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/scripts/ops/generate_ba11_contract_catalog.py",
+        "implementation/research/scripts/ops/verify_ba11_canary_governance.py",
+        "implementation/research/scripts/ops/build_ba11_r1_corrected_evidence.py",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "affected_docs": [
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md"
+      ],
+      "affected_schemas": "implementation/research/schemas",
+      "current_contract": [
+        "02_CANARY_REGISTRY_DESIGN.md:7-10",
+        "05_PROMOTION_GOVERNANCE.md:96-97"
+      ],
+      "delta_id": "CD-P1-STORAGE-MIRROR",
+      "evidence_outputs": [
+        "03_FINDING_CLOSURE_REGISTER.json",
+        "05_TEST_MATRIX_EXECUTED.json"
+      ],
+      "migration_or_backfill": "additive_no_ba0_ba10_mutation",
+      "negative_fixtures": [
+        "product_consumes_exact_research_snapshot_read_only"
+      ],
+      "positive_tests": [
+        "product_consumes_exact_research_snapshot_read_only"
+      ],
+      "regression_tests": [
+        "research_full",
+        "product_full",
+        "ba10_freeze"
+      ],
+      "required_change": "Research storage layout, Product mirror layout, receipt path, atomic publication and retention policy definieren.",
+      "source_finding_id": "BA11-AR-012"
+    },
+    {
+      "affected_authority": "research",
+      "affected_code": [
+        "implementation/research/research_agent/canary_governance/__init__.py",
+        "implementation/research/research_agent/canary_governance/approval.py",
+        "implementation/research/research_agent/canary_governance/archive.py",
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/canary_governance/diagnostics.py",
+        "implementation/research/research_agent/canary_governance/ledger.py",
+        "implementation/research/research_agent/canary_governance/storage.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/scripts/ops/generate_ba11_contract_catalog.py",
+        "implementation/research/scripts/ops/verify_ba11_canary_governance.py",
+        "implementation/research/scripts/ops/build_ba11_r1_corrected_evidence.py",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "affected_docs": [
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md"
+      ],
+      "affected_schemas": "implementation/research/schemas",
+      "current_contract": [
+        "10_BA11_TEST_CONTRACT.md:12-42"
+      ],
+      "delta_id": "CD-P1-ADVERSARIAL-MATRIX",
+      "evidence_outputs": [
+        "03_FINDING_CLOSURE_REGISTER.json",
+        "05_TEST_MATRIX_EXECUTED.json"
+      ],
+      "migration_or_backfill": "additive_no_ba0_ba10_mutation",
+      "negative_fixtures": [
+        "full_negative_and_fault_injection_suite"
+      ],
+      "positive_tests": [
+        "full_negative_and_fault_injection_suite"
+      ],
+      "regression_tests": [
+        "research_full",
+        "product_full",
+        "ba10_freeze"
+      ],
+      "required_change": "Pflichttests mindestens um T023-T040 erweitern und alle Negativfälle an stabile Diagnostics binden.",
+      "source_finding_id": "BA11-AR-013"
+    },
+    {
+      "affected_authority": "research",
+      "affected_code": [
+        "implementation/research/research_agent/canary_governance/__init__.py",
+        "implementation/research/research_agent/canary_governance/approval.py",
+        "implementation/research/research_agent/canary_governance/archive.py",
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/canary_governance/diagnostics.py",
+        "implementation/research/research_agent/canary_governance/ledger.py",
+        "implementation/research/research_agent/canary_governance/storage.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/scripts/ops/generate_ba11_contract_catalog.py",
+        "implementation/research/scripts/ops/verify_ba11_canary_governance.py",
+        "implementation/research/scripts/ops/build_ba11_r1_corrected_evidence.py",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "affected_docs": [
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md"
+      ],
+      "affected_schemas": "implementation/research/schemas",
+      "current_contract": [
+        "00_EXECUTIVE_SUMMARY.md:14-25",
+        "RESULT_MANIFEST.json:15-22"
+      ],
+      "delta_id": "CD-P1-BA10-RAW-EVIDENCE",
+      "evidence_outputs": [
+        "03_FINDING_CLOSURE_REGISTER.json",
+        "05_TEST_MATRIX_EXECUTED.json"
+      ],
+      "migration_or_backfill": "additive_no_ba0_ba10_mutation",
+      "negative_fixtures": [
+        "ba10_freeze_verifier_raw_receipt"
+      ],
+      "positive_tests": [
+        "ba10_freeze_verifier_raw_receipt"
+      ],
+      "regression_tests": [
+        "research_full",
+        "product_full",
+        "ba10_freeze"
+      ],
+      "required_change": "Raw verifier JSON, command receipt, commit/tree identities und optional CI/runner receipt als manifestierte Evidence beilegen.",
+      "source_finding_id": "BA11-AR-014"
+    },
+    {
+      "affected_authority": "research",
+      "affected_code": [
+        "implementation/research/research_agent/canary_governance/__init__.py",
+        "implementation/research/research_agent/canary_governance/approval.py",
+        "implementation/research/research_agent/canary_governance/archive.py",
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/canary_governance/diagnostics.py",
+        "implementation/research/research_agent/canary_governance/ledger.py",
+        "implementation/research/research_agent/canary_governance/storage.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/scripts/ops/generate_ba11_contract_catalog.py",
+        "implementation/research/scripts/ops/verify_ba11_canary_governance.py",
+        "implementation/research/scripts/ops/build_ba11_r1_corrected_evidence.py",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "affected_docs": [
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md"
+      ],
+      "affected_schemas": "implementation/research/schemas",
+      "current_contract": [
+        "04_CANARY_FREEZE_V2_DESIGN.md:3-9"
+      ],
+      "delta_id": "CD-P1-FREEZE-VERSION",
+      "evidence_outputs": [
+        "03_FINDING_CLOSURE_REGISTER.json",
+        "05_TEST_MATRIX_EXECUTED.json"
+      ],
+      "migration_or_backfill": "additive_no_ba0_ba10_mutation",
+      "negative_fixtures": [
+        "freeze_first_contract_no_predecessor"
+      ],
+      "positive_tests": [
+        "freeze_first_contract_no_predecessor"
+      ],
+      "regression_tests": [
+        "research_full",
+        "product_full",
+        "ba10_freeze"
+      ],
+      "required_change": "Entweder als @1 starten oder Vorgänger, Breaking Changes, Importadapter und Compatibility Rules explizit dokumentieren.",
+      "source_finding_id": "BA11-AR-015"
+    },
+    {
+      "affected_authority": "research",
+      "affected_code": [
+        "implementation/research/research_agent/canary_governance/__init__.py",
+        "implementation/research/research_agent/canary_governance/approval.py",
+        "implementation/research/research_agent/canary_governance/archive.py",
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/canary_governance/diagnostics.py",
+        "implementation/research/research_agent/canary_governance/ledger.py",
+        "implementation/research/research_agent/canary_governance/storage.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/scripts/ops/generate_ba11_contract_catalog.py",
+        "implementation/research/scripts/ops/verify_ba11_canary_governance.py",
+        "implementation/research/scripts/ops/build_ba11_r1_corrected_evidence.py",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "affected_docs": [
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md"
+      ],
+      "affected_schemas": "implementation/research/schemas",
+      "current_contract": [
+        "02_CANARY_REGISTRY_DESIGN.md:48-59",
+        "07_STALE_DETECTION_MODEL.md:17"
+      ],
+      "delta_id": "CD-P2-SOURCE-LOCK",
+      "evidence_outputs": [
+        "03_FINDING_CLOSURE_REGISTER.json",
+        "05_TEST_MATRIX_EXECUTED.json"
+      ],
+      "migration_or_backfill": "additive_no_ba0_ba10_mutation",
+      "negative_fixtures": [
+        "test_source_contract_lock_is_required_and_hash_bound"
+      ],
+      "positive_tests": [
+        "test_source_contract_lock_is_required_and_hash_bound"
+      ],
+      "regression_tests": [
+        "research_full",
+        "product_full",
+        "ba10_freeze"
+      ],
+      "required_change": "Als Pflichtfeld in technische Baseline und Compare-Vertrag aufnehmen.",
+      "source_finding_id": "BA11-AR-016"
+    },
+    {
+      "affected_authority": "research",
+      "affected_code": [
+        "implementation/research/research_agent/canary_governance/__init__.py",
+        "implementation/research/research_agent/canary_governance/approval.py",
+        "implementation/research/research_agent/canary_governance/archive.py",
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/canary_governance/diagnostics.py",
+        "implementation/research/research_agent/canary_governance/ledger.py",
+        "implementation/research/research_agent/canary_governance/storage.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/scripts/ops/generate_ba11_contract_catalog.py",
+        "implementation/research/scripts/ops/verify_ba11_canary_governance.py",
+        "implementation/research/scripts/ops/build_ba11_r1_corrected_evidence.py",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "affected_docs": [
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md"
+      ],
+      "affected_schemas": "implementation/research/schemas",
+      "current_contract": [
+        "02_CANARY_REGISTRY_DESIGN.md:34",
+        "08_RELEASE_REGISTRY_BOUNDARY.md:67-81"
+      ],
+      "delta_id": "CD-P2-CANARY-TYPE-BOUNDARY",
+      "evidence_outputs": [
+        "03_FINDING_CLOSURE_REGISTER.json",
+        "05_TEST_MATRIX_EXECUTED.json"
+      ],
+      "migration_or_backfill": "additive_no_ba0_ba10_mutation",
+      "negative_fixtures": [
+        "contract_catalog_forbids_release_candidate"
+      ],
+      "positive_tests": [
+        "contract_catalog_forbids_release_candidate"
+      ],
+      "regression_tests": [
+        "research_full",
+        "product_full",
+        "ba10_freeze"
+      ],
+      "required_change": "In technical_release_regression oder vergleichbar umbenennen und explizit als nicht autorisierend definieren.",
+      "source_finding_id": "BA11-AR-017"
+    },
+    {
+      "affected_authority": "research",
+      "affected_code": [
+        "implementation/research/research_agent/canary_governance/__init__.py",
+        "implementation/research/research_agent/canary_governance/approval.py",
+        "implementation/research/research_agent/canary_governance/archive.py",
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/canary_governance/diagnostics.py",
+        "implementation/research/research_agent/canary_governance/ledger.py",
+        "implementation/research/research_agent/canary_governance/storage.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/scripts/ops/generate_ba11_contract_catalog.py",
+        "implementation/research/scripts/ops/verify_ba11_canary_governance.py",
+        "implementation/research/scripts/ops/build_ba11_r1_corrected_evidence.py",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "affected_docs": [
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md"
+      ],
+      "affected_schemas": "implementation/research/schemas",
+      "current_contract": [
+        "RESULT_MANIFEST.json:24-96"
+      ],
+      "delta_id": "CD-P2-MANIFEST-SELF-EXCLUSION",
+      "evidence_outputs": [
+        "03_FINDING_CLOSURE_REGISTER.json",
+        "05_TEST_MATRIX_EXECUTED.json"
+      ],
+      "migration_or_backfill": "additive_no_ba0_ba10_mutation",
+      "negative_fixtures": [
+        "test_deterministic_archive_and_manifest_self_exclusion"
+      ],
+      "positive_tests": [
+        "test_deterministic_archive_and_manifest_self_exclusion"
+      ],
+      "regression_tests": [
+        "research_full",
+        "product_full",
+        "ba10_freeze"
+      ],
+      "required_change": "Exact payload rule, self-exclusion und Package-Hash normativ im Bundle-Contract festlegen.",
+      "source_finding_id": "BA11-AR-018"
+    }
+  ]
+}

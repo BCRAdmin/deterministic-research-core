@@ -1,0 +1,810 @@
+{
+  "counts": {
+    "P0": 7,
+    "P1": 8,
+    "P2": 3,
+    "total": 18
+  },
+  "findings": [
+    {
+      "changed_files": [
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "closure_rationale": "stale_state und superseded_state aus dem Freeze-Record entfernen oder ausschließlich immutable Null-/Referenzfelder definieren; separate versionierte Event-Verträge und eine deterministische Derived-State-Regel festlegen.",
+      "closure_status": "closed_verified",
+      "contract_delta_ids": [
+        "CD-P0-FREEZE"
+      ],
+      "evidence_refs": [
+        "05_TEST_MATRIX_EXECUTED.json",
+        "06_FULL_REGRESSION_REPORT.json"
+      ],
+      "finding_id": "BA11-AR-001",
+      "negative_fixture_ids": [
+        "test_freeze_is_immutable_and_rejects_future_state_fields"
+      ],
+      "priority": "P0",
+      "remaining_debt": null,
+      "root_cause": "Der immutable Freeze-Record enthält superseded_state und stale_state, während spätere Abschnitte Supersession und Staleness als separate Records definieren und Bytegleichheit des ursprünglichen Freeze verlangen.",
+      "source_exact_text": {
+        "id": "BA11-AR-001",
+        "problem": "Der immutable Freeze-Record enthält superseded_state und stale_state, während spätere Abschnitte Supersession und Staleness als separate Records definieren und Bytegleichheit des ursprünglichen Freeze verlangen.",
+        "references": [
+          "04_CANARY_FREEZE_V2_DESIGN.md:21-30",
+          "04_CANARY_FREEZE_V2_DESIGN.md:121-135"
+        ],
+        "required_fix": "stale_state und superseded_state aus dem Freeze-Record entfernen oder ausschließlich immutable Null-/Referenzfelder definieren; separate versionierte Event-Verträge und eine deterministische Derived-State-Regel festlegen.",
+        "severity": "P0",
+        "title": "Freeze-Immutability widerspricht eingebetteten Zukunftszuständen"
+      },
+      "source_exact_title": "Freeze-Immutability widerspricht eingebetteten Zukunftszuständen",
+      "source_locator": "$.findings[0]",
+      "source_member": "ROOM16_BA11_ARCHITECTURE_REVIEW_R1_REQUIRED_2026-08-19/01_FINDINGS.json",
+      "source_member_sha256": "de9edd08e92a288affc0d1fde7274119d6bfe661eaf524029150bbfcbdf9fc8e",
+      "source_ordinal": 0,
+      "test_ids": [
+        "test_freeze_is_immutable_and_rejects_future_state_fields"
+      ]
+    },
+    {
+      "changed_files": [
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "closure_rationale": "Research-Baseline und Consumer-Mirror-Zustand trennen. Mirror-Abweichung muss consumer_mirror_invalid/consumer_blocked ergeben, darf aber den kanonischen Research-Freeze nicht stale setzen.",
+      "closure_status": "closed_verified",
+      "contract_delta_ids": [
+        "CD-P0-AUTHORITY"
+      ],
+      "evidence_refs": [
+        "05_TEST_MATRIX_EXECUTED.json",
+        "06_FULL_REGRESSION_REPORT.json"
+      ],
+      "finding_id": "BA11-AR-002",
+      "negative_fixture_ids": [
+        "test_product_mirror_failure_never_changes_research_state",
+        "product_mirror_drift"
+      ],
+      "priority": "P0",
+      "remaining_debt": null,
+      "root_cause": "Ein nicht hashgleicher Product-Mirror soll die akzeptierte Baseline stale machen, obwohl Product nur Consumer ist und keine Registry-Hashes oder Authority prägen darf.",
+      "source_exact_text": {
+        "id": "BA11-AR-002",
+        "problem": "Ein nicht hashgleicher Product-Mirror soll die akzeptierte Baseline stale machen, obwohl Product nur Consumer ist und keine Registry-Hashes oder Authority prägen darf.",
+        "references": [
+          "02_CANARY_REGISTRY_DESIGN.md:7-10",
+          "02_CANARY_REGISTRY_DESIGN.md:113",
+          "05_PROMOTION_GOVERNANCE.md:94-100",
+          "07_STALE_DETECTION_MODEL.md:22-24"
+        ],
+        "required_fix": "Research-Baseline und Consumer-Mirror-Zustand trennen. Mirror-Abweichung muss consumer_mirror_invalid/consumer_blocked ergeben, darf aber den kanonischen Research-Freeze nicht stale setzen.",
+        "severity": "P0",
+        "title": "Product-Mirror erzeugt unzulässige Rückwärts-Authority"
+      },
+      "source_exact_title": "Product-Mirror erzeugt unzulässige Rückwärts-Authority",
+      "source_locator": "$.findings[1]",
+      "source_member": "ROOM16_BA11_ARCHITECTURE_REVIEW_R1_REQUIRED_2026-08-19/01_FINDINGS.json",
+      "source_member_sha256": "de9edd08e92a288affc0d1fde7274119d6bfe661eaf524029150bbfcbdf9fc8e",
+      "source_ordinal": 1,
+      "test_ids": [
+        "test_product_mirror_failure_never_changes_research_state",
+        "product_mirror_drift"
+      ]
+    },
+    {
+      "changed_files": [
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "closure_rationale": "Debt Entry unveränderlich halten; Carry-Forward als Baseline-Membership und Resolution als separaten append-only Resolution Record modellieren. Pflichtfelder und Canonicalization vollständig normieren.",
+      "closure_status": "closed_verified",
+      "contract_delta_ids": [
+        "CD-P0-DEBT"
+      ],
+      "evidence_refs": [
+        "05_TEST_MATRIX_EXECUTED.json",
+        "06_FULL_REGRESSION_REPORT.json"
+      ],
+      "finding_id": "BA11-AR-003",
+      "negative_fixture_ids": [
+        "test_debt_events_are_append_only_and_membership_is_separate"
+      ],
+      "priority": "P0",
+      "remaining_debt": null,
+      "root_cause": "carried_forward und resolved_by sind als Entry-Felder modelliert, obwohl Entries erhalten bleiben sollen. Eine spätere Befüllung würde den Entry-Hash ändern. Zudem fehlen debt_type und entry_sha256 in der eigenen Pflichtfeldliste.",
+      "source_exact_text": {
+        "id": "BA11-AR-003",
+        "problem": "carried_forward und resolved_by sind als Entry-Felder modelliert, obwohl Entries erhalten bleiben sollen. Eine spätere Befüllung würde den Entry-Hash ändern. Zudem fehlen debt_type und entry_sha256 in der eigenen Pflichtfeldliste.",
+        "references": [
+          "06_ACCEPTED_DEBT_MODEL.md:11-29",
+          "06_ACCEPTED_DEBT_MODEL.md:39-40",
+          "06_ACCEPTED_DEBT_MODEL.md:51-62"
+        ],
+        "required_fix": "Debt Entry unveränderlich halten; Carry-Forward als Baseline-Membership und Resolution als separaten append-only Resolution Record modellieren. Pflichtfelder und Canonicalization vollständig normieren.",
+        "severity": "P0",
+        "title": "Accepted-Debt-Modell ist nicht append-only konsistent"
+      },
+      "source_exact_title": "Accepted-Debt-Modell ist nicht append-only konsistent",
+      "source_locator": "$.findings[2]",
+      "source_member": "ROOM16_BA11_ARCHITECTURE_REVIEW_R1_REQUIRED_2026-08-19/01_FINDINGS.json",
+      "source_member_sha256": "de9edd08e92a288affc0d1fde7274119d6bfe661eaf524029150bbfcbdf9fc8e",
+      "source_ordinal": 2,
+      "test_ids": [
+        "test_debt_events_are_append_only_and_membership_is_separate"
+      ]
+    },
+    {
+      "changed_files": [
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "closure_rationale": "Maschinenlesbaren Contract Catalog mit Schema-Dateien, Versionierung, Canonicalization, Unknown-Field-Policy, Hash-Exclusion-Regeln und Beispiel-/Negativ-Fixtures liefern.",
+      "closure_status": "closed_verified",
+      "contract_delta_ids": [
+        "CD-P0-MACHINE"
+      ],
+      "evidence_refs": [
+        "05_TEST_MATRIX_EXECUTED.json",
+        "06_FULL_REGRESSION_REPORT.json"
+      ],
+      "finding_id": "BA11-AR-004",
+      "negative_fixture_ids": [
+        "test_contract_catalog_has_all_required_machine_contracts"
+      ],
+      "priority": "P0",
+      "remaining_debt": null,
+      "root_cause": "Die Architektur benötigt Registry Entry/Snapshot, Genesis Import, Change Classification, Candidate, Review, Operator Approval, Promotion, Rejection, Freeze, Supersession, Stale, Recovery, Debt und Debt Resolution. Für den Großteil fehlen Contract-ID, Version, JSON Schema, Hashformel und stabile Diagnostics.",
+      "source_exact_text": {
+        "id": "BA11-AR-004",
+        "problem": "Die Architektur benötigt Registry Entry/Snapshot, Genesis Import, Change Classification, Candidate, Review, Operator Approval, Promotion, Rejection, Freeze, Supersession, Stale, Recovery, Debt und Debt Resolution. Für den Großteil fehlen Contract-ID, Version, JSON Schema, Hashformel und stabile Diagnostics.",
+        "references": [
+          "00_EXECUTIVE_SUMMARY.md:34-38",
+          "04_CANARY_FREEZE_V2_DESIGN.md:65-149",
+          "05_PROMOTION_GOVERNANCE.md:15-16",
+          "11_BA11_DEFINITION_OF_DONE.md:9-14"
+        ],
+        "required_fix": "Maschinenlesbaren Contract Catalog mit Schema-Dateien, Versionierung, Canonicalization, Unknown-Field-Policy, Hash-Exclusion-Regeln und Beispiel-/Negativ-Fixtures liefern.",
+        "severity": "P0",
+        "title": "Vollständiger Contract-Katalog fehlt"
+      },
+      "source_exact_title": "Vollständiger Contract-Katalog fehlt",
+      "source_locator": "$.findings[3]",
+      "source_member": "ROOM16_BA11_ARCHITECTURE_REVIEW_R1_REQUIRED_2026-08-19/01_FINDINGS.json",
+      "source_member_sha256": "de9edd08e92a288affc0d1fde7274119d6bfe661eaf524029150bbfcbdf9fc8e",
+      "source_ordinal": 3,
+      "test_ids": [
+        "test_contract_catalog_has_all_required_machine_contracts"
+      ]
+    },
+    {
+      "changed_files": [
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "closure_rationale": "Operator-/Reviewer-controlled Signatur oder extern verankerte Attestation festlegen, inklusive Key-ID, Signaturalgorithmus, Nonce, Replay-Schutz, Rollenpolicy und Revocation-/Rotation-Regel.",
+      "closure_status": "closed_verified",
+      "contract_delta_ids": [
+        "CD-P0-APPROVAL"
+      ],
+      "evidence_refs": [
+        "05_TEST_MATRIX_EXECUTED.json",
+        "06_FULL_REGRESSION_REPORT.json"
+      ],
+      "finding_id": "BA11-AR-005",
+      "negative_fixture_ids": [
+        "test_ed25519_approval_replay_scope_expiry_and_tamper"
+      ],
+      "priority": "P0",
+      "remaining_debt": null,
+      "root_cause": "Ein Hash über eine selbst erzeugte JSON-Datei beweist weder Reviewer-Unabhängigkeit noch Operator-Autorisierung. Ein Research-Prozess könnte beide Records selbst erzeugen und neu hashen.",
+      "source_exact_text": {
+        "id": "BA11-AR-005",
+        "problem": "Ein Hash über eine selbst erzeugte JSON-Datei beweist weder Reviewer-Unabhängigkeit noch Operator-Autorisierung. Ein Research-Prozess könnte beide Records selbst erzeugen und neu hashen.",
+        "references": [
+          "04_CANARY_FREEZE_V2_DESIGN.md:80-106",
+          "05_PROMOTION_GOVERNANCE.md:40-52"
+        ],
+        "required_fix": "Operator-/Reviewer-controlled Signatur oder extern verankerte Attestation festlegen, inklusive Key-ID, Signaturalgorithmus, Nonce, Replay-Schutz, Rollenpolicy und Revocation-/Rotation-Regel.",
+        "severity": "P0",
+        "title": "Review- und Operator-Approval sind nicht authentisch verankert"
+      },
+      "source_exact_title": "Review- und Operator-Approval sind nicht authentisch verankert",
+      "source_locator": "$.findings[4]",
+      "source_member": "ROOM16_BA11_ARCHITECTURE_REVIEW_R1_REQUIRED_2026-08-19/01_FINDINGS.json",
+      "source_member_sha256": "de9edd08e92a288affc0d1fde7274119d6bfe661eaf524029150bbfcbdf9fc8e",
+      "source_ordinal": 4,
+      "test_ids": [
+        "test_ed25519_approval_replay_scope_expiry_and_tamper"
+      ]
+    },
+    {
+      "changed_files": [
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "closure_rationale": "Immutable Records zuerst schreiben und verifizieren; anschließend genau einen generationierten registry_head per CAS/atomic rename publizieren. previous_head_sha256, ledger_head_sha256 und rollback/truncation protection binden.",
+      "closure_status": "closed_verified",
+      "contract_delta_ids": [
+        "CD-P0-ATOMIC"
+      ],
+      "evidence_refs": [
+        "05_TEST_MATRIX_EXECUTED.json",
+        "06_FULL_REGRESSION_REPORT.json"
+      ],
+      "finding_id": "BA11-AR-006",
+      "negative_fixture_ids": [
+        "test_registry_commit_is_atomic_and_compare_and_swap"
+      ],
+      "priority": "P0",
+      "remaining_debt": null,
+      "root_cause": "Promotion Event, Freeze Record, Supersession und Registry Snapshot sollen gemeinsam konsistent sein, aber es fehlen Registry-Generation, Compare-and-Swap, Ledger-Head, Partial-Write-Recovery und Fork-/Race-Auflösung.",
+      "source_exact_text": {
+        "id": "BA11-AR-006",
+        "problem": "Promotion Event, Freeze Record, Supersession und Registry Snapshot sollen gemeinsam konsistent sein, aber es fehlen Registry-Generation, Compare-and-Swap, Ledger-Head, Partial-Write-Recovery und Fork-/Race-Auflösung.",
+        "references": [
+          "04_CANARY_FREEZE_V2_DESIGN.md:55-63",
+          "05_PROMOTION_GOVERNANCE.md:54-66"
+        ],
+        "required_fix": "Immutable Records zuerst schreiben und verifizieren; anschließend genau einen generationierten registry_head per CAS/atomic rename publizieren. previous_head_sha256, ledger_head_sha256 und rollback/truncation protection binden.",
+        "severity": "P0",
+        "title": "Kein atomarer und konkurrenzsicherer Registry-Commit"
+      },
+      "source_exact_title": "Kein atomarer und konkurrenzsicherer Registry-Commit",
+      "source_locator": "$.findings[5]",
+      "source_member": "ROOM16_BA11_ARCHITECTURE_REVIEW_R1_REQUIRED_2026-08-19/01_FINDINGS.json",
+      "source_member_sha256": "de9edd08e92a288affc0d1fde7274119d6bfe661eaf524029150bbfcbdf9fc8e",
+      "source_ordinal": 5,
+      "test_ids": [
+        "test_registry_commit_is_atomic_and_compare_and_swap"
+      ]
+    },
+    {
+      "changed_files": [
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "closure_rationale": "Zeitpunkte als bereits attestierte Eingaben behandeln, Build-Zeit aus Hashobjekten ausschließen oder SOURCE_DATE_EPOCH/normalisierte ZIP-Metadaten verbindlich definieren.",
+      "closure_status": "closed_verified",
+      "contract_delta_ids": [
+        "CD-P0-TIME-ARCHIVE"
+      ],
+      "evidence_refs": [
+        "05_TEST_MATRIX_EXECUTED.json",
+        "06_FULL_REGRESSION_REPORT.json"
+      ],
+      "finding_id": "BA11-AR-007",
+      "negative_fixture_ids": [
+        "test_deterministic_archive_and_manifest_self_exclusion"
+      ],
+      "priority": "P0",
+      "remaining_debt": null,
+      "root_cause": "Mehrere Records enthalten RFC3339-Zeitpunkte; gleichzeitig wird ein zweiter byteidentischer Evidence-Build verlangt. Ohne fixierte Zeitinputs und normalisierte Archivmetadaten ist das nicht reproduzierbar.",
+      "source_exact_text": {
+        "id": "BA11-AR-007",
+        "problem": "Mehrere Records enthalten RFC3339-Zeitpunkte; gleichzeitig wird ein zweiter byteidentischer Evidence-Build verlangt. Ohne fixierte Zeitinputs und normalisierte Archivmetadaten ist das nicht reproduzierbar.",
+        "references": [
+          "02_CANARY_REGISTRY_DESIGN.md:58",
+          "04_CANARY_FREEZE_V2_DESIGN.md:29",
+          "06_ACCEPTED_DEBT_MODEL.md:17",
+          "07_STALE_DETECTION_MODEL.md:47",
+          "11_BA11_DEFINITION_OF_DONE.md:41"
+        ],
+        "required_fix": "Zeitpunkte als bereits attestierte Eingaben behandeln, Build-Zeit aus Hashobjekten ausschließen oder SOURCE_DATE_EPOCH/normalisierte ZIP-Metadaten verbindlich definieren.",
+        "severity": "P0",
+        "title": "Deterministische Evidence-Builds sind zeitlich unterdefiniert"
+      },
+      "source_exact_title": "Deterministische Evidence-Builds sind zeitlich unterdefiniert",
+      "source_locator": "$.findings[6]",
+      "source_member": "ROOM16_BA11_ARCHITECTURE_REVIEW_R1_REQUIRED_2026-08-19/01_FINDINGS.json",
+      "source_member_sha256": "de9edd08e92a288affc0d1fde7274119d6bfe661eaf524029150bbfcbdf9fc8e",
+      "source_ordinal": 6,
+      "test_ids": [
+        "test_deterministic_archive_and_manifest_self_exclusion"
+      ]
+    },
+    {
+      "changed_files": [
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "closure_rationale": "technical_baseline_sha256 und governance_envelope_sha256 trennen; Freeze-Hash bindet beide.",
+      "closure_status": "closed_verified",
+      "contract_delta_ids": [
+        "CD-P1-IDENTITY-SEPARATION"
+      ],
+      "evidence_refs": [
+        "05_TEST_MATRIX_EXECUTED.json",
+        "06_FULL_REGRESSION_REPORT.json"
+      ],
+      "finding_id": "BA11-AR-008",
+      "negative_fixture_ids": [
+        "test_technical_identity_is_separate_from_governance_identity"
+      ],
+      "priority": "P1",
+      "remaining_debt": null,
+      "root_cause": "new_baseline_hash bindet Review- und Operator-Approval-Hashes. Derselbe technische Output erhält dadurch bei erneutem Review eine neue technische Baseline-Identität.",
+      "source_exact_text": {
+        "id": "BA11-AR-008",
+        "problem": "new_baseline_hash bindet Review- und Operator-Approval-Hashes. Derselbe technische Output erhält dadurch bei erneutem Review eine neue technische Baseline-Identität.",
+        "references": [
+          "04_CANARY_FREEZE_V2_DESIGN.md:34-53"
+        ],
+        "required_fix": "technical_baseline_sha256 und governance_envelope_sha256 trennen; Freeze-Hash bindet beide.",
+        "severity": "P1",
+        "title": "Technische Baseline und Governance-Autorisierung sind vermischt"
+      },
+      "source_exact_title": "Technische Baseline und Governance-Autorisierung sind vermischt",
+      "source_locator": "$.findings[7]",
+      "source_member": "ROOM16_BA11_ARCHITECTURE_REVIEW_R1_REQUIRED_2026-08-19/01_FINDINGS.json",
+      "source_member_sha256": "de9edd08e92a288affc0d1fde7274119d6bfe661eaf524029150bbfcbdf9fc8e",
+      "source_ordinal": 7,
+      "test_ids": [
+        "test_technical_identity_is_separate_from_governance_identity"
+      ]
+    },
+    {
+      "changed_files": [
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "closure_rationale": "Renderer implementation/artifact, presentation contract und semantic/no-new-truth contract als getrennte Locks klassifizieren und die Transition-Matrix eindeutig machen.",
+      "closure_status": "closed_verified",
+      "contract_delta_ids": [
+        "CD-P1-RENDERER-LOCK-SPLIT"
+      ],
+      "evidence_refs": [
+        "05_TEST_MATRIX_EXECUTED.json",
+        "06_FULL_REGRESSION_REPORT.json"
+      ],
+      "finding_id": "BA11-AR-009",
+      "negative_fixture_ids": [
+        "test_ordinary_change_requires_independent_no_new_truth"
+      ],
+      "priority": "P1",
+      "remaining_debt": null,
+      "root_cause": "Ein rein presentation-only Renderer Change soll keine Promotion benötigen, eine Renderer-Contract-Abweichung macht die Baseline jedoch stale und verlangt laut Auflösung den vollständigen Promotion-/Freeze-Pfad.",
+      "source_exact_text": {
+        "id": "BA11-AR-009",
+        "problem": "Ein rein presentation-only Renderer Change soll keine Promotion benötigen, eine Renderer-Contract-Abweichung macht die Baseline jedoch stale und verlangt laut Auflösung den vollständigen Promotion-/Freeze-Pfad.",
+        "references": [
+          "03_CHANGE_CLASSIFICATION_AND_TRIGGER_MODEL.md:52",
+          "07_STALE_DETECTION_MODEL.md:19-20",
+          "07_STALE_DETECTION_MODEL.md:68-75"
+        ],
+        "required_fix": "Renderer implementation/artifact, presentation contract und semantic/no-new-truth contract als getrennte Locks klassifizieren und die Transition-Matrix eindeutig machen.",
+        "severity": "P1",
+        "title": "Stale-Regel kollidiert mit presentation-only Ordinary Changes"
+      },
+      "source_exact_title": "Stale-Regel kollidiert mit presentation-only Ordinary Changes",
+      "source_locator": "$.findings[8]",
+      "source_member": "ROOM16_BA11_ARCHITECTURE_REVIEW_R1_REQUIRED_2026-08-19/01_FINDINGS.json",
+      "source_member_sha256": "de9edd08e92a288affc0d1fde7274119d6bfe661eaf524029150bbfcbdf9fc8e",
+      "source_ordinal": 8,
+      "test_ids": [
+        "test_ordinary_change_requires_independent_no_new_truth"
+      ]
+    },
+    {
+      "changed_files": [
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "closure_rationale": "Exakte ID-Derivation oder CSPRNG-plus-signed-import-receipt definieren; Version monotonicity, Rollback, Skip und Genesis festlegen.",
+      "closure_status": "closed_verified",
+      "contract_delta_ids": [
+        "CD-P1-ID-SEMVER"
+      ],
+      "evidence_refs": [
+        "05_TEST_MATRIX_EXECUTED.json",
+        "06_FULL_REGRESSION_REPORT.json"
+      ],
+      "finding_id": "BA11-AR-010",
+      "negative_fixture_ids": [
+        "test_deterministic_canary_id_and_semver_rules"
+      ],
+      "priority": "P1",
+      "remaining_debt": null,
+      "root_cause": "Ein generic documented ID generator wird angekündigt, aber Namespace, Algorithmus, Kollisionsregel, Reimport-Verhalten und SemVer-Transitionsregeln fehlen.",
+      "source_exact_text": {
+        "id": "BA11-AR-010",
+        "problem": "Ein generic documented ID generator wird angekündigt, aber Namespace, Algorithmus, Kollisionsregel, Reimport-Verhalten und SemVer-Transitionsregeln fehlen.",
+        "references": [
+          "02_CANARY_REGISTRY_DESIGN.md:33-43",
+          "02_CANARY_REGISTRY_DESIGN.md:115-124"
+        ],
+        "required_fix": "Exakte ID-Derivation oder CSPRNG-plus-signed-import-receipt definieren; Version monotonicity, Rollback, Skip und Genesis festlegen.",
+        "severity": "P1",
+        "title": "Canary-ID- und Baseline-Versionserzeugung ist nicht deterministisch festgelegt"
+      },
+      "source_exact_title": "Canary-ID- und Baseline-Versionserzeugung ist nicht deterministisch festgelegt",
+      "source_locator": "$.findings[9]",
+      "source_member": "ROOM16_BA11_ARCHITECTURE_REVIEW_R1_REQUIRED_2026-08-19/01_FINDINGS.json",
+      "source_member_sha256": "de9edd08e92a288affc0d1fde7274119d6bfe661eaf524029150bbfcbdf9fc8e",
+      "source_ordinal": 9,
+      "test_ids": [
+        "test_deterministic_canary_id_and_semver_rules"
+      ]
+    },
+    {
+      "changed_files": [
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "closure_rationale": "Registry als immutable derived snapshot definieren; deterministischen Event-Fold, Event-Reihenfolge, Tie-Breaker und invalid-transition diagnostics festlegen.",
+      "closure_status": "closed_verified",
+      "contract_delta_ids": [
+        "CD-P1-EVENT-FOLD"
+      ],
+      "evidence_refs": [
+        "05_TEST_MATRIX_EXECUTED.json",
+        "06_FULL_REGRESSION_REPORT.json"
+      ],
+      "finding_id": "BA11-AR-011",
+      "negative_fixture_ids": [
+        "test_registry_fold_is_append_only_and_transition_checked"
+      ],
+      "priority": "P1",
+      "remaining_debt": null,
+      "root_cause": "Registry Entry enthält current states, während Events append-only sein sollen. Es fehlt eine normative Fold-/Projection-Regel einschließlich Priorität von stale, superseded, rejected und frozen.",
+      "source_exact_text": {
+        "id": "BA11-AR-011",
+        "problem": "Registry Entry enthält current states, während Events append-only sein sollen. Es fehlt eine normative Fold-/Projection-Regel einschließlich Priorität von stale, superseded, rejected und frozen.",
+        "references": [
+          "02_CANARY_REGISTRY_DESIGN.md:42-46",
+          "04_CANARY_FREEZE_V2_DESIGN.md:121-139",
+          "05_PROMOTION_GOVERNANCE.md:3-16"
+        ],
+        "required_fix": "Registry als immutable derived snapshot definieren; deterministischen Event-Fold, Event-Reihenfolge, Tie-Breaker und invalid-transition diagnostics festlegen.",
+        "severity": "P1",
+        "title": "State-Derivation und Priorität sind unvollständig"
+      },
+      "source_exact_title": "State-Derivation und Priorität sind unvollständig",
+      "source_locator": "$.findings[10]",
+      "source_member": "ROOM16_BA11_ARCHITECTURE_REVIEW_R1_REQUIRED_2026-08-19/01_FINDINGS.json",
+      "source_member_sha256": "de9edd08e92a288affc0d1fde7274119d6bfe661eaf524029150bbfcbdf9fc8e",
+      "source_ordinal": 10,
+      "test_ids": [
+        "test_registry_fold_is_append_only_and_transition_checked"
+      ]
+    },
+    {
+      "changed_files": [
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "closure_rationale": "Research storage layout, Product mirror layout, receipt path, atomic publication and retention policy definieren.",
+      "closure_status": "closed_verified",
+      "contract_delta_ids": [
+        "CD-P1-STORAGE-MIRROR"
+      ],
+      "evidence_refs": [
+        "05_TEST_MATRIX_EXECUTED.json",
+        "06_FULL_REGRESSION_REPORT.json"
+      ],
+      "finding_id": "BA11-AR-012",
+      "negative_fixture_ids": [
+        "product_consumes_exact_research_snapshot_read_only"
+      ],
+      "priority": "P1",
+      "remaining_debt": null,
+      "root_cause": "Keine normativen Repository-Pfade, Dateinamen, Ledger-Segmentierung, Snapshot-Retention, Mirror-Receipt-Struktur oder Ownership-Dateiregeln.",
+      "source_exact_text": {
+        "id": "BA11-AR-012",
+        "problem": "Keine normativen Repository-Pfade, Dateinamen, Ledger-Segmentierung, Snapshot-Retention, Mirror-Receipt-Struktur oder Ownership-Dateiregeln.",
+        "references": [
+          "02_CANARY_REGISTRY_DESIGN.md:7-10",
+          "05_PROMOTION_GOVERNANCE.md:96-97"
+        ],
+        "required_fix": "Research storage layout, Product mirror layout, receipt path, atomic publication and retention policy definieren.",
+        "severity": "P1",
+        "title": "Storage- und Mirror-Protokoll fehlt"
+      },
+      "source_exact_title": "Storage- und Mirror-Protokoll fehlt",
+      "source_locator": "$.findings[11]",
+      "source_member": "ROOM16_BA11_ARCHITECTURE_REVIEW_R1_REQUIRED_2026-08-19/01_FINDINGS.json",
+      "source_member_sha256": "de9edd08e92a288affc0d1fde7274119d6bfe661eaf524029150bbfcbdf9fc8e",
+      "source_ordinal": 11,
+      "test_ids": [
+        "product_consumes_exact_research_snapshot_read_only"
+      ]
+    },
+    {
+      "changed_files": [
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "closure_rationale": "Pflichttests mindestens um T023-T040 erweitern und alle Negativfälle an stabile Diagnostics binden.",
+      "closure_status": "closed_verified",
+      "contract_delta_ids": [
+        "CD-P1-ADVERSARIAL-MATRIX"
+      ],
+      "evidence_refs": [
+        "05_TEST_MATRIX_EXECUTED.json",
+        "06_FULL_REGRESSION_REPORT.json"
+      ],
+      "finding_id": "BA11-AR-013",
+      "negative_fixture_ids": [
+        "full_negative_and_fault_injection_suite"
+      ],
+      "priority": "P1",
+      "remaining_debt": null,
+      "root_cause": "Es fehlen unter anderem Ledger-Truncation/Rollback, Approval-Replay, Duplicate IDs, Version-Downgrade, Registry-Generation-Race, Partial Write, forged no-new-truth counters, stale-clear forgery und deterministic timestamp tests.",
+      "source_exact_text": {
+        "id": "BA11-AR-013",
+        "problem": "Es fehlen unter anderem Ledger-Truncation/Rollback, Approval-Replay, Duplicate IDs, Version-Downgrade, Registry-Generation-Race, Partial Write, forged no-new-truth counters, stale-clear forgery und deterministic timestamp tests.",
+        "references": [
+          "10_BA11_TEST_CONTRACT.md:12-42"
+        ],
+        "required_fix": "Pflichttests mindestens um T023-T040 erweitern und alle Negativfälle an stabile Diagnostics binden.",
+        "severity": "P1",
+        "title": "Testvertrag deckt zentrale Angriffs- und Race-Fälle nicht ab"
+      },
+      "source_exact_title": "Testvertrag deckt zentrale Angriffs- und Race-Fälle nicht ab",
+      "source_locator": "$.findings[12]",
+      "source_member": "ROOM16_BA11_ARCHITECTURE_REVIEW_R1_REQUIRED_2026-08-19/01_FINDINGS.json",
+      "source_member_sha256": "de9edd08e92a288affc0d1fde7274119d6bfe661eaf524029150bbfcbdf9fc8e",
+      "source_ordinal": 12,
+      "test_ids": [
+        "full_negative_and_fault_injection_suite"
+      ]
+    },
+    {
+      "changed_files": [
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "closure_rationale": "Raw verifier JSON, command receipt, commit/tree identities und optional CI/runner receipt als manifestierte Evidence beilegen.",
+      "closure_status": "closed_verified",
+      "contract_delta_ids": [
+        "CD-P1-BA10-RAW-EVIDENCE"
+      ],
+      "evidence_refs": [
+        "05_TEST_MATRIX_EXECUTED.json",
+        "06_FULL_REGRESSION_REPORT.json"
+      ],
+      "finding_id": "BA11-AR-014",
+      "negative_fixture_ids": [
+        "ba10_freeze_verifier_raw_receipt"
+      ],
+      "priority": "P1",
+      "remaining_debt": null,
+      "root_cause": "Das Paket deklariert ba10_freeze_verifier=PASS, enthält aber weder den JSON-Output noch Log/Command/Environment/Repository-tree proof. Die Aussage ist extern plausibel, aber aus dem ZIP allein nicht reproduzierbar.",
+      "source_exact_text": {
+        "id": "BA11-AR-014",
+        "problem": "Das Paket deklariert ba10_freeze_verifier=PASS, enthält aber weder den JSON-Output noch Log/Command/Environment/Repository-tree proof. Die Aussage ist extern plausibel, aber aus dem ZIP allein nicht reproduzierbar.",
+        "references": [
+          "00_EXECUTIVE_SUMMARY.md:14-25",
+          "RESULT_MANIFEST.json:15-22"
+        ],
+        "required_fix": "Raw verifier JSON, command receipt, commit/tree identities und optional CI/runner receipt als manifestierte Evidence beilegen.",
+        "severity": "P1",
+        "title": "Architecture-Paket trägt seine BA10-PASS-Behauptung nicht selbst"
+      },
+      "source_exact_title": "Architecture-Paket trägt seine BA10-PASS-Behauptung nicht selbst",
+      "source_locator": "$.findings[13]",
+      "source_member": "ROOM16_BA11_ARCHITECTURE_REVIEW_R1_REQUIRED_2026-08-19/01_FINDINGS.json",
+      "source_member_sha256": "de9edd08e92a288affc0d1fde7274119d6bfe661eaf524029150bbfcbdf9fc8e",
+      "source_ordinal": 13,
+      "test_ids": [
+        "ba10_freeze_verifier_raw_receipt"
+      ]
+    },
+    {
+      "changed_files": [
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "closure_rationale": "Entweder als @1 starten oder Vorgänger, Breaking Changes, Importadapter und Compatibility Rules explizit dokumentieren.",
+      "closure_status": "closed_verified",
+      "contract_delta_ids": [
+        "CD-P1-FREEZE-VERSION"
+      ],
+      "evidence_refs": [
+        "05_TEST_MATRIX_EXECUTED.json",
+        "06_FULL_REGRESSION_REPORT.json"
+      ],
+      "finding_id": "BA11-AR-015",
+      "negative_fixture_ids": [
+        "freeze_first_contract_no_predecessor"
+      ],
+      "priority": "P1",
+      "remaining_debt": null,
+      "root_cause": "room16.canary_freeze@2 wird eingeführt, ohne einen room16.canary_freeze@1-Vertrag oder die Migration/Kompatibilität zu benennen.",
+      "source_exact_text": {
+        "id": "BA11-AR-015",
+        "problem": "room16.canary_freeze@2 wird eingeführt, ohne einen room16.canary_freeze@1-Vertrag oder die Migration/Kompatibilität zu benennen.",
+        "references": [
+          "04_CANARY_FREEZE_V2_DESIGN.md:3-9"
+        ],
+        "required_fix": "Entweder als @1 starten oder Vorgänger, Breaking Changes, Importadapter und Compatibility Rules explizit dokumentieren.",
+        "severity": "P1",
+        "title": "Version @2 besitzt keine definierte Vorgängerkompatibilität"
+      },
+      "source_exact_title": "Version @2 besitzt keine definierte Vorgängerkompatibilität",
+      "source_locator": "$.findings[14]",
+      "source_member": "ROOM16_BA11_ARCHITECTURE_REVIEW_R1_REQUIRED_2026-08-19/01_FINDINGS.json",
+      "source_member_sha256": "de9edd08e92a288affc0d1fde7274119d6bfe661eaf524029150bbfcbdf9fc8e",
+      "source_ordinal": 14,
+      "test_ids": [
+        "freeze_first_contract_no_predecessor"
+      ]
+    },
+    {
+      "changed_files": [
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "closure_rationale": "Als Pflichtfeld in technische Baseline und Compare-Vertrag aufnehmen.",
+      "closure_status": "closed_verified",
+      "contract_delta_ids": [
+        "CD-P2-SOURCE-LOCK"
+      ],
+      "evidence_refs": [
+        "05_TEST_MATRIX_EXECUTED.json",
+        "06_FULL_REGRESSION_REPORT.json"
+      ],
+      "finding_id": "BA11-AR-016",
+      "negative_fixture_ids": [
+        "test_source_contract_lock_is_required_and_hash_bound"
+      ],
+      "priority": "P2",
+      "remaining_debt": null,
+      "root_cause": "source_contract_lock ist empfohlen statt verpflichtend, obwohl eine Änderung Stale auslösen soll.",
+      "source_exact_text": {
+        "id": "BA11-AR-016",
+        "problem": "source_contract_lock ist empfohlen statt verpflichtend, obwohl eine Änderung Stale auslösen soll.",
+        "references": [
+          "02_CANARY_REGISTRY_DESIGN.md:48-59",
+          "07_STALE_DETECTION_MODEL.md:17"
+        ],
+        "required_fix": "Als Pflichtfeld in technische Baseline und Compare-Vertrag aufnehmen.",
+        "severity": "P2",
+        "title": "Source Contract Lock ist nur optional, obwohl er Stale-Authority besitzt"
+      },
+      "source_exact_title": "Source Contract Lock ist nur optional, obwohl er Stale-Authority besitzt",
+      "source_locator": "$.findings[15]",
+      "source_member": "ROOM16_BA11_ARCHITECTURE_REVIEW_R1_REQUIRED_2026-08-19/01_FINDINGS.json",
+      "source_member_sha256": "de9edd08e92a288affc0d1fde7274119d6bfe661eaf524029150bbfcbdf9fc8e",
+      "source_ordinal": 15,
+      "test_ids": [
+        "test_source_contract_lock_is_required_and_hash_bound"
+      ]
+    },
+    {
+      "changed_files": [
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "closure_rationale": "In technical_release_regression oder vergleichbar umbenennen und explizit als nicht autorisierend definieren.",
+      "closure_status": "closed_verified",
+      "contract_delta_ids": [
+        "CD-P2-CANARY-TYPE-BOUNDARY"
+      ],
+      "evidence_refs": [
+        "05_TEST_MATRIX_EXECUTED.json",
+        "06_FULL_REGRESSION_REPORT.json"
+      ],
+      "finding_id": "BA11-AR-017",
+      "negative_fixture_ids": [
+        "contract_catalog_forbids_release_candidate"
+      ],
+      "priority": "P2",
+      "remaining_debt": null,
+      "root_cause": "Der Name kann als Release-Status missverstanden werden, obwohl BA11 keine Release-Authority besitzt.",
+      "source_exact_text": {
+        "id": "BA11-AR-017",
+        "problem": "Der Name kann als Release-Status missverstanden werden, obwohl BA11 keine Release-Authority besitzt.",
+        "references": [
+          "02_CANARY_REGISTRY_DESIGN.md:34",
+          "08_RELEASE_REGISTRY_BOUNDARY.md:67-81"
+        ],
+        "required_fix": "In technical_release_regression oder vergleichbar umbenennen und explizit als nicht autorisierend definieren.",
+        "severity": "P2",
+        "title": "Canary-Typ release_candidate verwischt die Release-Authority-Grenze"
+      },
+      "source_exact_title": "Canary-Typ release_candidate verwischt die Release-Authority-Grenze",
+      "source_locator": "$.findings[16]",
+      "source_member": "ROOM16_BA11_ARCHITECTURE_REVIEW_R1_REQUIRED_2026-08-19/01_FINDINGS.json",
+      "source_member_sha256": "de9edd08e92a288affc0d1fde7274119d6bfe661eaf524029150bbfcbdf9fc8e",
+      "source_ordinal": 16,
+      "test_ids": [
+        "contract_catalog_forbids_release_candidate"
+      ]
+    },
+    {
+      "changed_files": [
+        "implementation/research/research_agent/canary_governance/contracts.py",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "implementation/research/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md",
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs"
+      ],
+      "closure_rationale": "Exact payload rule, self-exclusion und Package-Hash normativ im Bundle-Contract festlegen.",
+      "closure_status": "closed_verified",
+      "contract_delta_ids": [
+        "CD-P2-MANIFEST-SELF-EXCLUSION"
+      ],
+      "evidence_refs": [
+        "05_TEST_MATRIX_EXECUTED.json",
+        "06_FULL_REGRESSION_REPORT.json"
+      ],
+      "finding_id": "BA11-AR-018",
+      "negative_fixture_ids": [
+        "test_deterministic_archive_and_manifest_self_exclusion"
+      ],
+      "priority": "P2",
+      "remaining_debt": null,
+      "root_cause": "file_count=14 ist technisch korrekt, weil das Manifest selbst ausgeschlossen wird; diese Semantik steht jedoch nicht im Contract.",
+      "source_exact_text": {
+        "id": "BA11-AR-018",
+        "problem": "file_count=14 ist technisch korrekt, weil das Manifest selbst ausgeschlossen wird; diese Semantik steht jedoch nicht im Contract.",
+        "references": [
+          "RESULT_MANIFEST.json:24-96"
+        ],
+        "required_fix": "Exact payload rule, self-exclusion und Package-Hash normativ im Bundle-Contract festlegen.",
+        "severity": "P2",
+        "title": "Manifest-Selbstausschluss ist nicht normativ dokumentiert"
+      },
+      "source_exact_title": "Manifest-Selbstausschluss ist nicht normativ dokumentiert",
+      "source_locator": "$.findings[17]",
+      "source_member": "ROOM16_BA11_ARCHITECTURE_REVIEW_R1_REQUIRED_2026-08-19/01_FINDINGS.json",
+      "source_member_sha256": "de9edd08e92a288affc0d1fde7274119d6bfe661eaf524029150bbfcbdf9fc8e",
+      "source_ordinal": 17,
+      "test_ids": [
+        "test_deterministic_archive_and_manifest_self_exclusion"
+      ]
+    }
+  ]
+}

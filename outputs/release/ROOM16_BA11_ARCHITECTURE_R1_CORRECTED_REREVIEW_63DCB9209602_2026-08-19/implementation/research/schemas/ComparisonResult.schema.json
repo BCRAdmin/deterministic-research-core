@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authority_owner": {
+      "const": "research",
+      "default": "research",
+      "title": "Authority Owner",
+      "type": "string"
+    },
+    "claim_diff_count": {
+      "minimum": 0,
+      "title": "Claim Diff Count",
+      "type": "integer"
+    },
+    "contract_id": {
+      "const": "room16.canary_comparison_result",
+      "default": "room16.canary_comparison_result",
+      "title": "Contract Id",
+      "type": "string"
+    },
+    "decision_diff_count": {
+      "minimum": 0,
+      "title": "Decision Diff Count",
+      "type": "integer"
+    },
+    "diagnostic_codes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Diagnostic Codes",
+      "type": "array"
+    },
+    "fact_diff_count": {
+      "minimum": 0,
+      "title": "Fact Diff Count",
+      "type": "integer"
+    },
+    "lineage_diff_count": {
+      "minimum": 0,
+      "title": "Lineage Diff Count",
+      "type": "integer"
+    },
+    "request_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Request Sha256",
+      "type": "string"
+    },
+    "result_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Result Sha256",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "verdict": {
+      "enum": [
+        "identical",
+        "ordinary_change",
+        "promotion_required",
+        "blocked"
+      ],
+      "title": "Verdict",
+      "type": "string"
+    }
+  },
+  "required": [
+    "request_sha256",
+    "verdict",
+    "fact_diff_count",
+    "claim_diff_count",
+    "decision_diff_count",
+    "lineage_diff_count",
+    "diagnostic_codes",
+    "result_sha256"
+  ],
+  "title": "ComparisonResult",
+  "type": "object",
+  "x-room16-canonicalization": "room16.canonical_json@1",
+  "x-room16-hash-algorithm": "sha256",
+  "x-room16-unknown-field-policy": "fail_closed"
+}

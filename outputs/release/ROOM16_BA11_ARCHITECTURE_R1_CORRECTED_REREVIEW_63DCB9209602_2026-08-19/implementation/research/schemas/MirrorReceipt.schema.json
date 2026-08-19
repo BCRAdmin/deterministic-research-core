@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authority_owner": {
+      "const": "product_consumer",
+      "default": "product_consumer",
+      "title": "Authority Owner",
+      "type": "string"
+    },
+    "contract_id": {
+      "const": "room16.canary_consumer_mirror_receipt",
+      "default": "room16.canary_consumer_mirror_receipt",
+      "title": "Contract Id",
+      "type": "string"
+    },
+    "mirrored_snapshot_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Mirrored Snapshot Sha256",
+      "type": "string"
+    },
+    "product_commit": {
+      "pattern": "^[0-9a-f]{40}$",
+      "title": "Product Commit",
+      "type": "string"
+    },
+    "receipt_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Receipt Sha256",
+      "type": "string"
+    },
+    "receipt_state": {
+      "enum": [
+        "valid",
+        "consumer_mirror_invalid"
+      ],
+      "title": "Receipt State",
+      "type": "string"
+    },
+    "research_snapshot_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Research Snapshot Sha256",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "research_snapshot_sha256",
+    "mirrored_snapshot_sha256",
+    "product_commit",
+    "receipt_state",
+    "receipt_sha256"
+  ],
+  "title": "MirrorReceipt",
+  "type": "object",
+  "x-room16-canonicalization": "room16.canonical_json@1",
+  "x-room16-hash-algorithm": "sha256",
+  "x-room16-unknown-field-policy": "fail_closed"
+}

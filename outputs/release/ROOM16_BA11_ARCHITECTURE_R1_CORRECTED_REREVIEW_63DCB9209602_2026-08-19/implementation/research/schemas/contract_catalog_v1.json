@@ -1,0 +1,218 @@
+{
+  "authority_owner": "research",
+  "catalog_sha256": "ced4e750da9ebc7b4c9b63ccf54c93387f22573b5b88066aed5a43351beb9d34",
+  "contract_id": "room16.canary_contract_catalog",
+  "contracts": [
+    {
+      "canonicalization_profile": "room16.canonical_json@1",
+      "contract_id": "room16.canary_accepted_debt_event",
+      "hash_algorithm": "sha256",
+      "model": "AcceptedDebtEvent",
+      "schema_file": "AcceptedDebtEvent.schema.json",
+      "schema_sha256": "fd23c95a3184c89cf60da5b0793ac2ba91acf7ef7eaad66e678652785c25ee57",
+      "unknown_field_policy": "fail_closed"
+    },
+    {
+      "canonicalization_profile": "room16.canonical_json@1",
+      "contract_id": "room16.canary_archive_receipt",
+      "hash_algorithm": "sha256",
+      "model": "ArchiveReceipt",
+      "schema_file": "ArchiveReceipt.schema.json",
+      "schema_sha256": "7cbf2c330a26d771075cbba96ff00444f7bcdeef623122785bd9b9a3beb275fd",
+      "unknown_field_policy": "fail_closed"
+    },
+    {
+      "canonicalization_profile": "room16.canonical_json@1",
+      "contract_id": "room16.canary_freeze",
+      "hash_algorithm": "sha256",
+      "model": "CanaryFreezeRecord",
+      "schema_file": "CanaryFreezeRecord.schema.json",
+      "schema_sha256": "a49254de4864f95f2d554881967be491cd1014f3fbe62529945283a2ecacf9f3",
+      "unknown_field_policy": "fail_closed"
+    },
+    {
+      "canonicalization_profile": "room16.canonical_json@1",
+      "contract_id": "room16.canary_registry_entry",
+      "hash_algorithm": "sha256",
+      "model": "CanaryRegistryEntry",
+      "schema_file": "CanaryRegistryEntry.schema.json",
+      "schema_sha256": "bd018c43b78666ada05b4fd7db4640a552f36c5653a58cf09794635dc3945a65",
+      "unknown_field_policy": "fail_closed"
+    },
+    {
+      "canonicalization_profile": "room16.canonical_json@1",
+      "contract_id": "room16.canary_change_classification",
+      "hash_algorithm": "sha256",
+      "model": "ChangeClassification",
+      "schema_file": "ChangeClassification.schema.json",
+      "schema_sha256": "9ba76eb3769ebfe5ddd54d0c48c9544a73dfb9bc9472815f6c2b1906dd4a5507",
+      "unknown_field_policy": "fail_closed"
+    },
+    {
+      "canonicalization_profile": "room16.canonical_json@1",
+      "contract_id": "room16.canary_comparison_request",
+      "hash_algorithm": "sha256",
+      "model": "ComparisonRequest",
+      "schema_file": "ComparisonRequest.schema.json",
+      "schema_sha256": "67b53c55a624b056ca8b7a0c1d55044063522b50dda807aff80e3fbb6154ca52",
+      "unknown_field_policy": "fail_closed"
+    },
+    {
+      "canonicalization_profile": "room16.canonical_json@1",
+      "contract_id": "room16.canary_comparison_result",
+      "hash_algorithm": "sha256",
+      "model": "ComparisonResult",
+      "schema_file": "ComparisonResult.schema.json",
+      "schema_sha256": "98e554721a9960adf9e3a8dec2acc89a127c168f0df961837976b73421dc2a50",
+      "unknown_field_policy": "fail_closed"
+    },
+    {
+      "canonicalization_profile": "room16.canonical_json@1",
+      "contract_id": "room16.canary_debt_membership",
+      "hash_algorithm": "sha256",
+      "model": "DebtMembership",
+      "schema_file": "DebtMembership.schema.json",
+      "schema_sha256": "8fe6521a6afba8f74680a77740b5ddd2e27b208a958c261e69f22e5ef0e0bf53",
+      "unknown_field_policy": "fail_closed"
+    },
+    {
+      "canonicalization_profile": "room16.canonical_json@1",
+      "contract_id": "room16.canary_debt_resolution",
+      "hash_algorithm": "sha256",
+      "model": "DebtResolution",
+      "schema_file": "DebtResolution.schema.json",
+      "schema_sha256": "8064da510048c901854d29882dee3527b9ff3b2d16c9a05516e90fabdad43d0b",
+      "unknown_field_policy": "fail_closed"
+    },
+    {
+      "canonicalization_profile": "room16.canonical_json@1",
+      "contract_id": "room16.canary_genesis_import",
+      "hash_algorithm": "sha256",
+      "model": "GenesisImportReceipt",
+      "schema_file": "GenesisImportReceipt.schema.json",
+      "schema_sha256": "4bf23f20b900bd170bfda2d13b6c759fca341088aed759cc1f9b9d200c529cb1",
+      "unknown_field_policy": "fail_closed"
+    },
+    {
+      "canonicalization_profile": "room16.canonical_json@1",
+      "contract_id": "room16.canary.governance_envelope",
+      "hash_algorithm": "sha256",
+      "model": "GovernanceEnvelope",
+      "schema_file": "GovernanceEnvelope.schema.json",
+      "schema_sha256": "ba9aebe6ed5d372a0aa5ad4eb1e9eb2133a2db6ba8f17b076f2e8788b89e2c20",
+      "unknown_field_policy": "fail_closed"
+    },
+    {
+      "canonicalization_profile": "room16.canonical_json@1",
+      "contract_id": "room16.canary_independent_review_attestation",
+      "hash_algorithm": "sha256",
+      "model": "IndependentReviewAttestation",
+      "schema_file": "IndependentReviewAttestation.schema.json",
+      "schema_sha256": "fca74db4b4201ae10d2adf665656ef05a9d6387a34f130db6cbd5036f71a3c76",
+      "unknown_field_policy": "fail_closed"
+    },
+    {
+      "canonicalization_profile": "room16.canonical_json@1",
+      "contract_id": "room16.canary_consumer_mirror_receipt",
+      "hash_algorithm": "sha256",
+      "model": "MirrorReceipt",
+      "schema_file": "MirrorReceipt.schema.json",
+      "schema_sha256": "c2e945ce5c1ff4ef61fb641f53a61fdd1998d01451bd334e298e8f6f19c75103",
+      "unknown_field_policy": "fail_closed"
+    },
+    {
+      "canonicalization_profile": "room16.canonical_json@1",
+      "contract_id": "room16.canary_operator_approval",
+      "hash_algorithm": "sha256",
+      "model": "OperatorApprovalReceipt",
+      "schema_file": "OperatorApprovalReceipt.schema.json",
+      "schema_sha256": "14dbc15563e34ea13f33447fa379d4ab7571f23d5e7f2efaac3b6ffe808695d6",
+      "unknown_field_policy": "fail_closed"
+    },
+    {
+      "canonicalization_profile": "room16.canonical_json@1",
+      "contract_id": "room16.canary_promotion_candidate",
+      "hash_algorithm": "sha256",
+      "model": "PromotionCandidate",
+      "schema_file": "PromotionCandidate.schema.json",
+      "schema_sha256": "cd132d6dda4459526a3e9e9b96de95d7bee56400b79250a8e56bdf1b7bf1a6d5",
+      "unknown_field_policy": "fail_closed"
+    },
+    {
+      "canonicalization_profile": "room16.canonical_json@1",
+      "contract_id": "room16.canary_registry_event",
+      "hash_algorithm": "sha256",
+      "model": "RegistryEvent",
+      "schema_file": "RegistryEvent.schema.json",
+      "schema_sha256": "e5e0b0c1490c6e7a415d56b536f29e0f7660e270dc6399958a51124dd5b80465",
+      "unknown_field_policy": "fail_closed"
+    },
+    {
+      "canonicalization_profile": "room16.canonical_json@1",
+      "contract_id": "room16.canary_registry_head",
+      "hash_algorithm": "sha256",
+      "model": "RegistryHead",
+      "schema_file": "RegistryHead.schema.json",
+      "schema_sha256": "d484ff65d997b5f12fda8053ae7a462a09adac24d64d5727a0d3c912769585c2",
+      "unknown_field_policy": "fail_closed"
+    },
+    {
+      "canonicalization_profile": "room16.canonical_json@1",
+      "contract_id": "room16.canary_registry_snapshot",
+      "hash_algorithm": "sha256",
+      "model": "RegistrySnapshot",
+      "schema_file": "RegistrySnapshot.schema.json",
+      "schema_sha256": "c4904b2779b9b67c2e7ee4e72d7b82000c33d06a49c708cc8a7b8f102141b8a6",
+      "unknown_field_policy": "fail_closed"
+    },
+    {
+      "canonicalization_profile": "room16.canonical_json@1",
+      "contract_id": "room16.canary_registry_transaction",
+      "hash_algorithm": "sha256",
+      "model": "RegistryTransaction",
+      "schema_file": "RegistryTransaction.schema.json",
+      "schema_sha256": "5a14f57fdd360387dcb957cfd210da5d3ab478ad42573d0ee7be6bf040c416e1",
+      "unknown_field_policy": "fail_closed"
+    },
+    {
+      "canonicalization_profile": "room16.canonical_json@1",
+      "contract_id": "room16.canary.source_contract_lock",
+      "hash_algorithm": "sha256",
+      "model": "SourceContractLock",
+      "schema_file": "SourceContractLock.schema.json",
+      "schema_sha256": "74bd0a59b3f47e7f09878e3d681b1bb7d4d766b056242f1d2885ad5b71d859b0",
+      "unknown_field_policy": "fail_closed"
+    },
+    {
+      "canonicalization_profile": "room16.canonical_json@1",
+      "contract_id": "room16.canary.technical_baseline",
+      "hash_algorithm": "sha256",
+      "model": "TechnicalBaseline",
+      "schema_file": "TechnicalBaseline.schema.json",
+      "schema_sha256": "bcc125a6f96f786386cc9401aad5a728be4e9c9dfd919052c69f62507945d829",
+      "unknown_field_policy": "fail_closed"
+    }
+  ],
+  "diagnostics": {
+    "BA11_APPROVAL_EXPIRED": "Approval validity window has ended.",
+    "BA11_APPROVAL_REPLAY": "Approval nonce or counter was already consumed.",
+    "BA11_APPROVAL_REVOKED": "Approval key is revoked.",
+    "BA11_APPROVAL_SCOPE": "Approval does not bind the required scope or subjects.",
+    "BA11_APPROVAL_SIGNATURE": "Approval signature is invalid.",
+    "BA11_ARCHIVE_MUTATION": "Archive identity was reused with different bytes.",
+    "BA11_CONSUMER_MIRROR_INVALID": "Product mirror differs from Research authority.",
+    "BA11_DEBT_CHAIN_BROKEN": "Accepted-debt event chain is incomplete or mutated.",
+    "BA11_DUPLICATE_ID": "A governance identifier is duplicated.",
+    "BA11_EVENT_CHAIN_BROKEN": "Registry event chain is incomplete or mutated.",
+    "BA11_EVENT_TRANSITION_INVALID": "Registry event transition is invalid.",
+    "BA11_FREEZE_LOCK_DRIFT": "A frozen BA0-BA10 authority lock differs.",
+    "BA11_HASH_MISMATCH": "A declared content hash differs from canonical bytes.",
+    "BA11_REGISTRY_CAS_CONFLICT": "Registry head changed since candidate preparation.",
+    "BA11_REGISTRY_GENERATION_INVALID": "Registry generation is not monotonic by one.",
+    "BA11_REGISTRY_PREDECESSOR_INVALID": "Registry snapshot does not extend the current snapshot.",
+    "BA11_SCHEMA_INVALID": "A governance payload violates its strict schema.",
+    "BA11_SOURCE_CONTRACT_DRIFT": "Required source-contract lock differs.",
+    "BA11_VERSION_TRANSITION_INVALID": "Baseline SemVer transition is invalid."
+  },
+  "schema_version": 1
+}

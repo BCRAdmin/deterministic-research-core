@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "attestation_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Attestation Sha256",
+      "type": "string"
+    },
+    "authority_owner": {
+      "const": "external_reviewer",
+      "default": "external_reviewer",
+      "title": "Authority Owner",
+      "type": "string"
+    },
+    "candidate_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Candidate Sha256",
+      "type": "string"
+    },
+    "contract_id": {
+      "const": "room16.canary_independent_review_attestation",
+      "default": "room16.canary_independent_review_attestation",
+      "title": "Contract Id",
+      "type": "string"
+    },
+    "decision": {
+      "enum": [
+        "accepted",
+        "changes_required"
+      ],
+      "title": "Decision",
+      "type": "string"
+    },
+    "finding_set_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Finding Set Sha256",
+      "type": "string"
+    },
+    "issued_at_utc": {
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+      "title": "Issued At Utc",
+      "type": "string"
+    },
+    "monotonic_counter": {
+      "minimum": 1,
+      "title": "Monotonic Counter",
+      "type": "integer"
+    },
+    "nonce": {
+      "minLength": 16,
+      "title": "Nonce",
+      "type": "string"
+    },
+    "previous_registry_head_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Previous Registry Head Sha256",
+      "type": "string"
+    },
+    "review_id": {
+      "pattern": "^[a-z][a-z0-9_.:-]*$",
+      "title": "Review Id",
+      "type": "string"
+    },
+    "reviewer_key_id": {
+      "pattern": "^[a-z][a-z0-9_.:-]*$",
+      "title": "Reviewer Key Id",
+      "type": "string"
+    },
+    "reviewer_role": {
+      "const": "independent_architecture_reviewer",
+      "title": "Reviewer Role",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "signature": {
+      "pattern": "^[0-9a-f]{128}$",
+      "title": "Signature",
+      "type": "string"
+    },
+    "signature_algorithm": {
+      "const": "ed25519",
+      "title": "Signature Algorithm",
+      "type": "string"
+    }
+  },
+  "required": [
+    "review_id",
+    "reviewer_key_id",
+    "reviewer_role",
+    "candidate_sha256",
+    "finding_set_sha256",
+    "previous_registry_head_sha256",
+    "decision",
+    "nonce",
+    "monotonic_counter",
+    "issued_at_utc",
+    "signature_algorithm",
+    "signature",
+    "attestation_sha256"
+  ],
+  "title": "IndependentReviewAttestation",
+  "type": "object",
+  "x-room16-canonicalization": "room16.canonical_json@1",
+  "x-room16-hash-algorithm": "sha256",
+  "x-room16-unknown-field-policy": "fail_closed"
+}

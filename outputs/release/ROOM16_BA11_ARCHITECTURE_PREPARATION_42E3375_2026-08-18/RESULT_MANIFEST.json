@@ -1,0 +1,97 @@
+{
+  "contract_id": "room16.ba11_architecture_preparation_bundle",
+  "contract_version": 1,
+  "created_on": "2026-08-18",
+  "handoff_type": "REVIEW_ONLY",
+  "recommendation": "BA11_IMPLEMENTATION_READY",
+  "scope": "BA11 Canary Governance architecture preparation only",
+  "implementation_started": false,
+  "canary_changed": false,
+  "new_company_run": false,
+  "ba11_authorized": false,
+  "ba12_authorized": false,
+  "release_ready": false,
+  "publication_allowed": false,
+  "source_state": {
+    "research_head": "42e3375d04c21c07a11c03a5c60bbc0a232ac2c4",
+    "product_head": "de0dfbde1d7e14d081b8da27933f7164c88d0d12",
+    "ba10_tag": "room16-ba10-artifact-abi-renderer-v1.0.0",
+    "semantic_wave_lock": "62867ad72cd1a99eee482e75087cbe01449faa650d7cf2c535fd494c5fef30f9",
+    "ba10_freeze_lock": "29bc0bf2d00aa22d49fd7bb569cf080cc335778c1773b9e63710ecd61dfebc8e",
+    "ba10_freeze_verifier": "PASS",
+    "ba10_freeze_failed_checks": []
+  },
+  "file_count": 14,
+  "files": [
+    {
+      "path": "00_EXECUTIVE_SUMMARY.md",
+      "bytes": 3233,
+      "sha256": "5e30a223fd934007e72698e07ad1bb447164b311fc3fdf895acbb5b9aa95679b"
+    },
+    {
+      "path": "01_CURRENT_CANARY_STATE.md",
+      "bytes": 8136,
+      "sha256": "caadda3d51deb828fd94936609c2fc01877a324237d218fe9c32ad351e91e448"
+    },
+    {
+      "path": "02_CANARY_REGISTRY_DESIGN.md",
+      "bytes": 4484,
+      "sha256": "aee628e9157cfbc5e31f40c0baadd95907cae94cfc4ad439ec01c49dc954c569"
+    },
+    {
+      "path": "03_CHANGE_CLASSIFICATION_AND_TRIGGER_MODEL.md",
+      "bytes": 4993,
+      "sha256": "69bb1940fbca0d95b51a1b69cfd9e1145a80871b187cfdfde71c2060d2bfb344"
+    },
+    {
+      "path": "04_CANARY_FREEZE_V2_DESIGN.md",
+      "bytes": 4497,
+      "sha256": "60ab231c5eee5bb211494f045d45774793e24b19afdfef2637ae081c1afd6e4e"
+    },
+    {
+      "path": "05_PROMOTION_GOVERNANCE.md",
+      "bytes": 3485,
+      "sha256": "151acc6a5011c322998f6d332e03baa8d1b906207bf0ffc91687668ab19ff9ac"
+    },
+    {
+      "path": "06_ACCEPTED_DEBT_MODEL.md",
+      "bytes": 3358,
+      "sha256": "d844746b30df337a72eea8010ccfa613a3b30b3a041c8e78e5b419fc5b4a9d55"
+    },
+    {
+      "path": "07_STALE_DETECTION_MODEL.md",
+      "bytes": 2622,
+      "sha256": "2cadf841ec1cd27893edf5e366c444641626e10eeec5dd99762ebc07e4b2d748"
+    },
+    {
+      "path": "08_RELEASE_REGISTRY_BOUNDARY.md",
+      "bytes": 3143,
+      "sha256": "91c094f8b71d30b87d257900c72c17b2f4d6c6537c99a2a497c38cb396253e4c"
+    },
+    {
+      "path": "09_BA12_CONSUMER_BOUNDARY.md",
+      "bytes": 3435,
+      "sha256": "717e39e639d1a4e28359987fd308af89491c2ce4e2b35a298565ba31f042e771"
+    },
+    {
+      "path": "10_BA11_TEST_CONTRACT.md",
+      "bytes": 4453,
+      "sha256": "dff2311f4fca10fc8659c4e5a6a6bc351ed698767759d506353f9b7cf26ff6b4"
+    },
+    {
+      "path": "11_BA11_DEFINITION_OF_DONE.md",
+      "bytes": 2998,
+      "sha256": "8cb568b631a1fd8043d30160ebdab275cd05db59afec2316a20e71a010ff71ea"
+    },
+    {
+      "path": "12_BA11_GO_NO_GO_RECOMMENDATION.json",
+      "bytes": 987,
+      "sha256": "83878f70bf756be5681d23aec621e7324206df3530e742eb334e06775d392e12"
+    },
+    {
+      "path": "12_BA11_GO_NO_GO_RECOMMENDATION.md",
+      "bytes": 779,
+      "sha256": "04125bee9fa62423cb4b94fc189f9f83f08cdfcf051740eb4e7bd29db2ba9c01"
+    }
+  ]
+}

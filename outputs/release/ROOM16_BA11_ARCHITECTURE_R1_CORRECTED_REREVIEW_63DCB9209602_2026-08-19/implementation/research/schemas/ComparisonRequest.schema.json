@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authority_owner": {
+      "const": "research",
+      "default": "research",
+      "title": "Authority Owner",
+      "type": "string"
+    },
+    "baseline_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Baseline Sha256",
+      "type": "string"
+    },
+    "candidate_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Candidate Sha256",
+      "type": "string"
+    },
+    "contract_id": {
+      "const": "room16.canary_comparison_request",
+      "default": "room16.canary_comparison_request",
+      "title": "Contract Id",
+      "type": "string"
+    },
+    "request_id": {
+      "pattern": "^[a-z][a-z0-9_.:-]*$",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "request_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Request Sha256",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "source_contract_lock_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Source Contract Lock Sha256",
+      "type": "string"
+    }
+  },
+  "required": [
+    "request_id",
+    "baseline_sha256",
+    "candidate_sha256",
+    "source_contract_lock_sha256",
+    "request_sha256"
+  ],
+  "title": "ComparisonRequest",
+  "type": "object",
+  "x-room16-canonicalization": "room16.canonical_json@1",
+  "x-room16-hash-algorithm": "sha256",
+  "x-room16-unknown-field-policy": "fail_closed"
+}

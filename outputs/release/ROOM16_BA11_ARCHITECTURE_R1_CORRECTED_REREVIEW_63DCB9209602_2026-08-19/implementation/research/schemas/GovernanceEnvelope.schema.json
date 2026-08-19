@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "accepted_debt_set_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Accepted Debt Set Sha256",
+      "type": "string"
+    },
+    "authority_owner": {
+      "const": "research",
+      "default": "research",
+      "title": "Authority Owner",
+      "type": "string"
+    },
+    "change_classification_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Change Classification Sha256",
+      "type": "string"
+    },
+    "contract_id": {
+      "const": "room16.canary.governance_envelope",
+      "default": "room16.canary.governance_envelope",
+      "title": "Contract Id",
+      "type": "string"
+    },
+    "governance_envelope_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Governance Envelope Sha256",
+      "type": "string"
+    },
+    "independent_review_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Independent Review Sha256",
+      "type": "string"
+    },
+    "operator_approval_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Operator Approval Sha256",
+      "type": "string"
+    },
+    "previous_registry_head_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Previous Registry Head Sha256"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "technical_baseline_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Technical Baseline Sha256",
+      "type": "string"
+    }
+  },
+  "required": [
+    "technical_baseline_sha256",
+    "accepted_debt_set_sha256",
+    "change_classification_sha256",
+    "independent_review_sha256",
+    "operator_approval_sha256",
+    "governance_envelope_sha256"
+  ],
+  "title": "GovernanceEnvelope",
+  "type": "object",
+  "x-room16-canonicalization": "room16.canonical_json@1",
+  "x-room16-hash-algorithm": "sha256",
+  "x-room16-unknown-field-policy": "fail_closed"
+}

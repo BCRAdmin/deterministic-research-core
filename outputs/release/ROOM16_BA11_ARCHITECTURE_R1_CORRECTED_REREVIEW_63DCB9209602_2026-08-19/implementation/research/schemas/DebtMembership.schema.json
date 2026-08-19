@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "accepted_debt_set_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Accepted Debt Set Sha256",
+      "type": "string"
+    },
+    "authority_owner": {
+      "const": "research",
+      "default": "research",
+      "title": "Authority Owner",
+      "type": "string"
+    },
+    "contract_id": {
+      "const": "room16.canary_debt_membership",
+      "default": "room16.canary_debt_membership",
+      "title": "Contract Id",
+      "type": "string"
+    },
+    "debt_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Debt Ids",
+      "type": "array"
+    },
+    "freeze_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Freeze Sha256",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "freeze_sha256",
+    "debt_ids",
+    "accepted_debt_set_sha256"
+  ],
+  "title": "DebtMembership",
+  "type": "object",
+  "x-room16-canonicalization": "room16.canonical_json@1",
+  "x-room16-hash-algorithm": "sha256",
+  "x-room16-unknown-field-policy": "fail_closed"
+}

@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authority_owner": {
+      "const": "research",
+      "default": "research",
+      "title": "Authority Owner",
+      "type": "string"
+    },
+    "contract_id": {
+      "const": "room16.canary_registry_head",
+      "default": "room16.canary_registry_head",
+      "title": "Contract Id",
+      "type": "string"
+    },
+    "head_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Head Sha256",
+      "type": "string"
+    },
+    "ledger_head_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Ledger Head Sha256",
+      "type": "string"
+    },
+    "previous_head_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Previous Head Sha256"
+    },
+    "registry_generation": {
+      "minimum": 0,
+      "title": "Registry Generation",
+      "type": "integer"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "snapshot_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Snapshot Sha256",
+      "type": "string"
+    }
+  },
+  "required": [
+    "registry_generation",
+    "snapshot_sha256",
+    "ledger_head_sha256",
+    "head_sha256"
+  ],
+  "title": "RegistryHead",
+  "type": "object",
+  "x-room16-canonicalization": "room16.canonical_json@1",
+  "x-room16-hash-algorithm": "sha256",
+  "x-room16-unknown-field-policy": "fail_closed"
+}

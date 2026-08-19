@@ -1,0 +1,24 @@
+{
+  "product_hash_verified_read_only": true,
+  "receipt": {
+    "command": [
+      "npm",
+      "run",
+      "verify:canary-registry-mirror"
+    ],
+    "cwd": "/Users/BjornRosinger/Documents/DreamFactory/Room16/company-dossier-lab/room16-app",
+    "exit_code": 0,
+    "input_hashes": {
+      "/Users/BjornRosinger/Documents/DreamFactory/Room16/company-dossier-lab/room16-app/package.json": "b77f03c660445d799a80f6db934864b0c32688ccd6dc196c4e166684be9bf38a",
+      "/Users/BjornRosinger/Documents/DreamFactory/Room16/company-dossier-lab/room16-app/scripts/test_canary_registry_mirror.mjs": "e6a11c2eb3161c8b677cf4032c95f9b168d677beb59c37a29f79a28795d766e3",
+      "/Users/BjornRosinger/Documents/DreamFactory/Room16/company-dossier-lab/room16-app/server-modules/canary-registry-mirror.mjs": "941533ef1507b1ae94b1339d267c396fc97b61658c52acd14eacc67a7494c31d"
+    },
+    "input_set_sha256": "ec408f285c78eba9b689ab28b058f15040eee9c1b213a10d0194bff4dea9d6fc",
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "\n> room16-app@0.1.0 verify:canary-registry-mirror\n> node --test scripts/test_canary_registry_mirror.mjs\n\n✔ product consumes an exact Research snapshot read-only (<DURATION>)\n✔ mirror drift blocks Product but cannot stale Research (<DURATION>)\n✔ Product authority relabel fails closed (<DURATION>)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms <DURATION>\n",
+    "stdout_sha256": "bb0d2d0a14ec6bfd4cf9f174b706fdb4a017a0c5e3f5d1c306630569f71d3f85"
+  },
+  "research_authority": true,
+  "status": "PASS"
+}

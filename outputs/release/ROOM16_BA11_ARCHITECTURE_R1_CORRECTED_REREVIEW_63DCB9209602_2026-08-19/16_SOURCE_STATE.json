@@ -1,0 +1,12 @@
+{
+  "authority_review_sha256": "e828b1bf30f60c9af86971a8e69434fc69876831610c5b21316e67edeac46639",
+  "ba11_implementation_ready": false,
+  "ba12_authorized": false,
+  "implementation_artifact_set_sha256": "63dcb92096027c4455767d29a848071c843ca00fcd0dd751aaf3ace9e9dd43de",
+  "product_head": "f674c06c69f0c0289dfcd2c11fb5030d06b6f1e0",
+  "product_status": "",
+  "publication_authorized": false,
+  "release_authorized": false,
+  "research_head": "7c1e8faa82f751fcae509463cee5b8880be64e0c",
+  "research_status": ""
+}

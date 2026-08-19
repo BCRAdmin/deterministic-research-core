@@ -1,0 +1,42 @@
+.../RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md  |  93 ++++
+ pyproject.toml                                     |   1 +
+ research_agent/canary_governance/__init__.py       |  19 +
+ research_agent/canary_governance/approval.py       |  64 +++
+ research_agent/canary_governance/archive.py        |  51 +++
+ research_agent/canary_governance/contracts.py      | 489 +++++++++++++++++++++
+ research_agent/canary_governance/diagnostics.py    |  34 ++
+ research_agent/canary_governance/ledger.py         | 128 ++++++
+ .../schemas/AcceptedDebtEvent.schema.json          | 147 +++++++
+ .../schemas/ArchiveReceipt.schema.json             |  83 ++++
+ .../schemas/CanaryFreezeRecord.schema.json         |  79 ++++
+ .../schemas/CanaryRegistryEntry.schema.json        |  89 ++++
+ .../schemas/ChangeClassification.schema.json       |  91 ++++
+ .../schemas/ComparisonRequest.schema.json          |  61 +++
+ .../schemas/ComparisonResult.schema.json           |  86 ++++
+ .../schemas/DebtMembership.schema.json             |  51 +++
+ .../schemas/DebtResolution.schema.json             |  96 ++++
+ .../schemas/GenesisImportReceipt.schema.json       |  69 +++
+ .../schemas/GovernanceEnvelope.schema.json         |  80 ++++
+ .../IndependentReviewAttestation.schema.json       | 112 +++++
+ .../schemas/MirrorReceipt.schema.json              |  64 +++
+ .../schemas/OperatorApprovalReceipt.schema.json    | 144 ++++++
+ .../schemas/PromotionCandidate.schema.json         |  67 +++
+ .../schemas/RegistryEvent.schema.json              |  96 ++++
+ .../schemas/RegistryHead.schema.json               |  68 +++
+ .../schemas/RegistrySnapshot.schema.json           | 157 +++++++
+ .../schemas/RegistryTransaction.schema.json        | 108 +++++
+ .../schemas/SourceContractLock.schema.json         |  53 +++
+ .../schemas/TechnicalBaseline.schema.json          | 115 +++++
+ .../schemas/contract_catalog_v1.json               | 218 +++++++++
+ research_agent/canary_governance/storage.py        |  97 ++++
+ research_agent/tests/test_canary_governance.py     | 448 +++++++++++++++++++
+ scripts/ops/build_ba11_r1_corrected_evidence.py    | 466 ++++++++++++++++++++
+ scripts/ops/generate_ba11_contract_catalog.py      |  62 +++
+ scripts/ops/verify_ba11_canary_governance.py       |  96 ++++
+ 35 files changed, 4182 insertions(+)
+
+PRODUCT
+room16-app/package.json                            |  3 +-
+ room16-app/scripts/test_canary_registry_mirror.mjs | 60 ++++++++++++++++++
+ .../server-modules/canary-registry-mirror.mjs      | 73 ++++++++++++++++++++++
+ 3 files changed, 135 insertions(+), 1 deletion(-)

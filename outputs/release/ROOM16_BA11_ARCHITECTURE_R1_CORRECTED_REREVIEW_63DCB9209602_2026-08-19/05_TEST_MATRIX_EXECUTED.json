@@ -1,0 +1,363 @@
+{
+  "commands": {
+    "ba10_freeze": {
+      "command": [
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/.venv/bin/python",
+        "scripts/ops/verify_ba10_artifact_abi_renderer_freeze.py",
+        "--product-repo",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/company-dossier-lab",
+        "--json"
+      ],
+      "cwd": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops",
+      "exit_code": 0,
+      "input_hashes": {
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/company-dossier-lab/room16-app/package.json": "b77f03c660445d799a80f6db934864b0c32688ccd6dc196c4e166684be9bf38a",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/company-dossier-lab/room16-app/scripts/test_canary_registry_mirror.mjs": "e6a11c2eb3161c8b677cf4032c95f9b168d677beb59c37a29f79a28795d766e3",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/company-dossier-lab/room16-app/server-modules/canary-registry-mirror.mjs": "941533ef1507b1ae94b1339d267c396fc97b61658c52acd14eacc67a7494c31d",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md": "063ccb1f66759944e73a6bb657d8f321875af72e1b76cac477dc1d44d87537ba",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/pyproject.toml": "01c28f6d8982e5cf146fa466240a735a10ef49571677cbf38353b1fd880a7a1f",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/__init__.py": "a9f3db4363b7c375afb6d64a16952d755cb8e941f8b3c3a0fc93ddf669039419",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/approval.py": "2edad120a6cdff0229d75c8bbf60d6f207dcb5b674d2f576d5293acfb61d1676",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/archive.py": "4cbddf8123d702c6c3a60aaf143a20630553df476cade1a7db4ecc04a77574de",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/contracts.py": "ef31c460cbc63ad97c1356c23e52b3eb3e1823e2e3ffcb5e47087097745f6ec6",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/diagnostics.py": "6dbc0c77315b485d97a98bea3f4e283cfa7f0d33d0f3efd0840bd3f874c075da",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/ledger.py": "f57a3f376b64e250d018e03309db72f3b7935062e9401b5219e4e72e8b5ffce0",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/AcceptedDebtEvent.schema.json": "60ffa61b082d58c85d81c2261b0c28553b6950822d2f972ff7e414995c801137",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/ArchiveReceipt.schema.json": "3ba47aba5533083ee0d4adef10aee176d0edaaf5c42db123887537997a6d2d16",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/CanaryFreezeRecord.schema.json": "e80e28375eb2d6a2948bab1f35f3dc3a46a433685100b5d66a1fa69c13e94de4",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/CanaryRegistryEntry.schema.json": "dc3e76c49d3fe116fc20a140d3e840cb166cc52b6e378dc2f75b875bd97a5d7b",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/ChangeClassification.schema.json": "60f7497b61d63091061cc427c3b611c7e5395b886efc5ee1a4941bfceabdca5c",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/ComparisonRequest.schema.json": "672fc6a5d890a7013f4605bf261827598f44790daa820ff1b9bb6295b68a4f93",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/ComparisonResult.schema.json": "1d32bc61a93e0b3b2261bbc9b441ecbdfc27562c37dc026da3c37c5556807bdf",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/DebtMembership.schema.json": "fbbf3e79a0ef4fa6a04e914ee3a2ba71d2bb333e32202de7fe893a21259fd471",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/DebtResolution.schema.json": "889d351e95aed2ceed33c835a3db0c54bf46f78e9970417ff5b2a4053f21ca0a",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/GenesisImportReceipt.schema.json": "72559d4ee11fd5e0c87aa2563a2acd70b92d816d365bb568430368f007d5c93b",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/GovernanceEnvelope.schema.json": "ecf1015e9958d0765caa1a28ddeae50b43028cd576e8c4d2cd7f191dd978706f",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/IndependentReviewAttestation.schema.json": "056b35530f0698aa5398c7c02a2afb30505b5b12dcad7220be92f2951084345a",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/MirrorReceipt.schema.json": "b219241fd49477578c8a35c7982daed14e861703c1a61619b3cc4fae05c20bf8",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/OperatorApprovalReceipt.schema.json": "4d8983890720b70cbab117867cc1afd609f07f0a32d46297650db36505c1cc8f",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/PromotionCandidate.schema.json": "01d8a235ea8edf96cb5073cd5be1575ef9b27186de8dc2561779c12c0da1e976",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/RegistryEvent.schema.json": "f66ba1cf1b466bcb35ec65421344d5071c287df5839b91e684c8d63748620746",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/RegistryHead.schema.json": "6d5aad2e3e5aa1a44fdc6872fe26c53dbd160fafe1435a75a64b95b3be8c212f",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/RegistrySnapshot.schema.json": "25086f091ac966041af909111148d94e28c51f0e4d00b5a3c4767e433d01ca7a",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/RegistryTransaction.schema.json": "1efb9a2f10e08762b33edb33860406f828e88699bcf3685396517c6f3c0224a3",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/SourceContractLock.schema.json": "1f38644ed9d532f693ba0bd14f8a1cd3a604a74252df1d2f6f913824e3ef3eeb",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/TechnicalBaseline.schema.json": "7626fa465f846a44413c29972d20632058b4117ca5751155458b46acad7f0f3f",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/contract_catalog_v1.json": "25d775163964bdd2dc7070fd131258ece8b89b53715379d605b6859ad0129e9c",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/storage.py": "f73a9ec1a30b6e8c6e51c59f7065ea16d17b0717089ae06ffeacd933085c816e",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/tests/test_canary_governance.py": "f1edae2aeff9978be4a95a2c5d9e0c5fd74f1b4871d21284998c5c3afd24af53",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/scripts/ops/build_ba11_r1_corrected_evidence.py": "96a6975104c630d79a0a90a4422dc3f4cdef07999729c4325a3a19ab6c26bee5",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/scripts/ops/generate_ba11_contract_catalog.py": "43bf54df1fac8f739ab2251bd295ebf857e9bbfa8fa354e736c8ff9615155292",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/scripts/ops/verify_ba11_canary_governance.py": "077752d717d86c9cfc61972c5b0bebd5508181dc439f069668a409580b21db87"
+      },
+      "input_set_sha256": "1abc83ec48bb816b633852b700f57d59fe04774355c22a863eae086962d1d2f6",
+      "stderr": "",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "{\n  \"ba10_frozen\": true,\n  \"ba11_authorized\": false,\n  \"ba12_authorized\": false,\n  \"checks\": {\n    \"ABT_bundle_hash\": true,\n    \"ABT_nested_bundle_manifest\": true,\n    \"ABT_nested_bundle_zip\": true,\n    \"ABT_nested_renderer_truth_boundary\": true,\n    \"ABT_nested_renderer_zip\": true,\n    \"ABT_renderer_acceptance\": true,\n    \"ABT_source_hash\": true,\n    \"COST_bundle_hash\": true,\n    \"COST_nested_bundle_manifest\": true,\n    \"COST_nested_bundle_zip\": true,\n    \"COST_nested_renderer_truth_boundary\": true,\n    \"COST_nested_renderer_zip\": true,\n    \"COST_renderer_acceptance\": true,\n    \"COST_source_hash\": true,\n    \"WM_bundle_hash\": true,\n    \"WM_nested_bundle_manifest\": true,\n    \"WM_nested_bundle_zip\": true,\n    \"WM_nested_renderer_truth_boundary\": true,\n    \"WM_nested_renderer_zip\": true,\n    \"WM_renderer_acceptance\": true,\n    \"WM_source_hash\": true,\n    \"accepted_r3_evidence_archive\": true,\n    \"all_r3_closures\": true,\n    \"artifact_abi_contract\": true,\n    \"authority_v3_compatibility_boundary\": true,\n    \"ba10_tag_is_annotated\": true,\n    \"ba10_tag_object\": true,\n    \"ba10_tag_target\": true,\n    \"canary_baseline_file\": true,\n    \"consumer_policy_file_lock\": true,\n    \"consumer_policy_lock\": true,\n    \"exact_pass_execution_profile\": true,\n    \"foundation_freeze_verifier\": true,\n    \"foundation_lock\": true,\n    \"freeze_lock\": true,\n    \"freeze_record_contract\": true,\n    \"freeze_rule\": true,\n    \"frozen_status\": true,\n    \"pass_execution_profile_file_lock\": true,\n    \"product_commit_exists\": true,\n    \"product_source:room16-app/config/room16_product_truth_boundary_v1.json\": true,\n    \"product_source:room16-app/server-modules/compiler-artifact-bundle.mjs\": true,\n    \"product_source:room16-app/server-modules/deterministic-research-report.mjs\": true,\n    \"product_source:room16-app/server.mjs\": true,\n    \"product_source:room16-app/src/CompilerArtifactStatus.tsx\": true,\n    \"product_source:scripts/room16_compiler_presentation.py\": true,\n    \"product_source:scripts/room16_render_deterministic_report.py\": true,\n    \"product_source:scripts/room16_render_public_report.py\": true,\n    \"production_trust_api_closure\": true,\n    \"r3_independent_acceptance\": true,\n    \"r3_machine_verdict\": true,\n    \"receipt_set_file_lock\": true,\n    \"receipt_set_lock\": true,\n    \"registry_freeze_verifier\": true,\n    \"registry_lock\": true,\n    \"release_and_next_phases_closed\": true,\n    \"required_artifact_profile\": true,\n    \"required_artifact_profile_file_lock\": true,\n    \"research_commit_exists\": true,\n    \"research_source:research_agent/current/__main__.py\": true,\n    \"research_source:research_agent/current/runner.py\": true,\n    \"research_source:research_agent/productization/__init__.py\": true,\n    \"research_source:research_agent/productization/artifact_bundle.py\": true,\n    \"research_source:research_agent/productization/contracts.py\": true,\n    \"research_source:research_agent/productization/output_lineage.py\": true,\n    \"research_source:research_agent/productization/trust_receipt.py\": true,\n    \"semantic_wave_freeze_verifier\": true,\n    \"semantic_wave_lock\": true,\n    \"truthful_migration_state\": true\n  },\n  \"contract_id\": \"room16.compiler.ba10_artifact_abi_renderer_freeze_verification\",\n  \"contract_version\": 1,\n  \"failed_checks\": [],\n  \"freeze_lock_sha256\": \"29bc0bf2d00aa22d49fd7bb569cf080cc335778c1773b9e63710ecd61dfebc8e\",\n  \"freeze_version\": \"1.0.0\",\n  \"git_tag\": \"room16-ba10-artifact-abi-renderer-v1.0.0\",\n  \"product_commit\": \"de0dfbde1d7e14d081b8da27933f7164c88d0d12\",\n  \"publication_allowed\": false,\n  \"release_ready\": false,\n  \"status\": \"PASS\",\n  \"tag_object\": \"78c39bf8c69754f717ef03833add898d69da4979\",\n  \"tag_target\": \"e10c8d4454c9ebeef42a7e8f1021aff291225e8c\"\n}\n",
+      "stdout_sha256": "1124d4999f5dae97b703c5e0a7e5d65c8498762619748635ee65784defe9f0e7"
+    },
+    "product_full": {
+      "command": [
+        "npm",
+        "run",
+        "verify"
+      ],
+      "cwd": "/Users/BjornRosinger/Documents/DreamFactory/Room16/company-dossier-lab/room16-app",
+      "exit_code": 0,
+      "input_hashes": {
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/company-dossier-lab/room16-app/package.json": "b77f03c660445d799a80f6db934864b0c32688ccd6dc196c4e166684be9bf38a",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/company-dossier-lab/room16-app/scripts/test_canary_registry_mirror.mjs": "e6a11c2eb3161c8b677cf4032c95f9b168d677beb59c37a29f79a28795d766e3",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/company-dossier-lab/room16-app/server-modules/canary-registry-mirror.mjs": "941533ef1507b1ae94b1339d267c396fc97b61658c52acd14eacc67a7494c31d"
+      },
+      "input_set_sha256": "ec408f285c78eba9b689ab28b058f15040eee9c1b213a10d0194bff4dea9d6fc",
+      "stderr": "",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "{\n  \"contract_id\": \"room16.normalized_product_verify_receipt@1\",\n  \"markers\": {\n    \"authority_bindings_unblocked\": true,\n    \"canary_mirror_pass\": true,\n    \"compiler_truth_boundary_pass\": true,\n    \"expected_tap_summaries\": true,\n    \"room16_app_verdict_pass\": true,\n    \"runtime_trust_api_pass\": true,\n    \"valuation_calibration_pass\": true\n  },\n  \"tap_summaries\": [\n    {\n      \"fail\": 0,\n      \"pass\": 33,\n      \"tests\": 33\n    },\n    {\n      \"fail\": 0,\n      \"pass\": 4,\n      \"tests\": 4\n    },\n    {\n      \"fail\": 0,\n      \"pass\": 3,\n      \"tests\": 3\n    }\n  ],\n  \"volatile_fields_excluded\": [\n    \"timestamps\",\n    \"durations\",\n    \"runtime_age_minutes\",\n    \"live_symbol_resolution_candidates_and_scores\"\n  ]\n}\n",
+      "stdout_sha256": "3b446df6617209b1e511ffba91e94ae688277aafcbfc0639cffcd103600d6a0c"
+    },
+    "product_mirror": {
+      "command": [
+        "npm",
+        "run",
+        "verify:canary-registry-mirror"
+      ],
+      "cwd": "/Users/BjornRosinger/Documents/DreamFactory/Room16/company-dossier-lab/room16-app",
+      "exit_code": 0,
+      "input_hashes": {
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/company-dossier-lab/room16-app/package.json": "b77f03c660445d799a80f6db934864b0c32688ccd6dc196c4e166684be9bf38a",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/company-dossier-lab/room16-app/scripts/test_canary_registry_mirror.mjs": "e6a11c2eb3161c8b677cf4032c95f9b168d677beb59c37a29f79a28795d766e3",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/company-dossier-lab/room16-app/server-modules/canary-registry-mirror.mjs": "941533ef1507b1ae94b1339d267c396fc97b61658c52acd14eacc67a7494c31d"
+      },
+      "input_set_sha256": "ec408f285c78eba9b689ab28b058f15040eee9c1b213a10d0194bff4dea9d6fc",
+      "stderr": "",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "\n> room16-app@0.1.0 verify:canary-registry-mirror\n> node --test scripts/test_canary_registry_mirror.mjs\n\n✔ product consumes an exact Research snapshot read-only (<DURATION>)\n✔ mirror drift blocks Product but cannot stale Research (<DURATION>)\n✔ Product authority relabel fails closed (<DURATION>)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms <DURATION>\n",
+      "stdout_sha256": "bb0d2d0a14ec6bfd4cf9f174b706fdb4a017a0c5e3f5d1c306630569f71d3f85"
+    },
+    "research_full": {
+      "command": [
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-q"
+      ],
+      "cwd": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops",
+      "exit_code": 0,
+      "input_hashes": {
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md": "063ccb1f66759944e73a6bb657d8f321875af72e1b76cac477dc1d44d87537ba",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/pyproject.toml": "01c28f6d8982e5cf146fa466240a735a10ef49571677cbf38353b1fd880a7a1f",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/__init__.py": "a9f3db4363b7c375afb6d64a16952d755cb8e941f8b3c3a0fc93ddf669039419",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/approval.py": "2edad120a6cdff0229d75c8bbf60d6f207dcb5b674d2f576d5293acfb61d1676",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/archive.py": "4cbddf8123d702c6c3a60aaf143a20630553df476cade1a7db4ecc04a77574de",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/contracts.py": "ef31c460cbc63ad97c1356c23e52b3eb3e1823e2e3ffcb5e47087097745f6ec6",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/diagnostics.py": "6dbc0c77315b485d97a98bea3f4e283cfa7f0d33d0f3efd0840bd3f874c075da",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/ledger.py": "f57a3f376b64e250d018e03309db72f3b7935062e9401b5219e4e72e8b5ffce0",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/AcceptedDebtEvent.schema.json": "60ffa61b082d58c85d81c2261b0c28553b6950822d2f972ff7e414995c801137",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/ArchiveReceipt.schema.json": "3ba47aba5533083ee0d4adef10aee176d0edaaf5c42db123887537997a6d2d16",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/CanaryFreezeRecord.schema.json": "e80e28375eb2d6a2948bab1f35f3dc3a46a433685100b5d66a1fa69c13e94de4",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/CanaryRegistryEntry.schema.json": "dc3e76c49d3fe116fc20a140d3e840cb166cc52b6e378dc2f75b875bd97a5d7b",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/ChangeClassification.schema.json": "60f7497b61d63091061cc427c3b611c7e5395b886efc5ee1a4941bfceabdca5c",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/ComparisonRequest.schema.json": "672fc6a5d890a7013f4605bf261827598f44790daa820ff1b9bb6295b68a4f93",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/ComparisonResult.schema.json": "1d32bc61a93e0b3b2261bbc9b441ecbdfc27562c37dc026da3c37c5556807bdf",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/DebtMembership.schema.json": "fbbf3e79a0ef4fa6a04e914ee3a2ba71d2bb333e32202de7fe893a21259fd471",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/DebtResolution.schema.json": "889d351e95aed2ceed33c835a3db0c54bf46f78e9970417ff5b2a4053f21ca0a",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/GenesisImportReceipt.schema.json": "72559d4ee11fd5e0c87aa2563a2acd70b92d816d365bb568430368f007d5c93b",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/GovernanceEnvelope.schema.json": "ecf1015e9958d0765caa1a28ddeae50b43028cd576e8c4d2cd7f191dd978706f",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/IndependentReviewAttestation.schema.json": "056b35530f0698aa5398c7c02a2afb30505b5b12dcad7220be92f2951084345a",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/MirrorReceipt.schema.json": "b219241fd49477578c8a35c7982daed14e861703c1a61619b3cc4fae05c20bf8",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/OperatorApprovalReceipt.schema.json": "4d8983890720b70cbab117867cc1afd609f07f0a32d46297650db36505c1cc8f",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/PromotionCandidate.schema.json": "01d8a235ea8edf96cb5073cd5be1575ef9b27186de8dc2561779c12c0da1e976",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/RegistryEvent.schema.json": "f66ba1cf1b466bcb35ec65421344d5071c287df5839b91e684c8d63748620746",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/RegistryHead.schema.json": "6d5aad2e3e5aa1a44fdc6872fe26c53dbd160fafe1435a75a64b95b3be8c212f",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/RegistrySnapshot.schema.json": "25086f091ac966041af909111148d94e28c51f0e4d00b5a3c4767e433d01ca7a",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/RegistryTransaction.schema.json": "1efb9a2f10e08762b33edb33860406f828e88699bcf3685396517c6f3c0224a3",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/SourceContractLock.schema.json": "1f38644ed9d532f693ba0bd14f8a1cd3a604a74252df1d2f6f913824e3ef3eeb",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/TechnicalBaseline.schema.json": "7626fa465f846a44413c29972d20632058b4117ca5751155458b46acad7f0f3f",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/contract_catalog_v1.json": "25d775163964bdd2dc7070fd131258ece8b89b53715379d605b6859ad0129e9c",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/storage.py": "f73a9ec1a30b6e8c6e51c59f7065ea16d17b0717089ae06ffeacd933085c816e",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/tests/test_canary_governance.py": "f1edae2aeff9978be4a95a2c5d9e0c5fd74f1b4871d21284998c5c3afd24af53",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/scripts/ops/build_ba11_r1_corrected_evidence.py": "96a6975104c630d79a0a90a4422dc3f4cdef07999729c4325a3a19ab6c26bee5",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/scripts/ops/generate_ba11_contract_catalog.py": "43bf54df1fac8f739ab2251bd295ebf857e9bbfa8fa354e736c8ff9615155292",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/scripts/ops/verify_ba11_canary_governance.py": "077752d717d86c9cfc61972c5b0bebd5508181dc439f069668a409580b21db87"
+      },
+      "input_set_sha256": "4561c46ed505f587c3627e96f0db0530c1f0a0eaa246eb22dba64b589516a1e2",
+      "stderr": "",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "........................................................................ [  5%]\n........................................................................ [ 11%]\n........................................................................ [ 17%]\n........................................................................ [ 23%]\n........................................................................ [ 29%]\n........................................................................ [ 35%]\n........................................................................ [ 41%]\n........................................................................ [ 47%]\n........................................................................ [ 53%]\n........................................................................ [ 59%]\n........................................................................ [ 65%]\n........................................................................ [ 71%]\n........................................................................ [ 77%]\n........................................................................ [ 83%]\n........................................................................ [ 89%]\n........................................................................ [ 95%]\n.....................................................                    [100%]\n",
+      "stdout_sha256": "4d4a2c2083775bcd067fa7b987bcafa5863aca61634302965a0af22f3953335a"
+    },
+    "research_ruff": {
+      "command": [
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/.venv/bin/ruff",
+        "check",
+        "research_agent",
+        "scripts/ops"
+      ],
+      "cwd": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops",
+      "exit_code": 0,
+      "input_hashes": {
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md": "063ccb1f66759944e73a6bb657d8f321875af72e1b76cac477dc1d44d87537ba",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/pyproject.toml": "01c28f6d8982e5cf146fa466240a735a10ef49571677cbf38353b1fd880a7a1f",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/__init__.py": "a9f3db4363b7c375afb6d64a16952d755cb8e941f8b3c3a0fc93ddf669039419",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/approval.py": "2edad120a6cdff0229d75c8bbf60d6f207dcb5b674d2f576d5293acfb61d1676",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/archive.py": "4cbddf8123d702c6c3a60aaf143a20630553df476cade1a7db4ecc04a77574de",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/contracts.py": "ef31c460cbc63ad97c1356c23e52b3eb3e1823e2e3ffcb5e47087097745f6ec6",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/diagnostics.py": "6dbc0c77315b485d97a98bea3f4e283cfa7f0d33d0f3efd0840bd3f874c075da",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/ledger.py": "f57a3f376b64e250d018e03309db72f3b7935062e9401b5219e4e72e8b5ffce0",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/AcceptedDebtEvent.schema.json": "60ffa61b082d58c85d81c2261b0c28553b6950822d2f972ff7e414995c801137",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/ArchiveReceipt.schema.json": "3ba47aba5533083ee0d4adef10aee176d0edaaf5c42db123887537997a6d2d16",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/CanaryFreezeRecord.schema.json": "e80e28375eb2d6a2948bab1f35f3dc3a46a433685100b5d66a1fa69c13e94de4",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/CanaryRegistryEntry.schema.json": "dc3e76c49d3fe116fc20a140d3e840cb166cc52b6e378dc2f75b875bd97a5d7b",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/ChangeClassification.schema.json": "60f7497b61d63091061cc427c3b611c7e5395b886efc5ee1a4941bfceabdca5c",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/ComparisonRequest.schema.json": "672fc6a5d890a7013f4605bf261827598f44790daa820ff1b9bb6295b68a4f93",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/ComparisonResult.schema.json": "1d32bc61a93e0b3b2261bbc9b441ecbdfc27562c37dc026da3c37c5556807bdf",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/DebtMembership.schema.json": "fbbf3e79a0ef4fa6a04e914ee3a2ba71d2bb333e32202de7fe893a21259fd471",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/DebtResolution.schema.json": "889d351e95aed2ceed33c835a3db0c54bf46f78e9970417ff5b2a4053f21ca0a",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/GenesisImportReceipt.schema.json": "72559d4ee11fd5e0c87aa2563a2acd70b92d816d365bb568430368f007d5c93b",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/GovernanceEnvelope.schema.json": "ecf1015e9958d0765caa1a28ddeae50b43028cd576e8c4d2cd7f191dd978706f",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/IndependentReviewAttestation.schema.json": "056b35530f0698aa5398c7c02a2afb30505b5b12dcad7220be92f2951084345a",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/MirrorReceipt.schema.json": "b219241fd49477578c8a35c7982daed14e861703c1a61619b3cc4fae05c20bf8",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/OperatorApprovalReceipt.schema.json": "4d8983890720b70cbab117867cc1afd609f07f0a32d46297650db36505c1cc8f",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/PromotionCandidate.schema.json": "01d8a235ea8edf96cb5073cd5be1575ef9b27186de8dc2561779c12c0da1e976",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/RegistryEvent.schema.json": "f66ba1cf1b466bcb35ec65421344d5071c287df5839b91e684c8d63748620746",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/RegistryHead.schema.json": "6d5aad2e3e5aa1a44fdc6872fe26c53dbd160fafe1435a75a64b95b3be8c212f",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/RegistrySnapshot.schema.json": "25086f091ac966041af909111148d94e28c51f0e4d00b5a3c4767e433d01ca7a",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/RegistryTransaction.schema.json": "1efb9a2f10e08762b33edb33860406f828e88699bcf3685396517c6f3c0224a3",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/SourceContractLock.schema.json": "1f38644ed9d532f693ba0bd14f8a1cd3a604a74252df1d2f6f913824e3ef3eeb",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/TechnicalBaseline.schema.json": "7626fa465f846a44413c29972d20632058b4117ca5751155458b46acad7f0f3f",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/contract_catalog_v1.json": "25d775163964bdd2dc7070fd131258ece8b89b53715379d605b6859ad0129e9c",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/storage.py": "f73a9ec1a30b6e8c6e51c59f7065ea16d17b0717089ae06ffeacd933085c816e",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/tests/test_canary_governance.py": "f1edae2aeff9978be4a95a2c5d9e0c5fd74f1b4871d21284998c5c3afd24af53",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/scripts/ops/build_ba11_r1_corrected_evidence.py": "96a6975104c630d79a0a90a4422dc3f4cdef07999729c4325a3a19ab6c26bee5",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/scripts/ops/generate_ba11_contract_catalog.py": "43bf54df1fac8f739ab2251bd295ebf857e9bbfa8fa354e736c8ff9615155292",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/scripts/ops/verify_ba11_canary_governance.py": "077752d717d86c9cfc61972c5b0bebd5508181dc439f069668a409580b21db87"
+      },
+      "input_set_sha256": "4561c46ed505f587c3627e96f0db0530c1f0a0eaa246eb22dba64b589516a1e2",
+      "stderr": "",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "All checks passed!\n",
+      "stdout_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "schema_generation": {
+      "command": [
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/.venv/bin/python",
+        "scripts/ops/generate_ba11_contract_catalog.py"
+      ],
+      "cwd": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops",
+      "exit_code": 0,
+      "input_hashes": {
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md": "063ccb1f66759944e73a6bb657d8f321875af72e1b76cac477dc1d44d87537ba",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/pyproject.toml": "01c28f6d8982e5cf146fa466240a735a10ef49571677cbf38353b1fd880a7a1f",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/__init__.py": "a9f3db4363b7c375afb6d64a16952d755cb8e941f8b3c3a0fc93ddf669039419",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/approval.py": "2edad120a6cdff0229d75c8bbf60d6f207dcb5b674d2f576d5293acfb61d1676",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/archive.py": "4cbddf8123d702c6c3a60aaf143a20630553df476cade1a7db4ecc04a77574de",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/contracts.py": "ef31c460cbc63ad97c1356c23e52b3eb3e1823e2e3ffcb5e47087097745f6ec6",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/diagnostics.py": "6dbc0c77315b485d97a98bea3f4e283cfa7f0d33d0f3efd0840bd3f874c075da",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/ledger.py": "f57a3f376b64e250d018e03309db72f3b7935062e9401b5219e4e72e8b5ffce0",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/AcceptedDebtEvent.schema.json": "60ffa61b082d58c85d81c2261b0c28553b6950822d2f972ff7e414995c801137",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/ArchiveReceipt.schema.json": "3ba47aba5533083ee0d4adef10aee176d0edaaf5c42db123887537997a6d2d16",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/CanaryFreezeRecord.schema.json": "e80e28375eb2d6a2948bab1f35f3dc3a46a433685100b5d66a1fa69c13e94de4",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/CanaryRegistryEntry.schema.json": "dc3e76c49d3fe116fc20a140d3e840cb166cc52b6e378dc2f75b875bd97a5d7b",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/ChangeClassification.schema.json": "60f7497b61d63091061cc427c3b611c7e5395b886efc5ee1a4941bfceabdca5c",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/ComparisonRequest.schema.json": "672fc6a5d890a7013f4605bf261827598f44790daa820ff1b9bb6295b68a4f93",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/ComparisonResult.schema.json": "1d32bc61a93e0b3b2261bbc9b441ecbdfc27562c37dc026da3c37c5556807bdf",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/DebtMembership.schema.json": "fbbf3e79a0ef4fa6a04e914ee3a2ba71d2bb333e32202de7fe893a21259fd471",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/DebtResolution.schema.json": "889d351e95aed2ceed33c835a3db0c54bf46f78e9970417ff5b2a4053f21ca0a",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/GenesisImportReceipt.schema.json": "72559d4ee11fd5e0c87aa2563a2acd70b92d816d365bb568430368f007d5c93b",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/GovernanceEnvelope.schema.json": "ecf1015e9958d0765caa1a28ddeae50b43028cd576e8c4d2cd7f191dd978706f",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/IndependentReviewAttestation.schema.json": "056b35530f0698aa5398c7c02a2afb30505b5b12dcad7220be92f2951084345a",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/MirrorReceipt.schema.json": "b219241fd49477578c8a35c7982daed14e861703c1a61619b3cc4fae05c20bf8",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/OperatorApprovalReceipt.schema.json": "4d8983890720b70cbab117867cc1afd609f07f0a32d46297650db36505c1cc8f",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/PromotionCandidate.schema.json": "01d8a235ea8edf96cb5073cd5be1575ef9b27186de8dc2561779c12c0da1e976",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/RegistryEvent.schema.json": "f66ba1cf1b466bcb35ec65421344d5071c287df5839b91e684c8d63748620746",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/RegistryHead.schema.json": "6d5aad2e3e5aa1a44fdc6872fe26c53dbd160fafe1435a75a64b95b3be8c212f",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/RegistrySnapshot.schema.json": "25086f091ac966041af909111148d94e28c51f0e4d00b5a3c4767e433d01ca7a",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/RegistryTransaction.schema.json": "1efb9a2f10e08762b33edb33860406f828e88699bcf3685396517c6f3c0224a3",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/SourceContractLock.schema.json": "1f38644ed9d532f693ba0bd14f8a1cd3a604a74252df1d2f6f913824e3ef3eeb",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/TechnicalBaseline.schema.json": "7626fa465f846a44413c29972d20632058b4117ca5751155458b46acad7f0f3f",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/contract_catalog_v1.json": "25d775163964bdd2dc7070fd131258ece8b89b53715379d605b6859ad0129e9c",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/storage.py": "f73a9ec1a30b6e8c6e51c59f7065ea16d17b0717089ae06ffeacd933085c816e",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/tests/test_canary_governance.py": "f1edae2aeff9978be4a95a2c5d9e0c5fd74f1b4871d21284998c5c3afd24af53",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/scripts/ops/build_ba11_r1_corrected_evidence.py": "96a6975104c630d79a0a90a4422dc3f4cdef07999729c4325a3a19ab6c26bee5",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/scripts/ops/generate_ba11_contract_catalog.py": "43bf54df1fac8f739ab2251bd295ebf857e9bbfa8fa354e736c8ff9615155292",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/scripts/ops/verify_ba11_canary_governance.py": "077752d717d86c9cfc61972c5b0bebd5508181dc439f069668a409580b21db87"
+      },
+      "input_set_sha256": "4561c46ed505f587c3627e96f0db0530c1f0a0eaa246eb22dba64b589516a1e2",
+      "stderr": "",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "{\"status\": \"PASS\", \"contract_count\": 21, \"output\": \"research_agent/canary_governance/schemas\"}\n",
+      "stdout_sha256": "97485131178f8e932a485666df5f0e8a28145810313eb71634e19d44428669a6"
+    },
+    "targeted_research": {
+      "command": [
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/.venv/bin/python",
+        "-m",
+        "pytest",
+        "research_agent/tests/test_canary_governance.py",
+        "-q"
+      ],
+      "cwd": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops",
+      "exit_code": 0,
+      "input_hashes": {
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md": "063ccb1f66759944e73a6bb657d8f321875af72e1b76cac477dc1d44d87537ba",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/pyproject.toml": "01c28f6d8982e5cf146fa466240a735a10ef49571677cbf38353b1fd880a7a1f",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/__init__.py": "a9f3db4363b7c375afb6d64a16952d755cb8e941f8b3c3a0fc93ddf669039419",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/approval.py": "2edad120a6cdff0229d75c8bbf60d6f207dcb5b674d2f576d5293acfb61d1676",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/archive.py": "4cbddf8123d702c6c3a60aaf143a20630553df476cade1a7db4ecc04a77574de",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/contracts.py": "ef31c460cbc63ad97c1356c23e52b3eb3e1823e2e3ffcb5e47087097745f6ec6",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/diagnostics.py": "6dbc0c77315b485d97a98bea3f4e283cfa7f0d33d0f3efd0840bd3f874c075da",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/ledger.py": "f57a3f376b64e250d018e03309db72f3b7935062e9401b5219e4e72e8b5ffce0",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/AcceptedDebtEvent.schema.json": "60ffa61b082d58c85d81c2261b0c28553b6950822d2f972ff7e414995c801137",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/ArchiveReceipt.schema.json": "3ba47aba5533083ee0d4adef10aee176d0edaaf5c42db123887537997a6d2d16",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/CanaryFreezeRecord.schema.json": "e80e28375eb2d6a2948bab1f35f3dc3a46a433685100b5d66a1fa69c13e94de4",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/CanaryRegistryEntry.schema.json": "dc3e76c49d3fe116fc20a140d3e840cb166cc52b6e378dc2f75b875bd97a5d7b",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/ChangeClassification.schema.json": "60f7497b61d63091061cc427c3b611c7e5395b886efc5ee1a4941bfceabdca5c",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/ComparisonRequest.schema.json": "672fc6a5d890a7013f4605bf261827598f44790daa820ff1b9bb6295b68a4f93",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/ComparisonResult.schema.json": "1d32bc61a93e0b3b2261bbc9b441ecbdfc27562c37dc026da3c37c5556807bdf",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/DebtMembership.schema.json": "fbbf3e79a0ef4fa6a04e914ee3a2ba71d2bb333e32202de7fe893a21259fd471",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/DebtResolution.schema.json": "889d351e95aed2ceed33c835a3db0c54bf46f78e9970417ff5b2a4053f21ca0a",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/GenesisImportReceipt.schema.json": "72559d4ee11fd5e0c87aa2563a2acd70b92d816d365bb568430368f007d5c93b",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/GovernanceEnvelope.schema.json": "ecf1015e9958d0765caa1a28ddeae50b43028cd576e8c4d2cd7f191dd978706f",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/IndependentReviewAttestation.schema.json": "056b35530f0698aa5398c7c02a2afb30505b5b12dcad7220be92f2951084345a",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/MirrorReceipt.schema.json": "b219241fd49477578c8a35c7982daed14e861703c1a61619b3cc4fae05c20bf8",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/OperatorApprovalReceipt.schema.json": "4d8983890720b70cbab117867cc1afd609f07f0a32d46297650db36505c1cc8f",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/PromotionCandidate.schema.json": "01d8a235ea8edf96cb5073cd5be1575ef9b27186de8dc2561779c12c0da1e976",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/RegistryEvent.schema.json": "f66ba1cf1b466bcb35ec65421344d5071c287df5839b91e684c8d63748620746",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/RegistryHead.schema.json": "6d5aad2e3e5aa1a44fdc6872fe26c53dbd160fafe1435a75a64b95b3be8c212f",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/RegistrySnapshot.schema.json": "25086f091ac966041af909111148d94e28c51f0e4d00b5a3c4767e433d01ca7a",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/RegistryTransaction.schema.json": "1efb9a2f10e08762b33edb33860406f828e88699bcf3685396517c6f3c0224a3",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/SourceContractLock.schema.json": "1f38644ed9d532f693ba0bd14f8a1cd3a604a74252df1d2f6f913824e3ef3eeb",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/TechnicalBaseline.schema.json": "7626fa465f846a44413c29972d20632058b4117ca5751155458b46acad7f0f3f",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/schemas/contract_catalog_v1.json": "25d775163964bdd2dc7070fd131258ece8b89b53715379d605b6859ad0129e9c",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/canary_governance/storage.py": "f73a9ec1a30b6e8c6e51c59f7065ea16d17b0717089ae06ffeacd933085c816e",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/research_agent/tests/test_canary_governance.py": "f1edae2aeff9978be4a95a2c5d9e0c5fd74f1b4871d21284998c5c3afd24af53",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/scripts/ops/build_ba11_r1_corrected_evidence.py": "96a6975104c630d79a0a90a4422dc3f4cdef07999729c4325a3a19ab6c26bee5",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/scripts/ops/generate_ba11_contract_catalog.py": "43bf54df1fac8f739ab2251bd295ebf857e9bbfa8fa354e736c8ff9615155292",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/scripts/ops/verify_ba11_canary_governance.py": "077752d717d86c9cfc61972c5b0bebd5508181dc439f069668a409580b21db87"
+      },
+      "input_set_sha256": "4561c46ed505f587c3627e96f0db0530c1f0a0eaa246eb22dba64b589516a1e2",
+      "stderr": "",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": ".............                                                            [100%]\n",
+      "stdout_sha256": "cfc14fd2dc11c362cccf5421245ca5ab0e9d286b54a604a80bd2dd5522f6feb9"
+    }
+  },
+  "finding_test_map": {
+    "BA11-AR-001": [
+      "test_freeze_is_immutable_and_rejects_future_state_fields"
+    ],
+    "BA11-AR-002": [
+      "test_product_mirror_failure_never_changes_research_state",
+      "product_mirror_drift"
+    ],
+    "BA11-AR-003": [
+      "test_debt_events_are_append_only_and_membership_is_separate"
+    ],
+    "BA11-AR-004": [
+      "test_contract_catalog_has_all_required_machine_contracts"
+    ],
+    "BA11-AR-005": [
+      "test_ed25519_approval_replay_scope_expiry_and_tamper"
+    ],
+    "BA11-AR-006": [
+      "test_registry_commit_is_atomic_and_compare_and_swap"
+    ],
+    "BA11-AR-007": [
+      "test_deterministic_archive_and_manifest_self_exclusion"
+    ],
+    "BA11-AR-008": [
+      "test_technical_identity_is_separate_from_governance_identity"
+    ],
+    "BA11-AR-009": [
+      "test_ordinary_change_requires_independent_no_new_truth"
+    ],
+    "BA11-AR-010": [
+      "test_deterministic_canary_id_and_semver_rules"
+    ],
+    "BA11-AR-011": [
+      "test_registry_fold_is_append_only_and_transition_checked"
+    ],
+    "BA11-AR-012": [
+      "product_consumes_exact_research_snapshot_read_only"
+    ],
+    "BA11-AR-013": [
+      "full_negative_and_fault_injection_suite"
+    ],
+    "BA11-AR-014": [
+      "ba10_freeze_verifier_raw_receipt"
+    ],
+    "BA11-AR-015": [
+      "freeze_first_contract_no_predecessor"
+    ],
+    "BA11-AR-016": [
+      "test_source_contract_lock_is_required_and_hash_bound"
+    ],
+    "BA11-AR-017": [
+      "contract_catalog_forbids_release_candidate"
+    ],
+    "BA11-AR-018": [
+      "test_deterministic_archive_and_manifest_self_exclusion"
+    ]
+  },
+  "status": "PASS"
+}

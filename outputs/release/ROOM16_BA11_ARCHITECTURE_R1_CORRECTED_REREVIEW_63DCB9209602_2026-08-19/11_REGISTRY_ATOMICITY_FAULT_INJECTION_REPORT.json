@@ -1,0 +1,9 @@
+{
+  "protocol": "content-addressed-stage_then_flocked_cas_atomic_rename",
+  "status": "PASS",
+  "tests": [
+    "crash_before_pointer_swap",
+    "stale_base_compare_and_swap",
+    "readback_hash"
+  ]
+}

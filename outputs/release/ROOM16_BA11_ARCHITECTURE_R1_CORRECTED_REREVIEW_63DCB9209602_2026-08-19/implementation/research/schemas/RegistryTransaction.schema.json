@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "approval_receipt_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Approval Receipt Sha256",
+      "type": "string"
+    },
+    "archive_receipt_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Archive Receipt Sha256",
+      "type": "string"
+    },
+    "authority_owner": {
+      "const": "research",
+      "default": "research",
+      "title": "Authority Owner",
+      "type": "string"
+    },
+    "base_registry_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Base Registry Sha256"
+    },
+    "candidate_artifact_set_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Candidate Artifact Set Sha256",
+      "type": "string"
+    },
+    "candidate_registry_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Candidate Registry Sha256",
+      "type": "string"
+    },
+    "commit_receipt_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Commit Receipt Sha256",
+      "type": "string"
+    },
+    "comparison_result_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Comparison Result Sha256",
+      "type": "string"
+    },
+    "contract_id": {
+      "const": "room16.canary_registry_transaction",
+      "default": "room16.canary_registry_transaction",
+      "title": "Contract Id",
+      "type": "string"
+    },
+    "debt_ledger_head_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Debt Ledger Head Sha256",
+      "type": "string"
+    },
+    "registry_generation": {
+      "minimum": 0,
+      "title": "Registry Generation",
+      "type": "integer"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "transaction_id": {
+      "pattern": "^[a-z][a-z0-9_.:-]*$",
+      "title": "Transaction Id",
+      "type": "string"
+    },
+    "transaction_state": {
+      "enum": [
+        "prepared",
+        "committed",
+        "recovered"
+      ],
+      "title": "Transaction State",
+      "type": "string"
+    }
+  },
+  "required": [
+    "transaction_id",
+    "registry_generation",
+    "candidate_registry_sha256",
+    "candidate_artifact_set_sha256",
+    "comparison_result_sha256",
+    "approval_receipt_sha256",
+    "debt_ledger_head_sha256",
+    "archive_receipt_sha256",
+    "transaction_state",
+    "commit_receipt_sha256"
+  ],
+  "title": "RegistryTransaction",
+  "type": "object",
+  "x-room16-canonicalization": "room16.canonical_json@1",
+  "x-room16-hash-algorithm": "sha256",
+  "x-room16-unknown-field-policy": "fail_closed"
+}

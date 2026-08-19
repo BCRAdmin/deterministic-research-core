@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authority_owner": {
+      "const": "research",
+      "default": "research",
+      "title": "Authority Owner",
+      "type": "string"
+    },
+    "canary_id": {
+      "pattern": "^[a-z][a-z0-9_.:-]*$",
+      "title": "Canary Id",
+      "type": "string"
+    },
+    "compatibility": {
+      "const": "first_contract_no_predecessor",
+      "default": "first_contract_no_predecessor",
+      "title": "Compatibility",
+      "type": "string"
+    },
+    "contract_id": {
+      "const": "room16.canary_freeze",
+      "default": "room16.canary_freeze",
+      "title": "Contract Id",
+      "type": "string"
+    },
+    "effective_at_utc": {
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+      "title": "Effective At Utc",
+      "type": "string"
+    },
+    "freeze_id": {
+      "pattern": "^[a-z][a-z0-9_.:-]*$",
+      "title": "Freeze Id",
+      "type": "string"
+    },
+    "freeze_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Freeze Sha256",
+      "type": "string"
+    },
+    "governance_envelope_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Governance Envelope Sha256",
+      "type": "string"
+    },
+    "registry_snapshot_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Registry Snapshot Sha256",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "technical_baseline_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Technical Baseline Sha256",
+      "type": "string"
+    }
+  },
+  "required": [
+    "freeze_id",
+    "canary_id",
+    "technical_baseline_sha256",
+    "governance_envelope_sha256",
+    "registry_snapshot_sha256",
+    "effective_at_utc",
+    "freeze_sha256"
+  ],
+  "title": "CanaryFreezeRecord",
+  "type": "object",
+  "x-room16-canonicalization": "room16.canonical_json@1",
+  "x-room16-hash-algorithm": "sha256",
+  "x-room16-unknown-field-policy": "fail_closed"
+}
