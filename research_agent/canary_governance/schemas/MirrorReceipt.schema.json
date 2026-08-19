@@ -37,19 +37,25 @@
       "title": "Receipt State",
       "type": "string"
     },
+    "research_authority_receipt_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Research Authority Receipt Sha256",
+      "type": "string"
+    },
     "research_snapshot_sha256": {
       "pattern": "^[0-9a-f]{64}$",
       "title": "Research Snapshot Sha256",
       "type": "string"
     },
     "schema_version": {
-      "const": 1,
-      "default": 1,
+      "const": 2,
+      "default": 2,
       "title": "Schema Version",
       "type": "integer"
     }
   },
   "required": [
+    "research_authority_receipt_sha256",
     "research_snapshot_sha256",
     "mirrored_snapshot_sha256",
     "product_commit",

@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authority_owner": {
+      "const": "research",
+      "default": "research",
+      "title": "Authority Owner",
+      "type": "string"
+    },
+    "commit_state": {
+      "enum": [
+        "committed",
+        "recovered"
+      ],
+      "title": "Commit State",
+      "type": "string"
+    },
+    "committed_at_utc": {
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+      "title": "Committed At Utc",
+      "type": "string"
+    },
+    "contract_id": {
+      "const": "room16.canary_registry_commit_receipt",
+      "default": "room16.canary_registry_commit_receipt",
+      "title": "Contract Id",
+      "type": "string"
+    },
+    "published_head_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Published Head Sha256",
+      "type": "string"
+    },
+    "receipt_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Receipt Sha256",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "transaction_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Transaction Sha256",
+      "type": "string"
+    }
+  },
+  "required": [
+    "transaction_sha256",
+    "published_head_sha256",
+    "commit_state",
+    "committed_at_utc",
+    "receipt_sha256"
+  ],
+  "title": "RegistryCommitReceipt",
+  "type": "object",
+  "x-room16-canonicalization": "room16.canonical_json@1",
+  "x-room16-hash-algorithm": "sha256",
+  "x-room16-unknown-field-policy": "fail_closed"
+}

@@ -8,9 +8,23 @@
       "title": "Authority Owner",
       "type": "string"
     },
+    "baseline_version": {
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+      "title": "Baseline Version",
+      "type": "string"
+    },
     "canary_id": {
       "pattern": "^[a-z][a-z0-9_.:-]*$",
       "title": "Canary Id",
+      "type": "string"
+    },
+    "canary_type": {
+      "enum": [
+        "company_regression",
+        "archetype_regression",
+        "technical_release_regression"
+      ],
+      "title": "Canary Type",
       "type": "string"
     },
     "contract_id": {
@@ -49,6 +63,24 @@
       "title": "Event Type",
       "type": "string"
     },
+    "freeze_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Freeze Sha256"
+    },
+    "governance_envelope_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Governance Envelope Sha256",
+      "type": "string"
+    },
     "previous_event_sha256": {
       "anyOf": [
         {
@@ -63,8 +95,8 @@
       "title": "Previous Event Sha256"
     },
     "schema_version": {
-      "const": 1,
-      "default": 1,
+      "const": 2,
+      "default": 2,
       "title": "Schema Version",
       "type": "integer"
     },
@@ -77,6 +109,11 @@
       "pattern": "^[0-9a-f]{64}$",
       "title": "Subject Sha256",
       "type": "string"
+    },
+    "technical_baseline_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Technical Baseline Sha256",
+      "type": "string"
     }
   },
   "required": [
@@ -85,6 +122,10 @@
     "sequence",
     "event_type",
     "subject_sha256",
+    "canary_type",
+    "baseline_version",
+    "technical_baseline_sha256",
+    "governance_envelope_sha256",
     "effective_at_utc",
     "event_sha256"
   ],

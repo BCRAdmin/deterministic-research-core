@@ -8,20 +8,28 @@
       "title": "Authority Owner",
       "type": "string"
     },
+    "baseline_version": {
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+      "title": "Baseline Version",
+      "type": "string"
+    },
     "canary_id": {
       "pattern": "^[a-z][a-z0-9_.:-]*$",
       "title": "Canary Id",
       "type": "string"
     },
-    "compatibility": {
-      "const": "first_contract_no_predecessor",
-      "default": "first_contract_no_predecessor",
-      "title": "Compatibility",
+    "canary_type": {
+      "enum": [
+        "company_regression",
+        "archetype_regression",
+        "technical_release_regression"
+      ],
+      "title": "Canary Type",
       "type": "string"
     },
     "contract_id": {
-      "const": "room16.canary_freeze",
-      "default": "room16.canary_freeze",
+      "const": "room16.canary_recovery_event",
+      "default": "room16.canary_recovery_event",
       "title": "Contract Id",
       "type": "string"
     },
@@ -30,9 +38,20 @@
       "title": "Effective At Utc",
       "type": "string"
     },
-    "freeze_id": {
+    "event_id": {
       "pattern": "^[a-z][a-z0-9_.:-]*$",
-      "title": "Freeze Id",
+      "title": "Event Id",
+      "type": "string"
+    },
+    "event_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Event Sha256",
+      "type": "string"
+    },
+    "event_type": {
+      "const": "recovered",
+      "default": "recovered",
+      "title": "Event Type",
       "type": "string"
     },
     "freeze_sha256": {
@@ -45,11 +64,39 @@
       "title": "Governance Envelope Sha256",
       "type": "string"
     },
+    "previous_event_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Previous Event Sha256"
+    },
+    "recovery_review_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Recovery Review Sha256",
+      "type": "string"
+    },
     "schema_version": {
       "const": 2,
       "default": 2,
       "title": "Schema Version",
       "type": "integer"
+    },
+    "sequence": {
+      "minimum": 0,
+      "title": "Sequence",
+      "type": "integer"
+    },
+    "subject_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Subject Sha256",
+      "type": "string"
     },
     "technical_baseline_sha256": {
       "pattern": "^[0-9a-f]{64}$",
@@ -58,14 +105,20 @@
     }
   },
   "required": [
-    "freeze_id",
+    "event_id",
     "canary_id",
+    "sequence",
+    "subject_sha256",
+    "canary_type",
+    "baseline_version",
     "technical_baseline_sha256",
     "governance_envelope_sha256",
+    "freeze_sha256",
     "effective_at_utc",
-    "freeze_sha256"
+    "event_sha256",
+    "recovery_review_sha256"
   ],
-  "title": "CanaryFreezeRecord",
+  "title": "RecoveryEvent",
   "type": "object",
   "x-room16-canonicalization": "room16.canonical_json@1",
   "x-room16-hash-algorithm": "sha256",

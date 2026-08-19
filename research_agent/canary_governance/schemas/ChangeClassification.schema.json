@@ -17,6 +17,11 @@
       "title": "Change Class",
       "type": "string"
     },
+    "claim_diff_count": {
+      "minimum": 0,
+      "title": "Claim Diff Count",
+      "type": "integer"
+    },
     "classification_id": {
       "pattern": "^[a-z][a-z0-9_.:-]*$",
       "title": "Classification Id",
@@ -27,25 +32,35 @@
       "title": "Classification Sha256",
       "type": "string"
     },
+    "comparison_request_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Comparison Request Sha256",
+      "type": "string"
+    },
+    "comparison_result_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Comparison Result Sha256",
+      "type": "string"
+    },
     "contract_id": {
       "const": "room16.canary_change_classification",
       "default": "room16.canary_change_classification",
       "title": "Contract Id",
       "type": "string"
     },
-    "independent_compare_sha256": {
-      "pattern": "^[0-9a-f]{64}$",
-      "title": "Independent Compare Sha256",
-      "type": "string"
+    "decision_diff_count": {
+      "minimum": 0,
+      "title": "Decision Diff Count",
+      "type": "integer"
+    },
+    "fact_diff_count": {
+      "minimum": 0,
+      "title": "Fact Diff Count",
+      "type": "integer"
     },
     "lineage_diff_count": {
       "minimum": 0,
       "title": "Lineage Diff Count",
-      "type": "integer"
-    },
-    "new_truth_count": {
-      "minimum": 0,
-      "title": "New Truth Count",
       "type": "integer"
     },
     "presentation_contract_changed": {
@@ -57,8 +72,8 @@
       "type": "boolean"
     },
     "schema_version": {
-      "const": 1,
-      "default": 1,
+      "const": 2,
+      "default": 2,
       "title": "Schema Version",
       "type": "integer"
     },
@@ -74,13 +89,16 @@
   "required": [
     "classification_id",
     "change_class",
+    "comparison_request_sha256",
+    "comparison_result_sha256",
+    "fact_diff_count",
+    "claim_diff_count",
+    "decision_diff_count",
+    "lineage_diff_count",
     "semantic_lock_changed",
     "presentation_contract_changed",
     "renderer_artifact_changed",
     "source_contract_changed",
-    "new_truth_count",
-    "lineage_diff_count",
-    "independent_compare_sha256",
     "classification_sha256"
   ],
   "title": "ChangeClassification",

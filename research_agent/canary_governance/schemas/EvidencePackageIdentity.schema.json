@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authority_owner": {
+      "const": "research",
+      "default": "research",
+      "title": "Authority Owner",
+      "type": "string"
+    },
+    "contract_id": {
+      "const": "room16.canary_evidence_package_identity",
+      "default": "room16.canary_evidence_package_identity",
+      "title": "Contract Id",
+      "type": "string"
+    },
+    "detached_sha256_filename": {
+      "pattern": "^[A-Za-z0-9_.-]+\\.zip\\.sha256$",
+      "title": "Detached Sha256 Filename",
+      "type": "string"
+    },
+    "identity_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Identity Sha256",
+      "type": "string"
+    },
+    "manifest_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Manifest Sha256",
+      "type": "string"
+    },
+    "package_bytes": {
+      "exclusiveMinimum": 0,
+      "title": "Package Bytes",
+      "type": "integer"
+    },
+    "package_filename": {
+      "pattern": "^[A-Za-z0-9_.-]+\\.zip$",
+      "title": "Package Filename",
+      "type": "string"
+    },
+    "package_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Package Sha256",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "package_filename",
+    "package_bytes",
+    "package_sha256",
+    "manifest_sha256",
+    "detached_sha256_filename",
+    "identity_sha256"
+  ],
+  "title": "EvidencePackageIdentity",
+  "type": "object",
+  "x-room16-canonicalization": "room16.canonical_json@1",
+  "x-room16-hash-algorithm": "sha256",
+  "x-room16-unknown-field-policy": "fail_closed"
+}

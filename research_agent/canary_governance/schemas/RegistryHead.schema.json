@@ -8,10 +8,20 @@
       "title": "Authority Owner",
       "type": "string"
     },
+    "consumed_nonce_set_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Consumed Nonce Set Sha256",
+      "type": "string"
+    },
     "contract_id": {
       "const": "room16.canary_registry_head",
       "default": "room16.canary_registry_head",
       "title": "Contract Id",
+      "type": "string"
+    },
+    "debt_ledger_head_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Debt Ledger Head Sha256",
       "type": "string"
     },
     "head_sha256": {
@@ -19,10 +29,10 @@
       "title": "Head Sha256",
       "type": "string"
     },
-    "ledger_head_sha256": {
-      "pattern": "^[0-9a-f]{64}$",
-      "title": "Ledger Head Sha256",
-      "type": "string"
+    "operator_counter": {
+      "minimum": 0,
+      "title": "Operator Counter",
+      "type": "integer"
     },
     "previous_head_sha256": {
       "anyOf": [
@@ -42,9 +52,19 @@
       "title": "Registry Generation",
       "type": "integer"
     },
+    "registry_ledger_head_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Registry Ledger Head Sha256",
+      "type": "string"
+    },
+    "reviewer_counter": {
+      "minimum": 0,
+      "title": "Reviewer Counter",
+      "type": "integer"
+    },
     "schema_version": {
-      "const": 1,
-      "default": 1,
+      "const": 2,
+      "default": 2,
       "title": "Schema Version",
       "type": "integer"
     },
@@ -52,12 +72,22 @@
       "pattern": "^[0-9a-f]{64}$",
       "title": "Snapshot Sha256",
       "type": "string"
+    },
+    "transaction_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Transaction Sha256",
+      "type": "string"
     }
   },
   "required": [
     "registry_generation",
     "snapshot_sha256",
-    "ledger_head_sha256",
+    "registry_ledger_head_sha256",
+    "debt_ledger_head_sha256",
+    "transaction_sha256",
+    "consumed_nonce_set_sha256",
+    "operator_counter",
+    "reviewer_counter",
     "head_sha256"
   ],
   "title": "RegistryHead",

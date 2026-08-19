@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 
@@ -30,22 +31,38 @@ def main() -> int:
         schema["x-room16-hash-algorithm"] = "sha256"
         filename = f"{model.__name__}.schema.json"
         encoded = json.dumps(schema, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
-        (args.output / filename).write_text(encoded, encoding="utf-8")
+        schema_path = args.output / filename
+        schema_path.write_text(encoded, encoding="utf-8")
+        hash_field = getattr(model, "hash_field")
         entries.append(
             {
                 "model": model.__name__,
                 "contract_id": model.model_fields["contract_id"].default,
+                "schema_version": model.model_fields["schema_version"].default,
+                "authority_owner": model.model_fields["authority_owner"].default,
                 "schema_file": filename,
-                "schema_sha256": sha256_json(schema),
+                "schema_file_sha256": hashlib.sha256(encoded.encode("utf-8")).hexdigest(),
                 "unknown_field_policy": "fail_closed",
                 "canonicalization_profile": "room16.canonical_json@1",
                 "hash_algorithm": "sha256",
+                "hash_domain": getattr(model, "hash_domain"),
+                "hash_preimage_fields": sorted(
+                    field for field in model.model_fields if field != hash_field
+                ),
+                "hash_excluded_fields": [hash_field],
+                "diagnostics": sorted(DIAGNOSTICS),
+                "positive_fixture_refs": [f"contract:{model.__name__}:positive"],
+                "negative_fixture_refs": [
+                    f"contract:{model.__name__}:unknown_field",
+                    f"contract:{model.__name__}:hash_mismatch",
+                ],
             }
         )
     catalog = {
         "contract_id": "room16.canary_contract_catalog",
         "schema_version": 1,
         "authority_owner": "research",
+        "catalog_hash_preimage_rule": "canonical JSON of this object without catalog_sha256",
         "contracts": entries,
         "diagnostics": DIAGNOSTICS,
     }

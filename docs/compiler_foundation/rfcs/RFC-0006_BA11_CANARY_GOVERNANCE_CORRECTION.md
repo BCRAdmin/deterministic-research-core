@@ -91,3 +91,46 @@ release_authorized=false
 publication_authorized=false
 next_gate=corrected_ba11_architecture_r1_and_independent_rereview
 ```
+
+## R3 correction after independent R2 rereview
+
+R3 addresses the 14 independent RR2 findings without expanding BA11 authority:
+
+- Product verifies a mirror only against a pinned Research Ed25519 trust policy and a signed
+  Research authority receipt. Callers cannot supply an expected Research hash.
+- Approval and independent-review signatures have separate verification paths, role/key
+  independence, exact decision/scope/subject/finding/head bindings, expiry/revocation checks,
+  and transaction-atomic nonce/counter consumption.
+- The identity graph is acyclic: a Freeze does not reference the current Registry Snapshot;
+  Registry events and entries reference the Freeze, and the transaction/commit receipt binds
+  the resulting Snapshot.
+- Registry and Debt ledgers persist content-addressed events plus CAS-published head records.
+  Expected head and length prevent valid-prefix rollback, truncation, branch, merge, reorder,
+  and debt reopen attacks.
+- `RegistryStore.commit_transaction` validates the complete governance object graph, writes
+  immutable objects and a prepared receipt, performs exactly one atomic current-head swap,
+  then read-backs and emits an idempotently recoverable commit receipt.
+- Registry Snapshots are normative projections of the exact bound ledger. Arbitrary entries,
+  mismatched entry identities, and mismatched ledger heads fail closed.
+- `ComparisonResult` and `ChangeClassification` cross-bind counts and locks. Ordinary change
+  requires zero Fact, Claim, Decision, and Lineage differences.
+- Source Contract bindings use typed SHA-256 values and a unique sorted ID/hash bijection.
+  Canary IDs use normative Unicode normalization with a collision gate; SemVer follows the
+  validated Change Class; Genesis import has a one-time persisted CAS head.
+- Evidence collection and closure verification are separate programs. The collector cannot
+  write verdict or closure files. The verifier derives closure only after exact finding/test
+  resolution, command-receipt validation, finding-specific file/hash validation, and evidence
+  reference resolution.
+- Regression receipts bind the complete tracked repository tree, full worktree state, tool
+  versions, raw and normalized output hashes, and relative paths. EvidenceManifest and detached
+  Package Identity have distinct, machine-readable hash domains.
+
+R3 remains a correction candidate only:
+
+```text
+ready_for_independent_rereview=true
+ba11_implementation_ready=false
+ba12_authorized=false
+release_authorized=false
+publication_authorized=false
+```

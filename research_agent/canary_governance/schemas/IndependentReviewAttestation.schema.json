@@ -13,11 +13,6 @@
       "title": "Authority Owner",
       "type": "string"
     },
-    "candidate_sha256": {
-      "pattern": "^[0-9a-f]{64}$",
-      "title": "Candidate Sha256",
-      "type": "string"
-    },
     "contract_id": {
       "const": "room16.canary_independent_review_attestation",
       "default": "room16.canary_independent_review_attestation",
@@ -31,6 +26,19 @@
       ],
       "title": "Decision",
       "type": "string"
+    },
+    "expires_at_utc": {
+      "anyOf": [
+        {
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expires At Utc"
     },
     "finding_set_sha256": {
       "pattern": "^[0-9a-f]{64}$",
@@ -73,10 +81,16 @@
       "type": "string"
     },
     "schema_version": {
-      "const": 1,
-      "default": 1,
+      "const": 2,
+      "default": 2,
       "title": "Schema Version",
       "type": "integer"
+    },
+    "scope": {
+      "const": "ba11_canary_promotion",
+      "default": "ba11_canary_promotion",
+      "title": "Scope",
+      "type": "string"
     },
     "signature": {
       "pattern": "^[0-9a-f]{128}$",
@@ -85,22 +99,37 @@
     },
     "signature_algorithm": {
       "const": "ed25519",
+      "default": "ed25519",
       "title": "Signature Algorithm",
       "type": "string"
+    },
+    "subject_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Subject Ids",
+      "type": "array"
+    },
+    "subject_sha256s": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Subject Sha256S",
+      "type": "array"
     }
   },
   "required": [
     "review_id",
     "reviewer_key_id",
     "reviewer_role",
-    "candidate_sha256",
+    "subject_ids",
+    "subject_sha256s",
     "finding_set_sha256",
     "previous_registry_head_sha256",
     "decision",
     "nonce",
     "monotonic_counter",
     "issued_at_utc",
-    "signature_algorithm",
     "signature",
     "attestation_sha256"
   ],

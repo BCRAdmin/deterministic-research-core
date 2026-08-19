@@ -45,10 +45,23 @@
           "title": "Derived State",
           "type": "string"
         },
-        "freeze_sha256": {
+        "entry_sha256": {
           "pattern": "^[0-9a-f]{64}$",
-          "title": "Freeze Sha256",
+          "title": "Entry Sha256",
           "type": "string"
+        },
+        "freeze_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Freeze Sha256"
         },
         "governance_envelope_sha256": {
           "pattern": "^[0-9a-f]{64}$",
@@ -61,8 +74,8 @@
           "type": "string"
         },
         "schema_version": {
-          "const": 1,
-          "default": 1,
+          "const": 2,
+          "default": 2,
           "title": "Schema Version",
           "type": "integer"
         },
@@ -78,9 +91,9 @@
         "baseline_version",
         "technical_baseline_sha256",
         "governance_envelope_sha256",
-        "freeze_sha256",
         "derived_state",
-        "latest_event_sha256"
+        "latest_event_sha256",
+        "entry_sha256"
       ],
       "title": "CanaryRegistryEntry",
       "type": "object"
@@ -132,8 +145,8 @@
       "type": "integer"
     },
     "schema_version": {
-      "const": 1,
-      "default": 1,
+      "const": 2,
+      "default": 2,
       "title": "Schema Version",
       "type": "integer"
     },

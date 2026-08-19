@@ -1,4 +1,51 @@
 {
+  "$defs": {
+    "SourceContractBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "authority_owner": {
+          "const": "research",
+          "default": "research",
+          "title": "Authority Owner",
+          "type": "string"
+        },
+        "binding_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Binding Sha256",
+          "type": "string"
+        },
+        "contract_id": {
+          "const": "room16.canary.source_contract_binding",
+          "default": "room16.canary.source_contract_binding",
+          "title": "Contract Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "source_contract_id": {
+          "pattern": "^[a-z][a-z0-9_.:-]*$",
+          "title": "Source Contract Id",
+          "type": "string"
+        },
+        "source_contract_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Contract Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_contract_id",
+        "source_contract_sha256",
+        "binding_sha256"
+      ],
+      "title": "SourceContractBinding",
+      "type": "object"
+    }
+  },
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "properties": {
@@ -7,6 +54,13 @@
       "default": "research",
       "title": "Authority Owner",
       "type": "string"
+    },
+    "bindings": {
+      "items": {
+        "$ref": "#/$defs/SourceContractBinding"
+      },
+      "title": "Bindings",
+      "type": "array"
     },
     "contract_id": {
       "const": "room16.canary.source_contract_lock",
@@ -20,29 +74,14 @@
       "type": "string"
     },
     "schema_version": {
-      "const": 1,
-      "default": 1,
+      "const": 2,
+      "default": 2,
       "title": "Schema Version",
       "type": "integer"
-    },
-    "source_contract_ids": {
-      "items": {
-        "type": "string"
-      },
-      "title": "Source Contract Ids",
-      "type": "array"
-    },
-    "source_contract_sha256s": {
-      "items": {
-        "type": "string"
-      },
-      "title": "Source Contract Sha256S",
-      "type": "array"
     }
   },
   "required": [
-    "source_contract_ids",
-    "source_contract_sha256s",
+    "bindings",
     "lock_sha256"
   ],
   "title": "SourceContractLock",

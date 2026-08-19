@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authority_owner": {
+      "const": "research",
+      "default": "research",
+      "title": "Authority Owner",
+      "type": "string"
+    },
+    "contract_id": {
+      "const": "room16.canary_research_snapshot_authority_receipt",
+      "default": "room16.canary_research_snapshot_authority_receipt",
+      "title": "Contract Id",
+      "type": "string"
+    },
+    "issued_at_utc": {
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+      "title": "Issued At Utc",
+      "type": "string"
+    },
+    "receipt_id": {
+      "pattern": "^[a-z][a-z0-9_.:-]*$",
+      "title": "Receipt Id",
+      "type": "string"
+    },
+    "receipt_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Receipt Sha256",
+      "type": "string"
+    },
+    "registry_head_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Registry Head Sha256",
+      "type": "string"
+    },
+    "research_key_id": {
+      "pattern": "^[a-z][a-z0-9_.:-]*$",
+      "title": "Research Key Id",
+      "type": "string"
+    },
+    "research_role": {
+      "const": "canary_registry_authority",
+      "default": "canary_registry_authority",
+      "title": "Research Role",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "signature": {
+      "pattern": "^[0-9a-f]{128}$",
+      "title": "Signature",
+      "type": "string"
+    },
+    "signature_algorithm": {
+      "const": "ed25519",
+      "default": "ed25519",
+      "title": "Signature Algorithm",
+      "type": "string"
+    },
+    "snapshot_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Snapshot Sha256",
+      "type": "string"
+    }
+  },
+  "required": [
+    "receipt_id",
+    "research_key_id",
+    "snapshot_sha256",
+    "registry_head_sha256",
+    "issued_at_utc",
+    "signature",
+    "receipt_sha256"
+  ],
+  "title": "ResearchSnapshotAuthorityReceipt",
+  "type": "object",
+  "x-room16-canonicalization": "room16.canonical_json@1",
+  "x-room16-hash-algorithm": "sha256",
+  "x-room16-unknown-field-policy": "fail_closed"
+}

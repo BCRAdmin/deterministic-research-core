@@ -1,0 +1,92 @@
+{
+  "$defs": {
+    "EvidenceManifestEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "bytes": {
+          "minimum": 0,
+          "title": "Bytes",
+          "type": "integer"
+        },
+        "path": {
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "bytes",
+        "sha256"
+      ],
+      "title": "EvidenceManifestEntry",
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authority_owner": {
+      "const": "research",
+      "default": "research",
+      "title": "Authority Owner",
+      "type": "string"
+    },
+    "contract_id": {
+      "const": "room16.canary_evidence_manifest",
+      "default": "room16.canary_evidence_manifest",
+      "title": "Contract Id",
+      "type": "string"
+    },
+    "files": {
+      "items": {
+        "$ref": "#/$defs/EvidenceManifestEntry"
+      },
+      "title": "Files",
+      "type": "array"
+    },
+    "manifest_hash_preimage_rule": {
+      "const": "canonical JSON of this object without manifest_sha256",
+      "default": "canonical JSON of this object without manifest_sha256",
+      "title": "Manifest Hash Preimage Rule",
+      "type": "string"
+    },
+    "manifest_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Manifest Sha256",
+      "type": "string"
+    },
+    "payload_rule": {
+      "const": "all members except MANIFEST.json",
+      "default": "all members except MANIFEST.json",
+      "title": "Payload Rule",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 2,
+      "default": 2,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "source_date_epoch": {
+      "minimum": 315532800,
+      "title": "Source Date Epoch",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "source_date_epoch",
+    "files",
+    "manifest_sha256"
+  ],
+  "title": "EvidenceManifest",
+  "type": "object",
+  "x-room16-canonicalization": "room16.canonical_json@1",
+  "x-room16-hash-algorithm": "sha256",
+  "x-room16-unknown-field-policy": "fail_closed"
+}
