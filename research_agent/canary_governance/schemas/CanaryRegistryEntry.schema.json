@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authority_owner": {
+      "const": "research",
+      "default": "research",
+      "title": "Authority Owner",
+      "type": "string"
+    },
+    "baseline_version": {
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+      "title": "Baseline Version",
+      "type": "string"
+    },
+    "canary_id": {
+      "pattern": "^[a-z][a-z0-9_.:-]*$",
+      "title": "Canary Id",
+      "type": "string"
+    },
+    "canary_type": {
+      "enum": [
+        "company_regression",
+        "archetype_regression",
+        "technical_release_regression"
+      ],
+      "title": "Canary Type",
+      "type": "string"
+    },
+    "contract_id": {
+      "const": "room16.canary_registry_entry",
+      "default": "room16.canary_registry_entry",
+      "title": "Contract Id",
+      "type": "string"
+    },
+    "derived_state": {
+      "enum": [
+        "candidate",
+        "frozen",
+        "rejected",
+        "stale",
+        "superseded"
+      ],
+      "title": "Derived State",
+      "type": "string"
+    },
+    "freeze_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Freeze Sha256",
+      "type": "string"
+    },
+    "governance_envelope_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Governance Envelope Sha256",
+      "type": "string"
+    },
+    "latest_event_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Latest Event Sha256",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "technical_baseline_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Technical Baseline Sha256",
+      "type": "string"
+    }
+  },
+  "required": [
+    "canary_id",
+    "canary_type",
+    "baseline_version",
+    "technical_baseline_sha256",
+    "governance_envelope_sha256",
+    "freeze_sha256",
+    "derived_state",
+    "latest_event_sha256"
+  ],
+  "title": "CanaryRegistryEntry",
+  "type": "object",
+  "x-room16-canonicalization": "room16.canonical_json@1",
+  "x-room16-hash-algorithm": "sha256",
+  "x-room16-unknown-field-policy": "fail_closed"
+}

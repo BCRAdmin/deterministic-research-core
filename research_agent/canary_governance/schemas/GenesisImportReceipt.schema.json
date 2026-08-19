@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authority_owner": {
+      "const": "research",
+      "default": "research",
+      "title": "Authority Owner",
+      "type": "string"
+    },
+    "contract_id": {
+      "const": "room16.canary_genesis_import",
+      "default": "room16.canary_genesis_import",
+      "title": "Contract Id",
+      "type": "string"
+    },
+    "import_id": {
+      "pattern": "^[a-z][a-z0-9_.:-]*$",
+      "title": "Import Id",
+      "type": "string"
+    },
+    "imported_canary_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Imported Canary Ids",
+      "type": "array"
+    },
+    "receipt_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Receipt Sha256",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "second_import_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Second Import Allowed",
+      "type": "boolean"
+    },
+    "source_records_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Source Records Sha256",
+      "type": "string"
+    },
+    "target_registry_generation": {
+      "const": 0,
+      "default": 0,
+      "title": "Target Registry Generation",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "import_id",
+    "source_records_sha256",
+    "imported_canary_ids",
+    "receipt_sha256"
+  ],
+  "title": "GenesisImportReceipt",
+  "type": "object",
+  "x-room16-canonicalization": "room16.canonical_json@1",
+  "x-room16-hash-algorithm": "sha256",
+  "x-room16-unknown-field-policy": "fail_closed"
+}

@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "approval_receipt_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Approval Receipt Sha256"
+    },
+    "authority_owner": {
+      "const": "research",
+      "default": "research",
+      "title": "Authority Owner",
+      "type": "string"
+    },
+    "contract_id": {
+      "const": "room16.canary_debt_resolution",
+      "default": "room16.canary_debt_resolution",
+      "title": "Contract Id",
+      "type": "string"
+    },
+    "debt_id": {
+      "pattern": "^[a-z][a-z0-9_.:-]*$",
+      "title": "Debt Id",
+      "type": "string"
+    },
+    "fix_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Fix Refs",
+      "type": "array"
+    },
+    "resolution_id": {
+      "pattern": "^[a-z][a-z0-9_.:-]*$",
+      "title": "Resolution Id",
+      "type": "string"
+    },
+    "resolution_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Resolution Sha256",
+      "type": "string"
+    },
+    "resolved_at_utc": {
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+      "title": "Resolved At Utc",
+      "type": "string"
+    },
+    "review_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Review Sha256",
+      "type": "string"
+    },
+    "root_cause": {
+      "minLength": 1,
+      "title": "Root Cause",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "test_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Test Refs",
+      "type": "array"
+    }
+  },
+  "required": [
+    "resolution_id",
+    "debt_id",
+    "root_cause",
+    "fix_refs",
+    "test_refs",
+    "review_sha256",
+    "resolved_at_utc",
+    "resolution_sha256"
+  ],
+  "title": "DebtResolution",
+  "type": "object",
+  "x-room16-canonicalization": "room16.canonical_json@1",
+  "x-room16-hash-algorithm": "sha256",
+  "x-room16-unknown-field-policy": "fail_closed"
+}

@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "approval_receipt_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Approval Receipt Sha256"
+    },
+    "authority_owner": {
+      "const": "research",
+      "default": "research",
+      "title": "Authority Owner",
+      "type": "string"
+    },
+    "contract_id": {
+      "const": "room16.canary_accepted_debt_event",
+      "default": "room16.canary_accepted_debt_event",
+      "title": "Contract Id",
+      "type": "string"
+    },
+    "debt_id": {
+      "pattern": "^[a-z][a-z0-9_.:-]*$",
+      "title": "Debt Id",
+      "type": "string"
+    },
+    "debt_type": {
+      "pattern": "^[a-z][a-z0-9_.:-]*$",
+      "title": "Debt Type",
+      "type": "string"
+    },
+    "event_id": {
+      "pattern": "^[a-z][a-z0-9_.:-]*$",
+      "title": "Event Id",
+      "type": "string"
+    },
+    "event_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Event Sha256",
+      "type": "string"
+    },
+    "event_type": {
+      "enum": [
+        "opened",
+        "accepted",
+        "amended",
+        "superseded",
+        "closed"
+      ],
+      "title": "Event Type",
+      "type": "string"
+    },
+    "evidence_refs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "finding_id": {
+      "title": "Finding Id",
+      "type": "string"
+    },
+    "previous_event_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Previous Event Sha256"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "recorded_at_utc": {
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+      "title": "Recorded At Utc",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "scope": {
+      "minLength": 1,
+      "title": "Scope",
+      "type": "string"
+    },
+    "sequence": {
+      "minimum": 0,
+      "title": "Sequence",
+      "type": "integer"
+    },
+    "state_after": {
+      "title": "State After",
+      "type": "string"
+    },
+    "state_before": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "State Before"
+    }
+  },
+  "required": [
+    "debt_id",
+    "event_id",
+    "sequence",
+    "event_type",
+    "finding_id",
+    "debt_type",
+    "scope",
+    "state_before",
+    "state_after",
+    "reason",
+    "evidence_refs",
+    "recorded_at_utc",
+    "event_sha256"
+  ],
+  "title": "AcceptedDebtEvent",
+  "type": "object",
+  "x-room16-canonicalization": "room16.canonical_json@1",
+  "x-room16-hash-algorithm": "sha256",
+  "x-room16-unknown-field-policy": "fail_closed"
+}

@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "artifact_set_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Artifact Set Sha256",
+      "type": "string"
+    },
+    "authority_owner": {
+      "const": "research",
+      "default": "research",
+      "title": "Authority Owner",
+      "type": "string"
+    },
+    "ba10_freeze_identity_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Ba10 Freeze Identity Sha256",
+      "type": "string"
+    },
+    "baseline_version": {
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+      "title": "Baseline Version",
+      "type": "string"
+    },
+    "canary_id": {
+      "pattern": "^[a-z][a-z0-9_.:-]*$",
+      "title": "Canary Id",
+      "type": "string"
+    },
+    "compiler_artifact_bundle_contract": {
+      "const": "room16.compiler_artifact_bundle@1",
+      "title": "Compiler Artifact Bundle Contract",
+      "type": "string"
+    },
+    "consumer_semantic_lock_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Consumer Semantic Lock Sha256",
+      "type": "string"
+    },
+    "contract_id": {
+      "const": "room16.canary.technical_baseline",
+      "default": "room16.canary.technical_baseline",
+      "title": "Contract Id",
+      "type": "string"
+    },
+    "foundation_version_lock_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Foundation Version Lock Sha256",
+      "type": "string"
+    },
+    "presentation_contract_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Presentation Contract Sha256",
+      "type": "string"
+    },
+    "registry_authority_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Registry Authority Sha256",
+      "type": "string"
+    },
+    "renderer_artifact_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Renderer Artifact Sha256",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "semantic_output_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Semantic Output Sha256",
+      "type": "string"
+    },
+    "semantic_wave_version_lock_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Semantic Wave Version Lock Sha256",
+      "type": "string"
+    },
+    "source_contract_lock_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Source Contract Lock Sha256",
+      "type": "string"
+    },
+    "technical_baseline_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Technical Baseline Sha256",
+      "type": "string"
+    }
+  },
+  "required": [
+    "canary_id",
+    "baseline_version",
+    "foundation_version_lock_sha256",
+    "registry_authority_sha256",
+    "semantic_wave_version_lock_sha256",
+    "ba10_freeze_identity_sha256",
+    "compiler_artifact_bundle_contract",
+    "source_contract_lock_sha256",
+    "consumer_semantic_lock_sha256",
+    "presentation_contract_sha256",
+    "renderer_artifact_sha256",
+    "artifact_set_sha256",
+    "semantic_output_sha256",
+    "technical_baseline_sha256"
+  ],
+  "title": "TechnicalBaseline",
+  "type": "object",
+  "x-room16-canonicalization": "room16.canonical_json@1",
+  "x-room16-hash-algorithm": "sha256",
+  "x-room16-unknown-field-policy": "fail_closed"
+}

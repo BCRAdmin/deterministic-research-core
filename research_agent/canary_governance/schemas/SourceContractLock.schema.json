@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authority_owner": {
+      "const": "research",
+      "default": "research",
+      "title": "Authority Owner",
+      "type": "string"
+    },
+    "contract_id": {
+      "const": "room16.canary.source_contract_lock",
+      "default": "room16.canary.source_contract_lock",
+      "title": "Contract Id",
+      "type": "string"
+    },
+    "lock_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Lock Sha256",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "source_contract_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Contract Ids",
+      "type": "array"
+    },
+    "source_contract_sha256s": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Contract Sha256S",
+      "type": "array"
+    }
+  },
+  "required": [
+    "source_contract_ids",
+    "source_contract_sha256s",
+    "lock_sha256"
+  ],
+  "title": "SourceContractLock",
+  "type": "object",
+  "x-room16-canonicalization": "room16.canonical_json@1",
+  "x-room16-hash-algorithm": "sha256",
+  "x-room16-unknown-field-policy": "fail_closed"
+}
