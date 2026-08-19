@@ -1,0 +1,170 @@
+{
+  "$defs": {
+    "CanaryRegistryEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "authority_owner": {
+          "const": "research",
+          "default": "research",
+          "title": "Authority Owner",
+          "type": "string"
+        },
+        "baseline_version": {
+          "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+          "title": "Baseline Version",
+          "type": "string"
+        },
+        "canary_id": {
+          "pattern": "^[a-z][a-z0-9_.:-]*$",
+          "title": "Canary Id",
+          "type": "string"
+        },
+        "canary_type": {
+          "enum": [
+            "company_regression",
+            "archetype_regression",
+            "technical_release_regression"
+          ],
+          "title": "Canary Type",
+          "type": "string"
+        },
+        "contract_id": {
+          "const": "room16.canary_registry_entry",
+          "default": "room16.canary_registry_entry",
+          "title": "Contract Id",
+          "type": "string"
+        },
+        "derived_state": {
+          "enum": [
+            "candidate",
+            "frozen",
+            "rejected",
+            "stale",
+            "superseded"
+          ],
+          "title": "Derived State",
+          "type": "string"
+        },
+        "entry_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Entry Sha256",
+          "type": "string"
+        },
+        "freeze_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Freeze Sha256"
+        },
+        "governance_envelope_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Governance Envelope Sha256",
+          "type": "string"
+        },
+        "latest_event_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Latest Event Sha256",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": 2,
+          "default": 2,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "technical_baseline_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Technical Baseline Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "canary_id",
+        "canary_type",
+        "baseline_version",
+        "technical_baseline_sha256",
+        "governance_envelope_sha256",
+        "derived_state",
+        "latest_event_sha256",
+        "entry_sha256"
+      ],
+      "title": "CanaryRegistryEntry",
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authority_owner": {
+      "const": "research",
+      "default": "research",
+      "title": "Authority Owner",
+      "type": "string"
+    },
+    "contract_id": {
+      "const": "room16.canary_registry_snapshot",
+      "default": "room16.canary_registry_snapshot",
+      "title": "Contract Id",
+      "type": "string"
+    },
+    "entries": {
+      "items": {
+        "$ref": "#/$defs/CanaryRegistryEntry"
+      },
+      "title": "Entries",
+      "type": "array"
+    },
+    "ledger_head_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Ledger Head Sha256",
+      "type": "string"
+    },
+    "previous_registry_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Previous Registry Sha256"
+    },
+    "registry_generation": {
+      "minimum": 0,
+      "title": "Registry Generation",
+      "type": "integer"
+    },
+    "schema_version": {
+      "const": 2,
+      "default": 2,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "snapshot_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Snapshot Sha256",
+      "type": "string"
+    }
+  },
+  "required": [
+    "registry_generation",
+    "ledger_head_sha256",
+    "entries",
+    "snapshot_sha256"
+  ],
+  "title": "RegistrySnapshot",
+  "type": "object",
+  "x-room16-canonicalization": "room16.canonical_json@1",
+  "x-room16-hash-algorithm": "sha256",
+  "x-room16-unknown-field-policy": "fail_closed"
+}

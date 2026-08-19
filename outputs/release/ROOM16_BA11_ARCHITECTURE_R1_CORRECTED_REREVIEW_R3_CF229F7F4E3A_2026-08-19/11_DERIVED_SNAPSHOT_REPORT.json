@@ -1,0 +1,6 @@
+{
+  "contract_id": "room16.ba11_r3.derived_snapshot_report@1",
+  "exact_ledger_head_and_entry_hashes_bound": true,
+  "normative_ledger_to_snapshot": true,
+  "same_ledger_same_bytes": true
+}

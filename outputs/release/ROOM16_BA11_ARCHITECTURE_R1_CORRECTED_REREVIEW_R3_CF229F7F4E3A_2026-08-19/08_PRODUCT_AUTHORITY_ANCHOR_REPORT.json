@@ -1,0 +1,7 @@
+{
+  "caller_selectable_expected_hash": false,
+  "contract_id": "room16.ba11_r3.product_authority_anchor_report@1",
+  "policy_path": "product/room16-app/config/room16_canary_registry_trust_policy_v1.json",
+  "product_promotion_authority": false,
+  "research_receipt_signature_required": true
+}

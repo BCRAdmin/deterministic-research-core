@@ -1,0 +1,631 @@
+{
+  "contract_id": "room16.ba11_r3.changed_files_per_finding@1",
+  "findings": [
+    {
+      "changed_files_with_sha256": [
+        {
+          "path": "room16-app/config/room16_canary_registry_trust_policy_v1.json",
+          "repository": "product",
+          "sha256": "7b59e9bc67af0f16f421efddf82318ece2055f9a8d39ef375ed34937aaeb0f0f"
+        },
+        {
+          "path": "room16-app/server-modules/canary-registry-mirror.mjs",
+          "repository": "product",
+          "sha256": "6d37cb40f3af90f9713525064f2c841560e74b4bbbcf19b716bc445cc0ea8b6f"
+        },
+        {
+          "path": "room16-app/scripts/test_canary_registry_mirror.mjs",
+          "repository": "product",
+          "sha256": "e146ae19848140f37f608522a71bde7df5cb077fcda7547e2979bef9c5428738"
+        }
+      ],
+      "command_receipts": [
+        "product_trust_anchor",
+        "product_full"
+      ],
+      "contract_delta_ids": [
+        "CD-BA11-RR2-P0-001"
+      ],
+      "evidence_refs": [
+        "08_PRODUCT_AUTHORITY_ANCHOR_REPORT.json"
+      ],
+      "exact_executed_test_ids": [
+        "T-RR2-001-A",
+        "T-RR2-001-B",
+        "T-RR2-001-C"
+      ],
+      "finding_id": "BA11-RR2-P0-001",
+      "negative_fixture_ids": [
+        "T-RR2-001-A",
+        "T-RR2-001-B",
+        "T-RR2-001-C"
+      ],
+      "remaining_debt": null,
+      "required_fix": "Product darf nur einen Mirror plus einen extern gepinnten Research-Authority-Anchor prüfen. Der erwartete Snapshot-Hash bzw. eine signierte Research-Receipt muss aus einer nicht vom Product wählbaren Trust-Quelle stammen. Zwei frei übergebene Objekte sind verboten."
+    },
+    {
+      "changed_files_with_sha256": [
+        {
+          "path": "research_agent/canary_governance/approval.py",
+          "repository": "research",
+          "sha256": "2999c1aaf74743b3a62b162d317de36365582c6a130b256aa8377a66c161e1ea"
+        },
+        {
+          "path": "research_agent/canary_governance/contracts.py",
+          "repository": "research",
+          "sha256": "ac282d5c3a76ef9e2c1fe8745179bd4a799e9724c4420123e74f08fc8c51922d"
+        },
+        {
+          "path": "research_agent/canary_governance/storage.py",
+          "repository": "research",
+          "sha256": "0b94dc32cefab2175880964cacadc6e5137f8c1be3e3edfd9db5dca4f916e597"
+        },
+        {
+          "path": "research_agent/tests/test_canary_governance.py",
+          "repository": "research",
+          "sha256": "facb7d92ad757ec6ab2b171f159bbf18a681e18b26590f613fd73b2d06a9088e"
+        }
+      ],
+      "command_receipts": [
+        "targeted_research"
+      ],
+      "contract_delta_ids": [
+        "CD-BA11-RR2-P0-002"
+      ],
+      "evidence_refs": [
+        "07_APPROVAL_AND_REVIEW_TRUST_REPORT.json"
+      ],
+      "exact_executed_test_ids": [
+        "T-RR2-002-A",
+        "T-RR2-002-B",
+        "T-RR2-002-C",
+        "T-RR2-002-D",
+        "T-RR2-002-E"
+      ],
+      "finding_id": "BA11-RR2-P0-002",
+      "negative_fixture_ids": [
+        "T-RR2-002-A",
+        "T-RR2-002-B",
+        "T-RR2-002-C",
+        "T-RR2-002-D",
+        "T-RR2-002-E"
+      ],
+      "remaining_debt": null,
+      "required_fix": "Separate, fail-closed Verifier für OperatorApprovalReceipt und IndependentReviewAttestation. Jeder Verifier muss expected decision, scope, subject IDs und Hashes, Finding-Set-Hash, vorherigen Registry Head, Rollen-/Key-Policy, Nonce, Counter, Expiry und Revocation prüfen. Nonce/Counter-Verbrauch muss atomar mit der Registry-Transaktion persistiert werden. Reviewer-Key muss von Research- und Operator-Key getrennt sein."
+    },
+    {
+      "changed_files_with_sha256": [
+        {
+          "path": "research_agent/canary_governance/storage.py",
+          "repository": "research",
+          "sha256": "0b94dc32cefab2175880964cacadc6e5137f8c1be3e3edfd9db5dca4f916e597"
+        },
+        {
+          "path": "research_agent/canary_governance/contracts.py",
+          "repository": "research",
+          "sha256": "ac282d5c3a76ef9e2c1fe8745179bd4a799e9724c4420123e74f08fc8c51922d"
+        },
+        {
+          "path": "research_agent/canary_governance/ledger.py",
+          "repository": "research",
+          "sha256": "8dcc7f761ec2bcf79ce0013f12c315358c7a898695c29897d285bcec911cade2"
+        },
+        {
+          "path": "research_agent/tests/test_canary_governance.py",
+          "repository": "research",
+          "sha256": "facb7d92ad757ec6ab2b171f159bbf18a681e18b26590f613fd73b2d06a9088e"
+        }
+      ],
+      "command_receipts": [
+        "targeted_research"
+      ],
+      "contract_delta_ids": [
+        "CD-BA11-RR2-P0-003"
+      ],
+      "evidence_refs": [
+        "10_REGISTRY_TRANSACTION_FAULT_INJECTION_REPORT.json"
+      ],
+      "exact_executed_test_ids": [
+        "T-RR2-003-A",
+        "T-RR2-003-B",
+        "T-RR2-003-C",
+        "T-RR2-003-D"
+      ],
+      "finding_id": "BA11-RR2-P0-003",
+      "negative_fixture_ids": [
+        "T-RR2-003-A",
+        "T-RR2-003-B",
+        "T-RR2-003-C",
+        "T-RR2-003-D"
+      ],
+      "remaining_debt": null,
+      "required_fix": "Einen echten Transaction-Orchestrator implementieren: immutable staging, vollständige Objektgraph- und Approval-Prüfung, prepared receipt, file+directory fsync, CAS, genau ein atomarer Head-Swap, read-back, idempotente Recovery und eindeutige committed/aborted receipts. Kein einzelner Snapshot-Commit darf Promotion darstellen."
+    },
+    {
+      "changed_files_with_sha256": [
+        {
+          "path": "research_agent/canary_governance/ledger.py",
+          "repository": "research",
+          "sha256": "8dcc7f761ec2bcf79ce0013f12c315358c7a898695c29897d285bcec911cade2"
+        },
+        {
+          "path": "research_agent/canary_governance/storage.py",
+          "repository": "research",
+          "sha256": "0b94dc32cefab2175880964cacadc6e5137f8c1be3e3edfd9db5dca4f916e597"
+        },
+        {
+          "path": "research_agent/canary_governance/diagnostics.py",
+          "repository": "research",
+          "sha256": "84f5c9c6c37af7a51ea4970326ee232c4e314878180c596cea075fa39fcb81a7"
+        },
+        {
+          "path": "research_agent/tests/test_canary_governance.py",
+          "repository": "research",
+          "sha256": "facb7d92ad757ec6ab2b171f159bbf18a681e18b26590f613fd73b2d06a9088e"
+        }
+      ],
+      "command_receipts": [
+        "targeted_research"
+      ],
+      "contract_delta_ids": [
+        "CD-BA11-RR2-P0-004"
+      ],
+      "evidence_refs": [
+        "09_LEDGER_ROLLBACK_AND_REPLAY_REPORT.json"
+      ],
+      "exact_executed_test_ids": [
+        "T-RR2-004-A",
+        "T-RR2-004-B",
+        "T-RR2-004-C",
+        "T-RR2-004-D",
+        "T-RR2-004-E"
+      ],
+      "finding_id": "BA11-RR2-P0-004",
+      "negative_fixture_ids": [
+        "T-RR2-004-A",
+        "T-RR2-004-B",
+        "T-RR2-004-C",
+        "T-RR2-004-D",
+        "T-RR2-004-E"
+      ],
+      "remaining_debt": null,
+      "required_fix": "Persistente append-only Ledgers mit content-addressed Events, expected head, event count/sequence, CAS-publiziertem Ledger Head und Truncation-/Rollback-Erkennung. Debt-Transitionen müssen event_type, state_before/state_after und Approval-Pflicht deterministisch validieren."
+    },
+    {
+      "changed_files_with_sha256": [
+        {
+          "path": "research_agent/canary_governance/contracts.py",
+          "repository": "research",
+          "sha256": "ac282d5c3a76ef9e2c1fe8745179bd4a799e9724c4420123e74f08fc8c51922d"
+        },
+        {
+          "path": "research_agent/canary_governance/schemas/contract_catalog_v1.json",
+          "repository": "research",
+          "sha256": "21097cd8e61df4c5636467c8388eefea63da76f2fd9249d4285da2e33f7aadbd"
+        },
+        {
+          "path": "scripts/ops/generate_ba11_contract_catalog.py",
+          "repository": "research",
+          "sha256": "1e99067b6ab4c243a7153f3a5a90db8e16b0c769d24ae7a14159447684076e62"
+        },
+        {
+          "path": "scripts/ops/verify_ba11_canary_governance.py",
+          "repository": "research",
+          "sha256": "e9791fe17a29b074ca7dc7b46592c702d6285f912e9ded0c82385b8a9eee7e02"
+        }
+      ],
+      "command_receipts": [
+        "targeted_research"
+      ],
+      "contract_delta_ids": [
+        "CD-BA11-RR2-P0-005"
+      ],
+      "evidence_refs": [
+        "05_CONTRACT_CATALOG.json"
+      ],
+      "exact_executed_test_ids": [
+        "T-RR2-005-A",
+        "T-RR2-005-B",
+        "T-RR2-005-C"
+      ],
+      "finding_id": "BA11-RR2-P0-005",
+      "negative_fixture_ids": [
+        "T-RR2-005-A",
+        "T-RR2-005-B",
+        "T-RR2-005-C"
+      ],
+      "remaining_debt": null,
+      "required_fix": "Vollständiger Katalog mit eindeutigen, versionierten Records/Schemas für PromotionEvent, RejectionEvent, StaleEvent, RecoveryEvent, SupersessionEvent und EvidenceManifest. Jeder Record bindet authority owner, canonicalization, hash domain/formula/exclusions, unknown-field policy, diagnostics und positive/negative fixtures. RegistryEntry erhält eine eigene unveränderliche Identität."
+    },
+    {
+      "changed_files_with_sha256": [
+        {
+          "path": "research_agent/canary_governance/contracts.py",
+          "repository": "research",
+          "sha256": "ac282d5c3a76ef9e2c1fe8745179bd4a799e9724c4420123e74f08fc8c51922d"
+        },
+        {
+          "path": "research_agent/canary_governance/ledger.py",
+          "repository": "research",
+          "sha256": "8dcc7f761ec2bcf79ce0013f12c315358c7a898695c29897d285bcec911cade2"
+        },
+        {
+          "path": "research_agent/canary_governance/storage.py",
+          "repository": "research",
+          "sha256": "0b94dc32cefab2175880964cacadc6e5137f8c1be3e3edfd9db5dca4f916e597"
+        }
+      ],
+      "command_receipts": [
+        "targeted_research"
+      ],
+      "contract_delta_ids": [
+        "CD-BA11-RR2-P0-006"
+      ],
+      "evidence_refs": [
+        "06_IDENTITY_GRAPH.json"
+      ],
+      "exact_executed_test_ids": [
+        "T-RR2-006-A",
+        "T-RR2-006-B"
+      ],
+      "finding_id": "BA11-RR2-P0-006",
+      "negative_fixture_ids": [
+        "T-RR2-006-A",
+        "T-RR2-006-B"
+      ],
+      "remaining_debt": null,
+      "required_fix": "Den Identitätsgraphen azyklisch definieren. Empfohlen: TechnicalBaseline -> GovernanceEnvelope -> FreezeCore (ohne aktuellen Snapshot-Hash) -> RegistryEvent/Entry -> RegistrySnapshot -> RegistryTransaction/CommitReceipt, das Freeze und Snapshot gemeinsam bindet. Eine alternative Lösung muss einen maschinenprüfbaren azyklischen Graphen liefern."
+    },
+    {
+      "changed_files_with_sha256": [
+        {
+          "path": "scripts/ops/build_ba11_r3_evidence.py",
+          "repository": "research",
+          "sha256": "64f38ac31f12bbc80331ad14fc576b2df37779b40df9f1bceded4709c6445fe8"
+        },
+        {
+          "path": "scripts/ops/verify_ba11_r3_evidence.py",
+          "repository": "research",
+          "sha256": "c4da90302d50da7af62b9961567f4ce6e637d7e237031544388a27b3ac2f8bef"
+        },
+        {
+          "path": "scripts/ops/verify_ba11_r3_package.py",
+          "repository": "research",
+          "sha256": "0106238ce2af1ff28822c21b65b9b6693fb857d154f581bd15eca7eff551ef98"
+        },
+        {
+          "path": "research_agent/tests/test_ba11_r3_evidence_verifier.py",
+          "repository": "research",
+          "sha256": "98369abf1d67af0e9171e79e3f36b58ece4fa5e007beec8a2553479e8867977f"
+        },
+        {
+          "path": "research_agent/tests/ba11_r3_test_inventory.json",
+          "repository": "research",
+          "sha256": "84c928266d983af1d097bb8b13798949e61c76112b690e587bc2ab14e81b5e9f"
+        }
+      ],
+      "command_receipts": [
+        "evidence_verifier_tests",
+        "research_full"
+      ],
+      "contract_delta_ids": [
+        "CD-BA11-RR2-P0-007"
+      ],
+      "evidence_refs": [
+        "13_TEST_MATRIX_EXECUTED.json"
+      ],
+      "exact_executed_test_ids": [
+        "T-RR2-007-A",
+        "T-RR2-007-B",
+        "T-RR2-007-C"
+      ],
+      "finding_id": "BA11-RR2-P0-007",
+      "negative_fixture_ids": [
+        "T-RR2-007-A",
+        "T-RR2-007-B",
+        "T-RR2-007-C"
+      ],
+      "remaining_debt": null,
+      "required_fix": "Builder und unabhängigen Verifier trennen. Closure wird ausschließlich durch einen fail-closed Verifier aus auflösbaren Finding-IDs, präzisen Changed-File-Hashes, real existierenden Test-IDs, ausgeführten Resultaten und finding-spezifischer Evidence abgeleitet. Keine hardcodierten PASS-/closed_verified-Werte."
+    },
+    {
+      "changed_files_with_sha256": [
+        {
+          "path": "research_agent/canary_governance/contracts.py",
+          "repository": "research",
+          "sha256": "ac282d5c3a76ef9e2c1fe8745179bd4a799e9724c4420123e74f08fc8c51922d"
+        },
+        {
+          "path": "research_agent/canary_governance/ledger.py",
+          "repository": "research",
+          "sha256": "8dcc7f761ec2bcf79ce0013f12c315358c7a898695c29897d285bcec911cade2"
+        },
+        {
+          "path": "research_agent/tests/test_canary_governance.py",
+          "repository": "research",
+          "sha256": "facb7d92ad757ec6ab2b171f159bbf18a681e18b26590f613fd73b2d06a9088e"
+        }
+      ],
+      "command_receipts": [
+        "targeted_research"
+      ],
+      "contract_delta_ids": [
+        "CD-BA11-RR2-P1-001"
+      ],
+      "evidence_refs": [
+        "12_NO_NEW_TRUTH_REPORT.json"
+      ],
+      "exact_executed_test_ids": [
+        "T-RR2-008-A",
+        "T-RR2-008-B"
+      ],
+      "finding_id": "BA11-RR2-P1-001",
+      "negative_fixture_ids": [
+        "T-RR2-008-A",
+        "T-RR2-008-B"
+      ],
+      "remaining_debt": null,
+      "required_fix": "ComparisonResult muss verdict/count-Konsistenz erzwingen. ChangeClassification wird aus dem validierten ComparisonResult abgeleitet oder verifiziert dessen exakte Counts/Request-/Source-Locks. Ordinary ist nur bei 0 Fact, Claim, Decision und Lineage Diffs erlaubt."
+    },
+    {
+      "changed_files_with_sha256": [
+        {
+          "path": "research_agent/canary_governance/contracts.py",
+          "repository": "research",
+          "sha256": "ac282d5c3a76ef9e2c1fe8745179bd4a799e9724c4420123e74f08fc8c51922d"
+        },
+        {
+          "path": "research_agent/canary_governance/ledger.py",
+          "repository": "research",
+          "sha256": "8dcc7f761ec2bcf79ce0013f12c315358c7a898695c29897d285bcec911cade2"
+        },
+        {
+          "path": "research_agent/tests/test_canary_governance.py",
+          "repository": "research",
+          "sha256": "facb7d92ad757ec6ab2b171f159bbf18a681e18b26590f613fd73b2d06a9088e"
+        },
+        {
+          "path": "research_agent/canary_governance/schemas/RegistrySnapshot.schema.json",
+          "repository": "research",
+          "sha256": "21152eae98927df384fe224ebfb7fde061b634148571db9e2e08a938f70fa167"
+        }
+      ],
+      "command_receipts": [
+        "targeted_research"
+      ],
+      "contract_delta_ids": [
+        "CD-BA11-RR2-P1-002"
+      ],
+      "evidence_refs": [
+        "11_DERIVED_SNAPSHOT_REPORT.json"
+      ],
+      "exact_executed_test_ids": [
+        "T-RR2-009-A",
+        "T-RR2-009-B"
+      ],
+      "finding_id": "BA11-RR2-P1-002",
+      "negative_fixture_ids": [
+        "T-RR2-009-A",
+        "T-RR2-009-B"
+      ],
+      "remaining_debt": null,
+      "required_fix": "Normativen ledger_to_snapshot-Fold implementieren. Arbiträre Entries sind verboten; Snapshot-Erzeugung bindet exact ledger head, event count, State-Priority/Transitionen und Entry-Hashes. Intermediate States werden ausdrücklich modelliert oder deterministisch projiziert."
+    },
+    {
+      "changed_files_with_sha256": [
+        {
+          "path": "research_agent/canary_governance/ledger.py",
+          "repository": "research",
+          "sha256": "8dcc7f761ec2bcf79ce0013f12c315358c7a898695c29897d285bcec911cade2"
+        },
+        {
+          "path": "research_agent/canary_governance/storage.py",
+          "repository": "research",
+          "sha256": "0b94dc32cefab2175880964cacadc6e5137f8c1be3e3edfd9db5dca4f916e597"
+        },
+        {
+          "path": "research_agent/canary_governance/schemas/GenesisImportHead.schema.json",
+          "repository": "research",
+          "sha256": "ddc495ed2cb970c17771c2dc601bd443d9d1898a415e5c9c81e44e05e950724d"
+        },
+        {
+          "path": "research_agent/tests/test_canary_governance.py",
+          "repository": "research",
+          "sha256": "facb7d92ad757ec6ab2b171f159bbf18a681e18b26590f613fd73b2d06a9088e"
+        }
+      ],
+      "command_receipts": [
+        "targeted_research"
+      ],
+      "contract_delta_ids": [
+        "CD-BA11-RR2-P1-003"
+      ],
+      "evidence_refs": [
+        "09_LEDGER_ROLLBACK_AND_REPLAY_REPORT.json"
+      ],
+      "exact_executed_test_ids": [
+        "T-RR2-010-A",
+        "T-RR2-010-B",
+        "T-RR2-010-C"
+      ],
+      "finding_id": "BA11-RR2-P1-003",
+      "negative_fixture_ids": [
+        "T-RR2-010-A",
+        "T-RR2-010-B",
+        "T-RR2-010-C"
+      ],
+      "remaining_debt": null,
+      "required_fix": "Normative ID-Preimage/Normalization, Collision Detection und Import-Receipt-Bindung. SemVer-Delta wird aus ChangeClass/Compatibility abgeleitet. Genesis-Store führt einen einmaligen, CAS-gebundenen Import-Head."
+    },
+    {
+      "changed_files_with_sha256": [
+        {
+          "path": "research_agent/tests/test_canary_governance.py",
+          "repository": "research",
+          "sha256": "facb7d92ad757ec6ab2b171f159bbf18a681e18b26590f613fd73b2d06a9088e"
+        },
+        {
+          "path": "research_agent/tests/ba11_r3_test_inventory.json",
+          "repository": "research",
+          "sha256": "84c928266d983af1d097bb8b13798949e61c76112b690e587bc2ab14e81b5e9f"
+        },
+        {
+          "path": "scripts/ops/verify_ba11_canary_governance.py",
+          "repository": "research",
+          "sha256": "e9791fe17a29b074ca7dc7b46592c702d6285f912e9ded0c82385b8a9eee7e02"
+        }
+      ],
+      "command_receipts": [
+        "targeted_research"
+      ],
+      "contract_delta_ids": [
+        "CD-BA11-RR2-P1-004"
+      ],
+      "evidence_refs": [
+        "13_TEST_MATRIX_EXECUTED.json"
+      ],
+      "exact_executed_test_ids": [
+        "T-RR2-011-A"
+      ],
+      "finding_id": "BA11-RR2-P1-004",
+      "negative_fixture_ids": [
+        "T-RR2-011-A"
+      ],
+      "remaining_debt": null,
+      "required_fix": "Alle R1-Pflichttests als einzeln benannte, ausgeführte Tests mit stabilen Diagnostics, Command Receipt, Input-/Output-Hashes und Finding-Mapping materialisieren. Coverage-Strings ohne Testresultat sind verboten."
+    },
+    {
+      "changed_files_with_sha256": [
+        {
+          "path": "scripts/ops/build_ba11_r3_evidence.py",
+          "repository": "research",
+          "sha256": "64f38ac31f12bbc80331ad14fc576b2df37779b40df9f1bceded4709c6445fe8"
+        },
+        {
+          "path": "scripts/ops/verify_ba11_r3_evidence.py",
+          "repository": "research",
+          "sha256": "c4da90302d50da7af62b9961567f4ce6e637d7e237031544388a27b3ac2f8bef"
+        },
+        {
+          "path": "research_agent/tests/test_ba11_r3_evidence_verifier.py",
+          "repository": "research",
+          "sha256": "98369abf1d67af0e9171e79e3f36b58ece4fa5e007beec8a2553479e8867977f"
+        }
+      ],
+      "command_receipts": [
+        "evidence_verifier_tests",
+        "research_full",
+        "product_full",
+        "ba10_freeze"
+      ],
+      "contract_delta_ids": [
+        "CD-BA11-RR2-P1-005"
+      ],
+      "evidence_refs": [
+        "14_FULL_REGRESSION_RECEIPTS.json",
+        "16_SOURCE_TREE_BINDINGS.json"
+      ],
+      "exact_executed_test_ids": [
+        "T-RR2-012-A",
+        "T-RR2-012-B"
+      ],
+      "finding_id": "BA11-RR2-P1-005",
+      "negative_fixture_ids": [
+        "T-RR2-012-A",
+        "T-RR2-012-B"
+      ],
+      "remaining_debt": null,
+      "required_fix": "Receipts binden vollständige git commit+tree IDs, gesamtes Worktree-Status, Dependency/Runtime-Versionen, Verifier-Skript und alle fachlichen Input-Artefakte. Raw stdout/stderr und deren Hash bleiben erhalten; normalisierte Ansichten sind zusätzliche Derivate. Pfade werden relativ/canonical dargestellt."
+    },
+    {
+      "changed_files_with_sha256": [
+        {
+          "path": "research_agent/canary_governance/contracts.py",
+          "repository": "research",
+          "sha256": "ac282d5c3a76ef9e2c1fe8745179bd4a799e9724c4420123e74f08fc8c51922d"
+        },
+        {
+          "path": "research_agent/canary_governance/schemas/SourceContractLock.schema.json",
+          "repository": "research",
+          "sha256": "5f46c0d1fc35a1a3c3c8e44754e7c01e4e72705dd21ac8f3b904b1fca4f1ed6c"
+        },
+        {
+          "path": "research_agent/canary_governance/schemas/SourceContractBinding.schema.json",
+          "repository": "research",
+          "sha256": "cfd1fb79bd2d62152d6e3a7ee1819bf3756b5496deb0f8b10a57f8cb87be4133"
+        }
+      ],
+      "command_receipts": [
+        "targeted_research"
+      ],
+      "contract_delta_ids": [
+        "CD-BA11-RR2-P2-001"
+      ],
+      "evidence_refs": [
+        "05_CONTRACT_CATALOG.json"
+      ],
+      "exact_executed_test_ids": [
+        "T-RR2-013-A"
+      ],
+      "finding_id": "BA11-RR2-P2-001",
+      "negative_fixture_ids": [
+        "T-RR2-013-A"
+      ],
+      "remaining_debt": null,
+      "required_fix": "Ein typed SourceContractBinding-Record mit source_contract_id + source_contract_sha256, strikter 64-hex-Validierung, Sortierung nach ID und eindeutiger Bijection."
+    },
+    {
+      "changed_files_with_sha256": [
+        {
+          "path": "research_agent/canary_governance/archive.py",
+          "repository": "research",
+          "sha256": "e6d7d4b618b4624dcaf51e962de894c610e17a5b46cd59a7090d07ec0c3c1cfe"
+        },
+        {
+          "path": "research_agent/canary_governance/contracts.py",
+          "repository": "research",
+          "sha256": "ac282d5c3a76ef9e2c1fe8745179bd4a799e9724c4420123e74f08fc8c51922d"
+        },
+        {
+          "path": "research_agent/canary_governance/schemas/EvidenceManifest.schema.json",
+          "repository": "research",
+          "sha256": "4d9ede4bf43722e58f6a2a89549689f4ba2721320f4733baa33cccace8e7ec06"
+        },
+        {
+          "path": "research_agent/canary_governance/schemas/EvidencePackageIdentity.schema.json",
+          "repository": "research",
+          "sha256": "437bbb82f072a1eb6dcc21717fbe920a28a7f1ecd0521a3489186db394570598"
+        },
+        {
+          "path": "scripts/ops/build_ba11_r3_evidence.py",
+          "repository": "research",
+          "sha256": "64f38ac31f12bbc80331ad14fc576b2df37779b40df9f1bceded4709c6445fe8"
+        },
+        {
+          "path": "scripts/ops/verify_ba11_r3_package.py",
+          "repository": "research",
+          "sha256": "0106238ce2af1ff28822c21b65b9b6693fb857d154f581bd15eca7eff551ef98"
+        }
+      ],
+      "command_receipts": [
+        "targeted_research",
+        "evidence_verifier_tests"
+      ],
+      "contract_delta_ids": [
+        "CD-BA11-RR2-P2-002"
+      ],
+      "evidence_refs": [
+        "18_DETERMINISTIC_BUILD_REPORT.json"
+      ],
+      "exact_executed_test_ids": [
+        "T-RR2-014-A"
+      ],
+      "finding_id": "BA11-RR2-P2-002",
+      "negative_fixture_ids": [
+        "T-RR2-014-A"
+      ],
+      "remaining_debt": null,
+      "required_fix": "Versionierter EvidenceManifest-Contract mit exakter Self-Hash-Preimage-Regel und Payload-Scope. Das Auslieferungsset enthält ZIP plus detached .sha256; die Rereview-Request bindet beide. Package-Identity und Manifest-Identity werden getrennt und normativ dokumentiert."
+    }
+  ]
+}

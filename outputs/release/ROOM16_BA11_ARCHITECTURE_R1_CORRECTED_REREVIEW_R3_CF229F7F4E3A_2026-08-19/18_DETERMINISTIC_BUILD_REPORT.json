@@ -1,0 +1,9 @@
+{
+  "contract_id": "room16.ba11_r3.deterministic_build_report@1",
+  "manifest_preimage_rule": "canonical JSON of all manifest fields except manifest_sha256",
+  "member_order": "lexicographic",
+  "package_identity_scope": "detached ZIP identity and .zip.sha256 sidecar",
+  "regular_file_mode": "0644",
+  "source_date_epoch": 1787097600,
+  "verification": "builder compares two complete builds byte-for-byte before delivery"
+}

@@ -1,0 +1,7 @@
+{
+  "contract_id": "room16.ba11_r3.approval_review_trust_report@1",
+  "decision_scope_subject_finding_head_replay_revocation_expiry_bound": true,
+  "nonce_counter_consumption_atomic_with_transaction": true,
+  "role_key_independence_enforced": true,
+  "separate_verifiers": true
+}

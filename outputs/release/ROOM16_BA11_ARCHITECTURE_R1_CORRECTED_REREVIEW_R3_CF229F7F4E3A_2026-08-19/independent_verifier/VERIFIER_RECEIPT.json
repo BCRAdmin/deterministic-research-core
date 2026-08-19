@@ -1,0 +1,53 @@
+{
+  "contract_id": "room16.ba11_r3.independent_evidence_verifier@1",
+  "derivation_rules": [
+    "collector_must_not_write_verifier_owned_outputs",
+    "exact_source_finding_set_and_order",
+    "exact_executed_test_set",
+    "all_bound_command_receipts_exit_zero_and_hash_verify",
+    "finding_specific_changed_file_sets_resolve_and_hash_verify",
+    "all_evidence_refs_resolve",
+    "all_original_findings_are_covered"
+  ],
+  "mapping_sha256": "9bf1c762d69b7f9c61d2cfdd64cb42efd548b3d6d1d9c0e7fecf8e428f3cb79b",
+  "rr2_findings_sha256": "9dbedabb2337bfb972eb9a0eedc1cab407d106db92e26be904ee338116717f67",
+  "test_matrix_sha256": "ea0392fa0401442a662bc1ef48dc7399a60ace86d770283da7aee34493064474",
+  "verdict": "PASS",
+  "verified_original_finding_ids": [
+    "BA11-AR-001",
+    "BA11-AR-002",
+    "BA11-AR-003",
+    "BA11-AR-004",
+    "BA11-AR-005",
+    "BA11-AR-006",
+    "BA11-AR-007",
+    "BA11-AR-008",
+    "BA11-AR-009",
+    "BA11-AR-010",
+    "BA11-AR-011",
+    "BA11-AR-012",
+    "BA11-AR-013",
+    "BA11-AR-014",
+    "BA11-AR-015",
+    "BA11-AR-016",
+    "BA11-AR-017",
+    "BA11-AR-018"
+  ],
+  "verified_rr2_finding_ids": [
+    "BA11-RR2-P0-001",
+    "BA11-RR2-P0-002",
+    "BA11-RR2-P0-003",
+    "BA11-RR2-P0-004",
+    "BA11-RR2-P0-005",
+    "BA11-RR2-P0-006",
+    "BA11-RR2-P0-007",
+    "BA11-RR2-P1-001",
+    "BA11-RR2-P1-002",
+    "BA11-RR2-P1-003",
+    "BA11-RR2-P1-004",
+    "BA11-RR2-P1-005",
+    "BA11-RR2-P2-001",
+    "BA11-RR2-P2-002"
+  ],
+  "verifier_receipt_sha256": "6e6a5a30c1fa650635b9c8f86fa88a111fa72540560ea3bc0554b5cb12da68c8"
+}

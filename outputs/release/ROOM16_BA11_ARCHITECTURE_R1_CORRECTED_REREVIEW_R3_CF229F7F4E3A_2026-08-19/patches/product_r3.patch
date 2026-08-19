@@ -1,0 +1,288 @@
+diff --git a/room16-app/config/room16_canary_registry_trust_policy_v1.json b/room16-app/config/room16_canary_registry_trust_policy_v1.json
+new file mode 100644
+index 0000000..2517b03
+--- /dev/null
++++ b/room16-app/config/room16_canary_registry_trust_policy_v1.json
+@@ -0,0 +1,15 @@
++{
++  "contract_id": "room16.product.canary_registry_trust_policy",
++  "ed25519_public_key_hex": "41820666e25f80801336d82bc611f94cb8a3d84239351266f3a4916c9c1b2f3f",
++  "mirror_mode": "signed_research_receipt_hash_verified_read_only",
++  "owner": "research",
++  "policy_sha256": "24315fd9e7784322219ea0927df78738f37a3cf1fb7b482af0c6c04faab2c7f4",
++  "product_may_promote_research_truth": false,
++  "product_may_select_expected_hash": false,
++  "receipt_contract_id": "room16.canary_research_snapshot_authority_receipt",
++  "receipt_schema_version": 1,
++  "schema_version": 1,
++  "snapshot_contract_id": "room16.canary_registry_snapshot",
++  "snapshot_schema_version": 2,
++  "trusted_research_key_id": "research.canary.registry.primary"
++}
+diff --git a/room16-app/scripts/test_canary_registry_mirror.mjs b/room16-app/scripts/test_canary_registry_mirror.mjs
+index 9d1087f..68d1383 100644
+--- a/room16-app/scripts/test_canary_registry_mirror.mjs
++++ b/room16-app/scripts/test_canary_registry_mirror.mjs
+@@ -12,49 +12,91 @@ function sha256(value) {
+   return createHash("sha256").update(value).digest("hex");
+ }
+ 
+-function snapshot() {
++function domainHash(domain, payload) {
++  return sha256(canonicalJson({ domain, payload }));
++}
++
++function snapshot(generation = 0) {
+   const body = {
+     contract_id: "room16.canary_registry_snapshot",
+-    schema_version: 1,
++    schema_version: 2,
+     authority_owner: "research",
+-    registry_generation: 0,
++    registry_generation: generation,
+     previous_registry_sha256: null,
+     ledger_head_sha256: "1".repeat(64),
+     entries: [],
+   };
+   return {
+     ...body,
+-    snapshot_sha256: sha256(canonicalJson({
+-      domain: "room16.canary_registry_snapshot@1",
+-      payload: body,
+-    })),
++    snapshot_sha256: domainHash("room16.canary_registry_snapshot@2", body),
++  };
++}
++
++function authorityReceipt(source) {
++  assert.equal(source.snapshot_sha256, "0ec92ccd6fafcb33bda80c04634994eda06020f01769bd254018e494ccc5dc8a");
++  return {
++    contract_id: "room16.canary_research_snapshot_authority_receipt",
++    schema_version: 1,
++    authority_owner: "research",
++    receipt_id: "receipt.test.pinned.fixture",
++    research_key_id: "research.canary.registry.primary",
++    research_role: "canary_registry_authority",
++    snapshot_sha256: source.snapshot_sha256,
++    registry_head_sha256: "2".repeat(64),
++    issued_at_utc: "2026-08-20T00:00:00Z",
++    signature_algorithm: "ed25519",
++    signature: "cbaf9129726dfe01b6fc5184940fecb097a73514d0e7db7013600cadcf5d5bce1c5d977d84e2c8e9a5e510dec9f26ef6de2ab53f5b1924ebec336c689f867906",
++    receipt_sha256: "d09b0e093e4bde08e6d4b424be8ff8ec10f311821b8c2fee1231b251d2834ece",
+   };
+ }
+ 
+-test("product consumes an exact Research snapshot read-only", () => {
++test("exact mirror bound to pinned Research receipt passes read-only", () => {
+   const source = snapshot();
+-  const verdict = verifyCanaryRegistryMirror(source, structuredClone(source));
++  const verdict = verifyCanaryRegistryMirror(structuredClone(source), authorityReceipt(source));
+   assert.equal(verdict.receipt_state, "valid");
++  assert.equal(verdict.product_may_select_expected_hash, false);
+   assert.equal(verdict.product_may_promote_research_truth, false);
+   assert.equal(Object.isFrozen(verdict), true);
+ });
+ 
+-test("mirror drift blocks Product but cannot stale Research", () => {
++test("caller-created Research-labeled snapshot cannot choose the trusted hash", () => {
++  const trusted = snapshot();
++  const forged = snapshot(999);
++  assert.throws(
++    () => verifyCanaryRegistryMirror(forged, authorityReceipt(trusted)),
++    (error) => error instanceof CanaryRegistryMirrorError
++      && error.diagnosticCode === "BA11_CONSUMER_MIRROR_INVALID",
++  );
++  assert.equal(verifyCanaryRegistryMirror.length, 2);
++});
++
++test("forged or tampered Research receipt is blocked", () => {
+   const source = snapshot();
+-  const mirror = structuredClone(source);
+-  mirror.registry_generation = 1;
++  const receipt = authorityReceipt(source);
+   assert.throws(
+-    () => verifyCanaryRegistryMirror(source, mirror),
+-    (error) => error instanceof CanaryRegistryMirrorError && error.diagnosticCode === "BA11_HASH_MISMATCH",
++    () => verifyCanaryRegistryMirror(source, { ...receipt, signature: "0".repeat(128) }),
++    (error) => error instanceof CanaryRegistryMirrorError
++      && error.diagnosticCode === "BA11_RESEARCH_AUTHORITY_UNTRUSTED",
+   );
+-  assert.equal(source.registry_generation, 0);
+ });
+ 
+-test("Product authority relabel fails closed", () => {
++test("mirror drift and Product authority relabel fail closed", () => {
+   const source = snapshot();
+-  const mirror = { ...source, authority_owner: "product" };
++  const drift = { ...source, registry_generation: 1 };
++  assert.throws(
++    () => verifyCanaryRegistryMirror(drift, authorityReceipt(source)),
++    (error) => error instanceof CanaryRegistryMirrorError
++      && error.diagnosticCode === "BA11_HASH_MISMATCH",
++  );
++  const relabeledBody = { ...source, authority_owner: "product" };
++  delete relabeledBody.snapshot_sha256;
++  const relabeled = {
++    ...relabeledBody,
++    snapshot_sha256: domainHash("room16.canary_registry_snapshot@2", relabeledBody),
++  };
+   assert.throws(
+-    () => verifyCanaryRegistryMirror(source, mirror),
+-    (error) => error instanceof CanaryRegistryMirrorError && error.diagnosticCode === "BA11_CONSUMER_MIRROR_INVALID",
++    () => verifyCanaryRegistryMirror(relabeled, authorityReceipt(source)),
++    (error) => error instanceof CanaryRegistryMirrorError
++      && error.diagnosticCode === "BA11_SCHEMA_INVALID",
+   );
+ });
+diff --git a/room16-app/server-modules/canary-registry-mirror.mjs b/room16-app/server-modules/canary-registry-mirror.mjs
+index ee2df72..15fd3b4 100644
+--- a/room16-app/server-modules/canary-registry-mirror.mjs
++++ b/room16-app/server-modules/canary-registry-mirror.mjs
+@@ -1,4 +1,22 @@
+-import { createHash } from "node:crypto";
++import fs from "node:fs";
++import path from "node:path";
++import { createHash, createPublicKey, verify as verifySignature } from "node:crypto";
++import { fileURLToPath } from "node:url";
++
++const TRUST_POLICY_FILE = path.resolve(
++  path.dirname(fileURLToPath(import.meta.url)),
++  "../config/room16_canary_registry_trust_policy_v1.json",
++);
++const TRUST_POLICY_SHA256 = "24315fd9e7784322219ea0927df78738f37a3cf1fb7b482af0c6c04faab2c7f4";
++const SNAPSHOT_FIELDS = new Set([
++  "contract_id", "schema_version", "authority_owner", "registry_generation",
++  "previous_registry_sha256", "ledger_head_sha256", "entries", "snapshot_sha256",
++]);
++const RECEIPT_FIELDS = new Set([
++  "contract_id", "schema_version", "authority_owner", "receipt_id", "research_key_id",
++  "research_role", "snapshot_sha256", "registry_head_sha256", "issued_at_utc",
++  "signature_algorithm", "signature", "receipt_sha256",
++]);
+ 
+ export class CanaryRegistryMirrorError extends Error {
+   constructor(diagnosticCode, detail = "") {
+@@ -35,39 +53,107 @@ function domainHash(domain, payload) {
+   return sha256(canonicalJson({ domain, payload }));
+ }
+ 
+-function verifySnapshotHash(snapshot) {
++function exactFields(value, expected, label) {
++  if (!value || typeof value !== "object" || Array.isArray(value)) {
++    throw new CanaryRegistryMirrorError("BA11_SCHEMA_INVALID", label);
++  }
++  const actual = Object.keys(value);
++  if (actual.length !== expected.size || actual.some((field) => !expected.has(field))) {
++    throw new CanaryRegistryMirrorError("BA11_SCHEMA_INVALID", `${label}_fields`);
++  }
++}
++
++function trustedResearchPolicy() {
++  let policy;
++  try {
++    policy = JSON.parse(fs.readFileSync(TRUST_POLICY_FILE, "utf8"));
++  } catch (error) {
++    throw new CanaryRegistryMirrorError("BA11_RESEARCH_AUTHORITY_UNTRUSTED", error.message);
++  }
++  const body = { ...policy };
++  delete body.policy_sha256;
++  if (
++    policy.contract_id !== "room16.product.canary_registry_trust_policy" ||
++    policy.schema_version !== 1 ||
++    policy.owner !== "research" ||
++    policy.product_may_select_expected_hash !== false ||
++    policy.product_may_promote_research_truth !== false ||
++    policy.policy_sha256 !== TRUST_POLICY_SHA256 ||
++    sha256(canonicalJson(body)) !== TRUST_POLICY_SHA256
++  ) {
++    throw new CanaryRegistryMirrorError("BA11_RESEARCH_AUTHORITY_UNTRUSTED", "policy");
++  }
++  return policy;
++}
++
++function verifySnapshotHash(snapshot, policy) {
++  exactFields(snapshot, SNAPSHOT_FIELDS, "snapshot");
++  if (
++    snapshot.contract_id !== policy.snapshot_contract_id ||
++    snapshot.schema_version !== policy.snapshot_schema_version ||
++    snapshot.authority_owner !== "research"
++  ) {
++    throw new CanaryRegistryMirrorError("BA11_SCHEMA_INVALID", "snapshot");
++  }
+   const body = { ...snapshot };
+   const declared = body.snapshot_sha256;
+   delete body.snapshot_sha256;
+-  if (domainHash("room16.canary_registry_snapshot@1", body) !== declared) {
++  if (domainHash("room16.canary_registry_snapshot@2", body) !== declared) {
+     throw new CanaryRegistryMirrorError("BA11_HASH_MISMATCH", "snapshot_sha256");
+   }
+ }
+ 
+-export function verifyCanaryRegistryMirror(researchSnapshot, productMirror) {
++function verifyResearchReceipt(receipt, policy) {
++  exactFields(receipt, RECEIPT_FIELDS, "research_receipt");
+   if (
+-    researchSnapshot?.contract_id !== "room16.canary_registry_snapshot" ||
+-    researchSnapshot?.schema_version !== 1 ||
+-    researchSnapshot?.authority_owner !== "research"
++    receipt.contract_id !== policy.receipt_contract_id ||
++    receipt.schema_version !== policy.receipt_schema_version ||
++    receipt.authority_owner !== "research" ||
++    receipt.research_role !== "canary_registry_authority" ||
++    receipt.research_key_id !== policy.trusted_research_key_id ||
++    receipt.signature_algorithm !== "ed25519"
+   ) {
+-    throw new CanaryRegistryMirrorError("BA11_SCHEMA_INVALID", "research_snapshot");
++    throw new CanaryRegistryMirrorError("BA11_RESEARCH_AUTHORITY_UNTRUSTED", "receipt_policy");
+   }
+-  if (productMirror?.authority_owner !== "research") {
+-    throw new CanaryRegistryMirrorError("BA11_CONSUMER_MIRROR_INVALID", "authority_relabel");
++  const hashed = { ...receipt };
++  const receiptHash = hashed.receipt_sha256;
++  delete hashed.receipt_sha256;
++  if (domainHash("room16.canary.research_snapshot_authority_receipt@1", hashed) !== receiptHash) {
++    throw new CanaryRegistryMirrorError("BA11_RESEARCH_AUTHORITY_UNTRUSTED", "receipt_hash");
+   }
+-  verifySnapshotHash(researchSnapshot);
+-  verifySnapshotHash(productMirror);
+-  if (canonicalJson(researchSnapshot) !== canonicalJson(productMirror)) {
+-    throw new CanaryRegistryMirrorError("BA11_CONSUMER_MIRROR_INVALID", "hash_drift");
++  const signed = { ...receipt };
++  delete signed.signature;
++  delete signed.receipt_sha256;
++  const publicKey = createPublicKey({
++    key: Buffer.concat([
++      Buffer.from("302a300506032b6570032100", "hex"),
++      Buffer.from(policy.ed25519_public_key_hex, "hex"),
++    ]),
++    format: "der",
++    type: "spki",
++  });
++  if (!verifySignature(null, Buffer.from(canonicalJson(signed)), publicKey, Buffer.from(receipt.signature, "hex"))) {
++    throw new CanaryRegistryMirrorError("BA11_RESEARCH_AUTHORITY_UNTRUSTED", "signature");
++  }
++}
++
++export function verifyCanaryRegistryMirror(productMirror, researchAuthorityReceipt) {
++  const policy = trustedResearchPolicy();
++  verifySnapshotHash(productMirror, policy);
++  verifyResearchReceipt(researchAuthorityReceipt, policy);
++  if (productMirror.snapshot_sha256 !== researchAuthorityReceipt.snapshot_sha256) {
++    throw new CanaryRegistryMirrorError("BA11_CONSUMER_MIRROR_INVALID", "trusted_hash_drift");
+   }
+   return Object.freeze({
+     contract_id: "room16.canary_consumer_mirror_verdict",
+-    schema_version: 1,
++    schema_version: 2,
+     authority_owner: "product_consumer",
+-    mirror_mode: "hash_verified_read_only",
+-    research_snapshot_sha256: researchSnapshot.snapshot_sha256,
++    mirror_mode: policy.mirror_mode,
++    research_authority_receipt_sha256: researchAuthorityReceipt.receipt_sha256,
++    research_snapshot_sha256: researchAuthorityReceipt.snapshot_sha256,
+     mirrored_snapshot_sha256: productMirror.snapshot_sha256,
+     receipt_state: "valid",
++    product_may_select_expected_hash: false,
+     product_may_promote_research_truth: false,
+   });
+ }

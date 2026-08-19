@@ -1,0 +1,14 @@
+{
+  "acyclic_order": [
+    "TechnicalBaseline",
+    "GovernanceEnvelope",
+    "CanaryFreezeRecord",
+    "RegistryEvent",
+    "CanaryRegistryEntry",
+    "RegistrySnapshot",
+    "RegistryTransaction",
+    "RegistryCommitReceipt"
+  ],
+  "contract_id": "room16.ba11_r3.identity_graph_report@1",
+  "freeze_excludes_current_snapshot_hash": true
+}

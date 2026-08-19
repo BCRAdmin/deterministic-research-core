@@ -1,0 +1,656 @@
+diff --git a/research_agent/canary_governance/contracts.py b/research_agent/canary_governance/contracts.py
+index ba7c4932ad7570d8eab80016050d997827f145ee..f3f03bf41621dca65824e297780bdff16416be32 100644
+--- a/research_agent/canary_governance/contracts.py
++++ b/research_agent/canary_governance/contracts.py
+@@ -1,8 +1,10 @@
+-"""Strict machine contracts for BA11 canary governance.
++"""Strict machine contracts for BA11 R3 canary governance.
+ 
+-All records are immutable, reject unknown fields, and use domain-separated
+-canonical SHA-256 identities. Later state is represented by append-only events;
+-the freeze record intentionally has no stale or superseded fields.
++All authority records are immutable, reject unknown fields, and use
++domain-separated canonical SHA-256 identities. The identity graph is
++deliberately acyclic: FreezeCore never references the snapshot containing its
++hash; a transaction binds freeze, ledgers and snapshot; the registry head
++binds the transaction; and a commit receipt binds the published head.
+ """
+ 
+ from __future__ import annotations
+@@ -25,7 +27,9 @@ def domain_hash(domain: str, payload: Any) -> str:
+     return sha256_json({"domain": domain, "payload": payload})
+ 
+ 
+-def complete_model_body(model_type: type[StrictModel], values: dict[str, Any], hash_field: str) -> dict[str, Any]:
++def complete_model_body(
++    model_type: type[StrictModel], values: dict[str, Any], hash_field: str
++) -> dict[str, Any]:
+     body: dict[str, Any] = {}
+     for name, field in model_type.model_fields.items():
+         if name == hash_field:
+@@ -56,22 +60,34 @@ class HashBoundModel(StrictModel):
+         return self
+ 
+ 
++class SourceContractBinding(HashBoundModel):
++    contract_id: Literal["room16.canary.source_contract_binding"] = "room16.canary.source_contract_binding"
++    schema_version: Literal[1] = 1
++    authority_owner: Literal["research"] = "research"
++    source_contract_id: str = Field(pattern=ID_PATTERN)
++    source_contract_sha256: str = Field(pattern=SHA256_PATTERN)
++    binding_sha256: str = Field(pattern=SHA256_PATTERN)
++    hash_field = "binding_sha256"
++    hash_domain = "room16.canary.source_contract_binding@1"
++
++
+ class SourceContractLock(HashBoundModel):
+     contract_id: Literal["room16.canary.source_contract_lock"] = "room16.canary.source_contract_lock"
+-    schema_version: Literal[1] = 1
++    schema_version: Literal[2] = 2
+     authority_owner: Literal["research"] = "research"
+-    source_contract_ids: tuple[str, ...]
+-    source_contract_sha256s: tuple[str, ...]
++    bindings: tuple[SourceContractBinding, ...]
+     lock_sha256: str = Field(pattern=SHA256_PATTERN)
+     hash_field = "lock_sha256"
+-    hash_domain = "room16.canary.source_contract_lock@1"
++    hash_domain = "room16.canary.source_contract_lock@2"
+ 
+     @model_validator(mode="after")
+     def ordered_sources(self):
+-        if self.source_contract_ids != tuple(sorted(set(self.source_contract_ids))):
+-            raise ValueError("source contract ids must be unique and sorted")
+-        if len(self.source_contract_ids) != len(self.source_contract_sha256s):
+-            raise ValueError("source contract ids and hashes must be bijective")
++        ids = tuple(item.source_contract_id for item in self.bindings)
++        hashes = tuple(item.source_contract_sha256 for item in self.bindings)
++        if ids != tuple(sorted(set(ids))):
++            raise ValueError("source contract bindings must be unique and sorted by id")
++        if len(set(hashes)) != len(hashes):
++            raise ValueError("source contract id/hash bindings must be bijective")
+         return self
+ 
+ 
+@@ -114,39 +130,48 @@ class GovernanceEnvelope(HashBoundModel):
+ 
+ class CanaryFreezeRecord(HashBoundModel):
+     contract_id: Literal["room16.canary_freeze"] = "room16.canary_freeze"
+-    schema_version: Literal[1] = 1
++    schema_version: Literal[2] = 2
+     compatibility: Literal["first_contract_no_predecessor"] = "first_contract_no_predecessor"
+     authority_owner: Literal["research"] = "research"
+     freeze_id: str = Field(pattern=ID_PATTERN)
+     canary_id: str = Field(pattern=ID_PATTERN)
+     technical_baseline_sha256: str = Field(pattern=SHA256_PATTERN)
+     governance_envelope_sha256: str = Field(pattern=SHA256_PATTERN)
+-    registry_snapshot_sha256: str = Field(pattern=SHA256_PATTERN)
+     effective_at_utc: str = Field(pattern=UTC_PATTERN)
+     freeze_sha256: str = Field(pattern=SHA256_PATTERN)
+     hash_field = "freeze_sha256"
+-    hash_domain = "room16.canary_freeze@1"
++    hash_domain = "room16.canary_freeze@2"
++
++
++CanaryType = Literal["company_regression", "archetype_regression", "technical_release_regression"]
+ 
+ 
+-class CanaryRegistryEntry(StrictModel):
++class CanaryRegistryEntry(HashBoundModel):
+     contract_id: Literal["room16.canary_registry_entry"] = "room16.canary_registry_entry"
+-    schema_version: Literal[1] = 1
++    schema_version: Literal[2] = 2
+     authority_owner: Literal["research"] = "research"
+     canary_id: str = Field(pattern=ID_PATTERN)
+-    canary_type: Literal[
+-        "company_regression", "archetype_regression", "technical_release_regression"
+-    ]
++    canary_type: CanaryType
+     baseline_version: str = Field(pattern=SEMVER_PATTERN)
+     technical_baseline_sha256: str = Field(pattern=SHA256_PATTERN)
+     governance_envelope_sha256: str = Field(pattern=SHA256_PATTERN)
+-    freeze_sha256: str = Field(pattern=SHA256_PATTERN)
++    freeze_sha256: str | None = Field(default=None, pattern=SHA256_PATTERN)
+     derived_state: Literal["candidate", "frozen", "rejected", "stale", "superseded"]
+     latest_event_sha256: str = Field(pattern=SHA256_PATTERN)
++    entry_sha256: str = Field(pattern=SHA256_PATTERN)
++    hash_field = "entry_sha256"
++    hash_domain = "room16.canary_registry_entry@2"
++
++    @model_validator(mode="after")
++    def freeze_required_for_promoted_states(self):
++        if self.derived_state in {"frozen", "stale", "superseded"} and not self.freeze_sha256:
++            raise ValueError("promoted registry states require freeze_sha256")
++        return self
+ 
+ 
+ class RegistryEvent(HashBoundModel):
+     contract_id: Literal["room16.canary_registry_event"] = "room16.canary_registry_event"
+-    schema_version: Literal[1] = 1
++    schema_version: Literal[2] = 2
+     authority_owner: Literal["research"] = "research"
+     event_id: str = Field(pattern=ID_PATTERN)
+     canary_id: str = Field(pattern=ID_PATTERN)
+@@ -156,16 +181,78 @@ class RegistryEvent(HashBoundModel):
+         "rejected", "stale", "recovered", "superseded"
+     ]
+     subject_sha256: str = Field(pattern=SHA256_PATTERN)
++    canary_type: CanaryType
++    baseline_version: str = Field(pattern=SEMVER_PATTERN)
++    technical_baseline_sha256: str = Field(pattern=SHA256_PATTERN)
++    governance_envelope_sha256: str = Field(pattern=SHA256_PATTERN)
++    freeze_sha256: str | None = Field(default=None, pattern=SHA256_PATTERN)
+     previous_event_sha256: str | None = Field(default=None, pattern=SHA256_PATTERN)
+     effective_at_utc: str = Field(pattern=UTC_PATTERN)
+     event_sha256: str = Field(pattern=SHA256_PATTERN)
+     hash_field = "event_sha256"
+-    hash_domain = "room16.canary_registry_event@1"
++    hash_domain = "room16.canary_registry_event@2"
++
++
++class PromotionEvent(RegistryEvent):
++    contract_id: Literal["room16.canary_promotion_event"] = "room16.canary_promotion_event"
++    event_type: Literal["frozen"] = "frozen"
++    freeze_sha256: str = Field(pattern=SHA256_PATTERN)
++    independent_review_sha256: str = Field(pattern=SHA256_PATTERN)
++    operator_approval_sha256: str = Field(pattern=SHA256_PATTERN)
++    hash_domain = "room16.canary_promotion_event@1"
++
++
++class RejectionEvent(RegistryEvent):
++    contract_id: Literal["room16.canary_rejection_event"] = "room16.canary_rejection_event"
++    event_type: Literal["rejected"] = "rejected"
++    rejection_reason: str = Field(min_length=1)
++    review_sha256: str = Field(pattern=SHA256_PATTERN)
++    hash_domain = "room16.canary_rejection_event@1"
++
++
++class StaleEvent(RegistryEvent):
++    contract_id: Literal["room16.canary_stale_event"] = "room16.canary_stale_event"
++    event_type: Literal["stale"] = "stale"
++    freeze_sha256: str = Field(pattern=SHA256_PATTERN)
++    stale_reason: str = Field(min_length=1)
++    detected_baseline_sha256: str = Field(pattern=SHA256_PATTERN)
++    hash_domain = "room16.canary_stale_event@1"
++
++
++class RecoveryEvent(RegistryEvent):
++    contract_id: Literal["room16.canary_recovery_event"] = "room16.canary_recovery_event"
++    event_type: Literal["recovered"] = "recovered"
++    freeze_sha256: str = Field(pattern=SHA256_PATTERN)
++    recovery_review_sha256: str = Field(pattern=SHA256_PATTERN)
++    hash_domain = "room16.canary_recovery_event@1"
++
++
++class SupersessionEvent(RegistryEvent):
++    contract_id: Literal["room16.canary_supersession_event"] = "room16.canary_supersession_event"
++    event_type: Literal["superseded"] = "superseded"
++    freeze_sha256: str = Field(pattern=SHA256_PATTERN)
++    superseding_canary_id: str = Field(pattern=ID_PATTERN)
++    superseding_freeze_sha256: str = Field(pattern=SHA256_PATTERN)
++    hash_domain = "room16.canary_supersession_event@1"
++
++
++class RegistryLedgerHead(HashBoundModel):
++    contract_id: Literal["room16.canary_registry_ledger_head"] = "room16.canary_registry_ledger_head"
++    schema_version: Literal[1] = 1
++    authority_owner: Literal["research"] = "research"
++    generation: int = Field(ge=0)
++    event_count: int = Field(ge=0)
++    previous_head_sha256: str | None = Field(default=None, pattern=SHA256_PATTERN)
++    current_event_sha256: str | None = Field(default=None, pattern=SHA256_PATTERN)
++    ledger_content_sha256: str = Field(pattern=SHA256_PATTERN)
++    head_sha256: str = Field(pattern=SHA256_PATTERN)
++    hash_field = "head_sha256"
++    hash_domain = "room16.canary_registry_ledger_head@1"
+ 
+ 
+ class RegistrySnapshot(HashBoundModel):
+     contract_id: Literal["room16.canary_registry_snapshot"] = "room16.canary_registry_snapshot"
+-    schema_version: Literal[1] = 1
++    schema_version: Literal[2] = 2
+     authority_owner: Literal["research"] = "research"
+     registry_generation: int = Field(ge=0)
+     previous_registry_sha256: str | None = Field(default=None, pattern=SHA256_PATTERN)
+@@ -173,7 +260,7 @@ class RegistrySnapshot(HashBoundModel):
+     entries: tuple[CanaryRegistryEntry, ...]
+     snapshot_sha256: str = Field(pattern=SHA256_PATTERN)
+     hash_field = "snapshot_sha256"
+-    hash_domain = "room16.canary_registry_snapshot@1"
++    hash_domain = "room16.canary_registry_snapshot@2"
+ 
+     @model_validator(mode="after")
+     def sorted_entries(self):
+@@ -185,29 +272,34 @@ class RegistrySnapshot(HashBoundModel):
+ 
+ class RegistryHead(HashBoundModel):
+     contract_id: Literal["room16.canary_registry_head"] = "room16.canary_registry_head"
+-    schema_version: Literal[1] = 1
++    schema_version: Literal[2] = 2
+     authority_owner: Literal["research"] = "research"
+     registry_generation: int = Field(ge=0)
+     previous_head_sha256: str | None = Field(default=None, pattern=SHA256_PATTERN)
+     snapshot_sha256: str = Field(pattern=SHA256_PATTERN)
+-    ledger_head_sha256: str = Field(pattern=SHA256_PATTERN)
++    registry_ledger_head_sha256: str = Field(pattern=SHA256_PATTERN)
++    debt_ledger_head_sha256: str = Field(pattern=SHA256_PATTERN)
++    transaction_sha256: str = Field(pattern=SHA256_PATTERN)
++    consumed_nonce_set_sha256: str = Field(pattern=SHA256_PATTERN)
++    operator_counter: int = Field(ge=0)
++    reviewer_counter: int = Field(ge=0)
+     head_sha256: str = Field(pattern=SHA256_PATTERN)
+     hash_field = "head_sha256"
+-    hash_domain = "room16.canary_registry_head@1"
++    hash_domain = "room16.canary_registry_head@2"
+ 
+ 
+ class GenesisImportReceipt(HashBoundModel):
+     contract_id: Literal["room16.canary_genesis_import"] = "room16.canary_genesis_import"
+-    schema_version: Literal[1] = 1
++    schema_version: Literal[2] = 2
+     authority_owner: Literal["research"] = "research"
+     import_id: str = Field(pattern=ID_PATTERN)
+     source_records_sha256: str = Field(pattern=SHA256_PATTERN)
+     imported_canary_ids: tuple[str, ...]
+     target_registry_generation: Literal[0] = 0
+-    second_import_allowed: Literal[False] = False
++    previous_genesis_head_sha256: None = None
+     receipt_sha256: str = Field(pattern=SHA256_PATTERN)
+     hash_field = "receipt_sha256"
+-    hash_domain = "room16.canary_genesis_import@1"
++    hash_domain = "room16.canary_genesis_import@2"
+ 
+     @model_validator(mode="after")
+     def unique_sorted_imports(self):
+@@ -216,33 +308,14 @@ class GenesisImportReceipt(HashBoundModel):
+         return self
+ 
+ 
+-class ChangeClassification(HashBoundModel):
+-    contract_id: Literal["room16.canary_change_classification"] = "room16.canary_change_classification"
++class GenesisImportHead(HashBoundModel):
++    contract_id: Literal["room16.canary_genesis_import_head"] = "room16.canary_genesis_import_head"
+     schema_version: Literal[1] = 1
+     authority_owner: Literal["research"] = "research"
+-    classification_id: str = Field(pattern=ID_PATTERN)
+-    change_class: Literal["ordinary", "governance", "breaking"]
+-    semantic_lock_changed: bool
+-    presentation_contract_changed: bool
+-    renderer_artifact_changed: bool
+-    source_contract_changed: bool
+-    new_truth_count: int = Field(ge=0)
+-    lineage_diff_count: int = Field(ge=0)
+-    independent_compare_sha256: str = Field(pattern=SHA256_PATTERN)
+-    classification_sha256: str = Field(pattern=SHA256_PATTERN)
+-    hash_field = "classification_sha256"
+-    hash_domain = "room16.canary_change_classification@1"
+-
+-    @model_validator(mode="after")
+-    def ordinary_is_presentation_only(self):
+-        if self.change_class == "ordinary" and (
+-            self.semantic_lock_changed
+-            or self.source_contract_changed
+-            or self.new_truth_count
+-            or self.lineage_diff_count
+-        ):
+-            raise ValueError("ordinary change must be independently no-new-truth")
+-        return self
++    import_receipt_sha256: str = Field(pattern=SHA256_PATTERN)
++    head_sha256: str = Field(pattern=SHA256_PATTERN)
++    hash_field = "head_sha256"
++    hash_domain = "room16.canary_genesis_import_head@1"
+ 
+ 
+ class ComparisonRequest(HashBoundModel):
+@@ -260,9 +333,11 @@ class ComparisonRequest(HashBoundModel):
+ 
+ class ComparisonResult(HashBoundModel):
+     contract_id: Literal["room16.canary_comparison_result"] = "room16.canary_comparison_result"
+-    schema_version: Literal[1] = 1
++    schema_version: Literal[2] = 2
+     authority_owner: Literal["research"] = "research"
+     request_sha256: str = Field(pattern=SHA256_PATTERN)
++    baseline_sha256: str = Field(pattern=SHA256_PATTERN)
++    candidate_sha256: str = Field(pattern=SHA256_PATTERN)
+     verdict: Literal["identical", "ordinary_change", "promotion_required", "blocked"]
+     fact_diff_count: int = Field(ge=0)
+     claim_diff_count: int = Field(ge=0)
+@@ -271,7 +346,62 @@ class ComparisonResult(HashBoundModel):
+     diagnostic_codes: tuple[str, ...]
+     result_sha256: str = Field(pattern=SHA256_PATTERN)
+     hash_field = "result_sha256"
+-    hash_domain = "room16.canary_comparison_result@1"
++    hash_domain = "room16.canary_comparison_result@2"
++
++    @model_validator(mode="after")
++    def verdict_matches_counts(self):
++        semantic_diffs = self.fact_diff_count + self.claim_diff_count + self.decision_diff_count + self.lineage_diff_count
++        if self.verdict in {"identical", "ordinary_change"} and semantic_diffs:
++            raise ValueError("no-new-truth verdict requires zero semantic diffs")
++        if self.verdict == "identical" and self.baseline_sha256 != self.candidate_sha256:
++            raise ValueError("identical verdict requires identical artifact hashes")
++        return self
++
++
++class ChangeClassification(HashBoundModel):
++    contract_id: Literal["room16.canary_change_classification"] = "room16.canary_change_classification"
++    schema_version: Literal[2] = 2
++    authority_owner: Literal["research"] = "research"
++    classification_id: str = Field(pattern=ID_PATTERN)
++    change_class: Literal["ordinary", "governance", "breaking"]
++    comparison_request_sha256: str = Field(pattern=SHA256_PATTERN)
++    comparison_result_sha256: str = Field(pattern=SHA256_PATTERN)
++    fact_diff_count: int = Field(ge=0)
++    claim_diff_count: int = Field(ge=0)
++    decision_diff_count: int = Field(ge=0)
++    lineage_diff_count: int = Field(ge=0)
++    semantic_lock_changed: bool
++    presentation_contract_changed: bool
++    renderer_artifact_changed: bool
++    source_contract_changed: bool
++    classification_sha256: str = Field(pattern=SHA256_PATTERN)
++    hash_field = "classification_sha256"
++    hash_domain = "room16.canary_change_classification@2"
++
++    @model_validator(mode="after")
++    def ordinary_is_presentation_only(self):
++        if self.change_class == "ordinary" and (
++            self.semantic_lock_changed or self.source_contract_changed or self.fact_diff_count
++            or self.claim_diff_count or self.decision_diff_count or self.lineage_diff_count
++        ):
++            raise ValueError("ordinary change must be independently no-new-truth")
++        return self
++
++    @classmethod
++    def from_comparison(cls, *, classification_id: str, change_class: str, result: ComparisonResult,
++                        semantic_lock_changed: bool, presentation_contract_changed: bool,
++                        renderer_artifact_changed: bool, source_contract_changed: bool):
++        return cls.create(
++            classification_id=classification_id, change_class=change_class,
++            comparison_request_sha256=result.request_sha256,
++            comparison_result_sha256=result.result_sha256,
++            fact_diff_count=result.fact_diff_count, claim_diff_count=result.claim_diff_count,
++            decision_diff_count=result.decision_diff_count, lineage_diff_count=result.lineage_diff_count,
++            semantic_lock_changed=semantic_lock_changed,
++            presentation_contract_changed=presentation_contract_changed,
++            renderer_artifact_changed=renderer_artifact_changed,
++            source_contract_changed=source_contract_changed,
++        )
+ 
+ 
+ class PromotionCandidate(HashBoundModel):
+@@ -290,28 +420,39 @@ class PromotionCandidate(HashBoundModel):
+ 
+ class IndependentReviewAttestation(HashBoundModel):
+     contract_id: Literal["room16.canary_independent_review_attestation"] = "room16.canary_independent_review_attestation"
+-    schema_version: Literal[1] = 1
++    schema_version: Literal[2] = 2
+     authority_owner: Literal["external_reviewer"] = "external_reviewer"
+     review_id: str = Field(pattern=ID_PATTERN)
+     reviewer_key_id: str = Field(pattern=ID_PATTERN)
+     reviewer_role: Literal["independent_architecture_reviewer"]
+-    candidate_sha256: str = Field(pattern=SHA256_PATTERN)
++    scope: Literal["ba11_canary_promotion"] = "ba11_canary_promotion"
++    subject_ids: tuple[str, ...]
++    subject_sha256s: tuple[str, ...]
+     finding_set_sha256: str = Field(pattern=SHA256_PATTERN)
+     previous_registry_head_sha256: str = Field(pattern=SHA256_PATTERN)
+     decision: Literal["accepted", "changes_required"]
+     nonce: str = Field(min_length=16)
+     monotonic_counter: int = Field(ge=1)
+     issued_at_utc: str = Field(pattern=UTC_PATTERN)
+-    signature_algorithm: Literal["ed25519"]
++    expires_at_utc: str | None = Field(default=None, pattern=UTC_PATTERN)
++    signature_algorithm: Literal["ed25519"] = "ed25519"
+     signature: str = Field(pattern=r"^[0-9a-f]{128}$")
+     attestation_sha256: str = Field(pattern=SHA256_PATTERN)
+     hash_field = "attestation_sha256"
+-    hash_domain = "room16.canary_independent_review_attestation@1"
++    hash_domain = "room16.canary.independent_review_attestation@2"
++
++    @model_validator(mode="after")
++    def subject_bijection(self):
++        if self.subject_ids != tuple(sorted(set(self.subject_ids))):
++            raise ValueError("review subject ids must be unique and sorted")
++        if len(self.subject_ids) != len(self.subject_sha256s):
++            raise ValueError("review subject ids and hashes must be bijective")
++        return self
+ 
+ 
+ class OperatorApprovalReceipt(HashBoundModel):
+     contract_id: Literal["room16.canary_operator_approval"] = "room16.canary_operator_approval"
+-    schema_version: Literal[1] = 1
++    schema_version: Literal[2] = 2
+     authority_owner: Literal["operator"] = "operator"
+     approval_id: str = Field(pattern=ID_PATTERN)
+     decision: Literal["approve", "reject"]
+@@ -330,20 +471,20 @@ class OperatorApprovalReceipt(HashBoundModel):
+     signature: str = Field(pattern=r"^[0-9a-f]{128}$")
+     approval_sha256: str = Field(pattern=SHA256_PATTERN)
+     hash_field = "approval_sha256"
+-    hash_domain = "room16.canary_operator_approval@1"
++    hash_domain = "room16.canary.operator_approval@2"
+ 
+     @model_validator(mode="after")
+     def subject_bijection(self):
+         if self.subject_ids != tuple(sorted(set(self.subject_ids))):
+-            raise ValueError("subject ids must be unique and sorted")
++            raise ValueError("approval subject ids must be unique and sorted")
+         if len(self.subject_ids) != len(self.subject_sha256s):
+-            raise ValueError("subject ids and hashes must be bijective")
++            raise ValueError("approval subject ids and hashes must be bijective")
+         return self
+ 
+ 
+ class AcceptedDebtEvent(HashBoundModel):
+     contract_id: Literal["room16.canary_accepted_debt_event"] = "room16.canary_accepted_debt_event"
+-    schema_version: Literal[1] = 1
++    schema_version: Literal[2] = 2
+     authority_owner: Literal["research"] = "research"
+     debt_id: str = Field(pattern=ID_PATTERN)
+     event_id: str = Field(pattern=ID_PATTERN)
+@@ -361,7 +502,21 @@ class AcceptedDebtEvent(HashBoundModel):
+     recorded_at_utc: str = Field(pattern=UTC_PATTERN)
+     event_sha256: str = Field(pattern=SHA256_PATTERN)
+     hash_field = "event_sha256"
+-    hash_domain = "room16.canary_accepted_debt_event@1"
++    hash_domain = "room16.canary_accepted_debt_event@2"
++
++
++class DebtLedgerHead(HashBoundModel):
++    contract_id: Literal["room16.canary_debt_ledger_head"] = "room16.canary_debt_ledger_head"
++    schema_version: Literal[1] = 1
++    authority_owner: Literal["research"] = "research"
++    generation: int = Field(ge=0)
++    event_count: int = Field(ge=0)
++    previous_head_sha256: str | None = Field(default=None, pattern=SHA256_PATTERN)
++    current_event_sha256: str | None = Field(default=None, pattern=SHA256_PATTERN)
++    ledger_content_sha256: str = Field(pattern=SHA256_PATTERN)
++    head_sha256: str = Field(pattern=SHA256_PATTERN)
++    hash_field = "head_sha256"
++    hash_domain = "room16.canary_debt_ledger_head@1"
+ 
+ 
+ class DebtMembership(HashBoundModel):
+@@ -398,18 +553,6 @@ class DebtResolution(HashBoundModel):
+     hash_domain = "room16.canary_debt_resolution@1"
+ 
+ 
+-class StaleEvent(RegistryEvent):
+-    event_type: Literal["stale"] = "stale"
+-
+-
+-class RecoveryEvent(RegistryEvent):
+-    event_type: Literal["recovered"] = "recovered"
+-
+-
+-class SupersessionEvent(RegistryEvent):
+-    event_type: Literal["superseded"] = "superseded"
+-
+-
+ class ArchiveReceipt(HashBoundModel):
+     contract_id: Literal["room16.canary_archive_receipt"] = "room16.canary_archive_receipt"
+     schema_version: Literal[1] = 1
+@@ -427,58 +570,131 @@ class ArchiveReceipt(HashBoundModel):
+ 
+ class RegistryTransaction(HashBoundModel):
+     contract_id: Literal["room16.canary_registry_transaction"] = "room16.canary_registry_transaction"
+-    schema_version: Literal[1] = 1
++    schema_version: Literal[2] = 2
+     authority_owner: Literal["research"] = "research"
+     transaction_id: str = Field(pattern=ID_PATTERN)
+     registry_generation: int = Field(ge=0)
+-    base_registry_sha256: str | None = Field(default=None, pattern=SHA256_PATTERN)
+-    candidate_registry_sha256: str = Field(pattern=SHA256_PATTERN)
+-    candidate_artifact_set_sha256: str = Field(pattern=SHA256_PATTERN)
++    base_head_sha256: str | None = Field(default=None, pattern=SHA256_PATTERN)
++    candidate_snapshot_sha256: str = Field(pattern=SHA256_PATTERN)
++    registry_event_set_sha256: str = Field(pattern=SHA256_PATTERN)
++    registry_ledger_head_sha256: str = Field(pattern=SHA256_PATTERN)
++    freeze_sha256: str = Field(pattern=SHA256_PATTERN)
+     comparison_result_sha256: str = Field(pattern=SHA256_PATTERN)
+-    approval_receipt_sha256: str = Field(pattern=SHA256_PATTERN)
++    independent_review_sha256: str = Field(pattern=SHA256_PATTERN)
++    operator_approval_sha256: str = Field(pattern=SHA256_PATTERN)
+     debt_ledger_head_sha256: str = Field(pattern=SHA256_PATTERN)
+     archive_receipt_sha256: str = Field(pattern=SHA256_PATTERN)
+-    transaction_state: Literal["prepared", "committed", "recovered"]
+-    commit_receipt_sha256: str = Field(pattern=SHA256_PATTERN)
+-    hash_field = "commit_receipt_sha256"
+-    hash_domain = "room16.canary_registry_transaction@1"
++    artifact_set_sha256: str = Field(pattern=SHA256_PATTERN)
++    consumed_nonces: tuple[str, ...]
++    operator_counter: int = Field(ge=1)
++    reviewer_counter: int = Field(ge=1)
++    transaction_sha256: str = Field(pattern=SHA256_PATTERN)
++    hash_field = "transaction_sha256"
++    hash_domain = "room16.canary_registry_transaction@2"
++
++    @model_validator(mode="after")
++    def nonces_are_unique_and_sorted(self):
++        if self.consumed_nonces != tuple(sorted(set(self.consumed_nonces))):
++            raise ValueError("consumed nonces must be unique and sorted")
++        return self
++
++
++class RegistryCommitReceipt(HashBoundModel):
++    contract_id: Literal["room16.canary_registry_commit_receipt"] = "room16.canary_registry_commit_receipt"
++    schema_version: Literal[1] = 1
++    authority_owner: Literal["research"] = "research"
++    transaction_sha256: str = Field(pattern=SHA256_PATTERN)
++    published_head_sha256: str = Field(pattern=SHA256_PATTERN)
++    commit_state: Literal["committed", "recovered"]
++    committed_at_utc: str = Field(pattern=UTC_PATTERN)
++    receipt_sha256: str = Field(pattern=SHA256_PATTERN)
++    hash_field = "receipt_sha256"
++    hash_domain = "room16.canary_registry_commit_receipt@1"
+ 
+ 
+ class MirrorReceipt(HashBoundModel):
+     contract_id: Literal["room16.canary_consumer_mirror_receipt"] = "room16.canary_consumer_mirror_receipt"
+-    schema_version: Literal[1] = 1
++    schema_version: Literal[2] = 2
+     authority_owner: Literal["product_consumer"] = "product_consumer"
++    research_authority_receipt_sha256: str = Field(pattern=SHA256_PATTERN)
+     research_snapshot_sha256: str = Field(pattern=SHA256_PATTERN)
+     mirrored_snapshot_sha256: str = Field(pattern=SHA256_PATTERN)
+     product_commit: str = Field(pattern=r"^[0-9a-f]{40}$")
+     receipt_state: Literal["valid", "consumer_mirror_invalid"]
+     receipt_sha256: str = Field(pattern=SHA256_PATTERN)
+     hash_field = "receipt_sha256"
+-    hash_domain = "room16.canary_consumer_mirror_receipt@1"
++    hash_domain = "room16.canary_consumer_mirror_receipt@2"
++
++
++class ResearchSnapshotAuthorityReceipt(HashBoundModel):
++    contract_id: Literal["room16.canary_research_snapshot_authority_receipt"] = "room16.canary_research_snapshot_authority_receipt"
++    schema_version: Literal[1] = 1
++    authority_owner: Literal["research"] = "research"
++    receipt_id: str = Field(pattern=ID_PATTERN)
++    research_key_id: str = Field(pattern=ID_PATTERN)
++    research_role: Literal["canary_registry_authority"] = "canary_registry_authority"
++    snapshot_sha256: str = Field(pattern=SHA256_PATTERN)
++    registry_head_sha256: str = Field(pattern=SHA256_PATTERN)
++    issued_at_utc: str = Field(pattern=UTC_PATTERN)
++    signature_algorithm: Literal["ed25519"] = "ed25519"
++    signature: str = Field(pattern=r"^[0-9a-f]{128}$")
++    receipt_sha256: str = Field(pattern=SHA256_PATTERN)
++    hash_field = "receipt_sha256"
++    hash_domain = "room16.canary.research_snapshot_authority_receipt@1"
++
++
++class EvidenceManifestEntry(StrictModel):
++    path: str = Field(min_length=1)
++    bytes: int = Field(ge=0)
++    sha256: str = Field(pattern=SHA256_PATTERN)
++
++
++class EvidenceManifest(HashBoundModel):
++    contract_id: Literal["room16.canary_evidence_manifest"] = "room16.canary_evidence_manifest"
++    schema_version: Literal[2] = 2
++    authority_owner: Literal["research"] = "research"
++    payload_rule: Literal["all members except MANIFEST.json"] = "all members except MANIFEST.json"
++    manifest_hash_preimage_rule: Literal["canonical JSON of this object without manifest_sha256"] = "canonical JSON of this object without manifest_sha256"
++    source_date_epoch: int = Field(ge=315532800)
++    files: tuple[EvidenceManifestEntry, ...]
++    manifest_sha256: str = Field(pattern=SHA256_PATTERN)
++    hash_field = "manifest_sha256"
++    hash_domain = "room16.canary_evidence_manifest@2"
++
++    @model_validator(mode="after")
++    def files_are_unique_and_sorted(self):
++        names = tuple(item.path for item in self.files)
++        if names != tuple(sorted(set(names))) or "MANIFEST.json" in names:
++            raise ValueError("manifest payload must be unique, sorted and self-excluding")
++        if any(name.startswith("/") or ".." in name.split("/") for name in names):
++            raise ValueError("unsafe manifest path")
++        return self
++
++
++class EvidencePackageIdentity(HashBoundModel):
++    contract_id: Literal["room16.canary_evidence_package_identity"] = "room16.canary_evidence_package_identity"
++    schema_version: Literal[1] = 1
++    authority_owner: Literal["research"] = "research"
++    package_filename: str = Field(pattern=r"^[A-Za-z0-9_.-]+\.zip$")
++    package_bytes: int = Field(gt=0)
++    package_sha256: str = Field(pattern=SHA256_PATTERN)
++    manifest_sha256: str = Field(pattern=SHA256_PATTERN)
++    detached_sha256_filename: str = Field(pattern=r"^[A-Za-z0-9_.-]+\.zip\.sha256$")
++    identity_sha256: str = Field(pattern=SHA256_PATTERN)
++    hash_field = "identity_sha256"
++    hash_domain = "room16.canary_evidence_package_identity@1"
+ 
+ 
+ CONTRACT_MODELS = (
+-    SourceContractLock,
+-    TechnicalBaseline,
+-    GovernanceEnvelope,
+-    CanaryFreezeRecord,
+-    CanaryRegistryEntry,
+-    RegistryEvent,
+-    RegistrySnapshot,
+-    RegistryHead,
+-    GenesisImportReceipt,
+-    ChangeClassification,
+-    ComparisonRequest,
+-    ComparisonResult,
+-    PromotionCandidate,
+-    IndependentReviewAttestation,
+-    OperatorApprovalReceipt,
+-    AcceptedDebtEvent,
+-    DebtMembership,
+-    DebtResolution,
+-    ArchiveReceipt,
+-    RegistryTransaction,
+-    MirrorReceipt,
++    SourceContractBinding, SourceContractLock, TechnicalBaseline, GovernanceEnvelope,
++    CanaryFreezeRecord, CanaryRegistryEntry, RegistryEvent, PromotionEvent,
++    RejectionEvent, StaleEvent, RecoveryEvent, SupersessionEvent, RegistryLedgerHead,
++    RegistrySnapshot, RegistryHead, GenesisImportReceipt, GenesisImportHead,
++    ChangeClassification, ComparisonRequest, ComparisonResult, PromotionCandidate,
++    IndependentReviewAttestation, OperatorApprovalReceipt, AcceptedDebtEvent,
++    DebtLedgerHead, DebtMembership, DebtResolution, ArchiveReceipt,
++    RegistryTransaction, RegistryCommitReceipt, MirrorReceipt,
++    ResearchSnapshotAuthorityReceipt, EvidenceManifest, EvidencePackageIdentity,
+ )
+ 
+ 

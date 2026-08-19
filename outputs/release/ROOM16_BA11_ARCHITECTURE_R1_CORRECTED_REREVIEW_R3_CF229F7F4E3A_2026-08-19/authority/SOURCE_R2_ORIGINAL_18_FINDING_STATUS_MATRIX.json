@@ -1,0 +1,163 @@
+{
+  "contract_id": "room16.ba11_r1.original_finding_status_matrix@2",
+  "counts": {
+    "CLOSED_VERIFIED": 2,
+    "NOT_CLOSED": 7,
+    "PARTIAL": 9,
+    "total": 18
+  },
+  "findings": [
+    {
+      "finding_id": "BA11-AR-001",
+      "reason": "Future-state fields removed, but separate event contracts and an acyclic Freeze/Snapshot identity are not complete.",
+      "rr2_findings": [
+        "BA11-RR2-P0-005",
+        "BA11-RR2-P0-006"
+      ],
+      "status": "PARTIAL"
+    },
+    {
+      "finding_id": "BA11-AR-002",
+      "reason": "Mirror mismatch no longer mutates Research, but Product can choose the alleged Research trust root itself.",
+      "rr2_findings": [
+        "BA11-RR2-P0-001"
+      ],
+      "status": "NOT_CLOSED"
+    },
+    {
+      "finding_id": "BA11-AR-003",
+      "reason": "Debt records are separated, but append-only persistence and rollback/truncation protection are missing.",
+      "rr2_findings": [
+        "BA11-RR2-P0-004"
+      ],
+      "status": "PARTIAL"
+    },
+    {
+      "finding_id": "BA11-AR-004",
+      "reason": "Catalog exists but lacks required record-specific contracts and complete hash/fixture semantics.",
+      "rr2_findings": [
+        "BA11-RR2-P0-005"
+      ],
+      "status": "NOT_CLOSED"
+    },
+    {
+      "finding_id": "BA11-AR-005",
+      "reason": "Operator verification is semantically incomplete and independent review has no verifier/trust enforcement.",
+      "rr2_findings": [
+        "BA11-RR2-P0-002"
+      ],
+      "status": "NOT_CLOSED"
+    },
+    {
+      "finding_id": "BA11-AR-006",
+      "reason": "Snapshot CAS exists, but no atomic multi-record governance transaction or unambiguous recovery.",
+      "rr2_findings": [
+        "BA11-RR2-P0-003",
+        "BA11-RR2-P0-006"
+      ],
+      "status": "NOT_CLOSED"
+    },
+    {
+      "finding_id": "BA11-AR-007",
+      "reason": "ZIP metadata is deterministic, but complete source/raw-output/package identity binding is not.",
+      "rr2_findings": [
+        "BA11-RR2-P1-005",
+        "BA11-RR2-P2-002"
+      ],
+      "status": "PARTIAL"
+    },
+    {
+      "finding_id": "BA11-AR-008",
+      "reason": "Technical and governance models are separated, but the composed Freeze/Snapshot graph is circular.",
+      "rr2_findings": [
+        "BA11-RR2-P0-006"
+      ],
+      "status": "PARTIAL"
+    },
+    {
+      "finding_id": "BA11-AR-009",
+      "reason": "Locks are named separately, but independent no-new-truth is not cross-validated and is forgeable.",
+      "rr2_findings": [
+        "BA11-RR2-P1-001"
+      ],
+      "status": "NOT_CLOSED"
+    },
+    {
+      "finding_id": "BA11-AR-010",
+      "reason": "A deterministic ID and basic SemVer checks exist; collision, normalization, change-class and persisted genesis rules do not.",
+      "rr2_findings": [
+        "BA11-RR2-P1-003"
+      ],
+      "status": "PARTIAL"
+    },
+    {
+      "finding_id": "BA11-AR-011",
+      "reason": "An event fold exists, but snapshots are not derived or verified from the ledger and state projection is inconsistent.",
+      "rr2_findings": [
+        "BA11-RR2-P0-004",
+        "BA11-RR2-P1-002"
+      ],
+      "status": "NOT_CLOSED"
+    },
+    {
+      "finding_id": "BA11-AR-012",
+      "reason": "Paths and a mirror helper exist; operational trust anchoring, receipt publication and retention remain incomplete.",
+      "rr2_findings": [
+        "BA11-RR2-P0-001",
+        "BA11-RR2-P1-002"
+      ],
+      "status": "PARTIAL"
+    },
+    {
+      "finding_id": "BA11-AR-013",
+      "reason": "The declared coverage exceeds the actually resolvable and executed adversarial test set.",
+      "rr2_findings": [
+        "BA11-RR2-P0-004",
+        "BA11-RR2-P0-007",
+        "BA11-RR2-P1-001",
+        "BA11-RR2-P1-004"
+      ],
+      "status": "NOT_CLOSED"
+    },
+    {
+      "finding_id": "BA11-AR-014",
+      "reason": "A command/stdout receipt is present, but full source tree, verifier and BA10 artifact inputs are not completely bound.",
+      "rr2_findings": [
+        "BA11-RR2-P0-007",
+        "BA11-RR2-P1-005"
+      ],
+      "status": "PARTIAL"
+    },
+    {
+      "finding_id": "BA11-AR-015",
+      "reason": "Freeze starts at schema_version=1 and explicitly declares first_contract_no_predecessor.",
+      "rr2_findings": [],
+      "status": "CLOSED_VERIFIED"
+    },
+    {
+      "finding_id": "BA11-AR-016",
+      "reason": "Source Contract Lock is mandatory in the baseline/compare contracts, but its inner hash values are not typed as SHA-256.",
+      "rr2_findings": [
+        "BA11-RR2-P2-001"
+      ],
+      "status": "PARTIAL"
+    },
+    {
+      "finding_id": "BA11-AR-017",
+      "reason": "release_candidate is absent and technical_release_regression is used.",
+      "rr2_findings": [],
+      "status": "CLOSED_VERIFIED"
+    },
+    {
+      "finding_id": "BA11-AR-018",
+      "reason": "Self-exclusion is implemented, but a complete EvidenceManifest/package identity contract is absent.",
+      "rr2_findings": [
+        "BA11-RR2-P0-005",
+        "BA11-RR2-P2-002"
+      ],
+      "status": "PARTIAL"
+    }
+  ],
+  "rule": "All 18 must be CLOSED_VERIFIED before the correction candidate may return to independent rereview.",
+  "source_result_sha256": "a714f870b28ff5bccc44083125495a24166224f5c6d32154bf93ad9ca889e4ed"
+}

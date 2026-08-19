@@ -1,0 +1,29 @@
+{
+  "ba11_implementation_ready": false,
+  "ba12_authorized": false,
+  "contract_id": "room16.ba11_r3.input_lock@1",
+  "product": {
+    "complete_input_manifest_sha256": "283a097bafd946bcad72fe6f84216a41ce32a68280078309a6aa0b7c6222cd16",
+    "full_worktree_status": "## bcr-report-lab-original-trading-flow...origin/bcr-report-lab-original-trading-flow",
+    "git_commit": "fafcdbd3586075b5f4d0b50b3b18c22fb7a2e9e2",
+    "git_tree": "c451d79437b0547ffc8753cb1f65da240be4830d",
+    "tracked_file_count": 1145,
+    "tracked_files_sha256": "230fab450ce3c99be6dd96f06ac40431779440d8eb031d0db57cca2c9f29e259"
+  },
+  "publication_authorized": false,
+  "ready_for_independent_rereview": true,
+  "release_authorized": false,
+  "research": {
+    "complete_input_manifest_sha256": "09087783974c490509215ec765dc00bafc5b038c92c022f35ab255a11270d25e",
+    "full_worktree_status": "## main...origin/main",
+    "git_commit": "e82f8e9eadcd351513b93b8e31325b63190bd68f",
+    "git_tree": "49595a5379e17515f3e987f4a6cb2ebb5b93bf14",
+    "tracked_file_count": 10454,
+    "tracked_files_sha256": "c42cca8287af8fc6c23e0b0f2b6621487535bf08485b74c213b04565d3b8c585"
+  },
+  "source_r1_sha256": "a714f870b28ff5bccc44083125495a24166224f5c6d32154bf93ad9ca889e4ed",
+  "source_r2_bytes": 145598,
+  "source_r2_filename": "ROOM16_BA11_R1_INDEPENDENT_REREVIEW_R2_CHANGES_REQUIRED_VEGA_CORRECTION_133E886D938B_2026-08-19.zip",
+  "source_r2_sha256": "133e886d938b95f02d88c6a8612698d0ec05245ede8fb5d3cc83e2122146ca36",
+  "source_r2_zip_entries": 24
+}

@@ -1,0 +1,22 @@
+[RESEARCH]
+checkout=/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops
+branch=main
+head=db744eda01f4de19095b33df34130fa0ce248a7e
+tree=406090c0b12994e5046d52225eebb3d722d33efd
+origin=https://github.com/BCRAdmin/deterministic-research-core.git
+upstream=origin/main
+head_vs_upstream_left_right=0	0
+status:
+## main...origin/main
+ M research_agent/canary_governance/contracts.py
+
+[PRODUCT]
+checkout=/Users/BjornRosinger/Documents/DreamFactory/Room16/company-dossier-lab
+branch=bcr-report-lab-original-trading-flow
+head=f674c06c69f0c0289dfcd2c11fb5030d06b6f1e0
+tree=7e6667618f9b1ff1e921513ec0270470c9490f36
+origin=https://github.com/BCRAdmin/company-dossier-lab.git
+upstream=origin/bcr-report-lab-original-trading-flow
+head_vs_upstream_left_right=0	0
+status:
+## bcr-report-lab-original-trading-flow...origin/bcr-report-lab-original-trading-flow

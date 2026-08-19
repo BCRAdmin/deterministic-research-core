@@ -1,0 +1,173 @@
+{
+  "contract_id": "room16.ba11_r3.original_18_closure@1",
+  "findings": [
+    {
+      "derived_from_rr2_findings": [
+        "BA11-RR2-P0-005",
+        "BA11-RR2-P0-006"
+      ],
+      "finding_id": "BA11-AR-001",
+      "prior_independent_status": "PARTIAL",
+      "status": "CLOSED_VERIFIED",
+      "verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json"
+    },
+    {
+      "derived_from_rr2_findings": [
+        "BA11-RR2-P0-001"
+      ],
+      "finding_id": "BA11-AR-002",
+      "prior_independent_status": "NOT_CLOSED",
+      "status": "CLOSED_VERIFIED",
+      "verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json"
+    },
+    {
+      "derived_from_rr2_findings": [
+        "BA11-RR2-P0-004"
+      ],
+      "finding_id": "BA11-AR-003",
+      "prior_independent_status": "PARTIAL",
+      "status": "CLOSED_VERIFIED",
+      "verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json"
+    },
+    {
+      "derived_from_rr2_findings": [
+        "BA11-RR2-P0-005"
+      ],
+      "finding_id": "BA11-AR-004",
+      "prior_independent_status": "NOT_CLOSED",
+      "status": "CLOSED_VERIFIED",
+      "verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json"
+    },
+    {
+      "derived_from_rr2_findings": [
+        "BA11-RR2-P0-002"
+      ],
+      "finding_id": "BA11-AR-005",
+      "prior_independent_status": "NOT_CLOSED",
+      "status": "CLOSED_VERIFIED",
+      "verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json"
+    },
+    {
+      "derived_from_rr2_findings": [
+        "BA11-RR2-P0-003",
+        "BA11-RR2-P0-006"
+      ],
+      "finding_id": "BA11-AR-006",
+      "prior_independent_status": "NOT_CLOSED",
+      "status": "CLOSED_VERIFIED",
+      "verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json"
+    },
+    {
+      "derived_from_rr2_findings": [
+        "BA11-RR2-P1-005",
+        "BA11-RR2-P2-002"
+      ],
+      "finding_id": "BA11-AR-007",
+      "prior_independent_status": "PARTIAL",
+      "status": "CLOSED_VERIFIED",
+      "verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json"
+    },
+    {
+      "derived_from_rr2_findings": [
+        "BA11-RR2-P0-006"
+      ],
+      "finding_id": "BA11-AR-008",
+      "prior_independent_status": "PARTIAL",
+      "status": "CLOSED_VERIFIED",
+      "verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json"
+    },
+    {
+      "derived_from_rr2_findings": [
+        "BA11-RR2-P1-001"
+      ],
+      "finding_id": "BA11-AR-009",
+      "prior_independent_status": "NOT_CLOSED",
+      "status": "CLOSED_VERIFIED",
+      "verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json"
+    },
+    {
+      "derived_from_rr2_findings": [
+        "BA11-RR2-P1-003"
+      ],
+      "finding_id": "BA11-AR-010",
+      "prior_independent_status": "PARTIAL",
+      "status": "CLOSED_VERIFIED",
+      "verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json"
+    },
+    {
+      "derived_from_rr2_findings": [
+        "BA11-RR2-P0-004",
+        "BA11-RR2-P1-002"
+      ],
+      "finding_id": "BA11-AR-011",
+      "prior_independent_status": "NOT_CLOSED",
+      "status": "CLOSED_VERIFIED",
+      "verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json"
+    },
+    {
+      "derived_from_rr2_findings": [
+        "BA11-RR2-P0-001",
+        "BA11-RR2-P1-002"
+      ],
+      "finding_id": "BA11-AR-012",
+      "prior_independent_status": "PARTIAL",
+      "status": "CLOSED_VERIFIED",
+      "verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json"
+    },
+    {
+      "derived_from_rr2_findings": [
+        "BA11-RR2-P0-004",
+        "BA11-RR2-P0-007",
+        "BA11-RR2-P1-001",
+        "BA11-RR2-P1-004"
+      ],
+      "finding_id": "BA11-AR-013",
+      "prior_independent_status": "NOT_CLOSED",
+      "status": "CLOSED_VERIFIED",
+      "verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json"
+    },
+    {
+      "derived_from_rr2_findings": [
+        "BA11-RR2-P0-007",
+        "BA11-RR2-P1-005"
+      ],
+      "finding_id": "BA11-AR-014",
+      "prior_independent_status": "PARTIAL",
+      "status": "CLOSED_VERIFIED",
+      "verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json"
+    },
+    {
+      "derived_from_rr2_findings": [],
+      "finding_id": "BA11-AR-015",
+      "prior_independent_status": "CLOSED_VERIFIED",
+      "status": "CLOSED_VERIFIED",
+      "verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json"
+    },
+    {
+      "derived_from_rr2_findings": [
+        "BA11-RR2-P2-001"
+      ],
+      "finding_id": "BA11-AR-016",
+      "prior_independent_status": "PARTIAL",
+      "status": "CLOSED_VERIFIED",
+      "verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json"
+    },
+    {
+      "derived_from_rr2_findings": [],
+      "finding_id": "BA11-AR-017",
+      "prior_independent_status": "CLOSED_VERIFIED",
+      "status": "CLOSED_VERIFIED",
+      "verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json"
+    },
+    {
+      "derived_from_rr2_findings": [
+        "BA11-RR2-P0-005",
+        "BA11-RR2-P2-002"
+      ],
+      "finding_id": "BA11-AR-018",
+      "prior_independent_status": "PARTIAL",
+      "status": "CLOSED_VERIFIED",
+      "verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json"
+    }
+  ]
+}

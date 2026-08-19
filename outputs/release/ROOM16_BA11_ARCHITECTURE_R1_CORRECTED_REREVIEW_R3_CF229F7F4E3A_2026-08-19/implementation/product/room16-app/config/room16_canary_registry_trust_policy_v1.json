@@ -1,0 +1,15 @@
+{
+  "contract_id": "room16.product.canary_registry_trust_policy",
+  "ed25519_public_key_hex": "41820666e25f80801336d82bc611f94cb8a3d84239351266f3a4916c9c1b2f3f",
+  "mirror_mode": "signed_research_receipt_hash_verified_read_only",
+  "owner": "research",
+  "policy_sha256": "24315fd9e7784322219ea0927df78738f37a3cf1fb7b482af0c6c04faab2c7f4",
+  "product_may_promote_research_truth": false,
+  "product_may_select_expected_hash": false,
+  "receipt_contract_id": "room16.canary_research_snapshot_authority_receipt",
+  "receipt_schema_version": 1,
+  "schema_version": 1,
+  "snapshot_contract_id": "room16.canary_registry_snapshot",
+  "snapshot_schema_version": 2,
+  "trusted_research_key_id": "research.canary.registry.primary"
+}

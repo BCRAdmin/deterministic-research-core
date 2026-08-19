@@ -1,0 +1,7 @@
+{
+  "contract_id": "room16.ba11_r3.transaction_fault_report@1",
+  "full_object_graph_bound": true,
+  "post_swap_recovery_idempotent": true,
+  "pre_swap_faults_leave_current_unchanged": true,
+  "prepared_receipt_before_single_head_swap": true
+}

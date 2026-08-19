@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authority_owner": {
+      "const": "research",
+      "default": "research",
+      "title": "Authority Owner",
+      "type": "string"
+    },
+    "contract_id": {
+      "const": "room16.canary_genesis_import_head",
+      "default": "room16.canary_genesis_import_head",
+      "title": "Contract Id",
+      "type": "string"
+    },
+    "head_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Head Sha256",
+      "type": "string"
+    },
+    "import_receipt_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Import Receipt Sha256",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "import_receipt_sha256",
+    "head_sha256"
+  ],
+  "title": "GenesisImportHead",
+  "type": "object",
+  "x-room16-canonicalization": "room16.canonical_json@1",
+  "x-room16-hash-algorithm": "sha256",
+  "x-room16-unknown-field-policy": "fail_closed"
+}

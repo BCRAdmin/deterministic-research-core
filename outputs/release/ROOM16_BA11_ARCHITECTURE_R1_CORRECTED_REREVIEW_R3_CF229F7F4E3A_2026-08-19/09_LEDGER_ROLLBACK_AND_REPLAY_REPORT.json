@@ -1,0 +1,7 @@
+{
+  "contract_id": "room16.ba11_r3.ledger_report@1",
+  "debt_expected_head_and_length": true,
+  "fork_truncation_reorder_reopen_blocked": true,
+  "genesis_import_head_persisted_once": true,
+  "registry_expected_head_and_length": true
+}

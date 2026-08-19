@@ -1,0 +1,329 @@
+{
+  "contract_id": "room16.ba11_r1.independent_rereview_findings@2",
+  "counts": {
+    "P0": 7,
+    "P1": 5,
+    "P2": 2,
+    "total": 14
+  },
+  "findings": [
+    {
+      "acceptance_tests": [
+        "forged_self_labeled_research_snapshot_is_blocked",
+        "caller_cannot_supply_expected_research_hash",
+        "trusted_research_receipt_hash_mismatch_is_blocked",
+        "exact_pinned_research_snapshot_mirror_passes"
+      ],
+      "evidence": [
+        "implementation/product/room16-app/server-modules/canary-registry-mirror.mjs:47-72",
+        "implementation/product/room16-app/scripts/test_canary_registry_mirror.mjs:15-39",
+        "Der positive Test erzeugt den angeblichen Research-Snapshot vollständig im Product-Test selbst."
+      ],
+      "id": "BA11-RR2-P0-001",
+      "maps_to": [
+        "BA11-AR-002",
+        "BA11-AR-012"
+      ],
+      "problem": "Der Product-Verifier erhält sowohl researchSnapshot als auch productMirror vom Aufrufer. Ein Product-Prozess kann daher ein beliebiges selbstgehashtes Objekt mit authority_owner=research als beide Argumente übergeben. Es gibt keinen gepinnten Research-Snapshot-Hash, keine signierte Research-Receipt und keine Trust-API-Bindung.",
+      "required_fix": "Product darf nur einen Mirror plus einen extern gepinnten Research-Authority-Anchor prüfen. Der erwartete Snapshot-Hash bzw. eine signierte Research-Receipt muss aus einer nicht vom Product wählbaren Trust-Quelle stammen. Zwei frei übergebene Objekte sind verboten.",
+      "severity": "P0",
+      "title": "Product-Mirror besitzt weiterhin einen caller-selectable Research-Trust-Root"
+    },
+    {
+      "acceptance_tests": [
+        "signed_reject_cannot_authorize_promotion",
+        "wrong_review_finding_set_is_blocked",
+        "wrong_previous_registry_head_is_blocked",
+        "wrong_subject_id_with_same_hash_is_blocked",
+        "reviewer_not_independent_is_blocked",
+        "review_attestation_replay_is_blocked",
+        "nonce_and_counter_consumption_is_atomic"
+      ],
+      "evidence": [
+        "implementation/research/research_agent/canary_governance/approval.py:35-64",
+        "implementation/research/research_agent/canary_governance/contracts.py:291-341",
+        "Independent reproduction: REJECT_RECEIPT_VERIFIES_AS_APPROVAL=CONFIRMED",
+        "Independent reproduction: REVIEW_AND_HEAD_NOT_VERIFIED=CONFIRMED"
+      ],
+      "id": "BA11-RR2-P0-002",
+      "maps_to": [
+        "BA11-AR-005",
+        "BA11-AR-013"
+      ],
+      "problem": "verify_approval prüft weder decision noch subject_ids, review_finding_set_sha256 oder previous_registry_head_sha256 gegen erwartete Werte. Eine korrekt signierte reject-Receipt wird als gültige Approval-Receipt akzeptiert. Für IndependentReviewAttestation existiert nur ein Schema, aber kein Signatur-/Trust-/Replay-Verifier und keine Reviewer-Unabhängigkeitsprüfung.",
+      "required_fix": "Separate, fail-closed Verifier für OperatorApprovalReceipt und IndependentReviewAttestation. Jeder Verifier muss expected decision, scope, subject IDs und Hashes, Finding-Set-Hash, vorherigen Registry Head, Rollen-/Key-Policy, Nonce, Counter, Expiry und Revocation prüfen. Nonce/Counter-Verbrauch muss atomar mit der Registry-Transaktion persistiert werden. Reviewer-Key muss von Research- und Operator-Key getrennt sein.",
+      "severity": "P0",
+      "title": "Approval- und Independent-Review-Authentizität ist nicht end-to-end erzwungen"
+    },
+    {
+      "acceptance_tests": [
+        "transaction_binds_comparison_approval_debt_archive_freeze_and_snapshot",
+        "crash_before_each_stage_leaves_no_current_change",
+        "crash_after_pointer_swap_recovers_idempotently",
+        "stale_writer_is_blocked",
+        "partial_object_write_is_recovered_or_blocked",
+        "commit_receipt_matches_published_head"
+      ],
+      "evidence": [
+        "implementation/research/research_agent/canary_governance/storage.py:58-97",
+        "implementation/research/research_agent/canary_governance/contracts.py:428-444",
+        "RegistryTransaction wird außerhalb von Schema/Katalog nicht verwendet.",
+        "Independent reproduction: AMBIGUOUS_COMMIT_AFTER_SWAP=CONFIRMED",
+        "Independent reproduction: TRANSACTION_APPROVAL_ARCHIVE_NOT_BOUND_TO_COMMIT=CONFIRMED"
+      ],
+      "id": "BA11-RR2-P0-003",
+      "maps_to": [
+        "BA11-AR-006"
+      ],
+      "problem": "commit_snapshot bindet nur RegistrySnapshot und expected_head_sha256. RegistryTransaction, ComparisonResult, Approval, Debt-Head, Archive-Receipt, Freeze und Events werden nicht gemeinsam validiert oder committed. Ein Fehler nach dem Pointer-Swap wirft einen Fehler, obwohl Current State bereits geändert wurde; ein Recovery-/Commit-Receipt fehlt.",
+      "required_fix": "Einen echten Transaction-Orchestrator implementieren: immutable staging, vollständige Objektgraph- und Approval-Prüfung, prepared receipt, file+directory fsync, CAS, genau ein atomarer Head-Swap, read-back, idempotente Recovery und eindeutige committed/aborted receipts. Kein einzelner Snapshot-Commit darf Promotion darstellen.",
+      "severity": "P0",
+      "title": "RegistryTransaction ist ein unbenutzter Schema-Record; der atomare Governance-Commit fehlt"
+    },
+    {
+      "acceptance_tests": [
+        "valid_prefix_registry_rollback_is_blocked",
+        "valid_prefix_debt_rollback_is_blocked",
+        "event_delete_and_reorder_are_blocked",
+        "ledger_branch_and_merge_are_blocked",
+        "debt_closed_cannot_reopen",
+        "accepted_debt_without_authentic_approval_is_blocked"
+      ],
+      "evidence": [
+        "implementation/research/research_agent/canary_governance/ledger.py:54-116",
+        "implementation/research/research_agent/canary_governance/storage.py:21-28",
+        "Independent reproduction: VALID_PREFIX_REGISTRY_ROLLBACK_ACCEPTED=CONFIRMED",
+        "Independent reproduction: VALID_PREFIX_DEBT_ROLLBACK_ACCEPTED=CONFIRMED"
+      ],
+      "id": "BA11-RR2-P0-004",
+      "maps_to": [
+        "BA11-AR-003",
+        "BA11-AR-011",
+        "BA11-AR-013"
+      ],
+      "problem": "Die In-Memory-Folds akzeptieren jeden intern gültigen Präfix als vollständigen Ledger. Es gibt keine verpflichtende erwartete Head-/Length-Bindung und keine persistente append-only Write-API. Die in storage.py angelegten events-/receipts-Pfade werden nicht verwendet. Debt state_after ist nicht an event_type gebunden und accepted verlangt nicht zwingend eine Approval-Receipt.",
+      "required_fix": "Persistente append-only Ledgers mit content-addressed Events, expected head, event count/sequence, CAS-publiziertem Ledger Head und Truncation-/Rollback-Erkennung. Debt-Transitionen müssen event_type, state_before/state_after und Approval-Pflicht deterministisch validieren.",
+      "severity": "P0",
+      "title": "Append-only Registry- und Debt-Ledger besitzen keinen Rollback-/Truncation-Schutz"
+    },
+    {
+      "acceptance_tests": [
+        "required_record_contract_set_is_exact_and_complete",
+        "every_hash_claim_has_declared_hash_field_and_domain",
+        "registry_entry_tamper_is_blocked",
+        "event_specific_required_fields_are_enforced",
+        "catalog_fixture_references_resolve"
+      ],
+      "evidence": [
+        "implementation/research/research_agent/canary_governance/contracts.py:131-176",
+        "implementation/research/research_agent/canary_governance/contracts.py:401-481",
+        "implementation/research/schemas/contract_catalog_v1.json",
+        "implementation/research/research_agent/tests/test_canary_governance.py:424-448"
+      ],
+      "id": "BA11-RR2-P0-005",
+      "maps_to": [
+        "BA11-AR-004",
+        "BA11-AR-018"
+      ],
+      "problem": "Promotion, Rejection, Stale, Recovery und Supersession werden nur als event_type eines generischen RegistryEvent abgebildet, obwohl der R1-Review eindeutige Contract-IDs und Schemas je Record verlangt. CanaryRegistryEntry ist nicht hashgebunden, während der Katalog pauschal sha256 behauptet. Der Katalog enthält keine exakte Hash-Domain/-Formel, Hash-Exclusions, Required-Field-Liste, Fixture-Refs oder per-Contract Fail-Closed-Regeln. Ein EvidenceManifest-Contract fehlt.",
+      "required_fix": "Vollständiger Katalog mit eindeutigen, versionierten Records/Schemas für PromotionEvent, RejectionEvent, StaleEvent, RecoveryEvent, SupersessionEvent und EvidenceManifest. Jeder Record bindet authority owner, canonicalization, hash domain/formula/exclusions, unknown-field policy, diagnostics und positive/negative fixtures. RegistryEntry erhält eine eigene unveränderliche Identität.",
+      "severity": "P0",
+      "title": "Der Contract Catalog erfüllt den verlangten Record-by-Record-Maschinenvertrag nicht"
+    },
+    {
+      "acceptance_tests": [
+        "identity_dependency_graph_is_acyclic",
+        "real_end_to_end_promotion_object_graph_builds_without_placeholder_hashes",
+        "every_reference_hash_resolves_to_exact_member"
+      ],
+      "evidence": [
+        "implementation/research/research_agent/canary_governance/contracts.py:115-144",
+        "implementation/research/research_agent/canary_governance/contracts.py:166-176",
+        "Independent reproduction: FREEZE_SNAPSHOT_HASH_CYCLE=CONFIRMED"
+      ],
+      "id": "BA11-RR2-P0-006",
+      "maps_to": [
+        "BA11-AR-001",
+        "BA11-AR-006",
+        "BA11-AR-008"
+      ],
+      "problem": "CanaryFreezeRecord verlangt registry_snapshot_sha256. Gleichzeitig enthält jeder RegistrySnapshot CanaryRegistryEntry-Records mit freeze_sha256. Damit muss der Freeze-Hash den Snapshot-Hash kennen, während der Snapshot-Hash bereits den Freeze-Hash kennen muss. Die Tests verwenden Platzhalterhashes und bauen keinen konsistenten End-to-End-Objektgraphen.",
+      "required_fix": "Den Identitätsgraphen azyklisch definieren. Empfohlen: TechnicalBaseline -> GovernanceEnvelope -> FreezeCore (ohne aktuellen Snapshot-Hash) -> RegistryEvent/Entry -> RegistrySnapshot -> RegistryTransaction/CommitReceipt, das Freeze und Snapshot gemeinsam bindet. Eine alternative Lösung muss einen maschinenprüfbaren azyklischen Graphen liefern.",
+      "severity": "P0",
+      "title": "Freeze- und Registry-Snapshot-Identitäten bilden einen direkten Hash-Zyklus"
+    },
+    {
+      "acceptance_tests": [
+        "nonexistent_finding_test_id_fails_bundle",
+        "generic_same_changed_files_for_all_findings_fails_bundle",
+        "missing_actual_implementation_file_fails_finding_closure",
+        "failed_adversarial_test_prevents_closed_verified",
+        "builder_cannot_write_final_verdict_without_verifier_receipt"
+      ],
+      "evidence": [
+        "implementation/research/scripts/ops/build_ba11_r1_corrected_evidence.py:344-399",
+        "03_FINDING_CLOSURE_REGISTER.json",
+        "04_CONTRACT_DELTAS.json",
+        "05_TEST_MATRIX_EXECUTED.json",
+        "independent_evidence/06_MAPPING_AND_EVIDENCE_AUDIT.json"
+      ],
+      "id": "BA11-RR2-P0-007",
+      "maps_to": [
+        "BA11-AR-013",
+        "BA11-AR-014"
+      ],
+      "problem": "Der Builder setzt closure_status=closed_verified, all_findings_closed_verified=True und full_regression_pass=True nach bloßen Exit-Code-Prüfungen. Alle 18 Findings erhalten dieselbe Changed-File-Liste; relevante Dateien wie approval.py, storage.py, ledger.py und archive.py fehlen in den jeweiligen Zuordnungen. Mehrere Finding-Test-IDs existieren weder als Test noch als Command. Alle Contract-Deltas verwenden affected_authority=research und identische Sammellisten.",
+      "required_fix": "Builder und unabhängigen Verifier trennen. Closure wird ausschließlich durch einen fail-closed Verifier aus auflösbaren Finding-IDs, präzisen Changed-File-Hashes, real existierenden Test-IDs, ausgeführten Resultaten und finding-spezifischer Evidence abgeleitet. Keine hardcodierten PASS-/closed_verified-Werte.",
+      "severity": "P0",
+      "title": "Das Evidence-Build self-certifiziert 18/18 Closure statt sie unabhängig abzuleiten"
+    },
+    {
+      "acceptance_tests": [
+        "ordinary_result_with_any_semantic_diff_is_blocked",
+        "classification_counter_mismatch_with_comparison_is_blocked",
+        "comparison_request_and_result_hash_chain_is_verified"
+      ],
+      "evidence": [
+        "implementation/research/research_agent/canary_governance/contracts.py:219-274",
+        "Independent reproduction: FORGED_NO_NEW_TRUTH_ACCEPTED=CONFIRMED"
+      ],
+      "id": "BA11-RR2-P1-001",
+      "maps_to": [
+        "BA11-AR-009",
+        "BA11-AR-013"
+      ],
+      "problem": "ComparisonResult erlaubt ordinary_change trotz Fact-/Claim-/Decision-Diffs. ChangeClassification vertraut eigenen new_truth_count/lineage_diff_count und bindet nur einen Hash, ohne den referenzierten ComparisonResult zu laden und die Counts zu vergleichen.",
+      "required_fix": "ComparisonResult muss verdict/count-Konsistenz erzwingen. ChangeClassification wird aus dem validierten ComparisonResult abgeleitet oder verifiziert dessen exakte Counts/Request-/Source-Locks. Ordinary ist nur bei 0 Fact, Claim, Decision und Lineage Diffs erlaubt.",
+      "severity": "P1",
+      "title": "Independent no-new-truth kann durch widersprüchliche Counter gefälscht werden"
+    },
+    {
+      "acceptance_tests": [
+        "arbitrary_snapshot_entry_not_derived_from_ledger_is_blocked",
+        "ledger_head_mismatch_is_blocked",
+        "all_fold_states_have_normative_snapshot_projection",
+        "same_ledger_produces_byteidentical_snapshot"
+      ],
+      "evidence": [
+        "implementation/research/research_agent/canary_governance/contracts.py:131-183",
+        "implementation/research/research_agent/canary_governance/ledger.py:69-93"
+      ],
+      "id": "BA11-RR2-P1-002",
+      "maps_to": [
+        "BA11-AR-011"
+      ],
+      "problem": "RegistrySnapshot kann mit beliebigen Entries und beliebigem ledger_head_sha256 erzeugt werden. Es existiert kein Builder/Verifier, der Events faltet, Entries erzeugt und deren States/Hashes mit dem Ledger bindet. fold_registry_events liefert zudem genesis/review_accepted/operator_approved/recovered, die CanaryRegistryEntry.derived_state nicht darstellen kann.",
+      "required_fix": "Normativen ledger_to_snapshot-Fold implementieren. Arbiträre Entries sind verboten; Snapshot-Erzeugung bindet exact ledger head, event count, State-Priority/Transitionen und Entry-Hashes. Intermediate States werden ausdrücklich modelliert oder deterministisch projiziert.",
+      "severity": "P1",
+      "title": "RegistrySnapshot ist nicht nachweisbar aus dem Event Ledger abgeleitet"
+    },
+    {
+      "acceptance_tests": [
+        "canary_id_collision_is_detected_and_blocked",
+        "subject_normalization_is_cross_language_deterministic",
+        "ordinary_change_cannot_increment_major",
+        "second_genesis_import_is_blocked_by_persisted_state",
+        "rollback_skip_and_downgrade_are_blocked"
+      ],
+      "evidence": [
+        "implementation/research/research_agent/canary_governance/ledger.py:31-51",
+        "implementation/research/research_agent/canary_governance/contracts.py:199-216"
+      ],
+      "id": "BA11-RR2-P1-003",
+      "maps_to": [
+        "BA11-AR-010",
+        "BA11-AR-013"
+      ],
+      "problem": "derive_canary_id dokumentiert keine Subject-Normalisierung oder Kollisionsbehandlung. Die 96-bit Kurzidentität besitzt keinen Registry-Collision-Gate. SemVer-Transitions sind nicht an ChangeClass gebunden. GenesisImportReceipt verbietet nur ein Boolean-Feld, verhindert aber keinen zweiten realen Import.",
+      "required_fix": "Normative ID-Preimage/Normalization, Collision Detection und Import-Receipt-Bindung. SemVer-Delta wird aus ChangeClass/Compatibility abgeleitet. Genesis-Store führt einen einmaligen, CAS-gebundenen Import-Head.",
+      "severity": "P1",
+      "title": "Canary-ID-, SemVer- und Genesis-Regeln bleiben unvollständig"
+    },
+    {
+      "acceptance_tests": [
+        "every_required_R1_attack_case_has_resolvable_executed_test_id",
+        "every_negative_test_asserts_exact_diagnostic",
+        "no_coverage_label_without_command_result"
+      ],
+      "evidence": [
+        "07_NEGATIVE_FIXTURE_REPORT.json",
+        "05_TEST_MATRIX_EXECUTED.json",
+        "implementation/research/research_agent/tests/test_canary_governance.py",
+        "Unresolved test identifiers: 6"
+      ],
+      "id": "BA11-RR2-P1-004",
+      "maps_to": [
+        "BA11-AR-013"
+      ],
+      "problem": "07_NEGATIVE_FIXTURE_REPORT listet Coverage-Namen, die nicht auf einzelne ausgeführte Tests/Commands zurückgeführt werden. Es fehlen u.a. echter valid-prefix rollback, Independent-Review-Replay, Reviewer-not-independent, hash-algorithm downgrade, stale-clear forgery, branch approval/merge prohibition, crash-after-swap recovery und vollständige partial-write fault injection.",
+      "required_fix": "Alle R1-Pflichttests als einzeln benannte, ausgeführte Tests mit stabilen Diagnostics, Command Receipt, Input-/Output-Hashes und Finding-Mapping materialisieren. Coverage-Strings ohne Testresultat sind verboten.",
+      "severity": "P1",
+      "title": "Die verlangte Adversarial-/Race-Testmatrix ist nicht vollständig ausgeführt"
+    },
+    {
+      "acceptance_tests": [
+        "full_tree_hash_change_invalidates_receipt",
+        "dirty_unrelated_test_file_invalidates_full_regression_receipt",
+        "ba10_verifier_script_or_artifact_change_invalidates_receipt",
+        "raw_and_normalized_output_hashes_are_both_present",
+        "same_tree_in_different_checkout_path_yields_same_semantic_receipt"
+      ],
+      "evidence": [
+        "implementation/research/scripts/ops/build_ba11_r1_corrected_evidence.py:152-188",
+        "implementation/research/scripts/ops/build_ba11_r1_corrected_evidence.py:309-323",
+        "implementation/research/scripts/ops/build_ba11_r1_corrected_evidence.py:364-375",
+        "05_TEST_MATRIX_EXECUTED.json",
+        "06_FULL_REGRESSION_REPORT.json"
+      ],
+      "id": "BA11-RR2-P1-005",
+      "maps_to": [
+        "BA11-AR-007",
+        "BA11-AR-014"
+      ],
+      "problem": "Die Input-Hashes der Full-Regressions umfassen nur die BA11-Changed-Files, nicht den vollständigen Repository Tree, alle Tests, Verifier-Skripte oder BA10-Artefakte. git status wird nur für ausgewählte Pfade erfasst. Product-Full speichert einen normalisierten Marker-Receipt statt Raw stdout/stderr plus Raw-Hash. Absolute lokale Pfade fließen in Evidence ein.",
+      "required_fix": "Receipts binden vollständige git commit+tree IDs, gesamtes Worktree-Status, Dependency/Runtime-Versionen, Verifier-Skript und alle fachlichen Input-Artefakte. Raw stdout/stderr und deren Hash bleiben erhalten; normalisierte Ansichten sind zusätzliche Derivate. Pfade werden relativ/canonical dargestellt.",
+      "severity": "P1",
+      "title": "BA10- und Full-Regression-Receipts sind nicht vollständig an Source Tree und Rohoutput gebunden"
+    },
+    {
+      "acceptance_tests": [
+        "non_sha256_source_contract_value_is_blocked",
+        "id_hash_pair_reordering_or_duplicate_is_blocked"
+      ],
+      "evidence": [
+        "implementation/research/research_agent/canary_governance/contracts.py:59-75"
+      ],
+      "id": "BA11-RR2-P2-001",
+      "maps_to": [
+        "BA11-AR-016"
+      ],
+      "problem": "source_contract_sha256s ist tuple[str, ...] ohne 64-hex-Validierung. Der äußere Lock-Hash kann daher formal gültig sein, obwohl seine angeblichen Source-Hashes keine Hashes sind.",
+      "required_fix": "Ein typed SourceContractBinding-Record mit source_contract_id + source_contract_sha256, strikter 64-hex-Validierung, Sortierung nach ID und eindeutiger Bijection.",
+      "severity": "P2",
+      "title": "SourceContractLock validiert die gebundenen Einzelhashes nicht als SHA-256"
+    },
+    {
+      "acceptance_tests": [
+        "manifest_self_hash_preimage_is_machine_verifiable",
+        "detached_package_hash_matches_delivered_zip",
+        "unmanifested_or_reordered_payload_change_is_detected"
+      ],
+      "evidence": [
+        "implementation/research/research_agent/canary_governance/archive.py:23-50",
+        "implementation/research/schemas/contract_catalog_v1.json",
+        "implementation/research/scripts/ops/build_ba11_r1_corrected_evidence.py:445-461"
+      ],
+      "id": "BA11-RR2-P2-002",
+      "maps_to": [
+        "BA11-AR-018",
+        "BA11-AR-007"
+      ],
+      "problem": "Payload rule und manifest_sha256 existieren, aber es gibt kein EvidenceManifest-Schema im Catalog, keine explizite manifest_sha256-Preimage-Regel im Record und keinen im Rereview-Paket mitgelieferten detached Package-Hash/Package-Identity-Contract. Der Builder schreibt nur einen externen Sidecar.",
+      "required_fix": "Versionierter EvidenceManifest-Contract mit exakter Self-Hash-Preimage-Regel und Payload-Scope. Das Auslieferungsset enthält ZIP plus detached .sha256; die Rereview-Request bindet beide. Package-Identity und Manifest-Identity werden getrennt und normativ dokumentiert.",
+      "severity": "P2",
+      "title": "Manifest-Selbstschutz und Package-Hash sind nicht als vollständiger Bundle-Contract materialisiert"
+    }
+  ],
+  "source_result_sha256": "a714f870b28ff5bccc44083125495a24166224f5c6d32154bf93ad9ca889e4ed",
+  "verdict": "CHANGES_REQUIRED"
+}
