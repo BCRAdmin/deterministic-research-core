@@ -1,6 +1,6 @@
 {
   "authority_owner": "research",
-  "catalog_sha256": "90b9a57bedea3920c81944ec263cefce10a62d127f424ac09981cdbba52d8884",
+  "catalog_sha256": "ced4e750da9ebc7b4c9b63ccf54c93387f22573b5b88066aed5a43351beb9d34",
   "contract_id": "room16.canary_contract_catalog",
   "contracts": [
     {
@@ -209,6 +209,7 @@
     "BA11_HASH_MISMATCH": "A declared content hash differs from canonical bytes.",
     "BA11_REGISTRY_CAS_CONFLICT": "Registry head changed since candidate preparation.",
     "BA11_REGISTRY_GENERATION_INVALID": "Registry generation is not monotonic by one.",
+    "BA11_REGISTRY_PREDECESSOR_INVALID": "Registry snapshot does not extend the current snapshot.",
     "BA11_SCHEMA_INVALID": "A governance payload violates its strict schema.",
     "BA11_SOURCE_CONTRACT_DRIFT": "Required source-contract lock differs.",
     "BA11_VERSION_TRANSITION_INVALID": "Baseline SemVer transition is invalid."

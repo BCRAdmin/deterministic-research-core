@@ -22,6 +22,8 @@ from research_agent.compiler_foundation.canonical import sha256_bytes, sha256_js
 ROOT = Path(__file__).resolve().parents[2]
 EXPECTED_REVIEW_SHA = "e828b1bf30f60c9af86971a8e69434fc69876831610c5b21316e67edeac46639"
 EXPECTED_EXECUTION_CONTRACT_SHA = "4f7b43a32006b5a39d1726b05c6e77a7a599ee607fba87fd6fc9c3e773947424"
+RESEARCH_BASE_COMMIT = "42e3375d04c21c07a11c03a5c60bbc0a232ac2c4"
+PRODUCT_BASE_COMMIT = "de0dfbde1d7e14d081b8da27933f7164c88d0d12"
 REVIEW_MEMBER = "ROOM16_BA11_ARCHITECTURE_REVIEW_R1_REQUIRED_2026-08-19/01_FINDINGS.json"
 SOURCE_DATE_EPOCH = 1787097600
 
@@ -348,14 +350,10 @@ def main() -> int:
         "ba11_implementation_ready": False,
         "next_gate": "corrected_ba11_architecture_r1_and_independent_rereview",
     }
-    research_diff = git(ROOT, "diff", "--stat", "--", *RESEARCH_CHANGED)
-    product_diff = git(args.product_repo, "diff", "--stat", "--", *PRODUCT_CHANGED)
-    if not research_diff:
-        research_diff = git(ROOT, "show", "--stat", "--oneline", "--format=fuller", "HEAD")
-    if not product_diff:
-        product_diff = git(
-            args.product_repo, "show", "--stat", "--oneline", "--format=fuller", "HEAD"
-        )
+    research_diff = git(ROOT, "diff", "--stat", f"{RESEARCH_BASE_COMMIT}..HEAD")
+    product_diff = git(
+        args.product_repo, "diff", "--stat", f"{PRODUCT_BASE_COMMIT}..HEAD"
+    )
     members: dict[str, bytes] = {
         "00_CORRECTION_VERDICT.md": (
             "# BA11 R1 Correction Verdict\n\n"
