@@ -98,6 +98,7 @@ def normalized_output(value: str) -> str:
     value = re.sub(r"\bduration_ms:\s*\d+(?:\.\d+)?", "duration_ms: <DURATION>", value)
     value = re.sub(r"\bduration_ms\s+\d+(?:\.\d+)?", "duration_ms <DURATION>", value)
     value = re.sub(r'"elapsedMs":\s*\d+(?:\.\d+)?', '"elapsedMs": "<DURATION>"', value)
+    value = re.sub(r'"ageMinutes":\s*\d+', '"ageMinutes": "<DURATION>"', value)
     value = re.sub(r"\b\d+(?:\.\d+)?ms\b", "<DURATION>", value)
     return value
 
