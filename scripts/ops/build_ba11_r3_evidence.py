@@ -155,6 +155,8 @@ def git(repo: Path, *args: str) -> str:
 
 def normalized_output(value: str) -> str:
     value = value.replace("\r\n", "\n")
+    value = value.replace(str(ROOT), "<RESEARCH_ROOT>")
+    value = value.replace(str(ROOT.parent / "company-dossier-lab"), "<PRODUCT_ROOT>")
     value = re.sub(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z", "<TIMESTAMP>", value)
     value = re.sub(r"(?<=in )\d+(?:\.\d+)?s\b", "<DURATION>", value)
     value = re.sub(r"\b\d+(?:\.\d+)?ms\b", "<DURATION>", value)
@@ -222,9 +224,6 @@ def run_receipt(
     finished = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
     raw_stdout = process.stdout
     raw_stderr = process.stderr
-    for local_root in (str(ROOT), str(cwd)):
-        if local_root in raw_stdout or local_root in raw_stderr:
-            raise RuntimeError(f"absolute local path leaked into raw output: {receipt_id}")
     return {
         "receipt_id": receipt_id,
         "relative_command": command,
@@ -531,7 +530,9 @@ def main() -> int:
                     "research": research_binding,
                     "product": product_binding,
                     "raw_and_normalized_output_hashes_present": True,
-                    "absolute_checkout_paths_excluded": True,
+                    "receipt_metadata_uses_relative_paths": True,
+                    "raw_output_preserved_may_contain_tool_emitted_paths": True,
+                    "normalized_output_canonicalizes_checkout_roots": True,
                 }
             ),
         )
