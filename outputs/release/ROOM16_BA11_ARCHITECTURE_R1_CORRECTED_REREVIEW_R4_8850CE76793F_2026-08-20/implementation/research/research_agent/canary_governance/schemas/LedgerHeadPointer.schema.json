@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authority_owner": {
+      "const": "research",
+      "default": "research",
+      "title": "Authority Owner",
+      "type": "string"
+    },
+    "contract_id": {
+      "const": "room16.canary_ledger_head_pointer",
+      "default": "room16.canary_ledger_head_pointer",
+      "title": "Contract Id",
+      "type": "string"
+    },
+    "generation": {
+      "minimum": 0,
+      "title": "Generation",
+      "type": "integer"
+    },
+    "head_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Head Sha256",
+      "type": "string"
+    },
+    "ledger_kind": {
+      "enum": [
+        "registry",
+        "debt"
+      ],
+      "title": "Ledger Kind",
+      "type": "string"
+    },
+    "pointer_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Pointer Sha256",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "ledger_kind",
+    "head_sha256",
+    "generation",
+    "pointer_sha256"
+  ],
+  "title": "LedgerHeadPointer",
+  "type": "object",
+  "x-room16-canonicalization": "room16.canonical_json@1",
+  "x-room16-hash-algorithm": "sha256",
+  "x-room16-unknown-field-policy": "fail_closed"
+}

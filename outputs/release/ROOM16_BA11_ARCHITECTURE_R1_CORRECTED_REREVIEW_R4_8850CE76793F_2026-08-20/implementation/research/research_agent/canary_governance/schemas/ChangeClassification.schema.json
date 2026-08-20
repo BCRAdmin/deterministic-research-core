@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authority_owner": {
+      "const": "research",
+      "default": "research",
+      "title": "Authority Owner",
+      "type": "string"
+    },
+    "change_class": {
+      "enum": [
+        "ordinary",
+        "governance",
+        "breaking"
+      ],
+      "title": "Change Class",
+      "type": "string"
+    },
+    "claim_diff_count": {
+      "minimum": 0,
+      "title": "Claim Diff Count",
+      "type": "integer"
+    },
+    "classification_id": {
+      "pattern": "^[a-z][a-z0-9_.:-]*$",
+      "title": "Classification Id",
+      "type": "string"
+    },
+    "classification_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Classification Sha256",
+      "type": "string"
+    },
+    "comparison_request_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Comparison Request Sha256",
+      "type": "string"
+    },
+    "comparison_result_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Comparison Result Sha256",
+      "type": "string"
+    },
+    "contract_id": {
+      "const": "room16.canary_change_classification",
+      "default": "room16.canary_change_classification",
+      "title": "Contract Id",
+      "type": "string"
+    },
+    "decision_diff_count": {
+      "minimum": 0,
+      "title": "Decision Diff Count",
+      "type": "integer"
+    },
+    "fact_diff_count": {
+      "minimum": 0,
+      "title": "Fact Diff Count",
+      "type": "integer"
+    },
+    "lineage_diff_count": {
+      "minimum": 0,
+      "title": "Lineage Diff Count",
+      "type": "integer"
+    },
+    "presentation_contract_changed": {
+      "title": "Presentation Contract Changed",
+      "type": "boolean"
+    },
+    "renderer_artifact_changed": {
+      "title": "Renderer Artifact Changed",
+      "type": "boolean"
+    },
+    "schema_version": {
+      "const": 3,
+      "default": 3,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "semantic_lock_changed": {
+      "title": "Semantic Lock Changed",
+      "type": "boolean"
+    },
+    "source_contract_changed": {
+      "title": "Source Contract Changed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "classification_id",
+    "change_class",
+    "comparison_request_sha256",
+    "comparison_result_sha256",
+    "fact_diff_count",
+    "claim_diff_count",
+    "decision_diff_count",
+    "lineage_diff_count",
+    "semantic_lock_changed",
+    "presentation_contract_changed",
+    "renderer_artifact_changed",
+    "source_contract_changed",
+    "classification_sha256"
+  ],
+  "title": "ChangeClassification",
+  "type": "object",
+  "x-room16-canonicalization": "room16.canonical_json@1",
+  "x-room16-hash-algorithm": "sha256",
+  "x-room16-unknown-field-policy": "fail_closed"
+}

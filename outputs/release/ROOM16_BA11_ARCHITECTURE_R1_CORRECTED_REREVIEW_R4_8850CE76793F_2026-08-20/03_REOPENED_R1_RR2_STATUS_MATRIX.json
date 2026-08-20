@@ -1,0 +1,228 @@
+{
+  "contract_id": "room16.ba11_r4.reopened_status_matrix@1",
+  "original_r1": {
+    "reopened": 9,
+    "rows": [
+      {
+        "finding_id": "BA11-AR-001",
+        "r4_findings": [
+          "BA11-R3-RR-P0-002"
+        ],
+        "status": "REOPENED_BY_INDEPENDENT_R3_REREVIEW"
+      },
+      {
+        "finding_id": "BA11-AR-002",
+        "r4_findings": [],
+        "status": "R3_CLOSURE_RETAINED_PENDING_R4_REGRESSION"
+      },
+      {
+        "finding_id": "BA11-AR-003",
+        "r4_findings": [
+          "BA11-R3-RR-P0-001",
+          "BA11-R3-RR-P0-004",
+          "BA11-R3-RR-P0-005"
+        ],
+        "status": "REOPENED_BY_INDEPENDENT_R3_REREVIEW"
+      },
+      {
+        "finding_id": "BA11-AR-004",
+        "r4_findings": [],
+        "status": "R3_CLOSURE_RETAINED_PENDING_R4_REGRESSION"
+      },
+      {
+        "finding_id": "BA11-AR-005",
+        "r4_findings": [
+          "BA11-R3-RR-P0-002",
+          "BA11-R3-RR-P0-003",
+          "BA11-R3-RR-P1-003"
+        ],
+        "status": "REOPENED_BY_INDEPENDENT_R3_REREVIEW"
+      },
+      {
+        "finding_id": "BA11-AR-006",
+        "r4_findings": [
+          "BA11-R3-RR-P0-001",
+          "BA11-R3-RR-P0-002",
+          "BA11-R3-RR-P0-006"
+        ],
+        "status": "REOPENED_BY_INDEPENDENT_R3_REREVIEW"
+      },
+      {
+        "finding_id": "BA11-AR-007",
+        "r4_findings": [],
+        "status": "R3_CLOSURE_RETAINED_PENDING_R4_REGRESSION"
+      },
+      {
+        "finding_id": "BA11-AR-008",
+        "r4_findings": [],
+        "status": "R3_CLOSURE_RETAINED_PENDING_R4_REGRESSION"
+      },
+      {
+        "finding_id": "BA11-AR-009",
+        "r4_findings": [
+          "BA11-R3-RR-P1-001"
+        ],
+        "status": "REOPENED_BY_INDEPENDENT_R3_REREVIEW"
+      },
+      {
+        "finding_id": "BA11-AR-010",
+        "r4_findings": [
+          "BA11-R3-RR-P1-002"
+        ],
+        "status": "REOPENED_BY_INDEPENDENT_R3_REREVIEW"
+      },
+      {
+        "finding_id": "BA11-AR-011",
+        "r4_findings": [
+          "BA11-R3-RR-P0-001",
+          "BA11-R3-RR-P0-004",
+          "BA11-R3-RR-P0-005",
+          "BA11-R3-RR-P1-002"
+        ],
+        "status": "REOPENED_BY_INDEPENDENT_R3_REREVIEW"
+      },
+      {
+        "finding_id": "BA11-AR-012",
+        "r4_findings": [],
+        "status": "R3_CLOSURE_RETAINED_PENDING_R4_REGRESSION"
+      },
+      {
+        "finding_id": "BA11-AR-013",
+        "r4_findings": [
+          "BA11-R3-RR-P0-003",
+          "BA11-R3-RR-P0-005",
+          "BA11-R3-RR-P0-007"
+        ],
+        "status": "REOPENED_BY_INDEPENDENT_R3_REREVIEW"
+      },
+      {
+        "finding_id": "BA11-AR-014",
+        "r4_findings": [
+          "BA11-R3-RR-P0-007"
+        ],
+        "status": "REOPENED_BY_INDEPENDENT_R3_REREVIEW"
+      },
+      {
+        "finding_id": "BA11-AR-015",
+        "r4_findings": [],
+        "status": "R3_CLOSURE_RETAINED_PENDING_R4_REGRESSION"
+      },
+      {
+        "finding_id": "BA11-AR-016",
+        "r4_findings": [],
+        "status": "R3_CLOSURE_RETAINED_PENDING_R4_REGRESSION"
+      },
+      {
+        "finding_id": "BA11-AR-017",
+        "r4_findings": [],
+        "status": "R3_CLOSURE_RETAINED_PENDING_R4_REGRESSION"
+      },
+      {
+        "finding_id": "BA11-AR-018",
+        "r4_findings": [],
+        "status": "R3_CLOSURE_RETAINED_PENDING_R4_REGRESSION"
+      }
+    ],
+    "total": 18
+  },
+  "rr2": {
+    "reopened": 8,
+    "rows": [
+      {
+        "finding_id": "BA11-RR2-P0-001",
+        "r4_findings": [],
+        "status": "R3_CLOSURE_RETAINED_PENDING_R4_REGRESSION"
+      },
+      {
+        "finding_id": "BA11-RR2-P0-002",
+        "r4_findings": [
+          "BA11-R3-RR-P0-002",
+          "BA11-R3-RR-P0-003",
+          "BA11-R3-RR-P1-003"
+        ],
+        "status": "REOPENED_BY_INDEPENDENT_R3_REREVIEW"
+      },
+      {
+        "finding_id": "BA11-RR2-P0-003",
+        "r4_findings": [
+          "BA11-R3-RR-P0-001",
+          "BA11-R3-RR-P0-002",
+          "BA11-R3-RR-P0-006"
+        ],
+        "status": "REOPENED_BY_INDEPENDENT_R3_REREVIEW"
+      },
+      {
+        "finding_id": "BA11-RR2-P0-004",
+        "r4_findings": [
+          "BA11-R3-RR-P0-001",
+          "BA11-R3-RR-P0-004",
+          "BA11-R3-RR-P0-005"
+        ],
+        "status": "REOPENED_BY_INDEPENDENT_R3_REREVIEW"
+      },
+      {
+        "finding_id": "BA11-RR2-P0-005",
+        "r4_findings": [],
+        "status": "R3_CLOSURE_RETAINED_PENDING_R4_REGRESSION"
+      },
+      {
+        "finding_id": "BA11-RR2-P0-006",
+        "r4_findings": [],
+        "status": "R3_CLOSURE_RETAINED_PENDING_R4_REGRESSION"
+      },
+      {
+        "finding_id": "BA11-RR2-P0-007",
+        "r4_findings": [
+          "BA11-R3-RR-P0-007"
+        ],
+        "status": "REOPENED_BY_INDEPENDENT_R3_REREVIEW"
+      },
+      {
+        "finding_id": "BA11-RR2-P1-001",
+        "r4_findings": [
+          "BA11-R3-RR-P1-001"
+        ],
+        "status": "REOPENED_BY_INDEPENDENT_R3_REREVIEW"
+      },
+      {
+        "finding_id": "BA11-RR2-P1-002",
+        "r4_findings": [
+          "BA11-R3-RR-P0-001"
+        ],
+        "status": "REOPENED_BY_INDEPENDENT_R3_REREVIEW"
+      },
+      {
+        "finding_id": "BA11-RR2-P1-003",
+        "r4_findings": [
+          "BA11-R3-RR-P1-002"
+        ],
+        "status": "REOPENED_BY_INDEPENDENT_R3_REREVIEW"
+      },
+      {
+        "finding_id": "BA11-RR2-P1-004",
+        "r4_findings": [
+          "BA11-R3-RR-P0-005",
+          "BA11-R3-RR-P0-007"
+        ],
+        "status": "REOPENED_BY_INDEPENDENT_R3_REREVIEW"
+      },
+      {
+        "finding_id": "BA11-RR2-P1-005",
+        "r4_findings": [],
+        "status": "R3_CLOSURE_RETAINED_PENDING_R4_REGRESSION"
+      },
+      {
+        "finding_id": "BA11-RR2-P2-001",
+        "r4_findings": [],
+        "status": "R3_CLOSURE_RETAINED_PENDING_R4_REGRESSION"
+      },
+      {
+        "finding_id": "BA11-RR2-P2-002",
+        "r4_findings": [],
+        "status": "R3_CLOSURE_RETAINED_PENDING_R4_REGRESSION"
+      }
+    ],
+    "total": 14
+  },
+  "rule": "Reopened items require fresh verifier-derived closure; retained items require full regression."
+}

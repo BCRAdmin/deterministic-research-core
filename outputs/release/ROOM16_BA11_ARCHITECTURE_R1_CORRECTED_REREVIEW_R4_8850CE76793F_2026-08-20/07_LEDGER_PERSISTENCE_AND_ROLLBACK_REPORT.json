@@ -1,0 +1,6 @@
+{
+  "content_addressed_heads": true,
+  "finding": "BA11-R3-RR-P0-004",
+  "rollback_and_fork_fail_closed": true,
+  "status": "PASS"
+}

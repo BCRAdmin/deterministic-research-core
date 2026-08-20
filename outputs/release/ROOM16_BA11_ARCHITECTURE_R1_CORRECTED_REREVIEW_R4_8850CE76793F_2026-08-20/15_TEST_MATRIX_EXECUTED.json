@@ -1,0 +1,1081 @@
+{
+  "contract_id": "room16.ba11_r4.executed_test_matrix@1",
+  "row_count": 54,
+  "rows": [
+    {
+      "actual_diagnostic": "BA11_TRANSACTION_EVENT_AUTHORITY_MISSING",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BLOCK_NO_HEAD_CHANGE",
+      "expected_diagnostic": "BA11_TRANSACTION_EVENT_AUTHORITY_MISSING",
+      "finding_id": "BA11-R3-RR-P0-001",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0001_01_unpersisted_event_sets_block_without_head_change",
+      "status": "PASS",
+      "test_id": "T-R4-P0001-01"
+    },
+    {
+      "actual_diagnostic": "BA11_LEDGER_OBJECT_MISSING",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BLOCK_NO_HEAD_CHANGE",
+      "expected_diagnostic": "BA11_LEDGER_OBJECT_MISSING",
+      "finding_id": "BA11-R3-RR-P0-001",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0001_02_missing_persisted_event_object_blocks",
+      "status": "PASS",
+      "test_id": "T-R4-P0001-02"
+    },
+    {
+      "actual_diagnostic": null,
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BYTEIDENTICAL_PASS",
+      "expected_diagnostic": null,
+      "finding_id": "BA11-R3-RR-P0-001",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0001_03_published_state_reconstructs_byte_identically",
+      "status": "PASS",
+      "test_id": "T-R4-P0001-03"
+    },
+    {
+      "actual_diagnostic": null,
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "PASS",
+      "expected_diagnostic": null,
+      "finding_id": "BA11-R3-RR-P0-001",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0001_04_transaction_persists_exact_event_sets_and_heads",
+      "status": "PASS",
+      "test_id": "T-R4-P0001-04"
+    },
+    {
+      "actual_diagnostic": "BA11_AUTHORITY_GRAPH_MISMATCH",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_AUTHORITY_GRAPH_MISMATCH",
+      "finding_id": "BA11-R3-RR-P0-002",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0002_01_02_03_promotion_authority_hash_mismatch_blocks",
+      "status": "PASS",
+      "test_id": "T-R4-P0002-01"
+    },
+    {
+      "actual_diagnostic": "BA11_AUTHORITY_GRAPH_MISMATCH",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_AUTHORITY_GRAPH_MISMATCH",
+      "finding_id": "BA11-R3-RR-P0-002",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0002_01_02_03_promotion_authority_hash_mismatch_blocks",
+      "status": "PASS",
+      "test_id": "T-R4-P0002-02"
+    },
+    {
+      "actual_diagnostic": "BA11_AUTHORITY_GRAPH_MISMATCH",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_AUTHORITY_GRAPH_MISMATCH",
+      "finding_id": "BA11-R3-RR-P0-002",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0002_01_02_03_promotion_authority_hash_mismatch_blocks",
+      "status": "PASS",
+      "test_id": "T-R4-P0002-03"
+    },
+    {
+      "actual_diagnostic": "BA11_AUTHORITY_GRAPH_MISMATCH",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_AUTHORITY_GRAPH_MISMATCH",
+      "finding_id": "BA11-R3-RR-P0-002",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0002_04_comparison_candidate_snapshot_edge_mismatch_blocks",
+      "status": "PASS",
+      "test_id": "T-R4-P0002-04"
+    },
+    {
+      "actual_diagnostic": "BA11_AUTHORITY_GRAPH_MISMATCH",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_AUTHORITY_GRAPH_MISMATCH",
+      "finding_id": "BA11-R3-RR-P0-002",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0002_05_archive_artifact_set_mismatch_blocks",
+      "status": "PASS",
+      "test_id": "T-R4-P0002-05"
+    },
+    {
+      "actual_diagnostic": null,
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "PASS",
+      "expected_diagnostic": null,
+      "finding_id": "BA11-R3-RR-P0-002",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0002_06_complete_acyclic_authority_graph_passes",
+      "status": "PASS",
+      "test_id": "T-R4-P0002-06"
+    },
+    {
+      "actual_diagnostic": "BA11_APPROVAL_SUBJECT",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_APPROVAL_SUBJECT",
+      "finding_id": "BA11-R3-RR-P0-003",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0003_01_unrelated_signed_subject_is_blocked",
+      "status": "PASS",
+      "test_id": "T-R4-P0003-01"
+    },
+    {
+      "actual_diagnostic": "BA11_APPROVAL_SUBJECT",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_APPROVAL_SUBJECT",
+      "finding_id": "BA11-R3-RR-P0-003",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0003_02_candidate_swap_reusing_approval_is_blocked",
+      "status": "PASS",
+      "test_id": "T-R4-P0003-02"
+    },
+    {
+      "actual_diagnostic": "BA11_APPROVAL_PREVIOUS_HEAD",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_APPROVAL_PREVIOUS_HEAD",
+      "finding_id": "BA11-R3-RR-P0-003",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0003_03_attestation_base_head_mismatch_is_blocked",
+      "status": "PASS",
+      "test_id": "T-R4-P0003-03"
+    },
+    {
+      "actual_diagnostic": null,
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "PASS",
+      "expected_diagnostic": null,
+      "finding_id": "BA11-R3-RR-P0-003",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0003_04_subjects_are_derived_from_promotion_graph",
+      "status": "PASS",
+      "test_id": "T-R4-P0003-04"
+    },
+    {
+      "actual_diagnostic": null,
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "ATOMIC_PASS",
+      "expected_diagnostic": null,
+      "finding_id": "BA11-R3-RR-P0-003",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0003_05_nonce_counter_publication_faults_are_atomic",
+      "status": "PASS",
+      "test_id": "T-R4-P0003-05"
+    },
+    {
+      "actual_diagnostic": "BA11_LEDGER_ROLLBACK",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_LEDGER_ROLLBACK",
+      "finding_id": "BA11-R3-RR-P0-004",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0004_01_deleted_registry_tail_alternate_append_blocks",
+      "status": "PASS",
+      "test_id": "T-R4-P0004-01"
+    },
+    {
+      "actual_diagnostic": "BA11_LEDGER_ROLLBACK",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_LEDGER_ROLLBACK",
+      "finding_id": "BA11-R3-RR-P0-004",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0004_02_deleted_debt_tail_alternate_append_blocks",
+      "status": "PASS",
+      "test_id": "T-R4-P0004-02"
+    },
+    {
+      "actual_diagnostic": "BA11_LEDGER_ROLLBACK",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_LEDGER_ROLLBACK",
+      "finding_id": "BA11-R3-RR-P0-004",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0004_03_valid_older_current_head_is_rollback",
+      "status": "PASS",
+      "test_id": "T-R4-P0004-03"
+    },
+    {
+      "actual_diagnostic": "BA11_LEDGER_FORK",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_LEDGER_FORK",
+      "finding_id": "BA11-R3-RR-P0-004",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0004_04_two_heads_from_same_predecessor_are_fork",
+      "status": "PASS",
+      "test_id": "T-R4-P0004-04"
+    },
+    {
+      "actual_diagnostic": "BA11_LEDGER_OBJECT_MISSING",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_LEDGER_OBJECT_MISSING",
+      "finding_id": "BA11-R3-RR-P0-004",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0004_05_missing_historical_head_blocks",
+      "status": "PASS",
+      "test_id": "T-R4-P0004-05"
+    },
+    {
+      "actual_diagnostic": null,
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "PASS",
+      "expected_diagnostic": null,
+      "finding_id": "BA11-R3-RR-P0-004",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0004_06_full_previous_head_chain_resolves",
+      "status": "PASS",
+      "test_id": "T-R4-P0004-06"
+    },
+    {
+      "actual_diagnostic": "BA11_DEBT_TRANSITION_INVALID",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BLOCK_ZERO_DRIFT",
+      "expected_diagnostic": "BA11_DEBT_TRANSITION_INVALID",
+      "finding_id": "BA11-R3-RR-P0-005",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0005_01_unapproved_accepted_debt_is_zero_drift",
+      "status": "PASS",
+      "test_id": "T-R4-P0005-01"
+    },
+    {
+      "actual_diagnostic": "BA11_DEBT_TRANSITION_INVALID",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BLOCK_ZERO_DRIFT",
+      "expected_diagnostic": "BA11_DEBT_TRANSITION_INVALID",
+      "finding_id": "BA11-R3-RR-P0-005",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0005_02_closed_debt_cannot_reopen_zero_drift",
+      "status": "PASS",
+      "test_id": "T-R4-P0005-02"
+    },
+    {
+      "actual_diagnostic": "BA11_EVENT_CONTRACT_INVALID",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BLOCK_ZERO_DRIFT",
+      "expected_diagnostic": "BA11_EVENT_CONTRACT_INVALID",
+      "finding_id": "BA11-R3-RR-P0-005",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0005_03_generic_frozen_event_is_zero_drift",
+      "status": "PASS",
+      "test_id": "T-R4-P0005-03"
+    },
+    {
+      "actual_diagnostic": "BA11_EVENT_TRANSITION_INVALID",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BLOCK_ZERO_DRIFT",
+      "expected_diagnostic": "BA11_EVENT_TRANSITION_INVALID",
+      "finding_id": "BA11-R3-RR-P0-005",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0005_04_invalid_registry_transition_is_zero_drift",
+      "status": "PASS",
+      "test_id": "T-R4-P0005-04"
+    },
+    {
+      "actual_diagnostic": null,
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "PASS",
+      "expected_diagnostic": null,
+      "finding_id": "BA11-R3-RR-P0-005",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0005_05_complete_ledger_validates_before_first_write",
+      "status": "PASS",
+      "test_id": "T-R4-P0005-05"
+    },
+    {
+      "actual_diagnostic": "BA11_RECOVERY_GRAPH_INCOMPLETE",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BLOCK_NOT_RECOVERED",
+      "expected_diagnostic": "BA11_RECOVERY_GRAPH_INCOMPLETE",
+      "finding_id": "BA11-R3-RR-P0-006",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0006_01_missing_transaction_after_swap_not_recovered",
+      "status": "PASS",
+      "test_id": "T-R4-P0006-01"
+    },
+    {
+      "actual_diagnostic": "BA11_RECOVERY_GRAPH_INCOMPLETE",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BLOCK_NOT_RECOVERED",
+      "expected_diagnostic": "BA11_RECOVERY_GRAPH_INCOMPLETE",
+      "finding_id": "BA11-R3-RR-P0-006",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0006_02_missing_prepared_receipt_not_recovered",
+      "status": "PASS",
+      "test_id": "T-R4-P0006-02"
+    },
+    {
+      "actual_diagnostic": "BA11_RECOVERY_GRAPH_INCOMPLETE",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BLOCK_NOT_RECOVERED",
+      "expected_diagnostic": "BA11_RECOVERY_GRAPH_INCOMPLETE",
+      "finding_id": "BA11-R3-RR-P0-006",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0006_03_missing_snapshot_or_event_not_recovered",
+      "status": "PASS",
+      "test_id": "T-R4-P0006-03"
+    },
+    {
+      "actual_diagnostic": "BA11_RECOVERY_GRAPH_INCOMPLETE",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BLOCK_NOT_RECOVERED",
+      "expected_diagnostic": "BA11_RECOVERY_GRAPH_INCOMPLETE",
+      "finding_id": "BA11-R3-RR-P0-006",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0006_04_missing_authority_object_not_recovered",
+      "status": "PASS",
+      "test_id": "T-R4-P0006-04"
+    },
+    {
+      "actual_diagnostic": null,
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "IDENTICAL_RECEIPT_PASS",
+      "expected_diagnostic": null,
+      "finding_id": "BA11-R3-RR-P0-006",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0006_05_complete_staging_recovers_twice_identically",
+      "status": "PASS",
+      "test_id": "T-R4-P0006-05"
+    },
+    {
+      "actual_diagnostic": "BA11_ACCEPTANCE_REQUIREMENT_MISSING",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BUNDLE_FAIL",
+      "expected_diagnostic": "BA11_ACCEPTANCE_REQUIREMENT_MISSING",
+      "finding_id": "BA11-R3-RR-P0-007",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0007_01_missing_acceptance_requirement_fails",
+      "status": "PASS",
+      "test_id": "T-R4-P0007-01"
+    },
+    {
+      "actual_diagnostic": "BA11_TEST_ID_UNRESOLVED",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BUNDLE_FAIL",
+      "expected_diagnostic": "BA11_TEST_ID_UNRESOLVED",
+      "finding_id": "BA11-R3-RR-P0-007",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0007_02_nonexistent_source_test_fails",
+      "status": "PASS",
+      "test_id": "T-R4-P0007-02"
+    },
+    {
+      "actual_diagnostic": "BA11_ACCEPTANCE_MAPPING_AMBIGUOUS",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BUNDLE_FAIL",
+      "expected_diagnostic": "BA11_ACCEPTANCE_MAPPING_AMBIGUOUS",
+      "finding_id": "BA11-R3-RR-P0-007",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0007_03_generic_suite_mapping_fails",
+      "status": "PASS",
+      "test_id": "T-R4-P0007-03"
+    },
+    {
+      "actual_diagnostic": "BA11_SELF_CERTIFICATION_FORBIDDEN",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BUNDLE_FAIL",
+      "expected_diagnostic": "BA11_SELF_CERTIFICATION_FORBIDDEN",
+      "finding_id": "BA11-R3-RR-P0-007",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0007_04_builder_cannot_self_certify_closure",
+      "status": "PASS",
+      "test_id": "T-R4-P0007-04"
+    },
+    {
+      "actual_diagnostic": null,
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "PASS",
+      "expected_diagnostic": null,
+      "finding_id": "BA11-R3-RR-P0-007",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p0007_05_fresh_verifier_recomputes_final_outputs",
+      "status": "PASS",
+      "test_id": "T-R4-P0007-05"
+    },
+    {
+      "actual_diagnostic": "BA11_COMPARISON_BINDING_MISMATCH",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_COMPARISON_BINDING_MISMATCH",
+      "finding_id": "BA11-R3-RR-P1-001",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p1001_01_result_request_artifact_mismatch_blocks",
+      "status": "PASS",
+      "test_id": "T-R4-P1001-01"
+    },
+    {
+      "actual_diagnostic": "BA11_COMPARISON_COUNT_MISMATCH",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_COMPARISON_COUNT_MISMATCH",
+      "finding_id": "BA11-R3-RR-P1-001",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p1001_02_compare_engine_count_mismatch_blocks",
+      "status": "PASS",
+      "test_id": "T-R4-P1001-02"
+    },
+    {
+      "actual_diagnostic": null,
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "PASS",
+      "expected_diagnostic": null,
+      "finding_id": "BA11-R3-RR-P1-001",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p1001_03_exact_comparison_chain_passes",
+      "status": "PASS",
+      "test_id": "T-R4-P1001-03"
+    },
+    {
+      "actual_diagnostic": "BA11_CANARY_SUBJECT_MISMATCH",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_CANARY_SUBJECT_MISMATCH",
+      "finding_id": "BA11-R3-RR-P1-002",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p1002_01_same_canary_subject_change_blocks",
+      "status": "PASS",
+      "test_id": "T-R4-P1002-01"
+    },
+    {
+      "actual_diagnostic": "BA11_VERSION_TRANSITION_INVALID",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_VERSION_TRANSITION_INVALID",
+      "finding_id": "BA11-R3-RR-P1-002",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p1002_02_ordinary_major_jump_or_downgrade_blocks",
+      "status": "PASS",
+      "test_id": "T-R4-P1002-02"
+    },
+    {
+      "actual_diagnostic": "BA11_ID_COLLISION",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_ID_COLLISION",
+      "finding_id": "BA11-R3-RR-P1-002",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p1002_03_derived_id_collision_blocks",
+      "status": "PASS",
+      "test_id": "T-R4-P1002-03"
+    },
+    {
+      "actual_diagnostic": "BA11_GENESIS_ALREADY_IMPORTED",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_GENESIS_ALREADY_IMPORTED",
+      "finding_id": "BA11-R3-RR-P1-002",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p1002_04_second_persisted_genesis_import_blocks",
+      "status": "PASS",
+      "test_id": "T-R4-P1002-04"
+    },
+    {
+      "actual_diagnostic": null,
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "PASS",
+      "expected_diagnostic": null,
+      "finding_id": "BA11-R3-RR-P1-002",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p1002_05_snapshot_retains_canonical_subject_identity",
+      "status": "PASS",
+      "test_id": "T-R4-P1002-05"
+    },
+    {
+      "actual_diagnostic": "BA11_ROLE_KEY_OVERLAP",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_ROLE_KEY_OVERLAP",
+      "finding_id": "BA11-R3-RR-P1-003",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p1003_01_02_03_role_public_key_overlap_blocks",
+      "status": "PASS",
+      "test_id": "T-R4-P1003-01"
+    },
+    {
+      "actual_diagnostic": "BA11_ROLE_KEY_OVERLAP",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_ROLE_KEY_OVERLAP",
+      "finding_id": "BA11-R3-RR-P1-003",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p1003_01_02_03_role_public_key_overlap_blocks",
+      "status": "PASS",
+      "test_id": "T-R4-P1003-02"
+    },
+    {
+      "actual_diagnostic": "BA11_ROLE_KEY_OVERLAP",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_ROLE_KEY_OVERLAP",
+      "finding_id": "BA11-R3-RR-P1-003",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p1003_01_02_03_role_public_key_overlap_blocks",
+      "status": "PASS",
+      "test_id": "T-R4-P1003-03"
+    },
+    {
+      "actual_diagnostic": null,
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "PASS",
+      "expected_diagnostic": null,
+      "finding_id": "BA11-R3-RR-P1-003",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_p1003_04_rotation_revocation_preserves_separation",
+      "status": "PASS",
+      "test_id": "T-R4-P1003-04"
+    },
+    {
+      "actual_diagnostic": null,
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q"
+      ],
+      "command_receipt": "research_full",
+      "expected": "PASS",
+      "expected_diagnostic": null,
+      "finding_id": "ALL",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "2bf36ff2859a67481d8c3370a05405f1d0dfc7d15d0f7a71e5a5625450e84c6f",
+      "source_test_name": "test_t_r4_all_001_full_research_regression_receipt_anchor",
+      "status": "PASS",
+      "test_id": "T-R4-ALL-001"
+    },
+    {
+      "actual_diagnostic": null,
+      "command": [
+        "npm",
+        "run",
+        "verify"
+      ],
+      "command_receipt": "product_full",
+      "expected": "PASS",
+      "expected_diagnostic": null,
+      "finding_id": "ALL",
+      "git_tree": "c451d79437b0547ffc8753cb1f65da240be4830d",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "9f76fcd7c9c643363ae4a9daaa5aadbf8724b2cfe435ad36e9f9b1ec6c0f244c",
+      "source_test_name": "test_t_r4_all_002_full_product_authority_mirror_receipt_anchor",
+      "status": "PASS",
+      "test_id": "T-R4-ALL-002"
+    },
+    {
+      "actual_diagnostic": null,
+      "command": [
+        ".venv/bin/python",
+        "scripts/ops/verify_ba10_artifact_abi_renderer_freeze.py",
+        "--product-repo",
+        "/Users/BjornRosinger/Documents/DreamFactory/Room16/company-dossier-lab",
+        "--json"
+      ],
+      "command_receipt": "ba10_freeze",
+      "expected": "PASS",
+      "expected_diagnostic": null,
+      "finding_id": "ALL",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "1124d4999f5dae97b703c5e0a7e5d65c8498762619748635ee65784defe9f0e7",
+      "source_test_name": "test_t_r4_all_003_ba10_raw_verifier_receipt_anchor",
+      "status": "PASS",
+      "test_id": "T-R4-ALL-003"
+    },
+    {
+      "actual_diagnostic": null,
+      "command": [
+        ".venv/bin/ruff",
+        "check",
+        "."
+      ],
+      "command_receipt": "research_ruff",
+      "expected": "PASS",
+      "expected_diagnostic": null,
+      "finding_id": "ALL",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "source_test_name": "test_t_r4_all_004_lint_schema_catalog_receipt_anchor",
+      "status": "PASS",
+      "test_id": "T-R4-ALL-004"
+    },
+    {
+      "actual_diagnostic": null,
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "PASS",
+      "expected_diagnostic": null,
+      "finding_id": "ALL",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_all_005_deterministic_r4_build_receipt_anchor",
+      "status": "PASS",
+      "test_id": "T-R4-ALL-005"
+    },
+    {
+      "actual_diagnostic": null,
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r4.py"
+      ],
+      "command_receipt": "targeted_r4",
+      "expected": "PASS",
+      "expected_diagnostic": null,
+      "finding_id": "ALL",
+      "git_tree": "77646b760a6316b4c49600443f9044265f4653b4",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "3a105b429c566a6ab228658f80ae3094d2be8b3cd71c1dc02ddbcc5dceba360f",
+      "source_test_name": "test_t_r4_all_006_foreign_worktree_boundary_receipt_anchor",
+      "status": "PASS",
+      "test_id": "T-R4-ALL-006"
+    }
+  ]
+}

@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authority_owner": {
+      "const": "research",
+      "default": "research",
+      "title": "Authority Owner",
+      "type": "string"
+    },
+    "baseline_version": {
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+      "title": "Baseline Version",
+      "type": "string"
+    },
+    "canary_id": {
+      "pattern": "^[a-z][a-z0-9_.:-]*$",
+      "title": "Canary Id",
+      "type": "string"
+    },
+    "canary_type": {
+      "enum": [
+        "company_regression",
+        "archetype_regression",
+        "technical_release_regression"
+      ],
+      "title": "Canary Type",
+      "type": "string"
+    },
+    "change_class": {
+      "anyOf": [
+        {
+          "enum": [
+            "ordinary",
+            "governance",
+            "breaking"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Change Class"
+    },
+    "comparison_result_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Comparison Result Sha256",
+      "type": "string"
+    },
+    "contract_id": {
+      "const": "room16.canary_promotion_event",
+      "default": "room16.canary_promotion_event",
+      "title": "Contract Id",
+      "type": "string"
+    },
+    "effective_at_utc": {
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+      "title": "Effective At Utc",
+      "type": "string"
+    },
+    "event_id": {
+      "pattern": "^[a-z][a-z0-9_.:-]*$",
+      "title": "Event Id",
+      "type": "string"
+    },
+    "event_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Event Sha256",
+      "type": "string"
+    },
+    "event_type": {
+      "const": "frozen",
+      "default": "frozen",
+      "title": "Event Type",
+      "type": "string"
+    },
+    "freeze_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Freeze Sha256",
+      "type": "string"
+    },
+    "governance_envelope_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Governance Envelope Sha256",
+      "type": "string"
+    },
+    "independent_review_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Independent Review Sha256",
+      "type": "string"
+    },
+    "normalized_subject": {
+      "minLength": 1,
+      "title": "Normalized Subject",
+      "type": "string"
+    },
+    "operator_approval_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Operator Approval Sha256",
+      "type": "string"
+    },
+    "previous_event_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Previous Event Sha256"
+    },
+    "promotion_candidate_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Promotion Candidate Sha256",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 3,
+      "default": 3,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "sequence": {
+      "minimum": 0,
+      "title": "Sequence",
+      "type": "integer"
+    },
+    "subject_namespace": {
+      "pattern": "^[a-z][a-z0-9_.:-]*$",
+      "title": "Subject Namespace",
+      "type": "string"
+    },
+    "subject_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Subject Sha256",
+      "type": "string"
+    },
+    "technical_baseline_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Technical Baseline Sha256",
+      "type": "string"
+    }
+  },
+  "required": [
+    "event_id",
+    "canary_id",
+    "subject_namespace",
+    "normalized_subject",
+    "sequence",
+    "subject_sha256",
+    "canary_type",
+    "baseline_version",
+    "technical_baseline_sha256",
+    "governance_envelope_sha256",
+    "freeze_sha256",
+    "effective_at_utc",
+    "event_sha256",
+    "promotion_candidate_sha256",
+    "comparison_result_sha256",
+    "independent_review_sha256",
+    "operator_approval_sha256"
+  ],
+  "title": "PromotionEvent",
+  "type": "object",
+  "x-room16-canonicalization": "room16.canonical_json@1",
+  "x-room16-hash-algorithm": "sha256",
+  "x-room16-unknown-field-policy": "fail_closed"
+}

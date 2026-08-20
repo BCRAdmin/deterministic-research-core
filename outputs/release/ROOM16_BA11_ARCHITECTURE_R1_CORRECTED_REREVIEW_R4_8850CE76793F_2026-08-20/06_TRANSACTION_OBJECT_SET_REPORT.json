@@ -1,0 +1,6 @@
+{
+  "finding": "BA11-R3-RR-P0-001",
+  "immutable_heads": true,
+  "persistent_exact_event_sets": true,
+  "status": "PASS"
+}

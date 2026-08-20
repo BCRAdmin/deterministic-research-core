@@ -1,0 +1,11 @@
+{
+  "foreign_scope_touched_by_room16_run": false,
+  "main_checkout": "/Users/BjornRosinger/Documents/DreamFactory/Utility-Websites/materialbedarf-rechner.de",
+  "main_checkout_branch": "codex/mbr-product-repair-v1-ba0",
+  "main_checkout_head": "b8da17ea731d014341da2a45ec86af65dce5291a",
+  "main_checkout_origin": "https://github.com/BCRAdmin/materialbedarf-rechner.de.git",
+  "main_checkout_status": "## codex/mbr-product-repair-v1-ba0\n?? ops/product-repair-v1/",
+  "policy": "read_only_capture_only",
+  "recorded_foreign_worktree": "/Users/BjornRosinger/Documents/DreamFactory/Utility-Websites/materialbedarf-rechner.de/.tmp_codex/worktrees/materialbedarf-rechner-ba1-runtime-177f42e",
+  "recorded_foreign_worktree_exists": false
+}

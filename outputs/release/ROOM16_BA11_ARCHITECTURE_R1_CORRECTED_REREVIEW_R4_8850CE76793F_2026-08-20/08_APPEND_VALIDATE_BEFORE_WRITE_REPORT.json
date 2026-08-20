@@ -1,0 +1,6 @@
+{
+  "complete_prospective_fold_before_write": true,
+  "finding": "BA11-R3-RR-P0-005",
+  "negative_store_drift_bytes": 0,
+  "status": "PASS"
+}

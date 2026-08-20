@@ -1,0 +1,1522 @@
+{
+  "contract_id": "room16.ba11_r4.required_test_matrix@1",
+  "requirements": [
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "unpersisted event sets supplied to transaction",
+      "execution_result_sha256": "92a13488a2536aaa6e36ad2e77964c2a94bd9d7b5ecc7cb7651d11ae51375c9b",
+      "expected_diagnostic_or_state": "BA11_TRANSACTION_EVENT_AUTHORITY_MISSING",
+      "requirement_id": "T-R4-P0001-01",
+      "source_finding_id": "BA11-R3-RR-P0-001",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0001-01",
+      "source_sha256": "cd89d11e58107f17870f1f984d531761ba55699a2ce1b9071d41dcb0c4fc38f6",
+      "source_test_name": "test_t_r4_p0001_01_unpersisted_event_sets_block_without_head_change",
+      "test_id": "T-R4-P0001-01"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "one persisted event object missing",
+      "execution_result_sha256": "bfb4f11e10654f244a5a7c05c025897b3a7a24265e809dde91bcc4d6772c6824",
+      "expected_diagnostic_or_state": "BA11_LEDGER_OBJECT_MISSING",
+      "requirement_id": "T-R4-P0001-02",
+      "source_finding_id": "BA11-R3-RR-P0-001",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0001-02",
+      "source_sha256": "0a2cd5d88fab0b43548b37c835266c82f7f7cc6343f376c0a6cd77129aea8071",
+      "source_test_name": "test_t_r4_p0001_02_missing_persisted_event_object_blocks",
+      "test_id": "T-R4-P0001-02"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "published state reconstructed from immutable objects only",
+      "execution_result_sha256": "9f9bdee52efbeec62161ffe6810b15947ff33621bf2b1088614a3ed86f9c1c6d",
+      "expected_diagnostic_or_state": "BYTEIDENTICAL_PASS",
+      "requirement_id": "T-R4-P0001-03",
+      "source_finding_id": "BA11-R3-RR-P0-001",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0001-03",
+      "source_sha256": "d375a4ae6768be3394455ef1f71f4dd4477609b5ce86db3965281f6a0401f69b",
+      "source_test_name": "test_t_r4_p0001_03_published_state_reconstructs_byte_identically",
+      "test_id": "T-R4-P0001-03"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "transaction atomically persists exact event sets and heads",
+      "execution_result_sha256": "fb0beb6fcb01efe4ff8de001272fcd44018d0e3a9faf3a18d5f8e913fcb68998",
+      "expected_diagnostic_or_state": "PASS",
+      "requirement_id": "T-R4-P0001-04",
+      "source_finding_id": "BA11-R3-RR-P0-001",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0001-04",
+      "source_sha256": "9566ff8aa4d1464eb5ddbcc52b0a336293b22d8fa697bc82a648f64d606833f4",
+      "source_test_name": "test_t_r4_p0001_04_transaction_persists_exact_event_sets_and_heads",
+      "test_id": "T-R4-P0001-04"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "promotion freeze hash differs from actual freeze",
+      "execution_result_sha256": "95a742a09ca9c1b22f7a409fc72fe720515feb92d1742185fd2738514e2faa31",
+      "expected_diagnostic_or_state": "BA11_AUTHORITY_GRAPH_MISMATCH",
+      "requirement_id": "T-R4-P0002-01",
+      "source_finding_id": "BA11-R3-RR-P0-002",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0002-01",
+      "source_sha256": "35eaa172e3d1a64365a340db15b7c3c392c72d30efca1b315bce30f0d181cd1f",
+      "source_test_name": "test_t_r4_p0002_01_02_03_promotion_authority_hash_mismatch_blocks",
+      "test_id": "T-R4-P0002-01"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "promotion review hash differs from actual review",
+      "execution_result_sha256": "b3ee8e510dcd141930ec690f69a45bebb6668fe8b66021f27b654d1867de9cbd",
+      "expected_diagnostic_or_state": "BA11_AUTHORITY_GRAPH_MISMATCH",
+      "requirement_id": "T-R4-P0002-02",
+      "source_finding_id": "BA11-R3-RR-P0-002",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0002-02",
+      "source_sha256": "ccf045d495bc2001637d9e705ccd1c0b4dcd1af60f85c32fa0ffbb04e1fbcc2a",
+      "source_test_name": "test_t_r4_p0002_01_02_03_promotion_authority_hash_mismatch_blocks",
+      "test_id": "T-R4-P0002-02"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "promotion approval hash differs from actual approval",
+      "execution_result_sha256": "08182c84198f14766144470a7beaf5d01f8b176570d6c4583cba918f8af27cfc",
+      "expected_diagnostic_or_state": "BA11_AUTHORITY_GRAPH_MISMATCH",
+      "requirement_id": "T-R4-P0002-03",
+      "source_finding_id": "BA11-R3-RR-P0-002",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0002-03",
+      "source_sha256": "5d0a2aaecdbc41d13014b43a5d74013fd0d9f2a0bef1eaa5afda3422f04f6693",
+      "source_test_name": "test_t_r4_p0002_01_02_03_promotion_authority_hash_mismatch_blocks",
+      "test_id": "T-R4-P0002-03"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "comparison/candidate/snapshot edge mismatch",
+      "execution_result_sha256": "7faa6c839e62c40294e90b9da6ece27a114bed781c6400b8c6a7622d717476ed",
+      "expected_diagnostic_or_state": "BA11_AUTHORITY_GRAPH_MISMATCH",
+      "requirement_id": "T-R4-P0002-04",
+      "source_finding_id": "BA11-R3-RR-P0-002",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0002-04",
+      "source_sha256": "cc3b9e1ee92795d9d8d6b014545b9d1e162cb3b9a1fc4bc27db8684bd4f0206b",
+      "source_test_name": "test_t_r4_p0002_04_comparison_candidate_snapshot_edge_mismatch_blocks",
+      "test_id": "T-R4-P0002-04"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "archive artifact-set mismatch",
+      "execution_result_sha256": "a4a165af9857b7f7dccc9a80765e692559ba2cc0cfdf672742878c48b305f1f5",
+      "expected_diagnostic_or_state": "BA11_AUTHORITY_GRAPH_MISMATCH",
+      "requirement_id": "T-R4-P0002-05",
+      "source_finding_id": "BA11-R3-RR-P0-002",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0002-05",
+      "source_sha256": "f7900d5e4c282d11334bc493cd6bc850daece3fd52f83df3cc028368217aee7a",
+      "source_test_name": "test_t_r4_p0002_05_archive_artifact_set_mismatch_blocks",
+      "test_id": "T-R4-P0002-05"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "complete acyclic authority graph",
+      "execution_result_sha256": "decc1edabfd316dd95a529b5b01d0c097eea63da74852a73b00903190db9daf0",
+      "expected_diagnostic_or_state": "PASS",
+      "requirement_id": "T-R4-P0002-06",
+      "source_finding_id": "BA11-R3-RR-P0-002",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0002-06",
+      "source_sha256": "13be3d2336866415240b11264ee206d09cc2b28f7459d86a8af6bf085fb84105",
+      "source_test_name": "test_t_r4_p0002_06_complete_acyclic_authority_graph_passes",
+      "test_id": "T-R4-P0002-06"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "unrelated signed subject with caller matching expected args",
+      "execution_result_sha256": "71236f4a8537a7b0b4c1b262c25c2fde39830ef6530d4175f35556a3ce33ee77",
+      "expected_diagnostic_or_state": "BA11_APPROVAL_SUBJECT",
+      "requirement_id": "T-R4-P0003-01",
+      "source_finding_id": "BA11-R3-RR-P0-003",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0003-01",
+      "source_sha256": "308a3a407dbd644d142cb1e2f14d4902a68e86f57ba101285c4030bc039ca948",
+      "source_test_name": "test_t_r4_p0003_01_unrelated_signed_subject_is_blocked",
+      "test_id": "T-R4-P0003-01"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "candidate swap reusing review and approval",
+      "execution_result_sha256": "e5984f88bd3814f911791308a09f715828cdff13fa3a7b7f3f0d6bb76c78cf6d",
+      "expected_diagnostic_or_state": "BA11_APPROVAL_SUBJECT",
+      "requirement_id": "T-R4-P0003-02",
+      "source_finding_id": "BA11-R3-RR-P0-003",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0003-02",
+      "source_sha256": "f6d7fddeba26d242d3acbc2ecf610261db0e215a09ca96a5463106dff4719012",
+      "source_test_name": "test_t_r4_p0003_02_candidate_swap_reusing_approval_is_blocked",
+      "test_id": "T-R4-P0003-02"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "snapshot or base-head differs from attestation",
+      "execution_result_sha256": "d4d56d62fa1c85b5e2fad0fda232028d91d6deeae4ac8f6157309a4c406a7828",
+      "expected_diagnostic_or_state": "BA11_APPROVAL_PREVIOUS_HEAD",
+      "requirement_id": "T-R4-P0003-03",
+      "source_finding_id": "BA11-R3-RR-P0-003",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0003-03",
+      "source_sha256": "7888928255a8cb34bfedf09dc63a215049104ae779457dcc23dab0e3bf36e899",
+      "source_test_name": "test_t_r4_p0003_03_attestation_base_head_mismatch_is_blocked",
+      "test_id": "T-R4-P0003-03"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "subjects derived internally from promotion graph",
+      "execution_result_sha256": "6ab80de49d82f8f48a4b443b3c834508ff3a336028eac2910c5b76876d4d0630",
+      "expected_diagnostic_or_state": "PASS",
+      "requirement_id": "T-R4-P0003-04",
+      "source_finding_id": "BA11-R3-RR-P0-003",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0003-04",
+      "source_sha256": "a76b3fb042d60ba3ed939de827a9b77ef81ee727cc433922962337be5b966361",
+      "source_test_name": "test_t_r4_p0003_04_subjects_are_derived_from_promotion_graph",
+      "test_id": "T-R4-P0003-04"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "nonce/counter and publication fault injection",
+      "execution_result_sha256": "7cbcd99bf132f7a812eb04768e1f4a1dc24c01d05364c5f1f1428ca5cfbc4b62",
+      "expected_diagnostic_or_state": "ATOMIC_PASS",
+      "requirement_id": "T-R4-P0003-05",
+      "source_finding_id": "BA11-R3-RR-P0-003",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0003-05",
+      "source_sha256": "fe7c0833d4cc1c36073ee242b269a7472dc111b5454eac3ee9a753f01cf49482",
+      "source_test_name": "test_t_r4_p0003_05_nonce_counter_publication_faults_are_atomic",
+      "test_id": "T-R4-P0003-05"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "delete registry tail and append alternate event",
+      "execution_result_sha256": "24356e56b91094a4dce9512eb462a600fa4827110731cae72d54cdd158f0c868",
+      "expected_diagnostic_or_state": "BA11_LEDGER_ROLLBACK",
+      "requirement_id": "T-R4-P0004-01",
+      "source_finding_id": "BA11-R3-RR-P0-004",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0004-01",
+      "source_sha256": "99e972fe6ecbab569db6f7d5fb426f64bd1caddffdc6ea1401c26f9129bbd641",
+      "source_test_name": "test_t_r4_p0004_01_deleted_registry_tail_alternate_append_blocks",
+      "test_id": "T-R4-P0004-01"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "delete debt tail and append alternate event",
+      "execution_result_sha256": "d48942721f12887f0ab61c5a52cf97d5876b57e59fd0f155fdd4b9e5fa1d9838",
+      "expected_diagnostic_or_state": "BA11_LEDGER_ROLLBACK",
+      "requirement_id": "T-R4-P0004-02",
+      "source_finding_id": "BA11-R3-RR-P0-004",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0004-02",
+      "source_sha256": "7c1444af479e99c08bc028621cebdb37fc3b06898fe271fdb568435dec71fe48",
+      "source_test_name": "test_t_r4_p0004_02_deleted_debt_tail_alternate_append_blocks",
+      "test_id": "T-R4-P0004-02"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "replace current head with valid older head",
+      "execution_result_sha256": "e204ed19b464e4364c2097e3a00bb4f44b2330287ded7b1d1528987d5823e74f",
+      "expected_diagnostic_or_state": "BA11_LEDGER_ROLLBACK",
+      "requirement_id": "T-R4-P0004-03",
+      "source_finding_id": "BA11-R3-RR-P0-004",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0004-03",
+      "source_sha256": "60ba6860f64119bfd0f069060911b1b78fe33312d87cee678a8e77817f5a106f",
+      "source_test_name": "test_t_r4_p0004_03_valid_older_current_head_is_rollback",
+      "test_id": "T-R4-P0004-03"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "fork two events from same predecessor",
+      "execution_result_sha256": "93464270c46c8b6f2bffbd3e1df5d2c2f38461a532cb713fe2de095998a26e59",
+      "expected_diagnostic_or_state": "BA11_LEDGER_FORK",
+      "requirement_id": "T-R4-P0004-04",
+      "source_finding_id": "BA11-R3-RR-P0-004",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0004-04",
+      "source_sha256": "d7e7c9550f1b5924ec685278236f820762becb4a3532cfde37b5d179c1d26c98",
+      "source_test_name": "test_t_r4_p0004_04_two_heads_from_same_predecessor_are_fork",
+      "test_id": "T-R4-P0004-04"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "delete historical immutable ledger head",
+      "execution_result_sha256": "a44f17dc0d0588fc94241f0ca155bd10204dfcdbb4f2f9acecee5dd463525617",
+      "expected_diagnostic_or_state": "BA11_LEDGER_OBJECT_MISSING",
+      "requirement_id": "T-R4-P0004-05",
+      "source_finding_id": "BA11-R3-RR-P0-004",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0004-05",
+      "source_sha256": "6a0532b441829533e750197304093a1bb09e3a8734120f070c6650e8aa08cfd2",
+      "source_test_name": "test_t_r4_p0004_05_missing_historical_head_blocks",
+      "test_id": "T-R4-P0004-05"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "full immutable previous-head chain resolves",
+      "execution_result_sha256": "f58200962138665f0ac54a1f6bbb35475dfdac21e9b4480280a2447943b5c0a4",
+      "expected_diagnostic_or_state": "PASS",
+      "requirement_id": "T-R4-P0004-06",
+      "source_finding_id": "BA11-R3-RR-P0-004",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0004-06",
+      "source_sha256": "b193cd986eccf5e53d27f43c854d62ebbb8e85abf93cdb8223990d64ce89bc98",
+      "source_test_name": "test_t_r4_p0004_06_full_previous_head_chain_resolves",
+      "test_id": "T-R4-P0004-06"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "accepted debt as first event without authentic approval",
+      "execution_result_sha256": "430f81211dfcc2d39cf6bb37fa3c6c4dac3691460f288919d5e890d62692783a",
+      "expected_diagnostic_or_state": "BA11_DEBT_TRANSITION_INVALID",
+      "requirement_id": "T-R4-P0005-01",
+      "source_finding_id": "BA11-R3-RR-P0-005",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0005-01",
+      "source_sha256": "ec90dddf3222fec789314909f71ad6b76e275baf2fec9165dc13bab013fd1a25",
+      "source_test_name": "test_t_r4_p0005_01_unapproved_accepted_debt_is_zero_drift",
+      "test_id": "T-R4-P0005-01"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "closed debt reopened or state conflicts with event type",
+      "execution_result_sha256": "a9b9a61b5f2b9da54816341a87387e321e579bdf9d364ddff6fde7b2aab3a901",
+      "expected_diagnostic_or_state": "BA11_DEBT_TRANSITION_INVALID",
+      "requirement_id": "T-R4-P0005-02",
+      "source_finding_id": "BA11-R3-RR-P0-005",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0005-02",
+      "source_sha256": "b48c9f7ffb20a083bb5c535c89bb8dbd9361ae9586134b86e7238acb8887de48",
+      "source_test_name": "test_t_r4_p0005_02_closed_debt_cannot_reopen_zero_drift",
+      "test_id": "T-R4-P0005-02"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "generic frozen event instead of PromotionEvent",
+      "execution_result_sha256": "6c98db6b0e75a1cd98721edb9faf96b04a8a33dd5da95fa42a51d48f97f42bac",
+      "expected_diagnostic_or_state": "BA11_EVENT_CONTRACT_INVALID",
+      "requirement_id": "T-R4-P0005-03",
+      "source_finding_id": "BA11-R3-RR-P0-005",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0005-03",
+      "source_sha256": "855e3612413735b2321ca9af88cab17acb9e985cc26eee9fc7ab7e7fd8e6b9e0",
+      "source_test_name": "test_t_r4_p0005_03_generic_frozen_event_is_zero_drift",
+      "test_id": "T-R4-P0005-03"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "invalid registry state or subject transition",
+      "execution_result_sha256": "a56d3cd48d85743e8b76f33729f90bd668c52aef71cab29a92037a2b04bd6255",
+      "expected_diagnostic_or_state": "BA11_EVENT_TRANSITION_INVALID",
+      "requirement_id": "T-R4-P0005-04",
+      "source_finding_id": "BA11-R3-RR-P0-005",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0005-04",
+      "source_sha256": "f256cc7eae31a8464c47f50efc6c4da6472500b1e91459bdeeec14d7db557315",
+      "source_test_name": "test_t_r4_p0005_04_invalid_registry_transition_is_zero_drift",
+      "test_id": "T-R4-P0005-04"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "prospective complete ledger validates before first write",
+      "execution_result_sha256": "c57a190b801c7948d458a4108e3f374beb5090733806760bd4537cda807cfd40",
+      "expected_diagnostic_or_state": "PASS",
+      "requirement_id": "T-R4-P0005-05",
+      "source_finding_id": "BA11-R3-RR-P0-005",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0005-05",
+      "source_sha256": "471dfbb4c48d9406164db1d5a6abde095d845d8fc468b729b5ebedac139335b9",
+      "source_test_name": "test_t_r4_p0005_05_complete_ledger_validates_before_first_write",
+      "test_id": "T-R4-P0005-05"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "missing transaction record after head swap",
+      "execution_result_sha256": "6ee0a92611436f35181ecb78de7ca478a7c6ae3b61a40e77756e8c9d495fa3e7",
+      "expected_diagnostic_or_state": "BA11_RECOVERY_GRAPH_INCOMPLETE",
+      "requirement_id": "T-R4-P0006-01",
+      "source_finding_id": "BA11-R3-RR-P0-006",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0006-01",
+      "source_sha256": "82be57ade635e7f906564fbcc1babc085f43feb8f2ae796dcd3b79269a275a21",
+      "source_test_name": "test_t_r4_p0006_01_missing_transaction_after_swap_not_recovered",
+      "test_id": "T-R4-P0006-01"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "missing prepared receipt",
+      "execution_result_sha256": "92598c66d3821283100803a61603d5e6dca70d030aa7f0c2229a6bacdb96f5f1",
+      "expected_diagnostic_or_state": "BA11_RECOVERY_GRAPH_INCOMPLETE",
+      "requirement_id": "T-R4-P0006-02",
+      "source_finding_id": "BA11-R3-RR-P0-006",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0006-02",
+      "source_sha256": "36204729ed548e7483a6c583c4c7ddb16869a1a4ed0c029242661869f8a3fa70",
+      "source_test_name": "test_t_r4_p0006_02_missing_prepared_receipt_not_recovered",
+      "test_id": "T-R4-P0006-02"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "missing snapshot or event object",
+      "execution_result_sha256": "91ced03ffd2f55f48e426e9b5308832b15cfe8a0114b417073a5c874cc083c2d",
+      "expected_diagnostic_or_state": "BA11_RECOVERY_GRAPH_INCOMPLETE",
+      "requirement_id": "T-R4-P0006-03",
+      "source_finding_id": "BA11-R3-RR-P0-006",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0006-03",
+      "source_sha256": "a581a58581c9823221fff5021fcef7337880dcd9ece9dba96f05a728d435fe70",
+      "source_test_name": "test_t_r4_p0006_03_missing_snapshot_or_event_not_recovered",
+      "test_id": "T-R4-P0006-03"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "missing review/approval/freeze/archive object",
+      "execution_result_sha256": "7e87642be21b91ca2c5601fc3c0859401011f3a454f170f9e4416495284009f1",
+      "expected_diagnostic_or_state": "BA11_RECOVERY_GRAPH_INCOMPLETE",
+      "requirement_id": "T-R4-P0006-04",
+      "source_finding_id": "BA11-R3-RR-P0-006",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0006-04",
+      "source_sha256": "a2a51d78b8433914b721e980a8a6220cfb1d6e36578db6a3d75bc1cb10239520",
+      "source_test_name": "test_t_r4_p0006_04_missing_authority_object_not_recovered",
+      "test_id": "T-R4-P0006-04"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "complete immutable staging recovered twice",
+      "execution_result_sha256": "615be56d928446ef9665b4be87982afc9949bc0f215bf711c92bd5dfebd6598e",
+      "expected_diagnostic_or_state": "IDENTICAL_RECEIPT_PASS",
+      "requirement_id": "T-R4-P0006-05",
+      "source_finding_id": "BA11-R3-RR-P0-006",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0006-05",
+      "source_sha256": "fd2d7402b433985261525321e9a0812b01458051fc70f7906af54c78650f3eb5",
+      "source_test_name": "test_t_r4_p0006_05_complete_staging_recovers_twice_identically",
+      "test_id": "T-R4-P0006-05"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "remove one authoritative acceptance requirement",
+      "execution_result_sha256": "acccb5b1b6715b3c2374bbcf9a5a47fdc84b9505abfb6ec747c2ac66abb2bbbe",
+      "expected_diagnostic_or_state": "BA11_ACCEPTANCE_REQUIREMENT_MISSING",
+      "requirement_id": "T-R4-P0007-01",
+      "source_finding_id": "BA11-R3-RR-P0-007",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0007-01",
+      "source_sha256": "c55aed8d28673e23fb35bce7201a83dcb1674807ea38fa160534f9d89ba47235",
+      "source_test_name": "test_t_r4_p0007_01_missing_acceptance_requirement_fails",
+      "test_id": "T-R4-P0007-01"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "map requirement to nonexistent source test",
+      "execution_result_sha256": "fa56c62e0564ad165a4992fb9c24ddb498f517206ee869f0de4c936ade6b3dea",
+      "expected_diagnostic_or_state": "BA11_TEST_ID_UNRESOLVED",
+      "requirement_id": "T-R4-P0007-02",
+      "source_finding_id": "BA11-R3-RR-P0-007",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0007-02",
+      "source_sha256": "d0d3835d2b39aaf9f84e75fa61c770ccdce81b98532f9ff9a2730f84c0c38d72",
+      "source_test_name": "test_t_r4_p0007_02_nonexistent_source_test_fails",
+      "test_id": "T-R4-P0007-02"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "generic suite PASS used for unmatched requirements",
+      "execution_result_sha256": "e1d3b6f023b422cc099d075ccf9cee6a9e9e68d2e7df16b62e6468dd468e72b2",
+      "expected_diagnostic_or_state": "BA11_ACCEPTANCE_MAPPING_AMBIGUOUS",
+      "requirement_id": "T-R4-P0007-03",
+      "source_finding_id": "BA11-R3-RR-P0-007",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0007-03",
+      "source_sha256": "3f631b8d3ecc71d22a904591d0bbbd248a76b256bcb9f04835f3ed090b6dd9a2",
+      "source_test_name": "test_t_r4_p0007_03_generic_suite_mapping_fails",
+      "test_id": "T-R4-P0007-03"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "builder writes closure without verifier receipt",
+      "execution_result_sha256": "2a044900a4df09f0e43c6d334b68d5fc8c670d43a09d70fdb93c836860556ea6",
+      "expected_diagnostic_or_state": "BA11_SELF_CERTIFICATION_FORBIDDEN",
+      "requirement_id": "T-R4-P0007-04",
+      "source_finding_id": "BA11-R3-RR-P0-007",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0007-04",
+      "source_sha256": "32a1255b9d23d54c62d5f7a3f1520bf954bf49fb11026ea16f1e3941c321f4b1",
+      "source_test_name": "test_t_r4_p0007_04_builder_cannot_self_certify_closure",
+      "test_id": "T-R4-P0007-04"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "fresh-temp verifier recomputes and compares final outputs",
+      "execution_result_sha256": "4d8269352535febb89887359ac16a14d0448e786d09b486d12f6c98bc59db5d4",
+      "expected_diagnostic_or_state": "PASS",
+      "requirement_id": "T-R4-P0007-05",
+      "source_finding_id": "BA11-R3-RR-P0-007",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P0007-05",
+      "source_sha256": "26a19a6d398b2d1d41a831a32a87580c3e81bc8aa49ac42678f4ea1c478ad40e",
+      "source_test_name": "test_t_r4_p0007_05_fresh_verifier_recomputes_final_outputs",
+      "test_id": "T-R4-P0007-05"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "result request hash valid but baseline/candidate mismatch",
+      "execution_result_sha256": "b0d810c83731a11a473fd4e701ea112ca7c6cca366615c76909ed923c3069d1c",
+      "expected_diagnostic_or_state": "BA11_COMPARISON_BINDING_MISMATCH",
+      "requirement_id": "T-R4-P1001-01",
+      "source_finding_id": "BA11-R3-RR-P1-001",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P1001-01",
+      "source_sha256": "f1ab5b8dc3021b4c3902dafba3c690de4a7a494c0024fb7b7fb18bd23133fd8f",
+      "source_test_name": "test_t_r4_p1001_01_result_request_artifact_mismatch_blocks",
+      "test_id": "T-R4-P1001-01"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "diff counts differ from compare-engine receipt",
+      "execution_result_sha256": "08295fb73babafc56818452f313b83455ce0924781c525a2d4e04bbd221aa8f2",
+      "expected_diagnostic_or_state": "BA11_COMPARISON_COUNT_MISMATCH",
+      "requirement_id": "T-R4-P1001-02",
+      "source_finding_id": "BA11-R3-RR-P1-001",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P1001-02",
+      "source_sha256": "46b9924d5df4e748242947069730e9562da02a2ec4b04b3ba8e64c86d2391d3d",
+      "source_test_name": "test_t_r4_p1001_02_compare_engine_count_mismatch_blocks",
+      "test_id": "T-R4-P1001-02"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "result and classification derived from exact request",
+      "execution_result_sha256": "5031bcf76ecc14fcd3ccc95d1e4135c3137648d20f1b2e1821870e6f5dca12aa",
+      "expected_diagnostic_or_state": "PASS",
+      "requirement_id": "T-R4-P1001-03",
+      "source_finding_id": "BA11-R3-RR-P1-001",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P1001-03",
+      "source_sha256": "890ac011402390cc23737db83e7d5b9716396ef79dafaed1104ec57d9aaa1bf5",
+      "source_test_name": "test_t_r4_p1001_03_exact_comparison_chain_passes",
+      "test_id": "T-R4-P1001-03"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "same canary id changes subject hash",
+      "execution_result_sha256": "21d4e86a118043370c2b3aa8c2a06a55d526f47c0e27ea9329c9d0dcbc0624bd",
+      "expected_diagnostic_or_state": "BA11_CANARY_SUBJECT_MISMATCH",
+      "requirement_id": "T-R4-P1002-01",
+      "source_finding_id": "BA11-R3-RR-P1-002",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P1002-01",
+      "source_sha256": "74210a78727bc5ed785fe1b4218e8a06cadaf633ac836be6383538575f70a8f2",
+      "source_test_name": "test_t_r4_p1002_01_same_canary_subject_change_blocks",
+      "test_id": "T-R4-P1002-01"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "ordinary change jumps major or downgrades",
+      "execution_result_sha256": "8c4c3cb0a05e4434a0309517d1c66b0196f5216acae68e0e3299af31a57f8305",
+      "expected_diagnostic_or_state": "BA11_VERSION_TRANSITION_INVALID",
+      "requirement_id": "T-R4-P1002-02",
+      "source_finding_id": "BA11-R3-RR-P1-002",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P1002-02",
+      "source_sha256": "6a7b0f38b0309ca53d734cd84b50eca88ce0b29823d7e1a51cd1dc0d9e68f3ad",
+      "source_test_name": "test_t_r4_p1002_02_ordinary_major_jump_or_downgrade_blocks",
+      "test_id": "T-R4-P1002-02"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "derived ID collision with different subject",
+      "execution_result_sha256": "209c6cffcb8c1672dc94f9660f1e567cffe672cf4bd025e7fa6f447acbd3755e",
+      "expected_diagnostic_or_state": "BA11_ID_COLLISION",
+      "requirement_id": "T-R4-P1002-03",
+      "source_finding_id": "BA11-R3-RR-P1-002",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P1002-03",
+      "source_sha256": "cf813e1c7afabdb31570d9c537e895ffda884903af417e042ad51e8a5d35cfcc",
+      "source_test_name": "test_t_r4_p1002_03_derived_id_collision_blocks",
+      "test_id": "T-R4-P1002-03"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "second persisted genesis import",
+      "execution_result_sha256": "26e0950c051768d477f0a7dc653f577c4990b1f9808b2582b5f0d14e02c05883",
+      "expected_diagnostic_or_state": "BA11_GENESIS_ALREADY_IMPORTED",
+      "requirement_id": "T-R4-P1002-04",
+      "source_finding_id": "BA11-R3-RR-P1-002",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P1002-04",
+      "source_sha256": "2dac9e083751d4e40b0f11142b7febf2e7f16e82b89d546ac3b09c03e54de536",
+      "source_test_name": "test_t_r4_p1002_04_second_persisted_genesis_import_blocks",
+      "test_id": "T-R4-P1002-04"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "snapshot retains canonical subject identity",
+      "execution_result_sha256": "9f03aba5a6df37f5387f6ba7ef4c30317f8b7cd398d30a59401559935a052823",
+      "expected_diagnostic_or_state": "PASS",
+      "requirement_id": "T-R4-P1002-05",
+      "source_finding_id": "BA11-R3-RR-P1-002",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P1002-05",
+      "source_sha256": "104b5b308ce5b37788c9cfd5f5116e1c1ed71f5f49c1394a7657b9d42066be7a",
+      "source_test_name": "test_t_r4_p1002_05_snapshot_retains_canonical_subject_identity",
+      "test_id": "T-R4-P1002-05"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "same public key for operator and research",
+      "execution_result_sha256": "eec09577257714de564562b45e4faf1e0fa670cef92bf6c93df30095b7303e7f",
+      "expected_diagnostic_or_state": "BA11_ROLE_KEY_OVERLAP",
+      "requirement_id": "T-R4-P1003-01",
+      "source_finding_id": "BA11-R3-RR-P1-003",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P1003-01",
+      "source_sha256": "b0b48056cc1a29dde3c5e511202b644e9dfe4aab2454d8de3d7e619d9f776e29",
+      "source_test_name": "test_t_r4_p1003_01_02_03_role_public_key_overlap_blocks",
+      "test_id": "T-R4-P1003-01"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "same public key for operator and reviewer",
+      "execution_result_sha256": "633b37fd78cd8331f6b8a6fd95f2778ce6db8ccf2b47f5191cc26733cbbb645b",
+      "expected_diagnostic_or_state": "BA11_ROLE_KEY_OVERLAP",
+      "requirement_id": "T-R4-P1003-02",
+      "source_finding_id": "BA11-R3-RR-P1-003",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P1003-02",
+      "source_sha256": "80c8385edffbf0e0baa101fdd6a367b2ba292c4235e19f0487f3320db5ab31dd",
+      "source_test_name": "test_t_r4_p1003_01_02_03_role_public_key_overlap_blocks",
+      "test_id": "T-R4-P1003-02"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "same public key for research and reviewer",
+      "execution_result_sha256": "87011c896ab1b3f30b10b9aa680e227d26c77867ca8d9746379e6ad3cad8a82f",
+      "expected_diagnostic_or_state": "BA11_ROLE_KEY_OVERLAP",
+      "requirement_id": "T-R4-P1003-03",
+      "source_finding_id": "BA11-R3-RR-P1-003",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P1003-03",
+      "source_sha256": "6c7bba209f999cfeda9c9a1f881b3215b353cb0f6611cb38eaa52af993fbcdd4",
+      "source_test_name": "test_t_r4_p1003_01_02_03_role_public_key_overlap_blocks",
+      "test_id": "T-R4-P1003-03"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "rotation/revocation preserves role separation",
+      "execution_result_sha256": "a1105bca3cb238b6408e849fddc2b26fe3b43a1f3765148e3e87189da6440489",
+      "expected_diagnostic_or_state": "PASS",
+      "requirement_id": "T-R4-P1003-04",
+      "source_finding_id": "BA11-R3-RR-P1-003",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-P1003-04",
+      "source_sha256": "76776271dc1828a7822dbb43fdcf9bc5a77612fb57702de650bb4a44aa574750",
+      "source_test_name": "test_t_r4_p1003_04_rotation_revocation_preserves_separation",
+      "test_id": "T-R4-P1003-04"
+    },
+    {
+      "command_receipt": "research_full",
+      "exact_requirement_text": "full Research regression with no relevant skips",
+      "execution_result_sha256": "3e349ec6d26835f0254b41832e7f79f860bf08b67fc90fe8410f137d197fae3d",
+      "expected_diagnostic_or_state": "PASS",
+      "requirement_id": "T-R4-ALL-001",
+      "source_finding_id": "ALL",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-ALL-001",
+      "source_sha256": "bbcd2c7f9a91c390abd68717c58453cd985376fe896c67ee6c26f66e2bda2c04",
+      "source_test_name": "test_t_r4_all_001_full_research_regression_receipt_anchor",
+      "test_id": "T-R4-ALL-001"
+    },
+    {
+      "command_receipt": "product_full",
+      "exact_requirement_text": "full Product verification and authority mirror tests",
+      "execution_result_sha256": "24531832ce318e8cb077408d6b946b01dd57980acc0aa1455b2c30ddad912714",
+      "expected_diagnostic_or_state": "PASS",
+      "requirement_id": "T-R4-ALL-002",
+      "source_finding_id": "ALL",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-ALL-002",
+      "source_sha256": "9a9d41ad4226af0fcc1e49bd449c0c36c6858160135bf79d595b0bffe8bed10d",
+      "source_test_name": "test_t_r4_all_002_full_product_authority_mirror_receipt_anchor",
+      "test_id": "T-R4-ALL-002"
+    },
+    {
+      "command_receipt": "ba10_freeze",
+      "exact_requirement_text": "BA10 raw freeze verifier against unchanged authority",
+      "execution_result_sha256": "9c2b2d145371cb6c241a6d78716297976955e15456bf1923ee6a229541016b04",
+      "expected_diagnostic_or_state": "PASS",
+      "requirement_id": "T-R4-ALL-003",
+      "source_finding_id": "ALL",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-ALL-003",
+      "source_sha256": "18d1f5e26e9a68b3535d6840900769ba29c8343537c1b58b830f8f5fca473996",
+      "source_test_name": "test_t_r4_all_003_ba10_raw_verifier_receipt_anchor",
+      "test_id": "T-R4-ALL-003"
+    },
+    {
+      "command_receipt": "research_ruff",
+      "exact_requirement_text": "Ruff/lint/schema/catalog verification",
+      "execution_result_sha256": "b8c38cb425bd53d29e5b19e03e5b8948c6f8d9672b3d447b697a1fc0fc4aafe2",
+      "expected_diagnostic_or_state": "PASS",
+      "requirement_id": "T-R4-ALL-004",
+      "source_finding_id": "ALL",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-ALL-004",
+      "source_sha256": "7af052d2653dfdd6c119e12ddfae8804c42a936360f034eceb856b10841ed529",
+      "source_test_name": "test_t_r4_all_004_lint_schema_catalog_receipt_anchor",
+      "test_id": "T-R4-ALL-004"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "two clean byte-identical R4 package builds",
+      "execution_result_sha256": "e3e2ef08add5af55af3448b7d6a197be34a4448ed40c95c3b8d21871c2b7ba2c",
+      "expected_diagnostic_or_state": "PASS",
+      "requirement_id": "T-R4-ALL-005",
+      "source_finding_id": "ALL",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-ALL-005",
+      "source_sha256": "71dc77a8fb62c6e643266fd9983c46d509ff3bb52c34fa67b2600933209e9378",
+      "source_test_name": "test_t_r4_all_005_deterministic_r4_build_receipt_anchor",
+      "test_id": "T-R4-ALL-005"
+    },
+    {
+      "command_receipt": "targeted_r4",
+      "exact_requirement_text": "foreign materialbedarf worktree remains untouched",
+      "execution_result_sha256": "907827315dbadd282f623effa23c6a8e64eea0e6f85a8c4875db8a08ff8295c6",
+      "expected_diagnostic_or_state": "PASS",
+      "requirement_id": "T-R4-ALL-006",
+      "source_finding_id": "ALL",
+      "source_locator": "06_REQUIRED_TEST_MATRIX.json#T-R4-ALL-006",
+      "source_sha256": "5a5532d8fc3cac60c7bc7f30a8ba959a06018a68ac9ae46c5be01937604c19c0",
+      "source_test_name": "test_t_r4_all_006_foreign_worktree_boundary_receipt_anchor",
+      "test_id": "T-R4-ALL-006"
+    }
+  ],
+  "row_count": 54,
+  "rows": [
+    {
+      "class": "finding-specific",
+      "expected": "BLOCK_NO_HEAD_CHANGE",
+      "expected_diagnostic": "BA11_TRANSACTION_EVENT_AUTHORITY_MISSING",
+      "finding_id": "BA11-R3-RR-P0-001",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "unpersisted event sets supplied to transaction",
+      "test_id": "T-R4-P0001-01"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BLOCK_NO_HEAD_CHANGE",
+      "expected_diagnostic": "BA11_LEDGER_OBJECT_MISSING",
+      "finding_id": "BA11-R3-RR-P0-001",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "one persisted event object missing",
+      "test_id": "T-R4-P0001-02"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BYTEIDENTICAL_PASS",
+      "expected_diagnostic": null,
+      "finding_id": "BA11-R3-RR-P0-001",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "published state reconstructed from immutable objects only",
+      "test_id": "T-R4-P0001-03"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "PASS",
+      "expected_diagnostic": null,
+      "finding_id": "BA11-R3-RR-P0-001",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "transaction atomically persists exact event sets and heads",
+      "test_id": "T-R4-P0001-04"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_AUTHORITY_GRAPH_MISMATCH",
+      "finding_id": "BA11-R3-RR-P0-002",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "promotion freeze hash differs from actual freeze",
+      "test_id": "T-R4-P0002-01"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_AUTHORITY_GRAPH_MISMATCH",
+      "finding_id": "BA11-R3-RR-P0-002",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "promotion review hash differs from actual review",
+      "test_id": "T-R4-P0002-02"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_AUTHORITY_GRAPH_MISMATCH",
+      "finding_id": "BA11-R3-RR-P0-002",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "promotion approval hash differs from actual approval",
+      "test_id": "T-R4-P0002-03"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_AUTHORITY_GRAPH_MISMATCH",
+      "finding_id": "BA11-R3-RR-P0-002",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "comparison/candidate/snapshot edge mismatch",
+      "test_id": "T-R4-P0002-04"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_AUTHORITY_GRAPH_MISMATCH",
+      "finding_id": "BA11-R3-RR-P0-002",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "archive artifact-set mismatch",
+      "test_id": "T-R4-P0002-05"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "PASS",
+      "expected_diagnostic": null,
+      "finding_id": "BA11-R3-RR-P0-002",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "complete acyclic authority graph",
+      "test_id": "T-R4-P0002-06"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_APPROVAL_SUBJECT",
+      "finding_id": "BA11-R3-RR-P0-003",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "unrelated signed subject with caller matching expected args",
+      "test_id": "T-R4-P0003-01"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_APPROVAL_SUBJECT",
+      "finding_id": "BA11-R3-RR-P0-003",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "candidate swap reusing review and approval",
+      "test_id": "T-R4-P0003-02"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_APPROVAL_PREVIOUS_HEAD",
+      "finding_id": "BA11-R3-RR-P0-003",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "snapshot or base-head differs from attestation",
+      "test_id": "T-R4-P0003-03"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "PASS",
+      "expected_diagnostic": null,
+      "finding_id": "BA11-R3-RR-P0-003",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "subjects derived internally from promotion graph",
+      "test_id": "T-R4-P0003-04"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "ATOMIC_PASS",
+      "expected_diagnostic": null,
+      "finding_id": "BA11-R3-RR-P0-003",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "nonce/counter and publication fault injection",
+      "test_id": "T-R4-P0003-05"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_LEDGER_ROLLBACK",
+      "finding_id": "BA11-R3-RR-P0-004",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "delete registry tail and append alternate event",
+      "test_id": "T-R4-P0004-01"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_LEDGER_ROLLBACK",
+      "finding_id": "BA11-R3-RR-P0-004",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "delete debt tail and append alternate event",
+      "test_id": "T-R4-P0004-02"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_LEDGER_ROLLBACK",
+      "finding_id": "BA11-R3-RR-P0-004",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "replace current head with valid older head",
+      "test_id": "T-R4-P0004-03"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_LEDGER_FORK",
+      "finding_id": "BA11-R3-RR-P0-004",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "fork two events from same predecessor",
+      "test_id": "T-R4-P0004-04"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_LEDGER_OBJECT_MISSING",
+      "finding_id": "BA11-R3-RR-P0-004",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "delete historical immutable ledger head",
+      "test_id": "T-R4-P0004-05"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "PASS",
+      "expected_diagnostic": null,
+      "finding_id": "BA11-R3-RR-P0-004",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "full immutable previous-head chain resolves",
+      "test_id": "T-R4-P0004-06"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BLOCK_ZERO_DRIFT",
+      "expected_diagnostic": "BA11_DEBT_TRANSITION_INVALID",
+      "finding_id": "BA11-R3-RR-P0-005",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "accepted debt as first event without authentic approval",
+      "test_id": "T-R4-P0005-01"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BLOCK_ZERO_DRIFT",
+      "expected_diagnostic": "BA11_DEBT_TRANSITION_INVALID",
+      "finding_id": "BA11-R3-RR-P0-005",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "closed debt reopened or state conflicts with event type",
+      "test_id": "T-R4-P0005-02"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BLOCK_ZERO_DRIFT",
+      "expected_diagnostic": "BA11_EVENT_CONTRACT_INVALID",
+      "finding_id": "BA11-R3-RR-P0-005",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "generic frozen event instead of PromotionEvent",
+      "test_id": "T-R4-P0005-03"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BLOCK_ZERO_DRIFT",
+      "expected_diagnostic": "BA11_EVENT_TRANSITION_INVALID",
+      "finding_id": "BA11-R3-RR-P0-005",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "invalid registry state or subject transition",
+      "test_id": "T-R4-P0005-04"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "PASS",
+      "expected_diagnostic": null,
+      "finding_id": "BA11-R3-RR-P0-005",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "prospective complete ledger validates before first write",
+      "test_id": "T-R4-P0005-05"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BLOCK_NOT_RECOVERED",
+      "expected_diagnostic": "BA11_RECOVERY_GRAPH_INCOMPLETE",
+      "finding_id": "BA11-R3-RR-P0-006",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "missing transaction record after head swap",
+      "test_id": "T-R4-P0006-01"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BLOCK_NOT_RECOVERED",
+      "expected_diagnostic": "BA11_RECOVERY_GRAPH_INCOMPLETE",
+      "finding_id": "BA11-R3-RR-P0-006",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "missing prepared receipt",
+      "test_id": "T-R4-P0006-02"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BLOCK_NOT_RECOVERED",
+      "expected_diagnostic": "BA11_RECOVERY_GRAPH_INCOMPLETE",
+      "finding_id": "BA11-R3-RR-P0-006",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "missing snapshot or event object",
+      "test_id": "T-R4-P0006-03"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BLOCK_NOT_RECOVERED",
+      "expected_diagnostic": "BA11_RECOVERY_GRAPH_INCOMPLETE",
+      "finding_id": "BA11-R3-RR-P0-006",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "missing review/approval/freeze/archive object",
+      "test_id": "T-R4-P0006-04"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "IDENTICAL_RECEIPT_PASS",
+      "expected_diagnostic": null,
+      "finding_id": "BA11-R3-RR-P0-006",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "complete immutable staging recovered twice",
+      "test_id": "T-R4-P0006-05"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BUNDLE_FAIL",
+      "expected_diagnostic": "BA11_ACCEPTANCE_REQUIREMENT_MISSING",
+      "finding_id": "BA11-R3-RR-P0-007",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "remove one authoritative acceptance requirement",
+      "test_id": "T-R4-P0007-01"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BUNDLE_FAIL",
+      "expected_diagnostic": "BA11_TEST_ID_UNRESOLVED",
+      "finding_id": "BA11-R3-RR-P0-007",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "map requirement to nonexistent source test",
+      "test_id": "T-R4-P0007-02"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BUNDLE_FAIL",
+      "expected_diagnostic": "BA11_ACCEPTANCE_MAPPING_AMBIGUOUS",
+      "finding_id": "BA11-R3-RR-P0-007",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "generic suite PASS used for unmatched requirements",
+      "test_id": "T-R4-P0007-03"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BUNDLE_FAIL",
+      "expected_diagnostic": "BA11_SELF_CERTIFICATION_FORBIDDEN",
+      "finding_id": "BA11-R3-RR-P0-007",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "builder writes closure without verifier receipt",
+      "test_id": "T-R4-P0007-04"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "PASS",
+      "expected_diagnostic": null,
+      "finding_id": "BA11-R3-RR-P0-007",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "fresh-temp verifier recomputes and compares final outputs",
+      "test_id": "T-R4-P0007-05"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_COMPARISON_BINDING_MISMATCH",
+      "finding_id": "BA11-R3-RR-P1-001",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "result request hash valid but baseline/candidate mismatch",
+      "test_id": "T-R4-P1001-01"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_COMPARISON_COUNT_MISMATCH",
+      "finding_id": "BA11-R3-RR-P1-001",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "diff counts differ from compare-engine receipt",
+      "test_id": "T-R4-P1001-02"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "PASS",
+      "expected_diagnostic": null,
+      "finding_id": "BA11-R3-RR-P1-001",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "result and classification derived from exact request",
+      "test_id": "T-R4-P1001-03"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_CANARY_SUBJECT_MISMATCH",
+      "finding_id": "BA11-R3-RR-P1-002",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "same canary id changes subject hash",
+      "test_id": "T-R4-P1002-01"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_VERSION_TRANSITION_INVALID",
+      "finding_id": "BA11-R3-RR-P1-002",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "ordinary change jumps major or downgrades",
+      "test_id": "T-R4-P1002-02"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_ID_COLLISION",
+      "finding_id": "BA11-R3-RR-P1-002",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "derived ID collision with different subject",
+      "test_id": "T-R4-P1002-03"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_GENESIS_ALREADY_IMPORTED",
+      "finding_id": "BA11-R3-RR-P1-002",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "second persisted genesis import",
+      "test_id": "T-R4-P1002-04"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "PASS",
+      "expected_diagnostic": null,
+      "finding_id": "BA11-R3-RR-P1-002",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "snapshot retains canonical subject identity",
+      "test_id": "T-R4-P1002-05"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_ROLE_KEY_OVERLAP",
+      "finding_id": "BA11-R3-RR-P1-003",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "same public key for operator and research",
+      "test_id": "T-R4-P1003-01"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_ROLE_KEY_OVERLAP",
+      "finding_id": "BA11-R3-RR-P1-003",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "same public key for operator and reviewer",
+      "test_id": "T-R4-P1003-02"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "BLOCK",
+      "expected_diagnostic": "BA11_ROLE_KEY_OVERLAP",
+      "finding_id": "BA11-R3-RR-P1-003",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "same public key for research and reviewer",
+      "test_id": "T-R4-P1003-03"
+    },
+    {
+      "class": "finding-specific",
+      "expected": "PASS",
+      "expected_diagnostic": null,
+      "finding_id": "BA11-R3-RR-P1-003",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "rotation/revocation preserves role separation",
+      "test_id": "T-R4-P1003-04"
+    },
+    {
+      "class": "cross-cutting",
+      "expected": "PASS",
+      "expected_diagnostic": null,
+      "finding_id": "ALL",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "full Research regression with no relevant skips",
+      "test_id": "T-R4-ALL-001"
+    },
+    {
+      "class": "cross-cutting",
+      "expected": "PASS",
+      "expected_diagnostic": null,
+      "finding_id": "ALL",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "full Product verification and authority mirror tests",
+      "test_id": "T-R4-ALL-002"
+    },
+    {
+      "class": "cross-cutting",
+      "expected": "PASS",
+      "expected_diagnostic": null,
+      "finding_id": "ALL",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "BA10 raw freeze verifier against unchanged authority",
+      "test_id": "T-R4-ALL-003"
+    },
+    {
+      "class": "cross-cutting",
+      "expected": "PASS",
+      "expected_diagnostic": null,
+      "finding_id": "ALL",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "Ruff/lint/schema/catalog verification",
+      "test_id": "T-R4-ALL-004"
+    },
+    {
+      "class": "cross-cutting",
+      "expected": "PASS",
+      "expected_diagnostic": null,
+      "finding_id": "ALL",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "two clean byte-identical R4 package builds",
+      "test_id": "T-R4-ALL-005"
+    },
+    {
+      "class": "cross-cutting",
+      "expected": "PASS",
+      "expected_diagnostic": null,
+      "finding_id": "ALL",
+      "receipt_fields": [
+        "source_test_name",
+        "command",
+        "exit_code",
+        "git_tree",
+        "raw_stdout_sha256",
+        "raw_stderr_sha256"
+      ],
+      "scenario": "foreign materialbedarf worktree remains untouched",
+      "test_id": "T-R4-ALL-006"
+    }
+  ],
+  "rule": "Every row is mandatory and requires exact source test, command receipt, diagnostic/state and raw output hashes.",
+  "source_r3_sha256": "c2a1850d1e6928def976fa0459398f930429b2007adcd5e7e6efc339e84ad80e"
+}

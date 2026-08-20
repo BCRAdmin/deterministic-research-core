@@ -1,0 +1,11 @@
+{
+  "authority_owner": "research",
+  "contract_id": "room16.canary_evidence_package_identity",
+  "detached_sha256_filename": "ROOM16_BA11_ARCHITECTURE_R1_CORRECTED_REREVIEW_R4_8850CE76793F_2026-08-20.zip.sha256",
+  "identity_sha256": "ff3b24330fbdee34aa28da0b9d7a96317962d9884179dcb8d0853ed6e28f8468",
+  "manifest_sha256": "ffb24718fdfd9102b9d5a2ef7728bd8221466f1e7512afad0f95b2fde5fb9527",
+  "package_bytes": 633681,
+  "package_filename": "ROOM16_BA11_ARCHITECTURE_R1_CORRECTED_REREVIEW_R4_8850CE76793F_2026-08-20.zip",
+  "package_sha256": "f54566d10d6f8d2b861dd0f68d1cddce86b18661a0bfdb931e3d08eebb4510e1",
+  "schema_version": 1
+}

@@ -1,0 +1,6 @@
+{
+  "finding": "BA11-R3-RR-P1-003",
+  "key_ids_pairwise_disjoint": true,
+  "public_key_bytes_pairwise_disjoint": true,
+  "status": "PASS"
+}
