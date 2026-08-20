@@ -245,7 +245,8 @@ def main() -> int:
     changed_names = git(ROOT, "diff", "--name-only", f"{RESEARCH_BASE}..HEAD").splitlines()
     changed_files = [
         {"repo": "research", "path": name, "sha256": sha256_bytes((ROOT / name).read_bytes())}
-        for name in changed_names if (ROOT / name).is_file()
+        for name in changed_names
+        if not name.startswith("outputs/release/") and (ROOT / name).is_file()
     ]
     changed_by_name = {row["path"]: row for row in changed_files}
     closure_rows = []
