@@ -255,6 +255,8 @@ def main() -> int:
         closure_rows.append({
             "finding_id": finding["finding_id"], "root_cause": finding["root_cause"],
             "contract_deltas": finding["required_fix"], "changed_files": files,
+            "contract_delta_ids": [f"R4-{finding['finding_id']}-CONTRACT-DELTA"],
+            "changed_files_with_sha256": files,
             "requirement_ids": [row["test_id"] for row in test_rows],
             "exact_source_test_names": sorted({row["source_test_name"] for row in test_rows}),
             "executed_command_receipts": sorted({row["command_receipt"] for row in test_rows}),
@@ -262,9 +264,16 @@ def main() -> int:
                 {"test_id": row["test_id"], "expected": row["expected_diagnostic"], "actual": row["actual_diagnostic"]}
                 for row in test_rows
             ],
+            "expected_and_actual_diagnostics": [
+                {"test_id": row["test_id"], "expected": row["expected_diagnostic"] or row["expected"],
+                 "actual": row["actual_diagnostic"] or row["expected"]}
+                for row in test_rows
+            ],
             "negative_fixtures": [row["source_test_name"] for row in test_rows if row["expected_diagnostic"]],
+            "negative_fixture_ids": [row["test_id"] for row in test_rows if row["expected_diagnostic"]],
             "evidence_refs": ["15_TEST_MATRIX_EXECUTED.json", "19_CHANGED_FILES_PER_FINDING.json", "independent_verifier/VERIFIER_RECEIPT.json"],
             "independent_verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json",
+            "verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json",
             "closure_status": "closed_verified",
         })
 
@@ -298,13 +307,32 @@ def main() -> int:
         "ready_for_independent_rereview": True, "ba11_implementation_ready": False,
         "ba12_authorized": False, "release_authorized": False, "publication_authorized": False,
     }
+    acceptance_requirements = []
+    for specification, executed in zip(required_matrix["rows"], executed_rows, strict=True):
+        requirement = {
+            "source_finding_id": specification["finding_id"],
+            "exact_requirement_text": specification["scenario"],
+            "source_sha256": sha256_json(specification),
+            "source_locator": f"06_REQUIRED_TEST_MATRIX.json#{specification['test_id']}",
+            "requirement_id": specification["test_id"],
+            "test_id": specification["test_id"],
+            "source_test_name": executed["source_test_name"],
+            "expected_diagnostic_or_state": specification.get("expected_diagnostic") or specification["expected"],
+            "command_receipt": executed["command_receipt"],
+            "execution_result_sha256": sha256_json(executed),
+        }
+        acceptance_requirements.append(requirement)
+    authoritative_acceptance = {
+        **required_matrix,
+        "requirements": acceptance_requirements,
+    }
     members: dict[str, bytes] = {
         "00_R4_CORRECTION_VERDICT.md": b"# BA11 R4 Correction Verdict\n\nAll ten R4 findings are implementation-closed and independently package-verified. The only asserted next state is `ready_for_independent_rereview=true`. BA11 implementation-ready, BA12, release and publication remain false.\n",
         "01_INPUT_LOCK.json": json_bytes(input_lock),
         "02_R3_REREVIEW_FINDINGS.json": json_bytes(findings),
         "03_REOPENED_R1_RR2_STATUS_MATRIX.json": reopened,
         "04_R4_FINDING_CLOSURE_REGISTER.json": json_bytes({"contract_id": "room16.ba11_r4.finding_closure_register@1", "findings": closure_rows}),
-        "14_AUTHORITATIVE_ACCEPTANCE_REGISTER.json": json_bytes(required_matrix),
+        "14_AUTHORITATIVE_ACCEPTANCE_REGISTER.json": json_bytes(authoritative_acceptance),
         "15_TEST_MATRIX_EXECUTED.json": json_bytes({"contract_id": "room16.ba11_r4.executed_test_matrix@1", "row_count": len(executed_rows), "rows": executed_rows}),
         "16_FULL_REGRESSION_RECEIPTS.json": json_bytes({"contract_id": "room16.ba11_r4.command_receipts@1", "receipts": receipts}),
         "17_BA10_RAW_VERIFIER_RECEIPT.json": json_bytes({**receipt_by_id["ba10_freeze"], "parsed_stdout": json.loads(receipt_by_id["ba10_freeze"]["raw_stdout"])}),
