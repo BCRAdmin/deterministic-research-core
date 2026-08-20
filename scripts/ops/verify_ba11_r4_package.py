@@ -102,7 +102,16 @@ def derive_verifier_receipt(members: dict[str, bytes]) -> dict[str, Any]:
         package_path = f"implementation/{row['repo']}/{row['path']}"
         if package_path not in members or sha256_bytes(members[package_path]) != row["sha256"]:
             raise ValueError(f"changed-file binding mismatch: {package_path}")
-    if _json(members, "21_FOREIGN_WORKTREE_BOUNDARY_REPORT.json").get("foreign_scope_touched_by_room16_run"):
+    boundary = _json(members, "21_FOREIGN_WORKTREE_BOUNDARY_REPORT.json")
+    if not boundary.get("foreign_scope_present") or not boundary.get("foreign_worktrees"):
+        raise ValueError("foreign worktree presence not documented")
+    for worktree in boundary["foreign_worktrees"]:
+        if any(
+            key not in worktree
+            for key in ("path", "origin", "branch", "head", "status_porcelain_v2", "read_only_diff_sha256")
+        ):
+            raise ValueError("foreign worktree read-only evidence incomplete")
+    if boundary.get("foreign_scope_touched_by_room16_run"):
         raise ValueError("foreign worktree boundary violated")
     receipt = {
         "contract_id": "room16.ba11_r4.independent_verifier_receipt@1",

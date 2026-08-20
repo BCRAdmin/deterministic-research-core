@@ -279,9 +279,31 @@ def main() -> int:
 
     foreign_main = Path("/Users/BjornRosinger/Documents/DreamFactory/Utility-Websites/materialbedarf-rechner.de")
     recorded_foreign = foreign_main / ".tmp_codex/worktrees/materialbedarf-rechner-ba1-runtime-177f42e"
+    foreign_worktrees = []
+    if foreign_main.exists():
+        porcelain = git(foreign_main, "worktree", "list", "--porcelain")
+        for block in porcelain.split("\n\n"):
+            fields = dict(
+                line.split(" ", 1) for line in block.splitlines() if " " in line
+            )
+            worktree_path = Path(fields["worktree"])
+            diff = subprocess.run(
+                ["git", "diff", "--binary"], cwd=worktree_path, check=True, capture_output=True
+            ).stdout
+            foreign_worktrees.append({
+                "path": str(worktree_path),
+                "origin": git(worktree_path, "remote", "get-url", "origin"),
+                "branch": git(worktree_path, "branch", "--show-current"),
+                "head": git(worktree_path, "rev-parse", "HEAD"),
+                "status_porcelain_v2": git(worktree_path, "status", "--porcelain=v2", "--branch"),
+                "read_only_diff_sha256": sha256_bytes(diff),
+                "read_only_diff_bytes": len(diff),
+            })
     foreign_report = {
         "policy": "read_only_capture_only", "recorded_foreign_worktree": str(recorded_foreign),
         "recorded_foreign_worktree_exists": recorded_foreign.exists(),
+        "foreign_scope_present": bool(foreign_worktrees),
+        "foreign_worktrees": foreign_worktrees,
         "main_checkout": str(foreign_main),
         "main_checkout_head": git(foreign_main, "rev-parse", "HEAD") if foreign_main.exists() else None,
         "main_checkout_branch": git(foreign_main, "branch", "--show-current") if foreign_main.exists() else None,
