@@ -23,14 +23,9 @@
       "title": "Claim Diff Count",
       "type": "integer"
     },
-    "compare_engine_receipt_sha256": {
-      "pattern": "^[0-9a-f]{64}$",
-      "title": "Compare Engine Receipt Sha256",
-      "type": "string"
-    },
     "contract_id": {
-      "const": "room16.canary_comparison_result",
-      "default": "room16.canary_comparison_result",
+      "const": "room16.canary_compare_engine_receipt",
+      "default": "room16.canary_compare_engine_receipt",
       "title": "Contract Id",
       "type": "string"
     },
@@ -46,6 +41,11 @@
       "title": "Diagnostic Codes",
       "type": "array"
     },
+    "engine_version": {
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+      "title": "Engine Version",
+      "type": "string"
+    },
     "fact_diff_count": {
       "minimum": 0,
       "title": "Fact Diff Count",
@@ -56,19 +56,19 @@
       "title": "Lineage Diff Count",
       "type": "integer"
     },
+    "receipt_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Receipt Sha256",
+      "type": "string"
+    },
     "request_sha256": {
       "pattern": "^[0-9a-f]{64}$",
       "title": "Request Sha256",
       "type": "string"
     },
-    "result_sha256": {
-      "pattern": "^[0-9a-f]{64}$",
-      "title": "Result Sha256",
-      "type": "string"
-    },
     "schema_version": {
-      "const": 3,
-      "default": 3,
+      "const": 1,
+      "default": 1,
       "title": "Schema Version",
       "type": "integer"
     },
@@ -87,16 +87,16 @@
     "request_sha256",
     "baseline_sha256",
     "candidate_sha256",
-    "compare_engine_receipt_sha256",
     "verdict",
     "fact_diff_count",
     "claim_diff_count",
     "decision_diff_count",
     "lineage_diff_count",
     "diagnostic_codes",
-    "result_sha256"
+    "engine_version",
+    "receipt_sha256"
   ],
-  "title": "ComparisonResult",
+  "title": "CompareEngineReceipt",
   "type": "object",
   "x-room16-canonicalization": "room16.canonical_json@1",
   "x-room16-hash-algorithm": "sha256",

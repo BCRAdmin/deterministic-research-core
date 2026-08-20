@@ -2,6 +2,11 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "properties": {
+    "authority_graph_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Authority Graph Sha256",
+      "type": "string"
+    },
     "authority_owner": {
       "const": "research",
       "default": "research",
@@ -34,6 +39,11 @@
       "title": "Operator Counter",
       "type": "integer"
     },
+    "prepared_receipt_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Prepared Receipt Sha256",
+      "type": "string"
+    },
     "previous_head_sha256": {
       "anyOf": [
         {
@@ -63,8 +73,8 @@
       "type": "integer"
     },
     "schema_version": {
-      "const": 2,
-      "default": 2,
+      "const": 3,
+      "default": 3,
       "title": "Schema Version",
       "type": "integer"
     },
@@ -85,6 +95,8 @@
     "registry_ledger_head_sha256",
     "debt_ledger_head_sha256",
     "transaction_sha256",
+    "authority_graph_sha256",
+    "prepared_receipt_sha256",
     "consumed_nonce_set_sha256",
     "operator_counter",
     "reviewer_counter",

@@ -35,12 +35,16 @@ class TrustedRoleKeyPolicy:
     def __post_init__(self) -> None:
         role_ids = [set(self.operator_keys), set(self.reviewer_keys), set(self.research_keys)]
         if role_ids[0] & role_ids[1] or role_ids[0] & role_ids[2] or role_ids[1] & role_ids[2]:
-            raise CanaryGovernanceError("BA11_REVIEWER_NOT_INDEPENDENT", "key_id_overlap")
+            raise CanaryGovernanceError("BA11_ROLE_KEY_OVERLAP", "key_id_overlap")
         operator_values = {bytes(key) for key in self.operator_keys.values()}
         reviewer_values = {bytes(key) for key in self.reviewer_keys.values()}
         research_values = {bytes(key) for key in self.research_keys.values()}
-        if operator_values & reviewer_values or reviewer_values & research_values:
-            raise CanaryGovernanceError("BA11_REVIEWER_NOT_INDEPENDENT", "public_key_overlap")
+        if (
+            operator_values & reviewer_values
+            or operator_values & research_values
+            or reviewer_values & research_values
+        ):
+            raise CanaryGovernanceError("BA11_ROLE_KEY_OVERLAP", "public_key_overlap")
 
 
 def _signature_body(values: dict[str, Any], hash_field: str) -> dict[str, Any]:

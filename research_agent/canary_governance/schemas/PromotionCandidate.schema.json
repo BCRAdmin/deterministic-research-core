@@ -28,6 +28,16 @@
       "title": "Candidate Sha256",
       "type": "string"
     },
+    "change_classification_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Change Classification Sha256",
+      "type": "string"
+    },
+    "comparison_request_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Comparison Request Sha256",
+      "type": "string"
+    },
     "comparison_result_sha256": {
       "pattern": "^[0-9a-f]{64}$",
       "title": "Comparison Result Sha256",
@@ -40,10 +50,15 @@
       "type": "string"
     },
     "schema_version": {
-      "const": 1,
-      "default": 1,
+      "const": 2,
+      "default": 2,
       "title": "Schema Version",
       "type": "integer"
+    },
+    "subject_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Subject Sha256",
+      "type": "string"
     },
     "technical_baseline_sha256": {
       "pattern": "^[0-9a-f]{64}$",
@@ -54,8 +69,11 @@
   "required": [
     "candidate_id",
     "canary_id",
+    "subject_sha256",
     "technical_baseline_sha256",
+    "comparison_request_sha256",
     "comparison_result_sha256",
+    "change_classification_sha256",
     "base_registry_head_sha256",
     "candidate_sha256"
   ],

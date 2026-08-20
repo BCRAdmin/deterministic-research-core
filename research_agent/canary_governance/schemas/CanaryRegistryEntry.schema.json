@@ -72,11 +72,26 @@
       "title": "Latest Event Sha256",
       "type": "string"
     },
+    "normalized_subject": {
+      "minLength": 1,
+      "title": "Normalized Subject",
+      "type": "string"
+    },
     "schema_version": {
-      "const": 2,
-      "default": 2,
+      "const": 3,
+      "default": 3,
       "title": "Schema Version",
       "type": "integer"
+    },
+    "subject_namespace": {
+      "pattern": "^[a-z][a-z0-9_.:-]*$",
+      "title": "Subject Namespace",
+      "type": "string"
+    },
+    "subject_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Subject Sha256",
+      "type": "string"
     },
     "technical_baseline_sha256": {
       "pattern": "^[0-9a-f]{64}$",
@@ -86,6 +101,9 @@
   },
   "required": [
     "canary_id",
+    "subject_namespace",
+    "normalized_subject",
+    "subject_sha256",
     "canary_type",
     "baseline_version",
     "technical_baseline_sha256",

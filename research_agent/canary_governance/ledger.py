@@ -30,9 +30,9 @@ TRANSITIONS = {
     "candidate": {"review_accepted", "rejected", "stale"},
     "review_accepted": {"operator_approved", "rejected", "stale"},
     "operator_approved": {"frozen", "rejected", "stale"},
-    "frozen": {"stale", "superseded"},
-    "stale": {"recovered", "superseded", "rejected"},
-    "recovered": {"frozen", "stale", "superseded"},
+    "frozen": {"candidate", "stale", "superseded"},
+    "stale": {"candidate", "recovered", "superseded", "rejected"},
+    "recovered": {"candidate", "frozen", "stale", "superseded"},
     "rejected": set(),
     "superseded": set(),
 }
@@ -163,17 +163,49 @@ def fold_registry_events(
     )
     _assert_registry_head(ordered, expected_head)
     states: dict[str, str] = {}
+    subjects: dict[str, str] = {}
+    latest: dict[str, RegistryEvent] = {}
     for event in ordered:
+        prior_subject = subjects.get(event.canary_id)
+        if prior_subject is not None and prior_subject != event.subject_sha256:
+            raise CanaryGovernanceError("BA11_CANARY_SUBJECT_MISMATCH", event.canary_id)
+        canonical_id, canonical_subject, canonical_subject_sha256 = derive_canary_identity(
+            event.subject_namespace, event.normalized_subject
+        )
+        if (
+            event.canary_id != canonical_id
+            or event.normalized_subject != canonical_subject
+            or event.subject_sha256 != canonical_subject_sha256
+        ):
+            raise CanaryGovernanceError("BA11_ID_COLLISION", event.canary_id)
         required_model = EVENT_MODEL_BY_TYPE.get(event.event_type)
         if required_model and not isinstance(event, required_model):
-            raise CanaryGovernanceError("BA11_SCHEMA_INVALID", f"{event.event_type}_record")
+            raise CanaryGovernanceError("BA11_EVENT_CONTRACT_INVALID", f"{event.event_type}_record")
         previous_state = states.get(event.canary_id)
         allowed = GENESIS[None] if previous_state is None else TRANSITIONS[previous_state]
         if event.event_type not in allowed:
             raise CanaryGovernanceError(
                 "BA11_EVENT_TRANSITION_INVALID", f"{previous_state}->{event.event_type}"
             )
+        previous = latest.get(event.canary_id)
+        if previous is None:
+            validate_version_transition(None, event.baseline_version, genesis=True)
+            if event.change_class is not None:
+                raise CanaryGovernanceError("BA11_VERSION_TRANSITION_INVALID", "genesis_change_class")
+        elif event.event_type == "candidate" and previous_state in {"frozen", "stale", "recovered"}:
+            validate_version_transition(
+                previous.baseline_version,
+                event.baseline_version,
+                change_class=event.change_class,
+            )
+        elif (
+            event.baseline_version != previous.baseline_version
+            or event.change_class != previous.change_class
+        ):
+            raise CanaryGovernanceError("BA11_VERSION_TRANSITION_INVALID", event.event_id)
+        subjects[event.canary_id] = event.subject_sha256
         states[event.canary_id] = event.event_type
+        latest[event.canary_id] = event
     return states
 
 
@@ -206,6 +238,9 @@ def ledger_to_snapshot(
         entries.append(
             CanaryRegistryEntry.create(
                 canary_id=canary_id,
+                subject_namespace=event.subject_namespace,
+                normalized_subject=event.normalized_subject,
+                subject_sha256=event.subject_sha256,
                 canary_type=event.canary_type,
                 baseline_version=event.baseline_version,
                 technical_baseline_sha256=event.technical_baseline_sha256,
@@ -285,14 +320,14 @@ def verify_debt_ledger(
     for event in ordered:
         current = states.get(event.debt_id)
         if event.event_type not in allowed[current] or event.state_before != current:
-            raise CanaryGovernanceError("BA11_DEBT_CHAIN_BROKEN", event.event_id)
+            raise CanaryGovernanceError("BA11_DEBT_TRANSITION_INVALID", event.event_id)
         if event.state_after != event.event_type:
-            raise CanaryGovernanceError("BA11_DEBT_CHAIN_BROKEN", "state_after")
+            raise CanaryGovernanceError("BA11_DEBT_TRANSITION_INVALID", "state_after")
         if event.event_type == "accepted" and (
             not event.approval_receipt_sha256
             or event.approval_receipt_sha256 not in authentic_approval_sha256s
         ):
-            raise CanaryGovernanceError("BA11_DEBT_APPROVAL_REQUIRED", event.event_id)
+            raise CanaryGovernanceError("BA11_DEBT_TRANSITION_INVALID", "approval_required")
         states[event.debt_id] = event.state_after
     return states
 

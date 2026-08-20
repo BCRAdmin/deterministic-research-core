@@ -27,6 +27,28 @@
       "title": "Canary Type",
       "type": "string"
     },
+    "change_class": {
+      "anyOf": [
+        {
+          "enum": [
+            "ordinary",
+            "governance",
+            "breaking"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Change Class"
+    },
+    "comparison_result_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Comparison Result Sha256",
+      "type": "string"
+    },
     "contract_id": {
       "const": "room16.canary_promotion_event",
       "default": "room16.canary_promotion_event",
@@ -69,6 +91,11 @@
       "title": "Independent Review Sha256",
       "type": "string"
     },
+    "normalized_subject": {
+      "minLength": 1,
+      "title": "Normalized Subject",
+      "type": "string"
+    },
     "operator_approval_sha256": {
       "pattern": "^[0-9a-f]{64}$",
       "title": "Operator Approval Sha256",
@@ -87,9 +114,14 @@
       "default": null,
       "title": "Previous Event Sha256"
     },
+    "promotion_candidate_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Promotion Candidate Sha256",
+      "type": "string"
+    },
     "schema_version": {
-      "const": 2,
-      "default": 2,
+      "const": 3,
+      "default": 3,
       "title": "Schema Version",
       "type": "integer"
     },
@@ -97,6 +129,11 @@
       "minimum": 0,
       "title": "Sequence",
       "type": "integer"
+    },
+    "subject_namespace": {
+      "pattern": "^[a-z][a-z0-9_.:-]*$",
+      "title": "Subject Namespace",
+      "type": "string"
     },
     "subject_sha256": {
       "pattern": "^[0-9a-f]{64}$",
@@ -112,6 +149,8 @@
   "required": [
     "event_id",
     "canary_id",
+    "subject_namespace",
+    "normalized_subject",
     "sequence",
     "subject_sha256",
     "canary_type",
@@ -121,6 +160,8 @@
     "freeze_sha256",
     "effective_at_utc",
     "event_sha256",
+    "promotion_candidate_sha256",
+    "comparison_result_sha256",
     "independent_review_sha256",
     "operator_approval_sha256"
   ],

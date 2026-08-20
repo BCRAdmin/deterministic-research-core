@@ -27,6 +27,23 @@
       "title": "Canary Type",
       "type": "string"
     },
+    "change_class": {
+      "anyOf": [
+        {
+          "enum": [
+            "ordinary",
+            "governance",
+            "breaking"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Change Class"
+    },
     "contract_id": {
       "const": "room16.canary_stale_event",
       "default": "room16.canary_stale_event",
@@ -69,6 +86,11 @@
       "title": "Governance Envelope Sha256",
       "type": "string"
     },
+    "normalized_subject": {
+      "minLength": 1,
+      "title": "Normalized Subject",
+      "type": "string"
+    },
     "previous_event_sha256": {
       "anyOf": [
         {
@@ -83,8 +105,8 @@
       "title": "Previous Event Sha256"
     },
     "schema_version": {
-      "const": 2,
-      "default": 2,
+      "const": 3,
+      "default": 3,
       "title": "Schema Version",
       "type": "integer"
     },
@@ -96,6 +118,11 @@
     "stale_reason": {
       "minLength": 1,
       "title": "Stale Reason",
+      "type": "string"
+    },
+    "subject_namespace": {
+      "pattern": "^[a-z][a-z0-9_.:-]*$",
+      "title": "Subject Namespace",
       "type": "string"
     },
     "subject_sha256": {
@@ -112,6 +139,8 @@
   "required": [
     "event_id",
     "canary_id",
+    "subject_namespace",
+    "normalized_subject",
     "sequence",
     "subject_sha256",
     "canary_type",

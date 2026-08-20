@@ -60,9 +60,13 @@ from research_agent.canary_governance.ledger import (
     verify_derived_snapshot,
 )
 from research_agent.canary_governance.storage import ContentAddressedRegistryStore
+from research_agent.tests.canary_r4_fixtures import make_r4_fixture
 
 H1, H2, H3, H4, H5, H6, H7, H8 = (str(index) * 64 for index in range(1, 9))
 ZERO = "0" * 64
+TEST_CANARY_ID, TEST_NORMALIZED_SUBJECT, TEST_SUBJECT_SHA256 = derive_canary_identity(
+    "company", "Test Company"
+)
 
 
 def role_keys() -> tuple[TrustedRoleKeyPolicy, SigningKey, SigningKey, SigningKey]:
@@ -80,10 +84,12 @@ def role_keys() -> tuple[TrustedRoleKeyPolicy, SigningKey, SigningKey, SigningKe
 def event_values(sequence: int, kind: str, previous: str | None) -> dict:
     return {
         "event_id": f"event.{sequence}",
-        "canary_id": "canary.company.test",
+        "canary_id": TEST_CANARY_ID,
+        "subject_namespace": "company",
+        "normalized_subject": TEST_NORMALIZED_SUBJECT,
         "sequence": sequence,
         "event_type": kind,
-        "subject_sha256": H1,
+        "subject_sha256": TEST_SUBJECT_SHA256,
         "canary_type": "company_regression",
         "baseline_version": "1.0.0",
         "technical_baseline_sha256": H2,
@@ -98,7 +104,8 @@ def make_event(sequence: int, kind: str, previous: str | None) -> RegistryEvent:
     values = event_values(sequence, kind, previous)
     if kind == "frozen":
         return PromotionEvent.create(
-            **values, independent_review_sha256=H5, operator_approval_sha256=H6
+            **values, promotion_candidate_sha256=H7, comparison_result_sha256=H8,
+            independent_review_sha256=H5, operator_approval_sha256=H6
         )
     if kind == "rejected":
         return RejectionEvent.create(**values, rejection_reason="review failed", review_sha256=H5)
@@ -269,7 +276,9 @@ def test_t_rr2_005_a_record_specific_contract_set_and_entry_hash():
     } <= ids
     event = make_event(0, "genesis", None)
     entry = CanaryRegistryEntry.create(
-        canary_id=event.canary_id, canary_type=event.canary_type,
+        canary_id=event.canary_id, subject_namespace=event.subject_namespace,
+        normalized_subject=event.normalized_subject, subject_sha256=event.subject_sha256,
+        canary_type=event.canary_type,
         baseline_version=event.baseline_version, technical_baseline_sha256=H2,
         governance_envelope_sha256=H3, freeze_sha256=None,
         derived_state="candidate", latest_event_sha256=event.event_sha256,
@@ -302,7 +311,7 @@ def test_t_rr2_002_b_c_wrong_approval_bindings_are_blocked(changes, code):
 
 def test_t_rr2_002_d_reviewer_must_be_role_independent():
     operator = SigningKey(bytes.fromhex("01" * 32))
-    with pytest.raises(CanaryGovernanceError, match="BA11_REVIEWER_NOT_INDEPENDENT"):
+    with pytest.raises(CanaryGovernanceError, match="BA11_ROLE_KEY_OVERLAP"):
         TrustedRoleKeyPolicy(
             operator_keys={"operator.primary": operator.verify_key},
             reviewer_keys={"reviewer.primary": operator.verify_key},
@@ -344,7 +353,7 @@ def test_research_snapshot_receipt_has_separate_sign_and_verify_path():
 def test_t_rr2_004_a_registry_valid_prefix_rollback_is_blocked():
     events = registry_chain()
     full_head = build_registry_ledger_head(events, generation=0, previous_head_sha256=None)
-    assert fold_registry_events(events, expected_head=full_head)["canary.company.test"] == "frozen"
+    assert fold_registry_events(events, expected_head=full_head)[TEST_CANARY_ID] == "frozen"
     with pytest.raises(CanaryGovernanceError, match="BA11_LEDGER_ROLLBACK"):
         fold_registry_events(events[:-1], expected_head=full_head)
 
@@ -371,12 +380,12 @@ def test_t_rr2_004_c_d_e_persistent_ledgers_block_fork_bad_approval_and_reopen(t
     opened = debt_event(0, "opened", None, None)
     accepted = debt_event(1, "accepted", opened.event_sha256, "opened", approval=H1)
     head = build_debt_ledger_head((opened, accepted), generation=0, previous_head_sha256=None)
-    with pytest.raises(CanaryGovernanceError, match="BA11_DEBT_APPROVAL_REQUIRED"):
+    with pytest.raises(CanaryGovernanceError, match="BA11_DEBT_TRANSITION_INVALID"):
         verify_debt_ledger((opened, accepted), expected_head=head, authentic_approval_sha256s=set())
     closed = debt_event(2, "closed", accepted.event_sha256, "accepted")
     reopened = debt_event(3, "accepted", closed.event_sha256, "closed", approval=H1)
     reopen_head = build_debt_ledger_head((opened, accepted, closed, reopened), generation=0, previous_head_sha256=None)
-    with pytest.raises(CanaryGovernanceError, match="BA11_DEBT_CHAIN_BROKEN"):
+    with pytest.raises(CanaryGovernanceError, match="BA11_DEBT_TRANSITION_INVALID"):
         verify_debt_ledger(
             (opened, accepted, closed, reopened), expected_head=reopen_head,
             authentic_approval_sha256s={H1},
@@ -401,11 +410,13 @@ def test_t_rr2_008_a_b_no_new_truth_and_classification_counts_are_bound():
     with pytest.raises(ValidationError, match="zero semantic diffs"):
         ComparisonResult.create(
             request_sha256=H1, baseline_sha256=H2, candidate_sha256=H3,
+            compare_engine_receipt_sha256=H8,
             verdict="ordinary_change", fact_diff_count=1, claim_diff_count=0,
             decision_diff_count=0, lineage_diff_count=0, diagnostic_codes=(),
         )
     result = ComparisonResult.create(
         request_sha256=H1, baseline_sha256=H2, candidate_sha256=H3,
+        compare_engine_receipt_sha256=H8,
         verdict="ordinary_change", fact_diff_count=0, claim_diff_count=0,
         decision_diff_count=0, lineage_diff_count=0, diagnostic_codes=(),
     )
@@ -451,71 +462,8 @@ def test_t_rr2_010_c_genesis_import_is_persistently_one_time(tmp_path: Path):
 
 
 def transaction_fixture(tmp_path: Path):
-    policy, operator_key, reviewer_key, _ = role_keys()
-    approval = sign_approval(approval_values(), operator_key)
-    review = sign_independent_review(review_values(), reviewer_key)
-    freeze = CanaryFreezeRecord.create(
-        freeze_id="freeze.test", canary_id="canary.company.test",
-        technical_baseline_sha256=H2, governance_envelope_sha256=H3,
-        effective_at_utc="2026-08-20T00:00:00Z",
-    )
-    events = list(registry_chain())
-    previous = events[-2].event_sha256
-    promotion_values = event_values(4, "frozen", previous)
-    promotion_values["freeze_sha256"] = freeze.freeze_sha256
-    events[-1] = PromotionEvent.create(
-        **promotion_values,
-        independent_review_sha256=review.attestation_sha256,
-        operator_approval_sha256=approval.approval_sha256,
-    )
-    events = tuple(events)
-    registry_head = build_registry_ledger_head(events, generation=0, previous_head_sha256=None)
-    snapshot = ledger_to_snapshot(
-        events, expected_head=registry_head, registry_generation=0, previous_registry_sha256=None
-    )
-    debt_events: tuple[AcceptedDebtEvent, ...] = ()
-    debt_head = build_debt_ledger_head(debt_events, generation=0, previous_head_sha256=None)
-    comparison = ComparisonResult.create(
-        request_sha256=H5, baseline_sha256=H6, candidate_sha256=H7,
-        verdict="promotion_required", fact_diff_count=1, claim_diff_count=0,
-        decision_diff_count=0, lineage_diff_count=0, diagnostic_codes=(),
-    )
-    archive = ArchiveReceipt.create(
-        archive_content_sha256=H1, archive_member_manifest_sha256=H2,
-        source_date_epoch=1787184000, retention_class="governance_record",
-    )
-    event_set_sha = domain_hash(
-        "room16.canary_registry_event_set@1", [event.model_dump(mode="json") for event in events]
-    )
-    transaction = RegistryTransaction.create(
-        transaction_id="transaction.test", registry_generation=0, base_head_sha256=None,
-        candidate_snapshot_sha256=snapshot.snapshot_sha256,
-        registry_event_set_sha256=event_set_sha,
-        registry_ledger_head_sha256=registry_head.head_sha256,
-        freeze_sha256=freeze.freeze_sha256,
-        comparison_result_sha256=comparison.result_sha256,
-        independent_review_sha256=review.attestation_sha256,
-        operator_approval_sha256=approval.approval_sha256,
-        debt_ledger_head_sha256=debt_head.head_sha256,
-        archive_receipt_sha256=archive.receipt_sha256,
-        artifact_set_sha256=H8,
-        consumed_nonces=tuple(sorted((approval.nonce, review.nonce))),
-        operator_counter=approval.monotonic_counter,
-        reviewer_counter=review.monotonic_counter,
-    )
-    store = ContentAddressedRegistryStore(tmp_path / "registry")
-    kwargs = {
-        "snapshot": snapshot, "registry_events": events,
-        "registry_ledger_head": registry_head, "debt_events": debt_events,
-        "debt_ledger_head": debt_head, "freeze": freeze,
-        "comparison_result": comparison, "independent_review": review,
-        "operator_approval": approval, "archive_receipt": archive,
-        "artifact_set_sha256": H8, "trusted_role_key_policy": policy,
-        "revoked_key_ids": set(), "expected_subject_ids": ("canary.company.test",),
-        "expected_subject_sha256s": (H1,), "expected_finding_set_sha256": H2,
-        "fixed_now_utc": "2026-08-20T12:00:00Z",
-    }
-    return store, transaction, kwargs
+    fixture = make_r4_fixture(tmp_path / "registry")
+    return fixture.store, fixture.transaction, fixture.commit_kwargs()
 
 
 def test_t_rr2_003_a_transaction_binds_full_authority_graph(tmp_path: Path):
@@ -565,7 +513,7 @@ def test_t_rr2_003_d_stale_writer_and_unbound_transaction_are_blocked(tmp_path: 
     )
     with pytest.raises(CanaryGovernanceError, match="BA11_REGISTRY_CAS_CONFLICT"):
         store.commit_transaction(bad, **kwargs)
-    with pytest.raises(CanaryGovernanceError, match="BA11_TRANSACTION_BINDING_INVALID"):
+    with pytest.raises(CanaryGovernanceError, match="BA11_AUTHORITY_GRAPH_MISMATCH"):
         store.commit_transaction(
             RegistryTransaction.create(
                 **{

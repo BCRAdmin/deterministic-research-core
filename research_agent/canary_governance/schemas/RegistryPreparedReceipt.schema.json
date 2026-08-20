@@ -2,6 +2,11 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "properties": {
+    "authority_graph_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Authority Graph Sha256",
+      "type": "string"
+    },
     "authority_owner": {
       "const": "research",
       "default": "research",
@@ -38,8 +43,8 @@
       "type": "string"
     },
     "schema_version": {
-      "const": 1,
-      "default": 1,
+      "const": 2,
+      "default": 2,
       "title": "Schema Version",
       "type": "integer"
     },
@@ -51,6 +56,7 @@
   },
   "required": [
     "transaction_sha256",
+    "authority_graph_sha256",
     "prepared_at_utc",
     "receipt_sha256"
   ],
