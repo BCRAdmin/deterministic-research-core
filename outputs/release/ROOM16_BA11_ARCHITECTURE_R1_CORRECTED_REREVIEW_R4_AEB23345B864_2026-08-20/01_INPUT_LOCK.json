@@ -1,0 +1,13 @@
+{
+  "ba11_implementation_ready": false,
+  "ba12_authorized": false,
+  "contract_id": "room16.ba11_r4.input_lock@1",
+  "publication_authorized": false,
+  "ready_for_independent_rereview": true,
+  "release_authorized": false,
+  "source_r3_sha256": "c2a1850d1e6928def976fa0459398f930429b2007adcd5e7e6efc339e84ad80e",
+  "source_r4_bytes": 508600,
+  "source_r4_entries": 19,
+  "source_r4_filename": "ROOM16_BA11_R3_INDEPENDENT_REREVIEW_R4_CHANGES_REQUIRED_VEGA_CORRECTION_6301148F84AF_2026-08-20.zip",
+  "source_r4_sha256": "6301148f84af486a631280469d4cf496f17dc8bbdbecffba47de03350a838d11"
+}

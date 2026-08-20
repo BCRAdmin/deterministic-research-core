@@ -1,0 +1,147 @@
+{
+  "contract_id": "room16.ba11_r3.independent_rereview_findings@1",
+  "counts": {
+    "P0": 7,
+    "P1": 3,
+    "total": 10
+  },
+  "findings": [
+    {
+      "finding_id": "BA11-R3-RR-P0-001",
+      "priority": "P0",
+      "reopens": [
+        "BA11-AR-003",
+        "BA11-AR-006",
+        "BA11-AR-011",
+        "BA11-RR2-P0-003",
+        "BA11-RR2-P0-004",
+        "BA11-RR2-P1-002"
+      ],
+      "reproduction_id": "TRANSACTION_COMMITS_WITH_UNPERSISTED_EVENT_LEDGERS",
+      "required_fix": "Die Transaktion muss exakte Event-Sets und immutable Ledger-Heads selbst atomar persistieren oder ausschließlich bereits persistierte, vollständig rekonstruierte Authority akzeptieren. Caller-declared Heads ohne auflösbare Objekte blockieren.",
+      "root_cause": "commit_transaction akzeptiert caller-supplied Event-Tupel und Ledger-Heads, ohne diese Authority-Objekte zwingend über die persistenten append-only Rails zu speichern.",
+      "title": "Transaction publiziert ohne persistierte Registry-/Debt-Ledger"
+    },
+    {
+      "finding_id": "BA11-R3-RR-P0-002",
+      "priority": "P0",
+      "reopens": [
+        "BA11-AR-001",
+        "BA11-AR-005",
+        "BA11-AR-006",
+        "BA11-RR2-P0-002",
+        "BA11-RR2-P0-003"
+      ],
+      "reproduction_id": "PROMOTION_EVENT_AUTHORITY_HASHES_NOT_CROSS_BOUND",
+      "required_fix": "Ein zentraler AuthorityGraphVerifier muss jede Kante von Candidate/Comparison über Promotion, Freeze, Review, Approval, Snapshot, Archive und Transaction auflösen und byte-/hashgenau kreuzprüfen.",
+      "root_cause": "PromotionEvent kann andere Freeze-/Review-/Approval-Hashes tragen als die separat an RegistryTransaction übergebenen tatsächlichen Authority-Objekte.",
+      "title": "Promotion-/Authority-Referenzen werden nicht end-to-end gekreuzt"
+    },
+    {
+      "finding_id": "BA11-R3-RR-P0-003",
+      "priority": "P0",
+      "reopens": [
+        "BA11-AR-005",
+        "BA11-AR-013",
+        "BA11-RR2-P0-002"
+      ],
+      "reproduction_id": "UNRELATED_APPROVAL_SUBJECT_AUTHORIZES_CANARY_TRANSACTION",
+      "required_fix": "Expected Subjects ausschließlich intern aus dem kanonischen PromotionCandidate/Transaction-Graphen ableiten. Caller darf sie nicht wählen.",
+      "root_cause": "expected_subject_ids/-hashes werden als freie Argumente übergeben. Eine gültige Receipt für ein fremdes Subject kann deshalb mit passenden expected-Werten eine andere Canary-Transaktion autorisieren.",
+      "title": "Approval-/Review-Subjects bleiben caller-selectable"
+    },
+    {
+      "finding_id": "BA11-R3-RR-P0-004",
+      "priority": "P0",
+      "reopens": [
+        "BA11-AR-003",
+        "BA11-AR-011",
+        "BA11-RR2-P0-004"
+      ],
+      "reproduction_id": "PERSISTENT_LEDGER_TRUNCATION_AND_ALTERNATE_APPEND_ACCEPTED",
+      "required_fix": "Jeden Ledger-Head content-addressed speichern; Current nur als CAS-Pointer. Vor Append vollständige immutable Head-/Event-Historie rekonstruieren und Truncation/Fork blockieren.",
+      "root_cause": "Mutable head.json plus verbliebene Event-Dateien werden als Wahrheit verwendet. Nach Tail-Löschung kann ein alternativer Zweig angehängt werden; frühere Heads sind nicht zwingend als immutable auflösbare Objekte erhalten.",
+      "title": "Persistente Ledgers akzeptieren Truncation und alternativen Append"
+    },
+    {
+      "finding_id": "BA11-R3-RR-P0-005",
+      "priority": "P0",
+      "reopens": [
+        "BA11-AR-003",
+        "BA11-AR-011",
+        "BA11-AR-013",
+        "BA11-RR2-P0-004",
+        "BA11-RR2-P1-004"
+      ],
+      "reproduction_id": "INVALID_DEBT_EVENT_PERSISTED_BY_APPEND_API",
+      "required_fix": "Prospective vollständigen Ledger vor jedem Write durch denselben normativen Fold/Transition-/Approval-Verifier führen. Fehler müssen zero-byte store drift ergeben.",
+      "root_cause": "Append prüft primär Sequence/Previous Hash. Vollständige Transition, spezialisierter Event-Contract, Subject-Kontinuität und authentische Debt-Approval werden nicht zwingend vor dem ersten Write geprüft.",
+      "title": "Append-APIs persistieren semantisch ungültige Events"
+    },
+    {
+      "finding_id": "BA11-R3-RR-P0-006",
+      "priority": "P0",
+      "reopens": [
+        "BA11-AR-006",
+        "BA11-RR2-P0-003"
+      ],
+      "reproduction_id": "RECOVERY_SUCCEEDS_WITH_MISSING_TRANSACTION_RECORD",
+      "required_fix": "Committed nur aus vollständig auflösbarem Transaction-, Prepared-, Event-, Ledger-, Snapshot-, Freeze-, Comparison-, Review-, Approval-, Archive- und Commit-Graphen ableiten.",
+      "root_cause": "Wenn Current Head bereits dem Candidate entspricht, kann Recovery Erfolg melden, obwohl Transaction-/Staging-/Authority-Objekte fehlen.",
+      "title": "Recovery meldet Erfolg bei fehlendem Transaction-Graphen"
+    },
+    {
+      "finding_id": "BA11-R3-RR-P0-007",
+      "priority": "P0",
+      "reopens": [
+        "BA11-AR-013",
+        "BA11-AR-014",
+        "BA11-RR2-P0-007",
+        "BA11-RR2-P1-004"
+      ],
+      "reproduction_id": "STRUCTURAL_VERIFIER_REGENERATES_PASS_DESPITE_SEMANTIC_RESIDUALS",
+      "required_fix": "Unveränderliches Acceptance-Requirement-Register mit stabiler Requirement-ID, exaktem Source-Test, Diagnostic, Command Receipt und Ergebnis-Hash. Builder darf das Set nicht reduzieren.",
+      "root_cause": "Die RR2-Findings enthalten 61 Acceptance-Konzepte; R3 bindet 37 Test-IDs. Der Verifier prüft die reduzierte Collector-Matrix und regeneriert PASS trotz reproduzierter Restlücken.",
+      "title": "Evidence-Verifier erzwingt nicht den vollständigen Acceptance-Vertrag"
+    },
+    {
+      "finding_id": "BA11-R3-RR-P1-001",
+      "priority": "P1",
+      "reopens": [
+        "BA11-AR-009",
+        "BA11-RR2-P1-001"
+      ],
+      "reproduction_id": "COMPARISON_REQUEST_RESULT_CONTENT_MISMATCH_ACCEPTED",
+      "required_fix": "Result und Classification nur aus aufgelöster Request plus Compare-Engine-Receipt ableiten.",
+      "root_cause": "ComparisonResult kann einen gültigen Request-Hash tragen und zugleich abweichende Baseline-/Candidate-Hashes oder caller-settable Diff-Counts deklarieren.",
+      "title": "ComparisonRequest/Result/Candidate sind nicht vollständig gebunden"
+    },
+    {
+      "finding_id": "BA11-R3-RR-P1-002",
+      "priority": "P1",
+      "reopens": [
+        "BA11-AR-010",
+        "BA11-AR-011",
+        "BA11-RR2-P1-003"
+      ],
+      "reproduction_id": "CANARY_SUBJECT_RELABEL_AND_VERSION_JUMP_ACCEPTED",
+      "required_fix": "ID-/Subject-/Collision-/SemVer-/Genesis-Regeln in den produktiven Rail integrieren; Snapshot Entry muss Subject-Identity bewahren.",
+      "root_cause": "Hilfsfunktionen existieren, werden aber nicht zwingend von Append/Fold/Transaction ausgeführt. Derselbe canary_id kann Subject wechseln und unzulässige Versionssprünge akzeptieren.",
+      "title": "Canary-Subject/SemVer/Collision/Genesis nicht im produktiven Rail erzwungen"
+    },
+    {
+      "finding_id": "BA11-R3-RR-P1-003",
+      "priority": "P1",
+      "reopens": [
+        "BA11-AR-005",
+        "BA11-RR2-P0-002"
+      ],
+      "reproduction_id": "OPERATOR_AND_RESEARCH_KEY_OVERLAP_ACCEPTED",
+      "required_fix": "Key IDs und Public-Key-Bytes über Operator, Reviewer und Research paarweise disjunkt erzwingen.",
+      "root_cause": "TrustedRoleKeyPolicy blockiert Reviewer-Überlappung, aber nicht gleiche Key-Bytes zwischen Operator und Research.",
+      "title": "Operator und Research dürfen denselben Public Key verwenden"
+    }
+  ],
+  "source_r3_sha256": "c2a1850d1e6928def976fa0459398f930429b2007adcd5e7e6efc339e84ad80e",
+  "verdict": "CHANGES_REQUIRED"
+}

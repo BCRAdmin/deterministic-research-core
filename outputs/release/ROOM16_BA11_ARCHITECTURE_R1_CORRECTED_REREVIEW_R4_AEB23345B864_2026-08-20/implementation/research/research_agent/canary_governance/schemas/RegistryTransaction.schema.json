@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "archive_receipt_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Archive Receipt Sha256",
+      "type": "string"
+    },
+    "artifact_set_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Artifact Set Sha256",
+      "type": "string"
+    },
+    "authority_graph_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Authority Graph Sha256",
+      "type": "string"
+    },
+    "authority_owner": {
+      "const": "research",
+      "default": "research",
+      "title": "Authority Owner",
+      "type": "string"
+    },
+    "base_head_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Base Head Sha256"
+    },
+    "candidate_snapshot_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Candidate Snapshot Sha256",
+      "type": "string"
+    },
+    "comparison_result_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Comparison Result Sha256",
+      "type": "string"
+    },
+    "consumed_nonces": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Consumed Nonces",
+      "type": "array"
+    },
+    "contract_id": {
+      "const": "room16.canary_registry_transaction",
+      "default": "room16.canary_registry_transaction",
+      "title": "Contract Id",
+      "type": "string"
+    },
+    "debt_ledger_head_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Debt Ledger Head Sha256",
+      "type": "string"
+    },
+    "freeze_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Freeze Sha256",
+      "type": "string"
+    },
+    "independent_review_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Independent Review Sha256",
+      "type": "string"
+    },
+    "operator_approval_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Operator Approval Sha256",
+      "type": "string"
+    },
+    "operator_counter": {
+      "minimum": 1,
+      "title": "Operator Counter",
+      "type": "integer"
+    },
+    "registry_event_set_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Registry Event Set Sha256",
+      "type": "string"
+    },
+    "registry_generation": {
+      "minimum": 0,
+      "title": "Registry Generation",
+      "type": "integer"
+    },
+    "registry_ledger_head_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Registry Ledger Head Sha256",
+      "type": "string"
+    },
+    "reviewer_counter": {
+      "minimum": 1,
+      "title": "Reviewer Counter",
+      "type": "integer"
+    },
+    "schema_version": {
+      "const": 3,
+      "default": 3,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "transaction_id": {
+      "pattern": "^[a-z][a-z0-9_.:-]*$",
+      "title": "Transaction Id",
+      "type": "string"
+    },
+    "transaction_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Transaction Sha256",
+      "type": "string"
+    }
+  },
+  "required": [
+    "transaction_id",
+    "registry_generation",
+    "candidate_snapshot_sha256",
+    "registry_event_set_sha256",
+    "registry_ledger_head_sha256",
+    "freeze_sha256",
+    "comparison_result_sha256",
+    "independent_review_sha256",
+    "operator_approval_sha256",
+    "debt_ledger_head_sha256",
+    "archive_receipt_sha256",
+    "artifact_set_sha256",
+    "authority_graph_sha256",
+    "consumed_nonces",
+    "operator_counter",
+    "reviewer_counter",
+    "transaction_sha256"
+  ],
+  "title": "RegistryTransaction",
+  "type": "object",
+  "x-room16-canonicalization": "room16.canonical_json@1",
+  "x-room16-hash-algorithm": "sha256",
+  "x-room16-unknown-field-policy": "fail_closed"
+}

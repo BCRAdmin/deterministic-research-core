@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authority_owner": {
+      "const": "research",
+      "default": "research",
+      "title": "Authority Owner",
+      "type": "string"
+    },
+    "base_registry_head_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Base Registry Head Sha256",
+      "type": "string"
+    },
+    "canary_id": {
+      "pattern": "^[a-z][a-z0-9_.:-]*$",
+      "title": "Canary Id",
+      "type": "string"
+    },
+    "candidate_id": {
+      "pattern": "^[a-z][a-z0-9_.:-]*$",
+      "title": "Candidate Id",
+      "type": "string"
+    },
+    "candidate_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Candidate Sha256",
+      "type": "string"
+    },
+    "change_classification_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Change Classification Sha256",
+      "type": "string"
+    },
+    "comparison_request_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Comparison Request Sha256",
+      "type": "string"
+    },
+    "comparison_result_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Comparison Result Sha256",
+      "type": "string"
+    },
+    "contract_id": {
+      "const": "room16.canary_promotion_candidate",
+      "default": "room16.canary_promotion_candidate",
+      "title": "Contract Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 2,
+      "default": 2,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "subject_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Subject Sha256",
+      "type": "string"
+    },
+    "technical_baseline_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Technical Baseline Sha256",
+      "type": "string"
+    }
+  },
+  "required": [
+    "candidate_id",
+    "canary_id",
+    "subject_sha256",
+    "technical_baseline_sha256",
+    "comparison_request_sha256",
+    "comparison_result_sha256",
+    "change_classification_sha256",
+    "base_registry_head_sha256",
+    "candidate_sha256"
+  ],
+  "title": "PromotionCandidate",
+  "type": "object",
+  "x-room16-canonicalization": "room16.canonical_json@1",
+  "x-room16-hash-algorithm": "sha256",
+  "x-room16-unknown-field-policy": "fail_closed"
+}

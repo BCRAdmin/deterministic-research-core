@@ -1,0 +1,6 @@
+{
+  "central_verifier": "verify_authority_graph",
+  "finding": "BA11-R3-RR-P0-002",
+  "resolved_edges": 31,
+  "status": "PASS"
+}

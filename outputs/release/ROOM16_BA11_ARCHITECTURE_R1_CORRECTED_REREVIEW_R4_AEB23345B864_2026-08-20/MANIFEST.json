@@ -1,0 +1,301 @@
+{
+  "authority_owner": "research",
+  "contract_id": "room16.canary_evidence_manifest",
+  "files": [
+    {
+      "bytes": 254,
+      "path": "00_R4_CORRECTION_VERDICT.md",
+      "sha256": "de1e1504a052224c8a30cbe7de3e4ed0bbb5f666406794679c0bcf2b6eeebfe9"
+    },
+    {
+      "bytes": 588,
+      "path": "01_INPUT_LOCK.json",
+      "sha256": "deb88d004148f9da4711529ef29cd36abb806bad888a39d62dd0ed1dc2238102"
+    },
+    {
+      "bytes": 7617,
+      "path": "02_R3_REREVIEW_FINDINGS.json",
+      "sha256": "0c31159e10c35af0d4f127aa9160013a65b9efaf1ca3fe6fcfb8f2135c1e7df8"
+    },
+    {
+      "bytes": 6072,
+      "path": "03_REOPENED_R1_RR2_STATUS_MATRIX.json",
+      "sha256": "a3ede279a30b5969eec119b3ce3f12056f0f2217cbee8414b26a21f43152e4aa"
+    },
+    {
+      "bytes": 42496,
+      "path": "04_R4_FINDING_CLOSURE_REGISTER.json",
+      "sha256": "2c4519c1c2ecd362402e2b65c848f0e568bd378ae91ed0ee9ab093aad744cd89"
+    },
+    {
+      "bytes": 129,
+      "path": "05_AUTHORITY_GRAPH_REPORT.json",
+      "sha256": "7c1c6059ee0c51d95d93d4d80bd1b38eab2f1334b0ce9fb9566924dc71cfc5c8"
+    },
+    {
+      "bytes": 123,
+      "path": "06_TRANSACTION_OBJECT_SET_REPORT.json",
+      "sha256": "2418fc81bef86e013a461da59920a7ed0ea5b8b08350c85e605dd5dd90c337ff"
+    },
+    {
+      "bytes": 133,
+      "path": "07_LEDGER_PERSISTENCE_AND_ROLLBACK_REPORT.json",
+      "sha256": "7d61de49f3bf19a9c416b7d47677ae30ed8a16140b055f318ae681909b77e833"
+    },
+    {
+      "bytes": 142,
+      "path": "08_APPEND_VALIDATE_BEFORE_WRITE_REPORT.json",
+      "sha256": "c984aaa527448f572dae5468ab46e146f3515584a297047e22d8731f8e44c3b2"
+    },
+    {
+      "bytes": 145,
+      "path": "09_APPROVAL_SUBJECT_BINDING_REPORT.json",
+      "sha256": "5649e69bcf644cc2bbe190d491a28442327ff757abb9b073e4a97dfef104e200"
+    },
+    {
+      "bytes": 140,
+      "path": "10_RECOVERY_FAULT_INJECTION_REPORT.json",
+      "sha256": "05f08b5dd60914b68052c75ee910cb56ba452cc574f2f9479bcb0949ab501fb8"
+    },
+    {
+      "bytes": 111,
+      "path": "11_COMPARISON_CHAIN_REPORT.json",
+      "sha256": "1628f2707d63195a24001a03f88daf5f8d5547c842263044c93294473cd89894"
+    },
+    {
+      "bytes": 158,
+      "path": "12_CANARY_ID_VERSION_GENESIS_REPORT.json",
+      "sha256": "abb31727540db68f3504cf7b9593222567e7e46026cfd004645f7355c3c1a4d2"
+    },
+    {
+      "bytes": 140,
+      "path": "13_ROLE_KEY_SEPARATION_REPORT.json",
+      "sha256": "238ecdeb189233917dea6e13bcd42e70f48190ea2b1480254bc12829bb3921de"
+    },
+    {
+      "bytes": 60494,
+      "path": "14_AUTHORITATIVE_ACCEPTANCE_REGISTER.json",
+      "sha256": "72ecc0eff2a119924944972e3aa6f66effd4cb702395e08ded9df697343d3781"
+    },
+    {
+      "bytes": 42203,
+      "path": "15_TEST_MATRIX_EXECUTED.json",
+      "sha256": "3f8af3cd966c6ef7ef171a7b088467e3b8b3e1281d5ac513cea8b103707483bf"
+    },
+    {
+      "bytes": 247996,
+      "path": "16_FULL_REGRESSION_RECEIPTS.json",
+      "sha256": "e346ae522fb8b9e14f3b4345a3ef619ba16ffa865496d43b52407a9bb280a77f"
+    },
+    {
+      "bytes": 12541,
+      "path": "17_BA10_RAW_VERIFIER_RECEIPT.json",
+      "sha256": "5e77cc6e735c4baf7df8f6e914004e0eabd6b137158bb5090540f4a7784fa74e"
+    },
+    {
+      "bytes": 1124,
+      "path": "18_SOURCE_TREE_BINDINGS.json",
+      "sha256": "d5decb81b72950ea8762dce3764b68e00cf726cc3e157d80120d4ae7fcf04415"
+    },
+    {
+      "bytes": 7939,
+      "path": "19_CHANGED_FILES_PER_FINDING.json",
+      "sha256": "c59cbf78fd6c99b7011b869eef2a468e3303d63f285c2ffa738352360f98a3f5"
+    },
+    {
+      "bytes": 178,
+      "path": "20_DETERMINISTIC_BUILD_REPORT.json",
+      "sha256": "701731503d132a1616c4c112f55af3338dd411dbeed931cd347d744e3450c6b2"
+    },
+    {
+      "bytes": 1390,
+      "path": "21_FOREIGN_WORKTREE_BOUNDARY_REPORT.json",
+      "sha256": "be26ba0b00a12edb09f98a312da531eb572c90ec11ae6b4170b48353633cecc8"
+    },
+    {
+      "bytes": 158,
+      "path": "22_REREVIEW_REQUEST.md",
+      "sha256": "c472e79884e72730a796b1dbb1647bbcc3625cc9dd36c2ca6b9f0447aed56ddb"
+    },
+    {
+      "bytes": 1514,
+      "path": "implementation/research/research_agent/canary_governance/__init__.py",
+      "sha256": "8ac461a198265668f7d6fb4a69e6daa3417bcd53e5f6d19924a5f9e59c0cadce"
+    },
+    {
+      "bytes": 3173,
+      "path": "implementation/research/research_agent/canary_governance/acceptance.py",
+      "sha256": "4a0e4429e296e12b0e1d9099f851bb8b9ec4c788d60ffa8a562c8ebd0adeef82"
+    },
+    {
+      "bytes": 9003,
+      "path": "implementation/research/research_agent/canary_governance/approval.py",
+      "sha256": "171b120e26c099e2fc18534c4be645d49b3ed6e87f042d78183c9de8779f0510"
+    },
+    {
+      "bytes": 12597,
+      "path": "implementation/research/research_agent/canary_governance/authority_graph.py",
+      "sha256": "da25c578466778e7ed659f90383ad5a1a4d8bf1ee1cea85cdbf3abb61cf010cc"
+    },
+    {
+      "bytes": 38820,
+      "path": "implementation/research/research_agent/canary_governance/contracts.py",
+      "sha256": "66f6caba214df639227235de3efb137dd25a59d7f8cee32007e9e4c873d7711e"
+    },
+    {
+      "bytes": 5616,
+      "path": "implementation/research/research_agent/canary_governance/diagnostics.py",
+      "sha256": "4ed2150d8583c997ac24b759e14b0eb4a731fdf4c61750c939bc9d179c307e56"
+    },
+    {
+      "bytes": 12910,
+      "path": "implementation/research/research_agent/canary_governance/ledger.py",
+      "sha256": "ac78a806505caa784a493cbb4abe2c4d542da84a08f62b36f062e484413f86ea"
+    },
+    {
+      "bytes": 2202,
+      "path": "implementation/research/research_agent/canary_governance/schemas/ArchiveReceipt.schema.json",
+      "sha256": "e9a7c476baac732e4ae09d77a1488c9dcd2a22e4691b2fad815174fb89473ce0"
+    },
+    {
+      "bytes": 2902,
+      "path": "implementation/research/research_agent/canary_governance/schemas/CanaryRegistryEntry.schema.json",
+      "sha256": "8d5c26b0bfe49f2e6d113c4a442072f850e959f2c45a99ef5727582083a7c133"
+    },
+    {
+      "bytes": 2789,
+      "path": "implementation/research/research_agent/canary_governance/schemas/ChangeClassification.schema.json",
+      "sha256": "f6c0ae3433390a9f03e2d727ae89e71e71cedabf9364b7927391f80c6205622b"
+    },
+    {
+      "bytes": 2497,
+      "path": "implementation/research/research_agent/canary_governance/schemas/CompareEngineReceipt.schema.json",
+      "sha256": "1ad3dab2f89b43b400ff1c713ce60161030ebdb7e8a64221e140109a89ba3801"
+    },
+    {
+      "bytes": 2492,
+      "path": "implementation/research/research_agent/canary_governance/schemas/ComparisonResult.schema.json",
+      "sha256": "4d0b03f2756116d36b68603354a1a5cb40d7019943ecc00d7b7d75bccd0b5889"
+    },
+    {
+      "bytes": 1353,
+      "path": "implementation/research/research_agent/canary_governance/schemas/LedgerHeadPointer.schema.json",
+      "sha256": "c3b594897af24d670ecbc4b3fb3254dfa4b86895c86bf2d73f03dfe74b8c3949"
+    },
+    {
+      "bytes": 2261,
+      "path": "implementation/research/research_agent/canary_governance/schemas/PromotionCandidate.schema.json",
+      "sha256": "1d7f49c3a1c3744587f6f49f21bc2320a74cdcaa66a1c351355c69c3cb87ff5c"
+    },
+    {
+      "bytes": 4236,
+      "path": "implementation/research/research_agent/canary_governance/schemas/PromotionEvent.schema.json",
+      "sha256": "26f3f190918355e0c1df0555f658c0acf85bf41a81183418ffcd9c64819f5ca3"
+    },
+    {
+      "bytes": 3702,
+      "path": "implementation/research/research_agent/canary_governance/schemas/RecoveryEvent.schema.json",
+      "sha256": "610d5e94277569cee9daf8297347c37195192f25519b3ffbbb9b37d421954f31"
+    },
+    {
+      "bytes": 4668,
+      "path": "implementation/research/research_agent/canary_governance/schemas/RegistryAuthorityGraph.schema.json",
+      "sha256": "d11d90d74559a6f99859d679fe502629154800f6292c8e4ba25dd96bcff6eeea"
+    },
+    {
+      "bytes": 1961,
+      "path": "implementation/research/research_agent/canary_governance/schemas/RegistryCommitReceipt.schema.json",
+      "sha256": "ef984118f84ea13cd679a7e0873a22371e06433657acab27a0be432b98481e69"
+    },
+    {
+      "bytes": 3813,
+      "path": "implementation/research/research_agent/canary_governance/schemas/RegistryEvent.schema.json",
+      "sha256": "5ec5758800beb363e43a3b34af6fbaae5dca7066e986d300cf842bb1942d8a4e"
+    },
+    {
+      "bytes": 2760,
+      "path": "implementation/research/research_agent/canary_governance/schemas/RegistryHead.schema.json",
+      "sha256": "5c884c573e5f10f8475863f98e6c9a86672e01051347a3d2a73538d5c93e217a"
+    },
+    {
+      "bytes": 1725,
+      "path": "implementation/research/research_agent/canary_governance/schemas/RegistryPreparedReceipt.schema.json",
+      "sha256": "ece544ce2290ded65ca73253f6fae477036de5ecf3814102310dcd41d4f310ca"
+    },
+    {
+      "bytes": 4861,
+      "path": "implementation/research/research_agent/canary_governance/schemas/RegistrySnapshot.schema.json",
+      "sha256": "d3e040a0e541c2913772986b13e05f864b92a20a74ff5c4b63dfeb0d80287016"
+    },
+    {
+      "bytes": 3802,
+      "path": "implementation/research/research_agent/canary_governance/schemas/RegistryTransaction.schema.json",
+      "sha256": "9ccfd4b920d499fec4b1d55a3226df3d19c39fe444051b76ab9b61680104495f"
+    },
+    {
+      "bytes": 3914,
+      "path": "implementation/research/research_agent/canary_governance/schemas/RejectionEvent.schema.json",
+      "sha256": "812e124b6b994facb0b3a28b7f2a94000747eee8e6ef1465ebbe47a0d811ff35"
+    },
+    {
+      "bytes": 3816,
+      "path": "implementation/research/research_agent/canary_governance/schemas/StaleEvent.schema.json",
+      "sha256": "e0c536423fa7e61eff37a881acac8e900e327bf7f0fe0dd0cad6997248501f88"
+    },
+    {
+      "bytes": 3896,
+      "path": "implementation/research/research_agent/canary_governance/schemas/SupersessionEvent.schema.json",
+      "sha256": "d807b5c21602338b4d9dafd7e64c9deba4556f5dae09134f63def7c6380fb9c8"
+    },
+    {
+      "bytes": 134581,
+      "path": "implementation/research/research_agent/canary_governance/schemas/contract_catalog_v1.json",
+      "sha256": "7c714c5c41b877ce6da2eecf96a271ea74033541b7e4440a32900b0191fac97a"
+    },
+    {
+      "bytes": 33281,
+      "path": "implementation/research/research_agent/canary_governance/storage.py",
+      "sha256": "439485ef4f4608980dcfa3ad6f954236deb85b1845937e60c7a33a5a949a71ed"
+    },
+    {
+      "bytes": 12654,
+      "path": "implementation/research/research_agent/tests/canary_r4_fixtures.py",
+      "sha256": "a7d5cb0f71dada01662c9138934bc638101ee5c8dbf77964bdb972ef7df7e052"
+    },
+    {
+      "bytes": 24777,
+      "path": "implementation/research/research_agent/tests/test_canary_governance.py",
+      "sha256": "d54c224781ddcf5479910647e9289b83be61338f58fcd9e358f11588a5c7a5ad"
+    },
+    {
+      "bytes": 24485,
+      "path": "implementation/research/research_agent/tests/test_canary_governance_r4.py",
+      "sha256": "e5e0d4416d31ca38b30154b3f2321aeefe93049a812258091676d43569b6acd3"
+    },
+    {
+      "bytes": 25857,
+      "path": "implementation/research/scripts/ops/build_ba11_r4_evidence.py",
+      "sha256": "f88a0217c650e36ff8595f75ea620bd4d6f6fb3f3ae557268f933d6525424ac2"
+    },
+    {
+      "bytes": 10382,
+      "path": "implementation/research/scripts/ops/verify_ba11_r4_package.py",
+      "sha256": "2b73bea65e01402e4ad52fef5d26bf329856dd9c9989309aaada2ceda7d39f67"
+    },
+    {
+      "bytes": 781,
+      "path": "independent_verifier/VERIFIER_RECEIPT.json",
+      "sha256": "08a2997cac540559d282d0acb1daf72869a4674906b634ec04e163f1a9532a31"
+    },
+    {
+      "bytes": 492339,
+      "path": "source/ROOM16_BA11_ARCHITECTURE_R1_CORRECTED_REREVIEW_R3_CF229F7F4E3A_2026-08-19.zip",
+      "sha256": "c2a1850d1e6928def976fa0459398f930429b2007adcd5e7e6efc339e84ad80e"
+    }
+  ],
+  "manifest_hash_preimage_rule": "canonical JSON of this object without manifest_sha256",
+  "manifest_sha256": "f314c9f5c2bd6109e2ec51a3547989c181698f87c2109e0acfdc64e299f5c9fb",
+  "payload_rule": "all members except MANIFEST.json",
+  "schema_version": 2,
+  "source_date_epoch": 1787184000
+}

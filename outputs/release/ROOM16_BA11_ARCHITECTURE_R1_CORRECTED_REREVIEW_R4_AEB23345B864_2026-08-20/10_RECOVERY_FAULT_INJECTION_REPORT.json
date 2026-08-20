@@ -1,0 +1,6 @@
+{
+  "finding": "BA11-R3-RR-P0-006",
+  "identical_recovery_receipts": true,
+  "recovery_requires_complete_graph": true,
+  "status": "PASS"
+}

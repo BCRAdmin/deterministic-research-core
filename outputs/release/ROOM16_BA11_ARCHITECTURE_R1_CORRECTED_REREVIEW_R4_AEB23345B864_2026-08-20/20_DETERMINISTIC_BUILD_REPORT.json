@@ -1,0 +1,7 @@
+{
+  "assembly_passes": 2,
+  "byte_identical": true,
+  "note": "Final member set is assembled twice independently below.",
+  "source_date_epoch": 1787184000,
+  "status": "PASS"
+}

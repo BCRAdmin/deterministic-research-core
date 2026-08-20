@@ -1,0 +1,209 @@
+{
+  "files": [
+    {
+      "path": "research_agent/canary_governance/__init__.py",
+      "repo": "research",
+      "sha256": "8ac461a198265668f7d6fb4a69e6daa3417bcd53e5f6d19924a5f9e59c0cadce"
+    },
+    {
+      "path": "research_agent/canary_governance/acceptance.py",
+      "repo": "research",
+      "sha256": "4a0e4429e296e12b0e1d9099f851bb8b9ec4c788d60ffa8a562c8ebd0adeef82"
+    },
+    {
+      "path": "research_agent/canary_governance/approval.py",
+      "repo": "research",
+      "sha256": "171b120e26c099e2fc18534c4be645d49b3ed6e87f042d78183c9de8779f0510"
+    },
+    {
+      "path": "research_agent/canary_governance/authority_graph.py",
+      "repo": "research",
+      "sha256": "da25c578466778e7ed659f90383ad5a1a4d8bf1ee1cea85cdbf3abb61cf010cc"
+    },
+    {
+      "path": "research_agent/canary_governance/contracts.py",
+      "repo": "research",
+      "sha256": "66f6caba214df639227235de3efb137dd25a59d7f8cee32007e9e4c873d7711e"
+    },
+    {
+      "path": "research_agent/canary_governance/diagnostics.py",
+      "repo": "research",
+      "sha256": "4ed2150d8583c997ac24b759e14b0eb4a731fdf4c61750c939bc9d179c307e56"
+    },
+    {
+      "path": "research_agent/canary_governance/ledger.py",
+      "repo": "research",
+      "sha256": "ac78a806505caa784a493cbb4abe2c4d542da84a08f62b36f062e484413f86ea"
+    },
+    {
+      "path": "research_agent/canary_governance/schemas/ArchiveReceipt.schema.json",
+      "repo": "research",
+      "sha256": "e9a7c476baac732e4ae09d77a1488c9dcd2a22e4691b2fad815174fb89473ce0"
+    },
+    {
+      "path": "research_agent/canary_governance/schemas/CanaryRegistryEntry.schema.json",
+      "repo": "research",
+      "sha256": "8d5c26b0bfe49f2e6d113c4a442072f850e959f2c45a99ef5727582083a7c133"
+    },
+    {
+      "path": "research_agent/canary_governance/schemas/ChangeClassification.schema.json",
+      "repo": "research",
+      "sha256": "f6c0ae3433390a9f03e2d727ae89e71e71cedabf9364b7927391f80c6205622b"
+    },
+    {
+      "path": "research_agent/canary_governance/schemas/CompareEngineReceipt.schema.json",
+      "repo": "research",
+      "sha256": "1ad3dab2f89b43b400ff1c713ce60161030ebdb7e8a64221e140109a89ba3801"
+    },
+    {
+      "path": "research_agent/canary_governance/schemas/ComparisonResult.schema.json",
+      "repo": "research",
+      "sha256": "4d0b03f2756116d36b68603354a1a5cb40d7019943ecc00d7b7d75bccd0b5889"
+    },
+    {
+      "path": "research_agent/canary_governance/schemas/LedgerHeadPointer.schema.json",
+      "repo": "research",
+      "sha256": "c3b594897af24d670ecbc4b3fb3254dfa4b86895c86bf2d73f03dfe74b8c3949"
+    },
+    {
+      "path": "research_agent/canary_governance/schemas/PromotionCandidate.schema.json",
+      "repo": "research",
+      "sha256": "1d7f49c3a1c3744587f6f49f21bc2320a74cdcaa66a1c351355c69c3cb87ff5c"
+    },
+    {
+      "path": "research_agent/canary_governance/schemas/PromotionEvent.schema.json",
+      "repo": "research",
+      "sha256": "26f3f190918355e0c1df0555f658c0acf85bf41a81183418ffcd9c64819f5ca3"
+    },
+    {
+      "path": "research_agent/canary_governance/schemas/RecoveryEvent.schema.json",
+      "repo": "research",
+      "sha256": "610d5e94277569cee9daf8297347c37195192f25519b3ffbbb9b37d421954f31"
+    },
+    {
+      "path": "research_agent/canary_governance/schemas/RegistryAuthorityGraph.schema.json",
+      "repo": "research",
+      "sha256": "d11d90d74559a6f99859d679fe502629154800f6292c8e4ba25dd96bcff6eeea"
+    },
+    {
+      "path": "research_agent/canary_governance/schemas/RegistryCommitReceipt.schema.json",
+      "repo": "research",
+      "sha256": "ef984118f84ea13cd679a7e0873a22371e06433657acab27a0be432b98481e69"
+    },
+    {
+      "path": "research_agent/canary_governance/schemas/RegistryEvent.schema.json",
+      "repo": "research",
+      "sha256": "5ec5758800beb363e43a3b34af6fbaae5dca7066e986d300cf842bb1942d8a4e"
+    },
+    {
+      "path": "research_agent/canary_governance/schemas/RegistryHead.schema.json",
+      "repo": "research",
+      "sha256": "5c884c573e5f10f8475863f98e6c9a86672e01051347a3d2a73538d5c93e217a"
+    },
+    {
+      "path": "research_agent/canary_governance/schemas/RegistryPreparedReceipt.schema.json",
+      "repo": "research",
+      "sha256": "ece544ce2290ded65ca73253f6fae477036de5ecf3814102310dcd41d4f310ca"
+    },
+    {
+      "path": "research_agent/canary_governance/schemas/RegistrySnapshot.schema.json",
+      "repo": "research",
+      "sha256": "d3e040a0e541c2913772986b13e05f864b92a20a74ff5c4b63dfeb0d80287016"
+    },
+    {
+      "path": "research_agent/canary_governance/schemas/RegistryTransaction.schema.json",
+      "repo": "research",
+      "sha256": "9ccfd4b920d499fec4b1d55a3226df3d19c39fe444051b76ab9b61680104495f"
+    },
+    {
+      "path": "research_agent/canary_governance/schemas/RejectionEvent.schema.json",
+      "repo": "research",
+      "sha256": "812e124b6b994facb0b3a28b7f2a94000747eee8e6ef1465ebbe47a0d811ff35"
+    },
+    {
+      "path": "research_agent/canary_governance/schemas/StaleEvent.schema.json",
+      "repo": "research",
+      "sha256": "e0c536423fa7e61eff37a881acac8e900e327bf7f0fe0dd0cad6997248501f88"
+    },
+    {
+      "path": "research_agent/canary_governance/schemas/SupersessionEvent.schema.json",
+      "repo": "research",
+      "sha256": "d807b5c21602338b4d9dafd7e64c9deba4556f5dae09134f63def7c6380fb9c8"
+    },
+    {
+      "path": "research_agent/canary_governance/schemas/contract_catalog_v1.json",
+      "repo": "research",
+      "sha256": "7c714c5c41b877ce6da2eecf96a271ea74033541b7e4440a32900b0191fac97a"
+    },
+    {
+      "path": "research_agent/canary_governance/storage.py",
+      "repo": "research",
+      "sha256": "439485ef4f4608980dcfa3ad6f954236deb85b1845937e60c7a33a5a949a71ed"
+    },
+    {
+      "path": "research_agent/tests/canary_r4_fixtures.py",
+      "repo": "research",
+      "sha256": "a7d5cb0f71dada01662c9138934bc638101ee5c8dbf77964bdb972ef7df7e052"
+    },
+    {
+      "path": "research_agent/tests/test_canary_governance.py",
+      "repo": "research",
+      "sha256": "d54c224781ddcf5479910647e9289b83be61338f58fcd9e358f11588a5c7a5ad"
+    },
+    {
+      "path": "research_agent/tests/test_canary_governance_r4.py",
+      "repo": "research",
+      "sha256": "e5e0d4416d31ca38b30154b3f2321aeefe93049a812258091676d43569b6acd3"
+    },
+    {
+      "path": "scripts/ops/build_ba11_r4_evidence.py",
+      "repo": "research",
+      "sha256": "f88a0217c650e36ff8595f75ea620bd4d6f6fb3f3ae557268f933d6525424ac2"
+    },
+    {
+      "path": "scripts/ops/verify_ba11_r4_package.py",
+      "repo": "research",
+      "sha256": "2b73bea65e01402e4ad52fef5d26bf329856dd9c9989309aaada2ceda7d39f67"
+    }
+  ],
+  "finding_files": {
+    "BA11-R3-RR-P0-001": [
+      "research_agent/canary_governance/storage.py"
+    ],
+    "BA11-R3-RR-P0-002": [
+      "research_agent/canary_governance/authority_graph.py",
+      "research_agent/canary_governance/contracts.py"
+    ],
+    "BA11-R3-RR-P0-003": [
+      "research_agent/canary_governance/authority_graph.py",
+      "research_agent/canary_governance/storage.py"
+    ],
+    "BA11-R3-RR-P0-004": [
+      "research_agent/canary_governance/storage.py",
+      "research_agent/canary_governance/ledger.py"
+    ],
+    "BA11-R3-RR-P0-005": [
+      "research_agent/canary_governance/storage.py",
+      "research_agent/canary_governance/ledger.py"
+    ],
+    "BA11-R3-RR-P0-006": [
+      "research_agent/canary_governance/storage.py",
+      "research_agent/canary_governance/contracts.py"
+    ],
+    "BA11-R3-RR-P0-007": [
+      "research_agent/canary_governance/acceptance.py",
+      "scripts/ops/verify_ba11_r4_package.py"
+    ],
+    "BA11-R3-RR-P1-001": [
+      "research_agent/canary_governance/authority_graph.py",
+      "research_agent/canary_governance/contracts.py"
+    ],
+    "BA11-R3-RR-P1-002": [
+      "research_agent/canary_governance/ledger.py",
+      "research_agent/canary_governance/contracts.py"
+    ],
+    "BA11-R3-RR-P1-003": [
+      "research_agent/canary_governance/approval.py"
+    ]
+  }
+}

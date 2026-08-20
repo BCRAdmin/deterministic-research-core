@@ -1,0 +1,7 @@
+{
+  "finding": "BA11-R3-RR-P1-002",
+  "genesis_one_time": true,
+  "semver_enforced_in_fold": true,
+  "status": "PASS",
+  "subject_identity_persisted": true
+}

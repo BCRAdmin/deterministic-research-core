@@ -1,0 +1,1179 @@
+{
+  "contract_id": "room16.ba11_r4.finding_closure_register@1",
+  "findings": [
+    {
+      "changed_files": [
+        {
+          "path": "research_agent/canary_governance/storage.py",
+          "repo": "research",
+          "sha256": "439485ef4f4608980dcfa3ad6f954236deb85b1845937e60c7a33a5a949a71ed"
+        }
+      ],
+      "changed_files_with_sha256": [
+        {
+          "path": "research_agent/canary_governance/storage.py",
+          "repo": "research",
+          "sha256": "439485ef4f4608980dcfa3ad6f954236deb85b1845937e60c7a33a5a949a71ed"
+        }
+      ],
+      "closure_status": "closed_verified",
+      "contract_delta_ids": [
+        "R4-BA11-R3-RR-P0-001-CONTRACT-DELTA"
+      ],
+      "contract_deltas": "Die Transaktion muss exakte Event-Sets und immutable Ledger-Heads selbst atomar persistieren oder ausschließlich bereits persistierte, vollständig rekonstruierte Authority akzeptieren. Caller-declared Heads ohne auflösbare Objekte blockieren.",
+      "evidence_refs": [
+        "15_TEST_MATRIX_EXECUTED.json",
+        "19_CHANGED_FILES_PER_FINDING.json",
+        "independent_verifier/VERIFIER_RECEIPT.json"
+      ],
+      "exact_source_test_names": [
+        "test_t_r4_p0001_01_unpersisted_event_sets_block_without_head_change",
+        "test_t_r4_p0001_02_missing_persisted_event_object_blocks",
+        "test_t_r4_p0001_03_published_state_reconstructs_byte_identically",
+        "test_t_r4_p0001_04_transaction_persists_exact_event_sets_and_heads"
+      ],
+      "executed_command_receipts": [
+        "targeted_r4"
+      ],
+      "expected_actual_diagnostics": [
+        {
+          "actual": "BA11_TRANSACTION_EVENT_AUTHORITY_MISSING",
+          "expected": "BA11_TRANSACTION_EVENT_AUTHORITY_MISSING",
+          "test_id": "T-R4-P0001-01"
+        },
+        {
+          "actual": "BA11_LEDGER_OBJECT_MISSING",
+          "expected": "BA11_LEDGER_OBJECT_MISSING",
+          "test_id": "T-R4-P0001-02"
+        },
+        {
+          "actual": null,
+          "expected": null,
+          "test_id": "T-R4-P0001-03"
+        },
+        {
+          "actual": null,
+          "expected": null,
+          "test_id": "T-R4-P0001-04"
+        }
+      ],
+      "expected_and_actual_diagnostics": [
+        {
+          "actual": "BA11_TRANSACTION_EVENT_AUTHORITY_MISSING",
+          "expected": "BA11_TRANSACTION_EVENT_AUTHORITY_MISSING",
+          "test_id": "T-R4-P0001-01"
+        },
+        {
+          "actual": "BA11_LEDGER_OBJECT_MISSING",
+          "expected": "BA11_LEDGER_OBJECT_MISSING",
+          "test_id": "T-R4-P0001-02"
+        },
+        {
+          "actual": "BYTEIDENTICAL_PASS",
+          "expected": "BYTEIDENTICAL_PASS",
+          "test_id": "T-R4-P0001-03"
+        },
+        {
+          "actual": "PASS",
+          "expected": "PASS",
+          "test_id": "T-R4-P0001-04"
+        }
+      ],
+      "finding_id": "BA11-R3-RR-P0-001",
+      "independent_verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json",
+      "negative_fixture_ids": [
+        "T-R4-P0001-01",
+        "T-R4-P0001-02"
+      ],
+      "negative_fixtures": [
+        "test_t_r4_p0001_01_unpersisted_event_sets_block_without_head_change",
+        "test_t_r4_p0001_02_missing_persisted_event_object_blocks"
+      ],
+      "requirement_ids": [
+        "T-R4-P0001-01",
+        "T-R4-P0001-02",
+        "T-R4-P0001-03",
+        "T-R4-P0001-04"
+      ],
+      "root_cause": "commit_transaction akzeptiert caller-supplied Event-Tupel und Ledger-Heads, ohne diese Authority-Objekte zwingend über die persistenten append-only Rails zu speichern.",
+      "verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json"
+    },
+    {
+      "changed_files": [
+        {
+          "path": "research_agent/canary_governance/authority_graph.py",
+          "repo": "research",
+          "sha256": "da25c578466778e7ed659f90383ad5a1a4d8bf1ee1cea85cdbf3abb61cf010cc"
+        },
+        {
+          "path": "research_agent/canary_governance/contracts.py",
+          "repo": "research",
+          "sha256": "66f6caba214df639227235de3efb137dd25a59d7f8cee32007e9e4c873d7711e"
+        }
+      ],
+      "changed_files_with_sha256": [
+        {
+          "path": "research_agent/canary_governance/authority_graph.py",
+          "repo": "research",
+          "sha256": "da25c578466778e7ed659f90383ad5a1a4d8bf1ee1cea85cdbf3abb61cf010cc"
+        },
+        {
+          "path": "research_agent/canary_governance/contracts.py",
+          "repo": "research",
+          "sha256": "66f6caba214df639227235de3efb137dd25a59d7f8cee32007e9e4c873d7711e"
+        }
+      ],
+      "closure_status": "closed_verified",
+      "contract_delta_ids": [
+        "R4-BA11-R3-RR-P0-002-CONTRACT-DELTA"
+      ],
+      "contract_deltas": "Ein zentraler AuthorityGraphVerifier muss jede Kante von Candidate/Comparison über Promotion, Freeze, Review, Approval, Snapshot, Archive und Transaction auflösen und byte-/hashgenau kreuzprüfen.",
+      "evidence_refs": [
+        "15_TEST_MATRIX_EXECUTED.json",
+        "19_CHANGED_FILES_PER_FINDING.json",
+        "independent_verifier/VERIFIER_RECEIPT.json"
+      ],
+      "exact_source_test_names": [
+        "test_t_r4_p0002_01_02_03_promotion_authority_hash_mismatch_blocks",
+        "test_t_r4_p0002_04_comparison_candidate_snapshot_edge_mismatch_blocks",
+        "test_t_r4_p0002_05_archive_artifact_set_mismatch_blocks",
+        "test_t_r4_p0002_06_complete_acyclic_authority_graph_passes"
+      ],
+      "executed_command_receipts": [
+        "targeted_r4"
+      ],
+      "expected_actual_diagnostics": [
+        {
+          "actual": "BA11_AUTHORITY_GRAPH_MISMATCH",
+          "expected": "BA11_AUTHORITY_GRAPH_MISMATCH",
+          "test_id": "T-R4-P0002-01"
+        },
+        {
+          "actual": "BA11_AUTHORITY_GRAPH_MISMATCH",
+          "expected": "BA11_AUTHORITY_GRAPH_MISMATCH",
+          "test_id": "T-R4-P0002-02"
+        },
+        {
+          "actual": "BA11_AUTHORITY_GRAPH_MISMATCH",
+          "expected": "BA11_AUTHORITY_GRAPH_MISMATCH",
+          "test_id": "T-R4-P0002-03"
+        },
+        {
+          "actual": "BA11_AUTHORITY_GRAPH_MISMATCH",
+          "expected": "BA11_AUTHORITY_GRAPH_MISMATCH",
+          "test_id": "T-R4-P0002-04"
+        },
+        {
+          "actual": "BA11_AUTHORITY_GRAPH_MISMATCH",
+          "expected": "BA11_AUTHORITY_GRAPH_MISMATCH",
+          "test_id": "T-R4-P0002-05"
+        },
+        {
+          "actual": null,
+          "expected": null,
+          "test_id": "T-R4-P0002-06"
+        }
+      ],
+      "expected_and_actual_diagnostics": [
+        {
+          "actual": "BA11_AUTHORITY_GRAPH_MISMATCH",
+          "expected": "BA11_AUTHORITY_GRAPH_MISMATCH",
+          "test_id": "T-R4-P0002-01"
+        },
+        {
+          "actual": "BA11_AUTHORITY_GRAPH_MISMATCH",
+          "expected": "BA11_AUTHORITY_GRAPH_MISMATCH",
+          "test_id": "T-R4-P0002-02"
+        },
+        {
+          "actual": "BA11_AUTHORITY_GRAPH_MISMATCH",
+          "expected": "BA11_AUTHORITY_GRAPH_MISMATCH",
+          "test_id": "T-R4-P0002-03"
+        },
+        {
+          "actual": "BA11_AUTHORITY_GRAPH_MISMATCH",
+          "expected": "BA11_AUTHORITY_GRAPH_MISMATCH",
+          "test_id": "T-R4-P0002-04"
+        },
+        {
+          "actual": "BA11_AUTHORITY_GRAPH_MISMATCH",
+          "expected": "BA11_AUTHORITY_GRAPH_MISMATCH",
+          "test_id": "T-R4-P0002-05"
+        },
+        {
+          "actual": "PASS",
+          "expected": "PASS",
+          "test_id": "T-R4-P0002-06"
+        }
+      ],
+      "finding_id": "BA11-R3-RR-P0-002",
+      "independent_verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json",
+      "negative_fixture_ids": [
+        "T-R4-P0002-01",
+        "T-R4-P0002-02",
+        "T-R4-P0002-03",
+        "T-R4-P0002-04",
+        "T-R4-P0002-05"
+      ],
+      "negative_fixtures": [
+        "test_t_r4_p0002_01_02_03_promotion_authority_hash_mismatch_blocks",
+        "test_t_r4_p0002_01_02_03_promotion_authority_hash_mismatch_blocks",
+        "test_t_r4_p0002_01_02_03_promotion_authority_hash_mismatch_blocks",
+        "test_t_r4_p0002_04_comparison_candidate_snapshot_edge_mismatch_blocks",
+        "test_t_r4_p0002_05_archive_artifact_set_mismatch_blocks"
+      ],
+      "requirement_ids": [
+        "T-R4-P0002-01",
+        "T-R4-P0002-02",
+        "T-R4-P0002-03",
+        "T-R4-P0002-04",
+        "T-R4-P0002-05",
+        "T-R4-P0002-06"
+      ],
+      "root_cause": "PromotionEvent kann andere Freeze-/Review-/Approval-Hashes tragen als die separat an RegistryTransaction übergebenen tatsächlichen Authority-Objekte.",
+      "verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json"
+    },
+    {
+      "changed_files": [
+        {
+          "path": "research_agent/canary_governance/authority_graph.py",
+          "repo": "research",
+          "sha256": "da25c578466778e7ed659f90383ad5a1a4d8bf1ee1cea85cdbf3abb61cf010cc"
+        },
+        {
+          "path": "research_agent/canary_governance/storage.py",
+          "repo": "research",
+          "sha256": "439485ef4f4608980dcfa3ad6f954236deb85b1845937e60c7a33a5a949a71ed"
+        }
+      ],
+      "changed_files_with_sha256": [
+        {
+          "path": "research_agent/canary_governance/authority_graph.py",
+          "repo": "research",
+          "sha256": "da25c578466778e7ed659f90383ad5a1a4d8bf1ee1cea85cdbf3abb61cf010cc"
+        },
+        {
+          "path": "research_agent/canary_governance/storage.py",
+          "repo": "research",
+          "sha256": "439485ef4f4608980dcfa3ad6f954236deb85b1845937e60c7a33a5a949a71ed"
+        }
+      ],
+      "closure_status": "closed_verified",
+      "contract_delta_ids": [
+        "R4-BA11-R3-RR-P0-003-CONTRACT-DELTA"
+      ],
+      "contract_deltas": "Expected Subjects ausschließlich intern aus dem kanonischen PromotionCandidate/Transaction-Graphen ableiten. Caller darf sie nicht wählen.",
+      "evidence_refs": [
+        "15_TEST_MATRIX_EXECUTED.json",
+        "19_CHANGED_FILES_PER_FINDING.json",
+        "independent_verifier/VERIFIER_RECEIPT.json"
+      ],
+      "exact_source_test_names": [
+        "test_t_r4_p0003_01_unrelated_signed_subject_is_blocked",
+        "test_t_r4_p0003_02_candidate_swap_reusing_approval_is_blocked",
+        "test_t_r4_p0003_03_attestation_base_head_mismatch_is_blocked",
+        "test_t_r4_p0003_04_subjects_are_derived_from_promotion_graph",
+        "test_t_r4_p0003_05_nonce_counter_publication_faults_are_atomic"
+      ],
+      "executed_command_receipts": [
+        "targeted_r4"
+      ],
+      "expected_actual_diagnostics": [
+        {
+          "actual": "BA11_APPROVAL_SUBJECT",
+          "expected": "BA11_APPROVAL_SUBJECT",
+          "test_id": "T-R4-P0003-01"
+        },
+        {
+          "actual": "BA11_APPROVAL_SUBJECT",
+          "expected": "BA11_APPROVAL_SUBJECT",
+          "test_id": "T-R4-P0003-02"
+        },
+        {
+          "actual": "BA11_APPROVAL_PREVIOUS_HEAD",
+          "expected": "BA11_APPROVAL_PREVIOUS_HEAD",
+          "test_id": "T-R4-P0003-03"
+        },
+        {
+          "actual": null,
+          "expected": null,
+          "test_id": "T-R4-P0003-04"
+        },
+        {
+          "actual": null,
+          "expected": null,
+          "test_id": "T-R4-P0003-05"
+        }
+      ],
+      "expected_and_actual_diagnostics": [
+        {
+          "actual": "BA11_APPROVAL_SUBJECT",
+          "expected": "BA11_APPROVAL_SUBJECT",
+          "test_id": "T-R4-P0003-01"
+        },
+        {
+          "actual": "BA11_APPROVAL_SUBJECT",
+          "expected": "BA11_APPROVAL_SUBJECT",
+          "test_id": "T-R4-P0003-02"
+        },
+        {
+          "actual": "BA11_APPROVAL_PREVIOUS_HEAD",
+          "expected": "BA11_APPROVAL_PREVIOUS_HEAD",
+          "test_id": "T-R4-P0003-03"
+        },
+        {
+          "actual": "PASS",
+          "expected": "PASS",
+          "test_id": "T-R4-P0003-04"
+        },
+        {
+          "actual": "ATOMIC_PASS",
+          "expected": "ATOMIC_PASS",
+          "test_id": "T-R4-P0003-05"
+        }
+      ],
+      "finding_id": "BA11-R3-RR-P0-003",
+      "independent_verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json",
+      "negative_fixture_ids": [
+        "T-R4-P0003-01",
+        "T-R4-P0003-02",
+        "T-R4-P0003-03"
+      ],
+      "negative_fixtures": [
+        "test_t_r4_p0003_01_unrelated_signed_subject_is_blocked",
+        "test_t_r4_p0003_02_candidate_swap_reusing_approval_is_blocked",
+        "test_t_r4_p0003_03_attestation_base_head_mismatch_is_blocked"
+      ],
+      "requirement_ids": [
+        "T-R4-P0003-01",
+        "T-R4-P0003-02",
+        "T-R4-P0003-03",
+        "T-R4-P0003-04",
+        "T-R4-P0003-05"
+      ],
+      "root_cause": "expected_subject_ids/-hashes werden als freie Argumente übergeben. Eine gültige Receipt für ein fremdes Subject kann deshalb mit passenden expected-Werten eine andere Canary-Transaktion autorisieren.",
+      "verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json"
+    },
+    {
+      "changed_files": [
+        {
+          "path": "research_agent/canary_governance/storage.py",
+          "repo": "research",
+          "sha256": "439485ef4f4608980dcfa3ad6f954236deb85b1845937e60c7a33a5a949a71ed"
+        },
+        {
+          "path": "research_agent/canary_governance/ledger.py",
+          "repo": "research",
+          "sha256": "ac78a806505caa784a493cbb4abe2c4d542da84a08f62b36f062e484413f86ea"
+        }
+      ],
+      "changed_files_with_sha256": [
+        {
+          "path": "research_agent/canary_governance/storage.py",
+          "repo": "research",
+          "sha256": "439485ef4f4608980dcfa3ad6f954236deb85b1845937e60c7a33a5a949a71ed"
+        },
+        {
+          "path": "research_agent/canary_governance/ledger.py",
+          "repo": "research",
+          "sha256": "ac78a806505caa784a493cbb4abe2c4d542da84a08f62b36f062e484413f86ea"
+        }
+      ],
+      "closure_status": "closed_verified",
+      "contract_delta_ids": [
+        "R4-BA11-R3-RR-P0-004-CONTRACT-DELTA"
+      ],
+      "contract_deltas": "Jeden Ledger-Head content-addressed speichern; Current nur als CAS-Pointer. Vor Append vollständige immutable Head-/Event-Historie rekonstruieren und Truncation/Fork blockieren.",
+      "evidence_refs": [
+        "15_TEST_MATRIX_EXECUTED.json",
+        "19_CHANGED_FILES_PER_FINDING.json",
+        "independent_verifier/VERIFIER_RECEIPT.json"
+      ],
+      "exact_source_test_names": [
+        "test_t_r4_p0004_01_deleted_registry_tail_alternate_append_blocks",
+        "test_t_r4_p0004_02_deleted_debt_tail_alternate_append_blocks",
+        "test_t_r4_p0004_03_valid_older_current_head_is_rollback",
+        "test_t_r4_p0004_04_two_heads_from_same_predecessor_are_fork",
+        "test_t_r4_p0004_05_missing_historical_head_blocks",
+        "test_t_r4_p0004_06_full_previous_head_chain_resolves"
+      ],
+      "executed_command_receipts": [
+        "targeted_r4"
+      ],
+      "expected_actual_diagnostics": [
+        {
+          "actual": "BA11_LEDGER_ROLLBACK",
+          "expected": "BA11_LEDGER_ROLLBACK",
+          "test_id": "T-R4-P0004-01"
+        },
+        {
+          "actual": "BA11_LEDGER_ROLLBACK",
+          "expected": "BA11_LEDGER_ROLLBACK",
+          "test_id": "T-R4-P0004-02"
+        },
+        {
+          "actual": "BA11_LEDGER_ROLLBACK",
+          "expected": "BA11_LEDGER_ROLLBACK",
+          "test_id": "T-R4-P0004-03"
+        },
+        {
+          "actual": "BA11_LEDGER_FORK",
+          "expected": "BA11_LEDGER_FORK",
+          "test_id": "T-R4-P0004-04"
+        },
+        {
+          "actual": "BA11_LEDGER_OBJECT_MISSING",
+          "expected": "BA11_LEDGER_OBJECT_MISSING",
+          "test_id": "T-R4-P0004-05"
+        },
+        {
+          "actual": null,
+          "expected": null,
+          "test_id": "T-R4-P0004-06"
+        }
+      ],
+      "expected_and_actual_diagnostics": [
+        {
+          "actual": "BA11_LEDGER_ROLLBACK",
+          "expected": "BA11_LEDGER_ROLLBACK",
+          "test_id": "T-R4-P0004-01"
+        },
+        {
+          "actual": "BA11_LEDGER_ROLLBACK",
+          "expected": "BA11_LEDGER_ROLLBACK",
+          "test_id": "T-R4-P0004-02"
+        },
+        {
+          "actual": "BA11_LEDGER_ROLLBACK",
+          "expected": "BA11_LEDGER_ROLLBACK",
+          "test_id": "T-R4-P0004-03"
+        },
+        {
+          "actual": "BA11_LEDGER_FORK",
+          "expected": "BA11_LEDGER_FORK",
+          "test_id": "T-R4-P0004-04"
+        },
+        {
+          "actual": "BA11_LEDGER_OBJECT_MISSING",
+          "expected": "BA11_LEDGER_OBJECT_MISSING",
+          "test_id": "T-R4-P0004-05"
+        },
+        {
+          "actual": "PASS",
+          "expected": "PASS",
+          "test_id": "T-R4-P0004-06"
+        }
+      ],
+      "finding_id": "BA11-R3-RR-P0-004",
+      "independent_verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json",
+      "negative_fixture_ids": [
+        "T-R4-P0004-01",
+        "T-R4-P0004-02",
+        "T-R4-P0004-03",
+        "T-R4-P0004-04",
+        "T-R4-P0004-05"
+      ],
+      "negative_fixtures": [
+        "test_t_r4_p0004_01_deleted_registry_tail_alternate_append_blocks",
+        "test_t_r4_p0004_02_deleted_debt_tail_alternate_append_blocks",
+        "test_t_r4_p0004_03_valid_older_current_head_is_rollback",
+        "test_t_r4_p0004_04_two_heads_from_same_predecessor_are_fork",
+        "test_t_r4_p0004_05_missing_historical_head_blocks"
+      ],
+      "requirement_ids": [
+        "T-R4-P0004-01",
+        "T-R4-P0004-02",
+        "T-R4-P0004-03",
+        "T-R4-P0004-04",
+        "T-R4-P0004-05",
+        "T-R4-P0004-06"
+      ],
+      "root_cause": "Mutable head.json plus verbliebene Event-Dateien werden als Wahrheit verwendet. Nach Tail-Löschung kann ein alternativer Zweig angehängt werden; frühere Heads sind nicht zwingend als immutable auflösbare Objekte erhalten.",
+      "verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json"
+    },
+    {
+      "changed_files": [
+        {
+          "path": "research_agent/canary_governance/storage.py",
+          "repo": "research",
+          "sha256": "439485ef4f4608980dcfa3ad6f954236deb85b1845937e60c7a33a5a949a71ed"
+        },
+        {
+          "path": "research_agent/canary_governance/ledger.py",
+          "repo": "research",
+          "sha256": "ac78a806505caa784a493cbb4abe2c4d542da84a08f62b36f062e484413f86ea"
+        }
+      ],
+      "changed_files_with_sha256": [
+        {
+          "path": "research_agent/canary_governance/storage.py",
+          "repo": "research",
+          "sha256": "439485ef4f4608980dcfa3ad6f954236deb85b1845937e60c7a33a5a949a71ed"
+        },
+        {
+          "path": "research_agent/canary_governance/ledger.py",
+          "repo": "research",
+          "sha256": "ac78a806505caa784a493cbb4abe2c4d542da84a08f62b36f062e484413f86ea"
+        }
+      ],
+      "closure_status": "closed_verified",
+      "contract_delta_ids": [
+        "R4-BA11-R3-RR-P0-005-CONTRACT-DELTA"
+      ],
+      "contract_deltas": "Prospective vollständigen Ledger vor jedem Write durch denselben normativen Fold/Transition-/Approval-Verifier führen. Fehler müssen zero-byte store drift ergeben.",
+      "evidence_refs": [
+        "15_TEST_MATRIX_EXECUTED.json",
+        "19_CHANGED_FILES_PER_FINDING.json",
+        "independent_verifier/VERIFIER_RECEIPT.json"
+      ],
+      "exact_source_test_names": [
+        "test_t_r4_p0005_01_unapproved_accepted_debt_is_zero_drift",
+        "test_t_r4_p0005_02_closed_debt_cannot_reopen_zero_drift",
+        "test_t_r4_p0005_03_generic_frozen_event_is_zero_drift",
+        "test_t_r4_p0005_04_invalid_registry_transition_is_zero_drift",
+        "test_t_r4_p0005_05_complete_ledger_validates_before_first_write"
+      ],
+      "executed_command_receipts": [
+        "targeted_r4"
+      ],
+      "expected_actual_diagnostics": [
+        {
+          "actual": "BA11_DEBT_TRANSITION_INVALID",
+          "expected": "BA11_DEBT_TRANSITION_INVALID",
+          "test_id": "T-R4-P0005-01"
+        },
+        {
+          "actual": "BA11_DEBT_TRANSITION_INVALID",
+          "expected": "BA11_DEBT_TRANSITION_INVALID",
+          "test_id": "T-R4-P0005-02"
+        },
+        {
+          "actual": "BA11_EVENT_CONTRACT_INVALID",
+          "expected": "BA11_EVENT_CONTRACT_INVALID",
+          "test_id": "T-R4-P0005-03"
+        },
+        {
+          "actual": "BA11_EVENT_TRANSITION_INVALID",
+          "expected": "BA11_EVENT_TRANSITION_INVALID",
+          "test_id": "T-R4-P0005-04"
+        },
+        {
+          "actual": null,
+          "expected": null,
+          "test_id": "T-R4-P0005-05"
+        }
+      ],
+      "expected_and_actual_diagnostics": [
+        {
+          "actual": "BA11_DEBT_TRANSITION_INVALID",
+          "expected": "BA11_DEBT_TRANSITION_INVALID",
+          "test_id": "T-R4-P0005-01"
+        },
+        {
+          "actual": "BA11_DEBT_TRANSITION_INVALID",
+          "expected": "BA11_DEBT_TRANSITION_INVALID",
+          "test_id": "T-R4-P0005-02"
+        },
+        {
+          "actual": "BA11_EVENT_CONTRACT_INVALID",
+          "expected": "BA11_EVENT_CONTRACT_INVALID",
+          "test_id": "T-R4-P0005-03"
+        },
+        {
+          "actual": "BA11_EVENT_TRANSITION_INVALID",
+          "expected": "BA11_EVENT_TRANSITION_INVALID",
+          "test_id": "T-R4-P0005-04"
+        },
+        {
+          "actual": "PASS",
+          "expected": "PASS",
+          "test_id": "T-R4-P0005-05"
+        }
+      ],
+      "finding_id": "BA11-R3-RR-P0-005",
+      "independent_verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json",
+      "negative_fixture_ids": [
+        "T-R4-P0005-01",
+        "T-R4-P0005-02",
+        "T-R4-P0005-03",
+        "T-R4-P0005-04"
+      ],
+      "negative_fixtures": [
+        "test_t_r4_p0005_01_unapproved_accepted_debt_is_zero_drift",
+        "test_t_r4_p0005_02_closed_debt_cannot_reopen_zero_drift",
+        "test_t_r4_p0005_03_generic_frozen_event_is_zero_drift",
+        "test_t_r4_p0005_04_invalid_registry_transition_is_zero_drift"
+      ],
+      "requirement_ids": [
+        "T-R4-P0005-01",
+        "T-R4-P0005-02",
+        "T-R4-P0005-03",
+        "T-R4-P0005-04",
+        "T-R4-P0005-05"
+      ],
+      "root_cause": "Append prüft primär Sequence/Previous Hash. Vollständige Transition, spezialisierter Event-Contract, Subject-Kontinuität und authentische Debt-Approval werden nicht zwingend vor dem ersten Write geprüft.",
+      "verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json"
+    },
+    {
+      "changed_files": [
+        {
+          "path": "research_agent/canary_governance/storage.py",
+          "repo": "research",
+          "sha256": "439485ef4f4608980dcfa3ad6f954236deb85b1845937e60c7a33a5a949a71ed"
+        },
+        {
+          "path": "research_agent/canary_governance/contracts.py",
+          "repo": "research",
+          "sha256": "66f6caba214df639227235de3efb137dd25a59d7f8cee32007e9e4c873d7711e"
+        }
+      ],
+      "changed_files_with_sha256": [
+        {
+          "path": "research_agent/canary_governance/storage.py",
+          "repo": "research",
+          "sha256": "439485ef4f4608980dcfa3ad6f954236deb85b1845937e60c7a33a5a949a71ed"
+        },
+        {
+          "path": "research_agent/canary_governance/contracts.py",
+          "repo": "research",
+          "sha256": "66f6caba214df639227235de3efb137dd25a59d7f8cee32007e9e4c873d7711e"
+        }
+      ],
+      "closure_status": "closed_verified",
+      "contract_delta_ids": [
+        "R4-BA11-R3-RR-P0-006-CONTRACT-DELTA"
+      ],
+      "contract_deltas": "Committed nur aus vollständig auflösbarem Transaction-, Prepared-, Event-, Ledger-, Snapshot-, Freeze-, Comparison-, Review-, Approval-, Archive- und Commit-Graphen ableiten.",
+      "evidence_refs": [
+        "15_TEST_MATRIX_EXECUTED.json",
+        "19_CHANGED_FILES_PER_FINDING.json",
+        "independent_verifier/VERIFIER_RECEIPT.json"
+      ],
+      "exact_source_test_names": [
+        "test_t_r4_p0006_01_missing_transaction_after_swap_not_recovered",
+        "test_t_r4_p0006_02_missing_prepared_receipt_not_recovered",
+        "test_t_r4_p0006_03_missing_snapshot_or_event_not_recovered",
+        "test_t_r4_p0006_04_missing_authority_object_not_recovered",
+        "test_t_r4_p0006_05_complete_staging_recovers_twice_identically"
+      ],
+      "executed_command_receipts": [
+        "targeted_r4"
+      ],
+      "expected_actual_diagnostics": [
+        {
+          "actual": "BA11_RECOVERY_GRAPH_INCOMPLETE",
+          "expected": "BA11_RECOVERY_GRAPH_INCOMPLETE",
+          "test_id": "T-R4-P0006-01"
+        },
+        {
+          "actual": "BA11_RECOVERY_GRAPH_INCOMPLETE",
+          "expected": "BA11_RECOVERY_GRAPH_INCOMPLETE",
+          "test_id": "T-R4-P0006-02"
+        },
+        {
+          "actual": "BA11_RECOVERY_GRAPH_INCOMPLETE",
+          "expected": "BA11_RECOVERY_GRAPH_INCOMPLETE",
+          "test_id": "T-R4-P0006-03"
+        },
+        {
+          "actual": "BA11_RECOVERY_GRAPH_INCOMPLETE",
+          "expected": "BA11_RECOVERY_GRAPH_INCOMPLETE",
+          "test_id": "T-R4-P0006-04"
+        },
+        {
+          "actual": null,
+          "expected": null,
+          "test_id": "T-R4-P0006-05"
+        }
+      ],
+      "expected_and_actual_diagnostics": [
+        {
+          "actual": "BA11_RECOVERY_GRAPH_INCOMPLETE",
+          "expected": "BA11_RECOVERY_GRAPH_INCOMPLETE",
+          "test_id": "T-R4-P0006-01"
+        },
+        {
+          "actual": "BA11_RECOVERY_GRAPH_INCOMPLETE",
+          "expected": "BA11_RECOVERY_GRAPH_INCOMPLETE",
+          "test_id": "T-R4-P0006-02"
+        },
+        {
+          "actual": "BA11_RECOVERY_GRAPH_INCOMPLETE",
+          "expected": "BA11_RECOVERY_GRAPH_INCOMPLETE",
+          "test_id": "T-R4-P0006-03"
+        },
+        {
+          "actual": "BA11_RECOVERY_GRAPH_INCOMPLETE",
+          "expected": "BA11_RECOVERY_GRAPH_INCOMPLETE",
+          "test_id": "T-R4-P0006-04"
+        },
+        {
+          "actual": "IDENTICAL_RECEIPT_PASS",
+          "expected": "IDENTICAL_RECEIPT_PASS",
+          "test_id": "T-R4-P0006-05"
+        }
+      ],
+      "finding_id": "BA11-R3-RR-P0-006",
+      "independent_verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json",
+      "negative_fixture_ids": [
+        "T-R4-P0006-01",
+        "T-R4-P0006-02",
+        "T-R4-P0006-03",
+        "T-R4-P0006-04"
+      ],
+      "negative_fixtures": [
+        "test_t_r4_p0006_01_missing_transaction_after_swap_not_recovered",
+        "test_t_r4_p0006_02_missing_prepared_receipt_not_recovered",
+        "test_t_r4_p0006_03_missing_snapshot_or_event_not_recovered",
+        "test_t_r4_p0006_04_missing_authority_object_not_recovered"
+      ],
+      "requirement_ids": [
+        "T-R4-P0006-01",
+        "T-R4-P0006-02",
+        "T-R4-P0006-03",
+        "T-R4-P0006-04",
+        "T-R4-P0006-05"
+      ],
+      "root_cause": "Wenn Current Head bereits dem Candidate entspricht, kann Recovery Erfolg melden, obwohl Transaction-/Staging-/Authority-Objekte fehlen.",
+      "verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json"
+    },
+    {
+      "changed_files": [
+        {
+          "path": "research_agent/canary_governance/acceptance.py",
+          "repo": "research",
+          "sha256": "4a0e4429e296e12b0e1d9099f851bb8b9ec4c788d60ffa8a562c8ebd0adeef82"
+        },
+        {
+          "path": "scripts/ops/verify_ba11_r4_package.py",
+          "repo": "research",
+          "sha256": "2b73bea65e01402e4ad52fef5d26bf329856dd9c9989309aaada2ceda7d39f67"
+        }
+      ],
+      "changed_files_with_sha256": [
+        {
+          "path": "research_agent/canary_governance/acceptance.py",
+          "repo": "research",
+          "sha256": "4a0e4429e296e12b0e1d9099f851bb8b9ec4c788d60ffa8a562c8ebd0adeef82"
+        },
+        {
+          "path": "scripts/ops/verify_ba11_r4_package.py",
+          "repo": "research",
+          "sha256": "2b73bea65e01402e4ad52fef5d26bf329856dd9c9989309aaada2ceda7d39f67"
+        }
+      ],
+      "closure_status": "closed_verified",
+      "contract_delta_ids": [
+        "R4-BA11-R3-RR-P0-007-CONTRACT-DELTA"
+      ],
+      "contract_deltas": "Unveränderliches Acceptance-Requirement-Register mit stabiler Requirement-ID, exaktem Source-Test, Diagnostic, Command Receipt und Ergebnis-Hash. Builder darf das Set nicht reduzieren.",
+      "evidence_refs": [
+        "15_TEST_MATRIX_EXECUTED.json",
+        "19_CHANGED_FILES_PER_FINDING.json",
+        "independent_verifier/VERIFIER_RECEIPT.json"
+      ],
+      "exact_source_test_names": [
+        "test_t_r4_p0007_01_missing_acceptance_requirement_fails",
+        "test_t_r4_p0007_02_nonexistent_source_test_fails",
+        "test_t_r4_p0007_03_generic_suite_mapping_fails",
+        "test_t_r4_p0007_04_builder_cannot_self_certify_closure",
+        "test_t_r4_p0007_05_fresh_verifier_recomputes_final_outputs"
+      ],
+      "executed_command_receipts": [
+        "targeted_r4"
+      ],
+      "expected_actual_diagnostics": [
+        {
+          "actual": "BA11_ACCEPTANCE_REQUIREMENT_MISSING",
+          "expected": "BA11_ACCEPTANCE_REQUIREMENT_MISSING",
+          "test_id": "T-R4-P0007-01"
+        },
+        {
+          "actual": "BA11_TEST_ID_UNRESOLVED",
+          "expected": "BA11_TEST_ID_UNRESOLVED",
+          "test_id": "T-R4-P0007-02"
+        },
+        {
+          "actual": "BA11_ACCEPTANCE_MAPPING_AMBIGUOUS",
+          "expected": "BA11_ACCEPTANCE_MAPPING_AMBIGUOUS",
+          "test_id": "T-R4-P0007-03"
+        },
+        {
+          "actual": "BA11_SELF_CERTIFICATION_FORBIDDEN",
+          "expected": "BA11_SELF_CERTIFICATION_FORBIDDEN",
+          "test_id": "T-R4-P0007-04"
+        },
+        {
+          "actual": null,
+          "expected": null,
+          "test_id": "T-R4-P0007-05"
+        }
+      ],
+      "expected_and_actual_diagnostics": [
+        {
+          "actual": "BA11_ACCEPTANCE_REQUIREMENT_MISSING",
+          "expected": "BA11_ACCEPTANCE_REQUIREMENT_MISSING",
+          "test_id": "T-R4-P0007-01"
+        },
+        {
+          "actual": "BA11_TEST_ID_UNRESOLVED",
+          "expected": "BA11_TEST_ID_UNRESOLVED",
+          "test_id": "T-R4-P0007-02"
+        },
+        {
+          "actual": "BA11_ACCEPTANCE_MAPPING_AMBIGUOUS",
+          "expected": "BA11_ACCEPTANCE_MAPPING_AMBIGUOUS",
+          "test_id": "T-R4-P0007-03"
+        },
+        {
+          "actual": "BA11_SELF_CERTIFICATION_FORBIDDEN",
+          "expected": "BA11_SELF_CERTIFICATION_FORBIDDEN",
+          "test_id": "T-R4-P0007-04"
+        },
+        {
+          "actual": "PASS",
+          "expected": "PASS",
+          "test_id": "T-R4-P0007-05"
+        }
+      ],
+      "finding_id": "BA11-R3-RR-P0-007",
+      "independent_verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json",
+      "negative_fixture_ids": [
+        "T-R4-P0007-01",
+        "T-R4-P0007-02",
+        "T-R4-P0007-03",
+        "T-R4-P0007-04"
+      ],
+      "negative_fixtures": [
+        "test_t_r4_p0007_01_missing_acceptance_requirement_fails",
+        "test_t_r4_p0007_02_nonexistent_source_test_fails",
+        "test_t_r4_p0007_03_generic_suite_mapping_fails",
+        "test_t_r4_p0007_04_builder_cannot_self_certify_closure"
+      ],
+      "requirement_ids": [
+        "T-R4-P0007-01",
+        "T-R4-P0007-02",
+        "T-R4-P0007-03",
+        "T-R4-P0007-04",
+        "T-R4-P0007-05"
+      ],
+      "root_cause": "Die RR2-Findings enthalten 61 Acceptance-Konzepte; R3 bindet 37 Test-IDs. Der Verifier prüft die reduzierte Collector-Matrix und regeneriert PASS trotz reproduzierter Restlücken.",
+      "verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json"
+    },
+    {
+      "changed_files": [
+        {
+          "path": "research_agent/canary_governance/authority_graph.py",
+          "repo": "research",
+          "sha256": "da25c578466778e7ed659f90383ad5a1a4d8bf1ee1cea85cdbf3abb61cf010cc"
+        },
+        {
+          "path": "research_agent/canary_governance/contracts.py",
+          "repo": "research",
+          "sha256": "66f6caba214df639227235de3efb137dd25a59d7f8cee32007e9e4c873d7711e"
+        }
+      ],
+      "changed_files_with_sha256": [
+        {
+          "path": "research_agent/canary_governance/authority_graph.py",
+          "repo": "research",
+          "sha256": "da25c578466778e7ed659f90383ad5a1a4d8bf1ee1cea85cdbf3abb61cf010cc"
+        },
+        {
+          "path": "research_agent/canary_governance/contracts.py",
+          "repo": "research",
+          "sha256": "66f6caba214df639227235de3efb137dd25a59d7f8cee32007e9e4c873d7711e"
+        }
+      ],
+      "closure_status": "closed_verified",
+      "contract_delta_ids": [
+        "R4-BA11-R3-RR-P1-001-CONTRACT-DELTA"
+      ],
+      "contract_deltas": "Result und Classification nur aus aufgelöster Request plus Compare-Engine-Receipt ableiten.",
+      "evidence_refs": [
+        "15_TEST_MATRIX_EXECUTED.json",
+        "19_CHANGED_FILES_PER_FINDING.json",
+        "independent_verifier/VERIFIER_RECEIPT.json"
+      ],
+      "exact_source_test_names": [
+        "test_t_r4_p1001_01_result_request_artifact_mismatch_blocks",
+        "test_t_r4_p1001_02_compare_engine_count_mismatch_blocks",
+        "test_t_r4_p1001_03_exact_comparison_chain_passes"
+      ],
+      "executed_command_receipts": [
+        "targeted_r4"
+      ],
+      "expected_actual_diagnostics": [
+        {
+          "actual": "BA11_COMPARISON_BINDING_MISMATCH",
+          "expected": "BA11_COMPARISON_BINDING_MISMATCH",
+          "test_id": "T-R4-P1001-01"
+        },
+        {
+          "actual": "BA11_COMPARISON_COUNT_MISMATCH",
+          "expected": "BA11_COMPARISON_COUNT_MISMATCH",
+          "test_id": "T-R4-P1001-02"
+        },
+        {
+          "actual": null,
+          "expected": null,
+          "test_id": "T-R4-P1001-03"
+        }
+      ],
+      "expected_and_actual_diagnostics": [
+        {
+          "actual": "BA11_COMPARISON_BINDING_MISMATCH",
+          "expected": "BA11_COMPARISON_BINDING_MISMATCH",
+          "test_id": "T-R4-P1001-01"
+        },
+        {
+          "actual": "BA11_COMPARISON_COUNT_MISMATCH",
+          "expected": "BA11_COMPARISON_COUNT_MISMATCH",
+          "test_id": "T-R4-P1001-02"
+        },
+        {
+          "actual": "PASS",
+          "expected": "PASS",
+          "test_id": "T-R4-P1001-03"
+        }
+      ],
+      "finding_id": "BA11-R3-RR-P1-001",
+      "independent_verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json",
+      "negative_fixture_ids": [
+        "T-R4-P1001-01",
+        "T-R4-P1001-02"
+      ],
+      "negative_fixtures": [
+        "test_t_r4_p1001_01_result_request_artifact_mismatch_blocks",
+        "test_t_r4_p1001_02_compare_engine_count_mismatch_blocks"
+      ],
+      "requirement_ids": [
+        "T-R4-P1001-01",
+        "T-R4-P1001-02",
+        "T-R4-P1001-03"
+      ],
+      "root_cause": "ComparisonResult kann einen gültigen Request-Hash tragen und zugleich abweichende Baseline-/Candidate-Hashes oder caller-settable Diff-Counts deklarieren.",
+      "verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json"
+    },
+    {
+      "changed_files": [
+        {
+          "path": "research_agent/canary_governance/ledger.py",
+          "repo": "research",
+          "sha256": "ac78a806505caa784a493cbb4abe2c4d542da84a08f62b36f062e484413f86ea"
+        },
+        {
+          "path": "research_agent/canary_governance/contracts.py",
+          "repo": "research",
+          "sha256": "66f6caba214df639227235de3efb137dd25a59d7f8cee32007e9e4c873d7711e"
+        }
+      ],
+      "changed_files_with_sha256": [
+        {
+          "path": "research_agent/canary_governance/ledger.py",
+          "repo": "research",
+          "sha256": "ac78a806505caa784a493cbb4abe2c4d542da84a08f62b36f062e484413f86ea"
+        },
+        {
+          "path": "research_agent/canary_governance/contracts.py",
+          "repo": "research",
+          "sha256": "66f6caba214df639227235de3efb137dd25a59d7f8cee32007e9e4c873d7711e"
+        }
+      ],
+      "closure_status": "closed_verified",
+      "contract_delta_ids": [
+        "R4-BA11-R3-RR-P1-002-CONTRACT-DELTA"
+      ],
+      "contract_deltas": "ID-/Subject-/Collision-/SemVer-/Genesis-Regeln in den produktiven Rail integrieren; Snapshot Entry muss Subject-Identity bewahren.",
+      "evidence_refs": [
+        "15_TEST_MATRIX_EXECUTED.json",
+        "19_CHANGED_FILES_PER_FINDING.json",
+        "independent_verifier/VERIFIER_RECEIPT.json"
+      ],
+      "exact_source_test_names": [
+        "test_t_r4_p1002_01_same_canary_subject_change_blocks",
+        "test_t_r4_p1002_02_ordinary_major_jump_or_downgrade_blocks",
+        "test_t_r4_p1002_03_derived_id_collision_blocks",
+        "test_t_r4_p1002_04_second_persisted_genesis_import_blocks",
+        "test_t_r4_p1002_05_snapshot_retains_canonical_subject_identity"
+      ],
+      "executed_command_receipts": [
+        "targeted_r4"
+      ],
+      "expected_actual_diagnostics": [
+        {
+          "actual": "BA11_CANARY_SUBJECT_MISMATCH",
+          "expected": "BA11_CANARY_SUBJECT_MISMATCH",
+          "test_id": "T-R4-P1002-01"
+        },
+        {
+          "actual": "BA11_VERSION_TRANSITION_INVALID",
+          "expected": "BA11_VERSION_TRANSITION_INVALID",
+          "test_id": "T-R4-P1002-02"
+        },
+        {
+          "actual": "BA11_ID_COLLISION",
+          "expected": "BA11_ID_COLLISION",
+          "test_id": "T-R4-P1002-03"
+        },
+        {
+          "actual": "BA11_GENESIS_ALREADY_IMPORTED",
+          "expected": "BA11_GENESIS_ALREADY_IMPORTED",
+          "test_id": "T-R4-P1002-04"
+        },
+        {
+          "actual": null,
+          "expected": null,
+          "test_id": "T-R4-P1002-05"
+        }
+      ],
+      "expected_and_actual_diagnostics": [
+        {
+          "actual": "BA11_CANARY_SUBJECT_MISMATCH",
+          "expected": "BA11_CANARY_SUBJECT_MISMATCH",
+          "test_id": "T-R4-P1002-01"
+        },
+        {
+          "actual": "BA11_VERSION_TRANSITION_INVALID",
+          "expected": "BA11_VERSION_TRANSITION_INVALID",
+          "test_id": "T-R4-P1002-02"
+        },
+        {
+          "actual": "BA11_ID_COLLISION",
+          "expected": "BA11_ID_COLLISION",
+          "test_id": "T-R4-P1002-03"
+        },
+        {
+          "actual": "BA11_GENESIS_ALREADY_IMPORTED",
+          "expected": "BA11_GENESIS_ALREADY_IMPORTED",
+          "test_id": "T-R4-P1002-04"
+        },
+        {
+          "actual": "PASS",
+          "expected": "PASS",
+          "test_id": "T-R4-P1002-05"
+        }
+      ],
+      "finding_id": "BA11-R3-RR-P1-002",
+      "independent_verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json",
+      "negative_fixture_ids": [
+        "T-R4-P1002-01",
+        "T-R4-P1002-02",
+        "T-R4-P1002-03",
+        "T-R4-P1002-04"
+      ],
+      "negative_fixtures": [
+        "test_t_r4_p1002_01_same_canary_subject_change_blocks",
+        "test_t_r4_p1002_02_ordinary_major_jump_or_downgrade_blocks",
+        "test_t_r4_p1002_03_derived_id_collision_blocks",
+        "test_t_r4_p1002_04_second_persisted_genesis_import_blocks"
+      ],
+      "requirement_ids": [
+        "T-R4-P1002-01",
+        "T-R4-P1002-02",
+        "T-R4-P1002-03",
+        "T-R4-P1002-04",
+        "T-R4-P1002-05"
+      ],
+      "root_cause": "Hilfsfunktionen existieren, werden aber nicht zwingend von Append/Fold/Transaction ausgeführt. Derselbe canary_id kann Subject wechseln und unzulässige Versionssprünge akzeptieren.",
+      "verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json"
+    },
+    {
+      "changed_files": [
+        {
+          "path": "research_agent/canary_governance/approval.py",
+          "repo": "research",
+          "sha256": "171b120e26c099e2fc18534c4be645d49b3ed6e87f042d78183c9de8779f0510"
+        }
+      ],
+      "changed_files_with_sha256": [
+        {
+          "path": "research_agent/canary_governance/approval.py",
+          "repo": "research",
+          "sha256": "171b120e26c099e2fc18534c4be645d49b3ed6e87f042d78183c9de8779f0510"
+        }
+      ],
+      "closure_status": "closed_verified",
+      "contract_delta_ids": [
+        "R4-BA11-R3-RR-P1-003-CONTRACT-DELTA"
+      ],
+      "contract_deltas": "Key IDs und Public-Key-Bytes über Operator, Reviewer und Research paarweise disjunkt erzwingen.",
+      "evidence_refs": [
+        "15_TEST_MATRIX_EXECUTED.json",
+        "19_CHANGED_FILES_PER_FINDING.json",
+        "independent_verifier/VERIFIER_RECEIPT.json"
+      ],
+      "exact_source_test_names": [
+        "test_t_r4_p1003_01_02_03_role_public_key_overlap_blocks",
+        "test_t_r4_p1003_04_rotation_revocation_preserves_separation"
+      ],
+      "executed_command_receipts": [
+        "targeted_r4"
+      ],
+      "expected_actual_diagnostics": [
+        {
+          "actual": "BA11_ROLE_KEY_OVERLAP",
+          "expected": "BA11_ROLE_KEY_OVERLAP",
+          "test_id": "T-R4-P1003-01"
+        },
+        {
+          "actual": "BA11_ROLE_KEY_OVERLAP",
+          "expected": "BA11_ROLE_KEY_OVERLAP",
+          "test_id": "T-R4-P1003-02"
+        },
+        {
+          "actual": "BA11_ROLE_KEY_OVERLAP",
+          "expected": "BA11_ROLE_KEY_OVERLAP",
+          "test_id": "T-R4-P1003-03"
+        },
+        {
+          "actual": null,
+          "expected": null,
+          "test_id": "T-R4-P1003-04"
+        }
+      ],
+      "expected_and_actual_diagnostics": [
+        {
+          "actual": "BA11_ROLE_KEY_OVERLAP",
+          "expected": "BA11_ROLE_KEY_OVERLAP",
+          "test_id": "T-R4-P1003-01"
+        },
+        {
+          "actual": "BA11_ROLE_KEY_OVERLAP",
+          "expected": "BA11_ROLE_KEY_OVERLAP",
+          "test_id": "T-R4-P1003-02"
+        },
+        {
+          "actual": "BA11_ROLE_KEY_OVERLAP",
+          "expected": "BA11_ROLE_KEY_OVERLAP",
+          "test_id": "T-R4-P1003-03"
+        },
+        {
+          "actual": "PASS",
+          "expected": "PASS",
+          "test_id": "T-R4-P1003-04"
+        }
+      ],
+      "finding_id": "BA11-R3-RR-P1-003",
+      "independent_verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json",
+      "negative_fixture_ids": [
+        "T-R4-P1003-01",
+        "T-R4-P1003-02",
+        "T-R4-P1003-03"
+      ],
+      "negative_fixtures": [
+        "test_t_r4_p1003_01_02_03_role_public_key_overlap_blocks",
+        "test_t_r4_p1003_01_02_03_role_public_key_overlap_blocks",
+        "test_t_r4_p1003_01_02_03_role_public_key_overlap_blocks"
+      ],
+      "requirement_ids": [
+        "T-R4-P1003-01",
+        "T-R4-P1003-02",
+        "T-R4-P1003-03",
+        "T-R4-P1003-04"
+      ],
+      "root_cause": "TrustedRoleKeyPolicy blockiert Reviewer-Überlappung, aber nicht gleiche Key-Bytes zwischen Operator und Research.",
+      "verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json"
+    }
+  ]
+}
