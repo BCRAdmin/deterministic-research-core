@@ -1,6 +1,6 @@
 # RFC-0006 — BA11 Canary Governance R1 Correction
 
-Status: implemented correction candidate; independent rereview required.
+Status: `ACCEPTED / FROZEN` after independent R5 rereview on 2026-08-21.
 
 ## Scope
 
@@ -125,12 +125,36 @@ R3 addresses the 14 independent RR2 findings without expanding BA11 authority:
   versions, raw and normalized output hashes, and relative paths. EvidenceManifest and detached
   Package Identity have distinct, machine-readable hash domains.
 
-R3 remains a correction candidate only:
+## R4 and R5 closure, independent acceptance, and freeze
+
+The R4 correction closed ten independent R3 rereview findings. The R5 correction then closed
+the remaining three P0 and one P1 findings covering staging isolation, multi-generation
+promotion history, published RegistryHead receipt-chain authority, and exact collected/executed
+pytest node-ID binding.
+
+The independent R5 acceptance binds Research implementation
+`d31b2c064043fdc1246737d6fc8c62b392d6417f`, Research evidence
+`a7f83418c1473ef575467472b66934e4ff026dc8`, Product
+`fafcdbd3586075b5f4d0b50b3b18c22fb7a2e9e2`, and the R5 package SHA-256
+`f81e08620fac195642291d279492c3751e86dbf5130697e3f8205e512023938c`.
+The independent verdict is `ACCEPTED` with zero remaining blocking findings.
+
+The accepted runtime is frozen by
+`docs/compiler_foundation/freezes/BA11_CANARY_GOVERNANCE_FREEZE_v1.json`. This acceptance task
+does not change BA11 runtime semantics. Research remains the sole authority and Product remains
+a hash-verifying consumer.
+
+Final BA11 status:
 
 ```text
-ready_for_independent_rereview=true
-ba11_implementation_ready=false
+independent_rereview=ACCEPTED
+ba11_implementation_ready=true
+ba11_frozen=true
 ba12_authorized=false
 release_authorized=false
 publication_authorized=false
+next_gate=ba12_architecture_scope_and_operator_authorization
 ```
+
+Any future BA11 runtime change requires a new RFC and independent review. BA12 remains undefined
+and unauthorized; this freeze does not grant release, publication, or deployment authority.
