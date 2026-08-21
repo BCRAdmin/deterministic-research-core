@@ -1,0 +1,20 @@
+{
+  "ba10_v1_freeze_sha256": "29bc0bf2d00aa22d49fd7bb569cf080cc335778c1773b9e63710ecd61dfebc8e",
+  "ba11_freeze_sha256": "2c0e0e292f2b167e68814e2e2180f9f0823ea8be452be52b95f56db95a4ca1cf",
+  "bundle_sha256": "fe3d4a8b38375264f7cf1ade01a6c36d32ee54f02e95302d81d9578c271b148a",
+  "compile_identity_sha256": "ae504e9135464353b85e6d3050b77073625d2eca523146f75b3f540794d54cf3",
+  "compiler_identity_sha256": "57c2410bc4bde0a7ac3fd191b1add01ea0ec240de61c92ca5351685ba73a7924",
+  "contract_id": "room16.compiler_artifact_bundle_receipt",
+  "contract_version": 2,
+  "emitter_identity_sha256": "e973ff8bdbdb911b76a1606f2ee5fc263c8349d7c3ac68979c1e0c59a57c2fb4",
+  "issued_at_utc": "2026-08-21T12:00:00Z",
+  "monotonic_counter": 3,
+  "nonce": "rfc0008-abt-migration-20260821",
+  "not_after_utc": null,
+  "policy_sha256": "bf8eec534f7b1aab214f39ea667c130cd3bc2156410c8cab0afcdaa871099466",
+  "receipt_id": "rfc0008.abt.migration",
+  "receipt_sha256": "3ec1d0cb81ff6669b70a5b0fce78ad74c0ff48741270d9cfb77a31fe9052a49e",
+  "research_key_id": "research.rfc0008.primary.2026-08-21",
+  "signature": "5a3c39fca16731d79aa2b2ad785dc89c813021fc66c4254e3f06476561d320163d73f63d3a3a0d922f2b692ba783f18588fb88508dc37e9cff71ca10cda37605",
+  "signature_algorithm": "ed25519"
+}

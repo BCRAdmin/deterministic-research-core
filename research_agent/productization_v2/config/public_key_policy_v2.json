@@ -1,0 +1,21 @@
+{
+  "contract_id": "room16.compiler.public_key_policy",
+  "contract_version": 2,
+  "keys": [
+    {
+      "key_id": "research.rfc0008.primary.2026-08-21",
+      "not_after_utc": null,
+      "not_before_utc": "2026-08-21T00:00:00Z",
+      "public_key_hex": "7287a555bbd5bb0302cc45d5b716c94ead99ed1a41840999e7d3c1aa7d889a2d",
+      "state": "active"
+    }
+  ],
+  "owner": "research_compiler",
+  "policy_sha256": "1527c0ffa87b56d0dd355b5598cbfcd404bec734d6b14c9526867ed3b7d23d49",
+  "rotation_sequence": [
+    "active",
+    "grace_verify_only",
+    "revoked"
+  ],
+  "signature_algorithm": "ed25519"
+}

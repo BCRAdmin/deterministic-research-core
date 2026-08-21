@@ -1,0 +1,23 @@
+{
+  "allowed_authority_v3_bridge_directions": [
+    "bundle_to_authority_v3_only",
+    "disabled"
+  ],
+  "artifact_bundle_contract_major": 2,
+  "ba10_v1_freeze_sha256": "29bc0bf2d00aa22d49fd7bb569cf080cc335778c1773b9e63710ecd61dfebc8e",
+  "ba11_freeze_sha256": "2c0e0e292f2b167e68814e2e2180f9f0823ea8be452be52b95f56db95a4ca1cf",
+  "canonicalization_profile": "room16.foundation.canonical_json@1",
+  "contract_id": "room16.compiler.consumer_policy_lock",
+  "contract_version": 2,
+  "hash_algorithm": "sha256",
+  "key_policy_sha256": "1527c0ffa87b56d0dd355b5598cbfcd404bec734d6b14c9526867ed3b7d23d49",
+  "legacy_semantic_input_allowed": false,
+  "mutable_bundle_hash_allowlist_allowed": false,
+  "owner": "research_compiler",
+  "policy_sha256": "bf8eec534f7b1aab214f39ea667c130cd3bc2156410c8cab0afcdaa871099466",
+  "product_may_edit_semantics": false,
+  "schema_version_max": "2.x",
+  "schema_version_min": "2.0.0",
+  "source_native_fact_generation_required_for_native": true,
+  "trusted_emitter_id": "room16.compiler_artifact_bundle_builder_v2"
+}
