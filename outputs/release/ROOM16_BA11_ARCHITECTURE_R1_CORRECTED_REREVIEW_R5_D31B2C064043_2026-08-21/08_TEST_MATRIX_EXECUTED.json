@@ -1,0 +1,725 @@
+{
+  "collection_manifest": {
+    "manifest_sha256": "702f097e6a912852519d77f96837a4cb683ad1cf56fd6a242c760f971d7250a9",
+    "nodeids": [
+      "research_agent/tests/test_canary_governance_r5.py::test_t_r5_001_a_preswap_crash_then_different_valid_append_is_readable",
+      "research_agent/tests/test_canary_governance_r5.py::test_t_r5_001_b_orphan_staged_heads_are_not_published_authority",
+      "research_agent/tests/test_canary_governance_r5.py::test_t_r5_001_c_retry_same_transaction_after_preswap_crash_is_idempotent",
+      "research_agent/tests/test_canary_governance_r5.py::test_t_r5_002_a_second_valid_promotion_cycle_passes",
+      "research_agent/tests/test_canary_governance_r5.py::test_t_r5_002_b_third_cycle_replays_full_history_byte_identically",
+      "research_agent/tests/test_canary_governance_r5.py::test_t_r5_002_c_wrong_historical_promotion_selection_blocks",
+      "research_agent/tests/test_canary_governance_r5.py::test_t_r5_003_a_older_valid_registry_current_is_rejected",
+      "research_agent/tests/test_canary_governance_r5.py::test_t_r5_003_b_alternate_publication_from_old_base_is_cas_blocked",
+      "research_agent/tests/test_canary_governance_r5.py::test_t_r5_003_c_missing_latest_publication_receipt_blocks",
+      "research_agent/tests/test_canary_governance_r5.py::test_t_r5_004_a_every_requirement_has_exact_collected_executed_nodeid",
+      "research_agent/tests/test_canary_governance_r5.py::test_t_r5_004_b_duplicate_nodeid_mapping_is_rejected",
+      "research_agent/tests/test_canary_governance_r5.py::test_t_r5_004_c_uncollected_or_unexecuted_nodeid_is_rejected",
+      "research_agent/tests/test_canary_governance_r5.py::test_t_r5_all_001_r4_matrix_anchor",
+      "research_agent/tests/test_canary_governance_r5.py::test_t_r5_all_002_full_research_regression_anchor",
+      "research_agent/tests/test_canary_governance_r5.py::test_t_r5_all_003_full_product_verification_anchor",
+      "research_agent/tests/test_canary_governance_r5.py::test_t_r5_all_004_ba10_raw_freeze_anchor",
+      "research_agent/tests/test_canary_governance_r5.py::test_t_r5_all_005_deterministic_evidence_build_anchor",
+      "research_agent/tests/test_canary_governance_r5.py::test_t_r5_all_006_foreign_worktree_unchanged_anchor"
+    ]
+  },
+  "contract_id": "room16.ba11_r5.executed_test_matrix@1",
+  "execution_report": {
+    "report_sha256": "39d0c59b0e443e55b4174e24a27e597abdec2b2c02afb6ce6c7a9d08aa0c362e",
+    "results": [
+      {
+        "command_receipt": "node_t_r5_001_a",
+        "exit_code": 0,
+        "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_001_a_preswap_crash_then_different_valid_append_is_readable",
+        "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+        "status": "PASS",
+        "test_id": "T-R5-001-A"
+      },
+      {
+        "command_receipt": "node_t_r5_001_b",
+        "exit_code": 0,
+        "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_001_b_orphan_staged_heads_are_not_published_authority",
+        "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+        "status": "PASS",
+        "test_id": "T-R5-001-B"
+      },
+      {
+        "command_receipt": "node_t_r5_001_c",
+        "exit_code": 0,
+        "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_001_c_retry_same_transaction_after_preswap_crash_is_idempotent",
+        "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+        "status": "PASS",
+        "test_id": "T-R5-001-C"
+      },
+      {
+        "command_receipt": "node_t_r5_002_a",
+        "exit_code": 0,
+        "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_002_a_second_valid_promotion_cycle_passes",
+        "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+        "status": "PASS",
+        "test_id": "T-R5-002-A"
+      },
+      {
+        "command_receipt": "node_t_r5_002_b",
+        "exit_code": 0,
+        "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_002_b_third_cycle_replays_full_history_byte_identically",
+        "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+        "status": "PASS",
+        "test_id": "T-R5-002-B"
+      },
+      {
+        "command_receipt": "node_t_r5_002_c",
+        "exit_code": 0,
+        "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_002_c_wrong_historical_promotion_selection_blocks",
+        "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+        "status": "PASS",
+        "test_id": "T-R5-002-C"
+      },
+      {
+        "command_receipt": "node_t_r5_003_a",
+        "exit_code": 0,
+        "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_003_a_older_valid_registry_current_is_rejected",
+        "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+        "status": "PASS",
+        "test_id": "T-R5-003-A"
+      },
+      {
+        "command_receipt": "node_t_r5_003_b",
+        "exit_code": 0,
+        "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_003_b_alternate_publication_from_old_base_is_cas_blocked",
+        "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+        "status": "PASS",
+        "test_id": "T-R5-003-B"
+      },
+      {
+        "command_receipt": "node_t_r5_003_c",
+        "exit_code": 0,
+        "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_003_c_missing_latest_publication_receipt_blocks",
+        "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+        "status": "PASS",
+        "test_id": "T-R5-003-C"
+      },
+      {
+        "command_receipt": "node_t_r5_004_a",
+        "exit_code": 0,
+        "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_004_a_every_requirement_has_exact_collected_executed_nodeid",
+        "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+        "status": "PASS",
+        "test_id": "T-R5-004-A"
+      },
+      {
+        "command_receipt": "node_t_r5_004_b",
+        "exit_code": 0,
+        "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_004_b_duplicate_nodeid_mapping_is_rejected",
+        "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+        "status": "PASS",
+        "test_id": "T-R5-004-B"
+      },
+      {
+        "command_receipt": "node_t_r5_004_c",
+        "exit_code": 0,
+        "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_004_c_uncollected_or_unexecuted_nodeid_is_rejected",
+        "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+        "status": "PASS",
+        "test_id": "T-R5-004-C"
+      },
+      {
+        "command_receipt": "node_t_r5_all_001",
+        "exit_code": 0,
+        "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_all_001_r4_matrix_anchor",
+        "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+        "status": "PASS",
+        "test_id": "T-R5-ALL-001"
+      },
+      {
+        "command_receipt": "node_t_r5_all_002",
+        "exit_code": 0,
+        "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_all_002_full_research_regression_anchor",
+        "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+        "status": "PASS",
+        "test_id": "T-R5-ALL-002"
+      },
+      {
+        "command_receipt": "node_t_r5_all_003",
+        "exit_code": 0,
+        "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_all_003_full_product_verification_anchor",
+        "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+        "status": "PASS",
+        "test_id": "T-R5-ALL-003"
+      },
+      {
+        "command_receipt": "node_t_r5_all_004",
+        "exit_code": 0,
+        "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_all_004_ba10_raw_freeze_anchor",
+        "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+        "status": "PASS",
+        "test_id": "T-R5-ALL-004"
+      },
+      {
+        "command_receipt": "node_t_r5_all_005",
+        "exit_code": 0,
+        "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_all_005_deterministic_evidence_build_anchor",
+        "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+        "status": "PASS",
+        "test_id": "T-R5-ALL-005"
+      },
+      {
+        "command_receipt": "node_t_r5_all_006",
+        "exit_code": 0,
+        "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_all_006_foreign_worktree_unchanged_anchor",
+        "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+        "status": "PASS",
+        "test_id": "T-R5-ALL-006"
+      }
+    ]
+  },
+  "required_matrix": {
+    "contract_id": "room16.ba11_r5.required_test_matrix@1",
+    "row_count": 18,
+    "rows": [
+      {
+        "expected": "later operation remains readable; no fork from abandoned staging",
+        "finding_id": "BA11-R4-RR-P0-001",
+        "scenario": "crash before_head_swap then different valid append/transaction",
+        "test_id": "T-R5-001-A"
+      },
+      {
+        "expected": "not treated as published authority",
+        "finding_id": "BA11-R4-RR-P0-001",
+        "scenario": "orphan staged candidate heads exist",
+        "test_id": "T-R5-001-B"
+      },
+      {
+        "expected": "idempotent PASS",
+        "finding_id": "BA11-R4-RR-P0-001",
+        "scenario": "retry same transaction after pre-swap crash",
+        "test_id": "T-R5-001-C"
+      },
+      {
+        "expected": "PASS with two historical PromotionEvents",
+        "finding_id": "BA11-R4-RR-P0-002",
+        "scenario": "commit 1.0.0 promotion then valid governance promotion to 1.1.0",
+        "test_id": "T-R5-002-A"
+      },
+      {
+        "expected": "PASS and final snapshot derives from full history",
+        "finding_id": "BA11-R4-RR-P0-002",
+        "scenario": "third valid promotion cycle",
+        "test_id": "T-R5-002-B"
+      },
+      {
+        "expected": "BLOCK with stable authority-graph diagnostic",
+        "finding_id": "BA11-R4-RR-P0-002",
+        "scenario": "graph selects wrong historical PromotionEvent",
+        "test_id": "T-R5-002-C"
+      },
+      {
+        "expected": "BLOCK: registry rollback",
+        "finding_id": "BA11-R4-RR-P0-003",
+        "scenario": "after two published registry heads replace current with first valid head",
+        "test_id": "T-R5-003-A"
+      },
+      {
+        "expected": "BLOCK: registry fork/CAS",
+        "finding_id": "BA11-R4-RR-P0-003",
+        "scenario": "attempt alternate publication from old published base",
+        "test_id": "T-R5-003-B"
+      },
+      {
+        "expected": "BLOCK or deterministic recovery, never silent rollback",
+        "finding_id": "BA11-R4-RR-P0-003",
+        "scenario": "missing/corrupt latest publication receipt",
+        "test_id": "T-R5-003-C"
+      },
+      {
+        "expected": "PASS",
+        "finding_id": "BA11-R4-RR-P1-001",
+        "scenario": "every authoritative requirement has exact pytest nodeid",
+        "test_id": "T-R5-004-A"
+      },
+      {
+        "expected": "BUNDLE_FAIL",
+        "finding_id": "BA11-R4-RR-P1-001",
+        "scenario": "duplicate nodeid mapped to distinct requirements without distinct parameter ids",
+        "test_id": "T-R5-004-B"
+      },
+      {
+        "expected": "BUNDLE_FAIL",
+        "finding_id": "BA11-R4-RR-P1-001",
+        "scenario": "nodeid absent from collect-only manifest or execution report",
+        "test_id": "T-R5-004-C"
+      },
+      {
+        "expected": "PASS",
+        "finding_id": "ALL",
+        "scenario": "all 54 R4 tests remain green",
+        "test_id": "T-R5-ALL-001"
+      },
+      {
+        "expected": "PASS",
+        "finding_id": "ALL",
+        "scenario": "full Research regression",
+        "test_id": "T-R5-ALL-002"
+      },
+      {
+        "expected": "PASS",
+        "finding_id": "ALL",
+        "scenario": "full Product verification",
+        "test_id": "T-R5-ALL-003"
+      },
+      {
+        "expected": "PASS",
+        "finding_id": "ALL",
+        "scenario": "BA10 raw freeze verifier",
+        "test_id": "T-R5-ALL-004"
+      },
+      {
+        "expected": "byte-identical PASS",
+        "finding_id": "ALL",
+        "scenario": "two clean deterministic evidence builds",
+        "test_id": "T-R5-ALL-005"
+      },
+      {
+        "expected": "PASS",
+        "finding_id": "ALL",
+        "scenario": "foreign materialbedarf worktree unchanged",
+        "test_id": "T-R5-ALL-006"
+      }
+    ],
+    "rule": "Every row must bind exact source test/nodeid, command receipt, input git tree, exit code, and raw stdout/stderr hashes."
+  },
+  "row_count": 18,
+  "rows": [
+    {
+      "actual": "later operation remains readable; no fork from abandoned staging",
+      "actual_diagnostic": "later operation remains readable; no fork from abandoned staging",
+      "collect_manifest_sha256": "702f097e6a912852519d77f96837a4cb683ad1cf56fd6a242c760f971d7250a9",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r5.py::test_t_r5_001_a_preswap_crash_then_different_valid_append_is_readable"
+      ],
+      "command_receipt": "node_t_r5_001_a",
+      "execution_result_sha256": "361c43d5a048d03cec0388f7724c2e3af94197fa94e99d387a960d431a556ccd",
+      "expected": "later operation remains readable; no fork from abandoned staging",
+      "expected_diagnostic": "later operation remains readable; no fork from abandoned staging",
+      "finding_id": "BA11-R4-RR-P0-001",
+      "git_tree": "36a60f64369805e29a822cb14f59f2025b85625f",
+      "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_001_a_preswap_crash_then_different_valid_append_is_readable",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+      "status": "PASS",
+      "test_id": "T-R5-001-A"
+    },
+    {
+      "actual": "not treated as published authority",
+      "actual_diagnostic": "not treated as published authority",
+      "collect_manifest_sha256": "702f097e6a912852519d77f96837a4cb683ad1cf56fd6a242c760f971d7250a9",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r5.py::test_t_r5_001_b_orphan_staged_heads_are_not_published_authority"
+      ],
+      "command_receipt": "node_t_r5_001_b",
+      "execution_result_sha256": "3a573dd4785774de7a514c6f642a2af950e936a7e4a311588f41710648ec1590",
+      "expected": "not treated as published authority",
+      "expected_diagnostic": "not treated as published authority",
+      "finding_id": "BA11-R4-RR-P0-001",
+      "git_tree": "36a60f64369805e29a822cb14f59f2025b85625f",
+      "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_001_b_orphan_staged_heads_are_not_published_authority",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+      "status": "PASS",
+      "test_id": "T-R5-001-B"
+    },
+    {
+      "actual": "idempotent PASS",
+      "actual_diagnostic": "idempotent PASS",
+      "collect_manifest_sha256": "702f097e6a912852519d77f96837a4cb683ad1cf56fd6a242c760f971d7250a9",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r5.py::test_t_r5_001_c_retry_same_transaction_after_preswap_crash_is_idempotent"
+      ],
+      "command_receipt": "node_t_r5_001_c",
+      "execution_result_sha256": "42a6ce9ad416f465ce400f92367307a7e08bea81aa0d208a9b4399b30be7933a",
+      "expected": "idempotent PASS",
+      "expected_diagnostic": "idempotent PASS",
+      "finding_id": "BA11-R4-RR-P0-001",
+      "git_tree": "36a60f64369805e29a822cb14f59f2025b85625f",
+      "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_001_c_retry_same_transaction_after_preswap_crash_is_idempotent",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+      "status": "PASS",
+      "test_id": "T-R5-001-C"
+    },
+    {
+      "actual": "PASS with two historical PromotionEvents",
+      "actual_diagnostic": "PASS with two historical PromotionEvents",
+      "collect_manifest_sha256": "702f097e6a912852519d77f96837a4cb683ad1cf56fd6a242c760f971d7250a9",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r5.py::test_t_r5_002_a_second_valid_promotion_cycle_passes"
+      ],
+      "command_receipt": "node_t_r5_002_a",
+      "execution_result_sha256": "76e36b8648ba7560b9056508a9dc351d2d78e34173eeeda8838eeab3cba1f92e",
+      "expected": "PASS with two historical PromotionEvents",
+      "expected_diagnostic": "PASS with two historical PromotionEvents",
+      "finding_id": "BA11-R4-RR-P0-002",
+      "git_tree": "36a60f64369805e29a822cb14f59f2025b85625f",
+      "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_002_a_second_valid_promotion_cycle_passes",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+      "status": "PASS",
+      "test_id": "T-R5-002-A"
+    },
+    {
+      "actual": "PASS and final snapshot derives from full history",
+      "actual_diagnostic": "PASS and final snapshot derives from full history",
+      "collect_manifest_sha256": "702f097e6a912852519d77f96837a4cb683ad1cf56fd6a242c760f971d7250a9",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r5.py::test_t_r5_002_b_third_cycle_replays_full_history_byte_identically"
+      ],
+      "command_receipt": "node_t_r5_002_b",
+      "execution_result_sha256": "f33ac7b4c33949f8c783c8bd31c62178630640ca74542a470eb05e20daa761b8",
+      "expected": "PASS and final snapshot derives from full history",
+      "expected_diagnostic": "PASS and final snapshot derives from full history",
+      "finding_id": "BA11-R4-RR-P0-002",
+      "git_tree": "36a60f64369805e29a822cb14f59f2025b85625f",
+      "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_002_b_third_cycle_replays_full_history_byte_identically",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+      "status": "PASS",
+      "test_id": "T-R5-002-B"
+    },
+    {
+      "actual": "BLOCK with stable authority-graph diagnostic",
+      "actual_diagnostic": "BLOCK with stable authority-graph diagnostic",
+      "collect_manifest_sha256": "702f097e6a912852519d77f96837a4cb683ad1cf56fd6a242c760f971d7250a9",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r5.py::test_t_r5_002_c_wrong_historical_promotion_selection_blocks"
+      ],
+      "command_receipt": "node_t_r5_002_c",
+      "execution_result_sha256": "701a1cbf875ce288915427c6698b801d5a0f5a2fb0ea98ad888b6b500bdd66de",
+      "expected": "BLOCK with stable authority-graph diagnostic",
+      "expected_diagnostic": "BLOCK with stable authority-graph diagnostic",
+      "finding_id": "BA11-R4-RR-P0-002",
+      "git_tree": "36a60f64369805e29a822cb14f59f2025b85625f",
+      "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_002_c_wrong_historical_promotion_selection_blocks",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+      "status": "PASS",
+      "test_id": "T-R5-002-C"
+    },
+    {
+      "actual": "BLOCK: registry rollback",
+      "actual_diagnostic": "BLOCK: registry rollback",
+      "collect_manifest_sha256": "702f097e6a912852519d77f96837a4cb683ad1cf56fd6a242c760f971d7250a9",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r5.py::test_t_r5_003_a_older_valid_registry_current_is_rejected"
+      ],
+      "command_receipt": "node_t_r5_003_a",
+      "execution_result_sha256": "154aa315d7b7c03eedbd983b1e57318c5a3f5c4ce5190a15c9ff263e54346834",
+      "expected": "BLOCK: registry rollback",
+      "expected_diagnostic": "BLOCK: registry rollback",
+      "finding_id": "BA11-R4-RR-P0-003",
+      "git_tree": "36a60f64369805e29a822cb14f59f2025b85625f",
+      "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_003_a_older_valid_registry_current_is_rejected",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+      "status": "PASS",
+      "test_id": "T-R5-003-A"
+    },
+    {
+      "actual": "BLOCK: registry fork/CAS",
+      "actual_diagnostic": "BLOCK: registry fork/CAS",
+      "collect_manifest_sha256": "702f097e6a912852519d77f96837a4cb683ad1cf56fd6a242c760f971d7250a9",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r5.py::test_t_r5_003_b_alternate_publication_from_old_base_is_cas_blocked"
+      ],
+      "command_receipt": "node_t_r5_003_b",
+      "execution_result_sha256": "7b0a03810ae829d9319d9dd37934cc9ea158e6544cd0c5dd0a407eacb7539622",
+      "expected": "BLOCK: registry fork/CAS",
+      "expected_diagnostic": "BLOCK: registry fork/CAS",
+      "finding_id": "BA11-R4-RR-P0-003",
+      "git_tree": "36a60f64369805e29a822cb14f59f2025b85625f",
+      "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_003_b_alternate_publication_from_old_base_is_cas_blocked",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+      "status": "PASS",
+      "test_id": "T-R5-003-B"
+    },
+    {
+      "actual": "BLOCK or deterministic recovery, never silent rollback",
+      "actual_diagnostic": "BLOCK or deterministic recovery, never silent rollback",
+      "collect_manifest_sha256": "702f097e6a912852519d77f96837a4cb683ad1cf56fd6a242c760f971d7250a9",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r5.py::test_t_r5_003_c_missing_latest_publication_receipt_blocks"
+      ],
+      "command_receipt": "node_t_r5_003_c",
+      "execution_result_sha256": "348e2aad0c734a1440996ac0be795386ae65efd5a5a29f6b6bc8a559c06fd916",
+      "expected": "BLOCK or deterministic recovery, never silent rollback",
+      "expected_diagnostic": "BLOCK or deterministic recovery, never silent rollback",
+      "finding_id": "BA11-R4-RR-P0-003",
+      "git_tree": "36a60f64369805e29a822cb14f59f2025b85625f",
+      "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_003_c_missing_latest_publication_receipt_blocks",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+      "status": "PASS",
+      "test_id": "T-R5-003-C"
+    },
+    {
+      "actual": "PASS",
+      "actual_diagnostic": "PASS",
+      "collect_manifest_sha256": "702f097e6a912852519d77f96837a4cb683ad1cf56fd6a242c760f971d7250a9",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r5.py::test_t_r5_004_a_every_requirement_has_exact_collected_executed_nodeid"
+      ],
+      "command_receipt": "node_t_r5_004_a",
+      "execution_result_sha256": "4df565365940ea0dea3cc3c2cc5fcb28ad8803bff7f1bb21f05a1825566dbaef",
+      "expected": "PASS",
+      "expected_diagnostic": "PASS",
+      "finding_id": "BA11-R4-RR-P1-001",
+      "git_tree": "36a60f64369805e29a822cb14f59f2025b85625f",
+      "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_004_a_every_requirement_has_exact_collected_executed_nodeid",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+      "status": "PASS",
+      "test_id": "T-R5-004-A"
+    },
+    {
+      "actual": "BUNDLE_FAIL",
+      "actual_diagnostic": "BUNDLE_FAIL",
+      "collect_manifest_sha256": "702f097e6a912852519d77f96837a4cb683ad1cf56fd6a242c760f971d7250a9",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r5.py::test_t_r5_004_b_duplicate_nodeid_mapping_is_rejected"
+      ],
+      "command_receipt": "node_t_r5_004_b",
+      "execution_result_sha256": "9587024a36daa8c7e9550c6589d47a8ca3da3fdc0841187b978c175b56bd200a",
+      "expected": "BUNDLE_FAIL",
+      "expected_diagnostic": "BUNDLE_FAIL",
+      "finding_id": "BA11-R4-RR-P1-001",
+      "git_tree": "36a60f64369805e29a822cb14f59f2025b85625f",
+      "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_004_b_duplicate_nodeid_mapping_is_rejected",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+      "status": "PASS",
+      "test_id": "T-R5-004-B"
+    },
+    {
+      "actual": "BUNDLE_FAIL",
+      "actual_diagnostic": "BUNDLE_FAIL",
+      "collect_manifest_sha256": "702f097e6a912852519d77f96837a4cb683ad1cf56fd6a242c760f971d7250a9",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r5.py::test_t_r5_004_c_uncollected_or_unexecuted_nodeid_is_rejected"
+      ],
+      "command_receipt": "node_t_r5_004_c",
+      "execution_result_sha256": "5bebd4d96182368cfcf750d9288004ed8fb53392f0a515feaa2f924cd5e80615",
+      "expected": "BUNDLE_FAIL",
+      "expected_diagnostic": "BUNDLE_FAIL",
+      "finding_id": "BA11-R4-RR-P1-001",
+      "git_tree": "36a60f64369805e29a822cb14f59f2025b85625f",
+      "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_004_c_uncollected_or_unexecuted_nodeid_is_rejected",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+      "status": "PASS",
+      "test_id": "T-R5-004-C"
+    },
+    {
+      "actual": "PASS",
+      "actual_diagnostic": "PASS",
+      "collect_manifest_sha256": "702f097e6a912852519d77f96837a4cb683ad1cf56fd6a242c760f971d7250a9",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r5.py::test_t_r5_all_001_r4_matrix_anchor"
+      ],
+      "command_receipt": "node_t_r5_all_001",
+      "execution_result_sha256": "3d1445a5624d01afca2ce65ce0ae0ecbc4f5428a1459e11b7bf47ab5d438cfde",
+      "expected": "PASS",
+      "expected_diagnostic": "PASS",
+      "finding_id": "ALL",
+      "git_tree": "36a60f64369805e29a822cb14f59f2025b85625f",
+      "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_all_001_r4_matrix_anchor",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+      "status": "PASS",
+      "test_id": "T-R5-ALL-001"
+    },
+    {
+      "actual": "PASS",
+      "actual_diagnostic": "PASS",
+      "collect_manifest_sha256": "702f097e6a912852519d77f96837a4cb683ad1cf56fd6a242c760f971d7250a9",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r5.py::test_t_r5_all_002_full_research_regression_anchor"
+      ],
+      "command_receipt": "node_t_r5_all_002",
+      "execution_result_sha256": "e00eee8b0fb645d27ae957248637db4ac318879475015a870a2202be09d4fbf4",
+      "expected": "PASS",
+      "expected_diagnostic": "PASS",
+      "finding_id": "ALL",
+      "git_tree": "36a60f64369805e29a822cb14f59f2025b85625f",
+      "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_all_002_full_research_regression_anchor",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+      "status": "PASS",
+      "test_id": "T-R5-ALL-002"
+    },
+    {
+      "actual": "PASS",
+      "actual_diagnostic": "PASS",
+      "collect_manifest_sha256": "702f097e6a912852519d77f96837a4cb683ad1cf56fd6a242c760f971d7250a9",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r5.py::test_t_r5_all_003_full_product_verification_anchor"
+      ],
+      "command_receipt": "node_t_r5_all_003",
+      "execution_result_sha256": "32473706a7b54d6abcfe135fc630448f0ec3b70c534ceec77a27449cb1b8f644",
+      "expected": "PASS",
+      "expected_diagnostic": "PASS",
+      "finding_id": "ALL",
+      "git_tree": "36a60f64369805e29a822cb14f59f2025b85625f",
+      "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_all_003_full_product_verification_anchor",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+      "status": "PASS",
+      "test_id": "T-R5-ALL-003"
+    },
+    {
+      "actual": "PASS",
+      "actual_diagnostic": "PASS",
+      "collect_manifest_sha256": "702f097e6a912852519d77f96837a4cb683ad1cf56fd6a242c760f971d7250a9",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r5.py::test_t_r5_all_004_ba10_raw_freeze_anchor"
+      ],
+      "command_receipt": "node_t_r5_all_004",
+      "execution_result_sha256": "2315578ae8e98d7b75da3ee3be3a15524c9e5413addffba216157d23ef9589d6",
+      "expected": "PASS",
+      "expected_diagnostic": "PASS",
+      "finding_id": "ALL",
+      "git_tree": "36a60f64369805e29a822cb14f59f2025b85625f",
+      "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_all_004_ba10_raw_freeze_anchor",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+      "status": "PASS",
+      "test_id": "T-R5-ALL-004"
+    },
+    {
+      "actual": "byte-identical PASS",
+      "actual_diagnostic": "byte-identical PASS",
+      "collect_manifest_sha256": "702f097e6a912852519d77f96837a4cb683ad1cf56fd6a242c760f971d7250a9",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r5.py::test_t_r5_all_005_deterministic_evidence_build_anchor"
+      ],
+      "command_receipt": "node_t_r5_all_005",
+      "execution_result_sha256": "275acd06a1b29336e241d380c0cd457d39d089028214e8acdadec7b1a2514e54",
+      "expected": "byte-identical PASS",
+      "expected_diagnostic": "byte-identical PASS",
+      "finding_id": "ALL",
+      "git_tree": "36a60f64369805e29a822cb14f59f2025b85625f",
+      "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_all_005_deterministic_evidence_build_anchor",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+      "status": "PASS",
+      "test_id": "T-R5-ALL-005"
+    },
+    {
+      "actual": "PASS",
+      "actual_diagnostic": "PASS",
+      "collect_manifest_sha256": "702f097e6a912852519d77f96837a4cb683ad1cf56fd6a242c760f971d7250a9",
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "research_agent/tests/test_canary_governance_r5.py::test_t_r5_all_006_foreign_worktree_unchanged_anchor"
+      ],
+      "command_receipt": "node_t_r5_all_006",
+      "execution_result_sha256": "e5dd15b2cba29e29b8918f53a80880fc4ef097ccc18653a468f4fab56a0fe652",
+      "expected": "PASS",
+      "expected_diagnostic": "PASS",
+      "finding_id": "ALL",
+      "git_tree": "36a60f64369805e29a822cb14f59f2025b85625f",
+      "pytest_nodeid": "research_agent/tests/test_canary_governance_r5.py::test_t_r5_all_006_foreign_worktree_unchanged_anchor",
+      "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_stdout_sha256": "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d",
+      "status": "PASS",
+      "test_id": "T-R5-ALL-006"
+    }
+  ]
+}

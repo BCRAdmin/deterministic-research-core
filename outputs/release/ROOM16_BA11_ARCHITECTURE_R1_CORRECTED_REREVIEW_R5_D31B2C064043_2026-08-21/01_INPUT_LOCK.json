@@ -1,0 +1,15 @@
+{
+  "ba11_implementation_ready": false,
+  "ba12_authorized": false,
+  "contract_id": "room16.ba11_r5.input_lock@1",
+  "publication_authorized": false,
+  "ready_for_independent_rereview": true,
+  "release_authorized": false,
+  "source_r4_bytes": 634272,
+  "source_r4_filename": "ROOM16_BA11_ARCHITECTURE_R1_CORRECTED_REREVIEW_R4_AEB23345B864_2026-08-20.zip",
+  "source_r4_sha256": "cd45138728ec20c2c9a6cad2fbce5e25a56c99b599da58606098560753d80f46",
+  "source_r5_bytes": 637959,
+  "source_r5_entries": 12,
+  "source_r5_filename": "ROOM16_BA11_R4_INDEPENDENT_REREVIEW_R5_CHANGES_REQUIRED_VEGA_CORRECTION_EDDED2622456_2026-08-21.zip",
+  "source_r5_sha256": "edded26224567b087b852d9e9f631271b9b2e27dd917ad438ca63a3f5a951cd7"
+}

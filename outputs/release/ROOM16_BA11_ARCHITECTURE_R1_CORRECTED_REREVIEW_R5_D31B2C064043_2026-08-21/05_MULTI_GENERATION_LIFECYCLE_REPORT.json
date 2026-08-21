@@ -1,0 +1,15 @@
+{
+  "finding_id": "BA11-R4-RR-P0-002",
+  "full_history_replay": true,
+  "generations": [
+    0,
+    1,
+    2
+  ],
+  "status": "PASS",
+  "versions": [
+    "1.0.0",
+    "1.1.0",
+    "1.2.0"
+  ]
+}

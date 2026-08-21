@@ -1,0 +1,66 @@
+{
+  "contract_id": "room16.ba11_r5.findings@1",
+  "counts": {
+    "P0": 3,
+    "P1": 1,
+    "total": 4
+  },
+  "findings": [
+    {
+      "finding_id": "BA11-R4-RR-P0-001",
+      "observed": "After a before_head_swap crash, registry current head remained absent but one registry ledger head was already present. A later append_registry_event returned success and published a different head. The next read_registry_ledger_head failed with BA11_LEDGER_FORK.",
+      "priority": "P0",
+      "reopens": [
+        "BA11-R3-RR-P0-003",
+        "BA11-R3-RR-P0-004",
+        "BA11-R3-RR-P0-006"
+      ],
+      "reproduction": "R4-PROBE-STAGING-001",
+      "required_fix": "Separate candidate/staged ledger objects from published ledger authority, or make the publication rail explicitly distinguish reachable published heads from unreferenced content-addressed candidates. A pre-swap crash must not poison or fork later valid work.",
+      "root_cause": "commit_transaction writes registry/debt ledger heads and sets into the same directories that _read_persistent_ledger later treats as published authority before the registry head swap. A crash before_head_swap leaves an unreferenced candidate head there.",
+      "title": "Pre-swap staging pollutes the authoritative ledger namespace"
+    },
+    {
+      "finding_id": "BA11-R4-RR-P0-002",
+      "observed": "Attempting to build the next governance graph after one committed promotion fails with BA11_AUTHORITY_GRAPH_MISMATCH:promotion_event_count before a second promotion can be represented.",
+      "priority": "P0",
+      "reopens": [
+        "BA11-AR-006",
+        "BA11-AR-010",
+        "BA11-AR-011",
+        "BA11-R3-RR-P0-002",
+        "BA11-R3-RR-P1-002"
+      ],
+      "reproduction": "R4-PROBE-LIFECYCLE-002",
+      "required_fix": "RegistryAuthorityGraph must identify the current promotion event by exact event hash / candidate binding, not by requiring it to be the only promotion event in history. Historical PromotionEvents remain valid append-only evidence.",
+      "root_cause": "_promotion_event requires exactly one PromotionEvent in objects.registry_events, while registry_events simultaneously represent the full append-only ledger used to derive the snapshot and ledger head. A second legitimate candidate/review/approval/promotion cycle therefore produces two historical PromotionEvents and is rejected.",
+      "title": "The append-only model cannot represent a second valid promotion cycle"
+    },
+    {
+      "finding_id": "BA11-R4-RR-P0-003",
+      "observed": "storage.py contains head_history writes and predecessor loading for replay, but no read-time validation that the mutable current RegistryHead is the latest published head or that there is no alternative published branch.",
+      "priority": "P0",
+      "reopens": [
+        "BA11-AR-006",
+        "BA11-RR2-P0-003"
+      ],
+      "reproduction": "R4-STATIC-REGISTRY-HEAD-003",
+      "required_fix": "Add a fail-closed published RegistryHead authority chain. Candidate/staged heads may exist without becoming authority; published heads/commit receipts must form one monotonic chain. Rollback of current to an older valid head and publication from an old base must block.",
+      "root_cause": "read_head only validates the hash-bound current.json object. It does not verify the published RegistryHead chain, maximum committed generation, a publication receipt chain, or that current.json is the latest authoritative publication.",
+      "title": "Top-level RegistryHead current pointer has no rollback/fork authority check"
+    },
+    {
+      "finding_id": "BA11-R4-RR-P1-001",
+      "observed": "54 acceptance rows map to 50 test functions; two parameterized functions each cover three requirements under the same source function name and suite-level stdout hash.",
+      "priority": "P1",
+      "reopens": [
+        "BA11-R3-RR-P0-007"
+      ],
+      "reproduction": "R4-STATIC-ACCEPTANCE-004",
+      "required_fix": "Bind every requirement to an exact pytest node ID (including parameter ID), a collection manifest, and an execution result for that node. The verifier must reject missing, duplicate, uncollected or unexecuted node IDs.",
+      "root_cause": "The verifier resolves a source function name globally and a command receipt, but does not prove that each requirement maps to one exact collected/executed pytest node ID. Parameterized tests are reused for multiple requirement rows.",
+      "title": "Acceptance evidence is not uniquely bound to concrete pytest node IDs"
+    }
+  ],
+  "source_r4_sha256": "cd45138728ec20c2c9a6cad2fbce5e25a56c99b599da58606098560753d80f46"
+}

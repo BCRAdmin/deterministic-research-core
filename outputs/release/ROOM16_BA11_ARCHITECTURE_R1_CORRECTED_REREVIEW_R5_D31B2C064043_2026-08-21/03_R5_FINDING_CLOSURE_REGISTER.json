@@ -1,0 +1,151 @@
+{
+  "contract_id": "room16.ba11_r5.finding_closure_register@1",
+  "findings": [
+    {
+      "changed_files": [
+        {
+          "path": "research_agent/canary_governance/storage.py",
+          "repo": "research",
+          "sha256": "03be06ed479285a0750b9d0099e049db5877297736446316d6a818fba4b42a6d"
+        },
+        {
+          "path": "research_agent/tests/test_canary_governance_r5.py",
+          "repo": "research",
+          "sha256": "360a9c63202c2978340141cd097bda5c7008e85a57c8d229bfeab3ab169e7086"
+        }
+      ],
+      "closure_status": "closed_verified",
+      "exact_pytest_nodeids": [
+        "research_agent/tests/test_canary_governance_r5.py::test_t_r5_001_a_preswap_crash_then_different_valid_append_is_readable",
+        "research_agent/tests/test_canary_governance_r5.py::test_t_r5_001_b_orphan_staged_heads_are_not_published_authority",
+        "research_agent/tests/test_canary_governance_r5.py::test_t_r5_001_c_retry_same_transaction_after_preswap_crash_is_idempotent"
+      ],
+      "finding_id": "BA11-R4-RR-P0-001",
+      "required_fix": "Separate candidate/staged ledger objects from published ledger authority, or make the publication rail explicitly distinguish reachable published heads from unreferenced content-addressed candidates. A pre-swap crash must not poison or fork later valid work.",
+      "requirement_ids": [
+        "T-R5-001-A",
+        "T-R5-001-B",
+        "T-R5-001-C"
+      ],
+      "root_cause": "commit_transaction writes registry/debt ledger heads and sets into the same directories that _read_persistent_ledger later treats as published authority before the registry head swap. A crash before_head_swap leaves an unreferenced candidate head there.",
+      "verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json"
+    },
+    {
+      "changed_files": [
+        {
+          "path": "research_agent/canary_governance/authority_graph.py",
+          "repo": "research",
+          "sha256": "29393ca6ee14c5d5843729c23dee2b3359020a1a33b6c02ca07582c8d8ee92a5"
+        },
+        {
+          "path": "research_agent/tests/canary_r5_fixtures.py",
+          "repo": "research",
+          "sha256": "4eb74abef336586afcadb544b21bffa852ed61995fc19bba8f0e13e0ee60632a"
+        },
+        {
+          "path": "research_agent/tests/test_canary_governance_r5.py",
+          "repo": "research",
+          "sha256": "360a9c63202c2978340141cd097bda5c7008e85a57c8d229bfeab3ab169e7086"
+        }
+      ],
+      "closure_status": "closed_verified",
+      "exact_pytest_nodeids": [
+        "research_agent/tests/test_canary_governance_r5.py::test_t_r5_002_a_second_valid_promotion_cycle_passes",
+        "research_agent/tests/test_canary_governance_r5.py::test_t_r5_002_b_third_cycle_replays_full_history_byte_identically",
+        "research_agent/tests/test_canary_governance_r5.py::test_t_r5_002_c_wrong_historical_promotion_selection_blocks"
+      ],
+      "finding_id": "BA11-R4-RR-P0-002",
+      "required_fix": "RegistryAuthorityGraph must identify the current promotion event by exact event hash / candidate binding, not by requiring it to be the only promotion event in history. Historical PromotionEvents remain valid append-only evidence.",
+      "requirement_ids": [
+        "T-R5-002-A",
+        "T-R5-002-B",
+        "T-R5-002-C"
+      ],
+      "root_cause": "_promotion_event requires exactly one PromotionEvent in objects.registry_events, while registry_events simultaneously represent the full append-only ledger used to derive the snapshot and ledger head. A second legitimate candidate/review/approval/promotion cycle therefore produces two historical PromotionEvents and is rejected.",
+      "verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json"
+    },
+    {
+      "changed_files": [
+        {
+          "path": "research_agent/canary_governance/contracts.py",
+          "repo": "research",
+          "sha256": "09cd6c3130289a5203ac65b21eb0af48570d9aeefc8fd4d4c3e30746fa7c994e"
+        },
+        {
+          "path": "research_agent/canary_governance/storage.py",
+          "repo": "research",
+          "sha256": "03be06ed479285a0750b9d0099e049db5877297736446316d6a818fba4b42a6d"
+        },
+        {
+          "path": "research_agent/canary_governance/schemas/RegistryCommitReceipt.schema.json",
+          "repo": "research",
+          "sha256": "544603cbaa32edc33769c304feb37d1725b2e8cb8e0338aaea5f03938be95c1f"
+        },
+        {
+          "path": "research_agent/canary_governance/schemas/RegistryHeadPublicationPointer.schema.json",
+          "repo": "research",
+          "sha256": "15b2239773b1c153052097a403949c0a486874bafc07a88a56b8891b4bcf5e53"
+        },
+        {
+          "path": "research_agent/tests/test_canary_governance_r5.py",
+          "repo": "research",
+          "sha256": "360a9c63202c2978340141cd097bda5c7008e85a57c8d229bfeab3ab169e7086"
+        }
+      ],
+      "closure_status": "closed_verified",
+      "exact_pytest_nodeids": [
+        "research_agent/tests/test_canary_governance_r5.py::test_t_r5_003_a_older_valid_registry_current_is_rejected",
+        "research_agent/tests/test_canary_governance_r5.py::test_t_r5_003_b_alternate_publication_from_old_base_is_cas_blocked",
+        "research_agent/tests/test_canary_governance_r5.py::test_t_r5_003_c_missing_latest_publication_receipt_blocks"
+      ],
+      "finding_id": "BA11-R4-RR-P0-003",
+      "required_fix": "Add a fail-closed published RegistryHead authority chain. Candidate/staged heads may exist without becoming authority; published heads/commit receipts must form one monotonic chain. Rollback of current to an older valid head and publication from an old base must block.",
+      "requirement_ids": [
+        "T-R5-003-A",
+        "T-R5-003-B",
+        "T-R5-003-C"
+      ],
+      "root_cause": "read_head only validates the hash-bound current.json object. It does not verify the published RegistryHead chain, maximum committed generation, a publication receipt chain, or that current.json is the latest authoritative publication.",
+      "verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json"
+    },
+    {
+      "changed_files": [
+        {
+          "path": "research_agent/canary_governance/acceptance.py",
+          "repo": "research",
+          "sha256": "75cc0031acfb4383c3d9f75502546ada77629803306c09c9b77456901ee28e0c"
+        },
+        {
+          "path": "research_agent/tests/test_canary_governance_r4.py",
+          "repo": "research",
+          "sha256": "595d762d2babc95f1f4c48c811694b28d6a97a41e6f5ed60240d4645e1fcf70e"
+        },
+        {
+          "path": "research_agent/tests/test_canary_governance_r5.py",
+          "repo": "research",
+          "sha256": "360a9c63202c2978340141cd097bda5c7008e85a57c8d229bfeab3ab169e7086"
+        },
+        {
+          "path": "scripts/ops/verify_ba11_r5_package.py",
+          "repo": "research",
+          "sha256": "fc323b1bffa26fc583c042b37e9e95ddd85656d7c0aa5778b94bff708618cf71"
+        }
+      ],
+      "closure_status": "closed_verified",
+      "exact_pytest_nodeids": [
+        "research_agent/tests/test_canary_governance_r5.py::test_t_r5_004_a_every_requirement_has_exact_collected_executed_nodeid",
+        "research_agent/tests/test_canary_governance_r5.py::test_t_r5_004_b_duplicate_nodeid_mapping_is_rejected",
+        "research_agent/tests/test_canary_governance_r5.py::test_t_r5_004_c_uncollected_or_unexecuted_nodeid_is_rejected"
+      ],
+      "finding_id": "BA11-R4-RR-P1-001",
+      "required_fix": "Bind every requirement to an exact pytest node ID (including parameter ID), a collection manifest, and an execution result for that node. The verifier must reject missing, duplicate, uncollected or unexecuted node IDs.",
+      "requirement_ids": [
+        "T-R5-004-A",
+        "T-R5-004-B",
+        "T-R5-004-C"
+      ],
+      "root_cause": "The verifier resolves a source function name globally and a command receipt, but does not prove that each requirement maps to one exact collected/executed pytest node ID. Parameterized tests are reused for multiple requirement rows.",
+      "verifier_receipt": "independent_verifier/VERIFIER_RECEIPT.json"
+    }
+  ]
+}

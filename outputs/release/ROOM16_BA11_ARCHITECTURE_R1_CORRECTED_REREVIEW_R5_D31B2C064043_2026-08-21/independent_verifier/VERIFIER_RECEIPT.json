@@ -1,0 +1,26 @@
+{
+  "acceptance_row_count": 18,
+  "ba11_implementation_ready": false,
+  "ba12_authorized": false,
+  "checks": [
+    "required_members",
+    "input_lock",
+    "source_r5_contract",
+    "source_r4_result",
+    "four_findings",
+    "exact_18_nodeid_acceptance",
+    "full_regressions",
+    "ba10_raw_verifier",
+    "changed_file_hashes",
+    "foreign_boundary"
+  ],
+  "contract_id": "room16.ba11_r5.independent_verifier_receipt@1",
+  "finding_count": 4,
+  "publication_authorized": false,
+  "ready_for_independent_rereview": true,
+  "release_authorized": false,
+  "schema_version": 1,
+  "status": "PASS",
+  "verifier_owner": "independent_verifier",
+  "verifier_receipt_sha256": "e7c447d91c5bcff63b545a091ef391458e32a8e1caceac23cb5de424555e68e6"
+}

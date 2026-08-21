@@ -1,0 +1,11 @@
+{
+  "candidate_namespace": "staging/transactions/<transaction>/ledger",
+  "finding_id": "BA11-R4-RR-P0-001",
+  "published_namespace_pollution": false,
+  "status": "PASS",
+  "tests": [
+    "T-R5-001-A",
+    "T-R5-001-B",
+    "T-R5-001-C"
+  ]
+}

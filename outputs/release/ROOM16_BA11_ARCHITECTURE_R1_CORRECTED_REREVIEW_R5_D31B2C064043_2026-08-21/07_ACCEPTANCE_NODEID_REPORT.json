@@ -1,0 +1,8 @@
+{
+  "collection_manifest_sha256": "702f097e6a912852519d77f96837a4cb683ad1cf56fd6a242c760f971d7250a9",
+  "execution_report_sha256": "39d0c59b0e443e55b4174e24a27e597abdec2b2c02afb6ce6c7a9d08aa0c362e",
+  "finding_id": "BA11-R4-RR-P1-001",
+  "requirement_count": 18,
+  "status": "PASS",
+  "unique_nodeid_count": 18
+}
