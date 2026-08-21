@@ -1,0 +1,25 @@
+{
+  "accepted_r5_evidence_commit": "a7f83418c1473ef575467472b66934e4ff026dc8",
+  "product": {
+    "ahead_behind": "0\t0",
+    "branch": "bcr-report-lab-original-trading-flow",
+    "head": "fafcdbd3586075b5f4d0b50b3b18c22fb7a2e9e2",
+    "origin": "https://github.com/BCRAdmin/company-dossier-lab.git",
+    "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/company-dossier-lab",
+    "status": "## bcr-report-lab-original-trading-flow...origin/bcr-report-lab-original-trading-flow",
+    "tracked_file_count": 1145,
+    "tracked_files_sha256": "230fab450ce3c99be6dd96f06ac40431779440d8eb031d0db57cca2c9f29e259",
+    "tree": "c451d79437b0547ffc8753cb1f65da240be4830d"
+  },
+  "research": {
+    "ahead_behind": "1\t0",
+    "branch": "main",
+    "head": "7bff2a5a9a71e2a113929a40eacf482dcd9b1faa",
+    "origin": "https://github.com/BCRAdmin/deterministic-research-core.git",
+    "path": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops",
+    "status": "## main...origin/main [ahead 1]",
+    "tracked_file_count": 10695,
+    "tracked_files_sha256": "5fd43239246076eb07eb2e038c95c44b8dda57889421e519f555e26446873740",
+    "tree": "c7b06f7fe3552e81d21dcdc6ecd9b5d603bcb554"
+  }
+}

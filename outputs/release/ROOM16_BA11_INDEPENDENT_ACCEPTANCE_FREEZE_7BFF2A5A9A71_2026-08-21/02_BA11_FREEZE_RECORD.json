@@ -1,0 +1,81 @@
+{
+  "acceptance_handoff": {
+    "bytes": 1376565,
+    "filename": "ROOM16_BA11_R5_INDEPENDENT_ACCEPTANCE_FREEZE_VEGA_0DD42A068BA8_2026-08-21.zip",
+    "manifest_sha256": "054bd331c90841cd5db01780e84b66123e87d73c7408dcc35ff859cd9bd6b5d5",
+    "sha256": "0dd42a068ba8be1eac0e938fdadc4fc7434c2dbaeeaa9176fef89f939654b267",
+    "zip_entries": 11
+  },
+  "accepted_on": "2026-08-21",
+  "authority_owner": "research",
+  "ba10_freeze": {
+    "freeze_lock_sha256": "29bc0bf2d00aa22d49fd7bb569cf080cc335778c1773b9e63710ecd61dfebc8e",
+    "record_path": "research_agent/productization/freeze/ba10_artifact_abi_renderer_freeze_v1.json",
+    "verifier_path": "scripts/ops/verify_ba10_artifact_abi_renderer_freeze.py"
+  },
+  "ba10_freeze_lock_sha256": "29bc0bf2d00aa22d49fd7bb569cf080cc335778c1773b9e63710ecd61dfebc8e",
+  "ba11_frozen": true,
+  "ba11_implementation_ready": true,
+  "ba12_authorized": false,
+  "canonical_serialization": "utf8-json-sort-keys-compact-separators",
+  "contract_catalog": {
+    "path": "research_agent/canary_governance/schemas/contract_catalog_v1.json",
+    "sha256": "9e07ad169e8608453085685c7d81d29ec01a9a9d76299a6f65fc5c4614e765fe"
+  },
+  "contract_catalog_sha256": "9e07ad169e8608453085685c7d81d29ec01a9a9d76299a6f65fc5c4614e765fe",
+  "contract_id": "room16.ba11.canary_governance_freeze",
+  "freeze_hash_domain": "room16.ba11.canary_governance_freeze@1",
+  "freeze_hash_rule": "sha256(utf8(domain) || 0x00 || canonical_json(record_without_freeze_sha256))",
+  "freeze_sha256": "2c0e0e292f2b167e68814e2e2180f9f0823ea8be452be52b95f56db95a4ca1cf",
+  "independent_acceptance": {
+    "file_sha256": "382583cfa2c647c3037b69a85351c27c8a9b3c6f91a46bfcc8409099bb79ec8e",
+    "path": "docs/compiler_foundation/acceptance/BA11_R5_EXTERNAL_INDEPENDENT_ACCEPTANCE.json",
+    "receipt_sha256": "e0936c4d371c2dd0381d8b950bd8d18cd8ad604e8898858ecd69117d737043bb",
+    "verdict": "ACCEPTED"
+  },
+  "independent_acceptance_receipt_sha256": "e0936c4d371c2dd0381d8b950bd8d18cd8ad604e8898858ecd69117d737043bb",
+  "product": {
+    "branch": "bcr-report-lab-original-trading-flow",
+    "commit": "fafcdbd3586075b5f4d0b50b3b18c22fb7a2e9e2",
+    "remote": "https://github.com/BCRAdmin/company-dossier-lab.git",
+    "tree": "c451d79437b0547ffc8753cb1f65da240be4830d"
+  },
+  "product_commit": "fafcdbd3586075b5f4d0b50b3b18c22fb7a2e9e2",
+  "product_tree": "c451d79437b0547ffc8753cb1f65da240be4830d",
+  "publication_authorized": false,
+  "release_authorized": false,
+  "research": {
+    "branch": "main",
+    "evidence_commit": "a7f83418c1473ef575467472b66934e4ff026dc8",
+    "evidence_tree": "aff8ae9ad75cc6b4aca6fca48c5c1a5495e0eaa8",
+    "implementation_commit": "d31b2c064043fdc1246737d6fc8c62b392d6417f",
+    "implementation_tree": "36a60f64369805e29a822cb14f59f2025b85625f",
+    "remote": "https://github.com/BCRAdmin/deterministic-research-core.git"
+  },
+  "research_evidence_commit": "a7f83418c1473ef575467472b66934e4ff026dc8",
+  "research_evidence_tree": "aff8ae9ad75cc6b4aca6fca48c5c1a5495e0eaa8",
+  "research_implementation_commit": "d31b2c064043fdc1246737d6fc8c62b392d6417f",
+  "research_implementation_tree": "36a60f64369805e29a822cb14f59f2025b85625f",
+  "runtime_change_policy": "new_rfc_and_independent_review_required",
+  "runtime_protection": {
+    "accepted_evidence_commit": "a7f83418c1473ef575467472b66934e4ff026dc8",
+    "pathspec": "research_agent/canary_governance",
+    "task_diff_must_be_empty": true
+  },
+  "schema_version": 1,
+  "source_r5": {
+    "bytes": 1370936,
+    "identity_path": "outputs/release/ROOM16_BA11_ARCHITECTURE_R1_CORRECTED_REREVIEW_R5_D31B2C064043_2026-08-21.zip.identity.json",
+    "manifest_sha256": "00b6a35c2884445376de631b79a2e37e0a80346a51e38e7f085a7b1e3a028c1d",
+    "package_path": "outputs/release/ROOM16_BA11_ARCHITECTURE_R1_CORRECTED_REREVIEW_R5_D31B2C064043_2026-08-21.zip",
+    "package_sha256": "f81e08620fac195642291d279492c3751e86dbf5130697e3f8205e512023938c",
+    "sidecar_path": "outputs/release/ROOM16_BA11_ARCHITECTURE_R1_CORRECTED_REREVIEW_R5_D31B2C064043_2026-08-21.zip.sha256",
+    "verifier_path": "scripts/ops/verify_ba11_r5_package.py",
+    "verifier_receipt_sha256": "e7c447d91c5bcff63b545a091ef391458e32a8e1caceac23cb5de424555e68e6",
+    "zip_entries": 35
+  },
+  "source_r5_manifest_sha256": "00b6a35c2884445376de631b79a2e37e0a80346a51e38e7f085a7b1e3a028c1d",
+  "source_r5_package_sha256": "f81e08620fac195642291d279492c3751e86dbf5130697e3f8205e512023938c",
+  "source_r5_verifier_receipt_sha256": "e7c447d91c5bcff63b545a091ef391458e32a8e1caceac23cb5de424555e68e6",
+  "status": "accepted_frozen"
+}

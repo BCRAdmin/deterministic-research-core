@@ -1,0 +1,40 @@
+{
+  "acceptance_receipt_sha256": "e0936c4d371c2dd0381d8b950bd8d18cd8ad604e8898858ecd69117d737043bb",
+  "contract_id": "room16.ba11_r5.external_independent_acceptance@1",
+  "git_bindings": {
+    "product_commit": "fafcdbd3586075b5f4d0b50b3b18c22fb7a2e9e2",
+    "product_tree": "c451d79437b0547ffc8753cb1f65da240be4830d",
+    "research_evidence_commit": "a7f83418c1473ef575467472b66934e4ff026dc8",
+    "research_evidence_tree": "aff8ae9ad75cc6b4aca6fca48c5c1a5495e0eaa8",
+    "research_implementation_commit": "d31b2c064043fdc1246737d6fc8c62b392d6417f",
+    "research_implementation_tree": "36a60f64369805e29a822cb14f59f2025b85625f"
+  },
+  "independent_checks": {
+    "additional_multi_generation_stress": {
+      "final_registry_generation": 10,
+      "promotion_generations_executed": 11,
+      "status": "PASS"
+    },
+    "ba10_raw_freeze_verifier_in_source_package": "PASS",
+    "git_push_binding": "PASS",
+    "manifest_payload_hashes_34_of_34": "PASS",
+    "manifest_self_hash": "PASS",
+    "native_full_regression_receipts_in_source_package": "PASS",
+    "r4_regression_tests_54_of_54": "PASS",
+    "r5_exact_tests_18_of_18": "PASS",
+    "r5_runtime_files_tested_outside_evidence_report": true,
+    "zip_integrity": "PASS"
+  },
+  "remaining_blocking_findings": 0,
+  "review_date": "2026-08-21",
+  "schema_version": 1,
+  "source_r5": {
+    "bytes": 1370936,
+    "filename": "ROOM16_BA11_ARCHITECTURE_R1_CORRECTED_REREVIEW_R5_D31B2C064043_2026-08-21.zip",
+    "manifest_sha256": "00b6a35c2884445376de631b79a2e37e0a80346a51e38e7f085a7b1e3a028c1d",
+    "packaged_independent_verifier_receipt_sha256": "e7c447d91c5bcff63b545a091ef391458e32a8e1caceac23cb5de424555e68e6",
+    "sha256": "f81e08620fac195642291d279492c3751e86dbf5130697e3f8205e512023938c",
+    "zip_entries": 35
+  },
+  "verdict": "ACCEPTED"
+}

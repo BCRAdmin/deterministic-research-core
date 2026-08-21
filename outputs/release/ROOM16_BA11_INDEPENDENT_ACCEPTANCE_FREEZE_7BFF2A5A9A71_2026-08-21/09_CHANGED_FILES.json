@@ -1,0 +1,49 @@
+{
+  "ba11_runtime_files_changed": [],
+  "files": [
+    {
+      "bytes": 1805,
+      "path": "docs/compiler_foundation/acceptance/BA11_R5_EXTERNAL_INDEPENDENT_ACCEPTANCE.json",
+      "repo": "research",
+      "sha256": "382583cfa2c647c3037b69a85351c27c8a9b3c6f91a46bfcc8409099bb79ec8e"
+    },
+    {
+      "bytes": 4562,
+      "path": "docs/compiler_foundation/freezes/BA11_CANARY_GOVERNANCE_FREEZE_v1.json",
+      "repo": "research",
+      "sha256": "87777ad03419d2e08a54aa23587fdf84967c472cae0276b280a17f61c32723f5"
+    },
+    {
+      "bytes": 7538,
+      "path": "docs/compiler_foundation/rfcs/RFC-0006_BA11_CANARY_GOVERNANCE_CORRECTION.md",
+      "repo": "research",
+      "sha256": "d4225db436915b284b739ae4015a731565265e59f4f1f5d0d552f18999f86a3d"
+    },
+    {
+      "bytes": 2369,
+      "path": "research_agent/tests/test_ba11_canary_governance_freeze.py",
+      "repo": "research",
+      "sha256": "5263b218a72e94e66a50b43c1055c98ff0ab5afcb4ed09b00c48dbe3374fa33d"
+    },
+    {
+      "bytes": 13183,
+      "path": "scripts/ops/build_ba11_acceptance_freeze_evidence.py",
+      "repo": "research",
+      "sha256": "c3dec6bfee5c7967f1854c4b7b88ef930a0ea4d2c716e15ddfd28939c48a25fc"
+    },
+    {
+      "bytes": 7757,
+      "path": "scripts/ops/verify_ba11_acceptance_freeze_package.py",
+      "repo": "research",
+      "sha256": "aa293b4cb657903257c639ef6829502039d9060e14d349911b1551d02c4a31cf"
+    },
+    {
+      "bytes": 11298,
+      "path": "scripts/ops/verify_ba11_canary_governance_freeze.py",
+      "repo": "research",
+      "sha256": "e905b3eb06c22bb023c9493c5335dd22d20fae19bf403f9d91deb1e7961b3696"
+    }
+  ],
+  "product_files_changed": [],
+  "task_base": "a7f83418c1473ef575467472b66934e4ff026dc8"
+}

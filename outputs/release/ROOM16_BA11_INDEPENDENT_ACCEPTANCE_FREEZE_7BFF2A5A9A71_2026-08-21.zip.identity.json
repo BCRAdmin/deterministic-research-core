@@ -1,0 +1,11 @@
+{
+  "authority_owner": "research",
+  "contract_id": "room16.canary_evidence_package_identity",
+  "detached_sha256_filename": "ROOM16_BA11_INDEPENDENT_ACCEPTANCE_FREEZE_7BFF2A5A9A71_2026-08-21.zip.sha256",
+  "identity_sha256": "de70e1f25396bbcd64678fea1eb2d695ca82aff5c69cd3186dc740837f73fbd3",
+  "manifest_sha256": "f5886de23809bf7dfee1ee3e6e241bfbb133f9eebecfca3a0502e3ca619fe601",
+  "package_bytes": 48191,
+  "package_filename": "ROOM16_BA11_INDEPENDENT_ACCEPTANCE_FREEZE_7BFF2A5A9A71_2026-08-21.zip",
+  "package_sha256": "4b2ff5e7df95d890361de5bf7eb28fea92c69cb2818f64f18d8c7399162c81ba",
+  "schema_version": 1
+}

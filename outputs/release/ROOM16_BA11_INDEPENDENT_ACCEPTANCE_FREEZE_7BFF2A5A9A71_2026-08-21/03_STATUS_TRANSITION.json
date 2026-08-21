@@ -1,0 +1,20 @@
+{
+  "after_successful_freeze": {
+    "ba11_frozen": true,
+    "ba11_implementation_ready": true,
+    "ba12_authorized": false,
+    "independent_rereview": "ACCEPTED",
+    "publication_authorized": false,
+    "release_authorized": false
+  },
+  "before": {
+    "ba11_frozen": false,
+    "ba11_implementation_ready": false,
+    "ba12_authorized": false,
+    "publication_authorized": false,
+    "ready_for_independent_rereview": true,
+    "release_authorized": false
+  },
+  "contract_id": "room16.ba11.status_transition@1",
+  "rule": "Only the accepted R5 implementation/evidence/product identities may form BA11 freeze v1."
+}

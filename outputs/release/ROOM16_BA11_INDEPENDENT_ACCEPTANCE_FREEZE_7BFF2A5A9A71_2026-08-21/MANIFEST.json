@@ -1,0 +1,71 @@
+{
+  "authority_owner": "research",
+  "contract_id": "room16.canary_evidence_manifest",
+  "files": [
+    {
+      "bytes": 210,
+      "path": "00_BA11_ACCEPTANCE_VERDICT.md",
+      "sha256": "a7c3eaa88f25c9996146e784ce875ca9405af38694921d00be26eeb7a3f8bb26"
+    },
+    {
+      "bytes": 1805,
+      "path": "01_EXTERNAL_INDEPENDENT_ACCEPTANCE.json",
+      "sha256": "382583cfa2c647c3037b69a85351c27c8a9b3c6f91a46bfcc8409099bb79ec8e"
+    },
+    {
+      "bytes": 4562,
+      "path": "02_BA11_FREEZE_RECORD.json",
+      "sha256": "5b862e11e5ef9f1d5e954ba8063309206804294683520361fa8c7202da1c8c78"
+    },
+    {
+      "bytes": 624,
+      "path": "03_STATUS_TRANSITION.json",
+      "sha256": "9a00141a3e11e734f1c055c0c3087dcda00586de2e88c820711b1a57652aefe4"
+    },
+    {
+      "bytes": 1086,
+      "path": "04_FREEZE_VERIFIER_RECEIPT.json",
+      "sha256": "b25710f92fe36f73c9618fdee9761609fcc9e551193293fde8dcbe604000db39"
+    },
+    {
+      "bytes": 732,
+      "path": "05_R5_PACKAGE_BINDING.json",
+      "sha256": "8d3adfbc075df7ea71ed6fa1f65abfd68330df7a8e1a4c58d8345d420fe493b7"
+    },
+    {
+      "bytes": 12604,
+      "path": "06_BA10_FREEZE_RECEIPT.json",
+      "sha256": "a69414d5a40f3a025790ae395033649507b18535914b83a247f4326d45df1829"
+    },
+    {
+      "bytes": 272733,
+      "path": "07_FINAL_REGRESSION_RECEIPTS.json",
+      "sha256": "d73a2696f895626f6124d9113d9325b249a856658e9c94be4b78a7599db6d7b6"
+    },
+    {
+      "bytes": 1201,
+      "path": "08_SOURCE_TREE_BINDINGS.json",
+      "sha256": "ba8874370ce3823b7e8df59b4d8cc91ceaa8a06d7084c06755c2f08a642b7b0c"
+    },
+    {
+      "bytes": 1713,
+      "path": "09_CHANGED_FILES.json",
+      "sha256": "dab4b61146a5f376bcb90e194d82f513f34be64143cb9b9eac03a3d53f40126b"
+    },
+    {
+      "bytes": 4405,
+      "path": "10_FOREIGN_WORKTREE_BOUNDARY_REPORT.json",
+      "sha256": "8883a0649ef8ffc02d58f8e001e279c029ab355fb897b9ac5a3ae0819d2aaca6"
+    },
+    {
+      "bytes": 486,
+      "path": "11_NEXT_PHASE_GATE.md",
+      "sha256": "c22249a6d71f97a742046e3ec018978f3f21970b222870a865c02e6ba7366f31"
+    }
+  ],
+  "manifest_hash_preimage_rule": "canonical JSON of this object without manifest_sha256",
+  "manifest_sha256": "f5886de23809bf7dfee1ee3e6e241bfbb133f9eebecfca3a0502e3ca619fe601",
+  "payload_rule": "all members except MANIFEST.json",
+  "schema_version": 2,
+  "source_date_epoch": 1787270400
+}

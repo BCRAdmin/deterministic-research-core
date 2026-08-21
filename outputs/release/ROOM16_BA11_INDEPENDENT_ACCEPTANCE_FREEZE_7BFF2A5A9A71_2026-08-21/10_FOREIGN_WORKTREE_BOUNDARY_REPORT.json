@@ -1,0 +1,28 @@
+{
+  "foreign_scope_present": true,
+  "foreign_scope_touched_by_room16_run": false,
+  "foreign_worktrees": [
+    {
+      "branch": "codex/mbr-product-repair-v1-ba0",
+      "head": "b8da17ea731d014341da2a45ec86af65dce5291a",
+      "origin": "https://github.com/BCRAdmin/materialbedarf-rechner.de.git",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Utility-Websites/materialbedarf-rechner.de",
+      "read_only_diff_bytes": 0,
+      "read_only_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status_porcelain_v2": "# branch.oid b8da17ea731d014341da2a45ec86af65dce5291a\n# branch.head codex/mbr-product-repair-v1-ba0\n? ops/product-repair-v1/"
+    },
+    {
+      "branch": "agent/mbr-ba2-wave2-standard-surfaces-2026-08-21",
+      "head": "5aa69e74559d64a5648e460b265e387f4f7ba26d",
+      "origin": "https://github.com/BCRAdmin/materialbedarf-rechner.de.git",
+      "path": "/Users/BjornRosinger/Documents/DreamFactory/Utility-Websites/materialbedarf-rechner.de/.tmp_codex/worktrees/ba2-wave2-standard-surfaces",
+      "read_only_diff_bytes": 45354,
+      "read_only_diff_sha256": "fd3c06eea05e1db0ad31808621b79ef5680f1e7f993ac831a9df01a3012cb630",
+      "status_porcelain_v2": "# branch.oid 5aa69e74559d64a5648e460b265e387f4f7ba26d\n# branch.head agent/mbr-ba2-wave2-standard-surfaces-2026-08-21\n1 .M N... 100644 100644 100644 79fa7c6940a1008745a3c070180d77059b2b1715 79fa7c6940a1008745a3c070180d77059b2b1715 app/src/app/baustoff-verbrauchstabelle/page.tsx\n1 .M N... 100644 100644 100644 c014a3920da869ae9885fe0b0210ecb36bf81fa6 c014a3920da869ae9885fe0b0210ecb36bf81fa6 app/src/app/blog/beton-berechnen/page.tsx\n1 .M N... 100644 100644 100644 7a0eaa29ab37af5b597f003af125d04083633dcf 7a0eaa29ab37af5b597f003af125d04083633dcf app/src/app/blog/fliesen-berechnen/page.tsx\n1 .M N... 100644 100644 100644 18e222454292f05c7e3b691f04f46e03212f3b35 18e222454292f05c7e3b691f04f46e03212f3b35 app/src/app/blog/page.tsx\n1 .M N... 100644 100644 100644 69df84bd85978a237707c4fbd86d9f186ff8ca21 69df84bd85978a237707c4fbd86d9f186ff8ca21 app/src/app/blog/pflaster-berechnen/page.tsx\n1 .M N... 100644 100644 100644 b0fe3f7bf5490c6f71104abf00394af94a322b72 b0fe3f7bf5490c6f71104abf00394af94a322b72 app/src/app/daemmstoffrechner/page.tsx\n1 .M N... 100644 100644 100644 af507f75b354a1de4760b7f32c9c8d4af1200f35 af507f75b354a1de4760b7f32c9c8d4af1200f35 app/src/app/putzrechner/page.tsx\n1 .M N... 100644 100644 100644 2ff0994b93f2e5319da6f9e87df28903628480a0 2ff0994b93f2e5319da6f9e87df28903628480a0 app/src/app/tapetenrechner/page.tsx\n1 .M N... 100644 100644 100644 0bcff210a7a31343d83e41a141f0c3972cdae792 0bcff210a7a31343d83e41a141f0c3972cdae792 app/src/app/trockenbaurechner/page.tsx\n1 .M N... 100644 100644 100644 675ec6f849a67858a3e3deab3d1ec33a5d868021 675ec6f849a67858a3e3deab3d1ec33a5d868021 app/src/components/DrywallCalculator.tsx\n1 .M N... 100644 100644 100644 d5e33de5f713c26a194efc3decd09f58c0197691 d5e33de5f713c26a194efc3decd09f58c0197691 app/src/components/GuideArticleLayout.tsx\n1 .M N... 100644 100644 100644 7a7ec7c1909e54dc94b62b08a981851f20545ee7 7a7ec7c1909e54dc94b62b08a981851f20545ee7 app/src/components/InsulationCalculator.tsx\n1 .M N... 100644 100644 100644 3693cbd74fcfddf8b3dacc5476c26c487f51d4f6 3693cbd74fcfddf8b3dacc5476c26c487f51d4f6 app/src/components/PlasterCalculator.tsx\n1 .M N... 100644 100644 100644 44fc06d8256e2a5e25617017d0ac0a38a3e9016f 44fc06d8256e2a5e25617017d0ac0a38a3e9016f app/src/components/WallpaperCalculator.tsx\n1 .M N... 100644 100644 100644 1c5d585677c04be0a18644c803915b9d6c097dda 1c5d585677c04be0a18644c803915b9d6c097dda app/src/lib/gated-blog-posts.tsx\n1 .M N... 100644 100644 100644 ad20ef5aae0aae739b8e831843bf75e1a649e530 ad20ef5aae0aae739b8e831843bf75e1a649e530 app/src/lib/static-guide-posts.tsx\n1 .M N... 100644 100644 100644 f55bb258be97889a22a7a8165243db3d78cba957 f55bb258be97889a22a7a8165243db3d78cba957 package.json\n1 .M N... 100644 100644 100644 286598cad8117bc09c2fa85a5bdc85fa052396fa 286598cad8117bc09c2fa85a5bdc85fa052396fa tests/e2e/ba2-foundation.spec.ts\n? app/scripts/verify-ba2-wave2-contract.mjs\n? tests/e2e/ba2-wave2.spec.ts"
+    }
+  ],
+  "policy": "read_only_capture_only",
+  "postflight_sha256": "2bb2a950d9ab26d3184571f2992167ad1a180eb4370f37ba0774cce9086bf622",
+  "preflight_sha256": "2bb2a950d9ab26d3184571f2992167ad1a180eb4370f37ba0774cce9086bf622",
+  "unchanged": true
+}

@@ -1,0 +1,14 @@
+{
+  "acceptance_receipt_sha256": "e0936c4d371c2dd0381d8b950bd8d18cd8ad604e8898858ecd69117d737043bb",
+  "research_evidence_commit": "a7f83418c1473ef575467472b66934e4ff026dc8",
+  "research_implementation_commit": "d31b2c064043fdc1246737d6fc8c62b392d6417f",
+  "source_r5": {
+    "bytes": 1370936,
+    "filename": "ROOM16_BA11_ARCHITECTURE_R1_CORRECTED_REREVIEW_R5_D31B2C064043_2026-08-21.zip",
+    "manifest_sha256": "00b6a35c2884445376de631b79a2e37e0a80346a51e38e7f085a7b1e3a028c1d",
+    "packaged_independent_verifier_receipt_sha256": "e7c447d91c5bcff63b545a091ef391458e32a8e1caceac23cb5de424555e68e6",
+    "sha256": "f81e08620fac195642291d279492c3751e86dbf5130697e3f8205e512023938c",
+    "zip_entries": 35
+  },
+  "status": "PASS"
+}
