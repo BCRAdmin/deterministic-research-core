@@ -498,7 +498,13 @@ def write_zip(path: Path, payloads: dict[str, bytes]) -> dict:
     members = {**payloads, "MANIFEST.json": json_bytes(manifest)}
     with zipfile.ZipFile(path, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
         for name, payload in sorted(members.items()):
-            if "signing_key_ed25519.bin" in name or "private_key" in name.lower():
+            prohibited_key_names = {
+                "signing_key_ed25519.bin",
+                "private_key.pem",
+                "private_key.bin",
+                "ed25519_private_key",
+            }
+            if Path(name).name.lower() in prohibited_key_names:
                 raise RuntimeError(f"private key path prohibited from evidence: {name}")
             info = zipfile.ZipInfo(name, date_time=(1980, 1, 1, 0, 0, 0))
             info.compress_type = zipfile.ZIP_DEFLATED
