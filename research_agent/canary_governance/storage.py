@@ -38,6 +38,7 @@ from .contracts import (
     RegistryCommitReceipt,
     RegistryEvent,
     RegistryHead,
+    RegistryHeadPublicationPointer,
     RegistryLedgerHead,
     RegistryPreparedReceipt,
     RegistrySnapshot,
@@ -89,6 +90,9 @@ class ContentAddressedRegistryStore:
         self.genesis_head_path = root / "genesis" / "head.json"
         self.head_path = root / "heads" / "current.json"
         self.head_history = root / "heads" / "history"
+        self.published_receipts = root / "heads" / "published_receipts"
+        self.publication_pointer_path = root / "heads" / "publication_current.json"
+        self.staging_transactions = root / "staging" / "transactions"
         self.lock_path = root / "heads" / ".commit.lock"
 
     @staticmethod
@@ -158,7 +162,98 @@ class ContentAddressedRegistryStore:
         return model
 
     def read_head(self) -> RegistryHead | None:
-        return self._read_model(self.head_path, RegistryHead)
+        raw = self._read_model(self.head_path, RegistryHead)
+        pointer = self._read_model(
+            self.publication_pointer_path, RegistryHeadPublicationPointer
+        )
+        if raw is None and pointer is None:
+            return None
+        if raw is None or pointer is None:
+            raise CanaryGovernanceError("BA11_REGISTRY_ROLLBACK", "publication_pointer")
+        receipts: dict[str, RegistryCommitReceipt] = {}
+        try:
+            for path in sorted(self.published_receipts.glob("*.json")):
+                receipt = self._read_model(path, RegistryCommitReceipt)
+                if (
+                    receipt is None
+                    or path.stem != receipt.receipt_sha256
+                    or receipt.publication_state != "published"
+                ):
+                    raise ValueError(str(path))
+                receipts[receipt.receipt_sha256] = receipt
+        except (CanaryGovernanceError, ValueError) as exc:
+            raise CanaryGovernanceError("BA11_REGISTRY_ROLLBACK", "publication_receipt") from exc
+        current_receipt = receipts.get(pointer.commit_receipt_sha256)
+        if current_receipt is None:
+            raise CanaryGovernanceError("BA11_REGISTRY_ROLLBACK", "publication_receipt_missing")
+        children: dict[str | None, set[str]] = {}
+        for receipt in receipts.values():
+            children.setdefault(receipt.previous_commit_receipt_sha256, set()).add(
+                receipt.receipt_sha256
+            )
+        if any(len(values) > 1 for values in children.values()):
+            raise CanaryGovernanceError("BA11_REGISTRY_ROLLBACK", "publication_fork")
+        if current_receipt.registry_generation != max(
+            receipt.registry_generation for receipt in receipts.values()
+        ):
+            raise CanaryGovernanceError("BA11_REGISTRY_ROLLBACK", "publication_generation")
+        seen: set[str] = set()
+        receipt = current_receipt
+        authoritative_head = None
+        while True:
+            if receipt.receipt_sha256 in seen:
+                raise CanaryGovernanceError("BA11_REGISTRY_ROLLBACK", "publication_cycle")
+            seen.add(receipt.receipt_sha256)
+            head = self._read_model(
+                self.head_history / f"{receipt.published_head_sha256}.json", RegistryHead
+            )
+            if (
+                head is None
+                or head.registry_generation != receipt.registry_generation
+                or head.transaction_sha256 != receipt.transaction_sha256
+                or head.authority_graph_sha256 != receipt.authority_graph_sha256
+                or head.prepared_receipt_sha256 != receipt.prepared_receipt_sha256
+                or head.previous_head_sha256 != receipt.previous_published_head_sha256
+            ):
+                raise CanaryGovernanceError("BA11_REGISTRY_ROLLBACK", "publication_binding")
+            authoritative_head = authoritative_head or head
+            previous_receipt_sha = receipt.previous_commit_receipt_sha256
+            if previous_receipt_sha is None:
+                if receipt.registry_generation != 0 or receipt.previous_published_head_sha256 is not None:
+                    raise CanaryGovernanceError("BA11_REGISTRY_ROLLBACK", "publication_genesis")
+                break
+            previous_receipt = receipts.get(previous_receipt_sha)
+            if (
+                previous_receipt is None
+                or previous_receipt.registry_generation + 1 != receipt.registry_generation
+                or previous_receipt.published_head_sha256
+                != receipt.previous_published_head_sha256
+            ):
+                raise CanaryGovernanceError("BA11_REGISTRY_ROLLBACK", "publication_predecessor")
+            receipt = previous_receipt
+        if len(seen) != len(receipts):
+            raise CanaryGovernanceError("BA11_REGISTRY_ROLLBACK", "unreachable_publication")
+        if (
+            pointer.registry_generation != current_receipt.registry_generation
+            or pointer.published_head_sha256 != current_receipt.published_head_sha256
+            or raw != authoritative_head
+        ):
+            raise CanaryGovernanceError("BA11_REGISTRY_ROLLBACK", "current_pointer")
+        return raw
+
+    def _current_publication_receipt(self) -> RegistryCommitReceipt | None:
+        pointer = self._read_model(
+            self.publication_pointer_path, RegistryHeadPublicationPointer
+        )
+        if pointer is None:
+            return None
+        receipt = self._read_model(
+            self.published_receipts / f"{pointer.commit_receipt_sha256}.json",
+            RegistryCommitReceipt,
+        )
+        if receipt is None:
+            raise CanaryGovernanceError("BA11_REGISTRY_ROLLBACK", "publication_receipt_missing")
+        return receipt
 
     @staticmethod
     def _event_set_sha256(events: Iterable[RegistryEvent]) -> str:
@@ -190,6 +285,27 @@ class ContentAddressedRegistryStore:
         self._write_immutable(head_root / f"{head.head_sha256}.json", head.model_dump(mode="json"))
         self._write_immutable(
             set_root / f"{head.head_sha256}.json",
+            self._set_payload(kind, tuple(event.event_sha256 for event in events)),
+        )
+
+    def _persist_staged_ledger(
+        self, *, transaction_sha256: str, kind: str, events: tuple, head
+    ) -> None:
+        """Persist immutable candidates outside every published ledger namespace."""
+
+        root = self.staging_transactions / transaction_sha256 / "ledger" / kind
+        for event in events:
+            self._put_declared(event)
+            self._write_immutable(
+                root / "events" / f"{event.event_sha256}.json",
+                event.model_dump(mode="json"),
+            )
+        self._put_declared(head)
+        self._write_immutable(
+            root / "heads" / f"{head.head_sha256}.json", head.model_dump(mode="json")
+        )
+        self._write_immutable(
+            root / "sets" / f"{head.head_sha256}.json",
             self._set_payload(kind, tuple(event.event_sha256 for event in events)),
         )
 
@@ -530,11 +646,18 @@ class ContentAddressedRegistryStore:
         self._persist_ledger(kind="debt", events=objects.debt_events, head=objects.debt_ledger_head)
         self._write_pointer("registry", objects.registry_ledger_head)
         self._write_pointer("debt", objects.debt_ledger_head)
+        published_receipt = self._current_publication_receipt()
+        if published_receipt is None:
+            raise CanaryGovernanceError("BA11_REGISTRY_ROLLBACK", "publication_receipt_missing")
         receipt = RegistryCommitReceipt.create(
+            registry_generation=current.registry_generation,
+            previous_published_head_sha256=current.previous_head_sha256,
+            previous_commit_receipt_sha256=published_receipt.receipt_sha256,
             transaction_sha256=transaction.transaction_sha256,
             published_head_sha256=current.head_sha256,
             authority_graph_sha256=graph.authority_graph_sha256,
             prepared_receipt_sha256=prepared.receipt_sha256,
+            publication_state="recovery_evidence",
             commit_state="recovered",
             committed_at_utc=fixed_now_utc,
         )
@@ -566,6 +689,7 @@ class ContentAddressedRegistryStore:
                     fixed_now_utc=fixed_now_utc,
                 )
             current_hash = None if current is None else current.head_sha256
+            current_publication = self._current_publication_receipt()
             if current_hash != transaction.base_head_sha256:
                 raise CanaryGovernanceError("BA11_REGISTRY_CAS_CONFLICT")
             expected_generation = 0 if current is None else current.registry_generation + 1
@@ -608,8 +732,18 @@ class ContentAddressedRegistryStore:
                 transaction,
             ):
                 self._put_declared(model)
-            self._persist_ledger(kind="registry", events=authority_objects.registry_events, head=authority_objects.registry_ledger_head)
-            self._persist_ledger(kind="debt", events=authority_objects.debt_events, head=authority_objects.debt_ledger_head)
+            self._persist_staged_ledger(
+                transaction_sha256=transaction.transaction_sha256,
+                kind="registry",
+                events=authority_objects.registry_events,
+                head=authority_objects.registry_ledger_head,
+            )
+            self._persist_staged_ledger(
+                transaction_sha256=transaction.transaction_sha256,
+                kind="debt",
+                events=authority_objects.debt_events,
+                head=authority_objects.debt_ledger_head,
+            )
             self._write_immutable(
                 self.snapshots / f"{authority_objects.snapshot.snapshot_sha256}.json",
                 authority_objects.snapshot.model_dump(mode="json"),
@@ -643,22 +777,45 @@ class ContentAddressedRegistryStore:
             )
             self._put_declared(head)
             self._write_immutable(self.head_history / f"{head.head_sha256}.json", head.model_dump(mode="json"))
-            fault("before_head_swap")
-            self._atomic_write(self.head_path, head.model_dump(mode="json"))
-            fault("after_head_swap")
-            if self.read_head() != head:
-                raise CanaryGovernanceError("BA11_TRANSACTION_RECOVERY_INVALID", "head_readback")
-            self._write_pointer("registry", authority_objects.registry_ledger_head)
-            self._write_pointer("debt", authority_objects.debt_ledger_head)
-            fault("after_readback")
             receipt = RegistryCommitReceipt.create(
+                registry_generation=head.registry_generation,
+                previous_published_head_sha256=head.previous_head_sha256,
+                previous_commit_receipt_sha256=(
+                    None if current_publication is None else current_publication.receipt_sha256
+                ),
                 transaction_sha256=transaction.transaction_sha256,
                 published_head_sha256=head.head_sha256,
                 authority_graph_sha256=authority_graph.authority_graph_sha256,
                 prepared_receipt_sha256=prepared.receipt_sha256,
+                publication_state="published",
                 commit_state="committed",
                 committed_at_utc=fixed_now_utc,
             )
             self._put_declared(receipt)
-            self._write_immutable(self.receipts / f"{receipt.receipt_sha256}.json", receipt.model_dump(mode="json"))
+            self._write_immutable(
+                self.receipts / f"{receipt.receipt_sha256}.json",
+                receipt.model_dump(mode="json"),
+            )
+            fault("before_head_swap")
+            self._atomic_write(self.head_path, head.model_dump(mode="json"))
+            self._persist_ledger(kind="registry", events=authority_objects.registry_events, head=authority_objects.registry_ledger_head)
+            self._persist_ledger(kind="debt", events=authority_objects.debt_events, head=authority_objects.debt_ledger_head)
+            self._write_pointer("registry", authority_objects.registry_ledger_head)
+            self._write_pointer("debt", authority_objects.debt_ledger_head)
+            self._write_immutable(
+                self.published_receipts / f"{receipt.receipt_sha256}.json",
+                receipt.model_dump(mode="json"),
+            )
+            self._atomic_write(
+                self.publication_pointer_path,
+                RegistryHeadPublicationPointer.create(
+                    registry_generation=head.registry_generation,
+                    published_head_sha256=head.head_sha256,
+                    commit_receipt_sha256=receipt.receipt_sha256,
+                ).model_dump(mode="json"),
+            )
+            fault("after_head_swap")
+            if self.read_head() != head:
+                raise CanaryGovernanceError("BA11_TRANSACTION_RECOVERY_INVALID", "head_readback")
+            fault("after_readback")
             return head, receipt

@@ -310,6 +310,20 @@ class RegistryHead(HashBoundModel):
     hash_domain = "room16.canary_registry_head@3"
 
 
+class RegistryHeadPublicationPointer(HashBoundModel):
+    """Mutable pointer to the only reachable published RegistryHead receipt."""
+
+    contract_id: Literal["room16.canary_registry_head_publication_pointer"] = "room16.canary_registry_head_publication_pointer"
+    schema_version: Literal[1] = 1
+    authority_owner: Literal["research"] = "research"
+    registry_generation: int = Field(ge=0)
+    published_head_sha256: str = Field(pattern=SHA256_PATTERN)
+    commit_receipt_sha256: str = Field(pattern=SHA256_PATTERN)
+    pointer_sha256: str = Field(pattern=SHA256_PATTERN)
+    hash_field = "pointer_sha256"
+    hash_domain = "room16.canary_registry_head_publication_pointer@1"
+
+
 class GenesisImportReceipt(HashBoundModel):
     contract_id: Literal["room16.canary_genesis_import"] = "room16.canary_genesis_import"
     schema_version: Literal[2] = 2
@@ -686,17 +700,21 @@ class RegistryTransaction(HashBoundModel):
 
 class RegistryCommitReceipt(HashBoundModel):
     contract_id: Literal["room16.canary_registry_commit_receipt"] = "room16.canary_registry_commit_receipt"
-    schema_version: Literal[2] = 2
+    schema_version: Literal[3] = 3
     authority_owner: Literal["research"] = "research"
+    registry_generation: int = Field(ge=0)
+    previous_published_head_sha256: str | None = Field(default=None, pattern=SHA256_PATTERN)
+    previous_commit_receipt_sha256: str | None = Field(default=None, pattern=SHA256_PATTERN)
     transaction_sha256: str = Field(pattern=SHA256_PATTERN)
     published_head_sha256: str = Field(pattern=SHA256_PATTERN)
     authority_graph_sha256: str = Field(pattern=SHA256_PATTERN)
     prepared_receipt_sha256: str = Field(pattern=SHA256_PATTERN)
+    publication_state: Literal["published", "recovery_evidence"]
     commit_state: Literal["committed", "recovered"]
     committed_at_utc: str = Field(pattern=UTC_PATTERN)
     receipt_sha256: str = Field(pattern=SHA256_PATTERN)
     hash_field = "receipt_sha256"
-    hash_domain = "room16.canary_registry_commit_receipt@2"
+    hash_domain = "room16.canary_registry_commit_receipt@3"
 
 
 class RegistryPreparedReceipt(HashBoundModel):
@@ -789,7 +807,8 @@ CONTRACT_MODELS = (
     SourceContractBinding, SourceContractLock, TechnicalBaseline, GovernanceEnvelope,
     CanaryFreezeRecord, CanaryRegistryEntry, RegistryEvent, PromotionEvent,
     RejectionEvent, StaleEvent, RecoveryEvent, SupersessionEvent, RegistryLedgerHead,
-    LedgerHeadPointer, RegistrySnapshot, RegistryHead, GenesisImportReceipt, GenesisImportHead,
+    LedgerHeadPointer, RegistrySnapshot, RegistryHead, RegistryHeadPublicationPointer,
+    GenesisImportReceipt, GenesisImportHead,
     ChangeClassification, ComparisonRequest, CompareEngineReceipt, ComparisonResult,
     PromotionCandidate, RegistryAuthorityGraph,
     IndependentReviewAttestation, OperatorApprovalReceipt, AcceptedDebtEvent,

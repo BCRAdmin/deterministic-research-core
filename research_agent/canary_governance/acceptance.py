@@ -6,6 +6,8 @@ from collections import Counter
 from pathlib import Path
 from typing import Any
 
+from research_agent.compiler_foundation.canonical import sha256_json
+
 from .diagnostics import CanaryGovernanceError
 
 
@@ -26,7 +28,7 @@ def verify_acceptance_register(
     *,
     source_test_names: set[str],
 ) -> None:
-    """Require a unique, concrete, passing receipt for every authoritative row."""
+    """Require one exact collected and executed pytest node for every row."""
     required_rows = required.get("rows", [])
     executed_rows = executed.get("rows", [])
     required_ids = [row.get("test_id") for row in required_rows]
@@ -35,21 +37,59 @@ def verify_acceptance_register(
         raise CanaryGovernanceError("BA11_ACCEPTANCE_REQUIREMENT_MISSING")
     if any(count != 1 for count in Counter(executed_ids).values()):
         raise CanaryGovernanceError("BA11_ACCEPTANCE_MAPPING_AMBIGUOUS")
+    nodeids = [row.get("pytest_nodeid") for row in executed_rows]
+    if any(not nodeid or "::test_" not in nodeid for nodeid in nodeids):
+        raise CanaryGovernanceError("BA11_TEST_ID_UNRESOLVED")
+    if any(count != 1 for count in Counter(nodeids).values()):
+        raise CanaryGovernanceError("BA11_ACCEPTANCE_MAPPING_AMBIGUOUS", "duplicate_nodeid")
+
+    collection = executed.get("collection_manifest", {})
+    collected_nodeids = tuple(collection.get("nodeids", ()))
+    execution_report = executed.get("execution_report", {})
+    execution_results = execution_report.get("results", [])
+    result_by_nodeid = {
+        row.get("pytest_nodeid"): row for row in execution_results if row.get("pytest_nodeid")
+    }
+    for nodeid in nodeids:
+        if nodeid not in collected_nodeids or nodeid not in result_by_nodeid:
+            raise CanaryGovernanceError("BA11_TEST_ID_UNRESOLVED", str(nodeid))
+    expected_collection_sha = sha256_json(
+        {key: value for key, value in collection.items() if key != "manifest_sha256"}
+    )
+    expected_report_sha = sha256_json(
+        {key: value for key, value in execution_report.items() if key != "report_sha256"}
+    )
+    if (
+        collection.get("manifest_sha256") != expected_collection_sha
+        or execution_report.get("report_sha256") != expected_report_sha
+    ):
+        raise CanaryGovernanceError("BA11_ACCEPTANCE_MAPPING_AMBIGUOUS", "report_hash")
     by_id = {row["test_id"]: row for row in executed_rows}
     for specification in required_rows:
         row = by_id[specification["test_id"]]
-        source_name = row.get("source_test_name")
-        if not source_name or source_name not in source_test_names:
-            raise CanaryGovernanceError("BA11_TEST_ID_UNRESOLVED", str(source_name))
-        if source_name in {"full_suite", "generic_suite", "pytest"}:
+        nodeid = row["pytest_nodeid"]
+        source_name = nodeid.split("::")[-1].split("[")[0]
+        if source_name in {"test_full_suite", "test_generic_suite", "test_pytest"}:
             raise CanaryGovernanceError("BA11_ACCEPTANCE_MAPPING_AMBIGUOUS", source_name)
+        if source_name not in source_test_names:
+            raise CanaryGovernanceError("BA11_TEST_ID_UNRESOLVED", nodeid)
+        result = result_by_nodeid[nodeid]
         required_receipt_fields = (
             "command_receipt",
+            "collect_manifest_sha256",
+            "execution_result_sha256",
             "raw_stdout_sha256",
             "raw_stderr_sha256",
             "git_tree",
         )
-        if row.get("status") != "PASS" or any(not row.get(field) for field in required_receipt_fields):
+        if (
+            row.get("status") != "PASS"
+            or result.get("status") != "PASS"
+            or result.get("exit_code") != 0
+            or row.get("collect_manifest_sha256") != collection["manifest_sha256"]
+            or row.get("execution_result_sha256") != sha256_json(result)
+            or any(not row.get(field) for field in required_receipt_fields)
+        ):
             raise CanaryGovernanceError("BA11_ACCEPTANCE_MAPPING_AMBIGUOUS", row["test_id"])
         expected_diagnostic = specification.get("expected_diagnostic")
         if expected_diagnostic and row.get("actual_diagnostic") != expected_diagnostic:

@@ -39,6 +39,7 @@ DIAGNOSTICS = {
     "BA11_CANARY_SUBJECT_MISMATCH": "A canary identifier changed its canonical subject identity.",
     "BA11_GENESIS_ALREADY_IMPORTED": "The one-time genesis import head already exists.",
     "BA11_REGISTRY_CAS_CONFLICT": "Registry head changed since candidate preparation.",
+    "BA11_REGISTRY_ROLLBACK": "Registry current head is not the latest reachable published authority.",
     "BA11_REGISTRY_GENERATION_INVALID": "Registry generation is not monotonic by one.",
     "BA11_REGISTRY_PREDECESSOR_INVALID": "Registry snapshot does not extend the current snapshot.",
     "BA11_SNAPSHOT_NOT_DERIVED": "Registry snapshot is not the normative projection of its ledger.",

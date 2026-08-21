@@ -37,6 +37,7 @@ from research_agent.canary_governance.ledger import (
     ledger_to_snapshot,
     validate_version_transition,
 )
+from research_agent.compiler_foundation.canonical import sha256_json
 
 from research_agent.tests.canary_r4_fixtures import H1, H2, NOW, make_r4_fixture, role_keys
 
@@ -411,11 +412,26 @@ def test_t_r4_p0006_05_complete_staging_recovers_twice_identically(tmp_path: Pat
 
 def _acceptance_documents():
     required = {"rows": [{"test_id": "T-1", "expected_diagnostic": None}]}
+    result = {
+        "pytest_nodeid": "pkg/test_mod.py::test_real",
+        "status": "PASS",
+        "exit_code": 0,
+        "raw_stdout_sha256": H1,
+        "raw_stderr_sha256": H2,
+    }
+    collection = {"nodeids": [result["pytest_nodeid"]]}
+    collection["manifest_sha256"] = sha256_json(collection)
+    report = {"results": [result]}
+    report["report_sha256"] = sha256_json(report)
     executed = {
+        "collection_manifest": collection,
+        "execution_report": report,
         "rows": [
             {
                 "test_id": "T-1",
-                "source_test_name": "test_real",
+                "pytest_nodeid": result["pytest_nodeid"],
+                "collect_manifest_sha256": collection["manifest_sha256"],
+                "execution_result_sha256": sha256_json(result),
                 "command_receipt": "receipt.json",
                 "raw_stdout_sha256": H1,
                 "raw_stderr_sha256": H2,
@@ -437,16 +453,30 @@ def test_t_r4_p0007_01_missing_acceptance_requirement_fails():
 
 def test_t_r4_p0007_02_nonexistent_source_test_fails():
     required, executed = _acceptance_documents()
-    executed["rows"][0]["source_test_name"] = "test_missing"
+    executed["rows"][0]["pytest_nodeid"] = "pkg/test_mod.py::test_missing"
     with expect_code("BA11_TEST_ID_UNRESOLVED"):
         verify_acceptance_register(required, executed, source_test_names={"test_real"})
 
 
 def test_t_r4_p0007_03_generic_suite_mapping_fails():
     required, executed = _acceptance_documents()
-    executed["rows"][0]["source_test_name"] = "generic_suite"
+    nodeid = "pkg/test_mod.py::test_generic_suite"
+    executed["rows"][0]["pytest_nodeid"] = nodeid
+    executed["collection_manifest"] = {"nodeids": [nodeid]}
+    executed["collection_manifest"]["manifest_sha256"] = sha256_json(
+        executed["collection_manifest"]
+    )
+    result = {**executed["execution_report"]["results"][0], "pytest_nodeid": nodeid}
+    executed["execution_report"] = {"results": [result]}
+    executed["execution_report"]["report_sha256"] = sha256_json(
+        executed["execution_report"]
+    )
+    executed["rows"][0]["collect_manifest_sha256"] = executed["collection_manifest"][
+        "manifest_sha256"
+    ]
+    executed["rows"][0]["execution_result_sha256"] = sha256_json(result)
     with expect_code("BA11_ACCEPTANCE_MAPPING_AMBIGUOUS"):
-        verify_acceptance_register(required, executed, source_test_names={"generic_suite"})
+        verify_acceptance_register(required, executed, source_test_names={"test_generic_suite"})
 
 
 def test_t_r4_p0007_04_builder_cannot_self_certify_closure():

@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Mutable pointer to the only reachable published RegistryHead receipt.",
+  "properties": {
+    "authority_owner": {
+      "const": "research",
+      "default": "research",
+      "title": "Authority Owner",
+      "type": "string"
+    },
+    "commit_receipt_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Commit Receipt Sha256",
+      "type": "string"
+    },
+    "contract_id": {
+      "const": "room16.canary_registry_head_publication_pointer",
+      "default": "room16.canary_registry_head_publication_pointer",
+      "title": "Contract Id",
+      "type": "string"
+    },
+    "pointer_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Pointer Sha256",
+      "type": "string"
+    },
+    "published_head_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Published Head Sha256",
+      "type": "string"
+    },
+    "registry_generation": {
+      "minimum": 0,
+      "title": "Registry Generation",
+      "type": "integer"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "registry_generation",
+    "published_head_sha256",
+    "commit_receipt_sha256",
+    "pointer_sha256"
+  ],
+  "title": "RegistryHeadPublicationPointer",
+  "type": "object",
+  "x-room16-canonicalization": "room16.canonical_json@1",
+  "x-room16-hash-algorithm": "sha256",
+  "x-room16-unknown-field-policy": "fail_closed"
+}

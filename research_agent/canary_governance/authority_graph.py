@@ -117,7 +117,10 @@ def build_authority_graph(
     finding_set_sha256: str,
     base_registry_head_sha256: str | None,
 ) -> RegistryAuthorityGraph:
-    promotion = _promotion_event(objects.registry_events)
+    promotion = _promotion_event(
+        objects.registry_events,
+        candidate_sha256=objects.promotion_candidate.candidate_sha256,
+    )
     return RegistryAuthorityGraph.create(
         graph_id=graph_id,
         technical_baseline_sha256=objects.technical_baseline.technical_baseline_sha256,
@@ -143,10 +146,25 @@ def build_authority_graph(
     )
 
 
-def _promotion_event(events: tuple[RegistryEvent, ...]) -> PromotionEvent:
+def _promotion_event(
+    events: tuple[RegistryEvent, ...],
+    *,
+    candidate_sha256: str | None = None,
+    event_sha256: str | None = None,
+) -> PromotionEvent:
+    """Resolve the exact current promotion while retaining full append-only history."""
+
     promotions = [event for event in events if isinstance(event, PromotionEvent)]
+    if event_sha256 is not None:
+        promotions = [event for event in promotions if event.event_sha256 == event_sha256]
+    if candidate_sha256 is not None:
+        promotions = [
+            event
+            for event in promotions
+            if event.promotion_candidate_sha256 == candidate_sha256
+        ]
     if len(promotions) != 1:
-        raise CanaryGovernanceError("BA11_AUTHORITY_GRAPH_MISMATCH", "promotion_event_count")
+        raise CanaryGovernanceError("BA11_AUTHORITY_GRAPH_MISMATCH", "promotion_event_binding")
     return promotions[0]
 
 
@@ -168,7 +186,11 @@ def verify_authority_graph(
         objects.comparison_result,
         objects.change_classification,
     )
-    promotion = _promotion_event(objects.registry_events)
+    promotion = _promotion_event(
+        objects.registry_events,
+        event_sha256=graph.promotion_event_sha256,
+        candidate_sha256=objects.promotion_candidate.candidate_sha256,
+    )
     expected_graph = build_authority_graph(
         graph_id=graph.graph_id,
         objects=objects,
