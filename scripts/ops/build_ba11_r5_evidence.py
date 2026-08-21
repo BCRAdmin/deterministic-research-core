@@ -18,7 +18,7 @@ from typing import Any
 
 from research_agent.canary_governance.archive import build_deterministic_zip, build_package_identity
 from research_agent.compiler_foundation.canonical import sha256_json
-from scripts.ops.verify_ba11_r5_package import (
+from verify_ba11_r5_package import (
     SOURCE_R4_NAME,
     SOURCE_R4_SHA256,
     SOURCE_R5_NAME,
