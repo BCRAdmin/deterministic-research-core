@@ -1,0 +1,16 @@
+{
+  "ba12_resume_authorized": false,
+  "contract_id": "room16.rfc0008.v2_trust_migration_verifier_receipt",
+  "contract_version": 1,
+  "manifest_sha256": "066d84e41e1e2b0753ff3a8c7a34e695458ef9b39ce88d512722abde2c42bde2",
+  "package_bytes": 328711,
+  "package_name": "ROOM16_RFC0008_V2_TRUST_MIGRATION_R2_939AF5294285_2026-08-21.zip",
+  "package_sha256": "130fcf06f2ce9698bdd9ffaba305abf3416b04855c8a505131103a626b612fab",
+  "payload_count": 78,
+  "private_key_material_present": false,
+  "ready_for_independent_rereview": true,
+  "required_members_verified": 22,
+  "rfc0008_frozen": false,
+  "rfc0008_implementation_ready": false,
+  "status": "PASS"
+}
