@@ -1,0 +1,49 @@
+{
+  "contract_id": "room16.compiler.consumer_policy_envelope",
+  "contract_version": 2,
+  "envelope_sha256": "7f16189fdfd6b676fd3cb58acf9c6c51a9a1b66671dbb7c1f76156dffc5cd8c9",
+  "generation": 1,
+  "issued_at_utc": "2026-08-21T00:00:00Z",
+  "payload": {
+    "allowed_authority_v3_bridge_directions": [
+      "bundle_to_authority_v3_only",
+      "disabled"
+    ],
+    "artifact_bundle_contract_major": 2,
+    "ba10_v1_freeze_sha256": "29bc0bf2d00aa22d49fd7bb569cf080cc335778c1773b9e63710ecd61dfebc8e",
+    "ba11_freeze_sha256": "2c0e0e292f2b167e68814e2e2180f9f0823ea8be452be52b95f56db95a4ca1cf",
+    "canonicalization_profile": "room16.foundation.canonical_json@1",
+    "compiler_identity": {
+      "bundle_abi_version": "2.0.0",
+      "compiler_name": "Room16 Financial Research Compiler",
+      "compiler_version": "1.0.0",
+      "foundation_version": "1.0.0",
+      "ir_schema_set_sha256": "b7b6194ad05b023c1c1cb1fe2a5cba6d5f830dfd6ee400df954c35c997847f4c",
+      "pass_manifest_sha256": "854abab7764f1a26a26ac2a97585171154aaac52c2eb8ecb848e800d2da02d33",
+      "registry_authority_sha256": "55585f2242f32da4cc401455cd3186a97bf74f2c4a7feb5078e00d6a6e1ea5fb",
+      "registry_foundation_version": "1.1.0",
+      "semantic_artifact_origin": "frozen_v1_migration",
+      "semantic_wave_version": "1.0.0",
+      "semantic_wave_version_lock": "62867ad72cd1a99eee482e75087cbe01449faa650d7cf2c535fd494c5fef30f9"
+    },
+    "contract_id": "room16.compiler.consumer_policy_lock",
+    "contract_version": 2,
+    "hash_algorithm": "sha256",
+    "key_policy_sha256": "1527c0ffa87b56d0dd355b5598cbfcd404bec734d6b14c9526867ed3b7d23d49",
+    "legacy_semantic_input_allowed": false,
+    "manifest_schema_profile_sha256": "2abbedc920bcac4d2470ee1a63e3e258ce7e82c6a9e034d0455330fd6f9b72c3",
+    "mutable_bundle_hash_allowlist_allowed": false,
+    "owner": "research_compiler",
+    "policy_sha256": "b7e0e23e54c4de22a45e72f8d0e709fcf095a3b571d02d9370c5cdbdcad6e16f",
+    "product_may_edit_semantics": false,
+    "schema_version_max": "2.x",
+    "schema_version_min": "2.0.0",
+    "source_native_fact_generation_required_for_native": true,
+    "trusted_emitter_id": "room16.compiler_artifact_bundle_builder_v2"
+  },
+  "previous_envelope_sha256": null,
+  "root_id": "room16.compiler.v2_trust_root@1",
+  "root_key_id": "research.rfc0008.root.2026-08-21",
+  "signature": "a49bca247bf91a08f326dbc969b91f0990c53586c4482af6b5e8a94fde3462f9c49d2aa7f33b5df499ed3248a974120e08488fa87977002cda56e1057de41e08",
+  "signature_algorithm": "ed25519"
+}

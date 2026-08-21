@@ -10,9 +10,11 @@ from pathlib import Path
 
 from nacl.signing import SigningKey
 
-from research_agent.productization_v2.artifact_bundle import load_consumer_policy_v2
+from research_agent.productization_v2.artifact_bundle import (
+    load_consumer_policy_v2,
+    load_public_key_policy_v2,
+)
 from research_agent.productization_v2.canary_migration import CANARY_STAMP, build_migration_canary
-from research_agent.productization_v2.contracts import PublicKeyPolicyV2
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -76,10 +78,7 @@ def main() -> int:
         raise SystemExit("STOP Research-only RFC-0008 signing key is missing")
     signing_key = SigningKey(PRIVATE_KEY.read_bytes())
     consumer_policy = load_consumer_policy_v2()
-    key_policy = PublicKeyPolicyV2.model_validate_json(
-        (CONFIG / "public_key_policy_v2.json").read_bytes()
-    )
-    key_policy.verify_self_hash()
+    key_policy = load_public_key_policy_v2()
     key_id = next(item.key_id for item in key_policy.keys if item.state == "active")
     results = []
     for counter, ticker in enumerate(("WM", "COST", "ABT"), start=1):

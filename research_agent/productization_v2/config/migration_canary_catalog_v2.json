@@ -5,43 +5,43 @@
       "deterministic": true,
       "mode": "bundle_dual_read",
       "native_source_production": false,
-      "receipt_file_sha256": "7af848b6d214adfff5d60a7578e00e6cc4303a3c0baea5ecac2a3e749b6409d7",
+      "receipt_file_sha256": "a2184472e3d3ef7e68abae0da87a0473dcd945cbe191c1d7449b35bbe937595a",
       "semantic_artifact_index_sha256": "f96659f4aaa7f4b08bb48f9043e1845b730203d6b6adca73a4177700fb9e2e58",
       "source_native_fact_generation": false,
       "ticker": "WM",
       "v1_bundle_sha256": "71bc2f1dae367ecfe83f8f84f7a5d4eceffca07954709f2ea4d3caab655ff339",
-      "v2_bundle_sha256": "37b5032579c6fbc8fb936f3aefbc5978973e8788a4568561daa04a3d7cf71b1f",
-      "v2_bundle_tree_sha256": "1eaf99bb9bbd7666acc96e7d1343e7c2a698cbae92cae4758d3e4bdf63c8adea"
+      "v2_bundle_sha256": "9a8f03ca93803bf19269b9f58cc64c28e412438eaa8decdc8cd36abbc0232e29",
+      "v2_bundle_tree_sha256": "b5f89b3db1df87e4ccd26686506d37644dd975d68f788801da5381cdbdec96ea"
     },
     {
       "archive_sha256": "b97e6024855c7a772713ff9af4889987e4a9a8e5a3afca0d56a42a1ba8092ea4",
       "deterministic": true,
       "mode": "bundle_dual_read",
       "native_source_production": false,
-      "receipt_file_sha256": "b1ebf844e0d5b4540dcea11904117a91278ed0362510d63876227fa18ef58bd9",
+      "receipt_file_sha256": "69d7f9863b475cb2480f72d300161bc5b8c93a12a6a2e4dedd0943555f8e2b56",
       "semantic_artifact_index_sha256": "291793aa27756de7973699c7e14867711e80588fb396f18dd5e2b7de484a1ebc",
       "source_native_fact_generation": false,
       "ticker": "COST",
       "v1_bundle_sha256": "2c6a35f23011faa7ef1b6f1a401fb184d2b0f602766836df05a6ba66f94bbdd4",
-      "v2_bundle_sha256": "aad784626f1e4419342bc5c84d50e038796ada240ab5e472bc01c7f95af40015",
-      "v2_bundle_tree_sha256": "c154aa3ea4da363148ec5fd5907828f3778ba64826752bf9802bec2b7be4d2df"
+      "v2_bundle_sha256": "b3ae7c395d226d70d9d8d05f71b3b531ff725ff5d7bf78c111dbb16209271e18",
+      "v2_bundle_tree_sha256": "925aef4a6d2e5d799c41a28d8ca3dd0ff50e3382677e000301efab2258262b56"
     },
     {
       "archive_sha256": "0926d3cafd312556ec267b2b25214d255ff9352daed77a01b7852addbb48dc45",
       "deterministic": true,
       "mode": "bundle_dual_read",
       "native_source_production": false,
-      "receipt_file_sha256": "bc2f5552116b3f7f803779597c80eccb1e2b56b2fa0dff7f0e757c534ce2fb52",
+      "receipt_file_sha256": "158b1a828cf484a3a010acbcad50caddae7c9ee409c1376433fc5de3187735fd",
       "semantic_artifact_index_sha256": "a818b49094490905d9a9af69e2e6c25f05dafdf176297ded5eabefbee0b03241",
       "source_native_fact_generation": false,
       "ticker": "ABT",
       "v1_bundle_sha256": "48a39cf7537d4ed1f807d3a532173847192d6bfe805cd12fd3f5842b8d26383a",
-      "v2_bundle_sha256": "fe3d4a8b38375264f7cf1ade01a6c36d32ee54f02e95302d81d9578c271b148a",
-      "v2_bundle_tree_sha256": "b9676249b17b9aad647d28d1fa1911cd967048eff24b71863747764447c3ec44"
+      "v2_bundle_sha256": "31e6c3df68a4ed19ff8dee06d11b9bad9e9283842b7ae1704107648d4569a53c",
+      "v2_bundle_tree_sha256": "fa30cde4671794090566cecc638bab4f1c8744ae56f845bec6d4b0552339f924"
     }
   ],
   "canonical_runtime_changed": false,
-  "consumer_policy_sha256": "bf8eec534f7b1aab214f39ea667c130cd3bc2156410c8cab0afcdaa871099466",
+  "consumer_policy_sha256": "b7e0e23e54c4de22a45e72f8d0e709fcf095a3b571d02d9370c5cdbdcad6e16f",
   "contract_id": "room16.rfc0008.migration_canary_catalog@1",
   "key_policy_sha256": "1527c0ffa87b56d0dd355b5598cbfcd404bec734d6b14c9526867ed3b7d23d49",
   "native_source_production": false,

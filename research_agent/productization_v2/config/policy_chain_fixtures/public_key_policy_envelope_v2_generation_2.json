@@ -1,0 +1,33 @@
+{
+  "contract_id": "room16.compiler.public_key_policy_envelope",
+  "contract_version": 2,
+  "envelope_sha256": "481bf0e6241cc27510d6d345d15685b694e53b3d9db66eb62ed31ac12f6b4e07",
+  "generation": 2,
+  "issued_at_utc": "2026-08-21T00:01:00Z",
+  "payload": {
+    "contract_id": "room16.compiler.public_key_policy",
+    "contract_version": 2,
+    "keys": [
+      {
+        "key_id": "research.rfc0008.primary.2026-08-21",
+        "not_after_utc": null,
+        "not_before_utc": "2026-08-21T00:00:00Z",
+        "public_key_hex": "7287a555bbd5bb0302cc45d5b716c94ead99ed1a41840999e7d3c1aa7d889a2d",
+        "state": "active"
+      }
+    ],
+    "owner": "research_compiler",
+    "policy_sha256": "1527c0ffa87b56d0dd355b5598cbfcd404bec734d6b14c9526867ed3b7d23d49",
+    "rotation_sequence": [
+      "active",
+      "grace_verify_only",
+      "revoked"
+    ],
+    "signature_algorithm": "ed25519"
+  },
+  "previous_envelope_sha256": "fb5fcf6556348d9e8f4af2cf688cdef4e79c3e6a4c5317571c19239c8f43310f",
+  "root_id": "room16.compiler.v2_trust_root@1",
+  "root_key_id": "research.rfc0008.root.2026-08-21",
+  "signature": "445595bad5860d158ee86ae87dcc12b1a0b137db054415678ccdcbc3e14729ea8984fbfb262a63eddd9b37c841c29d71eb3850ad708f7592ef574945c598e50b",
+  "signature_algorithm": "ed25519"
+}

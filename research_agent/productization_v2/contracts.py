@@ -8,13 +8,38 @@ from pydantic import Field, model_validator
 
 from research_agent.compiler_foundation.canonical import sha256_json
 from research_agent.compiler_foundation.contracts import StrictModel
-from research_agent.productization.contracts import ArtifactRecord, BundleSectionRecord
+from research_agent.productization.contracts import (
+    REQUIRED_ARTIFACT_KINDS,
+    REQUIRED_BUNDLE_SECTION_IDS,
+    ArtifactRecord,
+    BundleSectionRecord,
+)
 
 SHA256_PATTERN = r"^[0-9a-f]{64}$"
 HEX_PATTERN = r"^[0-9a-f]+$"
 UTC_PATTERN = r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$"
 BA10_V1_FREEZE_SHA256 = "29bc0bf2d00aa22d49fd7bb569cf080cc335778c1773b9e63710ecd61dfebc8e"
 BA11_FREEZE_SHA256 = "2c0e0e292f2b167e68814e2e2180f9f0823ea8be452be52b95f56db95a4ca1cf"
+SEMANTIC_WAVE_VERSION_LOCK = "62867ad72cd1a99eee482e75087cbe01449faa650d7cf2c535fd494c5fef30f9"
+PASS_MANIFEST_SHA256 = "854abab7764f1a26a26ac2a97585171154aaac52c2eb8ecb848e800d2da02d33"
+IR_SCHEMA_SET_SHA256 = "b7b6194ad05b023c1c1cb1fe2a5cba6d5f830dfd6ee400df954c35c997847f4c"
+REGISTRY_AUTHORITY_SHA256 = "55585f2242f32da4cc401455cd3186a97bf74f2c4a7feb5078e00d6a6e1ea5fb"
+
+
+class CompilerIdentityV2(StrictModel):
+    compiler_name: Literal["Room16 Financial Research Compiler"] = (
+        "Room16 Financial Research Compiler"
+    )
+    foundation_version: Literal["1.0.0"] = "1.0.0"
+    registry_foundation_version: Literal["1.1.0"] = "1.1.0"
+    semantic_wave_version: Literal["1.0.0"] = "1.0.0"
+    semantic_wave_version_lock: Literal[SEMANTIC_WAVE_VERSION_LOCK] = SEMANTIC_WAVE_VERSION_LOCK
+    compiler_version: Literal["1.0.0"] = "1.0.0"
+    pass_manifest_sha256: Literal[PASS_MANIFEST_SHA256] = PASS_MANIFEST_SHA256
+    ir_schema_set_sha256: Literal[IR_SCHEMA_SET_SHA256] = IR_SCHEMA_SET_SHA256
+    registry_authority_sha256: Literal[REGISTRY_AUTHORITY_SHA256] = REGISTRY_AUTHORITY_SHA256
+    bundle_abi_version: Literal["2.0.0"] = "2.0.0"
+    semantic_artifact_origin: Literal["frozen_v1_migration", "source_native"]
 
 
 class CompileIdentityV2(StrictModel):
@@ -91,7 +116,7 @@ class CompilerArtifactBundleManifestV2(StrictModel):
     )
     hash_algorithm: Literal["sha256"] = "sha256"
     bundle_sha256: str = Field(pattern=SHA256_PATTERN)
-    compiler_identity: dict[str, Any]
+    compiler_identity: CompilerIdentityV2
     emitter_identity: EmitterIdentityV2
     compile_identity: CompileIdentityV2
     compatibility: CompatibilityStateV2
@@ -131,6 +156,15 @@ class CompilerArtifactBundleManifestV2(StrictModel):
         }
         if unknown_artifact_ids:
             raise ValueError("v2 section references unknown artifacts")
+        required_kinds = {item.artifact_kind for item in self.artifacts if item.required}
+        missing_kinds = set(self.required_sections) - required_kinds
+        if missing_kinds:
+            raise ValueError("v2 required artifact kind missing")
+        required_section_ids = {item.section_id for item in self.sections if item.required}
+        if set(REQUIRED_BUNDLE_SECTION_IDS) - required_section_ids:
+            raise ValueError("v2 required semantic section missing")
+        if set(self.required_sections) != set(REQUIRED_ARTIFACT_KINDS):
+            raise ValueError("v2 required artifact-kind contract drift")
         bridge_hashes = {
             item.sha256 for item in self.artifacts if item.artifact_kind == "authority_v3_bridge"
         }
@@ -181,6 +215,8 @@ class ConsumerPolicyV2(StrictModel):
     mutable_bundle_hash_allowlist_allowed: Literal[False] = False
     ba10_v1_freeze_sha256: Literal[BA10_V1_FREEZE_SHA256] = BA10_V1_FREEZE_SHA256
     ba11_freeze_sha256: Literal[BA11_FREEZE_SHA256] = BA11_FREEZE_SHA256
+    compiler_identity: CompilerIdentityV2
+    manifest_schema_profile_sha256: str = Field(pattern=SHA256_PATTERN)
     key_policy_sha256: str = Field(pattern=SHA256_PATTERN)
     policy_sha256: str = Field(pattern=SHA256_PATTERN)
 
@@ -212,12 +248,79 @@ class PublicKeyPolicyV2(StrictModel):
         ids = [item.key_id for item in self.keys]
         if ids != sorted(ids) or len(ids) != len(set(ids)):
             raise ValueError("v2 key IDs must be unique and sorted")
+        public_keys = [item.public_key_hex for item in self.keys]
+        if len(public_keys) != len(set(public_keys)):
+            raise ValueError("v2 public keys must not be duplicated across key IDs")
         return self
 
     def verify_self_hash(self) -> None:
         body = self.model_dump(mode="json", exclude={"policy_sha256"})
         if sha256_json(body) != self.policy_sha256:
             raise ValueError("v2 public key policy self-hash mismatch")
+
+
+class TrustRootV2(StrictModel):
+    contract_id: Literal["room16.compiler.v2_trust_root"] = "room16.compiler.v2_trust_root"
+    contract_version: Literal[1] = 1
+    owner: Literal["research_compiler"] = "research_compiler"
+    root_id: Literal["room16.compiler.v2_trust_root@1"] = "room16.compiler.v2_trust_root@1"
+    root_key_id: str = Field(pattern=r"^[a-z][a-z0-9_.:-]*$")
+    root_public_key_hex: str = Field(pattern=r"^[0-9a-f]{64}$")
+    consumer_policy_contract_id: Literal["room16.compiler.consumer_policy_lock"] = (
+        "room16.compiler.consumer_policy_lock"
+    )
+    consumer_policy_contract_version: Literal[2] = 2
+    public_key_policy_contract_id: Literal["room16.compiler.public_key_policy"] = (
+        "room16.compiler.public_key_policy"
+    )
+    public_key_policy_contract_version: Literal[2] = 2
+    artifact_bundle_contract_major: Literal[2] = 2
+    canonicalization_profile: Literal["room16.foundation.canonical_json@1"] = (
+        "room16.foundation.canonical_json@1"
+    )
+    hash_algorithm: Literal["sha256"] = "sha256"
+    ba10_v1_freeze_sha256: Literal[BA10_V1_FREEZE_SHA256] = BA10_V1_FREEZE_SHA256
+    ba11_freeze_sha256: Literal[BA11_FREEZE_SHA256] = BA11_FREEZE_SHA256
+    issued_at_utc: str = Field(pattern=UTC_PATTERN)
+    root_sha256: str = Field(pattern=SHA256_PATTERN)
+
+    def verify_self_hash(self) -> None:
+        body = self.model_dump(mode="json", exclude={"root_sha256"})
+        expected = sha256_json({"domain": self.root_id, "value": body})
+        if expected != self.root_sha256:
+            raise ValueError("v2 trust root self-hash mismatch")
+
+
+class ConsumerPolicyEnvelopeV2(StrictModel):
+    contract_id: Literal["room16.compiler.consumer_policy_envelope"] = (
+        "room16.compiler.consumer_policy_envelope"
+    )
+    contract_version: Literal[2] = 2
+    generation: int = Field(gt=0)
+    previous_envelope_sha256: str | None = Field(default=None, pattern=SHA256_PATTERN)
+    root_id: Literal["room16.compiler.v2_trust_root@1"] = "room16.compiler.v2_trust_root@1"
+    root_key_id: str = Field(pattern=r"^[a-z][a-z0-9_.:-]*$")
+    issued_at_utc: str = Field(pattern=UTC_PATTERN)
+    payload: ConsumerPolicyV2
+    signature_algorithm: Literal["ed25519"] = "ed25519"
+    signature: str = Field(pattern=r"^[0-9a-f]{128}$")
+    envelope_sha256: str = Field(pattern=SHA256_PATTERN)
+
+
+class PublicKeyPolicyEnvelopeV2(StrictModel):
+    contract_id: Literal["room16.compiler.public_key_policy_envelope"] = (
+        "room16.compiler.public_key_policy_envelope"
+    )
+    contract_version: Literal[2] = 2
+    generation: int = Field(gt=0)
+    previous_envelope_sha256: str | None = Field(default=None, pattern=SHA256_PATTERN)
+    root_id: Literal["room16.compiler.v2_trust_root@1"] = "room16.compiler.v2_trust_root@1"
+    root_key_id: str = Field(pattern=r"^[a-z][a-z0-9_.:-]*$")
+    issued_at_utc: str = Field(pattern=UTC_PATTERN)
+    payload: PublicKeyPolicyV2
+    signature_algorithm: Literal["ed25519"] = "ed25519"
+    signature: str = Field(pattern=r"^[0-9a-f]{128}$")
+    envelope_sha256: str = Field(pattern=SHA256_PATTERN)
 
 
 class BundleReceiptV2(StrictModel):

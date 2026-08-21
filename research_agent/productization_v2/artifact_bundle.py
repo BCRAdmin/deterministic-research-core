@@ -21,14 +21,24 @@ from .contracts import (
     CompilerArtifactBundleManifestV2,
     CompatibilityStateV2,
     CompileIdentityV2,
+    ConsumerPolicyEnvelopeV2,
     ConsumerPolicyV2,
     EligibilityStateV2,
     EmitterIdentityV2,
+    PublicKeyPolicyEnvelopeV2,
+    PublicKeyPolicyV2,
+    TrustRootV2,
+)
+from .schema_profile import manifest_schema_profile_v2
+from .trust_root import (
+    CONSUMER_ENVELOPE_PATH,
+    KEY_ENVELOPE_PATH,
+    TRUST_ROOT_PATH,
+    verify_policy_envelope,
 )
 
 BUNDLE_MANIFEST = "BUNDLE_MANIFEST.json"
 CONFIG_ROOT = Path(__file__).resolve().parent / "config"
-POLICY_PATH = CONFIG_ROOT / "consumer_policy_v2.json"
 
 
 class ArtifactBundleV2Error(ValueError):
@@ -48,13 +58,45 @@ def _sha(path: Path) -> str:
     return digest.hexdigest()
 
 
-def load_consumer_policy_v2(path: Path = POLICY_PATH) -> ConsumerPolicyV2:
+def load_trust_root_v2(path: Path = TRUST_ROOT_PATH) -> TrustRootV2:
     try:
-        policy = ConsumerPolicyV2.model_validate(json.loads(path.read_text(encoding="utf-8")))
-        policy.verify_self_hash()
-        return policy
+        root = TrustRootV2.model_validate(json.loads(path.read_text(encoding="utf-8")))
+        root.verify_self_hash()
+        return root
     except Exception as exc:
-        raise ArtifactBundleV2Error("RFC8_POLICY_INVALID", str(exc)) from exc
+        raise ArtifactBundleV2Error("RFC8_R2_TRUST_ROOT_INVALID", str(exc)) from exc
+
+
+def load_consumer_policy_v2(
+    path: Path = CONSUMER_ENVELOPE_PATH,
+    *,
+    root: TrustRootV2 | None = None,
+) -> ConsumerPolicyV2:
+    try:
+        trust_root = root or load_trust_root_v2()
+        envelope = ConsumerPolicyEnvelopeV2.model_validate(
+            json.loads(path.read_text(encoding="utf-8"))
+        )
+        verify_policy_envelope(envelope, root=trust_root)
+        return envelope.payload
+    except Exception as exc:
+        raise ArtifactBundleV2Error("RFC8_R2_CONSUMER_POLICY_INVALID", str(exc)) from exc
+
+
+def load_public_key_policy_v2(
+    path: Path = KEY_ENVELOPE_PATH,
+    *,
+    root: TrustRootV2 | None = None,
+) -> PublicKeyPolicyV2:
+    try:
+        trust_root = root or load_trust_root_v2()
+        envelope = PublicKeyPolicyEnvelopeV2.model_validate(
+            json.loads(path.read_text(encoding="utf-8"))
+        )
+        verify_policy_envelope(envelope, root=trust_root)
+        return envelope.payload
+    except Exception as exc:
+        raise ArtifactBundleV2Error("RFC8_R2_KEY_POLICY_INVALID", str(exc)) from exc
 
 
 def build_migration_bundle_v2(
@@ -217,6 +259,8 @@ def verify_compiler_artifact_bundle_v2(
         or manifest.ba11_freeze_sha256 != policy.ba11_freeze_sha256
         or manifest.compatibility.authority_v3_bridge_direction
         not in policy.allowed_authority_v3_bridge_directions
+        or manifest.compiler_identity != policy.compiler_identity
+        or policy.manifest_schema_profile_sha256 != manifest_schema_profile_v2()["profile_sha256"]
     ):
         raise ArtifactBundleV2Error("RFC8_TRUST_POLICY_MISMATCH")
     if (

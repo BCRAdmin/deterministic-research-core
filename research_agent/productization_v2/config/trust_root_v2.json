@@ -1,0 +1,19 @@
+{
+  "artifact_bundle_contract_major": 2,
+  "ba10_v1_freeze_sha256": "29bc0bf2d00aa22d49fd7bb569cf080cc335778c1773b9e63710ecd61dfebc8e",
+  "ba11_freeze_sha256": "2c0e0e292f2b167e68814e2e2180f9f0823ea8be452be52b95f56db95a4ca1cf",
+  "canonicalization_profile": "room16.foundation.canonical_json@1",
+  "consumer_policy_contract_id": "room16.compiler.consumer_policy_lock",
+  "consumer_policy_contract_version": 2,
+  "contract_id": "room16.compiler.v2_trust_root",
+  "contract_version": 1,
+  "hash_algorithm": "sha256",
+  "issued_at_utc": "2026-08-21T00:00:00Z",
+  "owner": "research_compiler",
+  "public_key_policy_contract_id": "room16.compiler.public_key_policy",
+  "public_key_policy_contract_version": 2,
+  "root_id": "room16.compiler.v2_trust_root@1",
+  "root_key_id": "research.rfc0008.root.2026-08-21",
+  "root_public_key_hex": "621d4a04fb14f322e2cfd57f650532c43f2d4c0d45c0f4d6834f5b9dd14af034",
+  "root_sha256": "56a94fcd6eede746dc2778f05774bc46f80cd50be02cf3302027aab729f8a356"
+}
