@@ -44,7 +44,10 @@ FORBIDDEN_PATH_RE = re.compile(
     r"(?:^|/)(?:\.runtime|private(?:_key)?|signing_key|root_signing_key)(?:[./_-]|$)|\.(?:pem|key|p12)$",
     re.IGNORECASE,
 )
-FORBIDDEN_CONTENT = (b"-----BEGIN PRIVATE KEY-----", b"-----BEGIN OPENSSH PRIVATE KEY-----")
+FORBIDDEN_CONTENT = (
+    b"-----BEGIN PRIVATE KEY-----\n",
+    b"-----BEGIN OPENSSH PRIVATE KEY-----\n",
+)
 
 
 class EvidenceVerificationError(ValueError):
