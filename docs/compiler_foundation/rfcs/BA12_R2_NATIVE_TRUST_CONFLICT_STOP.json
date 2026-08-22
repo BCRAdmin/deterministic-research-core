@@ -1,0 +1,66 @@
+{
+  "bindings": {
+    "consumer_policy_envelope_file_sha256": "1a6c5fd4534f408736a251bc44fabd96f33f31300fc318c3a3b03f9c5791d1e9",
+    "consumer_policy_sha256": "b7e0e23e54c4de22a45e72f8d0e709fcf095a3b571d02d9370c5cdbdcad6e16f",
+    "product_commit": "f6f8a7eec22eef227d40bf538c17fe2e6caf41f7",
+    "product_tree": "f937537284aae8f78ee664bea5092d34ae858184",
+    "product_v2_schema_profile_file_sha256": "31335cc691210083e2c9a67b85689bba4b0408794a1315fe92be8b9bb0c88bc0",
+    "product_v2_verifier_file_sha256": "74c5dec7fb8fa58e3b720138e42f80ccd88fa04bb22836e4ae2354d6d20f5d08",
+    "research_commit_before_stop_evidence": "d131db047e824ffefa61d0008c45f3db3474e657",
+    "research_schema_profile_file_sha256": "31335cc691210083e2c9a67b85689bba4b0408794a1315fe92be8b9bb0c88bc0",
+    "research_tree_before_stop_evidence": "c9dfb1dc01599bddf4f1a52aa07d089244c3402b",
+    "research_v2_contract_file_sha256": "ea0513a82bc44eb572a162727c15d1df9fcc33b52fa68f8c4dcddecfe0d18e89",
+    "research_v2_verifier_file_sha256": "6d60190f03ec1f7c1aa7b6a673a5e12885a6efd34d52c70826aa512844f4687d",
+    "rfc0008_freeze_sha256": "27636f891457a98a790702f8fbba19763e0a8b363978c205c9eca54361a84fb0"
+  },
+  "checks": {
+    "bundle_v2_contract_accepts_source_native_identity": true,
+    "consumer_policy_pins_migration_origin": true,
+    "product_schema_pins_migration_origin": true,
+    "research_product_schema_profiles_byte_identical": true,
+    "research_schema_pins_migration_origin": true,
+    "rfc0008_freeze_present": true,
+    "truthful_native_bundle_rejected_by_frozen_verifier": true
+  },
+  "contract_id": "room16.ba12.native_trust_conflict_stop_evidence@1",
+  "diagnostic_code": "RFC8_TRUST_POLICY_MISMATCH",
+  "foreign_repository_boundary": {
+    "head": "b8da17ea731d014341da2a45ec86af65dce5291a",
+    "path": "/Users/BjornRosinger/Documents/DreamFactory/Utility-Websites/materialbedarf-rechner.de",
+    "preexisting_status": [
+      "?? ops/product-repair-v1/"
+    ],
+    "read_only": true,
+    "tree": "ca79b2022dcba4a3257b9035d225cdc9df7451df",
+    "unchanged": true
+  },
+  "forbidden_actions_preserved": {
+    "ba10_or_ba11_changed": false,
+    "ba12_frozen": false,
+    "deploy": false,
+    "frozen_v2_policy_changed": false,
+    "frozen_v2_verifier_changed": false,
+    "product_changed": false,
+    "publication": false,
+    "release": false
+  },
+  "native_probe": {
+    "compiler_identity_semantic_artifact_origin": "source_native",
+    "compiler_mode": "source_native",
+    "contract_model_validation": "PASS",
+    "frozen_verifier_result": "RFC8_TRUST_POLICY_MISMATCH",
+    "mode": "bundle_native",
+    "native_source_production": true,
+    "source_native_fact_generation": true
+  },
+  "required_rfc_decision": "A new independently accepted trust-policy generation or successor trust root must define and sign a source_native CompilerIdentityV2 lock without weakening the existing migration trust boundary.",
+  "root_cause": "The frozen RFC-0008 Consumer Policy and Research/Product schema profiles pin CompilerIdentityV2.semantic_artifact_origin=frozen_v1_migration. CompilerArtifactBundle@2 permits source_native, but both frozen verifiers require exact equality with the migration-only compiler identity lock.",
+  "schema_version": 1,
+  "status": "STOPPED_RFC_TRIGGER_REQUIRED",
+  "stop_conditions": [
+    2,
+    6,
+    7,
+    8
+  ]
+}

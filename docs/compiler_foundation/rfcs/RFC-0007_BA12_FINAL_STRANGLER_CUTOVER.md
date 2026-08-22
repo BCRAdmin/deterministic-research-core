@@ -1,8 +1,49 @@
 # RFC-0007 — BA12 Final Strangler Cutover
 
-Status: `STOPPED — FROZEN_BOUNDARY_RFC_REQUIRED`
+Status: `STOPPED — RFC0008_NATIVE_IDENTITY_TRUST_LOCK_CONFLICT`
 
-Date: `2026-08-21`
+Date: `2026-08-22`
+
+## 2026-08-22 resume result
+
+RFC-0008 was independently accepted and formally frozen at
+`27636f891457a98a790702f8fbba19763e0a8b363978c205c9eca54361a84fb0`.
+The authorized BA12 resume then reached a new frozen-boundary conflict during
+the first truthful native Bundle@2 probe.
+
+The strict Bundle@2 model accepts the required native state:
+
+```text
+compiler_identity.semantic_artifact_origin=source_native
+mode=bundle_native
+compiler_mode=source_native
+source_native_fact_generation=true
+native_source_production=true
+```
+
+The frozen RFC-0008 Consumer Policy and both frozen Research/Product schema
+profiles instead pin:
+
+```text
+compiler_identity.semantic_artifact_origin=frozen_v1_migration
+```
+
+Both production verifiers require exact equality with that compiler-identity
+lock. The truthful native probe therefore fails with
+`RFC8_TRUST_POLICY_MISMATCH` before artifact or receipt verification. Claiming
+`frozen_v1_migration` for newly generated native semantics would make the
+bundle identity untruthful and is not an allowed workaround.
+
+This triggers BA12 Stop Conditions 2, 6, 7 and 8. No frozen policy, schema,
+verifier, BA10 or BA11 file was changed. Product was not changed. BA12 was not
+self-accepted or frozen, and release/publication/deploy remain false.
+
+Machine evidence:
+`docs/compiler_foundation/rfcs/BA12_R2_NATIVE_TRUST_CONFLICT_STOP.json`.
+
+Required follow-up: an independently accepted policy generation or successor
+trust root must define and sign a source-native `CompilerIdentityV2` lock while
+retaining the existing migration boundary unchanged.
 
 ## Decision
 
