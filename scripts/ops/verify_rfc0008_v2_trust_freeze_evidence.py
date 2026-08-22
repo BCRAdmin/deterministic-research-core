@@ -124,7 +124,11 @@ def verify_package(package: Path) -> dict[str, Any]:
         ):
             raise FreezeEvidenceError("frozen_status")
 
-        private_markers = (b"-----BEGIN PRIVATE KEY-----\n", b"OPENSSH PRIVATE KEY")
+        # Keep the verifier's own source from matching the byte patterns it rejects.
+        private_markers = (
+            b"-----BEGIN " + b"PRIVATE KEY-----\n",
+            b"OPENSSH " + b"PRIVATE KEY",
+        )
         if any(marker in archive.read(name) for name in names for marker in private_markers):
             raise FreezeEvidenceError("private_key_marker")
 
