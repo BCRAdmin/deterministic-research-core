@@ -98,6 +98,23 @@ def product_full(bindings: dict[str, Any]) -> dict[str, Any]:
 
 
 def foreign_state() -> dict[str, Any]:
+    worktree_paths = [
+        Path(line.removeprefix("worktree "))
+        for line in git(FOREIGN, "worktree", "list", "--porcelain").splitlines()
+        if line.startswith("worktree ")
+    ]
+    worktrees = []
+    for worktree in worktree_paths:
+        worktrees.append(
+            {
+                "path": str(worktree),
+                "branch": git(worktree, "branch", "--show-current"),
+                "head": git(worktree, "rev-parse", "HEAD"),
+                "tree": git(worktree, "rev-parse", "HEAD^{tree}"),
+                "status_lines": git(worktree, "status", "--short", "--branch").splitlines(),
+                "read_only_capture": True,
+            }
+        )
     return {
         "path": str(FOREIGN),
         "origin": git(FOREIGN, "remote", "get-url", "origin"),
@@ -105,6 +122,7 @@ def foreign_state() -> dict[str, Any]:
         "head": git(FOREIGN, "rev-parse", "HEAD"),
         "tree": git(FOREIGN, "rev-parse", "HEAD^{tree}"),
         "status_lines": git(FOREIGN, "status", "--short", "--branch").splitlines(),
+        "worktrees": worktrees,
     }
 
 
@@ -188,9 +206,15 @@ def main() -> int:
         matrix_rows.append({**row, "actual": row["expected"], "status": "PASS", "source_node_id": node, "command_receipt": receipt_id, "input_research_tree": bindings["research"]["tree"], "input_product_tree": bindings["product"]["tree"], "evidence_reference": "14_FULL_REGRESSION_RECEIPTS.json" if receipt_id in {item["receipt_id"] for item in receipts} else node})
     matrix = {"contract_id": "room16.rfc0009.acceptance_matrix_executed@1", "row_count": 47, "status": "PASS", "rows": matrix_rows}
 
-    changed_research = git(ROOT, "diff", "--name-only", f"{RESEARCH_BASE}..HEAD").splitlines()
+    all_changed_research = git(ROOT, "diff", "--name-only", f"{RESEARCH_BASE}..HEAD").splitlines()
+    superseded_evidence = [
+        name
+        for name in all_changed_research
+        if name.startswith("outputs/release/ROOM16_RFC0009_BA12_NATIVE_TRUST_EPOCH2_R1_")
+    ]
+    changed_research = [name for name in all_changed_research if name not in superseded_evidence]
     changed_product = git(PRODUCT, "diff", "--name-only", f"{PRODUCT_BASE}..HEAD").splitlines()
-    changed = {"research_base": RESEARCH_BASE, "product_base": PRODUCT_BASE, "research": changed_research, "product": changed_product}
+    changed = {"research_base": RESEARCH_BASE, "product_base": PRODUCT_BASE, "research": changed_research, "product": changed_product, "superseded_evidence_excluded_from_source_payloads": superseded_evidence}
     forbidden = {"research_agent/productization_v2/contracts.py", "research_agent/productization_v2/artifact_bundle.py", "research_agent/productization_v2/trust_root.py", "research_agent/productization_v2/schema_profile.py", "room16-app/server-modules/compiler-artifact-bundle-v2.mjs", "room16-app/server-modules/compiler-artifact-bundle-router.mjs"}
     if forbidden.intersection(changed_research + changed_product): raise SystemExit("STOP Gen1 protected file changed")
 
