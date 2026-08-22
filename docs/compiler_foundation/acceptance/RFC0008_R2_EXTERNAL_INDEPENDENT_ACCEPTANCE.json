@@ -1,0 +1,64 @@
+{
+  "acceptance_receipt_sha256": "d4380998a2b8900be01eed4275578e0a345db9632fcb458e49fc5ab6f6753145",
+  "accepted_freeze_inputs": {
+    "ba10_v1_freeze_sha256": "29bc0bf2d00aa22d49fd7bb569cf080cc335778c1773b9e63710ecd61dfebc8e",
+    "ba11_freeze_sha256": "2c0e0e292f2b167e68814e2e2180f9f0823ea8be452be52b95f56db95a4ca1cf",
+    "consumer_policy_envelope_sha256": "7f16189fdfd6b676fd3cb58acf9c6c51a9a1b66671dbb7c1f76156dffc5cd8c9",
+    "key_policy_envelope_sha256": "fb5fcf6556348d9e8f4af2cf688cdef4e79c3e6a4c5317571c19239c8f43310f",
+    "migration_canaries": {
+      "ABT": {
+        "receipt_file_sha256": "158b1a828cf484a3a010acbcad50caddae7c9ee409c1376433fc5de3187735fd",
+        "v2_bundle_sha256": "31e6c3df68a4ed19ff8dee06d11b9bad9e9283842b7ae1704107648d4569a53c"
+      },
+      "COST": {
+        "receipt_file_sha256": "69d7f9863b475cb2480f72d300161bc5b8c93a12a6a2e4dedd0943555f8e2b56",
+        "v2_bundle_sha256": "b3ae7c395d226d70d9d8d05f71b3b531ff725ff5d7bf78c111dbb16209271e18"
+      },
+      "WM": {
+        "receipt_file_sha256": "a2184472e3d3ef7e68abae0da87a0473dcd945cbe191c1d7449b35bbe937595a",
+        "v2_bundle_sha256": "9a8f03ca93803bf19269b9f58cc64c28e412438eaa8decdc8cd36abbc0232e29"
+      }
+    },
+    "schema_profile_sha256": "2abbedc920bcac4d2470ee1a63e3e258ce7e82c6a9e034d0455330fd6f9b72c3",
+    "trust_root_sha256": "56a94fcd6eede746dc2778f05774bc46f80cd50be02cf3302027aab729f8a356"
+  },
+  "contract_id": "room16.rfc0008.r2.external_independent_acceptance@1",
+  "git_bindings": {
+    "product_implementation_commit": "f6f8a7eec22eef227d40bf538c17fe2e6caf41f7",
+    "product_implementation_tree": "f937537284aae8f78ee664bea5092d34ae858184",
+    "research_evidence_commit": "71cd2fc149367e3d02eba3be1ab501b86c502a1c",
+    "research_evidence_tree": "c1141d2739c79f3ede1320806949cf5a962d9c63",
+    "research_implementation_commit": "939af5294285b591a1584c3f1b3a8dd7bd06f45f",
+    "research_implementation_tree": "ec9686f12934776a944a39ef6929f16af5420c3a"
+  },
+  "independent_checks": {
+    "ba10_freeze_regression": "PASS",
+    "ba11_freeze_regression": "PASS",
+    "full_product_verify_receipt": "PASS",
+    "full_research_regression_receipt": "PASS",
+    "manifest_self_hash_recomputed": "PASS",
+    "payload_closure_78_of_78": "PASS",
+    "pinned_product_trust_root": "PASS",
+    "private_key_absence": "PASS",
+    "r1_regression_matrix_45_of_45": "PASS",
+    "r2_matrix_45_of_45": "PASS",
+    "root_signed_consumer_policy": "PASS",
+    "root_signed_key_policy": "PASS",
+    "standalone_final_package_verifier": "PASS",
+    "strict_compiler_identity_lock": "PASS",
+    "strict_product_schema_parity": "PASS",
+    "v1_v2_router_fail_closed": "PASS",
+    "zip_integrity": "PASS"
+  },
+  "remaining_blocking_findings": 0,
+  "review_date": "2026-08-22",
+  "schema_version": 1,
+  "source_r2": {
+    "bytes": 328711,
+    "filename": "ROOM16_RFC0008_V2_TRUST_MIGRATION_R2_939AF5294285_2026-08-21.zip",
+    "manifest_sha256": "066d84e41e1e2b0753ff3a8c7a34e695458ef9b39ce88d512722abde2c42bde2",
+    "sha256": "130fcf06f2ce9698bdd9ffaba305abf3416b04855c8a505131103a626b612fab",
+    "zip_entries": 79
+  },
+  "verdict": "ACCEPTED"
+}
