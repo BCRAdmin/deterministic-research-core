@@ -1,0 +1,26 @@
+{
+  "allowed_changes": {
+    "compiler_identity.semantic_artifact_origin": [
+      "frozen_v1_migration",
+      "source_native"
+    ],
+    "manifest_schema_profile_sha256": [
+      "2abbedc920bcac4d2470ee1a63e3e258ce7e82c6a9e034d0455330fd6f9b72c3",
+      "3787c243a10817e774ca055b18275bc1386520fe86ef4ee51defadd60f37794f"
+    ],
+    "policy_sha256": [
+      "b7e0e23e54c4de22a45e72f8d0e709fcf095a3b571d02d9370c5cdbdcad6e16f",
+      "a83cb6a109d8f771dcba25c78dbcae9714c3dd93125ff8fe5017b7d97a665a93"
+    ],
+    "trusted_emitter_id": [
+      "room16.compiler_artifact_bundle_builder_v2",
+      "room16.compiler_artifact_bundle_builder_v2_native"
+    ]
+  },
+  "contract_id": "room16.rfc0009.consumer_policy_generation_delta@1",
+  "generation_2_envelope_sha256": "4b21ad3936ccd2ba178c5b3964e3adc34b2ea56e125ec6f8a600e6df3c16ae85",
+  "generation_from": 1,
+  "generation_to": 2,
+  "previous_envelope_sha256": "7f16189fdfd6b676fd3cb58acf9c6c51a9a1b66671dbb7c1f76156dffc5cd8c9",
+  "unchanged_key_policy_sha256": "1527c0ffa87b56d0dd355b5598cbfcd404bec734d6b14c9526867ed3b7d23d49"
+}

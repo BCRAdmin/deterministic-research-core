@@ -1,0 +1,20 @@
+{
+  "ba10_v1_freeze_sha256": "29bc0bf2d00aa22d49fd7bb569cf080cc335778c1773b9e63710ecd61dfebc8e",
+  "ba11_freeze_sha256": "2c0e0e292f2b167e68814e2e2180f9f0823ea8be452be52b95f56db95a4ca1cf",
+  "bundle_sha256": "abc5b3da3a7d280e647103256d9ac4a854c2bbfd556f704205cd0ba9e988e1c0",
+  "compile_identity_sha256": "d579b6e52389ef6fe99280615128ba8c46edaa49e35f68389eb3d1d372a31abe",
+  "compiler_identity_sha256": "d655dd34ffe09000e62db27dc5ff3a37514dea38bf68589a0a88184640756eb4",
+  "contract_id": "room16.compiler_artifact_bundle_receipt",
+  "contract_version": 2,
+  "emitter_identity_sha256": "b9bd4a00e5a294a05f21373782069b33603445ab48ec126f39d60222d2d5d015",
+  "issued_at_utc": "2026-08-22T00:05:00Z",
+  "monotonic_counter": 2,
+  "nonce": "rfc0009.native.probe.0001",
+  "not_after_utc": null,
+  "policy_sha256": "a83cb6a109d8f771dcba25c78dbcae9714c3dd93125ff8fe5017b7d97a665a93",
+  "receipt_id": "rfc0008.rfc0009.native_trust_probe",
+  "receipt_sha256": "ab38c5ae550f1e216425f9a4448e4ee3ab331c3cfe6740b7fda5a907b94126d5",
+  "research_key_id": "research.rfc0008.primary.2026-08-21",
+  "signature": "4d86eec4e01fb487adc6aee283ee625a653c10c23f157ef1da5ef2a08b6c127c37e6f78a62fda77cbc1f9a6d0d52b071d3c31ff87c3fb758f13c4cabea7abb0f",
+  "signature_algorithm": "ed25519"
+}
