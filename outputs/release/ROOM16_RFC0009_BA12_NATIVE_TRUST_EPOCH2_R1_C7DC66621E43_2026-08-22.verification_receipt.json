@@ -1,0 +1,16 @@
+{
+  "ba12_resume_authorized": false,
+  "contract_id": "room16.rfc0009.native_trust_epoch2.evidence_verifier@1",
+  "gen2_envelope_sha256": "4b21ad3936ccd2ba178c5b3964e3adc34b2ea56e125ec6f8a600e6df3c16ae85",
+  "manifest_sha256": "dce07259284c171b7b39562d0a75d50bebb8931dfd68b5d3f6a84a9652b8cac4",
+  "matrix_rows_passed": 47,
+  "package": "ROOM16_RFC0009_BA12_NATIVE_TRUST_EPOCH2_R1_C7DC66621E43_2026-08-22.zip",
+  "package_bytes": 111038,
+  "package_sha256": "42d3513da453176cd8824ed2f1c4930b3c3d3f95b497e6cbddd39107f4af2052",
+  "ready_for_independent_rereview": true,
+  "rfc0009_frozen": false,
+  "rfc0009_implementation_ready": false,
+  "status": "PASS",
+  "trust_root_sha256": "56a94fcd6eede746dc2778f05774bc46f80cd50be02cf3302027aab729f8a356",
+  "zip_entries": 85
+}
