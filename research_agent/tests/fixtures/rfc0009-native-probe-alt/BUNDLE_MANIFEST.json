@@ -346,7 +346,7 @@
   ],
   "ba10_v1_freeze_sha256": "29bc0bf2d00aa22d49fd7bb569cf080cc335778c1773b9e63710ecd61dfebc8e",
   "ba11_freeze_sha256": "2c0e0e292f2b167e68814e2e2180f9f0823ea8be452be52b95f56db95a4ca1cf",
-  "bundle_sha256": "db3ca35752d321d4e2dcdab8d07a55416278b56300a10464865a4a5f4a9e1881",
+  "bundle_sha256": "cd578284744055635f88ffebc8fb89c776a874424b49918d2dbdad9cc7ba23fe",
   "canonicalization_profile": "room16.foundation.canonical_json@1",
   "compatibility": {
     "authority_v3_bridge_direction": "bundle_to_authority_v3_only",
@@ -398,7 +398,7 @@
     "consumer_policy_sha256": "40db3aa183ba5ed7f804626888b45b1d850434e365fded8fc9bd0666566a9c98",
     "emitter_id": "room16.compiler_artifact_bundle_builder_v2_native",
     "emitter_version": "2.1.0-ba12",
-    "implementation_sha256": "c81ff6036b93f4d22266c161bd22572381d9dd6c2653698343206abdc7ffd4a2",
+    "implementation_sha256": "89ea264d5820d483ac1c31e401918fa55845bd3967929bef372a1d4ad647c72f",
     "producer_pass_id": "ba12.l11.emit_native_bundle_v2",
     "schema_sha256": "ea0513a82bc44eb572a162727c15d1df9fcc33b52fa68f8c4dcddecfe0d18e89"
   },

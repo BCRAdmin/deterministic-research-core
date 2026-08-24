@@ -51,6 +51,8 @@ PINNED_GEN1_SCHEMA_SHA256 = "2abbedc920bcac4d2470ee1a63e3e258ce7e82c6a9e034d0455
 NATIVE_EMITTER_ID = "room16.compiler_artifact_bundle_builder_v2_native"
 NATIVE_EMITTER_VERSION = "2.1.0-ba12"
 NATIVE_PRODUCER_PASS_ID = "ba12.l11.emit_native_bundle_v2"
+NATIVE_IMPLEMENTATION_BINDING = "research_signed_bundle_receipt"
+NATIVE_IMPLEMENTATION_SHA256_RULE = "required_64_hex_dynamic"
 
 
 class NativeTrustError(ValueError):
@@ -178,18 +180,21 @@ def load_native_trust() -> dict[str, Any]:
     if native_profile["profile_sha256"] != policy.manifest_schema_profile_sha256:
         raise NativeTrustError("RFC9_NATIVE_SCHEMA_POLICY_BINDING_MISMATCH")
     emitter_lock = native_profile.get("native_emitter_lock", {})
-    expected_emitter = {
+    expected_emitter_lock = {
         "emitter_id": NATIVE_EMITTER_ID,
         "emitter_version": NATIVE_EMITTER_VERSION,
         "producer_pass_id": NATIVE_PRODUCER_PASS_ID,
-        "implementation_sha256": emitter_profile.get("emitter_identity", {}).get(
-            "implementation_sha256"
-        ),
-        "schema_sha256": emitter_profile.get("emitter_identity", {}).get(
+        "schema_sha256": emitter_profile.get("emitter_contract_lock", {}).get(
             "schema_sha256"
         ),
+        "implementation_binding": NATIVE_IMPLEMENTATION_BINDING,
+        "implementation_sha256_rule": NATIVE_IMPLEMENTATION_SHA256_RULE,
     }
-    if emitter_lock != expected_emitter or emitter_profile.get("emitter_identity") != expected_emitter:
+    if (
+        emitter_profile.get("contract_version") != 2
+        or emitter_lock != expected_emitter_lock
+        or emitter_profile.get("emitter_contract_lock") != expected_emitter_lock
+    ):
         raise NativeTrustError("RFC9_NATIVE_EMITTER_BINDING_MISMATCH")
     if policy.trusted_emitter_id != NATIVE_EMITTER_ID:
         raise NativeTrustError("RFC9_NATIVE_EMITTER_POLICY_MISMATCH")
@@ -261,11 +266,20 @@ def verify_native_bundle_v2(
     if manifest["compiler_identity"] != trust["policy"].compiler_identity.model_dump(mode="json"):
         raise NativeTrustError("RFC9_NATIVE_COMPILER_IDENTITY_MISMATCH")
     emitter = manifest["emitter_identity"]
-    expected = {
-        **trust["emitter_profile"]["emitter_identity"],
+    emitter_lock = trust["emitter_profile"]["emitter_contract_lock"]
+    expected_static = {
+        "emitter_id": emitter_lock["emitter_id"],
+        "emitter_version": emitter_lock["emitter_version"],
+        "producer_pass_id": emitter_lock["producer_pass_id"],
+        "schema_sha256": emitter_lock["schema_sha256"],
         "consumer_policy_sha256": trust["policy"].policy_sha256,
     }
-    if emitter != expected:
+    if (
+        any(emitter.get(key) != value for key, value in expected_static.items())
+        or not isinstance(emitter.get("implementation_sha256"), str)
+        or len(emitter["implementation_sha256"]) != 64
+        or any(character not in "0123456789abcdef" for character in emitter["implementation_sha256"])
+    ):
         raise NativeTrustError("RFC9_NATIVE_EMITTER_IDENTITY_MISMATCH")
     compatibility = manifest["compatibility"]
     expected_compatibility = {
@@ -280,7 +294,21 @@ def verify_native_bundle_v2(
     if compatibility != expected_compatibility:
         raise NativeTrustError("RFC9_NATIVE_COMPATIBILITY_INVALID")
     eligibility = manifest["eligibility"]
-    if eligibility["release_ready"] or eligibility["publication_allowed"] or eligibility["deploy_allowed"]:
+    if (
+        eligibility["ba11_frozen"] is not True
+        or eligibility["release_ready"] is not False
+        or eligibility["publication_allowed"] is not False
+        or eligibility["deploy_allowed"] is not False
+        or any(
+            type(eligibility[field]) is not bool
+            for field in (
+                "ba12_cutover_candidate",
+                "renderer_cutover",
+                "renderer_eligible",
+                "compile_allowed",
+            )
+        )
+    ):
         raise NativeTrustError("RFC9_NATIVE_GATE_INVALID")
     for artifact in manifest["artifacts"]:
         relative = Path(artifact["relative_path"])

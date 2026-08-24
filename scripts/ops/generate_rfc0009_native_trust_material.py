@@ -25,7 +25,6 @@ PRODUCT = ROOT.parent / "company-dossier-lab"
 RESEARCH_CONFIG = ROOT / "research_agent/productization_v2/config"
 PRODUCT_CONFIG = PRODUCT / "room16-app/config"
 ROOT_KEY_PATH = ROOT / ".runtime/rfc0008/root_signing_key_ed25519.bin"
-NATIVE_MODULE = ROOT / "research_agent/productization_v2/native_trust.py"
 CONTRACTS = ROOT / "research_agent/productization_v2/contracts.py"
 
 
@@ -52,17 +51,18 @@ def main() -> int:
     if gen1["envelope_sha256"] != "7f16189fdfd6b676fd3cb58acf9c6c51a9a1b66671dbb7c1f76156dffc5cd8c9":
         raise SystemExit("STOP RFC-0008 Gen1 envelope drift")
 
-    emitter_identity = {
+    emitter_contract_lock = {
         "emitter_id": NATIVE_EMITTER_ID,
         "emitter_version": NATIVE_EMITTER_VERSION,
         "producer_pass_id": NATIVE_PRODUCER_PASS_ID,
-        "implementation_sha256": sha_file(NATIVE_MODULE),
         "schema_sha256": sha_file(CONTRACTS),
+        "implementation_binding": "research_signed_bundle_receipt",
+        "implementation_sha256_rule": "required_64_hex_dynamic",
     }
     emitter_body = {
         "contract_id": "room16.compiler.native_emitter_profile",
-        "contract_version": 1,
-        "emitter_identity": emitter_identity,
+        "contract_version": 2,
+        "emitter_contract_lock": emitter_contract_lock,
         "compatibility_lock": {
             "mode": "bundle_native",
             "compiler_mode": "source_native",
@@ -87,7 +87,7 @@ def main() -> int:
         **native_profile_body["compiler_identity_lock"],
         "semantic_artifact_origin": "source_native",
     }
-    native_profile_body["native_emitter_lock"] = emitter_identity
+    native_profile_body["native_emitter_lock"] = emitter_contract_lock
     native_profile = {
         **native_profile_body,
         "profile_sha256": sha256_json(native_profile_body),

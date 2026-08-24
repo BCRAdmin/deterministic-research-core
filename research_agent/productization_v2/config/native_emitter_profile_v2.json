@@ -9,18 +9,19 @@
     "source_native_fact_generation": true
   },
   "contract_id": "room16.compiler.native_emitter_profile",
-  "contract_version": 1,
+  "contract_version": 2,
   "eligibility_lock": {
     "deploy_allowed": false,
     "publication_allowed": false,
     "release_ready": false
   },
-  "emitter_identity": {
+  "emitter_contract_lock": {
     "emitter_id": "room16.compiler_artifact_bundle_builder_v2_native",
     "emitter_version": "2.1.0-ba12",
-    "implementation_sha256": "da98ace2148cd680edd7094382ca58a0a4433347d36da0b63535a246c9e18cee",
+    "implementation_binding": "research_signed_bundle_receipt",
+    "implementation_sha256_rule": "required_64_hex_dynamic",
     "producer_pass_id": "ba12.l11.emit_native_bundle_v2",
     "schema_sha256": "ea0513a82bc44eb572a162727c15d1df9fcc33b52fa68f8c4dcddecfe0d18e89"
   },
-  "profile_sha256": "9208d33b95a035ae7cd0dcffcc6a1c3357cb1209f5bb501ca01eb16b0b6c12e3"
+  "profile_sha256": "a6c7b980e4b8539f1d0dcc4ad2034527e4e35630a4f67f26002a420137bcda72"
 }

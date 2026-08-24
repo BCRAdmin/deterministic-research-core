@@ -16,7 +16,7 @@ RFC-0008 root
 
 Generation 2 is chained to the exact Generation-1 envelope hash. It changes
 only the semantic origin, the hash-pinned native manifest profile, and the
-trusted emitter identity. Foundation, Registry Foundation, Semantic Wave,
+trusted emitter contract. Foundation, Registry Foundation, Semantic Wave,
 BA10, BA11, Bundle major, canonicalization, key policy, release, publication,
 and deploy locks remain unchanged.
 
@@ -31,6 +31,19 @@ The native profile preserves the strict Bundle@2 field model and pins:
 - `mode=bundle_native` and `compiler_mode=source_native`;
 - native source flags true and all legacy semantic input flags false;
 - release, publication, and deploy false.
+
+The R2 compatibility closure separates the frozen emitter contract from the
+implementation identity of a concrete BA12 build. The profile fixes the
+emitter ID/version, producer pass, Bundle@2 schema hash, and the rule
+`required_64_hex_dynamic`. Each bundle still carries an
+`implementation_sha256`; the Research-signed `BundleReceiptV2` binds the full
+emitter identity. Product therefore needs no mutable or static implementation
+allowlist.
+
+`ba12_cutover_candidate`, `renderer_cutover`, `renderer_eligible`, and
+`compile_allowed` remain strict booleans, so later BA12 state transitions are
+representable. RFC-0009 does not set those transitions. `release_ready`,
+`publication_allowed`, and `deploy_allowed` remain hard-false.
 
 The existing leaf receipt key policy is reused byte-identically.
 

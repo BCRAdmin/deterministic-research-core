@@ -129,11 +129,12 @@
   "native_emitter_lock": {
     "emitter_id": "room16.compiler_artifact_bundle_builder_v2_native",
     "emitter_version": "2.1.0-ba12",
-    "implementation_sha256": "da98ace2148cd680edd7094382ca58a0a4433347d36da0b63535a246c9e18cee",
+    "implementation_binding": "research_signed_bundle_receipt",
+    "implementation_sha256_rule": "required_64_hex_dynamic",
     "producer_pass_id": "ba12.l11.emit_native_bundle_v2",
     "schema_sha256": "ea0513a82bc44eb572a162727c15d1df9fcc33b52fa68f8c4dcddecfe0d18e89"
   },
-  "profile_sha256": "3787c243a10817e774ca055b18275bc1386520fe86ef4ee51defadd60f37794f",
+  "profile_sha256": "4586fabce2144bc321800337b10a924d8c344f265a328ee40828ee897ca7ad61",
   "required_artifact_kinds": [
     "compile_state",
     "diagnostics",

@@ -21,6 +21,12 @@ PRODUCT = ROOT.parent / "company-dossier-lab"
 SOURCE = PRODUCT / "room16-app/fixtures/compiler-artifact-bundle-v2-pinned"
 RESEARCH_FIXTURE = ROOT / "research_agent/tests/fixtures/rfc0009-native-probe"
 PRODUCT_FIXTURE = PRODUCT / "room16-app/fixtures/rfc0009-native-probe"
+RESEARCH_FIXTURE_ALT = ROOT / "research_agent/tests/fixtures/rfc0009-native-probe-alt"
+PRODUCT_FIXTURE_ALT = PRODUCT / "room16-app/fixtures/rfc0009-native-probe-alt"
+RESEARCH_FIXTURE_CANDIDATE = ROOT / "research_agent/tests/fixtures/rfc0009-native-probe-candidate"
+PRODUCT_FIXTURE_CANDIDATE = PRODUCT / "room16-app/fixtures/rfc0009-native-probe-candidate"
+RESEARCH_FIXTURE_CUTOVER = ROOT / "research_agent/tests/fixtures/rfc0009-native-probe-cutover"
+PRODUCT_FIXTURE_CUTOVER = PRODUCT / "room16-app/fixtures/rfc0009-native-probe-cutover"
 LEAF_KEY = ROOT / ".runtime/rfc0008/signing_key_ed25519.bin"
 
 
@@ -28,7 +34,15 @@ def write_json(path: Path, value: dict) -> None:
     path.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
-def build(target: Path) -> dict:
+def build(
+    target: Path,
+    *,
+    implementation_label: str,
+    nonce: str,
+    counter: int,
+    ba12_cutover_candidate: bool = False,
+    renderer_cutover: bool = False,
+) -> dict:
     if target.exists():
         shutil.rmtree(target)
     shutil.copytree(SOURCE, target)
@@ -44,8 +58,13 @@ def build(target: Path) -> dict:
         (CONFIG_ROOT / "native_emitter_profile_v2.json").read_text(encoding="utf-8")
     )
     manifest["compiler_identity"]["semantic_artifact_origin"] = "source_native"
+    emitter_lock = emitter_profile["emitter_contract_lock"]
     manifest["emitter_identity"] = {
-        **emitter_profile["emitter_identity"],
+        "emitter_id": emitter_lock["emitter_id"],
+        "emitter_version": emitter_lock["emitter_version"],
+        "producer_pass_id": emitter_lock["producer_pass_id"],
+        "schema_sha256": emitter_lock["schema_sha256"],
+        "implementation_sha256": sha256_json(implementation_label),
         "consumer_policy_sha256": policy["policy_sha256"],
     }
     manifest["compile_identity"].update(
@@ -68,11 +87,11 @@ def build(target: Path) -> dict:
     }
     manifest["eligibility"].update(
         {
-            "ba12_cutover_candidate": False,
+            "ba12_cutover_candidate": ba12_cutover_candidate,
             "deploy_allowed": False,
             "publication_allowed": False,
             "release_ready": False,
-            "renderer_cutover": False,
+            "renderer_cutover": renderer_cutover,
             "renderer_eligible": False,
         }
     )
@@ -127,8 +146,8 @@ def build(target: Path) -> dict:
             "research_key_id": key_policy["keys"][0]["key_id"],
             "issued_at_utc": "2026-08-22T00:05:00Z",
             "not_after_utc": None,
-            "monotonic_counter": 2,
-            "nonce": "rfc0009.native.probe.0001",
+            "monotonic_counter": counter,
+            "nonce": nonce,
             "signature_algorithm": "ed25519",
         },
         signing_key=signing_key,
@@ -138,11 +157,43 @@ def build(target: Path) -> dict:
 
 
 def main() -> int:
-    result = build(RESEARCH_FIXTURE)
-    if PRODUCT_FIXTURE.exists():
-        shutil.rmtree(PRODUCT_FIXTURE)
-    shutil.copytree(RESEARCH_FIXTURE, PRODUCT_FIXTURE)
-    print(json.dumps(result, indent=2, sort_keys=True))
+    primary = build(
+        RESEARCH_FIXTURE,
+        implementation_label="rfc0009-r2-synthetic-native-emitter-a",
+        nonce="rfc0009.native.probe.r2.0001",
+        counter=2,
+    )
+    alternate = build(
+        RESEARCH_FIXTURE_ALT,
+        implementation_label="rfc0009-r2-synthetic-native-emitter-b",
+        nonce="rfc0009.native.probe.r2.0002",
+        counter=3,
+    )
+    candidate = build(
+        RESEARCH_FIXTURE_CANDIDATE,
+        implementation_label="rfc0009-r2-synthetic-native-emitter-a",
+        nonce="rfc0009.native.probe.r2.0003",
+        counter=4,
+        ba12_cutover_candidate=True,
+    )
+    cutover = build(
+        RESEARCH_FIXTURE_CUTOVER,
+        implementation_label="rfc0009-r2-synthetic-native-emitter-a",
+        nonce="rfc0009.native.probe.r2.0004",
+        counter=5,
+        ba12_cutover_candidate=True,
+        renderer_cutover=True,
+    )
+    for source, destination in (
+        (RESEARCH_FIXTURE, PRODUCT_FIXTURE),
+        (RESEARCH_FIXTURE_ALT, PRODUCT_FIXTURE_ALT),
+        (RESEARCH_FIXTURE_CANDIDATE, PRODUCT_FIXTURE_CANDIDATE),
+        (RESEARCH_FIXTURE_CUTOVER, PRODUCT_FIXTURE_CUTOVER),
+    ):
+        if destination.exists():
+            shutil.rmtree(destination)
+        shutil.copytree(source, destination)
+    print(json.dumps({"status": "PASS", "primary": primary, "alternate": alternate, "candidate": candidate, "cutover": cutover}, indent=2, sort_keys=True))
     return 0
 
 
