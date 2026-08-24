@@ -1,0 +1,20 @@
+{
+  "ba12_frozen": false,
+  "ba12_implementation_ready": false,
+  "contract_id": "room16.ba12.r3.live_source_rfc_trigger.evidence_verifier@1",
+  "diagnostic_code": "FROZEN_BA3_LIVE_RECEIPT_TRANSPORT_UNREPRESENTABLE",
+  "manifest_sha256": "e6325cece9fb63b565ce214f304446a68b12c02cae9f956c4e08dd179e084662",
+  "package": "ROOM16_BA12_R3_LIVE_SOURCE_RFC_TRIGGER_9B1FD85F2279_2026-08-24.zip",
+  "package_bytes": 19604,
+  "package_sha256": "07ffee2bea0717cfd5ce1b5ac12707be09168b0364da7be96df1498276879a52",
+  "release_ready": false,
+  "rfc0009_freeze_sha256": "e9c9e6e5e5573961207babd66d7c981504d118ed4d14e87f7d6a8ca4180904b9",
+  "rfc_trigger_required": true,
+  "semantic_wave_freeze_sha256": "62867ad72cd1a99eee482e75087cbe01449faa650d7cf2c535fd494c5fef30f9",
+  "status": "PASS",
+  "stop_conditions": [
+    2,
+    4
+  ],
+  "zip_entries": 18
+}
