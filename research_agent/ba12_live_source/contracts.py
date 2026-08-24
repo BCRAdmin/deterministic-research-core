@@ -134,6 +134,7 @@ class LiveRetrievalReceipt(StrictModel):
     final_locator: str = Field(min_length=1)
     transport: Literal["live_acquisition"] = "live_acquisition"
     http_status_or_provider_status: str = Field(min_length=1, max_length=128)
+    normalized_outcome: Literal["success"] = "success"
     media_type: str = Field(min_length=3, max_length=128)
     payload_sha256: str = Field(pattern=SHA256_PATTERN)
     payload_bytes: int = Field(ge=1)
@@ -211,6 +212,141 @@ class LiveRetrievalReceipt(StrictModel):
         return self
 
 
+class LiveAttemptRecord(StrictModel):
+    """Durable, append-only authority for one provider execution attempt."""
+
+    contract_id: Literal["room16.ba12.live_attempt_record"] = (
+        "room16.ba12.live_attempt_record"
+    )
+    contract_version: Literal[1] = 1
+    request_sha256: str = Field(pattern=SHA256_PATTERN)
+    acquisition_plan_sha256: str = Field(pattern=SHA256_PATTERN)
+    acquisition_id: str = Field(pattern=STABLE_ID_PATTERN)
+    attempt_id: str = Field(pattern=STABLE_ID_PATTERN)
+    provider_id: str = Field(pattern=r"^[a-z][a-z0-9_]{1,31}$")
+    adapter_id: str = Field(pattern=r"^[a-z][a-z0-9_]{1,31}$")
+    adapter_implementation_sha256: str = Field(pattern=SHA256_PATTERN)
+    terminal_state: Literal["prepared_capture", "captured_success", "failed"]
+    source_id_or_null: str | None = Field(
+        default=None, pattern=r"^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+    )
+    source_type_or_null: str | None = Field(
+        default=None, pattern=r"^[a-z][a-z0-9_]{1,63}$"
+    )
+    original_locator_or_null: str | None = None
+    final_locator_or_null: str | None = None
+    raw_status_or_null: str | None = Field(default=None, max_length=128)
+    normalized_outcome: Literal["success", "failure"]
+    media_type_or_null: str | None = Field(default=None, max_length=128)
+    fetched_at_utc_or_null: str | None = None
+    available_at_utc_or_null: str | None = None
+    published_at_utc_or_null: str | None = None
+    filing_date_or_null: str | None = None
+    variable_cost_incurred: bool = False
+    variable_cost_amount_or_null: str | None = Field(
+        default=None, pattern=r"^[0-9]+(\.[0-9]+)?$"
+    )
+    variable_cost_currency_or_null: str | None = Field(
+        default=None, pattern=r"^[A-Z]{3}$"
+    )
+    payload_sha256_or_null: str | None = Field(default=None, pattern=SHA256_PATTERN)
+    payload_bytes_or_null: int | None = Field(default=None, ge=1)
+    capture_artifact_sha256_or_null: str | None = Field(
+        default=None, pattern=SHA256_PATTERN
+    )
+    live_receipt_sha256_or_null: str | None = Field(default=None, pattern=SHA256_PATTERN)
+    failure_class_or_null: Literal[
+        "http_error",
+        "authentication",
+        "authorization",
+        "rate_limited",
+        "provider_error",
+        "not_found",
+        "malformed_response",
+        "timeout",
+        "network_error",
+        "unsupported",
+    ] | None = None
+    failure_code_or_null: str | None = Field(
+        default=None, pattern=r"^[A-Z][A-Z0-9_]{2,127}$"
+    )
+    record_sha256: str = Field(pattern=SHA256_PATTERN)
+
+    @classmethod
+    def create(cls, **values: object) -> "LiveAttemptRecord":
+        body = {
+            "contract_id": "room16.ba12.live_attempt_record",
+            "contract_version": 1,
+            **values,
+        }
+        normalized = cls.model_construct(
+            **body, record_sha256="0" * 64
+        ).model_dump(mode="json")
+        normalized.pop("record_sha256")
+        return cls(
+            **normalized,
+            record_sha256=_domain_hash(
+                "room16.ba12.live_attempt_record@1", normalized
+            ),
+        )
+
+    @model_validator(mode="after")
+    def valid_attempt(self) -> "LiveAttemptRecord":
+        provenance = (
+            self.source_id_or_null,
+            self.source_type_or_null,
+            self.original_locator_or_null,
+            self.final_locator_or_null,
+            self.raw_status_or_null,
+            self.media_type_or_null,
+            self.fetched_at_utc_or_null,
+            self.available_at_utc_or_null,
+            self.payload_sha256_or_null,
+            self.payload_bytes_or_null,
+        )
+        if self.terminal_state in {"prepared_capture", "captured_success"}:
+            if self.normalized_outcome != "success" or any(value is None for value in provenance):
+                raise ValueError("successful/prepared attempt requires complete response provenance")
+            if self.failure_class_or_null is not None or self.failure_code_or_null is not None:
+                raise ValueError("successful/prepared attempt cannot carry failure evidence")
+        if self.terminal_state == "prepared_capture" and (
+            self.capture_artifact_sha256_or_null is not None
+            or self.live_receipt_sha256_or_null is not None
+        ):
+            raise ValueError("prepared attempt cannot claim final authority objects")
+        if self.terminal_state == "captured_success" and (
+            self.capture_artifact_sha256_or_null is None
+            or self.live_receipt_sha256_or_null is None
+        ):
+            raise ValueError("captured attempt requires artifact and receipt hashes")
+        if self.terminal_state == "failed":
+            if (
+                self.normalized_outcome != "failure"
+                or self.failure_class_or_null is None
+                or self.failure_code_or_null is None
+                or self.capture_artifact_sha256_or_null is not None
+                or self.live_receipt_sha256_or_null is not None
+            ):
+                raise ValueError("failed attempt requires failure evidence and no source authority")
+        for field_name in (
+            "fetched_at_utc_or_null",
+            "available_at_utc_or_null",
+            "published_at_utc_or_null",
+        ):
+            value = getattr(self, field_name)
+            if value is not None:
+                _utc_timestamp(value, field_name)
+        if self.filing_date_or_null is not None:
+            date.fromisoformat(self.filing_date_or_null)
+        expected = _domain_hash(
+            "room16.ba12.live_attempt_record@1",
+            _model_body(self, "record_sha256"),
+        )
+        if self.record_sha256 != expected:
+            raise ValueError("live attempt record self-hash mismatch")
+        return self
+
+
 class LiveCaptureBinding(StrictModel):
     contract_id: Literal["room16.ba12.live_capture_binding"] = (
         "room16.ba12.live_capture_binding"
@@ -265,7 +401,10 @@ class LiveCaptureDisposition(StrictModel):
     acquisition_id: str = Field(pattern=STABLE_ID_PATTERN)
     required: bool
     terminal_state: Literal[
-        "captured_bound", "failed_required", "failed_optional_dispositioned"
+        "captured_bound",
+        "captured_unbound",
+        "failed_required",
+        "failed_optional_dispositioned",
     ]
     live_receipt_sha256: str | None = Field(default=None, pattern=SHA256_PATTERN)
     binding_sha256: str | None = Field(default=None, pattern=SHA256_PATTERN)
@@ -276,6 +415,9 @@ class LiveCaptureDisposition(StrictModel):
         if self.terminal_state == "captured_bound":
             if self.live_receipt_sha256 is None or self.binding_sha256 is None or self.failure_code:
                 raise ValueError("captured disposition requires receipt and binding only")
+        elif self.terminal_state == "captured_unbound":
+            if self.live_receipt_sha256 is None or self.binding_sha256 is not None or self.failure_code:
+                raise ValueError("unbound capture requires only a successful live receipt")
         else:
             if self.live_receipt_sha256 or self.binding_sha256 or self.failure_code is None:
                 raise ValueError("failed disposition requires only a failure code")
@@ -308,7 +450,7 @@ class LiveCaptureSet(StrictModel):
     ) -> "LiveCaptureSet":
         expected = tuple(sorted(expected_acquisition_ids))
         ordered = tuple(sorted(dispositions, key=lambda item: item.acquisition_id))
-        eligible = all(item.terminal_state != "failed_required" for item in ordered)
+        eligible = all(item.terminal_state == "captured_bound" for item in ordered)
         body: dict[str, object] = {
             "acquisition_plan_sha256": acquisition_plan_sha256,
             "contract_id": "room16.ba12.live_capture_set",
@@ -329,7 +471,11 @@ class LiveCaptureSet(StrictModel):
             raise ValueError("capture-set collections must be sorted and unique")
         if expected != actual:
             raise ValueError("capture set does not exactly cover expected acquisitions")
-        eligible = all(item.terminal_state != "failed_required" for item in self.dispositions)
+        if any(not item.required for item in self.dispositions):
+            raise ValueError(
+                "RFC-0010 cannot manufacture optionality absent frozen planning authority"
+            )
+        eligible = all(item.terminal_state == "captured_bound" for item in self.dispositions)
         if self.eligible_for_native_compile != eligible:
             raise ValueError("capture-set eligibility is inconsistent")
         expected_hash = _domain_hash(
@@ -338,4 +484,60 @@ class LiveCaptureSet(StrictModel):
         )
         if self.set_sha256 != expected_hash:
             raise ValueError("live capture set self-hash mismatch")
+        return self
+
+
+class LiveRunClosure(StrictModel):
+    """Hash-bound durable index for a completed RFC-0010 acquisition run."""
+
+    contract_id: Literal["room16.ba12.live_run_closure"] = (
+        "room16.ba12.live_run_closure"
+    )
+    contract_version: Literal[1] = 1
+    request_sha256: str = Field(pattern=SHA256_PATTERN)
+    acquisition_plan_sha256: str = Field(pattern=SHA256_PATTERN)
+    expected_acquisition_ids: tuple[str, ...]
+    attempt_record_sha256s: tuple[str, ...]
+    binding_sha256s: tuple[str, ...]
+    capture_set_sha256: str = Field(pattern=SHA256_PATTERN)
+    ba3_source_snapshot_sha256_or_null: str | None = Field(
+        default=None, pattern=SHA256_PATTERN
+    )
+    eligible_for_native_compile: bool
+    closure_sha256: str = Field(pattern=SHA256_PATTERN)
+
+    @classmethod
+    def create(cls, **values: object) -> "LiveRunClosure":
+        body = {
+            "contract_id": "room16.ba12.live_run_closure",
+            "contract_version": 1,
+            **values,
+        }
+        return cls(
+            **body,
+            closure_sha256=_domain_hash("room16.ba12.live_run_closure@1", body),
+        )
+
+    @model_validator(mode="after")
+    def valid_closure(self) -> "LiveRunClosure":
+        if self.expected_acquisition_ids != tuple(sorted(set(self.expected_acquisition_ids))):
+            raise ValueError("run closure acquisition IDs must be sorted and unique")
+        if self.attempt_record_sha256s != tuple(sorted(set(self.attempt_record_sha256s))):
+            raise ValueError("run closure attempt hashes must be sorted and unique")
+        if self.binding_sha256s != tuple(sorted(set(self.binding_sha256s))):
+            raise ValueError("run closure binding hashes must be sorted and unique")
+        if self.eligible_for_native_compile:
+            if (
+                self.ba3_source_snapshot_sha256_or_null is None
+                or len(self.binding_sha256s) != len(self.expected_acquisition_ids)
+            ):
+                raise ValueError("eligible run closure requires complete BA3 binding graph")
+        elif self.ba3_source_snapshot_sha256_or_null is not None or self.binding_sha256s:
+            raise ValueError("ineligible run closure cannot claim a BA3 graph")
+        expected = _domain_hash(
+            "room16.ba12.live_run_closure@1",
+            _model_body(self, "closure_sha256"),
+        )
+        if self.closure_sha256 != expected:
+            raise ValueError("live run closure self-hash mismatch")
         return self

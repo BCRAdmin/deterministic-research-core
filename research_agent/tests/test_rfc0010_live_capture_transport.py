@@ -360,7 +360,9 @@ def test_rfc10_t_022_payload_mismatch_live_vs_ba3_blocks(tmp_path: Path):
     *_, executor, records, result = _bridge(tmp_path, "bse")
     ba3 = result.snapshot.retrieval_receipts[0].model_copy(update={"payload_sha256": "0" * 64})
     tampered_snapshot = result.snapshot.model_copy(update={"retrieval_receipts": (ba3,)})
-    tampered = LiveBridgeResult(tampered_snapshot, result.bindings, result.capture_set)
+    tampered = LiveBridgeResult(
+        tampered_snapshot, result.bindings, result.capture_set, result.closure
+    )
     with pytest.raises(
         LiveCaptureError,
         match="LIVE_CAPTURE_BINDING_MISMATCH|LIVE_BA3_BINDING_MISMATCH",
@@ -372,7 +374,9 @@ def test_rfc10_t_023_provider_source_mismatch_live_vs_ba3_blocks(tmp_path: Path)
     *_, executor, records, result = _bridge(tmp_path, "bse")
     ba3 = result.snapshot.retrieval_receipts[0].model_copy(update={"provider_id": "nasdaq"})
     tampered_snapshot = result.snapshot.model_copy(update={"retrieval_receipts": (ba3,)})
-    tampered = LiveBridgeResult(tampered_snapshot, result.bindings, result.capture_set)
+    tampered = LiveBridgeResult(
+        tampered_snapshot, result.bindings, result.capture_set, result.closure
+    )
     with pytest.raises(LiveCaptureError, match="LIVE_CAPTURE_BINDING_MISMATCH|LIVE_BA3_BINDING_MISMATCH"):
         verify_live_bridge(records=records, result=tampered, capture_store_root=executor.capture_store.root)
 
@@ -380,7 +384,9 @@ def test_rfc10_t_023_provider_source_mismatch_live_vs_ba3_blocks(tmp_path: Path)
 def test_rfc10_t_024_binding_to_different_snapshot_blocks(tmp_path: Path):
     *_, executor, records, result = _bridge(tmp_path, "bse")
     binding = result.bindings[0].model_copy(update={"ba3_source_snapshot_sha256": "0" * 64})
-    tampered = LiveBridgeResult(result.snapshot, (binding,), result.capture_set)
+    tampered = LiveBridgeResult(
+        result.snapshot, (binding,), result.capture_set, result.closure
+    )
     with pytest.raises(LiveCaptureError, match="LIVE_CAPTURE_BINDING_MISMATCH"):
         verify_live_bridge(records=records, result=tampered, capture_store_root=executor.capture_store.root)
 
@@ -482,30 +488,34 @@ def test_rfc10_t_033_crash_after_capture_before_receipt_recovers(tmp_path: Path)
     request, plan = _request_plan("bse")
     executor = LiveCaptureExecutor(tmp_path / "live")
     response = _response("bse")
+    executor.prepare_capture(
+        request=request,
+        plan=plan,
+        acquisition_id="source.bse",
+        attempt_id="attempt.bse.recover",
+        response=response,
+    )
     artifact = executor.capture_store.persist(
         response.payload,
         media_type=response.media_type,
         write_completed_at_utc=response.fetched_at_utc,
     )
     recovered = recover_after_capture(
-        executor=executor,
+        executor=LiveCaptureExecutor(tmp_path / "live"),
         request=request,
         plan=plan,
         acquisition_id="source.bse",
         attempt_id="attempt.bse.recover",
-        response=response,
-        artifact=artifact,
     )
     assert recovered.receipt.capture_artifact_sha256 == artifact.artifact_sha256
 
 
 def test_rfc10_t_034_crash_after_receipt_before_binding_recovers(tmp_path: Path):
-    request, plan, executor, records = _capture_all(tmp_path, "bse")
+    request, plan, executor, _ = _capture_all(tmp_path, "bse")
     result = recover_bridge(
         request=request,
         plan=plan,
-        records=records,
-        capture_store_root=executor.capture_store.root,
+        executor=LiveCaptureExecutor(executor.root),
         snapshot_root=tmp_path / "snapshot",
         staged_at_utc=STAGED_AT,
     )
@@ -513,13 +523,12 @@ def test_rfc10_t_034_crash_after_receipt_before_binding_recovers(tmp_path: Path)
 
 
 def test_rfc10_t_035_crash_after_binding_before_snapshot_completion_recovers(tmp_path: Path):
-    request, plan, executor, records, first = _bridge(tmp_path, "bse")
+    request, plan, executor, _, first = _bridge(tmp_path, "bse")
     (tmp_path / "snapshot/source_snapshot_ir.json").unlink()
     second = recover_bridge(
         request=request,
         plan=plan,
-        records=records,
-        capture_store_root=executor.capture_store.root,
+        executor=LiveCaptureExecutor(executor.root),
         snapshot_root=tmp_path / "snapshot",
         staged_at_utc=STAGED_AT,
     )
@@ -528,14 +537,13 @@ def test_rfc10_t_035_crash_after_binding_before_snapshot_completion_recovers(tmp
 
 
 def test_rfc10_t_036_replay_twice_has_identical_ba3_hashes(tmp_path: Path):
-    request, plan, executor, records = _capture_all(tmp_path, "bse")
+    request, plan, executor, _ = _capture_all(tmp_path, "bse")
     hashes = []
     for name in ("snapshot-a", "snapshot-b"):
         result = recover_bridge(
             request=request,
             plan=plan,
-            records=records,
-            capture_store_root=executor.capture_store.root,
+            executor=LiveCaptureExecutor(executor.root),
             snapshot_root=tmp_path / name,
             staged_at_utc=STAGED_AT,
         )

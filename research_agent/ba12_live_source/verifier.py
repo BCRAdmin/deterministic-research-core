@@ -22,6 +22,8 @@ def verify_live_bridge(
 ) -> dict[str, object]:
     if not result.capture_set.eligible_for_native_compile:
         raise fail("LIVE_CAPTURE_SET_INELIGIBLE", "capture set is not eligible")
+    if result.closure is None or not result.closure.eligible_for_native_compile:
+        raise fail("LIVE_RUN_CLOSURE_MISSING", "durable eligible run closure is missing")
     if result.capture_set.expected_acquisition_ids != tuple(
         sorted(record.receipt.acquisition_id for record in records)
     ):
@@ -37,6 +39,8 @@ def verify_live_bridge(
         payload = store.read_verified(artifact)
         if len(payload) != live.payload_bytes:
             raise fail("LIVE_CAPTURE_PAYLOAD_SIZE_MISMATCH", "live receipt size differs")
+        if live.normalized_outcome != "success":
+            raise fail("LIVE_RECEIPT_OUTCOME_INVALID", "successful receipt lacks success outcome")
         binding = binding_by_id.get(live.acquisition_id)
         ba3 = ba3_by_id.get(live.acquisition_id)
         if binding is None or ba3 is None:
@@ -66,6 +70,14 @@ def verify_live_bridge(
             or ba3.variable_cost_incurred is not False
         ):
             raise fail("LIVE_BA3_BINDING_MISMATCH", "BA3 replay identity is invalid")
+    if (
+        result.closure.capture_set_sha256 != result.capture_set.set_sha256
+        or result.closure.ba3_source_snapshot_sha256_or_null
+        != result.snapshot.snapshot_sha256
+        or result.closure.binding_sha256s
+        != tuple(sorted(item.binding_sha256 for item in result.bindings))
+    ):
+        raise fail("LIVE_RUN_CLOSURE_MISMATCH", "durable closure differs from live graph")
     return {
         "binding_count": len(result.bindings),
         "capture_set_sha256": result.capture_set.set_sha256,

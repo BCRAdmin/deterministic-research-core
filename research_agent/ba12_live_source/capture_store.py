@@ -165,3 +165,21 @@ class ContentAddressedCaptureStore:
         if len(payload) != artifact.byte_length or sha256_bytes(payload) != artifact.content_sha256:
             raise fail("LIVE_CAPTURE_READBACK_MISMATCH", "capture object failed verification")
         return payload
+
+    def load_verified(self, content_sha256: str) -> tuple[LiveCaptureArtifact, bytes]:
+        """Load an artifact and bytes from disk without trusting caller objects."""
+
+        if len(content_sha256) != 64 or any(
+            character not in "0123456789abcdef" for character in content_sha256
+        ):
+            raise fail("LIVE_CAPTURE_HASH_INVALID", "capture content hash is invalid")
+        metadata_path = self.root / "metadata" / f"{content_sha256}.json"
+        if metadata_path.is_symlink() or not metadata_path.is_file():
+            raise fail("LIVE_CAPTURE_METADATA_MISSING", "capture metadata is missing")
+        try:
+            artifact = LiveCaptureArtifact.model_validate(json.loads(metadata_path.read_bytes()))
+        except (json.JSONDecodeError, ValueError) as exc:
+            raise fail("LIVE_CAPTURE_METADATA_INVALID", "capture metadata is invalid") from exc
+        if artifact.content_sha256 != content_sha256:
+            raise fail("LIVE_CAPTURE_METADATA_CONFLICT", "capture metadata hash differs")
+        return artifact, self.read_verified(artifact)

@@ -4,8 +4,11 @@ from __future__ import annotations
 
 import importlib
 import inspect
+import json
 import os
+import socket
 import tempfile
+import urllib.error
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
@@ -22,7 +25,14 @@ from research_agent.semantic_compiler.source_frontend.contracts import (
 )
 
 from .capture_store import ContentAddressedCaptureStore, sha256_bytes
-from .contracts import LiveCaptureArtifact, LiveRetrievalReceipt, fail
+from .attempt_store import LiveAttemptStore
+from .contracts import (
+    LiveAttemptRecord,
+    LiveCaptureArtifact,
+    LiveCaptureError,
+    LiveRetrievalReceipt,
+    fail,
+)
 
 
 @dataclass(frozen=True)
@@ -54,6 +64,67 @@ class LiveCaptureRecord:
     receipt: LiveRetrievalReceipt
 
 
+@dataclass(frozen=True)
+class ProviderStatusClassification:
+    outcome: str
+    failure_class: str | None
+    failure_code: str | None
+
+
+def classify_provider_status(provider_id: str, raw_status: str) -> ProviderStatusClassification:
+    """Fail-closed normalization shared by every live provider adapter."""
+
+    status = raw_status.strip()
+    if not status:
+        return ProviderStatusClassification("failure", "malformed_response", "LIVE_STATUS_EMPTY")
+    if status.isdigit():
+        code = int(status)
+        if 200 <= code < 300:
+            return ProviderStatusClassification("success", None, None)
+        mapped = {
+            401: ("authentication", "LIVE_PROVIDER_AUTHENTICATION"),
+            403: ("authorization", "LIVE_PROVIDER_AUTHORIZATION"),
+            404: ("not_found", "LIVE_PROVIDER_NOT_FOUND"),
+            429: ("rate_limited", "LIVE_PROVIDER_RATE_LIMITED"),
+        }.get(code)
+        failure_class, failure_code = mapped or (
+            "http_error",
+            "LIVE_PROVIDER_REDIRECT" if 300 <= code < 400 else "LIVE_PROVIDER_HTTP_ERROR",
+        )
+        return ProviderStatusClassification("failure", failure_class, failure_code)
+    normalized = status.upper()
+    success_by_provider = {
+        "massive": {"OK", "DELAYED", "SUCCESS"},
+        "sec": {"OK", "SUCCESS"},
+        "nasdaq": {"OK", "SUCCESS"},
+        "bse": {"OK", "SUCCESS"},
+    }
+    if normalized in success_by_provider.get(provider_id, {"OK", "SUCCESS"}):
+        return ProviderStatusClassification("success", None, None)
+    if normalized in {"UNAUTHORIZED", "AUTHENTICATION_FAILED"}:
+        return ProviderStatusClassification("failure", "authentication", "LIVE_PROVIDER_AUTHENTICATION")
+    if normalized in {"FORBIDDEN", "AUTHORIZATION_FAILED"}:
+        return ProviderStatusClassification("failure", "authorization", "LIVE_PROVIDER_AUTHORIZATION")
+    if normalized in {"RATE_LIMITED", "TOO_MANY_REQUESTS"}:
+        return ProviderStatusClassification("failure", "rate_limited", "LIVE_PROVIDER_RATE_LIMITED")
+    if normalized in {"NOT_FOUND", "NO_RESULTS"}:
+        return ProviderStatusClassification("failure", "not_found", "LIVE_PROVIDER_NOT_FOUND")
+    return ProviderStatusClassification("failure", "provider_error", "LIVE_PROVIDER_STATUS_ERROR")
+
+
+def classify_adapter_exception(exc: Exception) -> tuple[str, str]:
+    if isinstance(exc, urllib.error.HTTPError):
+        classified = classify_provider_status("http", str(exc.code))
+        return classified.failure_class or "http_error", classified.failure_code or "LIVE_PROVIDER_HTTP_ERROR"
+    if isinstance(exc, (TimeoutError, socket.timeout)):
+        return "timeout", "LIVE_PROVIDER_TIMEOUT"
+    if isinstance(exc, (urllib.error.URLError, ConnectionError, OSError)):
+        return "network_error", "LIVE_PROVIDER_NETWORK_ERROR"
+    if isinstance(exc, (ValueError, TypeError, json.JSONDecodeError)):
+        return "malformed_response", "LIVE_PROVIDER_MALFORMED_RESPONSE"
+    return "provider_error", "LIVE_PROVIDER_ADAPTER_ERROR"
+
+
 def adapter_implementation_sha256(item: SourceAcquisitionItemIR) -> str:
     descriptor = verify_adapter_implementation(item.provider_id)
     if descriptor["implementation_ref"] != item.implementation_ref:
@@ -75,6 +146,7 @@ class LiveCaptureExecutor:
             raise fail("LIVE_CAPTURE_ROOT_SYMLINK", "live capture execution root is symlinked")
         self.root = root.resolve()
         self.capture_store = ContentAddressedCaptureStore(self.root / "capture_store")
+        self.attempt_store = LiveAttemptStore(self.root / "attempts")
         self.receipt_root = self.root / "receipts"
         self.receipt_root.mkdir(parents=True, exist_ok=True)
         if self.receipt_root.is_symlink():
@@ -105,11 +177,12 @@ class LiveCaptureExecutor:
         request: CompileRequestIR,
         item: SourceAcquisitionItemIR,
         response: ProviderResponse,
-    ) -> bool:
+    ) -> tuple[bool, ProviderStatusClassification]:
         if response.provider_id != item.provider_id:
             raise fail("LIVE_PROVIDER_FALLBACK_FORBIDDEN", "adapter returned another provider")
         if response.source_type not in item.allowed_source_types:
             raise fail("LIVE_SOURCE_TYPE_NOT_ALLOWED", "provider response source type is not planned")
+        classification = classify_provider_status(item.provider_id, response.status)
         provider = get_provider_capability(item.provider_id)
         possible_cost = provider["variableCost"] == "possible"
         approved = item.provider_id in request.policy.approved_paid_provider_ids
@@ -124,7 +197,7 @@ class LiveCaptureExecutor:
             raise fail("LIVE_COST_RECEIPT_INCOMPLETE", "incurred cost lacks amount or currency")
         if not response.payload:
             raise fail("LIVE_CAPTURE_EMPTY", "provider response is empty")
-        return approved
+        return approved, classification
 
     def _receipt_path(self, request_sha256: str, acquisition_id: str, attempt_id: str) -> Path:
         identity = sha256_bytes(
@@ -181,7 +254,12 @@ class LiveCaptureExecutor:
         artifact: LiveCaptureArtifact,
     ) -> LiveCaptureRecord:
         item = self._acquisition(request, plan, acquisition_id)
-        paid_approval = self._validate_response(request, item, response)
+        paid_approval, classification = self._validate_response(request, item, response)
+        if classification.outcome != "success":
+            raise fail(
+                classification.failure_code or "LIVE_PROVIDER_STATUS_ERROR",
+                "provider response status is not successful",
+            )
         if artifact.content_sha256 != sha256_bytes(response.payload) or (
             artifact.byte_length != len(response.payload)
         ) or artifact.media_type != response.media_type:
@@ -200,6 +278,7 @@ class LiveCaptureExecutor:
             original_locator=response.original_locator,
             final_locator=response.final_locator,
             http_status_or_provider_status=response.status,
+            normalized_outcome="success",
             media_type=response.media_type,
             payload_sha256=artifact.content_sha256,
             payload_bytes=artifact.byte_length,
@@ -222,6 +301,232 @@ class LiveCaptureExecutor:
         )
         return LiveCaptureRecord(artifact=artifact, receipt=receipt)
 
+    def _attempt_values(
+        self,
+        *,
+        request: CompileRequestIR,
+        plan: SourceAcquisitionIR,
+        item: SourceAcquisitionItemIR,
+        attempt_id: str,
+    ) -> dict[str, object]:
+        return {
+            "request_sha256": request.request_sha256,
+            "acquisition_plan_sha256": plan.plan_sha256,
+            "acquisition_id": item.acquisition_id,
+            "attempt_id": attempt_id,
+            "provider_id": item.provider_id,
+            "adapter_id": item.adapter_id,
+            "adapter_implementation_sha256": adapter_implementation_sha256(item),
+        }
+
+    def _prepared_attempt(
+        self,
+        *,
+        request: CompileRequestIR,
+        plan: SourceAcquisitionIR,
+        item: SourceAcquisitionItemIR,
+        attempt_id: str,
+        response: ProviderResponse,
+    ) -> LiveAttemptRecord:
+        return LiveAttemptRecord.create(
+            **self._attempt_values(
+                request=request, plan=plan, item=item, attempt_id=attempt_id
+            ),
+            terminal_state="prepared_capture",
+            source_id_or_null=response.source_id,
+            source_type_or_null=response.source_type,
+            original_locator_or_null=response.original_locator,
+            final_locator_or_null=response.final_locator,
+            raw_status_or_null=response.status,
+            normalized_outcome="success",
+            media_type_or_null=response.media_type,
+            fetched_at_utc_or_null=response.fetched_at_utc,
+            available_at_utc_or_null=response.available_at_utc,
+            published_at_utc_or_null=response.published_at_utc_or_null,
+            filing_date_or_null=response.filing_date_or_null,
+            variable_cost_incurred=response.variable_cost_incurred,
+            variable_cost_amount_or_null=response.variable_cost_amount_or_null,
+            variable_cost_currency_or_null=response.variable_cost_currency_or_null,
+            payload_sha256_or_null=sha256_bytes(response.payload),
+            payload_bytes_or_null=len(response.payload),
+        )
+
+    def _failure_attempt(
+        self,
+        *,
+        request: CompileRequestIR,
+        plan: SourceAcquisitionIR,
+        item: SourceAcquisitionItemIR,
+        attempt_id: str,
+        failure_class: str,
+        failure_code: str,
+        response: ProviderResponse | None = None,
+    ) -> LiveAttemptRecord:
+        return LiveAttemptRecord.create(
+            **self._attempt_values(
+                request=request, plan=plan, item=item, attempt_id=attempt_id
+            ),
+            terminal_state="failed",
+            source_id_or_null=response.source_id if response else None,
+            source_type_or_null=response.source_type if response else None,
+            original_locator_or_null=response.original_locator if response else None,
+            final_locator_or_null=response.final_locator if response else None,
+            raw_status_or_null=response.status if response else None,
+            normalized_outcome="failure",
+            media_type_or_null=response.media_type if response else None,
+            fetched_at_utc_or_null=response.fetched_at_utc if response else None,
+            available_at_utc_or_null=response.available_at_utc if response else None,
+            published_at_utc_or_null=response.published_at_utc_or_null if response else None,
+            filing_date_or_null=response.filing_date_or_null if response else None,
+            variable_cost_incurred=response.variable_cost_incurred if response else False,
+            variable_cost_amount_or_null=(response.variable_cost_amount_or_null if response else None),
+            variable_cost_currency_or_null=(response.variable_cost_currency_or_null if response else None),
+            payload_sha256_or_null=None,
+            payload_bytes_or_null=None,
+            failure_class_or_null=failure_class,
+            failure_code_or_null=failure_code,
+        )
+
+    def _success_attempt(
+        self,
+        *,
+        prepared: LiveAttemptRecord,
+        record: LiveCaptureRecord,
+    ) -> LiveAttemptRecord:
+        body = prepared.model_dump(mode="json")
+        for key in ("contract_id", "contract_version", "record_sha256"):
+            body.pop(key)
+        body.update(
+            terminal_state="captured_success",
+            capture_artifact_sha256_or_null=record.artifact.artifact_sha256,
+            live_receipt_sha256_or_null=record.receipt.receipt_sha256,
+        )
+        return LiveAttemptRecord.create(**body)
+
+    def prepare_capture(
+        self,
+        *,
+        request: CompileRequestIR,
+        plan: SourceAcquisitionIR,
+        acquisition_id: str,
+        attempt_id: str,
+        response: ProviderResponse,
+    ) -> LiveAttemptRecord:
+        """Durably bind successful response provenance before storing response bytes."""
+
+        item = self._acquisition(request, plan, acquisition_id)
+        _, classification = self._validate_response(request, item, response)
+        if classification.outcome != "success":
+            raise fail(
+                classification.failure_code or "LIVE_PROVIDER_STATUS_ERROR",
+                "provider response status is not successful",
+            )
+        return self.attempt_store.persist(
+            self._prepared_attempt(
+                request=request,
+                plan=plan,
+                item=item,
+                attempt_id=attempt_id,
+                response=response,
+            )
+        )
+
+    def load_receipt(
+        self, request_sha256: str, acquisition_id: str, attempt_id: str
+    ) -> LiveRetrievalReceipt:
+        path = self._receipt_path(request_sha256, acquisition_id, attempt_id)
+        if path.is_symlink() or not path.is_file():
+            raise fail("LIVE_RECEIPT_MISSING", "durable live receipt is missing")
+        try:
+            receipt = LiveRetrievalReceipt.model_validate(json.loads(path.read_bytes()))
+        except (json.JSONDecodeError, ValueError) as exc:
+            raise fail("LIVE_RECEIPT_INVALID", "durable live receipt failed verification") from exc
+        if (
+            receipt.request_sha256 != request_sha256
+            or receipt.acquisition_id != acquisition_id
+            or receipt.attempt_id != attempt_id
+        ):
+            raise fail("LIVE_RECEIPT_IDENTITY_MISMATCH", "receipt path and identity differ")
+        return receipt
+
+    def load_successful_record(
+        self, *, request_sha256: str, acquisition_id: str, attempt_id: str
+    ) -> LiveCaptureRecord:
+        attempt = self.attempt_store.load(
+            request_sha256=request_sha256,
+            acquisition_id=acquisition_id,
+            attempt_id=attempt_id,
+            terminal_only=True,
+        )
+        if attempt.terminal_state != "captured_success":
+            raise fail("LIVE_ATTEMPT_NOT_SUCCESSFUL", "attempt did not produce source authority")
+        receipt = self.load_receipt(request_sha256, acquisition_id, attempt_id)
+        artifact, _ = self.capture_store.load_verified(receipt.payload_sha256)
+        if (
+            attempt.live_receipt_sha256_or_null != receipt.receipt_sha256
+            or attempt.capture_artifact_sha256_or_null != artifact.artifact_sha256
+            or receipt.capture_artifact_sha256 != artifact.artifact_sha256
+        ):
+            raise fail("LIVE_ATTEMPT_GRAPH_MISMATCH", "attempt, receipt and capture differ")
+        return LiveCaptureRecord(artifact=artifact, receipt=receipt)
+
+    def recover_attempt(
+        self,
+        *,
+        request: CompileRequestIR,
+        plan: SourceAcquisitionIR,
+        acquisition_id: str,
+        attempt_id: str,
+    ) -> LiveCaptureRecord:
+        """Recover solely from persisted prepared/terminal authority and capture bytes."""
+
+        item = self._acquisition(request, plan, acquisition_id)
+        attempt = self.attempt_store.load(
+            request_sha256=request.request_sha256,
+            acquisition_id=acquisition_id,
+            attempt_id=attempt_id,
+        )
+        if attempt.acquisition_plan_sha256 != plan.plan_sha256:
+            raise fail("LIVE_ATTEMPT_PLAN_MISMATCH", "attempt belongs to another plan")
+        if attempt.terminal_state == "captured_success":
+            return self.load_successful_record(
+                request_sha256=request.request_sha256,
+                acquisition_id=acquisition_id,
+                attempt_id=attempt_id,
+            )
+        if attempt.terminal_state == "failed":
+            raise fail("LIVE_ATTEMPT_NOT_SUCCESSFUL", "failed attempt cannot become source evidence")
+        if attempt.payload_sha256_or_null is None:
+            raise fail("LIVE_PREPARED_PAYLOAD_MISSING", "prepared attempt has no payload hash")
+        artifact, payload = self.capture_store.load_verified(attempt.payload_sha256_or_null)
+        response = ProviderResponse(
+            provider_id=attempt.provider_id,
+            source_id=attempt.source_id_or_null or "",
+            source_type=attempt.source_type_or_null or "",
+            original_locator=attempt.original_locator_or_null or "",
+            final_locator=attempt.final_locator_or_null or "",
+            status=attempt.raw_status_or_null or "",
+            media_type=attempt.media_type_or_null or "",
+            payload=payload,
+            fetched_at_utc=attempt.fetched_at_utc_or_null or "",
+            available_at_utc=attempt.available_at_utc_or_null or "",
+            published_at_utc_or_null=attempt.published_at_utc_or_null,
+            filing_date_or_null=attempt.filing_date_or_null,
+            variable_cost_incurred=attempt.variable_cost_incurred,
+            variable_cost_amount_or_null=attempt.variable_cost_amount_or_null,
+            variable_cost_currency_or_null=attempt.variable_cost_currency_or_null,
+        )
+        record = self.finalize_receipt(
+            request=request,
+            plan=plan,
+            acquisition_id=acquisition_id,
+            attempt_id=attempt_id,
+            response=response,
+            artifact=artifact,
+        )
+        self.attempt_store.persist(self._success_attempt(prepared=attempt, record=record))
+        return record
+
     def capture(
         self,
         *,
@@ -232,8 +537,45 @@ class LiveCaptureExecutor:
         adapter: Callable[[], ProviderResponse],
     ) -> LiveCaptureRecord:
         item = self._acquisition(request, plan, acquisition_id)
-        response = adapter()
-        self._validate_response(request, item, response)
+        try:
+            response = adapter()
+        except Exception as exc:
+            failure_class, failure_code = classify_adapter_exception(exc)
+            self.attempt_store.persist(
+                self._failure_attempt(
+                    request=request,
+                    plan=plan,
+                    item=item,
+                    attempt_id=attempt_id,
+                    failure_class=failure_class,
+                    failure_code=failure_code,
+                )
+            )
+            raise fail(failure_code, "provider adapter execution failed") from exc
+        _, classification = self._validate_response(request, item, response)
+        if classification.outcome != "success":
+            self.attempt_store.persist(
+                self._failure_attempt(
+                    request=request,
+                    plan=plan,
+                    item=item,
+                    attempt_id=attempt_id,
+                    response=response,
+                    failure_class=classification.failure_class or "provider_error",
+                    failure_code=classification.failure_code or "LIVE_PROVIDER_STATUS_ERROR",
+                )
+            )
+            raise fail(
+                classification.failure_code or "LIVE_PROVIDER_STATUS_ERROR",
+                "provider response status is not successful",
+            )
+        prepared = self.prepare_capture(
+            request=request,
+            plan=plan,
+            acquisition_id=acquisition_id,
+            attempt_id=attempt_id,
+            response=response,
+        )
         # This is the only call site that receives response.payload.  All later
         # stages receive a verified immutable artifact reference instead.
         artifact = self.capture_store.persist(
@@ -241,7 +583,7 @@ class LiveCaptureExecutor:
             media_type=response.media_type,
             write_completed_at_utc=response.fetched_at_utc,
         )
-        return self.finalize_receipt(
+        record = self.finalize_receipt(
             request=request,
             plan=plan,
             acquisition_id=acquisition_id,
@@ -249,3 +591,5 @@ class LiveCaptureExecutor:
             response=response,
             artifact=artifact,
         )
+        self.attempt_store.persist(self._success_attempt(prepared=prepared, record=record))
+        return record

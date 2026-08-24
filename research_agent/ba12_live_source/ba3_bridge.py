@@ -21,8 +21,11 @@ from .contracts import (
     LiveCaptureBinding,
     LiveCaptureDisposition,
     LiveCaptureSet,
+    LiveRunClosure,
     fail,
 )
+from .attempt_store import LiveAttemptStore
+from .authority_store import LiveAuthorityStore
 from .live_receipt import LiveCaptureRecord
 
 
@@ -31,6 +34,7 @@ class LiveBridgeResult:
     snapshot: SourceSnapshotIR
     bindings: tuple[LiveCaptureBinding, ...]
     capture_set: LiveCaptureSet
+    closure: LiveRunClosure | None = None
 
 
 def _ba3_receipt_hash(receipt: RetrievalReceiptIR) -> str:
@@ -157,8 +161,84 @@ def bridge_capture_set_to_ba3(
         expected_acquisition_ids=tuple(sorted(expected_ids)),
         dispositions=tuple(dispositions),
     )
+    execution_root = capture_store_root.resolve().parent
+    attempts = LiveAttemptStore(execution_root / "attempts").terminal_for_run(
+        request_sha256=request.request_sha256,
+        acquisition_plan_sha256=plan.plan_sha256,
+    )
+    if (
+        tuple(sorted(item.acquisition_id for item in attempts))
+        != tuple(sorted(expected_ids))
+        or any(item.terminal_state != "captured_success" for item in attempts)
+    ):
+        raise fail(
+            "LIVE_RUN_ATTEMPT_COVERAGE",
+            "successful bridge requires one durable successful attempt per acquisition",
+        )
+    closure = LiveAuthorityStore(execution_root / "authority").persist_closed_graph(
+        capture_set=capture_set,
+        attempts=attempts,
+        bindings=tuple(bindings),
+        snapshot=snapshot,
+    )
     return LiveBridgeResult(
         snapshot=snapshot,
         bindings=tuple(bindings),
         capture_set=capture_set,
+        closure=closure,
     )
+
+
+def close_failed_capture_run(
+    *,
+    request: CompileRequestIR,
+    plan: SourceAcquisitionIR,
+    execution_root: Path,
+) -> tuple[LiveCaptureSet, LiveRunClosure]:
+    """Persist a fail-closed run when any required acquisition terminates failed."""
+
+    attempts = LiveAttemptStore(execution_root / "attempts").terminal_for_run(
+        request_sha256=request.request_sha256,
+        acquisition_plan_sha256=plan.plan_sha256,
+    )
+    expected_ids = tuple(item.acquisition_id for item in plan.acquisitions)
+    if tuple(sorted(item.acquisition_id for item in attempts)) != tuple(sorted(expected_ids)):
+        raise fail(
+            "LIVE_RUN_ATTEMPT_COVERAGE",
+            "run closure requires exactly one terminal attempt per planned acquisition",
+        )
+    if not any(item.terminal_state == "failed" for item in attempts):
+        raise fail("LIVE_RUN_FAILURE_REQUIRED", "failed run closure requires a failed attempt")
+    dispositions: list[LiveCaptureDisposition] = []
+    for attempt in sorted(attempts, key=lambda item: item.acquisition_id):
+        if attempt.terminal_state == "failed":
+            dispositions.append(
+                LiveCaptureDisposition(
+                    acquisition_id=attempt.acquisition_id,
+                    required=True,
+                    terminal_state="failed_required",
+                    failure_code=attempt.failure_code_or_null,
+                )
+            )
+        elif attempt.terminal_state == "captured_success":
+            dispositions.append(
+                LiveCaptureDisposition(
+                    acquisition_id=attempt.acquisition_id,
+                    required=True,
+                    terminal_state="captured_unbound",
+                    live_receipt_sha256=attempt.live_receipt_sha256_or_null,
+                )
+            )
+        else:
+            raise fail("LIVE_RUN_NOT_TERMINAL", "prepared attempt cannot close a run")
+    capture_set = LiveCaptureSet.create(
+        request_sha256=request.request_sha256,
+        acquisition_plan_sha256=plan.plan_sha256,
+        expected_acquisition_ids=tuple(sorted(expected_ids)),
+        dispositions=tuple(dispositions),
+    )
+    closure = LiveAuthorityStore(execution_root / "authority").persist_closed_graph(
+        capture_set=capture_set,
+        attempts=attempts,
+    )
+    return capture_set, closure
