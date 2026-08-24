@@ -1,8 +1,47 @@
 # RFC-0007 — BA12 Final Strangler Cutover
 
-Status: `STOPPED — RFC0008_NATIVE_IDENTITY_TRUST_LOCK_CONFLICT`
+Status: `STOPPED — FROZEN_BA3_LIVE_RECEIPT_TRANSPORT_UNREPRESENTABLE`
 
 Date: `2026-08-22`
+
+## 2026-08-24 final-resume result
+
+RFC-0009 R2 was independently accepted and formally frozen at
+`e9c9e6e5e5573961207babd66d7c981504d118ed4d14e87f7d6a8ca4180904b9`.
+The trust conflict documented below is therefore resolved. Phase A and the
+BA12 Wave-0 inventory completed before any BA12 runtime edit.
+
+Wave 1 then reached the next frozen-boundary conflict. The BA12 contract
+requires live provider bytes to be represented truthfully by the frozen BA3
+`RetrievalReceiptIR`. Its frozen `transport` field accepts only
+`offline_replay` and `offline_fixture`; it cannot represent
+`live_acquisition`. The surrounding frozen BA3 models already distinguish
+live acquisition in `CompilePolicyIR.network_mode` and
+`SourceAcquisitionItemIR.retrieval_mode`, so relabelling live bytes as offline
+would contradict the contract rather than provide a valid adapter.
+
+This triggers original BA12 Stop Conditions 2 and 4. The Semantic Compiler
+Wave v1 verifier remains PASS at version lock
+`62867ad72cd1a99eee482e75087cbe01449faa650d7cf2c535fd494c5fef30f9`.
+No BA3–BA9 file, Product file, runtime code, frozen policy, or frozen verifier
+was changed.
+
+Required follow-up: independently approve a versioned additive live-retrieval
+receipt transport contract (or a BA3 contract successor) and bind it into a
+new semantic-wave version without weakening the accepted offline replay
+meaning. BA12 must remain stopped until that contract is accepted and frozen.
+
+```text
+ready_for_independent_rereview=false
+ba12_implementation_ready=false
+ba12_frozen=false
+release_ready_candidate=false
+release_ready=false
+release_authorized=false
+publication_authorized=false
+deploy_authorized=false
+stop_condition=FROZEN_BA3_LIVE_RECEIPT_TRANSPORT_UNREPRESENTABLE
+```
 
 ## 2026-08-22 resume result
 

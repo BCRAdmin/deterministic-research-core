@@ -1,0 +1,42 @@
+{
+  "bindings": {
+    "ba10_freeze_sha256": "29bc0bf2d00aa22d49fd7bb569cf080cc335778c1773b9e63710ecd61dfebc8e",
+    "ba11_freeze_sha256": "2c0e0e292f2b167e68814e2e2180f9f0823ea8be452be52b95f56db95a4ca1cf",
+    "product_commit": "6dc397556a1e66a1b6eb29a1b3070914b0d562ba",
+    "product_tree": "f0a9b323edceb3b41f3141ca077d28b595f7f60f",
+    "research_commit_before_stop_evidence": "6378226cb718650ae3858c8f01ce2e0432847dec",
+    "research_tree_before_stop_evidence": "58036b5d3e713f98c488bbece6e622458305a546",
+    "rfc0008_freeze_sha256": "27636f891457a98a790702f8fbba19763e0a8b363978c205c9eca54361a84fb0",
+    "rfc0009_freeze_sha256": "e9c9e6e5e5573961207babd66d7c981504d118ed4d14e87f7d6a8ca4180904b9",
+    "semantic_wave_freeze_file_sha256": "eb44c7c6eeb1ccf64e54b835dddb35b7e9957c1088a83482a4d04191d2e3b2a8",
+    "semantic_wave_version_lock_sha256": "62867ad72cd1a99eee482e75087cbe01449faa650d7cf2c535fd494c5fef30f9",
+    "source_frontend_contract_file_sha256": "c37dd7847905f9113e5b50af9ba669cebf06f1520c2099de65cb5e4ce16fda2b"
+  },
+  "checks": {
+    "ba12_requires_live_retrieval_receipt": true,
+    "compile_policy_represents_live_acquisition": true,
+    "source_acquisition_item_represents_live_acquisition": true,
+    "retrieval_receipt_rejects_live_acquisition": true,
+    "offline_labels_would_be_untruthful_for_live_bytes": true,
+    "semantic_wave_freeze_pass": true,
+    "rfc0009_freeze_pass": true,
+    "runtime_code_changed": false,
+    "product_changed": false
+  },
+  "contract_id": "room16.ba12.r3.live_source_contract_conflict_stop_evidence@1",
+  "diagnostic_code": "FROZEN_BA3_LIVE_RECEIPT_TRANSPORT_UNREPRESENTABLE",
+  "forbidden_actions_preserved": {
+    "ba3_ba9_changed": false,
+    "ba10_or_ba11_changed": false,
+    "ba12_frozen": false,
+    "deploy": false,
+    "product_changed": false,
+    "publication": false,
+    "release": false
+  },
+  "required_rfc_decision": "Independently approve and freeze a versioned additive live-retrieval receipt transport contract or BA3 successor that represents live_acquisition truthfully while preserving the exact accepted meanings of offline_replay and offline_fixture.",
+  "root_cause": "The frozen BA3 CompilePolicyIR and SourceAcquisitionItemIR represent live_acquisition, but the same frozen wave's RetrievalReceiptIR.transport enum accepts only offline_replay and offline_fixture. BA12 therefore cannot bind actual live provider bytes into the required frozen receipt without either changing a frozen BA3 contract or assigning a false transport label.",
+  "schema_version": 1,
+  "status": "STOPPED_RFC_TRIGGER_REQUIRED",
+  "stop_conditions": [2, 4]
+}

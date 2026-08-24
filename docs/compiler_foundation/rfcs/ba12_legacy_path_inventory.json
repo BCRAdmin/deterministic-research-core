@@ -354,7 +354,17 @@
     ],
     "discovery_active_legacy_semantic_readers": 6,
     "unknown_runtime_reachable_paths": 0,
-    "rfc_blockers_remaining": 0,
+    "rfc_blockers_remaining": 1,
+    "stop_condition": {
+      "code": "FROZEN_BA3_LIVE_RECEIPT_TRANSPORT_UNREPRESENTABLE",
+      "contract": "room16.compiler.retrieval_receipt_ir@1",
+      "required_value": "live_acquisition",
+      "frozen_allowed_values": ["offline_fixture", "offline_replay"],
+      "source_contract_file_sha256": "c37dd7847905f9113e5b50af9ba669cebf06f1520c2099de65cb5e4ce16fda2b",
+      "semantic_wave_version_lock_sha256": "62867ad72cd1a99eee482e75087cbe01449faa650d7cf2c535fd494c5fef30f9",
+      "original_ba12_stop_condition": 4,
+      "new_rfc_required": true
+    },
     "runtime_change_started": false
   },
   "summary": {
@@ -363,7 +373,7 @@
     "cutover_required": 15,
     "path_count": 27,
     "runtime_reachable": 26,
-    "stop_condition": null,
+    "stop_condition": "FROZEN_BA3_LIVE_RECEIPT_TRANSPORT_UNREPRESENTABLE",
     "unknown_runtime_reachable_paths": 0
   }
 }
