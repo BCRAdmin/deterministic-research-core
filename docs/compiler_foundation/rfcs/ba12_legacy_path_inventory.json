@@ -1,14 +1,23 @@
 {
   "contract_id": "room16.ba12.legacy_path_inventory@1",
   "schema_version": 1,
-  "status": "rfc_trigger_complete",
+  "status": "ba12_wave0_inventory_complete",
   "authority_owner": "research_compiler",
   "canonicalization_profile": "room16.foundation.canonical_json@1",
   "generated_for_base": {
-    "product_commit": "fafcdbd3586075b5f4d0b50b3b18c22fb7a2e9e2",
-    "research_commit": "875416e8153ee35e8d68ede916f05adac6e25a03"
+    "product_commit": "6dc397556a1e66a1b6eb29a1b3070914b0d562ba",
+    "product_tree": "f0a9b323edceb3b41f3141ca077d28b595f7f60f",
+    "research_commit": "d972d648c8afe4ddc070c8e94e56fe23e250a21e",
+    "research_tree": "ce50088ed13d42498ec365ffad4e046365f730ba"
   },
-  "scope_rule": "All runtime-reachable source, semantic, report/read, fallback, and operator-gate paths discovered before BA12 edits are classified. Blocked dispositions require an RFC and are not final BA12 dispositions.",
+  "scope_rule": "All runtime-reachable source, semantic, report/read, fallback, and operator-gate paths discovered before BA12 runtime edits are classified. Historical blocked_pending_rfc labels record the original discovery state; wave0_revalidation is the effective post-RFC0009 classification.",
+  "authorization": {
+    "rfc0009_freeze_sha256": "e9c9e6e5e5573961207babd66d7c981504d118ed4d14e87f7d6a8ca4180904b9",
+    "rfc0009_frozen": true,
+    "ba12_resume_authorized": true,
+    "native_trust_contract": "room16.compiler_artifact_bundle@2",
+    "native_policy_generation": 2
+  },
   "paths": [
     {
       "authority_class": "acquisition_executor",
@@ -287,12 +296,74 @@
       "test_refs": ["BA12-T-041", "BA12-T-042"]
     }
   ],
+  "wave0_revalidation": {
+    "effective_dispositions": {
+      "R-LIVE-001": "cutover_required",
+      "R-SEM-001": "cutover_required",
+      "R-NET-001": "native_acquisition_adapter_required",
+      "R-NET-002": "native_acquisition_adapter_required",
+      "R-NET-003": "native_acquisition_adapter_required_with_paid_provider_gate",
+      "R-NET-004": "native_acquisition_adapter_required",
+      "R-BA3-001": "canonical_native_contract",
+      "R-LEG-001": "migration_evidence",
+      "R-LEG-002": "retire_from_canonical_runtime",
+      "R-LEG-003": "retire_from_canonical_runtime",
+      "R-BA10-001": "retain_frozen_migration_emitter_and_add_native_v2_emitter",
+      "R-BA10-002": "retain_frozen_v1_and_use_frozen_rfc0009_v2_contract",
+      "R-BA10-003": "retain_frozen_v1_policy",
+      "P-BA10-001": "retain_frozen_v1_and_route_native_v2_through_epoch2",
+      "P-BA10-002": "retain_frozen_v1_mirror",
+      "P-BA10-003": "retain_frozen_v1_receipts",
+      "P-LEG-001": "archive_read_only_after_cutover",
+      "P-LEG-002": "output_compatibility_view_after_cutover",
+      "P-LEG-003": "canonical_routes_cutover_required",
+      "P-LEG-004": "canonical_ui_cutover_required",
+      "P-RENDER-001": "native_bundle_renderer_required",
+      "P-GATE-001": "retain_non_actioning_operator_gate",
+      "P-GATE-002": "retain_non_actioning_operator_gate"
+    },
+    "additional_runtime_paths": [
+      {
+        "path_id": "R-NET-005",
+        "repository": "BCRAdmin/deterministic-research-core",
+        "path": "research_agent/sources/news/news_fallback_router.py",
+        "symbol_or_route": "news fallback provider routing",
+        "effective_disposition": "native_acquisition_adapter_required_with_explicit_fallback_receipt"
+      },
+      {
+        "path_id": "R-NET-006",
+        "repository": "BCRAdmin/deterministic-research-core",
+        "path": "research_agent/sources/earnings/official_calendar_snapshot.py",
+        "symbol_or_route": "official earnings snapshot acquisition",
+        "effective_disposition": "native_acquisition_adapter_required"
+      },
+      {
+        "path_id": "R-NATIVE-001",
+        "repository": "BCRAdmin/deterministic-research-core",
+        "path": "research_agent/productization_v2/native_trust.py",
+        "symbol_or_route": "verify_native_bundle_v2",
+        "effective_disposition": "frozen_native_trust_boundary"
+      },
+      {
+        "path_id": "P-NATIVE-001",
+        "repository": "BCRAdmin/company-dossier-lab",
+        "path": "room16-app/server-modules/compiler-artifact-bundle-router-epoch2.mjs",
+        "symbol_or_route": "verifyCompilerArtifactBundleEpoch2",
+        "effective_disposition": "canonical_native_bundle_router"
+      }
+    ],
+    "discovery_active_legacy_semantic_readers": 6,
+    "unknown_runtime_reachable_paths": 0,
+    "rfc_blockers_remaining": 0,
+    "runtime_change_started": false
+  },
   "summary": {
     "active_legacy_semantic_readers": 6,
-    "blocked_pending_rfc": 15,
-    "path_count": 23,
-    "runtime_reachable": 22,
-    "stop_condition": "FROZEN_BA10_CONSUMER_BOUNDARY_RFC_REQUIRED",
+    "blocked_pending_rfc": 0,
+    "cutover_required": 15,
+    "path_count": 27,
+    "runtime_reachable": 26,
+    "stop_condition": null,
     "unknown_runtime_reachable_paths": 0
   }
 }
