@@ -1,0 +1,14 @@
+{
+  "ba12_resume_authorized": false,
+  "contract_id": "room16.rfc0010.live_capture_transport.evidence_verifier@1",
+  "manifest_sha256": "b73065b9b6a16bd25af04355052e592a1c6a47f423dc446be82714440d429319",
+  "matrix_rows_passed": 47,
+  "package": "ROOM16_RFC0010_BA12_LIVE_CAPTURE_TRANSPORT_R1_236A308C72E5_2026-08-25.zip",
+  "package_bytes": 65465,
+  "package_sha256": "becceab7ce36e4d9aff48d1098285843fb2affdb0fbdf420d0c800bb6df738a6",
+  "ready_for_independent_rereview": true,
+  "rfc0010_frozen": false,
+  "rfc0010_implementation_ready": false,
+  "status": "PASS",
+  "zip_entries": 27
+}
