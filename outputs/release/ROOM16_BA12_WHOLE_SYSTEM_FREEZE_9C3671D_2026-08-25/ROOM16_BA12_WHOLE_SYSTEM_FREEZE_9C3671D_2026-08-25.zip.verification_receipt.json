@@ -1,0 +1,17 @@
+{
+  "archive": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/outputs/release/ROOM16_BA12_WHOLE_SYSTEM_FREEZE_9C3671D_2026-08-25/ROOM16_BA12_WHOLE_SYSTEM_FREEZE_9C3671D_2026-08-25.zip",
+  "bytes": 74421,
+  "entries": 31,
+  "freeze_sha256": "57749e15714b2888438db19cc9353e899647117f86acf0b5cdc60061eed72144",
+  "manifest_sha256": "8745aed5b2472ad1b9a91cbe082c0b15991287d233013f8a48bf57022108892d",
+  "sha256": "c30f461cd6b4d76f658f431fe13bde20312f0761396c75e6babe38c0145b8ba1",
+  "standalone_verifier": {
+    "contract_id": "room16.ba12.whole_system_freeze.independent_verifier@1",
+    "freeze_sha256": "57749e15714b2888438db19cc9353e899647117f86acf0b5cdc60061eed72144",
+    "manifest_sha256": "8745aed5b2472ad1b9a91cbe082c0b15991287d233013f8a48bf57022108892d",
+    "status": "PASS",
+    "verified_file_count": 30
+  },
+  "status": "PASS",
+  "two_clean_builds_byte_identical": true
+}
