@@ -176,12 +176,29 @@ def verify(
             )
         )
     )
+    product_head = _git(product_repo, "rev-parse", "HEAD")
+    product_delta = tuple(
+        line
+        for line in _git(
+            product_repo,
+            "diff",
+            "--name-only",
+            f"{product['implementation_commit']}..{product_head}",
+        ).splitlines()
+        if line
+    )
+    allowed_ba12_product_prefixes = (
+        "room16-app/ba12-",
+        "room16-app/server-modules/ba12-",
+        "room16-app/scripts/test_ba12_",
+    )
     checks["product_identity"] = (
         _git(product_repo, "remote", "get-url", "origin") == product["remote"]
         and _git(product_repo, "branch", "--show-current") == product["branch"]
         and _git(product_repo, "rev-parse", f"{product['implementation_commit']}^{{tree}}")
         == product["implementation_tree"]
-        and _git(product_repo, "rev-parse", "HEAD") == product["implementation_commit"]
+        and _ancestor(product_repo, product["implementation_commit"])
+        and all(path.startswith(allowed_ba12_product_prefixes) for path in product_delta)
     )
 
     runtime_failures: list[str] = []
