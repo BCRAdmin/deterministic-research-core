@@ -1,6 +1,6 @@
 # RFC-0007 — BA12 Final Strangler Cutover
 
-Status: `AUTHORIZED / IMPLEMENTATION_IN_PROGRESS`
+Status: `IMPLEMENTED / INDEPENDENT_REREVIEW_REQUIRED`
 
 Date: `2026-08-25`
 
@@ -24,6 +24,32 @@ ready_for_independent_rereview=false
 ba12_implementation_ready=false
 ba12_frozen=false
 release_ready_candidate=false
+release_ready=false
+release_authorized=false
+publication_authorized=false
+deploy_authorized=false
+stop_condition=none
+```
+
+## 2026-08-25 implementation result
+
+Waves 1–7 are implemented as an independent-review candidate. The canonical
+BA12 entry point is additive above the unchanged BA10 Product server and
+accepts only Research-signed, RFC-0009 generation-2 Bundle@2 input. Real
+public/free SEC and Nasdaq responses for WM, COST and ABT passed RFC-0010
+capture, frozen BA3 replay, source-native compilation, Research signing and
+Product verification. The 50-row BA12 matrix and 14-row RFC-0010 resume delta
+matrix passed in full; all frozen Foundation, Semantic Wave, BA10, BA11,
+RFC-0008, RFC-0009 and RFC-0010 checks remain PASS.
+
+This result is not an acceptance or freeze. Release, publication and deploy
+remain operator-gated and false.
+
+```text
+ready_for_independent_rereview=true
+ba12_implementation_ready=false
+ba12_frozen=false
+release_ready_candidate=true
 release_ready=false
 release_authorized=false
 publication_authorized=false
