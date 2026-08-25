@@ -1,8 +1,35 @@
 # RFC-0007 — BA12 Final Strangler Cutover
 
-Status: `STOPPED — FROZEN_BA3_LIVE_RECEIPT_TRANSPORT_UNREPRESENTABLE`
+Status: `AUTHORIZED / IMPLEMENTATION_IN_PROGRESS`
 
-Date: `2026-08-22`
+Date: `2026-08-25`
+
+## 2026-08-25 implementation resume
+
+RFC-0010 is independently accepted and frozen at
+`05f46f421f0da768424c125e39cabb86eb88b6c3fde7201d270a71725705ab6c`.
+Its additive live-capture authority truthfully records `live_acquisition`,
+durably freezes the provider bytes, and then bridges those immutable bytes to
+the unchanged frozen BA3 offline-replay representation. RFC-0009 generation 2
+continues to provide the accepted source-native Bundle@2 trust path.
+
+The revalidated Wave-0 inventory has zero unknown runtime-reachable paths and
+zero remaining RFC blockers. BA12 Waves 1–7 are therefore authorized above the
+frozen BA0–BA11, RFC-0008, RFC-0009 and RFC-0010 boundaries. The historical
+stop records below remain preserved as audit history; they are not current
+state.
+
+```text
+ready_for_independent_rereview=false
+ba12_implementation_ready=false
+ba12_frozen=false
+release_ready_candidate=false
+release_ready=false
+release_authorized=false
+publication_authorized=false
+deploy_authorized=false
+stop_condition=none
+```
 
 ## 2026-08-24 final-resume result
 
