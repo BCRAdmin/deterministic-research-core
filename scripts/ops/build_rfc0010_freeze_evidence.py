@@ -288,6 +288,9 @@ def main() -> int:
             changed_paths["deleted"].append(target)
         else:
             changed_paths["modified"].append(target)
+    changed_paths["created"].extend(
+        [output, output.with_suffix(".verification_receipt.json")]
+    )
     command_receipts = [
         freeze_matrix,
         node_collection,
@@ -306,6 +309,17 @@ def main() -> int:
         }
         for item in command_receipts
     ]
+    command_audit.append(
+        {
+            "argv": [
+                ".venv/bin/python",
+                "scripts/ops/build_rfc0010_freeze_evidence.py",
+            ],
+            "cwd": str(ROOT),
+            "mutation_classification": "room16_write",
+            "receipt_id": "rfc0010_freeze_evidence_builder",
+        }
+    )
     command_audit.append(
         {
             "argv": ["node", "server.mjs", "--static", "--port", "4546"],
