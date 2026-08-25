@@ -1,0 +1,16 @@
+{
+  "ba12_resume_authorized": true,
+  "contract_id": "room16.rfc0010.freeze_evidence_verifier@1",
+  "deploy_authorized": false,
+  "freeze_sha256": "05f46f421f0da768424c125e39cabb86eb88b6c3fde7201d270a71725705ab6c",
+  "manifest_sha256": "fccad1f9476b2c7c05e89a2678676da9f3a4e921988493af952c5efd037d51fa",
+  "matrix_rows_passed": 24,
+  "package": "ROOM16_RFC0010_ACCEPTANCE_FREEZE_87DF670F4C53_2026-08-25.zip",
+  "package_bytes": 36879,
+  "package_sha256": "98e63b2d4d2739c0402a7d539dfc17aae30145e8680ac245a0358c59ed2d1267",
+  "publication_authorized": false,
+  "release_authorized": false,
+  "rfc0010_frozen": true,
+  "status": "PASS",
+  "zip_entries": 19
+}
