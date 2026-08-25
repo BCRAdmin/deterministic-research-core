@@ -1,0 +1,89 @@
+{
+  "accepted_on": "2026-08-25",
+  "ba10_freeze_sha256": "29bc0bf2d00aa22d49fd7bb569cf080cc335778c1773b9e63710ecd61dfebc8e",
+  "ba11_freeze_sha256": "2c0e0e292f2b167e68814e2e2180f9f0823ea8be452be52b95f56db95a4ca1cf",
+  "ba12_resume_authorized": true,
+  "canonical_serialization": "utf8-json-sort-keys-compact-separators",
+  "contract_id": "room16.rfc0010.ba12_live_capture_transport_freeze",
+  "deploy_authorized": false,
+  "external_independent_acceptance": {
+    "acceptance_receipt_sha256": "8b14d0f349c640ac8bb8bb42fbcb20012e88f547296cbdf2e389000c5d75e7a3",
+    "file_sha256": "2c4844531633ec717db51ae1785ac2249844b9cee700bfaf423b8b383fda868d",
+    "path": "docs/compiler_foundation/acceptance/RFC0010_R2_EXTERNAL_INDEPENDENT_ACCEPTANCE.json",
+    "verdict": "ACCEPTED"
+  },
+  "foreign_boundary": {
+    "accepted_r2_snapshot_sha256": "56941934c6e8cc7923e0079f35e8bf09a32819d30dbc371ef3299959dd7b355c",
+    "foreign_mutation_commands": [],
+    "previous_stop_sha256": "c3e32493ca669fa61efcef9cf3e73f461c55bdf387b6b192429f9441ff269581"
+  },
+  "freeze_hash_domain": "room16.rfc0010.ba12_live_capture_transport_freeze@1",
+  "freeze_hash_rule": "sha256(utf8(domain) || 0x00 || canonical_json(record_without_freeze_sha256))",
+  "freeze_sha256": "05f46f421f0da768424c125e39cabb86eb88b6c3fde7201d270a71725705ab6c",
+  "frozen_invariants": [
+    "live_bytes_immutable_before_parser",
+    "provider_status_normalized_success_required",
+    "provider_error_payload_never_source_evidence",
+    "required_failure_blocks_native_eligibility",
+    "process_restart_uses_persisted_authority_only",
+    "capture_binding_set_snapshot_graph_hash_verified_on_reload",
+    "actual_adapter_public_methods_normalize_through_capture_boundary",
+    "paid_provider_requires_explicit_approval_and_cost_receipt",
+    "ba3_replay_variable_cost_zero",
+    "ba3_and_semantic_wave_identity_unchanged"
+  ],
+  "git_bindings": {
+    "product": {
+      "branch": "bcr-report-lab-original-trading-flow",
+      "implementation_commit": "6dc397556a1e66a1b6eb29a1b3070914b0d562ba",
+      "implementation_tree": "f0a9b323edceb3b41f3141ca077d28b595f7f60f",
+      "remote": "https://github.com/BCRAdmin/company-dossier-lab.git"
+    },
+    "research": {
+      "branch": "main",
+      "evidence_commit_1": "9a97941b6b01118a5c6d53aee38efdab953e82db",
+      "evidence_commit_2": "70f3e0e60bda0331422ee1a3424952678436dfb6",
+      "evidence_tree_2": "1afd19f83ad93af9dc34bce9847f4f224ac6ffb8",
+      "implementation_commit": "6b2efc3cb2fc82acb0a4eaa3b4e692ad48f52fa5",
+      "implementation_tree": "32970a8daf6057dbc8cb0a9f660401849baaaf11",
+      "remote": "https://github.com/BCRAdmin/deterministic-research-core.git"
+    }
+  },
+  "handoff": {
+    "bytes": 160762,
+    "filename": "ROOM16_RFC0010_ACCEPTANCE_FREEZE_AND_BA12_RESUME_EXECUTION_R1_B3C1F0A161CA_2026-08-25.zip",
+    "manifest_sha256": "777a7607d55ed3bb132d6ddf2cd43fc1833a5c5799e4a05d7cf493d86f27c8dd",
+    "sha256": "b3c1f0a161ca3492777807146247a314d074056bf2feaf61f55c27fe25667a1f",
+    "zip_entries": 17
+  },
+  "publication_authorized": false,
+  "release_authorized": false,
+  "rfc0008_freeze_sha256": "27636f891457a98a790702f8fbba19763e0a8b363978c205c9eca54361a84fb0",
+  "rfc0009_freeze_sha256": "e9c9e6e5e5573961207babd66d7c981504d118ed4d14e87f7d6a8ca4180904b9",
+  "rfc0010_frozen": true,
+  "rfc0010_implementation_ready": true,
+  "rfc0010_independent_rereview": "ACCEPTED",
+  "rfc0010_runtime_files": [
+    {"path": "research_agent/ba12_live_source/__init__.py", "sha256": "315fd07951944079dd10ff7e757c57c33eeb7e90fc3c81b26a11b41538952bbc"},
+    {"path": "research_agent/ba12_live_source/adapter_harness.py", "sha256": "d3e2e5d7f0b69843f5ea78576883e87c055b9891389cf63f316b6aa4039ed104"},
+    {"path": "research_agent/ba12_live_source/attempt_store.py", "sha256": "c12089f9606f59d793d55bd19eeeb199bbb9ed42eede650370c1c4c3eb2cd13e"},
+    {"path": "research_agent/ba12_live_source/authority_store.py", "sha256": "dcc070cf9143bff076e51b7190696ba1d9d415ebe7c02039b18048c0cc72113b"},
+    {"path": "research_agent/ba12_live_source/ba3_bridge.py", "sha256": "486f1ee3e4ba7cd2ddc24165e78e22ff562dc954aac6c15a88d2ccaafda990f3"},
+    {"path": "research_agent/ba12_live_source/capture_store.py", "sha256": "e5c8e55579bd2db546fb220e4898761139cab81211d4beb2e83aff20e9a9b19d"},
+    {"path": "research_agent/ba12_live_source/contracts.py", "sha256": "02fb5c09a6068f6f7d59d867d62feea27282df0ea8a0dc85cef97ae66cbcaa13"},
+    {"path": "research_agent/ba12_live_source/live_receipt.py", "sha256": "52fbdaa97feca277f7de265d38e2bea74ef0b7408963d3713eab265140bcf8ae"},
+    {"path": "research_agent/ba12_live_source/recovery.py", "sha256": "95e1b5c7ad27ac2e694d3e003215f3dbba8b7155fdf2f71f0782baeae841036b"},
+    {"path": "research_agent/ba12_live_source/verifier.py", "sha256": "3946384fb0b406fa6dacc937ceaadc67890045f9015115d8dfd92f9453ee38a4"}
+  ],
+  "schema_version": 1,
+  "semantic_wave_v1_lock": "62867ad72cd1a99eee482e75087cbe01449faa650d7cf2c535fd494c5fef30f9",
+  "source_r2": {
+    "bytes": 89459,
+    "manifest_sha256": "a852c0ad10a0b731a6e75b3d0240026d68626c5412c3392ac91c713964848066",
+    "package_path": "outputs/release/ROOM16_RFC0010_BA12_LIVE_CAPTURE_TRANSPORT_R2_6B2EFC3CB2FC_2026-08-25.zip",
+    "package_sha256": "4aee8c0d0fe2329f21cc3878ac5144352128abfc184e0ae2048e676b53c02b47",
+    "verifier_path": "scripts/ops/verify_rfc0010_r2_evidence.py",
+    "zip_entries": 30
+  },
+  "status": "accepted_frozen"
+}

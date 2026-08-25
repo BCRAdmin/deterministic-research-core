@@ -1,6 +1,6 @@
 # RFC-0010 — BA12 Live Capture Transport
 
-Status: `ACCEPTED_FOR_IMPLEMENTATION`
+Status: `ACCEPTED / FROZEN`
 
 ## Decision
 
@@ -129,16 +129,16 @@ after the unchanged Source Snapshot enters frozen BA4–BA9.
 ## Current authorization state
 
 ```text
-ready_for_independent_rereview=true
-rfc0010_implementation_ready=false
-rfc0010_frozen=false
-ba12_resume_authorized=false
+ready_for_independent_rereview=false
+rfc0010_implementation_ready=true
+rfc0010_frozen=true
+ba12_resume_authorized=true
 ba12_implementation_ready=false
 release_authorized=false
 publication_authorized=false
 deploy_authorized=false
 ```
 
-RFC-0010 must pass independent acceptance and a separate freeze before BA12 may
-resume. This implementation task performs no BA12 canonical cutover and no
-Product runtime change.
+RFC-0010 passed independent acceptance and is frozen. BA12 resume is authorized
+under the separately gated RFC-0007 cutover contract. This freeze does not
+authorize release, publication or deploy.

@@ -1,0 +1,50 @@
+{
+  "acceptance_receipt_sha256": "8b14d0f349c640ac8bb8bb42fbcb20012e88f547296cbdf2e389000c5d75e7a3",
+  "boundary": {
+    "foreign_mutation_commands": [],
+    "previous_stop_sha256": "c3e32493ca669fa61efcef9cf3e73f461c55bdf387b6b192429f9441ff269581",
+    "snapshot_sha256": "56941934c6e8cc7923e0079f35e8bf09a32819d30dbc371ef3299959dd7b355c"
+  },
+  "contract_id": "room16.rfc0010.r2.external_independent_acceptance@1",
+  "implementation": {
+    "current_research_tree": "1afd19f83ad93af9dc34bce9847f4f224ac6ffb8",
+    "evidence_commit_1": "9a97941b6b01118a5c6d53aee38efdab953e82db",
+    "evidence_commit_2": "70f3e0e60bda0331422ee1a3424952678436dfb6",
+    "product_commit": "6dc397556a1e66a1b6eb29a1b3070914b0d562ba",
+    "product_tree": "f0a9b323edceb3b41f3141ca077d28b595f7f60f",
+    "research_commit": "6b2efc3cb2fc82acb0a4eaa3b4e692ad48f52fa5",
+    "research_tree": "32970a8daf6057dbc8cb0a9f660401849baaaf11"
+  },
+  "independent_checks": {
+    "29_payload_hashes": "PASS",
+    "actual_adapter_method_harness_source_review": "PASS",
+    "ba10_freeze": "PASS",
+    "ba11_freeze": "PASS",
+    "durable_restart_recovery_source_review": "PASS",
+    "foreign_boundary_before_pre_push_after_equal": "PASS",
+    "full_product_verification_receipt": "PASS",
+    "full_research_regression_receipt": "PASS",
+    "manifest_self_hash_recomputed": "PASS",
+    "persisted_binding_set_snapshot_graph_source_review": "PASS",
+    "product_unchanged": "PASS",
+    "provider_error_status_fail_closed_source_review": "PASS",
+    "r1_regression_47_of_47": "PASS",
+    "r2_matrix_37_of_37": "PASS",
+    "rfc0008_freeze": "PASS",
+    "rfc0009_freeze": "PASS",
+    "semantic_wave_freeze": "PASS",
+    "standalone_final_package_verifier_executed": "PASS",
+    "zip_integrity": "PASS"
+  },
+  "remaining_blocking_findings": 0,
+  "review_date": "2026-08-25",
+  "schema_version": 1,
+  "source_package": {
+    "bytes": 89459,
+    "entries": 30,
+    "filename": "ROOM16_RFC0010_BA12_LIVE_CAPTURE_TRANSPORT_R2_6B2EFC3CB2FC_2026-08-25.zip",
+    "manifest_sha256": "a852c0ad10a0b731a6e75b3d0240026d68626c5412c3392ac91c713964848066",
+    "sha256": "4aee8c0d0fe2329f21cc3878ac5144352128abfc184e0ae2048e676b53c02b47"
+  },
+  "verdict": "ACCEPTED"
+}
