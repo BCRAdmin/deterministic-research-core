@@ -1,8 +1,41 @@
 # RFC-0007 — BA12 Final Strangler Cutover
 
-Status: `R5_IMPLEMENTED / INDEPENDENT_REREVIEW_REQUIRED`
+Status: `ACCEPTED / FROZEN`
 
 Date: `2026-08-25`
+
+## 2026-08-25 whole-system acceptance and freeze
+
+The external independent R5 verdict is `ACCEPTED` with zero blocking findings.
+The accepted Research implementation/evidence identities are
+`a92c6d9dcaf9a53f5e20a92898d0c9983b9e35de` and
+`ab06096f04573df6e1ddf6913ff864d6f796c208`; the accepted Product identity is
+`ed86bb841aab88d878266cf8ed498eabc6fa9029`.
+
+All 30 whole-system freeze rows, the R5 33-row matrix, R4 50-row BA12 matrix,
+RFC-0010 14-row delta matrix, full regressions, prior freezes, dependency
+audits and Boundary Gate v2 are required to remain PASS. The freeze changes no
+accepted Product runtime/source/config and no accepted BA12 Research runtime,
+compiler or live-source implementation.
+
+```text
+ready_for_independent_rereview=false
+ba12_independent_rereview=ACCEPTED
+ba12_implementation_ready=true
+ba12_frozen=true
+ba0_ba12_rebuild_complete=true
+release_ready_candidate=false
+release_ready=true
+release_authorized=false
+publication_authorized=false
+deploy_authorized=false
+commerce_authorized=false
+stop_condition=none
+```
+
+The architectural roadmap is closed at BA12. Future operational activation
+requires separate explicit authorization; future architectural changes require
+a new change/RFC decision.
 
 ## 2026-08-25 R5 Product runtime activation closure
 

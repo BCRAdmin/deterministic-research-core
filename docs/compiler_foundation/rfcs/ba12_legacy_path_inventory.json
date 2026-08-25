@@ -1,7 +1,7 @@
 {
   "contract_id": "room16.ba12.legacy_path_inventory@1",
   "schema_version": 1,
-  "status": "ba12_r5_runtime_activation_candidate",
+  "status": "ba12_accepted_frozen",
   "authority_owner": "research_compiler",
   "canonicalization_profile": "room16.foundation.canonical_json@1",
   "generated_for_base": {
@@ -389,7 +389,7 @@
     "normal_launcher_targets_legacy_server": false,
     "release_publication_deploy_commerce_authorized": false,
     "static_ui_serving": true,
-    "status": "independent_rereview_required",
+    "status": "accepted_frozen",
     "trust_epoch": "rfc0009_native_gen2",
     "vite_ui_serving": true
   },

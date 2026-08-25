@@ -1,0 +1,53 @@
+{
+  "acceptance_receipt_sha256": "56dec69c3aaa6ed9785a850c1d11e3eabbe7178864b10a285b263e22c617c59d",
+  "blocking_findings": 0,
+  "closure_policy": "Only a reproducible security/correctness regression may reopen BA12 before freeze. Evidence-only or noncritical observations become Known Limits.",
+  "contract_id": "room16.ba12.r5.external_independent_acceptance@1",
+  "git_bindings": {
+    "product_implementation_commit": "ed86bb841aab88d878266cf8ed498eabc6fa9029",
+    "product_implementation_tree": "a382d9c096825910b5e0e8865414ea232b95bd40",
+    "research_evidence_commit": "ab06096f04573df6e1ddf6913ff864d6f796c208",
+    "research_evidence_tree": "e5b5fb95cc4d4af3704cb7a4fed546b13803e441",
+    "research_implementation_commit": "a92c6d9dcaf9a53f5e20a92898d0c9983b9e35de",
+    "research_implementation_tree": "5c216edba48a5043cb8f981f68d33e4e5725ec86"
+  },
+  "independent_checks": {
+    "abt_native_runtime_reverify": "PASS",
+    "all_foundation_and_freeze_gates": "PASS",
+    "all_manifest_payload_hashes": "PASS",
+    "archive_runtime_acknowledgement_gated": "PASS",
+    "archive_runtime_loopback_only": "PASS",
+    "boundary_gate_v2_causal_non_interference": "PASS",
+    "canonical_legacy_semantic_readers_zero": "PASS",
+    "canonical_runtime_count_one": "PASS",
+    "cost_native_runtime_reverify": "PASS",
+    "full_product_verify_build_lint": "PASS",
+    "full_research_regression": "PASS",
+    "legacy_fallback_edges_zero": "PASS",
+    "manifest_self_hash_recomputed": "PASS",
+    "npm_production_audit_zero_vulnerabilities": "PASS",
+    "product_default_dev_native": "PASS",
+    "product_default_start_native": "PASS",
+    "python_dependency_audit_zero_known_vulnerabilities": "PASS",
+    "r4_ba12_matrix_50_of_50": "PASS",
+    "r4_rfc0010_delta_14_of_14": "PASS",
+    "r5_matrix_33_of_33": "PASS",
+    "release_publication_deploy_false": "PASS",
+    "standalone_package_verifier_executed": "PASS",
+    "static_ui_runtime": "PASS",
+    "vite_dev_runtime": "PASS",
+    "wm_native_runtime_reverify": "PASS",
+    "zip_integrity": "PASS"
+  },
+  "review_date": "2026-08-25",
+  "schema_version": 1,
+  "source_package": {
+    "bytes": 105780,
+    "entries": 45,
+    "filename": "ROOM16_BA12_FINAL_STRANGLER_CUTOVER_R5_A92C6D9_2026-08-25.zip",
+    "manifest_sha256": "eac7b3b2f50b7e623e5424dd6616dbf5544861c1a18d6bfe05352ef4c4602fb7",
+    "sha256": "5a55fa85671e1513b4f612b0e9ef14019cec68488166b638d98aa8305d9b28de",
+    "verified_payload_count": 44
+  },
+  "verdict": "ACCEPTED"
+}

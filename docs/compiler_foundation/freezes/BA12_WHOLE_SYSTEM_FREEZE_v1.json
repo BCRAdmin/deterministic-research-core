@@ -1,0 +1,91 @@
+{
+  "accepted_on": "2026-08-25",
+  "ba0_ba12_rebuild_complete": true,
+  "ba10_freeze_sha256": "29bc0bf2d00aa22d49fd7bb569cf080cc335778c1773b9e63710ecd61dfebc8e",
+  "ba11_freeze_sha256": "2c0e0e292f2b167e68814e2e2180f9f0823ea8be452be52b95f56db95a4ca1cf",
+  "ba12_frozen": true,
+  "ba12_implementation_ready": true,
+  "ba12_independent_rereview": "ACCEPTED",
+  "canonical_architecture": {
+    "authority_v3_semantic_input": false,
+    "canonical_legacy_semantic_readers": 0,
+    "canonical_runtime": "room16-app/ba12-native-server.mjs",
+    "canonical_runtime_count": 1,
+    "canonical_semantic_authority": "native_bundle_v2",
+    "legacy_fallback_edges": 0,
+    "legacy_semantic_input": false,
+    "renderer_cutover": true
+  },
+  "canonical_serialization": "utf8-json-sort-keys-compact-separators",
+  "commerce_authorized": false,
+  "contract_id": "room16.ba12.whole_system_freeze",
+  "deploy_authorized": false,
+  "external_communication_authorized": false,
+  "freeze_hash_domain": "room16.ba12.whole_system_freeze@1",
+  "freeze_hash_rule": "sha256(utf8(domain) || 0x00 || canonical_json(record_without_freeze_sha256))",
+  "freeze_sha256": "57749e15714b2888438db19cc9353e899647117f86acf0b5cdc60061eed72144",
+  "git_bindings": {
+    "product": {
+      "branch": "bcr-report-lab-original-trading-flow",
+      "implementation_commit": "ed86bb841aab88d878266cf8ed498eabc6fa9029",
+      "implementation_tree": "a382d9c096825910b5e0e8865414ea232b95bd40",
+      "remote": "https://github.com/BCRAdmin/company-dossier-lab.git"
+    },
+    "research": {
+      "branch": "main",
+      "evidence_commit": "ab06096f04573df6e1ddf6913ff864d6f796c208",
+      "evidence_tree": "e5b5fb95cc4d4af3704cb7a4fed546b13803e441",
+      "implementation_commit": "a92c6d9dcaf9a53f5e20a92898d0c9983b9e35de",
+      "implementation_tree": "5c216edba48a5043cb8f981f68d33e4e5725ec86",
+      "remote": "https://github.com/BCRAdmin/deterministic-research-core.git"
+    }
+  },
+  "handoff": {
+    "bytes": 113501,
+    "declared_manifest_sha256": "5ac99d45e64af983cbc71e727e3c291f8fbb37e92caabc02ad473e246dcf032c",
+    "filename": "ROOM16_BA12_WHOLE_SYSTEM_ACCEPTANCE_FREEZE_EXECUTION_R1_CB3CF2FA346A_2026-08-25.zip",
+    "manifest_raw_sha256": "6e1c4699e9fdc46843a64510a84c7b0ad2fc39784a364c2fbefda16a0787a3a3",
+    "sha256": "cb3cf2fa346ac542bba7dc0516e70109fced024484fa042054777bfa5be6431c",
+    "zip_entries": 12
+  },
+  "independent_acceptance": {
+    "acceptance_receipt_sha256": "56dec69c3aaa6ed9785a850c1d11e3eabbe7178864b10a285b263e22c617c59d",
+    "file_sha256": "6c41d5248aced0dae0d9a845595b495948d490a9183535819fdfbc6380649c78",
+    "path": "docs/compiler_foundation/acceptance/BA12_R5_EXTERNAL_INDEPENDENT_ACCEPTANCE.json",
+    "verdict": "ACCEPTED"
+  },
+  "payment_authorized": false,
+  "publication_authorized": false,
+  "public_member_visibility_authorized": false,
+  "release_authorized": false,
+  "release_ready": true,
+  "rfc0008_freeze_sha256": "27636f891457a98a790702f8fbba19763e0a8b363978c205c9eca54361a84fb0",
+  "rfc0009_freeze_sha256": "e9c9e6e5e5573961207babd66d7c981504d118ed4d14e87f7d6a8ca4180904b9",
+  "rfc0010_freeze_sha256": "05f46f421f0da768424c125e39cabb86eb88b6c3fde7201d270a71725705ab6c",
+  "r5_package": {
+    "bytes": 105780,
+    "manifest_sha256": "eac7b3b2f50b7e623e5424dd6616dbf5544861c1a18d6bfe05352ef4c4602fb7",
+    "path": "outputs/release/ROOM16_BA12_FINAL_STRANGLER_CUTOVER_R5_A92C6D9_2026-08-25/ROOM16_BA12_FINAL_STRANGLER_CUTOVER_R5_A92C6D9_2026-08-25.zip",
+    "sha256": "5a55fa85671e1513b4f612b0e9ef14019cec68488166b638d98aa8305d9b28de",
+    "verified_payload_count": 44,
+    "zip_entries": 45
+  },
+  "roadmap": "BA0-BA12",
+  "runtime_protection": {
+    "accepted_product_commit": "ed86bb841aab88d878266cf8ed498eabc6fa9029",
+    "accepted_research_implementation_commit": "a92c6d9dcaf9a53f5e20a92898d0c9983b9e35de",
+    "product_pathspec": [
+      "room16-app"
+    ],
+    "research_pathspec": [
+      "research_agent/ba12_live_source",
+      "research_agent/ba12_native",
+      "research_agent/productization",
+      "research_agent/productization_v2",
+      "research_agent/semantic_compiler"
+    ]
+  },
+  "schema_version": 1,
+  "semantic_wave_v1_lock": "62867ad72cd1a99eee482e75087cbe01449faa650d7cf2c535fd494c5fef30f9",
+  "status": "accepted_frozen"
+}
