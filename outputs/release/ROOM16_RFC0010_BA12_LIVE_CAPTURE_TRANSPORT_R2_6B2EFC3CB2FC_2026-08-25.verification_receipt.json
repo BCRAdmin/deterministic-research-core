@@ -1,0 +1,16 @@
+{
+  "ba12_resume_authorized": false,
+  "boundary_snapshot_sha256": "56941934c6e8cc7923e0079f35e8bf09a32819d30dbc371ef3299959dd7b355c",
+  "contract_id": "room16.rfc0010.r2_boundary_finalization_verifier@1",
+  "manifest_sha256": "3d92b4f06a1edcf5e08fbf1b87050d6f22ab9cd26993dfdfa437625bc5c0583f",
+  "matrix_rows_passed": 37,
+  "package": "ROOM16_RFC0010_BA12_LIVE_CAPTURE_TRANSPORT_R2_6B2EFC3CB2FC_2026-08-25.zip",
+  "package_bytes": 90850,
+  "package_sha256": "03f15aece0423244a6353570eeaf36a0d07c0a43f8b898802ae0e07156c87aeb",
+  "ready_for_independent_rereview": true,
+  "rfc0010_frozen": false,
+  "rfc0010_implementation_ready": false,
+  "status": "PASS",
+  "unchanged": true,
+  "zip_entries": 31
+}
