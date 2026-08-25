@@ -192,13 +192,24 @@ def verify(
         "room16-app/server-modules/ba12-",
         "room16-app/scripts/test_ba12_",
     )
+    allowed_ba12_product_paths = {
+        "room16-app/archive-server-launcher.mjs",
+        "room16-app/package.json",
+        "room16-app/scripts/ensure_room16_server.sh",
+        "room16-app/scripts/room16_night_hardening_loop.mjs",
+        "room16-app/scripts/verify_ba12_canonical_runtime.mjs",
+    }
     checks["product_identity"] = (
         _git(product_repo, "remote", "get-url", "origin") == product["remote"]
         and _git(product_repo, "branch", "--show-current") == product["branch"]
         and _git(product_repo, "rev-parse", f"{product['implementation_commit']}^{{tree}}")
         == product["implementation_tree"]
         and _ancestor(product_repo, product["implementation_commit"])
-        and all(path.startswith(allowed_ba12_product_prefixes) for path in product_delta)
+        and all(
+            path in allowed_ba12_product_paths
+            or path.startswith(allowed_ba12_product_prefixes)
+            for path in product_delta
+        )
     )
 
     runtime_failures: list[str] = []

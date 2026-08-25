@@ -1,7 +1,7 @@
 {
   "contract_id": "room16.ba12.legacy_path_inventory@1",
   "schema_version": 1,
-  "status": "ba12_wave0_inventory_complete",
+  "status": "ba12_r5_runtime_activation_candidate",
   "authority_owner": "research_compiler",
   "canonicalization_profile": "room16.foundation.canonical_json@1",
   "generated_for_base": {
@@ -314,7 +314,7 @@
       "R-BA10-001": "retain_frozen_migration_emitter_and_add_native_v2_emitter",
       "R-BA10-002": "retain_frozen_v1_and_use_frozen_rfc0009_v2_contract",
       "R-BA10-003": "retain_frozen_v1_policy",
-      "P-BA10-001": "retain_frozen_v1_and_route_native_v2_through_epoch2",
+      "P-BA10-001": "retain_frozen_v1_archive_only_and_route_canonical_runtime_directly_to_native_v2",
       "P-BA10-002": "retain_frozen_v1_mirror",
       "P-BA10-003": "retain_frozen_v1_receipts",
       "P-LEG-001": "archive_read_only_after_cutover",
@@ -350,9 +350,9 @@
       {
         "path_id": "P-NATIVE-001",
         "repository": "BCRAdmin/company-dossier-lab",
-        "path": "room16-app/server-modules/compiler-artifact-bundle-router-epoch2.mjs",
-        "symbol_or_route": "verifyCompilerArtifactBundleEpoch2",
-        "effective_disposition": "canonical_native_bundle_router"
+        "path": "room16-app/server-modules/ba12-native-report.mjs",
+        "symbol_or_route": "verifyCompilerArtifactBundleV2Native",
+        "effective_disposition": "canonical_direct_native_bundle_verifier"
       },
       {
         "path_id": "R-LIVE-002",
@@ -376,6 +376,22 @@
     "stop_condition": null,
     "resume_authority": "ROOM16_BOUNDARY_GATE_V2_RFC0010_FREEZE_BA12_RESUME_EXECUTION_R1_254C00F220D9_2026-08-25.zip",
     "runtime_change_started": true
+  },
+  "r5_runtime_activation": {
+    "archive_acknowledgement_required": true,
+    "archive_runtime": "room16-app/archive-server-launcher.mjs -> room16-app/server.mjs",
+    "canonical_bundle_contract": "room16.compiler_artifact_bundle@2",
+    "canonical_dev_launcher": "node ba12-native-server.mjs --dev --port 4516",
+    "canonical_legacy_semantic_readers": 0,
+    "canonical_runtime": "room16-app/ba12-native-server.mjs",
+    "canonical_start_launcher": "node ba12-native-server.mjs --static --port 4516",
+    "legacy_fallback_edges": 0,
+    "normal_launcher_targets_legacy_server": false,
+    "release_publication_deploy_commerce_authorized": false,
+    "static_ui_serving": true,
+    "status": "independent_rereview_required",
+    "trust_epoch": "rfc0009_native_gen2",
+    "vite_ui_serving": true
   },
   "summary": {
     "active_legacy_semantic_readers": 0,

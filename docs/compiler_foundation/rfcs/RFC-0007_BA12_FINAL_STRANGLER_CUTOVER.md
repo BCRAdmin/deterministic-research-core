@@ -1,8 +1,40 @@
 # RFC-0007 — BA12 Final Strangler Cutover
 
-Status: `IMPLEMENTED / INDEPENDENT_REREVIEW_REQUIRED`
+Status: `R5_IMPLEMENTED / INDEPENDENT_REREVIEW_REQUIRED`
 
 Date: `2026-08-25`
+
+## 2026-08-25 R5 Product runtime activation closure
+
+The independent R4 rereview retained the Research live-source, compiler,
+native Bundle@2, signing and Product verification results but rejected the
+runtime activation claim. Product `npm start` and `npm run dev` still selected
+the frozen legacy `server.mjs`, while the additive native server did not serve
+the standard static or Vite UI.
+
+R5 closes only that Product activation gap. The unchanged BA10 `server.mjs`
+remains archive evidence. The standard package launchers, the local server
+ensurer and the hardening launcher now select the full
+`ba12-native-server.mjs` runtime. That runtime serves static and Vite UI,
+accepts only RFC-0009 generation-2 native Bundle@2 semantic truth, imports the
+native verifier directly, exposes no canonical legacy semantic reader or
+fallback edge, and keeps release, publication, deploy and commerce gates
+false. The legacy server is reachable only through an explicit loopback-only,
+acknowledgement-gated archive launcher.
+
+This is an R5 independent-review candidate, not BA12 acceptance or freeze.
+
+```text
+ready_for_independent_rereview=true
+ba12_implementation_ready=false
+ba12_frozen=false
+release_ready_candidate=true
+release_ready=false
+release_authorized=false
+publication_authorized=false
+deploy_authorized=false
+stop_condition=none
+```
 
 ## 2026-08-25 implementation resume
 
