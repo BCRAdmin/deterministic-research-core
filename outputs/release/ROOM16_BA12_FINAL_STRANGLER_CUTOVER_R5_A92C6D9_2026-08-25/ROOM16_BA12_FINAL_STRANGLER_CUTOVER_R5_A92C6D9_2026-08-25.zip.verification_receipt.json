@@ -1,0 +1,15 @@
+{
+  "archive": "/Users/BjornRosinger/Documents/DreamFactory/Room16/research-agent-ops/outputs/release/ROOM16_BA12_FINAL_STRANGLER_CUTOVER_R5_A92C6D9_2026-08-25/ROOM16_BA12_FINAL_STRANGLER_CUTOVER_R5_A92C6D9_2026-08-25.zip",
+  "bytes": 105780,
+  "entries": 45,
+  "manifest_sha256": "eac7b3b2f50b7e623e5424dd6616dbf5544861c1a18d6bfe05352ef4c4602fb7",
+  "sha256": "5a55fa85671e1513b4f612b0e9ef14019cec68488166b638d98aa8305d9b28de",
+  "standalone_verifier": {
+    "contract_id": "room16.ba12.r5.independent_verifier_receipt@1",
+    "manifest_sha256": "eac7b3b2f50b7e623e5424dd6616dbf5544861c1a18d6bfe05352ef4c4602fb7",
+    "status": "PASS",
+    "verified_file_count": 44
+  },
+  "status": "PASS",
+  "two_clean_builds_byte_identical": true
+}
