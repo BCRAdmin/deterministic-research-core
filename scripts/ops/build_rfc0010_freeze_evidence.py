@@ -17,15 +17,24 @@ from typing import Any
 
 from verify_rfc0010_freeze import DEFAULT_HANDOFF
 from verify_rfc0010_freeze_evidence import manifest_hash, verify_package
+from verify_project_boundary_non_interference_v2 import (
+    build_receipt as build_boundary_v2_receipt,
+    foreign_snapshot,
+)
 
 ROOT = Path(__file__).resolve().parents[2]
 PRODUCT = ROOT.parent / "company-dossier-lab"
+FOREIGN = ROOT.parents[1] / "Utility-Websites/materialbedarf-rechner.de"
 FREEZE_COMMIT = "87df670f4c5350d12b836c84d10346c6096da485"
 PHASE_A_BASE = "70f3e0e60bda0331422ee1a3424952678436dfb6"
 PRODUCT_COMMIT = "6dc397556a1e66a1b6eb29a1b3070914b0d562ba"
-RUNTIME = ROOT / ".runtime/rfc0010-acceptance-ba12-resume"
-FOREIGN_BEFORE = RUNTIME / "PHASE_A_FOREIGN_BEFORE.json"
-FOREIGN_PRE_PUSH = RUNTIME / "PHASE_A_FOREIGN_PRE_PUSH.json"
+BOUNDARY_V2_HANDOFF = Path(
+    "/Users/BjornRosinger/Downloads/"
+    "ROOM16_BOUNDARY_GATE_V2_RFC0010_FREEZE_BA12_RESUME_EXECUTION_R1_"
+    "254C00F220D9_2026-08-25.zip"
+)
+BOUNDARY_V2_HANDOFF_SHA256 = "254c00f220d9f3a4fcf5e26923d502a90d6274c4e4dc16a4f28a067f347322aa"
+PREVIOUS_STOP_SHA256 = "a1ebed358f61ce7b1652dfa0f729d886d87661dedf2af7c8625c1480973483d3"
 FIXED_TIME = (2026, 8, 25, 0, 0, 0)
 
 
@@ -77,6 +86,7 @@ def receipt(
         "exit_code": result.returncode,
         "input_product_tree": bindings["product"]["tree"],
         "input_research_tree": bindings["research"]["tree"],
+        "mutation_classification": "room16_test_or_verification",
         "receipt_id": receipt_id,
         "status": "PASS" if result.returncode == 0 else "FAIL",
         "stderr": result.stderr,
@@ -167,12 +177,16 @@ def main() -> int:
     args = parser.parse_args()
     if git(ROOT, "status", "--porcelain") or git(PRODUCT, "status", "--porcelain"):
         raise SystemExit("STOP freeze evidence requires clean authorized worktrees")
-    if not FOREIGN_BEFORE.is_file() or not FOREIGN_PRE_PUSH.is_file():
-        raise SystemExit("STOP foreign snapshots missing")
-    before = FOREIGN_BEFORE.read_bytes()
-    pre_push = FOREIGN_PRE_PUSH.read_bytes()
-    if before != pre_push:
-        raise SystemExit("STOP foreign boundary changed during Phase A")
+    if (
+        not BOUNDARY_V2_HANDOFF.is_file()
+        or hashlib.sha256(BOUNDARY_V2_HANDOFF.read_bytes()).hexdigest()
+        != BOUNDARY_V2_HANDOFF_SHA256
+    ):
+        raise SystemExit("STOP Boundary Gate v2 handoff identity mismatch")
+    with zipfile.ZipFile(BOUNDARY_V2_HANDOFF) as boundary_handoff:
+        if boundary_handoff.testzip() is not None or len(boundary_handoff.namelist()) != 13:
+            raise SystemExit("STOP Boundary Gate v2 handoff ZIP mismatch")
+    foreign_before = foreign_snapshot(FOREIGN)
     bindings = {"product": binding(PRODUCT), "research": binding(ROOT)}
     if (
         bindings["research"]["origin"]
@@ -233,6 +247,9 @@ def main() -> int:
         receipt("rfc0009_freeze", [".venv/bin/python", "scripts/ops/verify_rfc0009_native_trust_freeze.py", "--product-repo", str(PRODUCT), "--json"], bindings),
     ]
     r2_receipt = delivered_r2_receipt()
+    foreign_after = foreign_snapshot(FOREIGN)
+    if binding(PRODUCT) != bindings["product"]:
+        raise SystemExit("STOP Product changed during Phase-A verification")
     changed_runtime = git(
         ROOT, "diff", "--name-only", f"{PHASE_A_BASE}..HEAD", "--", "research_agent/ba12_live_source"
     ).splitlines()
@@ -258,14 +275,65 @@ def main() -> int:
         "status": "PASS",
         "verifier_source_sha256": hashlib.sha256(verifier_source).hexdigest(),
     }
-    equality = {
-        "contract_id": "room16.rfc0010.freeze_foreign_boundary_equality@1",
-        "foreign_mutation_commands_executed": [],
-        "snapshot_file_sha256": hashlib.sha256(before).hexdigest(),
-        "snapshot_sha256": json.loads(before)["snapshot_sha256"],
+    output_name = f"ROOM16_RFC0010_ACCEPTANCE_FREEZE_{FREEZE_COMMIT[:12].upper()}_2026-08-25.zip"
+    output = args.output_root.resolve() / output_name
+    name_status = git(ROOT, "diff", "--name-status", f"{PHASE_A_BASE}..HEAD").splitlines()
+    changed_paths: dict[str, list[Path]] = {"created": [], "modified": [], "deleted": []}
+    for line in name_status:
+        status_code, relative = line.split("\t", 1)
+        target = ROOT / relative.split("\t")[-1]
+        if status_code.startswith("A"):
+            changed_paths["created"].append(target)
+        elif status_code.startswith("D"):
+            changed_paths["deleted"].append(target)
+        else:
+            changed_paths["modified"].append(target)
+    command_receipts = [
+        freeze_matrix,
+        node_collection,
+        full_research,
+        research_ruff,
+        product_verify,
+        freeze_verifier,
+        *dependencies,
+    ]
+    command_audit = [
+        {
+            "argv": item["command"],
+            "cwd": item["cwd"],
+            "mutation_classification": item["mutation_classification"],
+            "receipt_id": item["receipt_id"],
+        }
+        for item in command_receipts
+    ]
+    command_audit.append(
+        {
+            "argv": ["node", "server.mjs", "--static", "--port", "4546"],
+            "cwd": str(PRODUCT / "room16-app"),
+            "mutation_classification": "room16_test_or_verification",
+            "receipt_id": "full_product_verify_server",
+        }
+    )
+    boundary_v2 = build_boundary_v2_receipt(
+        before=foreign_before,
+        after=foreign_after,
+        room16_roots=[ROOT, PRODUCT],
+        command_audit=command_audit,
+        changed_paths=changed_paths,
+        output_paths=[output, output.with_suffix(".verification_receipt.json")],
+        foreign_repo_used_as_authority_input=False,
+    )
+    boundary_binding = {
+        "contract_id": "room16.boundary_gate_v2.phase_a_binding@1",
+        "handoff_bytes": BOUNDARY_V2_HANDOFF.stat().st_size,
+        "handoff_entries": 13,
+        "handoff_sha256": BOUNDARY_V2_HANDOFF_SHA256,
+        "previous_stop_evidence_sha256": PREVIOUS_STOP_SHA256,
         "status": "PASS",
-        "unchanged": True,
+        "supersedes_global_foreign_quiescence": True,
     }
+    before = pretty(foreign_before)
+    after = pretty(foreign_after)
     payloads = {
         "00_RFC0010_FREEZE_VERDICT.md": b"# RFC-0010 Acceptance Freeze\n\nIndependent R2 verdict: `ACCEPTED`.\n\nrfc0010_implementation_ready=true\nrfc0010_frozen=true\nba12_resume_authorized=true\nrelease_authorized=false\npublication_authorized=false\ndeploy_authorized=false\n",
         "01_EXTERNAL_INDEPENDENT_ACCEPTANCE.json": (ROOT / "docs/compiler_foundation/acceptance/RFC0010_R2_EXTERNAL_INDEPENDENT_ACCEPTANCE.json").read_bytes(),
@@ -277,11 +345,12 @@ def main() -> int:
         "07_R2_SOURCE_VERIFIER_RECEIPT.json": pretty(r2_receipt),
         "08_GIT_TREE_BINDINGS.json": pretty(bindings),
         "09_FOREIGN_BOUNDARY_BEFORE.json": before,
-        "10_FOREIGN_BOUNDARY_PRE_PUSH.json": pre_push,
-        "11_FOREIGN_BOUNDARY_EQUALITY_RECEIPT.json": pretty(equality),
+        "10_FOREIGN_BOUNDARY_PRE_PUSH.json": after,
+        "11_PROJECT_BOUNDARY_NON_INTERFERENCE_V2_RECEIPT.json": pretty(boundary_v2),
         "12_PHASE_A_RUNTIME_DIFF.json": pretty({"base_commit": PHASE_A_BASE, "changed_runtime_files": changed_runtime, "runtime_semantic_changed": False, "status": "PASS"}),
         "13_DETERMINISTIC_BUILD_REPORT.json": pretty({"archive_timestamp": "2026-08-25T00:00:00Z", "byte_identical_rebuild": True, "compression": "deflate-9", "status": "PASS"}),
         "14_PHASE_A_STATUS.json": pretty(status),
+        "15_BOUNDARY_GATE_V2_HANDOFF_BINDING.json": pretty(boundary_binding),
         "independent_verifier/VERIFIER_RECEIPT.json": pretty(embedded_receipt),
         "independent_verifier/verify_rfc0010_freeze_evidence.py": verifier_source,
     }
@@ -295,6 +364,7 @@ def main() -> int:
             for name in sorted(payloads)
         ],
         "schema_version": 1,
+        "boundary_gate_v2_handoff_sha256": BOUNDARY_V2_HANDOFF_SHA256,
         "source_handoff_sha256": freeze["handoff"]["sha256"],
     }
     manifest["manifest_sha256"] = manifest_hash(manifest)
@@ -302,8 +372,6 @@ def main() -> int:
     second = archive_bytes(payloads, manifest)
     if first != second:
         raise SystemExit("STOP deterministic freeze evidence rebuild mismatch")
-    short = FREEZE_COMMIT[:12].upper()
-    output = args.output_root.resolve() / f"ROOM16_RFC0010_ACCEPTANCE_FREEZE_{short}_2026-08-25.zip"
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_bytes(first)
     verification = verify_package(output)

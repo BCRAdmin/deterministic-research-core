@@ -25,10 +25,11 @@ REQUIRED = {
     "08_GIT_TREE_BINDINGS.json",
     "09_FOREIGN_BOUNDARY_BEFORE.json",
     "10_FOREIGN_BOUNDARY_PRE_PUSH.json",
-    "11_FOREIGN_BOUNDARY_EQUALITY_RECEIPT.json",
+    "11_PROJECT_BOUNDARY_NON_INTERFERENCE_V2_RECEIPT.json",
     "12_PHASE_A_RUNTIME_DIFF.json",
     "13_DETERMINISTIC_BUILD_REPORT.json",
     "14_PHASE_A_STATUS.json",
+    "15_BOUNDARY_GATE_V2_HANDOFF_BINDING.json",
     "MANIFEST.json",
     "independent_verifier/VERIFIER_RECEIPT.json",
     "independent_verifier/verify_rfc0010_freeze_evidence.py",
@@ -77,11 +78,12 @@ def verify_package(package: Path) -> dict[str, Any]:
         dependencies = _json(archive, "06_DEPENDENCY_FREEZE_RECEIPTS.json")
         r2 = _json(archive, "07_R2_SOURCE_VERIFIER_RECEIPT.json")
         bindings = _json(archive, "08_GIT_TREE_BINDINGS.json")
-        equality = _json(archive, "11_FOREIGN_BOUNDARY_EQUALITY_RECEIPT.json")
+        boundary = _json(archive, "11_PROJECT_BOUNDARY_NON_INTERFERENCE_V2_RECEIPT.json")
         runtime_diff = _json(archive, "12_PHASE_A_RUNTIME_DIFF.json")
         deterministic = _json(archive, "13_DETERMINISTIC_BUILD_REPORT.json")
         status = _json(archive, "14_PHASE_A_STATUS.json")
         embedded = _json(archive, "independent_verifier/VERIFIER_RECEIPT.json")
+        boundary_binding = _json(archive, "15_BOUNDARY_GATE_V2_HANDOFF_BINDING.json")
 
         if acceptance.get("verdict") != "ACCEPTED" or acceptance.get("remaining_blocking_findings") != 0:
             raise ValueError("RFC10_FREEZE_ACCEPTANCE_INVALID")
@@ -110,10 +112,31 @@ def verify_package(package: Path) -> dict[str, Any]:
             or bindings.get("product", {}).get("origin") != "https://github.com/BCRAdmin/company-dossier-lab.git"
         ):
             raise ValueError("RFC10_FREEZE_BINDINGS_INVALID")
-        before = archive.read("09_FOREIGN_BOUNDARY_BEFORE.json")
-        pre_push = archive.read("10_FOREIGN_BOUNDARY_PRE_PUSH.json")
-        if before != pre_push or equality.get("unchanged") is not True or equality.get("foreign_mutation_commands_executed") != []:
+        before = _json(archive, "09_FOREIGN_BOUNDARY_BEFORE.json")
+        after = _json(archive, "10_FOREIGN_BOUNDARY_PRE_PUSH.json")
+        if (
+            boundary.get("contract_id") != "room16.project_boundary_non_interference@2"
+            or boundary.get("verdict") != "PASS"
+            or boundary.get("common_dir_overlap") is not False
+            or boundary.get("path_root_overlap") is not False
+            or boundary.get("foreign_targeting_mutating_commands") != []
+            or boundary.get("room16_foreign_write_paths") != []
+            or boundary.get("room16_foreign_mutation") is not False
+            or boundary.get("foreign_repo_used_as_authority_input") is not False
+            or boundary.get("output_resolves_into_foreign_root") is not False
+            or boundary.get("foreign_before_snapshot_sha256") != before.get("snapshot_sha256")
+            or boundary.get("foreign_after_snapshot_sha256") != after.get("snapshot_sha256")
+        ):
             raise ValueError("RFC10_FREEZE_FOREIGN_BOUNDARY_INVALID")
+        if (
+            boundary_binding.get("status") != "PASS"
+            or boundary_binding.get("handoff_sha256")
+            != "254c00f220d9f3a4fcf5e26923d502a90d6274c4e4dc16a4f28a067f347322aa"
+            or boundary_binding.get("previous_stop_evidence_sha256")
+            != "a1ebed358f61ce7b1652dfa0f729d886d87661dedf2af7c8625c1480973483d3"
+            or boundary_binding.get("supersedes_global_foreign_quiescence") is not True
+        ):
+            raise ValueError("RFC10_FREEZE_BOUNDARY_V2_BINDING_INVALID")
         if runtime_diff.get("runtime_semantic_changed") is not False or runtime_diff.get("changed_runtime_files") != []:
             raise ValueError("RFC10_FREEZE_RUNTIME_DIFF_INVALID")
         if deterministic.get("byte_identical_rebuild") is not True or embedded.get("status") != "PASS":
