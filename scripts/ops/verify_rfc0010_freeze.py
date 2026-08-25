@@ -197,6 +197,7 @@ def verify(
         "room16-app/package.json",
         "room16-app/scripts/ensure_room16_server.sh",
         "room16-app/scripts/room16_night_hardening_loop.mjs",
+        "room16-app/scripts/run_ba12_product_verification.mjs",
         "room16-app/scripts/verify_ba12_canonical_runtime.mjs",
     }
     checks["product_identity"] = (
