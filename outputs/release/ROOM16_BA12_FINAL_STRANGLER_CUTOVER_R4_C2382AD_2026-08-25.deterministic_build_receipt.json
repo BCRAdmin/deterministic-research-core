@@ -1,0 +1,12 @@
+{
+  "archive_bytes": 112542,
+  "archive_entry_count": 56,
+  "archive_sha256": "2fb1162eac600f3a979f191b5b68a30566315873332e9ba7c19e93cee084737e",
+  "build_count": 2,
+  "byte_identical": true,
+  "candidate_name": "ROOM16_BA12_FINAL_STRANGLER_CUTOVER_R4_C2382AD_2026-08-25.zip",
+  "contract_id": "room16.ba12.deterministic_build_receipt",
+  "contract_version": 1,
+  "manifest_sha256": "cdc5a0eadbec0c39d3aa746a8d4bec9e6a87db2ceb77a8f2d08075ec22215656",
+  "status": "PASS"
+}
