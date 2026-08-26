@@ -135,6 +135,7 @@ def test_alpha_bank_development_matrix(test_id, compiled):
     elif n == 9:
         assert [x["semantic_metric_id"] for x in projection["facts"][:4]] == ["net_income", "net_income", "diluted_eps", "diluted_eps"]
         assert all(x["freshness_status"] != "STALE" for x in projection["facts"])
+        assert all(x["period_basis"] in {"STANDALONE_QUARTER", "YEAR_TO_DATE", "INSTANT"} for x in projection["facts"])
     elif n == 10:
         row = grouped["allowance_to_loans"][0]
         assert row["value"] == pytest.approx(20_000 / 1_400_000) and "Derived period-end" in row["label"]

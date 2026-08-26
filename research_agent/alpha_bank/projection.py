@@ -276,7 +276,12 @@ def build_bank_semantic_artifacts(*, snapshot: SourceSnapshotIR, payloads: list[
         raise ValueError("ALPHA_BANK_FACT_GENERATION_EMPTY")
     derived = _derived_ratios(facts)
     facts = sorted(facts + derived, key=lambda x: x["fact_id"])
-    primary = [x for x in facts if x.get("semantic_metric_id") and x["freshness_status"] != "STALE"]
+    primary = [
+        x for x in facts
+        if x.get("semantic_metric_id")
+        and x["freshness_status"] != "STALE"
+        and x["period_basis"] in {"STANDALONE_QUARTER", "YEAR_TO_DATE", "INSTANT"}
+    ]
     projection_facts = sorted(primary, key=_rank_key)[: int(RANKING_PROFILE["limit"])]
     evidence, evidence_by_fact = [], {}
     for index, item in enumerate(facts, 1):
