@@ -1,0 +1,17 @@
+{
+  "contract_id": "room16.rfc0011.structured_regulatory_fixture",
+  "contract_version": 1,
+  "dataset_id": "fixture.ffiec_fr_y_9c",
+  "dictionary_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "live_activation": false,
+  "media_type": "text/csv",
+  "rows": [
+    {
+      "mdrm_code": "RCON2170",
+      "official_label": "Total assets",
+      "report_period": "2026-06-30",
+      "unit": "USD"
+    }
+  ],
+  "source_family_id": "structured_regulatory_dataset"
+}

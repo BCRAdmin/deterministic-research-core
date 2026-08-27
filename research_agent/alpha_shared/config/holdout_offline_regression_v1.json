@@ -1,0 +1,18 @@
+{
+  "contract_id": "room16.alpha.shared_holdout_offline_regression_fixture",
+  "contract_version": 1,
+  "live_query_count": 0,
+  "principle": "Holdout alternatives are shared capability evidence, never ticker patches.",
+  "cases": [
+    {"case_id": "NOW-F-002", "metric_id": "long_term_debt", "expected": "STALE_ONLY", "economic_period_end": "2021-12-31", "as_of_date": "2026-08-27"},
+    {"case_id": "O-P2-002", "metric_id": "long_term_debt", "expected": "STALE_ONLY", "economic_period_end": "2012-12-31", "as_of_date": "2026-08-27"},
+    {"case_id": "BAC-P2-002", "metric_id": "net_revenue", "expected": "UNSUPPORTED", "economic_period_end": "2026-06-30", "as_of_date": "2026-08-27"},
+    {"case_id": "BAC-P2-003", "metric_id": "long_term_debt", "expected": "UNSUPPORTED", "economic_period_end": "2026-06-30", "as_of_date": "2026-08-27"},
+    {"case_id": "CVX-P2-001", "metric_id": "capital_expenditure", "expected": "UNSUPPORTED", "economic_period_end": "2026-06-30", "as_of_date": "2026-08-27"},
+    {"case_id": "CVX-P2-002", "metric_id": "cash_and_equivalents", "expected": "STALE_ONLY", "economic_period_end": "2024-12-31", "as_of_date": "2026-08-27"}
+  ],
+  "source_binding": {
+    "filename": "04_HOLDOUT_SURVIVING_FINDINGS.json",
+    "package_sha256": "cdf10e7a8229e2c683b5e794617db88048e9c2a819fc6ea00b9391691dc63321"
+  }
+}
