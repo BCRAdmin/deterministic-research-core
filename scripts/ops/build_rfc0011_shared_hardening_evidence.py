@@ -37,7 +37,7 @@ from research_agent.alpha_shared.period_freshness import (
 )
 from research_agent.alpha_shared.source_authority import STRUCTURED_REGULATORY_SOURCE_PROFILE
 from research_agent.compiler_foundation.canonical import sha256_json
-from scripts.ops.verify_project_boundary_non_interference_v2 import (
+from verify_project_boundary_non_interference_v2 import (
     build_receipt,
     foreign_snapshot,
 )
