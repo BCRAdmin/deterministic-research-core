@@ -9,7 +9,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from research_agent.alpha_shared.compiler import compile_shared_successor
+from research_agent.alpha_shared.compiler import execute_historical_regression
 from research_agent.alpha_shared.contracts import DocumentObservationIR
 from research_agent.alpha_shared.document_normalizer import (
     discover_observations,
@@ -159,28 +159,18 @@ def _compile_child(args: argparse.Namespace) -> int:
         as_of_date=args.as_of_date,
         artifact_root=args.artifact_root,
     )
-    result = compile_shared_successor(
-        inventory=inventory,
-        archetype_profile_id=args.archetype,
-        supplemental_observations=supplemental,
-        output_root=args.output / "bundle",
-        ledger_path=args.output / "operations.jsonl",
-        research_commit=args.research_commit,
-        research_tree=args.research_tree,
-        monotonic_counter=args.counter,
-    )
+    result = execute_historical_regression(inventory, args.archetype)
     report = {
         "status": "PASS",
         "ticker": args.ticker,
         "process_mode": "fresh_process_offline",
         "network_query_count": 0,
         "inventory": inventory.model_dump(mode="json"),
-        "bundle_sha256": result.manifest["bundle_sha256"],
-        "receipt_sha256": result.receipt["receipt_sha256"],
-        "verification": result.verification,
-        "period_receipts": list(result.period_receipts),
-        "resolution_receipts": list(result.resolution_receipts),
-        "ledger_report": result.ledger_report,
+        "provenance_mode": result["provenance_mode"],
+        "canonical_live_compile_identity": result["canonical_live_compile_identity"],
+        "period_receipts": result["period_receipts"],
+        "resolution_receipts": result["resolution_receipts"],
+        "supplemental_observation_count": len(supplemental),
     }
     _write_json(args.output / "result.json", report)
     print(json.dumps({"status": "PASS", "ticker": args.ticker}, sort_keys=True))
@@ -237,12 +227,7 @@ def _run_parent(args: argparse.Namespace) -> int:
                 json.loads((destination / "result.json").read_text(encoding="utf-8"))
             )
         first, second = run_reports
-        if (
-            first["bundle_sha256"] != second["bundle_sha256"]
-            or first["receipt_sha256"] != second["receipt_sha256"]
-            or sha256_json(first["resolution_receipts"])
-            != sha256_json(second["resolution_receipts"])
-        ):
+        if sha256_json(first["resolution_receipts"]) != sha256_json(second["resolution_receipts"]):
             raise RuntimeError(f"{ticker}: fresh-process replay identity drift")
         compile_results[ticker] = {
             "status": "PASS",
@@ -251,13 +236,12 @@ def _run_parent(args: argparse.Namespace) -> int:
             if ticker in DEVELOPMENT
             else "holdout_frozen_base_only",
             "network_query_count": 0,
-            "bundle_sha256": first["bundle_sha256"],
-            "receipt_sha256": first["receipt_sha256"],
+            "provenance_mode": first["provenance_mode"],
+            "canonical_live_compile_identity": first["canonical_live_compile_identity"],
             "inventory_sha256": first["inventory"]["inventory_sha256"],
             "actual_fact_count": len(first["inventory"]["facts"]),
             "h3_receipt_count": len(first["period_receipts"]),
             "h2_receipt_count": len(first["resolution_receipts"]),
-            "h4_event_count": len(first["ledger_report"]["events"]),
             "fresh_process_replay_identical": True,
         }
     summary = {

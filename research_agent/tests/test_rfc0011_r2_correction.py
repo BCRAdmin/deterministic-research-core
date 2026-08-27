@@ -20,7 +20,14 @@ from research_agent.alpha_shared.document_normalizer import (
 )
 from research_agent.alpha_shared.frozen_evidence import load_frozen_evidence
 from research_agent.alpha_shared.metric_resolver import MetricCandidate, resolve_metric
+from research_agent.alpha_shared.contracts import SharedBaseInputIR, SupplementalCompileInputIR
 from research_agent.productization_v2.native_trust import verify_native_bundle_v2
+from research_agent.semantic_compiler.source_frontend.contracts import (
+    RetrievalReceiptIR,
+    SourceArtifactIR,
+    SourceDispositionIR,
+    SourceSnapshotIR,
+)
 
 ROOT = Path(__file__).resolve().parents[2]
 FALSE_FIXTURES = json.loads(
@@ -100,6 +107,85 @@ def _mini_evidence_zip(path: Path, ticker: str = "TST") -> Path:
         archive.writestr("ACTUAL_FACTS.json", report_bytes)
         archive.writestr("MANIFEST.json", json.dumps(manifest, sort_keys=True))
     return path
+
+
+def _canonical_base(tmp_path: Path, ticker: str = "TST") -> SharedBaseInputIR:
+    payload = {
+        "facts": {
+            "us-gaap": {
+                "CashAndCashEquivalentsAtCarryingValue": {
+                    "label": "Cash",
+                    "units": {
+                        "USD": [
+                            {
+                                "val": 42,
+                                "end": "2026-06-30",
+                                "filed": "2026-08-01",
+                                "form": "10-Q",
+                            }
+                        ]
+                    },
+                }
+            }
+        }
+    }
+    raw = json.dumps(payload, sort_keys=True).encode()
+    digest = hashlib.sha256(raw).hexdigest()
+    snapshot_root = tmp_path / "snapshot"
+    relative = f"sources/{digest[:2]}/{digest}.json"
+    target = snapshot_root / relative
+    target.parent.mkdir(parents=True)
+    target.write_bytes(raw)
+    artifact = SourceArtifactIR(
+        snapshot_id=f"snapshot.{digest}",
+        path=relative,
+        sha256=digest,
+        bytes=len(raw),
+        media_type="application/json",
+    )
+    receipt = RetrievalReceiptIR(
+        receipt_id=f"receipt.{digest}",
+        acquisition_id="source.sec",
+        source_id="SEC_COMPANYFACTS_TEST",
+        source_type="sec_filing",
+        provider_id="sec",
+        original_locator="fixture://companyfacts",
+        media_type="application/json",
+        payload_sha256=digest,
+        payload_bytes=len(raw),
+        retrieved_at="2026-08-01T12:00:00Z",
+        available_at="2026-08-01T12:00:00Z",
+        filing_date="2026-08-01",
+        transport="offline_fixture",
+    )
+    snapshot = SourceSnapshotIR.create(
+        request_sha256="1" * 64,
+        acquisition_plan_sha256="2" * 64,
+        ticker=ticker,
+        as_of_date="2026-08-27",
+        artifacts=(artifact,),
+        retrieval_receipts=(receipt,),
+        source_dispositions=(
+            SourceDispositionIR(
+                source_id=receipt.source_id,
+                source_type=receipt.source_type,
+                provider_id=receipt.provider_id,
+                receipt_id=receipt.receipt_id,
+                snapshot_ids=(artifact.snapshot_id,),
+                disposition="material_evidence",
+            ),
+        ),
+    )
+    return SharedBaseInputIR.from_snapshot(snapshot=snapshot, snapshot_root=snapshot_root)
+
+
+def _supplemental(*observations):
+    return SupplementalCompileInputIR.create(
+        supplemental_policy_sha256="3" * 64,
+        discovery_set_sha256="4" * 64,
+        supplemental_evidence_set_sha256="5" * 64,
+        observations=tuple(observations),
+    )
 
 
 def test_r2_obs_001_short_alias_respects_token_boundary():
@@ -244,13 +330,11 @@ def test_r2_evid_h3_then_h2_use_actual_inventory(tmp_path: Path):
 
 
 def test_r2_int_shared_compiler_emits_and_verifies_native_bundle(tmp_path: Path):
-    inventory = load_frozen_evidence(
-        _mini_evidence_zip(tmp_path / "evidence.zip"), ticker="TST", as_of_date="2026-08-27"
-    )
+    base = _canonical_base(tmp_path)
     result = compile_shared_successor(
-        inventory=inventory,
-        archetype_profile_id="fixture",
-        supplemental_observations=(),
+        base_input=base,
+        archetype_profile_id="generic",
+        supplemental_input=_supplemental(),
         output_root=tmp_path / "bundle",
         ledger_path=tmp_path / "operations.jsonl",
         research_commit="a" * 40,
@@ -274,9 +358,7 @@ def test_r2_int_shared_compiler_emits_and_verifies_native_bundle(tmp_path: Path)
 
 
 def test_r2_int_untrusted_supplemental_never_enters_metric_truth(tmp_path: Path):
-    inventory = load_frozen_evidence(
-        _mini_evidence_zip(tmp_path / "evidence.zip"), ticker="TST", as_of_date="2026-08-27"
-    )
+    base = _canonical_base(tmp_path)
     from research_agent.alpha_shared.contracts import DocumentObservationIR
 
     observation = DocumentObservationIR.create(
@@ -291,9 +373,9 @@ def test_r2_int_untrusted_supplemental_never_enters_metric_truth(tmp_path: Path)
         trusted_numeric=False,
     )
     result = compile_shared_successor(
-        inventory=inventory,
-        archetype_profile_id="fixture",
-        supplemental_observations=(observation,),
+        base_input=base,
+        archetype_profile_id="generic",
+        supplemental_input=_supplemental(observation),
         output_root=tmp_path / "bundle",
         ledger_path=tmp_path / "operations.jsonl",
         research_commit="a" * 40,
@@ -314,5 +396,6 @@ def test_r2_int_future_batch_dry_run_imports_shared_compiler_without_query():
     plan = future_batch_dry_run_plan()
     assert plan["network_call_count"] == plan["fixed24_query_count"] == 0
     assert plan["fixed24_batch_authorized"] is False
-    assert plan["imports"].endswith("compile_shared_successor")
+    assert plan["actual_runner"].endswith("run_shared_case")
+    assert plan["status"] == "PLAN_ONLY"
     assert len(CONCEPT_REGISTRY_SHA256) == 64

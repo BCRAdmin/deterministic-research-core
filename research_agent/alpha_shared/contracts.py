@@ -3,12 +3,15 @@
 from __future__ import annotations
 
 from datetime import date
+from pathlib import Path
 from typing import Literal
 
 from pydantic import Field, model_validator
 
 from research_agent.compiler_foundation.canonical import sha256_json
 from research_agent.compiler_foundation.contracts import StrictModel
+from research_agent.semantic_compiler.source_frontend.contracts import SourceSnapshotIR
+from research_agent.semantic_compiler.source_frontend.offline import verify_source_snapshot
 
 SHA256 = r"^[0-9a-f]{64}$"
 SOURCE_FAMILIES = Literal[
@@ -359,4 +362,116 @@ class DocumentObservationIR(StrictModel):
             raise ValueError("only unambiguous structure-bound measure values can be trusted")
         if sha256_json(_body(self, "observation_sha256")) != self.observation_sha256:
             raise ValueError("document observation self-hash mismatch")
+        return self
+
+
+class SharedBaseInputIR(StrictModel):
+    """Canonical RFC-0011 input bound directly to a verified BA3 snapshot."""
+
+    contract_id: Literal["room16.rfc0011.shared_base_input_ir"] = (
+        "room16.rfc0011.shared_base_input_ir"
+    )
+    contract_version: Literal[1] = 1
+    ticker: str
+    as_of_date: str
+    request_sha256: str = Field(pattern=SHA256)
+    acquisition_plan_sha256: str = Field(pattern=SHA256)
+    retrieval_receipt_set_sha256: str = Field(pattern=SHA256)
+    source_snapshot_sha256: str = Field(pattern=SHA256)
+    snapshot_ir: SourceSnapshotIR
+    snapshot_root: str
+    base_input_sha256: str = Field(pattern=SHA256)
+
+    @classmethod
+    def from_snapshot(
+        cls, *, snapshot: SourceSnapshotIR, snapshot_root: Path
+    ) -> "SharedBaseInputIR":
+        root = snapshot_root.resolve()
+        verify_source_snapshot(snapshot, snapshot_root=root)
+        receipt_set_sha256 = sha256_json(
+            [item.model_dump(mode="json") for item in snapshot.retrieval_receipts]
+        )
+        body = {
+            "contract_id": "room16.rfc0011.shared_base_input_ir",
+            "contract_version": 1,
+            "ticker": snapshot.ticker,
+            "as_of_date": snapshot.as_of_date,
+            "request_sha256": snapshot.request_sha256,
+            "acquisition_plan_sha256": snapshot.acquisition_plan_sha256,
+            "retrieval_receipt_set_sha256": receipt_set_sha256,
+            "source_snapshot_sha256": snapshot.snapshot_sha256,
+            "snapshot_ir": snapshot.model_dump(mode="json"),
+            "snapshot_root": str(root),
+        }
+        return cls(**body, base_input_sha256=sha256_json(body))
+
+    @model_validator(mode="after")
+    def exact_snapshot_identity(self) -> "SharedBaseInputIR":
+        snapshot = self.snapshot_ir
+        if (
+            self.ticker != snapshot.ticker
+            or self.as_of_date != snapshot.as_of_date
+            or self.request_sha256 != snapshot.request_sha256
+            or self.acquisition_plan_sha256 != snapshot.acquisition_plan_sha256
+            or self.source_snapshot_sha256 != snapshot.snapshot_sha256
+            or self.retrieval_receipt_set_sha256
+            != sha256_json([item.model_dump(mode="json") for item in snapshot.retrieval_receipts])
+        ):
+            raise ValueError("shared base input does not exactly bind SourceSnapshotIR")
+        root = Path(self.snapshot_root)
+        if not root.is_absolute():
+            raise ValueError("shared base snapshot root must be absolute")
+        verify_source_snapshot(snapshot, snapshot_root=root)
+        if sha256_json(_body(self, "base_input_sha256")) != self.base_input_sha256:
+            raise ValueError("shared base input self-hash mismatch")
+        return self
+
+
+class SupplementalCompileInputIR(StrictModel):
+    """Hash-bound RFC-0011 authority and observations offered to H3/H2."""
+
+    contract_id: Literal["room16.rfc0011.supplemental_compile_input_ir"] = (
+        "room16.rfc0011.supplemental_compile_input_ir"
+    )
+    contract_version: Literal[1] = 1
+    supplemental_policy_sha256: str = Field(pattern=SHA256)
+    discovery_set_sha256: str = Field(pattern=SHA256)
+    supplemental_evidence_set_sha256: str = Field(pattern=SHA256)
+    observations: tuple[DocumentObservationIR, ...]
+    observation_set_sha256: str = Field(pattern=SHA256)
+    input_sha256: str = Field(pattern=SHA256)
+
+    @classmethod
+    def create(
+        cls,
+        *,
+        supplemental_policy_sha256: str,
+        discovery_set_sha256: str,
+        supplemental_evidence_set_sha256: str,
+        observations: tuple[DocumentObservationIR, ...],
+    ) -> "SupplementalCompileInputIR":
+        ordered = tuple(sorted(observations, key=lambda item: item.observation_id))
+        observation_set_sha256 = sha256_json([item.model_dump(mode="json") for item in ordered])
+        body = {
+            "contract_id": "room16.rfc0011.supplemental_compile_input_ir",
+            "contract_version": 1,
+            "supplemental_policy_sha256": supplemental_policy_sha256,
+            "discovery_set_sha256": discovery_set_sha256,
+            "supplemental_evidence_set_sha256": supplemental_evidence_set_sha256,
+            "observations": [item.model_dump(mode="json") for item in ordered],
+            "observation_set_sha256": observation_set_sha256,
+        }
+        return cls(**body, input_sha256=sha256_json(body))
+
+    @model_validator(mode="after")
+    def exact_observation_identity(self) -> "SupplementalCompileInputIR":
+        if tuple(item.observation_id for item in self.observations) != tuple(
+            sorted(item.observation_id for item in self.observations)
+        ):
+            raise ValueError("supplemental observations must be sorted")
+        expected_set = sha256_json([item.model_dump(mode="json") for item in self.observations])
+        if expected_set != self.observation_set_sha256:
+            raise ValueError("supplemental observation set hash mismatch")
+        if sha256_json(_body(self, "input_sha256")) != self.input_sha256:
+            raise ValueError("supplemental compile input self-hash mismatch")
         return self

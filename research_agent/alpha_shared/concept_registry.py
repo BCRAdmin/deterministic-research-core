@@ -169,6 +169,22 @@ CONCEPT_REGISTRY = {
                 ),
             ],
         },
+        "production_volume": {
+            "metric_definition": (
+                "Consolidated oil-equivalent production for an explicitly bound duration."
+            ),
+            "period_type": "DURATION",
+            "allowed_units": ["KBOE_PER_DAY"],
+            "candidates": [
+                _candidate(
+                    "oil-equivalent production",
+                    semantic_role="EXACT_DIRECT",
+                    equivalence_class="consolidated_oil_equivalent_production",
+                    aggregation_role="DIRECT_TOTAL",
+                    allowed_archetype_profiles=("generic", "energy"),
+                ),
+            ],
+        },
     },
 }
 CONCEPT_REGISTRY_SHA256 = sha256_json(CONCEPT_REGISTRY)
