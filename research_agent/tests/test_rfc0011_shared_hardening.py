@@ -97,8 +97,12 @@ def _submissions(rows: int = 2) -> bytes:
     return json.dumps(values, sort_keys=True).encode()
 
 
-def _response(payload: bytes, locator: str, media_type: str = "application/json") -> NetworkResponse:
-    return NetworkResponse(payload=payload, final_locator=locator, media_type=media_type, fetched_at_utc=FETCHED)
+def _response(
+    payload: bytes, locator: str, media_type: str = "application/json"
+) -> NetworkResponse:
+    return NetworkResponse(
+        payload=payload, final_locator=locator, media_type=media_type, fetched_at_utc=FETCHED
+    )
 
 
 def _discovered(tmp_path: Path, *, rows: int = 2, policy: SupplementalSourcePolicyIR | None = None):
@@ -128,6 +132,11 @@ def _metric_candidate(candidate_id: str, **updates: object) -> MetricCandidate:
         "authority_compatible": True,
         "numeric_value": "100",
         "semantic_metric_id": "long_term_debt",
+        "semantic_role": "EXACT_DIRECT",
+        "aggregation_role": "DIRECT_TOTAL",
+        "period_receipt_sha256": "3" * 64,
+        "inventory_sha256": "4" * 64,
+        "trusted_numeric": True,
     }
     values.update(updates)
     return MetricCandidate(**values)
@@ -167,8 +176,14 @@ def _event_values(run_id: str, stage: str, status: str = "PASS") -> dict[str, ob
 
 
 def test_h1_001_frozen_ba3_files_byte_identical():
-    assert _hash("research_agent/semantic_compiler/source_frontend/contracts.py") == "c37dd7847905f9113e5b50af9ba669cebf06f1520c2099de65cb5e4ce16fda2b"
-    assert _hash("research_agent/semantic_compiler/source_frontend/planner.py") == "7cf1eaf4b995fafef3a04d2acdbc62ff5828ca0847d34beacc7e1ea3934455fa"
+    assert (
+        _hash("research_agent/semantic_compiler/source_frontend/contracts.py")
+        == "c37dd7847905f9113e5b50af9ba669cebf06f1520c2099de65cb5e4ce16fda2b"
+    )
+    assert (
+        _hash("research_agent/semantic_compiler/source_frontend/planner.py")
+        == "7cf1eaf4b995fafef3a04d2acdbc62ff5828ca0847d34beacc7e1ea3934455fa"
+    )
 
 
 def test_h1_002_frozen_rfc0010_files_byte_identical():
@@ -178,19 +193,33 @@ def test_h1_002_frozen_rfc0010_files_byte_identical():
         "live_receipt.py": "52fbdaa97feca277f7de265d38e2bea74ef0b7408963d3713eab265140bcf8ae",
         "capture_store.py": "e5c8e55579bd2db546fb220e4898761139cab81211d4beb2e83aff20e9a9b19d",
     }
-    assert all(_hash(f"research_agent/ba12_live_source/{name}") == digest for name, digest in expected.items())
+    assert all(
+        _hash(f"research_agent/ba12_live_source/{name}") == digest
+        for name, digest in expected.items()
+    )
 
 
 def test_h1_003_companyfacts_nasdaq_planner_unchanged():
-    assert _hash("research_agent/semantic_compiler/source_frontend/registry_binding.py") == "685caf645a68c8276f7d7bbe442c47d5219b34948a71a6d563f2139256df56a1"
-    assert _hash("research_agent/semantic_compiler/source_frontend/config/source_adapter_implementations.json") == "0891426ebf15f44a5c824e3245d546b4148b4e28a3e1dbfc0a9fae95c0ee145f"
+    assert (
+        _hash("research_agent/semantic_compiler/source_frontend/registry_binding.py")
+        == "685caf645a68c8276f7d7bbe442c47d5219b34948a71a6d563f2139256df56a1"
+    )
+    assert (
+        _hash(
+            "research_agent/semantic_compiler/source_frontend/config/source_adapter_implementations.json"
+        )
+        == "0891426ebf15f44a5c824e3245d546b4148b4e28a3e1dbfc0a9fae95c0ee145f"
+    )
 
 
 def test_h1_004_policy_bound_before_network(tmp_path: Path):
     policy = _policy()
     authority = SupplementalSourceAuthority(policy, tmp_path / "store")
     seen: list[str] = []
-    authority.capture_discovery(_request(policy), lambda locator: (seen.append(policy.policy_sha256) or _response(_submissions(), locator)))
+    authority.capture_discovery(
+        _request(policy),
+        lambda locator: seen.append(policy.policy_sha256) or _response(_submissions(), locator),
+    )
     assert seen == [policy.policy_sha256]
     with pytest.raises(Exception):
         policy.ticker = "CHANGED"
@@ -199,7 +228,9 @@ def test_h1_004_policy_bound_before_network(tmp_path: Path):
 def test_h1_005_discovery_captured_before_parse(tmp_path: Path):
     policy = _policy()
     authority = SupplementalSourceAuthority(policy, tmp_path / "store")
-    receipt = authority.capture_discovery(_request(policy), lambda locator: _response(b"not-json", locator))
+    receipt = authority.capture_discovery(
+        _request(policy), lambda locator: _response(b"not-json", locator)
+    )
     assert authority.store.load_verified(receipt.payload_sha256)[1] == b"not-json"
     with pytest.raises(SupplementalSourceError, match="DISCOVERY_JSON_INVALID"):
         authority.derive_sec_submission_candidates(receipt)
@@ -215,7 +246,12 @@ def test_h1_006_discovery_is_deterministic(tmp_path: Path):
 def test_h1_007_domain_allowlist_blocks(tmp_path: Path):
     policy = _policy()
     authority = SupplementalSourceAuthority(policy, tmp_path / "store")
-    request = DiscoveryRequestIR.create(request_id="blocked", policy_sha256=policy.policy_sha256, source_family_id="sec_primary_document", locator="https://example.com/data.json")
+    request = DiscoveryRequestIR.create(
+        request_id="blocked",
+        policy_sha256=policy.policy_sha256,
+        source_family_id="sec_primary_document",
+        locator="https://example.com/data.json",
+    )
     with pytest.raises(SupplementalSourceError, match="DOMAIN_BLOCKED"):
         authority.capture_discovery(request, lambda locator: _response(b"{}", locator))
 
@@ -223,7 +259,9 @@ def test_h1_007_domain_allowlist_blocks(tmp_path: Path):
 def test_h1_008_limits_block(tmp_path: Path):
     policy = _policy(max_candidates=1, max_bytes_per_document=1000)
     authority = SupplementalSourceAuthority(policy, tmp_path / "store")
-    receipt = authority.capture_discovery(_request(policy), lambda locator: _response(_submissions(), locator))
+    receipt = authority.capture_discovery(
+        _request(policy), lambda locator: _response(_submissions(), locator)
+    )
     with pytest.raises(SupplementalSourceError, match="CANDIDATE_LIMIT"):
         authority.derive_sec_submission_candidates(receipt)
 
@@ -232,12 +270,18 @@ def test_h1_009_redirect_escape_blocks(tmp_path: Path):
     policy = _policy()
     authority = SupplementalSourceAuthority(policy, tmp_path / "store")
     with pytest.raises(SupplementalSourceError, match="DOMAIN_BLOCKED"):
-        authority.capture_discovery(_request(policy), lambda locator: _response(b"{}", "https://evil.invalid/redirect"))
+        authority.capture_discovery(
+            _request(policy), lambda locator: _response(b"{}", "https://evil.invalid/redirect")
+        )
 
 
 def test_h1_010_selected_children_immutable_before_normalize(tmp_path: Path):
     authority, _, _, candidate_set = _discovered(tmp_path, rows=1)
-    evidence = authority.capture_selected(candidate_set, authority.select(candidate_set), lambda locator: _response(b"<html><p>Guidance $42</p></html>", locator, "text/html"))
+    evidence = authority.capture_selected(
+        candidate_set,
+        authority.select(candidate_set),
+        lambda locator: _response(b"<html><p>Guidance $42</p></html>", locator, "text/html"),
+    )
     artifact, payload = authority.store.load_verified(evidence.capture_receipts[0].payload_sha256)
     path = authority.store.root / artifact.content_addressed_relative_path
     assert payload.startswith(b"<html") and path.stat().st_mode & 0o222 == 0
@@ -250,27 +294,58 @@ def test_h1_011_child_ids_stable_across_replay(tmp_path: Path):
 
 def test_h1_012_replay_has_no_network_surface(tmp_path: Path):
     authority, _, _, candidate_set = _discovered(tmp_path, rows=1)
-    evidence = authority.capture_selected(candidate_set, authority.select(candidate_set), lambda locator: _response(b"document", locator, "text/plain"))
+    evidence = authority.capture_selected(
+        candidate_set,
+        authority.select(candidate_set),
+        lambda locator: _response(b"document", locator, "text/plain"),
+    )
     assert "fetcher" not in inspect.signature(authority.replay).parameters
-    assert authority.replay(candidate_set, evidence.capture_receipts).capture_receipts == evidence.capture_receipts
+    assert (
+        authority.replay(candidate_set, evidence.capture_receipts).capture_receipts
+        == evidence.capture_receipts
+    )
 
 
 def test_h1_013_live_and_replay_evidence_hash_identical(tmp_path: Path):
     authority, _, _, candidate_set = _discovered(tmp_path, rows=1)
-    live = authority.capture_selected(candidate_set, authority.select(candidate_set), lambda locator: _response(b"document", locator, "text/plain"))
+    live = authority.capture_selected(
+        candidate_set,
+        authority.select(candidate_set),
+        lambda locator: _response(b"document", locator, "text/plain"),
+    )
     replay = authority.replay(candidate_set, live.capture_receipts)
     assert replay.evidence_set_sha256 == live.evidence_set_sha256
 
 
 def test_h1_014_document_normalization_deterministic():
-    kwargs = dict(document_id="doc", accession_number="1", report_date="2026-06-30", filing_date="2026-08-01", document_name="report.htm", media_type="text/html")
+    kwargs = dict(
+        document_id="doc",
+        accession_number="1",
+        report_date="2026-06-30",
+        filing_date="2026-08-01",
+        document_name="report.htm",
+        media_type="text/html",
+    )
     payload = b"<html><body><p>Net production 4.2</p><table><tr><th>A</th><td>1</td></tr></table></body></html>"
     assert normalize_document(payload, **kwargs) == normalize_document(payload, **kwargs)
 
 
 def test_h1_015_ambiguous_numeric_cannot_be_trusted():
     with pytest.raises(ValueError):
-        DocumentObservationIR.create(source_document_sha256="0" * 64, locator_type="text_span", locator="block:0", reported_label="guidance", raw_value_text="10 | 20", parsed_numeric_value_or_null="10", reported_unit_text_or_null=None, reported_period_text_or_null=None, reported_basis_text_or_null=None, context_text="guidance 10 to 20", ambiguity_codes=("NUMERIC_CARDINALITY_NOT_ONE",), trusted_numeric=True)
+        DocumentObservationIR.create(
+            source_document_sha256="0" * 64,
+            locator_type="text_span",
+            locator="block:0",
+            reported_label="guidance",
+            raw_value_text="10 | 20",
+            parsed_numeric_value_or_null="10",
+            reported_unit_text_or_null=None,
+            reported_period_text_or_null=None,
+            reported_basis_text_or_null=None,
+            context_text="guidance 10 to 20",
+            ambiguity_codes=("NUMERIC_CARDINALITY_NOT_ONE",),
+            trusted_numeric=True,
+        )
 
 
 def test_h1_016_source_layer_has_no_issuer_specific_rules():
@@ -279,7 +354,11 @@ def test_h1_016_source_layer_has_no_issuer_specific_rules():
 
 
 def test_h1_021_structured_regulatory_profile_and_fixture_compile():
-    fixture = json.loads((ROOT / "research_agent/alpha_shared/config/structured_regulatory_fixture_v1.json").read_text())
+    fixture = json.loads(
+        (
+            ROOT / "research_agent/alpha_shared/config/structured_regulatory_fixture_v1.json"
+        ).read_text()
+    )
     assert STRUCTURED_REGULATORY_SOURCE_PROFILE["live_activation"] is False
     assert fixture["source_family_id"] == "structured_regulatory_dataset"
 
@@ -291,16 +370,31 @@ def test_h2_001_resolver_has_zero_issuer_branches():
 
 def test_h2_002_resolution_receipt_deterministic():
     candidate = _metric_candidate("a")
-    assert resolve_metric("long_term_debt", (candidate,)).receipt_sha256 == resolve_metric("long_term_debt", (candidate,)).receipt_sha256
+    assert (
+        resolve_metric("long_term_debt", (candidate,)).receipt_sha256
+        == resolve_metric("long_term_debt", (candidate,)).receipt_sha256
+    )
 
 
 def test_h2_003_now_stale_debt_non_primary():
-    result = resolve_metric("long_term_debt", (_metric_candidate("now-old", freshness_status="STALE", period_role="HISTORICAL"),))
+    result = resolve_metric(
+        "long_term_debt",
+        (_metric_candidate("now-old", freshness_status="STALE", period_role="HISTORICAL"),),
+    )
     assert result.status == "STALE_ONLY" and result.selected_candidate_id_or_null is None
 
 
 def test_h2_004_o_debt_explicit_stale_only():
-    result = resolve_metric("long_term_debt", (_metric_candidate("o-old", concept_or_label="LongTermDebtAndFinanceLeaseObligationsNoncurrent", freshness_status="STALE"),))
+    result = resolve_metric(
+        "long_term_debt",
+        (
+            _metric_candidate(
+                "o-old",
+                concept_or_label="LongTermDebtAndFinanceLeaseObligationsNoncurrent",
+                freshness_status="STALE",
+            ),
+        ),
+    )
     assert result.status == "STALE_ONLY"
 
 
@@ -317,7 +411,12 @@ def test_h2_007_cvx_capex_explicit_unsupported():
 
 
 def test_h2_008_cvx_cash_stale_only():
-    candidate = _metric_candidate("cvx-old", concept_or_label="CashAndCashEquivalentsAtCarryingValue", semantic_metric_id="cash_and_equivalents", freshness_status="STALE")
+    candidate = _metric_candidate(
+        "cvx-old",
+        concept_or_label="CashAndCashEquivalentsAtCarryingValue",
+        semantic_metric_id="cash_and_equivalents",
+        freshness_status="STALE",
+    )
     assert resolve_metric("cash_and_equivalents", (candidate,)).status == "STALE_ONLY"
 
 
@@ -329,20 +428,33 @@ def test_h2_009_numeric_similarity_never_creates_synonym():
 def test_h2_010_stale_never_beats_current():
     stale = _metric_candidate("a-stale", freshness_status="STALE")
     current = _metric_candidate("b-current")
-    assert resolve_metric("long_term_debt", (stale, current)).selected_candidate_id_or_null == "b-current"
+    assert (
+        resolve_metric("long_term_debt", (stale, current)).selected_candidate_id_or_null
+        == "b-current"
+    )
 
 
 def test_h2_011_equal_top_candidates_are_ambiguous():
-    assert resolve_metric("long_term_debt", (_metric_candidate("a"), _metric_candidate("b"))).status == "AMBIGUOUS"
+    assert (
+        resolve_metric("long_term_debt", (_metric_candidate("a"), _metric_candidate("b"))).status
+        == "AMBIGUOUS"
+    )
 
 
 def test_h3_001_now_old_debt_stale():
-    receipt = classify_period(_period("now", period_end="2021-12-31", current_period_end="2026-06-30"))
+    receipt = classify_period(
+        _period("now", period_end="2021-12-31", current_period_end="2026-06-30")
+    )
     assert receipt.freshness_status == "STALE" and receipt.comparative_role != "CURRENT_PRIMARY"
 
 
 def test_h3_002_o_old_debt_stale():
-    assert classify_period(_period("o", period_end="2012-12-31", current_period_end="2026-06-30")).freshness_status == "STALE"
+    assert (
+        classify_period(
+            _period("o", period_end="2012-12-31", current_period_end="2026-06-30")
+        ).freshness_status
+        == "STALE"
+    )
 
 
 def test_h3_003_jpm_q2_and_h1_distinct():
@@ -352,17 +464,31 @@ def test_h3_003_jpm_q2_and_h1_distinct():
 
 
 def test_h3_004_xom_refiled_prior_period_comparative():
-    receipt = classify_period(_period("xom-prior", period_start="2025-04-01", period_end="2025-06-30", filed_date="2026-08-01", current_period_end="2026-06-30"))
+    receipt = classify_period(
+        _period(
+            "xom-prior",
+            period_start="2025-04-01",
+            period_end="2025-06-30",
+            filed_date="2026-08-01",
+            current_period_end="2026-06-30",
+        )
+    )
     assert receipt.comparative_role == "COMPARATIVE"
 
 
 def test_h3_005_cvx_stale_cash_excluded_primary():
-    receipt = classify_period(_period("cvx-cash", period_end="2024-12-31", current_period_end="2026-06-30"))
+    receipt = classify_period(
+        _period("cvx-cash", period_end="2024-12-31", current_period_end="2026-06-30")
+    )
     assert receipt.freshness_status == "STALE" and receipt.comparative_role != "CURRENT_PRIMARY"
 
 
 def test_h3_006_recent_filing_does_not_make_old_period_current():
-    receipt = classify_period(_period("old", period_end="2020-12-31", filed_date="2026-08-26", current_period_end="2026-06-30"))
+    receipt = classify_period(
+        _period(
+            "old", period_end="2020-12-31", filed_date="2026-08-26", current_period_end="2026-06-30"
+        )
+    )
     assert receipt.freshness_status == "STALE" and receipt.comparative_role == "COMPARATIVE"
 
 
@@ -434,6 +560,10 @@ def test_h4_008_manual_semantic_intervention_blocks_batch(tmp_path: Path):
 def test_h4_concurrent_append_lock_serializes_writers(tmp_path: Path):
     ledger = OperationsLedger(tmp_path / "ops.jsonl")
     with ThreadPoolExecutor(max_workers=4) as pool:
-        events = list(pool.map(lambda index: ledger.append(**_event_values("run", f"stage-{index}")), range(8)))
+        events = list(
+            pool.map(
+                lambda index: ledger.append(**_event_values("run", f"stage-{index}")), range(8)
+            )
+        )
     assert len(events) == 8
     assert [item.sequence for item in ledger.verify()] == list(range(1, 9))

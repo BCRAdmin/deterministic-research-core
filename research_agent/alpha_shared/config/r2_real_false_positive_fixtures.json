@@ -1,0 +1,46 @@
+{
+  "contract_id": "room16.rfc0011.r2_real_false_positive_fixtures@1",
+  "fixtures": [
+    {
+      "expected_numeric_role": "PERIOD_VALUE",
+      "label": "current remaining performance obligation",
+      "metric_id": "crpo",
+      "raw_value": "12",
+      "source_document_sha256": "a6d4da1fbe51d6a2296bfc4c42e9fb1f0d971a57b5b46c891db0b45a85e8a478",
+      "source_locator": "block:390",
+      "text": "Our remaining performance obligation represents all future revenue under contract that has not yet been recognized as revenue and includes unearned revenue and unbilled amounts. Our current remaining performance obligation represents future revenue under contract that is expected to be recognized as revenue in the next 12 months.",
+      "ticker": "CRM"
+    },
+    {
+      "expected_numeric_role": "NOTE_REFERENCE",
+      "label": "nim",
+      "metric_id": "net_interest_margin",
+      "raw_value": "21",
+      "source_document_sha256": "a26d1bf7303e06b74834b9d812e5be13b6132d6aa5031e11a43dc5c71bbf89c3",
+      "source_locator": "block:524",
+      "text": "(a) Represents minimum requirements and regulatory buffers applicable to the Firm. Refer to Note 21 for additional information.",
+      "ticker": "JPM"
+    },
+    {
+      "expected_numeric_role": "AMBIGUOUS",
+      "label": "nim",
+      "metric_id": "net_interest_margin",
+      "raw_value": "36",
+      "source_document_sha256": "a26d1bf7303e06b74834b9d812e5be13b6132d6aa5031e11a43dc5c71bbf89c3",
+      "source_locator": "block:1428",
+      "text": "Approximately 36 % of the total revolving loans are senior lien loans; the remaining balance are junior lien loans. The lien position the Firm holds is considered in the Firm’s allowance for credit losses. Revolving loans that have been converted to term loans have higher delinquency rates than those that are still within the revolving period. That is primarily because the fully-amortizing payment that is generally required for those products is higher than the minimum payment options available for revolving loans within the revolving period.",
+      "ticker": "JPM"
+    },
+    {
+      "expected_numeric_role": "FOOTNOTE_MARKER",
+      "label": "oil-equivalent production",
+      "metric_id": "production_volume",
+      "raw_value": "1",
+      "source_document_sha256": "a258b9e876acf7c68dd26a64d1cc51dbe9b6aae76fd1b6ad5b37c83e5721de13",
+      "source_locator": "table:40:row:1",
+      "text": "Volumes reconciliation (Oil-equivalent production) (1)",
+      "ticker": "XOM"
+    }
+  ],
+  "source_r1_candidate_sha256": "6105395490b2fcf51c1f8ed449203920daa39f246f37ff990138b098c15aa211"
+}

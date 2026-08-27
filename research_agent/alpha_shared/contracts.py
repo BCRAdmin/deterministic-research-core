@@ -14,6 +14,16 @@ SHA256 = r"^[0-9a-f]{64}$"
 SOURCE_FAMILIES = Literal[
     "sec_primary_document", "sec_filed_exhibit", "structured_regulatory_dataset"
 ]
+NumericRole = Literal[
+    "MEASURE_VALUE",
+    "PERIOD_VALUE",
+    "DATE_VALUE",
+    "FOOTNOTE_MARKER",
+    "NOTE_REFERENCE",
+    "SECTION_REFERENCE",
+    "ORDINAL_OR_COUNT",
+    "AMBIGUOUS",
+]
 
 
 def _body(model: StrictModel, hash_field: str) -> dict[str, object]:
@@ -186,7 +196,13 @@ class DiscoveredSourceSetIR(StrictModel):
     set_sha256: str = Field(pattern=SHA256)
 
     @classmethod
-    def create(cls, *, policy_sha256: str, discovery_receipt_sha256s: tuple[str, ...], candidates: tuple[DiscoveredSourceCandidateIR, ...]) -> "DiscoveredSourceSetIR":
+    def create(
+        cls,
+        *,
+        policy_sha256: str,
+        discovery_receipt_sha256s: tuple[str, ...],
+        candidates: tuple[DiscoveredSourceCandidateIR, ...],
+    ) -> "DiscoveredSourceSetIR":
         ordered = tuple(sorted(candidates, key=lambda item: item.candidate_id))
         body = {
             "contract_id": "room16.rfc0011.discovered_source_set",
@@ -199,7 +215,9 @@ class DiscoveredSourceSetIR(StrictModel):
 
     @model_validator(mode="after")
     def validate_hash(self) -> "DiscoveredSourceSetIR":
-        if tuple(item.candidate_id for item in self.candidates) != tuple(sorted(item.candidate_id for item in self.candidates)):
+        if tuple(item.candidate_id for item in self.candidates) != tuple(
+            sorted(item.candidate_id for item in self.candidates)
+        ):
             raise ValueError("candidate set must be sorted")
         if sha256_json(_body(self, "set_sha256")) != self.set_sha256:
             raise ValueError("candidate set self-hash mismatch")
@@ -249,7 +267,13 @@ class SupplementalEvidenceSetIR(StrictModel):
     evidence_set_sha256: str = Field(pattern=SHA256)
 
     @classmethod
-    def create(cls, *, policy_sha256: str, candidate_set_sha256: str, capture_receipts: tuple[SupplementalCaptureReceiptIR, ...]) -> "SupplementalEvidenceSetIR":
+    def create(
+        cls,
+        *,
+        policy_sha256: str,
+        candidate_set_sha256: str,
+        capture_receipts: tuple[SupplementalCaptureReceiptIR, ...],
+    ) -> "SupplementalEvidenceSetIR":
         ordered = tuple(sorted(capture_receipts, key=lambda item: item.candidate_id))
         body = {
             "contract_id": "room16.rfc0011.supplemental_evidence_set",
@@ -262,7 +286,9 @@ class SupplementalEvidenceSetIR(StrictModel):
 
     @model_validator(mode="after")
     def validate_hash(self) -> "SupplementalEvidenceSetIR":
-        if tuple(item.candidate_id for item in self.capture_receipts) != tuple(sorted(item.candidate_id for item in self.capture_receipts)):
+        if tuple(item.candidate_id for item in self.capture_receipts) != tuple(
+            sorted(item.candidate_id for item in self.capture_receipts)
+        ):
             raise ValueError("capture receipts must be sorted")
         if sha256_json(_body(self, "evidence_set_sha256")) != self.evidence_set_sha256:
             raise ValueError("supplemental evidence set self-hash mismatch")
@@ -278,6 +304,9 @@ class DocumentObservationIR(StrictModel):
     source_document_sha256: str = Field(pattern=SHA256)
     locator_type: Literal["table_cell", "table_row", "text_span"]
     locator: str
+    row_index_or_null: int | None = Field(default=None, ge=0)
+    column_index_or_null: int | None = Field(default=None, ge=0)
+    header_path: tuple[str, ...] = ()
     reported_label: str
     raw_value_text: str
     parsed_numeric_value_or_null: str | None = None
@@ -285,6 +314,7 @@ class DocumentObservationIR(StrictModel):
     reported_period_text_or_null: str | None = None
     reported_basis_text_or_null: str | None = None
     context_text: str
+    numeric_role: NumericRole = "AMBIGUOUS"
     ambiguity_codes: tuple[str, ...] = ()
     trusted_numeric: bool = False
     observation_sha256: str = Field(pattern=SHA256)
@@ -301,6 +331,14 @@ class DocumentObservationIR(StrictModel):
             "contract_id": "room16.rfc0011.document_observation",
             "contract_version": 1,
             "observation_id": f"observation.{sha256_json(seed)}",
+            "row_index_or_null": None,
+            "column_index_or_null": None,
+            "header_path": (),
+            "parsed_numeric_value_or_null": None,
+            "reported_unit_text_or_null": None,
+            "reported_period_text_or_null": None,
+            "reported_basis_text_or_null": None,
+            "numeric_role": "AMBIGUOUS",
             "ambiguity_codes": (),
             "trusted_numeric": False,
             **values,
@@ -309,8 +347,16 @@ class DocumentObservationIR(StrictModel):
 
     @model_validator(mode="after")
     def numeric_safety(self) -> "DocumentObservationIR":
-        if self.trusted_numeric and (self.parsed_numeric_value_or_null is None or self.ambiguity_codes):
-            raise ValueError("ambiguous or absent numeric values cannot be trusted")
+        if self.trusted_numeric and (
+            self.parsed_numeric_value_or_null is None
+            or self.ambiguity_codes
+            or self.numeric_role != "MEASURE_VALUE"
+            or self.locator_type != "table_cell"
+            or self.row_index_or_null is None
+            or self.column_index_or_null is None
+            or not self.header_path
+        ):
+            raise ValueError("only unambiguous structure-bound measure values can be trusted")
         if sha256_json(_body(self, "observation_sha256")) != self.observation_sha256:
             raise ValueError("document observation self-hash mismatch")
         return self

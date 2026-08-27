@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+import unicodedata
 from html.parser import HTMLParser
 
 from pydantic import Field
@@ -14,10 +15,54 @@ from .contracts import DocumentObservationIR
 
 SPACE = re.compile(r"\s+")
 NUMBER = re.compile(r"(?<![A-Za-z0-9])[-+]?\$?\d[\d,]*(?:\.\d+)?%?(?![A-Za-z0-9])")
+PUNCTUATION = re.compile(r"[^\w%$.-]+", re.UNICODE)
+HEADER_SIGNAL = re.compile(
+    r"(?:\b(?:19|20)\d{2}\b|\bq[1-4]\b|\b(?:current|prior|year|quarter|month|week|day)\b|"
+    r"\b(?:ended|ending|as of|percent|percentage|usd|dollars?|millions?|billions?)\b|[%$])",
+    re.IGNORECASE,
+)
 
 
 def _clean(value: str) -> str:
     return SPACE.sub(" ", value).strip()
+
+
+def _normalized_phrase(value: str) -> str:
+    normalized = unicodedata.normalize("NFKC", value).casefold()
+    return _clean(PUNCTUATION.sub(" ", normalized))
+
+
+def _contains_alias(value: str, alias: str) -> bool:
+    haystack = f" {_normalized_phrase(value)} "
+    needle = _normalized_phrase(alias)
+    return bool(needle) and f" {needle} " in haystack
+
+
+def classify_numeric_role(*, context: str, token: str, label: str) -> str:
+    """Classify a nearby number before any trust decision."""
+
+    escaped = re.escape(token)
+    normalized = _normalized_phrase(context)
+    if re.search(rf"\(\s*{escaped}\s*\)", context):
+        return "FOOTNOTE_MARKER"
+    if re.search(rf"\bnote\s+{escaped}\b", context, re.IGNORECASE):
+        return "NOTE_REFERENCE"
+    if re.search(rf"\b(?:section|item|page)\s+{escaped}\b", context, re.IGNORECASE):
+        return "SECTION_REFERENCE"
+    if re.search(
+        rf"\b{escaped}\s+(?:months?|years?|quarters?|weeks?|days?)\b", context, re.IGNORECASE
+    ):
+        return "PERIOD_VALUE"
+    bare = token.replace("$", "").replace(",", "").rstrip("%")
+    if re.fullmatch(r"(?:19|20)\d{2}", bare) or re.search(
+        rf"\b{escaped}[-/]\d{{1,2}}[-/]\d{{1,4}}\b", context
+    ):
+        return "DATE_VALUE"
+    if re.search(rf"\b(?:first|second|third|number|count)\s+{escaped}\b", context, re.IGNORECASE):
+        return "ORDINAL_OR_COUNT"
+    if token.endswith("%") and not _contains_alias(normalized, label):
+        return "AMBIGUOUS"
+    return "AMBIGUOUS"
 
 
 class NormalizedTable(StrictModel):
@@ -137,34 +182,85 @@ def discover_observations(
 ) -> tuple[DocumentObservationIR, ...]:
     """Find evidence-bound label contexts; never guess among numeric candidates."""
 
-    contexts: list[tuple[str, str, str]] = []
-    contexts.extend(("text_span", f"block:{index}", block) for index, block in enumerate(document.normalized_text_blocks))
-    for table in document.normalized_tables:
-        for row_index, row in enumerate(table.rows):
-            contexts.append(("table_row", f"table:{table.table_index}:row:{row_index}", " | ".join(row)))
     observations: list[DocumentObservationIR] = []
     for metric_id, aliases in sorted(label_profiles.items()):
-        for locator_type, locator, context in contexts:
-            lowered = context.casefold()
-            matched = next((alias for alias in aliases if alias.casefold() in lowered), None)
+        for block_index, context in enumerate(document.normalized_text_blocks):
+            matched = next((alias for alias in aliases if _contains_alias(context, alias)), None)
             if matched is None:
                 continue
             tokens = NUMBER.findall(context)
-            ambiguity = () if len(tokens) == 1 else ("NUMERIC_CARDINALITY_NOT_ONE",)
+            ambiguity = ("TEXT_SPAN_UNTRUSTED_BY_DEFAULT",)
+            if len(tokens) != 1:
+                ambiguity += ("NUMERIC_CARDINALITY_NOT_ONE",)
+            token = tokens[0] if len(tokens) == 1 else ""
             observations.append(
                 DocumentObservationIR.create(
                     source_document_sha256=document.source_document_sha256,
-                    locator_type=locator_type,
-                    locator=locator,
+                    locator_type="text_span",
+                    locator=f"block:{block_index}",
                     reported_label=matched,
                     raw_value_text=" | ".join(tokens),
-                    parsed_numeric_value_or_null=tokens[0] if len(tokens) == 1 else None,
-                    reported_unit_text_or_null="percent" if len(tokens) == 1 and tokens[0].endswith("%") else None,
+                    parsed_numeric_value_or_null=token or None,
+                    reported_unit_text_or_null="percent" if token.endswith("%") else None,
                     reported_period_text_or_null=None,
                     reported_basis_text_or_null=metric_id,
                     context_text=context[:2000],
+                    numeric_role=classify_numeric_role(context=context, token=token, label=matched)
+                    if token
+                    else "AMBIGUOUS",
                     ambiguity_codes=ambiguity,
-                    trusted_numeric=len(tokens) == 1,
+                    trusted_numeric=False,
                 )
             )
+
+        for table in document.normalized_tables:
+            headers = table.rows[0] if table.rows else ()
+            for row_index, row in enumerate(table.rows[1:], start=1):
+                for label_column, label_cell in enumerate(row):
+                    matched = next(
+                        (alias for alias in aliases if _contains_alias(label_cell, alias)), None
+                    )
+                    if matched is None:
+                        continue
+                    for value_column, value_cell in enumerate(row):
+                        if value_column == label_column:
+                            continue
+                        tokens = NUMBER.findall(value_cell)
+                        if not tokens:
+                            continue
+                        header = (
+                            headers[value_column]
+                            if value_column < len(headers)
+                            else f"column:{value_column}"
+                        )
+                        unambiguous = (
+                            len(tokens) == 1
+                            and bool(header)
+                            and not NUMBER.fullmatch(header)
+                            and bool(HEADER_SIGNAL.search(header))
+                        )
+                        ambiguity = () if unambiguous else ("TABLE_CELL_VALUE_AMBIGUOUS",)
+                        token = tokens[0] if len(tokens) == 1 else ""
+                        observations.append(
+                            DocumentObservationIR.create(
+                                source_document_sha256=document.source_document_sha256,
+                                locator_type="table_cell",
+                                locator=f"table:{table.table_index}:row:{row_index}:column:{value_column}",
+                                row_index_or_null=row_index,
+                                column_index_or_null=value_column,
+                                header_path=(header,),
+                                reported_label=matched,
+                                raw_value_text=" | ".join(tokens),
+                                parsed_numeric_value_or_null=token or None,
+                                reported_unit_text_or_null="percent"
+                                if token.endswith("%")
+                                else None,
+                                reported_period_text_or_null=header,
+                                reported_basis_text_or_null=metric_id,
+                                context_text=" | ".join(row)[:2000],
+                                numeric_role="MEASURE_VALUE" if unambiguous else "AMBIGUOUS",
+                                ambiguity_codes=ambiguity,
+                                trusted_numeric=unambiguous,
+                            )
+                        )
     return tuple(sorted(observations, key=lambda item: item.observation_id))

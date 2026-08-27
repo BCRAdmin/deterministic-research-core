@@ -7,7 +7,7 @@ from pydantic import Field
 from research_agent.compiler_foundation.canonical import sha256_json
 from research_agent.compiler_foundation.contracts import StrictModel
 
-from .concept_registry import CONCEPT_REGISTRY, CONCEPT_REGISTRY_SHA256
+from .concept_registry import CONCEPT_REGISTRY, CONCEPT_REGISTRY_SHA256, concept_record
 from .resolution_receipt import MetricResolutionReceipt, RejectedCandidate
 
 
@@ -25,6 +25,13 @@ class MetricCandidate(StrictModel):
     authority_compatible: bool = True
     numeric_value: str | None = None
     semantic_metric_id: str | None = None
+    semantic_role: str | None = None
+    aggregation_role: str | None = None
+    formula_use_or_null: str | None = None
+    archetype_profile_id: str = "generic"
+    period_receipt_sha256: str | None = None
+    inventory_sha256: str | None = None
+    trusted_numeric: bool = True
 
 
 RESOLVER_PROFILE = {
@@ -45,7 +52,9 @@ def _family(metric_id: str) -> dict[str, object] | None:
     return value if isinstance(value, dict) else None
 
 
-def resolve_metric(metric_id: str, candidates: tuple[MetricCandidate, ...]) -> MetricResolutionReceipt:
+def resolve_metric(
+    metric_id: str, candidates: tuple[MetricCandidate, ...]
+) -> MetricResolutionReceipt:
     family = _family(metric_id)
     if family is None:
         return MetricResolutionReceipt.create(
@@ -62,9 +71,9 @@ def resolve_metric(metric_id: str, candidates: tuple[MetricCandidate, ...]) -> M
             evidence_ids=(),
             resolver_profile_sha256=RESOLVER_PROFILE_SHA256,
         )
-    concepts = set(family["concepts"])
+    concepts = {item["concept"] for item in family["candidates"]}
     expected_period = family["period_type"]
-    units = set(family["units"])
+    units = set(family["allowed_units"])
     accepted: list[tuple[int, MetricCandidate]] = []
     rejected: list[RejectedCandidate] = []
     stale_seen = False
@@ -74,6 +83,22 @@ def resolve_metric(metric_id: str, candidates: tuple[MetricCandidate, ...]) -> M
             reasons.append("SEMANTIC_FAMILY_MISMATCH")
         if candidate.concept_or_label not in concepts:
             reasons.append("CONCEPT_NOT_IN_FAMILY")
+            semantic = None
+        else:
+            semantic = concept_record(metric_id, candidate.concept_or_label)
+        if semantic is not None:
+            role = str(semantic["semantic_role"])
+            if role not in {"EXACT_DIRECT", "ALTERNATE_EXACT"}:
+                reasons.append(f"SEMANTIC_ROLE_{role}")
+            if candidate.semantic_role is not None and candidate.semantic_role != role:
+                reasons.append("SEMANTIC_ROLE_BINDING_MISMATCH")
+            if (
+                candidate.formula_use_or_null is not None
+                and candidate.formula_use_or_null not in set(semantic["formula_eligibility"])
+            ):
+                reasons.append("FORMULA_USE_INELIGIBLE")
+            if candidate.archetype_profile_id not in set(semantic["allowed_archetype_profiles"]):
+                reasons.append("ARCHETYPE_PROFILE_INCOMPATIBLE")
         if candidate.period_type != expected_period:
             reasons.append("PERIOD_TYPE_MISMATCH")
         if candidate.unit not in units:
@@ -82,15 +107,29 @@ def resolve_metric(metric_id: str, candidates: tuple[MetricCandidate, ...]) -> M
             reasons.append("DIMENSION_MISMATCH")
         if not candidate.authority_compatible:
             reasons.append("AUTHORITY_MISMATCH")
+        if not candidate.trusted_numeric:
+            reasons.append("UNTRUSTED_NUMERIC")
+        if not candidate.evidence_ids or candidate.inventory_sha256 is None:
+            reasons.append("EVIDENCE_BINDING_MISSING")
+        if candidate.period_receipt_sha256 is None:
+            reasons.append("PERIOD_RECEIPT_MISSING")
         if candidate.freshness_status == "STALE":
             reasons.append("STALE")
             stale_seen = True
         if candidate.period_role not in {"CURRENT_PRIMARY", "CURRENT_YTD"}:
             reasons.append("NON_PRIMARY_PERIOD")
         if reasons:
-            rejected.append(RejectedCandidate(candidate_id=candidate.candidate_id, reason_codes=tuple(reasons)))
+            rejected.append(
+                RejectedCandidate(candidate_id=candidate.candidate_id, reason_codes=tuple(reasons))
+            )
             continue
-        score = 100 + (10 if candidate.direct else 0) + (5 if candidate.freshness_status == "CURRENT" else 0)
+        semantic_score = 20 if semantic and semantic["semantic_role"] == "EXACT_DIRECT" else 10
+        score = (
+            100
+            + semantic_score
+            + (10 if candidate.direct else 0)
+            + (5 if candidate.freshness_status == "CURRENT" else 0)
+        )
         accepted.append((score, candidate))
     accepted.sort(key=lambda item: (-item[0], item[1].candidate_id))
     if not accepted:
@@ -140,7 +179,11 @@ def resolve_metric(metric_id: str, candidates: tuple[MetricCandidate, ...]) -> M
         period_role=selected.period_role,
         freshness_status=selected.freshness_status,
         unit=selected.unit,
-        score_components={"semantic": 100, "direct": 10 if selected.direct else 0, "fresh": 5 if selected.freshness_status == "CURRENT" else 0},
+        score_components={
+            "semantic": 120 if selected.semantic_role == "EXACT_DIRECT" else 110,
+            "direct": 10 if selected.direct else 0,
+            "fresh": 5 if selected.freshness_status == "CURRENT" else 0,
+        },
         rejected_candidates=tuple(rejected),
         evidence_ids=selected.evidence_ids,
         resolver_profile_sha256=RESOLVER_PROFILE_SHA256,
