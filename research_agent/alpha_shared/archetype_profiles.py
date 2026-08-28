@@ -37,6 +37,7 @@ from research_agent.alpha_saas.projection import (
 from research_agent.compiler_foundation.canonical import sha256_json
 from research_agent.compiler_foundation.contracts import StrictModel
 
+from .core_slots import CoreCoverageSlotIR, required_core_slots
 from .metric_semantics import METRIC_SEMANTICS_REGISTRY_SHA256, metric_semantics
 
 SHA256 = r"^[0-9a-f]{64}$"
@@ -145,6 +146,7 @@ class ArchetypeProfileAdapterIR(StrictModel):
     ranking_profile_sha256: str = Field(pattern=SHA256)
     metric_semantics_registry_sha256: str = Field(pattern=SHA256)
     required_core_metrics: tuple[str, ...]
+    required_core_slots: tuple[CoreCoverageSlotIR, ...]
     optional_metrics: tuple[str, ...]
     metric_definitions: tuple[ArchetypeMetricDefinitionIR, ...]
     allowed_safe_formulas: dict[str, Any]
@@ -187,7 +189,9 @@ def load_archetype_profile(profile_id: ProfileId | str) -> ArchetypeProfileAdapt
     if observed != _EXPECTED_REGISTRY_HASHES[typed_id]:
         raise ValueError(f"R4_ARCHETYPE_FROZEN_REGISTRY_DRIFT:{profile_id}")
     order = tuple(str(item) for item in source["core_order"])
-    required = order[:5]
+    legacy_required = order[:5]
+    slots = required_core_slots(typed_id, legacy_required)
+    required = tuple(item.selection_priority[0] for item in slots)
     mappings = source["mapping"]["metrics"]
     formula_outputs = {
         str(value["output_metric"])
@@ -218,6 +222,7 @@ def load_archetype_profile(profile_id: ProfileId | str) -> ArchetypeProfileAdapt
         ranking_profile_sha256=observed["ranking"],
         metric_semantics_registry_sha256=METRIC_SEMANTICS_REGISTRY_SHA256,
         required_core_metrics=required,
+        required_core_slots=slots,
         optional_metrics=order[5:],
         metric_definitions=tuple(definitions),
         allowed_safe_formulas=source["formulas"],

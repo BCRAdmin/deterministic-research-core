@@ -13,6 +13,7 @@ from research_agent.compiler_foundation.canonical import sha256_json
 from research_agent.compiler_foundation.contracts import StrictModel
 
 from .archetype_profiles import ArchetypeMetricDefinitionIR, ArchetypeProfileAdapterIR
+from .core_slots import resolve_core_slots
 from .metric_resolver import RESOLVER_PROFILE_SHA256
 from .period_freshness import PeriodCandidate, classify_period
 from .raw_inventory import RawFactCandidateIR, SourceSnapshotFactInventoryIR
@@ -45,7 +46,9 @@ class InternalAlphaReportIR(StrictModel):
     as_of: str
     archetype: str
     core_metrics: tuple[InternalAlphaMetricIR, ...]
+    optional_metrics: tuple[InternalAlphaMetricIR, ...] = ()
     derived_metrics: tuple[InternalAlphaMetricIR, ...]
+    core_slot_resolutions: tuple[dict[str, object], ...] = ()
     important_unsupported_metrics: tuple[str, ...]
     stale_or_comparative_diagnostics: tuple[dict[str, object], ...]
     source_coverage: dict[str, int]
@@ -67,7 +70,7 @@ class InternalAlphaReportIR(StrictModel):
         body = self.model_dump(mode="json", exclude={"report_sha256"})
         if sha256_json(body) != self.report_sha256:
             raise ValueError("internal Alpha report self-hash mismatch")
-        surfaced = (*self.core_metrics, *self.derived_metrics)
+        surfaced = (*self.core_metrics, *self.optional_metrics, *self.derived_metrics)
         if any(not item.evidence_ids for item in surfaced):
             raise ValueError("surfaced metric lacks evidence lineage")
         return self
@@ -494,13 +497,19 @@ def build_internal_alpha_report(
     direct_by_metric = {item.metric_id: item for item in direct_values}
     derived, evaluations = _derive_metrics(adapter, direct_by_metric)
     all_metrics = {item.metric_id: item for item in (*direct_values, *derived)}
-    core_metrics = tuple(
-        all_metrics[item]
-        for item in adapter.required_core_metrics
-        if item in all_metrics
+    slot_resolutions = resolve_core_slots(adapter.required_core_slots, all_metrics)
+    selected_core_metric_ids = tuple(
+        item.selected_metric_id_or_null
+        for item in slot_resolutions
+        if item.selected_metric_id_or_null is not None
+    )
+    core_metrics = tuple(all_metrics[item] for item in selected_core_metric_ids)
+    selected_core_set = set(selected_core_metric_ids)
+    optional_metrics = tuple(
+        item for item in direct_values if item.metric_id not in selected_core_set
     )
     unsupported = tuple(
-        item for item in adapter.required_core_metrics if item not in all_metrics
+        item.slot_id for item in slot_resolutions if item.status == "UNSUPPORTED"
     )
     stale_or_comparative = tuple(
         {
@@ -515,9 +524,10 @@ def build_internal_alpha_report(
         or period_by_id[item.candidate_id]["comparative_role"]
         not in {"CURRENT_PRIMARY", "CURRENT_YTD"}
     )
-    required_count = len(adapter.required_core_metrics)
+    required_count = len(adapter.required_core_slots)
     core_coverage = round(100 * len(core_metrics) / required_count) if required_count else 0
-    surfaced = (*direct_values, *derived)
+    surfaced_by_id = {item.metric_id: item for item in (*direct_values, *derived)}
+    surfaced = tuple(surfaced_by_id.values())
     lineage_rate = round(
         100 * sum(bool(item.evidence_ids) for item in surfaced) / len(surfaced)
     ) if surfaced else 100
@@ -533,7 +543,11 @@ def build_internal_alpha_report(
         as_of=inventory.as_of_date,
         archetype=adapter.archetype,
         core_metrics=core_metrics,
+        optional_metrics=optional_metrics,
         derived_metrics=derived,
+        core_slot_resolutions=tuple(
+            item.model_dump(mode="json") for item in slot_resolutions
+        ),
         important_unsupported_metrics=unsupported,
         stale_or_comparative_diagnostics=stale_or_comparative,
         source_coverage={
@@ -544,6 +558,9 @@ def build_internal_alpha_report(
             "required_core_metric_count": required_count,
             "covered_core_metric_count": len(core_metrics),
             "core_metric_coverage_percent": core_coverage,
+            "required_core_slot_count": required_count,
+            "covered_core_slot_count": len(core_metrics),
+            "core_slot_coverage_percent": core_coverage,
         },
         report_completeness={
             "required_section_count": len(adapter.required_report_sections),
