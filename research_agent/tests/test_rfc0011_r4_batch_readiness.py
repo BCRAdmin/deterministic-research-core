@@ -19,6 +19,12 @@ from research_agent.alpha_shared.internal_report import (
     build_internal_alpha_report,
     compute_batch_threshold_metrics,
 )
+from research_agent.alpha_shared.execution_authority import (
+    BatchExecutionAuthorityIR,
+    BatchExecutionCaseIR,
+    RuntimeIdentityIR,
+    authorize_case_before_network,
+)
 from research_agent.alpha_shared.raw_inventory import (
     build_source_snapshot_fact_inventory,
 )
@@ -287,6 +293,40 @@ def test_r4_canonical_local_fixture_uses_same_runner_for_every_archetype(
 
 
 def test_r4_verified_live_receipts_populate_h4_provider_telemetry(tmp_path: Path):
+    runtime = RuntimeIdentityIR(
+        research_commit="a" * 40,
+        research_tree="b" * 40,
+        product_commit="c" * 40,
+        product_tree="d" * 40,
+        as_of_date="2026-08-27",
+    )
+    authority = BatchExecutionAuthorityIR.create(
+        authority_kind="DEVELOPMENT_VALIDATION",
+        as_of_date=runtime.as_of_date,
+        research_commit=runtime.research_commit,
+        research_tree=runtime.research_tree,
+        product_commit=runtime.product_commit,
+        product_tree=runtime.product_tree,
+        shared_freeze_sha256=None,
+        fixed_company_list_sha256=None,
+        threshold_sha256=None,
+        ordered_cases=(
+            BatchExecutionCaseIR(
+                sequence=1,
+                ticker="XOM",
+                company_name="Exxon Mobil Corporation",
+                archetype_profile_id="energy",
+            ),
+        ),
+        network_live_authorized=True,
+    )
+    receipt = authorize_case_before_network(
+        ticker="XOM",
+        archetype_profile_id="energy",
+        sequence=1,
+        authority=authority,
+        runtime_identity=runtime,
+    )
     result = run_canonical_alpha_case(
         base_input=_canonical_base(tmp_path, ticker="XOM"),
         supplemental_input=_supplemental(_positive()),
@@ -297,6 +337,7 @@ def test_r4_verified_live_receipts_populate_h4_provider_telemetry(tmp_path: Path
         research_tree="b" * 40,
         monotonic_counter=2001,
         acquisition_mode="verified_live_capture",
+        authorization_receipt=receipt,
     )
     assert result.report["live_network_call_count"] == 1
     assert result.report["live_capture_bytes"] > 0

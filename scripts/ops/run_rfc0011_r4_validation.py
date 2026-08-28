@@ -11,6 +11,12 @@ import sys
 from pathlib import Path
 
 from research_agent.alpha_shared.contracts import SharedBaseInputIR, SupplementalCompileInputIR
+from research_agent.alpha_shared.execution_authority import (
+    BatchExecutionAuthorityIR,
+    BatchExecutionCaseIR,
+    RuntimeIdentityIR,
+    authorize_case_before_network,
+)
 from research_agent.alpha_shared.raw_inventory import build_source_snapshot_fact_inventory
 from research_agent.alpha_shared.runner import replay_canonical_alpha_case, run_canonical_alpha_case
 from research_agent.compiler_foundation.canonical import sha256_json
@@ -48,8 +54,46 @@ def _compile(args: argparse.Namespace) -> int:
         "research_tree": args.research_tree,
         "monotonic_counter": args.counter,
     }
+    runtime_identity = RuntimeIdentityIR(
+        research_commit=args.research_commit,
+        research_tree=args.research_tree,
+        product_commit=args.product_commit,
+        product_tree=args.product_tree,
+        as_of_date=base.as_of_date,
+    )
+    development_authority = BatchExecutionAuthorityIR.create(
+        authority_kind="DEVELOPMENT_VALIDATION",
+        as_of_date=base.as_of_date,
+        research_commit=runtime_identity.research_commit,
+        research_tree=runtime_identity.research_tree,
+        product_commit=runtime_identity.product_commit,
+        product_tree=runtime_identity.product_tree,
+        shared_freeze_sha256=None,
+        fixed_company_list_sha256=None,
+        threshold_sha256=None,
+        ordered_cases=(
+            BatchExecutionCaseIR(
+                sequence=1,
+                ticker=base.ticker,
+                company_name="Exxon Mobil Corporation",
+                archetype_profile_id="energy",
+            ),
+        ),
+        network_live_authorized=True,
+    )
+    development_receipt = authorize_case_before_network(
+        ticker=base.ticker,
+        archetype_profile_id="energy",
+        sequence=1,
+        authority=development_authority,
+        runtime_identity=runtime_identity,
+    )
     result = (
-        run_canonical_alpha_case(**common, acquisition_mode="verified_live_capture")
+        run_canonical_alpha_case(
+            **common,
+            acquisition_mode="verified_live_capture",
+            authorization_receipt=development_receipt,
+        )
         if args.case_mode == "live"
         else replay_canonical_alpha_case(**common)
     )
@@ -162,6 +206,10 @@ def _parent(args: argparse.Namespace) -> int:
                 args.research_commit,
                 "--research-tree",
                 args.research_tree,
+                "--product-commit",
+                args.product_commit,
+                "--product-tree",
+                args.product_tree,
                 "--counter",
                 str(args.counter),
             ],
@@ -222,6 +270,8 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--r3-result", required=True, type=Path)
     parser.add_argument("--research-commit", required=True)
     parser.add_argument("--research-tree", required=True)
+    parser.add_argument("--product-commit", required=True)
+    parser.add_argument("--product-tree", required=True)
     parser.add_argument("--counter", required=True, type=int)
     return parser
 

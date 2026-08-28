@@ -9,9 +9,8 @@ from typing import Any
 
 from .compiler import SharedCompileResult, compile_shared_successor
 from .contracts import SharedBaseInputIR, SupplementalCompileInputIR
+from .execution_authority import AuthorizationReceiptIR, verify_receipt_for_live_case
 from .operations_ledger import OperationsLedger
-
-DEVELOPMENT_LIVE_TICKERS = frozenset({"CRM", "PLD", "JPM", "XOM"})
 
 
 @dataclass(frozen=True)
@@ -134,15 +133,22 @@ def run_canonical_alpha_case(
     research_tree: str,
     monotonic_counter: int,
     acquisition_mode: str,
+    authorization_receipt: AuthorizationReceiptIR | None = None,
 ) -> CanonicalAlphaCaseRunResult:
     """Bind a verified full source case to the R4 shared compiler and report surface."""
 
     if acquisition_mode not in {"verified_live_capture", "offline_replay"}:
         raise ValueError("R4_CANONICAL_ACQUISITION_MODE_INVALID")
-    if acquisition_mode == "verified_live_capture" and (
-        base_input.ticker not in DEVELOPMENT_LIVE_TICKERS
-    ):
-        raise ValueError("R4_LIVE_TICKER_NOT_AUTHORIZED")
+    verified_receipt = None
+    if acquisition_mode == "verified_live_capture":
+        verified_receipt = verify_receipt_for_live_case(
+            receipt=authorization_receipt,
+            ticker=base_input.ticker,
+            archetype_profile_id=archetype_profile_id,
+            as_of_date=base_input.as_of_date,
+            research_commit=research_commit,
+            research_tree=research_tree,
+        )
     run_id = f"rfc0011-r4.case.{base_input.ticker.lower()}.{base_input.source_snapshot_sha256[:12]}"
     ledger = OperationsLedger(ledger_path)
     _append_stage(
@@ -255,6 +261,15 @@ def run_canonical_alpha_case(
             "ticker": base_input.ticker,
             "archetype_profile_id": archetype_profile_id,
             "acquisition_mode": acquisition_mode,
+            "authorization_receipt_sha256": (
+                verified_receipt.receipt_sha256 if verified_receipt is not None else None
+            ),
+            "authorization_preflight_count": (
+                verified_receipt.authorization_preflight_count
+                if verified_receipt is not None
+                else 0
+            ),
+            "case_attempt_count": 1 if live else 0,
             "source_snapshot_sha256": base_input.source_snapshot_sha256,
             "bundle_sha256": compiled.manifest["bundle_sha256"],
             "internal_report_sha256": compiled.internal_report.report_sha256,
