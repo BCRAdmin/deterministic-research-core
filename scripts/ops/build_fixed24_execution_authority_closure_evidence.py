@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import shutil
 import subprocess
@@ -20,7 +21,6 @@ from research_agent.alpha_shared.execution_authority import (
     threshold_authority_sha256,
 )
 from research_agent.compiler_foundation.canonical import sha256_json
-from scripts.ops.verify_project_boundary_non_interference_v2 import build_receipt
 
 RESULT_PREFIX = "ROOM16_FIXED24_EXECUTION_AUTHORITY_CLOSURE_RESULT_R1"
 DATE = "2026-08-28"
@@ -57,6 +57,16 @@ def _git(repo: Path, *args: str) -> str:
 
 def _sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _boundary_receipt_builder() -> Any:
+    module_path = Path(__file__).with_name("verify_project_boundary_non_interference_v2.py")
+    spec = importlib.util.spec_from_file_location("room16_boundary_gate_v2", module_path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError("FIXED24_BOUNDARY_VERIFIER_IMPORT_FAILED")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.build_receipt
 
 
 def _changed_files(repo: Path, base: str) -> list[dict[str, str]]:
@@ -293,7 +303,7 @@ archetype profiles, Product, release, deploy and publication remain unchanged.
     after = _read(args.foreign_after)
     created = [args.research_repo / item["path"] for item in changed if item["status"].startswith("A")]
     modified = [args.research_repo / item["path"] for item in changed if item["status"].startswith("M")]
-    boundary = build_receipt(
+    boundary = _boundary_receipt_builder()(
         before=before,
         after=after,
         room16_roots=(args.research_repo, args.product_repo),
