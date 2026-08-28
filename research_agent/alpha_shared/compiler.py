@@ -566,12 +566,17 @@ def compile_shared_successor(
     periods, base_resolutions = _execute_semantics(inventory, archetype_profile_id)
     profile_adapter_id = "energy" if archetype_profile_id == "generic" else archetype_profile_id
     archetype_profile = load_archetype_profile(profile_adapter_id)
-    internal = build_internal_alpha_report(raw_inventory, archetype_profile)
     supplemental_candidates, supplemental_resolutions = build_supplemental_semantics(
         supplemental=supplemental_input,
         as_of_date=base_input.as_of_date,
         filed_date=base_input.as_of_date,
         archetype_profile_id=archetype_profile_id,
+    )
+    internal = build_internal_alpha_report(
+        raw_inventory,
+        archetype_profile,
+        supplemental_candidate_receipts=supplemental_candidates,
+        supplemental_resolution_receipts=supplemental_resolutions,
     )
     period_sha = sha256_json(periods)
     supplemental_candidate_sha = sha256_json(supplemental_candidates)

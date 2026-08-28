@@ -185,6 +185,86 @@ CONCEPT_REGISTRY = {
                 ),
             ],
         },
+        "rpo": {
+            "metric_definition": (
+                "Total remaining performance obligation at the reporting instant; "
+                "distinct from current RPO and contract liability."
+            ),
+            "period_type": "INSTANT",
+            "allowed_units": ["USD"],
+            "candidates": [
+                _candidate(
+                    "remaining performance obligation",
+                    semantic_role="EXACT_DIRECT",
+                    equivalence_class="total_remaining_performance_obligation",
+                    aggregation_role="DIRECT_TOTAL",
+                    allowed_archetype_profiles=("generic", "saas"),
+                ),
+                _candidate(
+                    "total rpo",
+                    semantic_role="ALTERNATE_EXACT",
+                    equivalence_class="total_remaining_performance_obligation",
+                    aggregation_role="DIRECT_TOTAL",
+                    allowed_archetype_profiles=("generic", "saas"),
+                ),
+            ],
+        },
+        "reported_ffo": {
+            "metric_definition": "Issuer-reported total funds from operations.",
+            "period_type": "DURATION",
+            "allowed_units": ["USD"],
+            "candidates": [
+                _candidate(
+                    "funds from operations",
+                    semantic_role="EXACT_DIRECT",
+                    equivalence_class="issuer_reported_total_ffo",
+                    aggregation_role="DIRECT_TOTAL",
+                    allowed_archetype_profiles=("reit",),
+                ),
+                _candidate(
+                    "ffo attributable to common stockholders",
+                    semantic_role="ALTERNATE_EXACT",
+                    equivalence_class="issuer_reported_total_ffo",
+                    aggregation_role="DIRECT_TOTAL",
+                    allowed_archetype_profiles=("reit",),
+                ),
+            ],
+        },
+        "reported_core_ffo": {
+            "metric_definition": "Issuer-reported total Core FFO.",
+            "period_type": "DURATION",
+            "allowed_units": ["USD"],
+            "candidates": [
+                _candidate(
+                    "core ffo",
+                    semantic_role="EXACT_DIRECT",
+                    equivalence_class="issuer_reported_total_core_ffo",
+                    aggregation_role="DIRECT_TOTAL",
+                    allowed_archetype_profiles=("reit",),
+                ),
+            ],
+        },
+        "reported_affo": {
+            "metric_definition": "Issuer-reported total AFFO with explicit AFFO title evidence.",
+            "period_type": "DURATION",
+            "allowed_units": ["USD"],
+            "candidates": [
+                _candidate(
+                    "affo",
+                    semantic_role="EXACT_DIRECT",
+                    equivalence_class="issuer_reported_total_affo",
+                    aggregation_role="DIRECT_TOTAL",
+                    allowed_archetype_profiles=("reit",),
+                ),
+                _candidate(
+                    "adjusted funds from operations (affo)",
+                    semantic_role="ALTERNATE_EXACT",
+                    equivalence_class="issuer_reported_total_affo",
+                    aggregation_role="DIRECT_TOTAL",
+                    allowed_archetype_profiles=("reit",),
+                ),
+            ],
+        },
     },
 }
 CONCEPT_REGISTRY_SHA256 = sha256_json(CONCEPT_REGISTRY)

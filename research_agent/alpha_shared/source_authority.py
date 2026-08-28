@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass
 from datetime import date, timedelta
 from pathlib import Path
@@ -33,6 +34,42 @@ class NetworkResponse:
 
 
 NetworkFetcher = Callable[[str], NetworkResponse]
+
+_INDEX_PAGE = re.compile(r"(?:^|-)index(?:-headers)?\.html?$", re.IGNORECASE)
+_STRICT_EXHIBIT = re.compile(
+    r"(?:^|[-_.])(?:ex|exhibit)[-_.]?99(?:[-_.]?\d+)?(?:[-_.]|$)", re.IGNORECASE
+)
+_EARNINGS_SIGNAL = re.compile(
+    r"(?:^|[-_.])(?:earnings?|financial[-_]?results?|press[-_]?release|results?)(?:[-_.]|$)",
+    re.IGNORECASE,
+)
+_NON_EARNINGS_SIGNAL = re.compile(
+    r"(?:^|[-_.])(?:acquisition|disposition|dividend|governance|merger|offering|"
+    r"presentation|proxy|restructuring)(?:[-_.]|$)",
+    re.IGNORECASE,
+)
+
+
+def is_sec_index_page(document_name: str) -> bool:
+    return bool(_INDEX_PAGE.search(document_name.rsplit("/", 1)[-1]))
+
+
+def is_strict_filed_exhibit_name(document_name: str) -> bool:
+    """Use strict exhibit/earnings signals; arbitrary ``ex`` substrings never qualify."""
+
+    name = document_name.rsplit("/", 1)[-1]
+    if is_sec_index_page(name):
+        return False
+    stem = name.rsplit(".", 1)[0]
+    return bool(_STRICT_EXHIBIT.search(stem) or _EARNINGS_SIGNAL.search(stem))
+
+
+def is_earnings_filed_exhibit_name(document_name: str) -> bool:
+    """Identify a generic earnings/results exhibit without issuer rules."""
+
+    name = document_name.rsplit("/", 1)[-1]
+    stem = name.rsplit(".", 1)[0]
+    return is_strict_filed_exhibit_name(name) and not _NON_EARNINGS_SIGNAL.search(stem)
 
 
 def _allowed_locator(locator: str, policy: SupplementalSourcePolicyIR) -> None:
@@ -182,7 +219,7 @@ class SupplementalSourceAuthority:
             lowered = name.lower()
             if name == primary_document or not lowered.endswith((".htm", ".html", ".txt")):
                 continue
-            if not any(token in lowered for token in ("ex", "99", "press", "earn", "release")):
+            if not is_strict_filed_exhibit_name(name):
                 continue
             locator = f"https://www.sec.gov/Archives/edgar/data/{cik}/{accession_path}/{name}"
             _allowed_locator(locator, self.policy)
@@ -223,11 +260,53 @@ class SupplementalSourceAuthority:
     def select(self, candidate_set: DiscoveredSourceSetIR) -> tuple[DiscoveredSourceCandidateIR, ...]:
         if candidate_set.policy_sha256 != self.policy.policy_sha256:
             raise SupplementalSourceError("RFC0011_POLICY_BINDING_MISMATCH", "candidate set")
-        ordered = sorted(
-            candidate_set.candidates,
-            key=lambda item: (item.filing_date, item.accession_number, item.document_name),
-            reverse=True,
+        eligible = [
+            item for item in candidate_set.candidates if not is_sec_index_page(item.document_name)
+        ]
+        quarterly_primaries = [
+            item
+            for item in eligible
+            if item.source_family_id == "sec_primary_document"
+            and item.form in {"10-Q", "10-K"}
+        ]
+        current_primary = max(
+            quarterly_primaries,
+            key=lambda item: (
+                item.report_date or "",
+                item.filing_date,
+                item.accession_number,
+                item.document_name,
+            ),
+            default=None,
         )
+
+        def rank(item: DiscoveredSourceCandidateIR) -> tuple[object, ...]:
+            if current_primary is not None and item.candidate_id == current_primary.candidate_id:
+                tier = 0
+            elif (
+                current_primary is not None
+                and item.source_family_id == "sec_filed_exhibit"
+                and is_earnings_filed_exhibit_name(item.document_name)
+                and abs(
+                    (date.fromisoformat(item.filing_date) - date.fromisoformat(current_primary.filing_date)).days
+                )
+                <= 7
+            ):
+                tier = 1
+            elif item.source_family_id == "sec_filed_exhibit":
+                tier = 2
+            else:
+                tier = 3
+            return (
+                tier,
+                -(date.fromisoformat(item.report_date or item.filing_date).toordinal()),
+                -(date.fromisoformat(item.filing_date).toordinal()),
+                item.accession_number,
+                item.document_name,
+                item.candidate_id,
+            )
+
+        ordered = sorted(eligible, key=rank)
         selected = tuple(ordered[: self.policy.max_selected_documents])
         if len(selected) > self.policy.max_selected_documents:
             raise SupplementalSourceError("RFC0011_SELECTION_LIMIT", str(len(selected)))

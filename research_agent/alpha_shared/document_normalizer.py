@@ -68,6 +68,7 @@ def classify_numeric_role(*, context: str, token: str, label: str) -> str:
 class NormalizedTable(StrictModel):
     table_index: int = Field(ge=0)
     rows: tuple[tuple[str, ...], ...]
+    context_blocks: tuple[str, ...] = ()
 
 
 class NormalizedDocument(StrictModel):
@@ -92,25 +93,35 @@ class _NeutralHTMLParser(HTMLParser):
         self.blocks: list[str] = []
         self._buffer: list[str] = []
         self.tables: list[list[list[str]]] = []
+        self.table_contexts: list[tuple[str, ...]] = []
         self._table: list[list[str]] | None = None
         self._row: list[str] | None = None
         self._cell: list[str] | None = None
+        self._cell_colspan = 1
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         if tag == "table":
             self._flush()
             self._table = []
+            self.table_contexts.append(tuple(self.blocks[-4:]))
         elif tag == "tr" and self._table is not None:
             self._row = []
         elif tag in {"td", "th"} and self._row is not None:
             self._cell = []
+            attributes = {key.casefold(): value for key, value in attrs}
+            try:
+                self._cell_colspan = max(1, min(50, int(attributes.get("colspan") or "1")))
+            except ValueError:
+                self._cell_colspan = 1
         elif tag in {"p", "div", "li", "br", "h1", "h2", "h3", "h4"}:
             self._flush()
 
     def handle_endtag(self, tag: str) -> None:
         if tag in {"td", "th"} and self._cell is not None and self._row is not None:
-            self._row.append(_clean(" ".join(self._cell)))
+            value = _clean(" ".join(self._cell))
+            self._row.extend([value, *("" for _ in range(self._cell_colspan - 1))])
             self._cell = None
+            self._cell_colspan = 1
         elif tag == "tr" and self._row is not None and self._table is not None:
             if any(self._row):
                 self._table.append(self._row)
@@ -155,7 +166,15 @@ def normalize_document(
         parser.close()
         blocks = tuple(parser.blocks)
         tables = tuple(
-            NormalizedTable(table_index=index, rows=tuple(tuple(row) for row in rows))
+            NormalizedTable(
+                table_index=index,
+                rows=tuple(tuple(row) for row in rows),
+                context_blocks=(
+                    parser.table_contexts[index]
+                    if index < len(parser.table_contexts)
+                    else ()
+                ),
+            )
             for index, rows in enumerate(parser.tables)
         )
     else:
@@ -214,7 +233,6 @@ def discover_observations(
             )
 
         for table in document.normalized_tables:
-            headers = table.rows[0] if table.rows else ()
             for row_index, row in enumerate(table.rows[1:], start=1):
                 for label_column, label_cell in enumerate(row):
                     matched = next(
@@ -228,11 +246,21 @@ def discover_observations(
                         tokens = NUMBER.findall(value_cell)
                         if not tokens:
                             continue
-                        header = (
-                            headers[value_column]
-                            if value_column < len(headers)
-                            else f"column:{value_column}"
-                        )
+                        header_values: list[str] = []
+                        for prior in table.rows[:row_index]:
+                            value = prior[value_column] if value_column < len(prior) else ""
+                            if not value:
+                                value = next(
+                                    (
+                                        prior[index]
+                                        for index in range(min(value_column, len(prior) - 1), -1, -1)
+                                        if prior[index]
+                                    ),
+                                    "",
+                                )
+                            if value and HEADER_SIGNAL.search(value) and value not in header_values:
+                                header_values.append(value)
+                        header = " ".join(header_values)
                         unambiguous = (
                             len(tokens) == 1
                             and bool(header)
@@ -241,6 +269,36 @@ def discover_observations(
                         )
                         ambiguity = () if unambiguous else ("TABLE_CELL_VALUE_AMBIGUOUS",)
                         token = tokens[0] if len(tokens) == 1 else ""
+                        table_context = " | ".join(
+                            (*table.context_blocks, *(" | ".join(item) for item in table.rows[:row_index]))
+                        )
+                        row_context = " | ".join(row)
+                        currency = (
+                            "$" in row[:value_column]
+                            or "$" in table_context
+                            or bool(re.search(r"\b(?:usd|dollars?)\b", table_context, re.IGNORECASE))
+                        )
+                        reported_unit = (
+                            "percent"
+                            if token.endswith("%")
+                            else "USD"
+                            if currency
+                            else "shares"
+                            if re.search(r"\b(?:diluted|weighted-average) shares\b", label_cell, re.IGNORECASE)
+                            else None
+                        )
+                        if re.search(r"\battributable to common stockholders\b", label_cell, re.IGNORECASE):
+                            basis = "attributable_to_common_stockholders"
+                        elif re.search(r"\bcompany share\b", label_cell, re.IGNORECASE):
+                            basis = "company_share"
+                        elif re.fullmatch(
+                            r"\s*(?:funds from operations\s*\(ffo\)|ffo|core ffo|affo)\s*",
+                            label_cell,
+                            re.IGNORECASE,
+                        ):
+                            basis = "issuer_reported_total"
+                        else:
+                            basis = metric_id
                         observations.append(
                             DocumentObservationIR.create(
                                 source_document_sha256=document.source_document_sha256,
@@ -248,16 +306,14 @@ def discover_observations(
                                 locator=f"table:{table.table_index}:row:{row_index}:column:{value_column}",
                                 row_index_or_null=row_index,
                                 column_index_or_null=value_column,
-                                header_path=(header,),
+                                header_path=tuple(header_values),
                                 reported_label=matched,
                                 raw_value_text=" | ".join(tokens),
                                 parsed_numeric_value_or_null=token or None,
-                                reported_unit_text_or_null="percent"
-                                if token.endswith("%")
-                                else None,
+                                reported_unit_text_or_null=reported_unit,
                                 reported_period_text_or_null=header,
-                                reported_basis_text_or_null=metric_id,
-                                context_text=" | ".join(row)[:2000],
+                                reported_basis_text_or_null=basis,
+                                context_text=f"{table_context} || ROW: {row_context}"[-4000:],
                                 numeric_role="MEASURE_VALUE" if unambiguous else "AMBIGUOUS",
                                 ambiguity_codes=ambiguity,
                                 trusted_numeric=unambiguous,

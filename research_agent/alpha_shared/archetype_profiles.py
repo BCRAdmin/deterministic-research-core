@@ -37,6 +37,8 @@ from research_agent.alpha_saas.projection import (
 from research_agent.compiler_foundation.canonical import sha256_json
 from research_agent.compiler_foundation.contracts import StrictModel
 
+from .metric_semantics import METRIC_SEMANTICS_REGISTRY_SHA256, metric_semantics
+
 SHA256 = r"^[0-9a-f]{64}$"
 ProfileId = Literal["saas", "reit", "bank", "energy"]
 REQUIRED_REPORT_SECTIONS = (
@@ -121,34 +123,6 @@ _EXPECTED_REGISTRY_HASHES: dict[ProfileId, dict[str, str]] = {
     },
 }
 
-_INSTANT_METRICS = {
-    "cash",
-    "cash_and_due_from_banks",
-    "current_contract_liability",
-    "current_debt",
-    "deposits",
-    "gross_loans_or_financing_receivables",
-    "investment_securities",
-    "latest_market_price",
-    "long_term_debt",
-    "long_term_debt_and_leases",
-    "reportable_segment_count",
-    "shares_outstanding",
-    "total_assets",
-    "total_debt",
-}
-
-
-def _metric_units(metric_id: str) -> tuple[str, ...]:
-    if "share" in metric_id and "shares" not in metric_id:
-        return ("USD/shares", "USD / shares")
-    if "shares" in metric_id or metric_id in {"reportable_segment_count"}:
-        return ("shares", "pure")
-    if "rate" in metric_id or "margin" in metric_id or "ratio" in metric_id:
-        return ("pure",)
-    return ("USD",)
-
-
 class ArchetypeMetricDefinitionIR(StrictModel):
     metric_id: str
     approved_concepts: tuple[str, ...]
@@ -169,6 +143,7 @@ class ArchetypeProfileAdapterIR(StrictModel):
     mapping_registry_sha256: str = Field(pattern=SHA256)
     formula_registry_sha256: str = Field(pattern=SHA256)
     ranking_profile_sha256: str = Field(pattern=SHA256)
+    metric_semantics_registry_sha256: str = Field(pattern=SHA256)
     required_core_metrics: tuple[str, ...]
     optional_metrics: tuple[str, ...]
     metric_definitions: tuple[ArchetypeMetricDefinitionIR, ...]
@@ -220,13 +195,16 @@ def load_archetype_profile(profile_id: ProfileId | str) -> ArchetypeProfileAdapt
     }
     definitions = []
     for metric_id in order:
+        semantics = metric_semantics(metric_id)
+        if semantics is None:
+            raise ValueError(f"R4_METRIC_SEMANTICS_UNSUPPORTED:{profile_id}:{metric_id}")
         concepts = tuple(str(item) for item in mappings.get(metric_id, ()))
         definitions.append(
             ArchetypeMetricDefinitionIR(
                 metric_id=metric_id,
                 approved_concepts=concepts,
-                period_type="INSTANT" if metric_id in _INSTANT_METRICS else "DURATION",
-                allowed_units=_metric_units(metric_id),
+                period_type=semantics.period_type,
+                allowed_units=semantics.allowed_units,
                 required_core=metric_id in required,
                 derived_only=metric_id in formula_outputs,
             )
@@ -238,6 +216,7 @@ def load_archetype_profile(profile_id: ProfileId | str) -> ArchetypeProfileAdapt
         mapping_registry_sha256=observed["mapping"],
         formula_registry_sha256=observed["formula"],
         ranking_profile_sha256=observed["ranking"],
+        metric_semantics_registry_sha256=METRIC_SEMANTICS_REGISTRY_SHA256,
         required_core_metrics=required,
         optional_metrics=order[5:],
         metric_definitions=tuple(definitions),

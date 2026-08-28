@@ -8,7 +8,13 @@ OBSERVATION_REGISTRY = {
     "contract_id": "room16.alpha.shared_observation_registry",
     "contract_version": 1,
     "labels": {
-        "adjusted_ffo": ["adjusted funds from operations", "core ffo", "funds from operations"],
+        "reported_affo": ["adjusted funds from operations (affo)", "affo"],
+        "reported_core_ffo": ["core ffo"],
+        "reported_ffo": [
+            "ffo attributable to common stockholders",
+            "funds from operations",
+        ],
+        "rpo": ["remaining performance obligation", "total rpo"],
         "crpo": ["current remaining performance obligation", "current rpo", "crpo"],
         "efficiency_ratio": ["efficiency ratio"],
         "guidance": ["guidance", "outlook"],

@@ -243,6 +243,110 @@ def _metric_from_receipt(
     )
 
 
+def _supplemental_metric_from_receipts(
+    *,
+    definition: ArchetypeMetricDefinitionIR,
+    adapter: ArchetypeProfileAdapterIR,
+    candidate_receipts: tuple[dict[str, Any], ...],
+    resolution_receipts: tuple[dict[str, Any], ...],
+) -> tuple[InternalAlphaMetricIR, MetricResolutionReceipt] | None:
+    resolution = next(
+        (
+            item
+            for item in resolution_receipts
+            if item.get("metric_id") == definition.metric_id
+            and item.get("status") == "RESOLVED"
+        ),
+        None,
+    )
+    if resolution is None:
+        return None
+    selected_id = resolution.get("selected_candidate_id_or_null")
+    source = next(
+        (
+            item
+            for item in candidate_receipts
+            if item.get("observation_id") == selected_id
+            and item.get("status") == "CANDIDATE"
+        ),
+        None,
+    )
+    if source is None or not isinstance(source.get("candidate"), dict):
+        return None
+    candidate = source["candidate"]
+    h3 = source.get("h3_receipt")
+    required = (
+        source.get("source_document_sha256"),
+        source.get("evidence_locator"),
+        source.get("row_role"),
+        source.get("period_end_or_null"),
+        source.get("reported_unit"),
+        resolution.get("receipt_sha256"),
+    )
+    if not all(required) or not isinstance(h3, dict) or not h3.get("receipt_sha256"):
+        return None
+    if definition.metric_id in {
+        "reported_ffo",
+        "reported_core_ffo",
+        "reported_affo",
+        "rpo",
+    } and not source.get("scale_evidence_or_null"):
+        return None
+    evidence_ids = tuple(
+        sorted(
+            set(
+                (
+                    *candidate.get("evidence_ids", ()),
+                    str(h3["receipt_sha256"]),
+                    str(resolution["receipt_sha256"]),
+                )
+            )
+        )
+    )
+    resolver_sha = sha256_json(
+        {
+            "base_resolver": RESOLVER_PROFILE_SHA256,
+            "adapter": adapter.adapter_sha256,
+            "metric_semantics_registry": adapter.metric_semantics_registry_sha256,
+            "supplemental_h2_receipt": resolution["receipt_sha256"],
+            "source_precedence": "base_before_supplemental",
+        }
+    )
+    profile_receipt = MetricResolutionReceipt.create(
+        metric_id=definition.metric_id,
+        status="RESOLVED",
+        selected_candidate_id_or_null=str(selected_id),
+        selected_concept_or_label=str(candidate["concept_or_label"]),
+        source_kind=str(candidate["source_kind"]),
+        period_role=str(h3["comparative_role"]),
+        freshness_status=str(h3["freshness_status"]),
+        unit=str(candidate["unit"]),
+        score_components={
+            "exact_supplemental_direct": 1,
+            "structural_row_role": 1,
+            "explicit_scale": 1,
+            "full_lineage": 1,
+        },
+        rejected_candidates=(),
+        evidence_ids=evidence_ids,
+        resolver_profile_sha256=resolver_sha,
+    )
+    metric = InternalAlphaMetricIR(
+        metric_id=definition.metric_id,
+        candidate_id=str(selected_id),
+        concept_or_formula=str(candidate["concept_or_label"]),
+        value=str(candidate["numeric_value"]),
+        unit=str(candidate["unit"]),
+        period_start_or_null=source.get("period_start_or_null"),
+        period_end=str(source["period_end_or_null"]),
+        period_role=str(h3["comparative_role"]),
+        freshness_status=str(h3["freshness_status"]),
+        evidence_ids=evidence_ids,
+        resolution_receipt_sha256=profile_receipt.receipt_sha256,
+    )
+    return metric, profile_receipt
+
+
 def _decimal(value: str) -> Decimal:
     parsed = json.loads(value)
     return Decimal(str(parsed))
@@ -353,19 +457,40 @@ def _derive_metrics(
 def build_internal_alpha_report(
     inventory: SourceSnapshotFactInventoryIR,
     adapter: ArchetypeProfileAdapterIR,
+    *,
+    supplemental_candidate_receipts: tuple[dict[str, Any], ...] = (),
+    supplemental_resolution_receipts: tuple[dict[str, Any], ...] = (),
 ) -> InternalReportBuildResult:
     periods = _period_receipts(inventory)
     period_by_id = {item["candidate_id"]: item for item in periods}
     candidates = {item.candidate_id: item for item in inventory.candidates}
-    receipts = tuple(
+    base_receipts = tuple(
         _resolve_profile_metric(definition, inventory, period_by_id, adapter)
         for definition in adapter.metric_definitions
     )
-    direct_values = tuple(
+    base_direct_values = tuple(
         item
-        for receipt in receipts
+        for receipt in base_receipts
         if (item := _metric_from_receipt(receipt, candidates, period_by_id)) is not None
     )
+    base_by_metric = {item.metric_id: item for item in base_direct_values}
+    receipt_by_metric = {item.metric_id: item for item in base_receipts}
+    supplemental_values: list[InternalAlphaMetricIR] = []
+    for definition in adapter.metric_definitions:
+        if definition.metric_id in base_by_metric:
+            continue
+        resolved = _supplemental_metric_from_receipts(
+            definition=definition,
+            adapter=adapter,
+            candidate_receipts=supplemental_candidate_receipts,
+            resolution_receipts=supplemental_resolution_receipts,
+        )
+        if resolved is not None:
+            metric, receipt = resolved
+            supplemental_values.append(metric)
+            receipt_by_metric[definition.metric_id] = receipt
+    receipts = tuple(receipt_by_metric[item.metric_id] for item in adapter.metric_definitions)
+    direct_values = (*base_direct_values, *supplemental_values)
     direct_by_metric = {item.metric_id: item for item in direct_values}
     derived, evaluations = _derive_metrics(adapter, direct_by_metric)
     all_metrics = {item.metric_id: item for item in (*direct_values, *derived)}
@@ -403,6 +528,7 @@ def build_internal_alpha_report(
             "inventory_sha256": inventory.inventory_sha256,
             "profile_adapter_sha256": adapter.adapter_sha256,
             "profile_freeze_sha256": adapter.profile_freeze_sha256,
+            "metric_semantics_registry_sha256": adapter.metric_semantics_registry_sha256,
         },
         as_of=inventory.as_of_date,
         archetype=adapter.archetype,
@@ -414,6 +540,7 @@ def build_internal_alpha_report(
             "raw_candidate_count": len(inventory.candidates),
             "excluded_candidate_count": len(inventory.exclusions),
             "resolved_metric_count": len(direct_values),
+            "supplemental_surfaced_metric_count": len(supplemental_values),
             "required_core_metric_count": required_count,
             "covered_core_metric_count": len(core_metrics),
             "core_metric_coverage_percent": core_coverage,
