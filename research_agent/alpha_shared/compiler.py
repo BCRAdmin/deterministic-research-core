@@ -14,8 +14,6 @@ from research_agent.ba12_native.compiler import (
     KINDS,
     SIGNING_KEY,
     TEMPLATE,
-    _latest_company_facts,
-    _read_snapshot_payloads,
 )
 from research_agent.compiler_foundation.canonical import sha256_json
 from research_agent.productization_v2.native_trust import (
@@ -24,12 +22,18 @@ from research_agent.productization_v2.native_trust import (
 )
 from research_agent.productization_v2.trust_receipt import sign_bundle_receipt_v2
 
+from .archetype_profiles import ArchetypeProfileAdapterIR, load_archetype_profile
 from .concept_registry import CONCEPT_REGISTRY, CONCEPT_REGISTRY_SHA256, concept_record
 from .contracts import SharedBaseInputIR, SupplementalCompileInputIR
 from .frozen_evidence import FrozenEvidenceFact, FrozenEvidenceInventory
+from .internal_report import InternalAlphaReportIR, build_internal_alpha_report
 from .metric_resolver import RESOLVER_PROFILE_SHA256, MetricCandidate, resolve_metric
 from .operations_ledger import OperationsLedger
 from .period_freshness import PERIOD_POLICY_SHA256, PeriodCandidate, classify_period
+from .raw_inventory import (
+    SourceSnapshotFactInventoryIR,
+    build_source_snapshot_fact_inventory,
+)
 from .supplemental_semantics import (
     SUPPLEMENTAL_SEMANTIC_REGISTRY_SHA256,
     build_supplemental_semantics,
@@ -46,6 +50,11 @@ class SharedCompileResult:
     resolution_receipts: tuple[dict[str, Any], ...]
     supplemental_candidate_receipts: tuple[dict[str, Any], ...]
     ledger_report: dict[str, Any]
+    raw_inventory: SourceSnapshotFactInventoryIR
+    archetype_profile: ArchetypeProfileAdapterIR
+    internal_report: InternalAlphaReportIR
+    profile_resolution_receipts: tuple[dict[str, Any], ...]
+    formula_evaluations: tuple[dict[str, Any], ...]
 
 
 @dataclass(frozen=True)
@@ -74,6 +83,14 @@ def _event(
     outputs: tuple[str, ...],
     *,
     unsupported: int = 0,
+    stale: int = 0,
+    core_coverage: int = 0,
+    completeness: int = 0,
+    provider_id: str | None = None,
+    provider_status: str | None = None,
+    network_calls: int = 0,
+    capture_bytes: int = 0,
+    diagnostics: tuple[str, ...] = (),
 ) -> None:
     sequence = len(ledger.verify()) + 1
     ledger.append(
@@ -84,12 +101,17 @@ def _event(
         ended_at=f"2026-08-27T12:{sequence:02d}:01Z",
         duration_ms=1000,
         status="PASS",
-        network_call_count=0,
-        capture_bytes=0,
+        provider_id_or_null=provider_id,
+        provider_status_or_null=provider_status,
+        network_call_count=network_calls,
+        capture_bytes=capture_bytes,
         input_sha256s=inputs,
         output_sha256s=outputs,
-        diagnostic_codes=(),
+        diagnostic_codes=diagnostics,
         unsupported_metric_count=unsupported,
+        stale_metric_count=stale,
+        core_metric_coverage=core_coverage,
+        report_section_completeness=completeness,
     )
 
 
@@ -230,47 +252,37 @@ def execute_historical_regression(
     }
 
 
-def _snapshot_inventory(base: SharedBaseInputIR) -> _SemanticInventory:
-    rows = _latest_company_facts(
-        _read_snapshot_payloads(base.snapshot_ir, Path(base.snapshot_root)), base.as_of_date
-    )
+def _snapshot_inventory(
+    base: SharedBaseInputIR,
+) -> tuple[_SemanticInventory, SourceSnapshotFactInventoryIR]:
+    raw_inventory = build_source_snapshot_fact_inventory(base)
     facts = []
-    for row in rows:
-        key = {
-            "snapshot": base.source_snapshot_sha256,
-            "fact": row["fact_id"],
-            "period_end": row["period_end"],
-            "unit": row["unit"],
-            "value": row["value"],
-        }
+    for row in raw_inventory.candidates:
         facts.append(
             FrozenEvidenceFact(
-                fact_id=str(row["fact_id"]),
-                concept=str(row["concept"]),
-                metric_hint=str(row.get("metric_id") or "") or None,
-                numeric_value=str(row["value"]),
-                unit=str(row["unit"]),
-                period_start=None,
-                period_end=str(row["period_end"]),
-                filed_date=str(row.get("filed") or base.as_of_date),
-                form=str(row.get("form") or "10-Q"),
+                fact_id=row.candidate_id,
+                concept=row.concept,
+                metric_hint=None,
+                numeric_value=row.value,
+                unit=row.unit,
+                period_start=row.start_or_null,
+                period_end=row.end,
+                filed_date=row.filed,
+                form=row.form or "10-Q",
                 source_entry="SourceSnapshotIR",
-                source_entry_sha256=base.source_snapshot_sha256,
-                evidence_id=f"snapshot.{sha256_json(key)}",
+                source_entry_sha256=row.source_artifact_sha256,
+                evidence_id=row.candidate_id,
             )
         )
-    inventory_sha = sha256_json(
-        {
-            "source_snapshot_sha256": base.source_snapshot_sha256,
-            "facts": [item.model_dump(mode="json") for item in facts],
-        }
-    )
-    return _SemanticInventory(
-        ticker=base.ticker,
-        as_of_date=base.as_of_date,
-        inventory_sha256=inventory_sha,
-        facts=tuple(sorted(facts, key=lambda item: item.evidence_id)),
-        source_kind="source_snapshot_ir",
+    return (
+        _SemanticInventory(
+            ticker=base.ticker,
+            as_of_date=base.as_of_date,
+            inventory_sha256=raw_inventory.inventory_sha256,
+            facts=tuple(sorted(facts, key=lambda item: item.evidence_id)),
+            source_kind="source_snapshot_raw_candidate_inventory",
+        ),
+        raw_inventory,
     )
 
 
@@ -283,8 +295,14 @@ def _artifacts(
     supplemental: SupplementalCompileInputIR,
     supplemental_candidates: tuple[dict[str, Any], ...],
     supplemental_resolutions: tuple[dict[str, Any], ...],
+    raw_inventory: SourceSnapshotFactInventoryIR,
+    archetype_profile: ArchetypeProfileAdapterIR,
+    internal_report: InternalAlphaReportIR,
+    profile_period_receipts: tuple[dict[str, Any], ...],
+    profile_resolution_receipts: tuple[dict[str, Any], ...],
+    formula_evaluations: tuple[dict[str, Any], ...],
 ) -> dict[str, dict[str, Any]]:
-    facts = [item.model_dump(mode="json") for item in inventory.facts]
+    facts = [item.model_dump(mode="json") for item in raw_inventory.candidates]
     all_resolutions = tuple(base_resolutions) + tuple(supplemental_resolutions)
     resolved = [item for item in all_resolutions if item["status"] == "RESOLVED"]
     metrics = [
@@ -305,31 +323,36 @@ def _artifacts(
     }
     artifacts: dict[str, dict[str, Any]] = {
         "parsed_table_ir": {
-            "contract_id": "room16.rfc0011.r3.source_snapshot_inventory",
+            "contract_id": "room16.rfc0011.r4.source_snapshot_fact_inventory",
             "contract_version": 1,
             **common,
-            "facts": facts,
+            "inventory": raw_inventory.model_dump(mode="json"),
         },
         "typed_facts": {
-            "contract_id": "room16.rfc0011.r3.shared_typed_facts",
+            "contract_id": "room16.rfc0011.r4.shared_typed_facts",
             "contract_version": 1,
             **common,
             "facts": facts,
+            "period_receipts": list(profile_period_receipts),
         },
         "metrics": {
-            "contract_id": "room16.rfc0011.r3.shared_semantic_metrics",
+            "contract_id": "room16.rfc0011.r4.shared_semantic_metrics",
             "contract_version": 1,
             **common,
             "metrics": metrics,
             "base_resolution_receipts": list(base_resolutions),
             "supplemental_resolution_receipts": list(supplemental_resolutions),
+            "archetype_profile": archetype_profile.model_dump(mode="json"),
+            "profile_resolution_receipts": list(profile_resolution_receipts),
+            "internal_alpha_report": internal_report.model_dump(mode="json"),
         },
         "formula_evaluations": {
-            "contract_id": "room16.rfc0011.r3.shared_formula_evaluations",
+            "contract_id": "room16.rfc0011.r4.shared_formula_evaluations",
             "contract_version": 1,
             **common,
-            "evaluations": [],
+            "evaluations": list(formula_evaluations),
             "unsafe_formula_fallback": False,
+            "formula_registry_sha256": archetype_profile.formula_registry_sha256,
         },
         "evidence_graph": {
             "contract_id": "room16.rfc0011.r3.shared_evidence_graph",
@@ -359,11 +382,12 @@ def _artifacts(
             "supplemental_input": supplemental.model_dump(mode="json"),
         },
         "renderer_projection": {
-            "contract_id": "room16.rfc0011.r3.shared_renderer_projection",
+            "contract_id": "room16.rfc0011.r4.internal_alpha_renderer_projection",
             "contract_version": 1,
             **common,
-            "metrics": metrics,
+            "internal_alpha_report": internal_report.model_dump(mode="json"),
             "renderer_eligible": False,
+            "product_report_v2": False,
         },
         "renderer_lineage_expectation": {
             "contract_id": "room16.rfc0011.r3.shared_renderer_lineage_expectation",
@@ -386,6 +410,12 @@ def _artifacts(
             "unsupported_metrics": [
                 item["metric_id"] for item in all_resolutions if item["status"] != "RESOLVED"
             ],
+            "important_unsupported_metrics": list(
+                internal_report.important_unsupported_metrics
+            ),
+            "stale_or_comparative_candidate_count": len(
+                internal_report.stale_or_comparative_diagnostics
+            ),
             "supplemental_rejected_count": sum(
                 item["status"] == "REJECTED" for item in supplemental_candidates
             ),
@@ -400,8 +430,12 @@ def _artifacts(
             "passes": [
                 "rfc0011.r3.accept_source_snapshot",
                 "rfc0011.r3.supplemental_candidate_builder",
+                "rfc0011.r4.raw_candidate_inventory",
                 "rfc0011.h3.period_freshness",
                 "rfc0011.h2.semantic_resolver",
+                "rfc0011.r4.archetype_projection",
+                "rfc0011.r4.safe_formula_evaluation",
+                "rfc0011.r4.internal_alpha_report",
                 "rfc0011.h4.operations_ledger",
                 "rfc0011.l11.emit_native_bundle_v2",
             ],
@@ -414,6 +448,9 @@ def _artifacts(
                 "source_snapshot_hashes",
                 "compile_identity_exact",
                 "supplemental_h3_before_h2",
+                "raw_period_basis_preserved",
+                "archetype_profile_freeze_binding",
+                "internal_alpha_report_lineage",
                 "bundle_v2_receipt",
                 "h4_chain",
             ],
@@ -428,6 +465,9 @@ def _artifacts(
             "h3_executed": True,
             "h2_executed": True,
             "h4_executed": True,
+            "raw_companyfacts_periods_preserved": True,
+            "archetype_batch_surface_integrated": True,
+            "product_source_changed": False,
         },
     }
     replay_sha = sha256_json(
@@ -455,6 +495,17 @@ def _artifacts(
         "verdict": "PASS",
         "fact_count": len(facts),
         "resolved_metric_count": len(resolved),
+        "profile_resolved_metric_count": int(
+            internal_report.source_coverage["resolved_metric_count"]
+        ),
+        "core_metric_coverage_percent": int(
+            internal_report.source_coverage["core_metric_coverage_percent"]
+        ),
+        "required_section_completeness_percent": int(
+            internal_report.report_completeness[
+                "required_section_completeness_percent"
+            ]
+        ),
         "supplemental_rejected_count": sum(
             item["status"] == "REJECTED" for item in supplemental_candidates
         ),
@@ -476,15 +527,18 @@ def compile_shared_successor(
     research_commit: str,
     research_tree: str,
     monotonic_counter: int,
+    run_id_override: str | None = None,
 ) -> SharedCompileResult:
     """Run verified SourceSnapshot -> H3/H2 -> signed native Bundle@2."""
 
     if output_root.exists():
         raise ValueError("RFC0011_SHARED_OUTPUT_ALREADY_EXISTS")
-    inventory = _snapshot_inventory(base_input)
+    inventory, raw_inventory = _snapshot_inventory(base_input)
     if not inventory.facts:
         raise ValueError("RFC0011_SHARED_SOURCE_SNAPSHOT_FACTS_EMPTY")
-    run_id = f"rfc0011-r3.{base_input.ticker.lower()}.{base_input.source_snapshot_sha256[:12]}"
+    run_id = run_id_override or (
+        f"rfc0011-r4.{base_input.ticker.lower()}.{base_input.source_snapshot_sha256[:12]}"
+    )
     ledger = OperationsLedger(ledger_path)
     _event(
         ledger,
@@ -493,7 +547,26 @@ def compile_shared_successor(
         (base_input.source_snapshot_sha256,),
         (base_input.base_input_sha256,),
     )
+    _event(
+        ledger,
+        run_id,
+        "raw_candidate_inventory",
+        (base_input.source_snapshot_sha256,),
+        (raw_inventory.inventory_sha256, raw_inventory.dedupe_receipt.receipt_sha256),
+        diagnostics=tuple(
+            sorted(
+                {
+                    code
+                    for item in raw_inventory.exclusions
+                    for code in item.reason_codes
+                }
+            )
+        ),
+    )
     periods, base_resolutions = _execute_semantics(inventory, archetype_profile_id)
+    profile_adapter_id = "energy" if archetype_profile_id == "generic" else archetype_profile_id
+    archetype_profile = load_archetype_profile(profile_adapter_id)
+    internal = build_internal_alpha_report(raw_inventory, archetype_profile)
     supplemental_candidates, supplemental_resolutions = build_supplemental_semantics(
         supplemental=supplemental_input,
         as_of_date=base_input.as_of_date,
@@ -530,6 +603,37 @@ def compile_shared_successor(
         (resolution_sha,),
         unsupported=unsupported,
     )
+    core_coverage = int(internal.report.source_coverage["core_metric_coverage_percent"])
+    completeness = int(
+        internal.report.report_completeness["required_section_completeness_percent"]
+    )
+    stale = int(internal.report.evidence_lineage["stale_primary_metric_count"])
+    _event(
+        ledger,
+        run_id,
+        "archetype_projection",
+        (raw_inventory.inventory_sha256, archetype_profile.adapter_sha256),
+        (internal.report.report_sha256,),
+    )
+    formula_sha = sha256_json(internal.formula_evaluations)
+    _event(
+        ledger,
+        run_id,
+        "safe_formula_evaluation",
+        (archetype_profile.formula_registry_sha256,),
+        (formula_sha,),
+    )
+    _event(
+        ledger,
+        run_id,
+        "internal_report_emit",
+        (raw_inventory.inventory_sha256, archetype_profile.adapter_sha256),
+        (internal.report.report_sha256,),
+        unsupported=len(internal.report.important_unsupported_metrics),
+        stale=stale,
+        core_coverage=core_coverage,
+        completeness=completeness,
+    )
     artifacts = _artifacts(
         base=base_input,
         inventory=inventory,
@@ -538,6 +642,12 @@ def compile_shared_successor(
         supplemental=supplemental_input,
         supplemental_candidates=supplemental_candidates,
         supplemental_resolutions=supplemental_resolutions,
+        raw_inventory=raw_inventory,
+        archetype_profile=archetype_profile,
+        internal_report=internal.report,
+        profile_period_receipts=internal.period_receipts,
+        profile_resolution_receipts=internal.resolution_receipts,
+        formula_evaluations=internal.formula_evaluations,
     )
     output_root.mkdir(parents=True)
     artifact_entries: list[dict[str, Any]] = []
@@ -613,6 +723,16 @@ def compile_shared_successor(
         "renderer_cutover": False,
         "renderer_eligible": False,
     }
+    semantic_execution_sha = sha256_json(
+        {
+            "raw_inventory": raw_inventory.inventory_sha256,
+            "shared_periods": period_sha,
+            "shared_resolutions": resolution_sha,
+            "profile_adapter": archetype_profile.adapter_sha256,
+            "internal_report": internal.report.report_sha256,
+            "formulas": formula_sha,
+        }
+    )
     manifest["extensions"] = {
         "rfc0011_shared_successor_r3": {
             "archetype_profile_id": archetype_profile_id,
@@ -626,9 +746,21 @@ def compile_shared_successor(
             "period_policy_sha256": PERIOD_POLICY_SHA256,
             "h3_receipt_set_sha256": period_sha,
             "h2_receipt_set_sha256": resolution_sha,
-            "h4_pre_emit_chain_tip_sha256": ledger.aggregate()["chain_tip_sha256"],
+            "h4_pre_emit_chain_tip_sha256": semantic_execution_sha,
             "fixed24_batch_authorized": False,
-        }
+        },
+        "rfc0011_batch_readiness_r4": {
+            "raw_fact_inventory_sha256": raw_inventory.inventory_sha256,
+            "raw_fact_dedupe_receipt_sha256": raw_inventory.dedupe_receipt.receipt_sha256,
+            "archetype_profile_adapter_sha256": archetype_profile.adapter_sha256,
+            "archetype_profile_freeze_sha256": archetype_profile.profile_freeze_sha256,
+            "internal_alpha_report_sha256": internal.report.report_sha256,
+            "core_metric_coverage_percent": core_coverage,
+            "required_section_completeness_percent": completeness,
+            "h4_semantic_execution_sha256": semantic_execution_sha,
+            "product_report_v2": False,
+            "fixed24_batch_authorized": False,
+        },
     }
     manifest["artifacts"] = artifact_entries
     manifest["required_sections"] = list(trust["native_profile"]["required_artifact_kinds"])
@@ -666,7 +798,7 @@ def compile_shared_successor(
         {
             "contract_id": "room16.compiler_artifact_bundle_receipt",
             "contract_version": 2,
-            "receipt_id": f"rfc0008.shared.rfc0011.r3.{base_input.ticker.lower()}.{manifest['bundle_sha256'][:16]}",
+            "receipt_id": f"rfc0008.shared.rfc0011.r4.{base_input.ticker.lower()}.{manifest['bundle_sha256'][:16]}",
             "bundle_sha256": manifest["bundle_sha256"],
             "compile_identity_sha256": sha256_json(manifest["compile_identity"]),
             "compiler_identity_sha256": sha256_json(manifest["compiler_identity"]),
@@ -678,7 +810,7 @@ def compile_shared_successor(
             "issued_at_utc": f"{base_input.as_of_date}T23:00:00Z",
             "not_after_utc": None,
             "monotonic_counter": monotonic_counter,
-            "nonce": f"rfc0011.r3.{base_input.ticker.lower()}.{manifest['bundle_sha256'][:24]}",
+            "nonce": f"rfc0011.r4.{base_input.ticker.lower()}.{manifest['bundle_sha256'][:24]}",
             "signature_algorithm": "ed25519",
         },
         signing_key=signing_key,
@@ -713,6 +845,11 @@ def compile_shared_successor(
         tuple((*base_resolutions, *supplemental_resolutions)),
         supplemental_candidates,
         ledger_report,
+        raw_inventory,
+        archetype_profile,
+        internal.report,
+        internal.resolution_receipts,
+        internal.formula_evaluations,
     )
 
 

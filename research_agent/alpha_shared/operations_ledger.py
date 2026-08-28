@@ -173,6 +173,12 @@ class OperationsLedger:
             "failed_runs": sum(item.status in {"FAILED", "BLOCKED"} for item in last_by_run.values()),
             "incomplete_runs": sum(item.status not in terminal for item in last_by_run.values()),
             "provider_failures": sum(item.provider_id_or_null is not None and item.status == "FAILED" for item in events),
+            "live_network_calls": sum(
+                item.network_call_count for item in events if item.stage != "offline_replay"
+            ),
+            "live_capture_bytes": sum(
+                item.capture_bytes for item in events if item.stage != "offline_replay"
+            ),
             "manual_interventions": sum(item.manual_semantic_intervention_count for item in events),
             "replay_provider_calls": sum(item.network_call_count for item in events if item.stage == "offline_replay"),
             "unsupported_metric_count": sum(item.unsupported_metric_count for item in events),
