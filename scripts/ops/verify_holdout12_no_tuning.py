@@ -60,14 +60,30 @@ def verify_zip(path: Path, full_zip: Path | None = None) -> dict[str, Any]:
             payload = archive.read(name)
             if len(payload) != row.get("bytes") or digest(payload) != row.get("sha256"):
                 failures.append(f"payload:{name}")
-        freeze = _load(archive, "03_FINAL_SHARED_COVERAGE_FREEZE.json")
-        envelope = _load(archive, "05_HOLDOUT12_EXECUTION_ENVELOPE.json")
-        authority = _load(archive, "06_COMPAT_EXECUTION_AUTHORITY.json")
-        receipts = _load(archive, "07_HOLDOUT12_ALL_PREFLIGHTS.json")
-        prestart = _load(archive, "08_HOLDOUT12_PRESTART_STATE.json")
-        evaluation = _load(archive, "14_HOLDOUT12_THRESHOLD_EVALUATION.json")
+        freeze = _load(archive, "05_FINAL_SHARED_COVERAGE_FREEZE.json")
+        envelope = _load(archive, "09_HOLDOUT12_EXECUTION_ENVELOPE.json")
+        authority = _load(archive, "10_COMPAT_EXECUTION_AUTHORITY.json")
+        receipts = _load(archive, "11_HOLDOUT12_ALL_PREFLIGHTS.json")
+        prestart = _load(archive, "12_HOLDOUT12_PRESTART_STATE.json")
+        evaluation = _load(archive, "18_HOLDOUT12_THRESHOLD_EVALUATION.json")
         if not selfhash(freeze, "freeze_sha256"):
             failures.append("freeze_selfhash")
+        package_files = freeze.get("ba12_live_source_package_files", [])
+        frozen_hashes = freeze.get("frozen_source_hashes", {})
+        if (
+            not isinstance(package_files, list)
+            or not package_files
+            or package_files != sorted(set(package_files))
+            or freeze.get("ba12_live_source_file_set_sha256")
+            != digest(canonical(package_files))
+            or not all(path in frozen_hashes for path in package_files)
+            or "research_agent/ba12_live_source.py" in frozen_hashes
+        ):
+            failures.append("ba12_package_file_set")
+        if freeze.get("execution_authority_source_sha256") != frozen_hashes.get(
+            "research_agent/alpha_shared/execution_authority.py"
+        ):
+            failures.append("execution_authority_source_binding")
         if not selfhash(envelope, "envelope_sha256"):
             failures.append("envelope_selfhash")
         if not selfhash(authority, "authority_sha256"):
@@ -112,7 +128,7 @@ def verify_zip(path: Path, full_zip: Path | None = None) -> dict[str, Any]:
                 failures.append(f"origin:{ticker}")
             if replay.get("network_provider_calls") != 0 or not verdict.get("replay_identity_match"):
                 failures.append(f"replay:{ticker}")
-        metrics = _load(archive, "13_HOLDOUT12_METRICS.json")
+        metrics = _load(archive, "17_HOLDOUT12_METRICS.json")
         expected_checks = {
             "P0_zero": metrics.get("P0") == 0,
             "P1_zero": metrics.get("P1") == 0,

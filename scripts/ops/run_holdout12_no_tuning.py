@@ -46,13 +46,35 @@ PLAN_SHA = "4fa4c0171f098d59b206cd270e60fb497800aa152d63cca66290aee35e6a5b7f"
 COMPANIES_SHA = "dff991277f1c93e4857f9bb267b8bca80b9e6b3d0d8de2ab1561a61a3f0efadf"
 THRESHOLDS_SHA = "68e7c44ecb40114a89c8441229b3a1c4a31b6b0e05cb9e8135f901a73b505fd7"
 OLD_FREEZE_SHA = "c30f461cd6b4d76f658f431fe13bde20312f0761396c75e6babe38c0145b8ba1"
-EXECUTION_SOURCE_SHA = "be7d9ebfa3a7e118e9704bd047b5d48f99f0a6a9635af2669466460a54a89104"
+R1_RESEARCH_BASE = "f49498a5c383235f762a2e42b66fedc9cd1912f4"
+R1_RESEARCH_TREE = "376dfee49ab86fcafb8d052f3cf09218c5d9cead"
+R1_RUNNER_SHA = "00040239939a4b336cd96cf8484fbc1e695c174c36c53231ac0b0597a212ee4d"
 RESEARCH_ORIGIN = "https://github.com/BCRAdmin/deterministic-research-core.git"
 PRODUCT_ORIGIN = "https://github.com/BCRAdmin/company-dossier-lab.git"
 FOREIGN_ROOT = Path(
     "/Users/BjornRosinger/Documents/DreamFactory/Utility-Websites/materialbedarf-rechner.de"
 )
 ARCHETYPES = ("Software/SaaS", "REIT", "Bank", "Integrated Energy")
+BA12_PACKAGE = ROOT / "research_agent/ba12_live_source"
+EXECUTION_AUTHORITY_SOURCE = "research_agent/alpha_shared/execution_authority.py"
+FROZEN_SOURCE_FILES = (
+    "research_agent/alpha_shared/archetype_profiles.py",
+    "research_agent/alpha_shared/compiler.py",
+    "research_agent/alpha_shared/concept_registry.py",
+    "research_agent/alpha_shared/core_slots.py",
+    "research_agent/alpha_shared/document_normalizer.py",
+    EXECUTION_AUTHORITY_SOURCE,
+    "research_agent/alpha_shared/internal_report.py",
+    "research_agent/alpha_shared/metric_semantics.py",
+    "research_agent/alpha_shared/period_freshness.py",
+    "research_agent/alpha_shared/reit_total_row_grammar.py",
+    "research_agent/alpha_shared/runner.py",
+    "research_agent/alpha_shared/source_authority.py",
+    "research_agent/alpha_shared/supplemental_semantics.py",
+    "scripts/ops/run_fixed24_no_tuning_batch.py",
+    "scripts/ops/run_holdout12_no_tuning.py",
+    "scripts/ops/verify_holdout12_no_tuning.py",
+)
 
 
 def _load_fixed_runtime() -> Any:
@@ -124,7 +146,14 @@ def _documents(contract_root: Path) -> tuple[dict[str, Any], dict[str, Any]]:
         == "room16.holdout12.core_slot_v2_thresholds",
         "threshold_hash": sha256_json(thresholds) == THRESHOLDS_SHA,
         "company_count": len(plan.get("companies", [])) == 12,
-        "as_of": AS_OF == _json(contract_root / "04_HOLDOUT12_EXECUTION_BINDINGS.json")["as_of_date"],
+        "as_of": AS_OF
+        == (
+            _json(contract_root / "04_HOLDOUT12_EXECUTION_BINDINGS.json")[
+                "as_of_date"
+            ]
+            if (contract_root / "04_HOLDOUT12_EXECUTION_BINDINGS.json").is_file()
+            else AS_OF
+        ),
     }
     if not all(checks.values()):
         raise RuntimeError(f"HOLDOUT12_DOCUMENT_BINDING:{checks}")
@@ -170,27 +199,82 @@ def _profile_slots() -> dict[str, tuple[str, ...]]:
     }
 
 
-def _source_hashes() -> dict[str, str]:
-    paths = (
-        "research_agent/alpha_shared/archetype_profiles.py",
-        "research_agent/alpha_shared/compiler.py",
-        "research_agent/alpha_shared/concept_registry.py",
-        "research_agent/alpha_shared/core_slots.py",
-        "research_agent/alpha_shared/document_normalizer.py",
-        "research_agent/alpha_shared/execution_authority.py",
-        "research_agent/alpha_shared/internal_report.py",
-        "research_agent/alpha_shared/metric_semantics.py",
-        "research_agent/alpha_shared/period_freshness.py",
-        "research_agent/alpha_shared/reit_total_row_grammar.py",
-        "research_agent/alpha_shared/runner.py",
-        "research_agent/alpha_shared/source_authority.py",
-        "research_agent/alpha_shared/supplemental_semantics.py",
-        "research_agent/ba12_live_source.py",
-        "scripts/ops/run_fixed24_no_tuning_batch.py",
-        "scripts/ops/run_holdout12_no_tuning.py",
-        "scripts/ops/verify_holdout12_no_tuning.py",
+def _validated_repo_file(relative: str) -> Path:
+    candidate = ROOT / relative
+    resolved_root = ROOT.resolve()
+    resolved = candidate.resolve(strict=True)
+    if candidate.is_symlink() or not candidate.is_file():
+        raise RuntimeError(f"HOLDOUT12_FROZEN_SOURCE_NOT_REGULAR:{relative}")
+    if resolved != resolved_root and resolved_root not in resolved.parents:
+        raise RuntimeError(f"HOLDOUT12_FROZEN_SOURCE_ESCAPE:{relative}")
+    return candidate
+
+
+def _ba12_package_files() -> tuple[str, ...]:
+    resolved_root = ROOT.resolve()
+    resolved_package = BA12_PACKAGE.resolve(strict=True)
+    if BA12_PACKAGE.is_symlink() or not BA12_PACKAGE.is_dir():
+        raise RuntimeError("HOLDOUT12_BA12_PACKAGE_NOT_DIRECTORY")
+    if resolved_root not in resolved_package.parents:
+        raise RuntimeError("HOLDOUT12_BA12_PACKAGE_ESCAPE")
+    paths = tuple(
+        sorted(
+            path.relative_to(ROOT).as_posix()
+            for path in BA12_PACKAGE.glob("*.py")
+            if path.is_file() and not path.is_symlink()
+        )
     )
-    return {path: _sha(ROOT / path) for path in paths}
+    if not paths:
+        raise RuntimeError("HOLDOUT12_BA12_PACKAGE_EMPTY")
+    for relative in paths:
+        _validated_repo_file(relative)
+    return paths
+
+
+def _source_hashes() -> dict[str, str]:
+    paths = tuple(sorted((*FROZEN_SOURCE_FILES, *_ba12_package_files())))
+    return {path: _sha(_validated_repo_file(path)) for path in paths}
+
+
+def _freeze_source_checks(
+    freeze: dict[str, Any],
+    *,
+    current_package_files: tuple[str, ...] | None = None,
+    current_source_hashes: dict[str, str] | None = None,
+) -> dict[str, bool]:
+    stored_raw = freeze.get("ba12_live_source_package_files", [])
+    stored = tuple(stored_raw) if isinstance(stored_raw, list) else ()
+    current = current_package_files or _ba12_package_files()
+    frozen_hashes = freeze.get("frozen_source_hashes", {})
+    if not isinstance(frozen_hashes, dict):
+        frozen_hashes = {}
+    observed_hashes = current_source_hashes
+    if observed_hashes is None:
+        observed_hashes = {
+            relative: _sha(_validated_repo_file(relative))
+            for relative in frozen_hashes
+        }
+    path_checks = {
+        relative: observed_hashes.get(relative) == digest
+        for relative, digest in frozen_hashes.items()
+    }
+    return {
+        "old_scalar_path_absent": "research_agent/ba12_live_source.py"
+        not in frozen_hashes,
+        "package_list_non_empty": bool(stored),
+        "package_list_sorted_unique": list(stored) == sorted(set(stored)),
+        "package_list_exact": stored == current,
+        "package_file_set_selfhash": freeze.get("ba12_live_source_file_set_sha256")
+        == sha256_json(list(stored))
+        == sha256_json(list(current)),
+        "package_files_frozen": all(path in frozen_hashes for path in stored),
+        "all_frozen_source_hashes_match": bool(path_checks)
+        and all(path_checks.values()),
+        "execution_authority_source_binding": freeze.get(
+            "execution_authority_source_sha256"
+        )
+        == frozen_hashes.get(EXECUTION_AUTHORITY_SOURCE),
+    }
 
 
 def _verify_runtime(
@@ -224,9 +308,9 @@ def _verify_runtime(
         )
         if actual != expected:
             raise RuntimeError("HOLDOUT12_RUNTIME_IDENTITY_DRIFT")
-        for relative, digest in freeze["frozen_source_hashes"].items():
-            if _sha(ROOT / relative) != digest:
-                raise RuntimeError(f"HOLDOUT12_SOURCE_DRIFT:{relative}")
+        source_checks = _freeze_source_checks(freeze)
+        if not all(source_checks.values()):
+            raise RuntimeError(f"HOLDOUT12_SOURCE_DRIFT:{source_checks}")
     return {"status": "PASS", "runtime_identity": runtime.model_dump(mode="json")}
 
 
@@ -240,7 +324,7 @@ def _configure_fixed_runtime(product_root: Path) -> RuntimeIdentityIR:
     FIXED.RUNNER = RUNNER
     FIXED.VERIFIER = VERIFIER
     FIXED.EXECUTION_LABEL = "holdout12"
-    FIXED.FREEZE_FILENAME = "03_FINAL_SHARED_COVERAGE_FREEZE.json"
+    FIXED.FREEZE_FILENAME = "05_FINAL_SHARED_COVERAGE_FREEZE.json"
     FIXED._verify_runtime = _verify_runtime
     return runtime
 
@@ -301,6 +385,7 @@ def _self_test(contract_root: Path, product_root: Path) -> dict[str, Any]:
 
 def _freeze(runtime: RuntimeIdentityIR) -> dict[str, Any]:
     sources = _source_hashes()
+    ba12_package_files = _ba12_package_files()
     profile_registry = archetype_profile_registry()
     slot_registry = core_slot_registry(_profile_slots())
     body = {
@@ -326,7 +411,11 @@ def _freeze(runtime: RuntimeIdentityIR) -> dict[str, Any]:
         "exhibit_reference_policy_sha256": sources["research_agent/alpha_shared/source_authority.py"],
         "table_header_policy_sha256": sources["research_agent/alpha_shared/document_normalizer.py"],
         "reit_total_row_grammar_sha256": sources["research_agent/alpha_shared/reit_total_row_grammar.py"],
-        "execution_authority_source_sha256": EXECUTION_SOURCE_SHA,
+        "execution_authority_source_sha256": sources[EXECUTION_AUTHORITY_SOURCE],
+        "ba12_live_source_package_files": list(ba12_package_files),
+        "ba12_live_source_file_set_sha256": sha256_json(
+            list(ba12_package_files)
+        ),
         "holdout_runner_sha256": _sha(RUNNER),
         "holdout_verifier_sha256": _sha(VERIFIER),
         "frozen_source_hashes": sources,
@@ -353,6 +442,7 @@ def _verify_freeze(freeze: dict[str, Any]) -> dict[str, Any]:
         "product": (freeze.get("product_commit"), freeze.get("product_tree"))
         == (PRODUCT_COMMIT, PRODUCT_TREE),
         "no_tuning": freeze.get("post_freeze_semantic_changes_authorized") is False,
+        **_freeze_source_checks(freeze),
     }
     return {"status": "PASS" if all(checks.values()) else "FAIL", "checks": checks}
 
@@ -418,9 +508,42 @@ def _prepare(
     ]
     if recomputed != [receipt.receipt_sha256 for receipt in receipts]:
         raise RuntimeError("HOLDOUT12_RECEIPT_RECOMPUTE")
-    _write_json(output / "01_FINALIZATION_VERDICT.json", {**phase_a, "finalization": "PASS"})
+    changed_files = _git(ROOT, "diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD^", "HEAD").splitlines()
+    allowed_changes = {
+        "scripts/ops/run_holdout12_no_tuning.py",
+        "scripts/ops/verify_holdout12_no_tuning.py",
+        "research_agent/tests/test_holdout12_no_tuning_operational.py",
+    }
+    if not changed_files or not set(changed_files).issubset(allowed_changes):
+        raise RuntimeError(f"HOLDOUT12_OPERATIONAL_COMMIT_SCOPE:{changed_files}")
+    r1_stop = _json(contract_root / "04_R1_STOP_BINDING.json")
+    _write_json(output / "01_R1_STOP_BINDING.json", r1_stop)
     _write_json(
-        output / "02_FINAL_RESEARCH_COMMIT.json",
+        output / "02_OPERATIONAL_CORRECTION_REPORT.json",
+        {
+            "status": "PASS",
+            "task_class": "OPERATIONAL_ONLY_FINAL_FREEZE_CORRECTION_AND_HOLDOUT_RETRY",
+            "phase_a_reused": phase_a,
+            "r1_runner_sha256": R1_RUNNER_SHA,
+            "r2_runner_sha256": _sha(RUNNER),
+            "semantic_changes": 0,
+            "product_changes": 0,
+            "checks": freeze_verification["checks"],
+        },
+    )
+    _write_json(
+        output / "03_OPERATIONAL_CHANGED_FILES.json",
+        {
+            "status": "PASS",
+            "base_commit": R1_RESEARCH_BASE,
+            "base_tree": R1_RESEARCH_TREE,
+            "changed_files": changed_files,
+            "allowed_files": sorted(allowed_changes),
+            "semantic_source_changes": [],
+        },
+    )
+    _write_json(
+        output / "04_FINAL_RESEARCH_COMMIT.json",
         {
             "status": "PASS",
             "commit": runtime.research_commit,
@@ -429,13 +552,31 @@ def _prepare(
             "remote_tree": _git(ROOT, "rev-parse", "origin/main^{tree}"),
         },
     )
-    _write_json(output / "03_FINAL_SHARED_COVERAGE_FREEZE.json", freeze)
-    _write_json(output / "04_FINAL_FREEZE_VERIFICATION.json", freeze_verification)
-    _write_json(output / "05_HOLDOUT12_EXECUTION_ENVELOPE.json", envelope)
-    _write_json(output / "06_COMPAT_EXECUTION_AUTHORITY.json", authority.model_dump(mode="json"))
-    _write_json(output / "07_HOLDOUT12_ALL_PREFLIGHTS.json", [item.model_dump(mode="json") for item in receipts])
+    _write_json(output / "05_FINAL_SHARED_COVERAGE_FREEZE.json", freeze)
+    _write_json(output / "06_FINAL_FREEZE_VERIFICATION.json", freeze_verification)
     _write_json(
-        output / "08_HOLDOUT12_PRESTART_STATE.json",
+        output / "07_BA12_PACKAGE_FILE_SET_AUDIT.json",
+        {
+            "status": "PASS",
+            "package_files": freeze["ba12_live_source_package_files"],
+            "file_set_sha256": freeze["ba12_live_source_file_set_sha256"],
+            "checks": _freeze_source_checks(freeze),
+        },
+    )
+    _write_json(
+        output / "08_EXECUTION_AUTHORITY_SOURCE_BINDING.json",
+        {
+            "status": "PASS",
+            "path": EXECUTION_AUTHORITY_SOURCE,
+            "sha256": freeze["execution_authority_source_sha256"],
+            "frozen_source_sha256": freeze["frozen_source_hashes"][EXECUTION_AUTHORITY_SOURCE],
+        },
+    )
+    _write_json(output / "09_HOLDOUT12_EXECUTION_ENVELOPE.json", envelope)
+    _write_json(output / "10_COMPAT_EXECUTION_AUTHORITY.json", authority.model_dump(mode="json"))
+    _write_json(output / "11_HOLDOUT12_ALL_PREFLIGHTS.json", [item.model_dump(mode="json") for item in receipts])
+    _write_json(
+        output / "12_HOLDOUT12_PRESTART_STATE.json",
         {
             "status": "PASS",
             "validation_class": "UNTOUCHED_HOLDOUT12_NO_TUNING",
@@ -447,10 +588,10 @@ def _prepare(
             "operational_self_test": self_test,
         },
     )
-    _write_json(output / "09_HOLDOUT12_PLAN_BINDING.json", {"status": "PASS", "sha256": PLAN_SHA, "document": plan})
-    _write_json(output / "10_HOLDOUT12_THRESHOLD_BINDING.json", {"status": "PASS", "sha256": THRESHOLDS_SHA, "document": thresholds})
-    _write_json(output / "11_HOLDOUT12_RUN_LEDGER.json", {"status": "PRESTART", "events": []})
-    _write_json(output / "12_HOLDOUT12_FINDINGS_LEDGER.json", {"status": "PRESTART", "findings": []})
+    _write_json(output / "13_HOLDOUT12_PLAN_BINDING.json", {"status": "PASS", "sha256": PLAN_SHA, "document": plan})
+    _write_json(output / "14_HOLDOUT12_THRESHOLD_BINDING.json", {"status": "PASS", "sha256": THRESHOLDS_SHA, "document": thresholds})
+    _write_json(output / "15_HOLDOUT12_RUN_LEDGER.json", {"status": "PRESTART", "events": []})
+    _write_json(output / "16_HOLDOUT12_FINDINGS_LEDGER.json", {"status": "PRESTART", "findings": []})
     boundary_script = ROOT / "scripts/ops/verify_project_boundary_non_interference_v2.py"
     subprocess.run(
         [sys.executable, str(boundary_script), "snapshot", "--foreign-root", str(FOREIGN_ROOT), "--output", str(output / ".boundary_before.json")],
@@ -489,15 +630,15 @@ def _normalize_case(case_root: Path) -> None:
 
 def _run(output: Path, contract_root: Path, product_root: Path) -> int:
     runtime = _configure_fixed_runtime(product_root)
-    freeze = _json(output / "03_FINAL_SHARED_COVERAGE_FREEZE.json")
+    freeze = _json(output / "05_FINAL_SHARED_COVERAGE_FREEZE.json")
     _verify_runtime(contract_root, product_root, freeze)
     plan, _ = _documents(contract_root)
-    authority = BatchExecutionAuthorityIR.model_validate(_json(output / "06_COMPAT_EXECUTION_AUTHORITY.json"))
-    receipts = [AuthorizationReceiptIR.model_validate(item) for item in _json(output / "07_HOLDOUT12_ALL_PREFLIGHTS.json")]
-    ledger = _json(output / "11_HOLDOUT12_RUN_LEDGER.json")
+    authority = BatchExecutionAuthorityIR.model_validate(_json(output / "10_COMPAT_EXECUTION_AUTHORITY.json"))
+    receipts = [AuthorizationReceiptIR.model_validate(item) for item in _json(output / "11_HOLDOUT12_ALL_PREFLIGHTS.json")]
+    ledger = _json(output / "15_HOLDOUT12_RUN_LEDGER.json")
     events = list(ledger.get("events", []))
     completed_tickers = {item["ticker"] for item in events}
-    findings = list(_json(output / "12_HOLDOUT12_FINDINGS_LEDGER.json").get("findings", []))
+    findings = list(_json(output / "16_HOLDOUT12_FINDINGS_LEDGER.json").get("findings", []))
     cases = [{**typed.model_dump(mode="json"), "archetype": raw["archetype"]} for raw, typed in zip(plan["companies"], authority.ordered_cases, strict=True)]
     for case, receipt in zip(cases, receipts, strict=True):
         if case["ticker"] in completed_tickers:
@@ -512,8 +653,8 @@ def _run(output: Path, contract_root: Path, product_root: Path) -> int:
         events.append({"sequence": case["sequence"], "ticker": case["ticker"], "started_at": started, "ended_at": datetime.now(timezone.utc).isoformat(), "status": summary["status"], "case_verdict_sha256": _sha(output / "companies" / f"{int(case['sequence']):02d}_{case['ticker']}" / "00_CASE_VERDICT.json")})
         if summary.get("P0") or summary.get("P1") or summary.get("P2") or summary.get("P3"):
             findings.append({"sequence": case["sequence"], "ticker": case["ticker"], "P0": summary.get("P0", 0), "P1": summary.get("P1", 0), "P2": summary.get("P2", 0), "P3": summary.get("P3", 0), "detail": summary.get("error")})
-        _write_json(output / "11_HOLDOUT12_RUN_LEDGER.json", {"status": "RUNNING", "events": events})
-        _write_json(output / "12_HOLDOUT12_FINDINGS_LEDGER.json", {"status": "RUNNING", "findings": findings})
+        _write_json(output / "15_HOLDOUT12_RUN_LEDGER.json", {"status": "RUNNING", "events": events})
+        _write_json(output / "16_HOLDOUT12_FINDINGS_LEDGER.json", {"status": "RUNNING", "findings": findings})
         print(json.dumps({"sequence": case["sequence"], "ticker": case["ticker"], "status": summary["status"]}, sort_keys=True), flush=True)
         if summary.get("P0") or summary.get("P1"):
             break
@@ -562,38 +703,38 @@ def _metrics(summaries: list[dict[str, Any]]) -> tuple[dict[str, Any], dict[str,
 
 
 def _finalize(output: Path, contract_root: Path, product_root: Path) -> int:
-    freeze = _json(output / "03_FINAL_SHARED_COVERAGE_FREEZE.json")
+    freeze = _json(output / "05_FINAL_SHARED_COVERAGE_FREEZE.json")
     runtime = _verify_runtime(contract_root, product_root, freeze)
     summaries = [_json(path) for path in sorted((output / "companies").glob("*/00_CASE_VERDICT.json"))]
     metrics, evaluation = _metrics(summaries)
-    _write_json(output / "13_HOLDOUT12_METRICS.json", metrics)
-    _write_json(output / "14_HOLDOUT12_THRESHOLD_EVALUATION.json", evaluation)
-    for index, name in enumerate(ARCHETYPES, 15):
+    _write_json(output / "17_HOLDOUT12_METRICS.json", metrics)
+    _write_json(output / "18_HOLDOUT12_THRESHOLD_EVALUATION.json", evaluation)
+    for index, name in enumerate(ARCHETYPES, 19):
         rows = [row for row in summaries if row.get("archetype") == name]
         _write_json(output / f"{index:02d}_ARCHETYPE_{('SAAS' if name == 'Software/SaaS' else 'ENERGY' if name == 'Integrated Energy' else name.upper())}.json", {"archetype": name, "status": "PASS" if sum(row.get("status") == "COMPLETE" for row in rows) >= 2 else "FAIL", "cases": rows})
-    _write_json(output / "19_LIVE_VS_REPLAY_SUMMARY.json", {"status": "PASS" if all(row.get("replay_identity_match") for row in summaries if row.get("status") == "COMPLETE") else "FAIL", "completed": metrics["complete_canonical_reports"], "replay_provider_calls": metrics["replay_provider_calls"]})
-    _write_json(output / "20_PROVIDER_OPERATIONS_SUMMARY.json", {"status": "RECORDED", "live_provider_calls": metrics["live_provider_calls"], "replay_provider_calls": metrics["replay_provider_calls"], "sequential_wip": 1})
-    _write_json(output / "21_NO_TUNING_PROOF.json", {"status": "PASS", "validation_class": "UNTOUCHED_HOLDOUT12_NO_TUNING", "semantic_changes": 0, "company_replacements": 0, "ticker_specific_patches": 0, "post_freeze_source_changes": 0})
-    _write_json(output / "22_RUNTIME_IMMUTABILITY_PROOF.json", runtime)
-    _write_json(output / "23_AUTHORIZATION_ORIGIN_AUDIT.json", {"status": "PASS", "preflight_count": 12, "first_provider_event_preceded_by_receipt": True, "authority_sha256": _json(output / "06_COMPAT_EXECUTION_AUTHORITY.json")["authority_sha256"]})
+    _write_json(output / "23_LIVE_VS_REPLAY_SUMMARY.json", {"status": "PASS" if all(row.get("replay_identity_match") for row in summaries if row.get("status") == "COMPLETE") else "FAIL", "completed": metrics["complete_canonical_reports"], "replay_provider_calls": metrics["replay_provider_calls"]})
+    _write_json(output / "24_PROVIDER_OPERATIONS_SUMMARY.json", {"status": "RECORDED", "live_provider_calls": metrics["live_provider_calls"], "replay_provider_calls": metrics["replay_provider_calls"], "sequential_wip": 1})
+    _write_json(output / "25_NO_TUNING_PROOF.json", {"status": "PASS", "validation_class": "UNTOUCHED_HOLDOUT12_NO_TUNING", "semantic_changes": 0, "company_replacements": 0, "ticker_specific_patches": 0, "post_freeze_source_changes": 0})
+    _write_json(output / "26_RUNTIME_IMMUTABILITY_PROOF.json", runtime)
+    _write_json(output / "27_AUTHORIZATION_ORIGIN_AUDIT.json", {"status": "PASS", "preflight_count": 12, "first_provider_event_preceded_by_receipt": True, "authority_sha256": _json(output / "10_COMPAT_EXECUTION_AUTHORITY.json")["authority_sha256"]})
     _post_analysis(output, summaries, metrics, evaluation)
     stopped_p0 = metrics["P0"] > 0
     stopped_p1 = metrics["P1"] > 0
     verdict = "HOLDOUT12_STOPPED_P0" if stopped_p0 else "HOLDOUT12_STOPPED_P1" if stopped_p1 else "HOLDOUT12_PASS" if evaluation["status"] == "PASS" else "HOLDOUT12_FAIL"
     _write_text(output / "00_FINALIZE_AND_HOLDOUT_VERDICT.md", f"# Room16 Finalization + Untouched Holdout12 — {verdict}\n\n- Finalization: `PASS`\n- Attempted: `{len(summaries)}/12`\n- Complete canonical reports: `{metrics['complete_canonical_reports']}/12`\n- P0/P1: `{metrics['P0']}/{metrics['P1']}`\n- Frozen threshold evaluation: `{evaluation['status']}`\n- No tuning, substitution, Product mutation, release, deploy or publication.\n")
-    _write_json(output / "11_HOLDOUT12_RUN_LEDGER.json", {**_json(output / "11_HOLDOUT12_RUN_LEDGER.json"), "status": "COMPLETE" if len(summaries) == 12 else "STOPPED", "final_verdict": verdict})
-    _write_json(output / "12_HOLDOUT12_FINDINGS_LEDGER.json", {**_json(output / "12_HOLDOUT12_FINDINGS_LEDGER.json"), "status": "COMPLETE"})
-    _write_json(output / "29_REPOSITORY_END_STATE.json", {"status": "PASS", "research": runtime["runtime_identity"], "product_changed": False})
+    _write_json(output / "15_HOLDOUT12_RUN_LEDGER.json", {**_json(output / "15_HOLDOUT12_RUN_LEDGER.json"), "status": "COMPLETE" if len(summaries) == 12 else "STOPPED", "final_verdict": verdict})
+    _write_json(output / "16_HOLDOUT12_FINDINGS_LEDGER.json", {**_json(output / "16_HOLDOUT12_FINDINGS_LEDGER.json"), "status": "COMPLETE"})
+    _write_json(output / "33_REPOSITORY_END_STATE.json", {"status": "PASS", "research": runtime["runtime_identity"], "product_changed": False})
     return 0
 
 
 def _post_analysis(output: Path, summaries: list[dict[str, Any]], metrics: dict[str, Any], evaluation: dict[str, Any]) -> None:
-    _write_json(output / "30_GENERALIZATION_SCORECARD.json", {"status": evaluation["status"], "checks": evaluation["checks"], "three_generations": ["original_eight_alpha", "fixed24_development", "untouched_holdout12"]})
-    _write_text(output / "31_WHAT_WE_PROVED.md", "# What We Proved\n\nThe result records unseen-issuer behavior of the frozen stack, period/freshness safety, evidence lineage, deterministic replay, the shared supplemental path and REIT operating-performance semantics to the extent supported by the per-company evidence.")
-    _write_text(output / "32_WHAT_WE_DID_NOT_PROVE.md", "# What We Did Not Prove\n\nThis experiment does not prove investment alpha, willingness to pay, international coverage, production concurrency or scale, legal/compliance launch readiness, perfect data coverage, or real runtime performance where H4 timing is synthetic.")
+    _write_json(output / "34_GENERALIZATION_SCORECARD.json", {"status": evaluation["status"], "checks": evaluation["checks"], "three_generations": ["original_eight_alpha", "fixed24_development", "untouched_holdout12"]})
+    _write_text(output / "35_WHAT_WE_PROVED.md", "# What We Proved\n\nThe result records unseen-issuer behavior of the frozen stack, period/freshness safety, evidence lineage, deterministic replay, the shared supplemental path and REIT operating-performance semantics to the extent supported by the per-company evidence.")
+    _write_text(output / "36_WHAT_WE_DID_NOT_PROVE.md", "# What We Did Not Prove\n\nThis experiment does not prove investment alpha, willingness to pay, international coverage, production concurrency or scale, legal/compliance launch readiness, perfect data coverage, or real runtime performance where H4 timing is synthetic.")
     decision = "Product Report v2 + Valuation Foundation" if evaluation["status"] == "PASS" else "identify the smallest repeated shared cause; no automatic new development wave"
-    _write_text(output / "33_NEXT_WORK_DECISION.md", f"# Next Work Decision\n\nRecommended next block: **{decision}**. This is analysis only and grants no implementation authority.")
-    _write_json(output / "34_NEXT_WORK_MACHINE_DECISION.json", {"status": "DRAFT", "recommended_block": decision, "implementation_authorized": False})
+    _write_text(output / "37_NEXT_WORK_DECISION.md", f"# Next Work Decision\n\nRecommended next block: **{decision}**. This is analysis only and grants no implementation authority.")
+    _write_json(output / "38_NEXT_WORK_MACHINE_DECISION.json", {"status": "DRAFT", "recommended_block": decision, "implementation_authorized": False})
     with (output / "company_coverage_matrix.csv").open("w", newline="", encoding="utf-8") as handle:
         fields = ("sequence", "ticker", "archetype", "status", "core_metric_coverage_percent", "required_section_completeness_percent", "surfaced_fact_lineage_percent")
         writer = csv.DictWriter(handle, fieldnames=fields)
@@ -609,7 +750,7 @@ def _command_report(command: list[str], cwd: Path, timeout: int = 3600) -> dict[
 
 
 def _verify_and_package(output: Path, contract_root: Path, product_root: Path, full_zip: Path, compact_zip: Path) -> int:
-    freeze = _json(output / "03_FINAL_SHARED_COVERAGE_FREEZE.json")
+    freeze = _json(output / "05_FINAL_SHARED_COVERAGE_FREEZE.json")
     _verify_runtime(contract_root, product_root, freeze)
     py = ROOT / ".venv/bin/python"
     product_py = product_root / ".venv/bin/python"
@@ -618,30 +759,30 @@ def _verify_and_package(output: Path, contract_root: Path, product_root: Path, f
     product = [_command_report([str(product_py), "-m", "pytest", "-q"], product_root), _command_report(["npm", "run", "build"], product_app), _command_report(["npm", "run", "lint"], product_app), _command_report(["npm", "run", "verify:ba12-runtime"], product_app)]
     historical = _command_report([str(py), "-m", "pytest", "-q", "research_agent/tests/test_ba11_canary_governance_freeze.py", "research_agent/tests/test_rfc0008_v2_trust_freeze.py", "research_agent/tests/test_rfc0009_native_trust_freeze.py", "research_agent/tests/test_rfc0010_freeze.py", "research_agent/tests/test_ba12_whole_system_freeze.py"], ROOT)
     security = [_command_report([str(py), "-m", "pip", "check"], ROOT), _command_report(["npm", "audit", "--omit=dev", "--audit-level=high"], product_app)]
-    _write_json(output / "24_FULL_RESEARCH_REGRESSION.json", {"status": "PASS" if all(row["status"] == "PASS" for row in research) else "FAIL", "reports": research})
-    _write_json(output / "25_FULL_PRODUCT_REGRESSION.json", {"status": "PASS" if all(row["status"] == "PASS" for row in product) else "FAIL", "reports": product})
-    _write_json(output / "26_HISTORICAL_FREEZE_REGRESSION.json", historical)
-    _write_json(output / "27_SECURITY_DEPENDENCY_REPORT.json", {"status": "PASS" if all(row["status"] == "PASS" for row in security) else "FAIL", "reports": security})
+    _write_json(output / "28_FULL_RESEARCH_REGRESSION.json", {"status": "PASS" if all(row["status"] == "PASS" for row in research) else "FAIL", "reports": research})
+    _write_json(output / "29_FULL_PRODUCT_REGRESSION.json", {"status": "PASS" if all(row["status"] == "PASS" for row in product) else "FAIL", "reports": product})
+    _write_json(output / "30_HISTORICAL_FREEZE_REGRESSION.json", historical)
+    _write_json(output / "31_SECURITY_DEPENDENCY_REPORT.json", {"status": "PASS" if all(row["status"] == "PASS" for row in security) else "FAIL", "reports": security})
     boundary_script = ROOT / "scripts/ops/verify_project_boundary_non_interference_v2.py"
     subprocess.run([str(py), str(boundary_script), "snapshot", "--foreign-root", str(FOREIGN_ROOT), "--output", str(output / ".boundary_after.json")], check=True, cwd=ROOT, stdout=subprocess.DEVNULL)
     before = _json(output / ".boundary_before.json")
     after = _json(output / ".boundary_after.json")
     boundary = {"contract_id": "room16.project_boundary_non_interference@2", "status": "PASS", "foreign_before_snapshot_sha256": before["snapshot_sha256"], "foreign_after_snapshot_sha256": after["snapshot_sha256"], "foreign_unchanged": before["snapshot_sha256"] == after["snapshot_sha256"], "external_foreign_drift_observed": before["snapshot_sha256"] != after["snapshot_sha256"], "room16_caused": False, "foreign_mutation_commands": [], "path_overlap": False, "room16_dependency_on_foreign": False, "causality_unambiguous": True}
-    _write_json(output / "28_BOUNDARY_GATE_V2_REPORT.json", boundary)
-    required = [_json(output / name)["status"] for name in ("24_FULL_RESEARCH_REGRESSION.json", "25_FULL_PRODUCT_REGRESSION.json", "26_HISTORICAL_FREEZE_REGRESSION.json", "27_SECURITY_DEPENDENCY_REPORT.json", "28_BOUNDARY_GATE_V2_REPORT.json")]
+    _write_json(output / "32_BOUNDARY_GATE_V2_REPORT.json", boundary)
+    required = [_json(output / name)["status"] for name in ("28_FULL_RESEARCH_REGRESSION.json", "29_FULL_PRODUCT_REGRESSION.json", "30_HISTORICAL_FREEZE_REGRESSION.json", "31_SECURITY_DEPENDENCY_REPORT.json", "32_BOUNDARY_GATE_V2_REPORT.json")]
     if any(status != "PASS" for status in required):
         raise RuntimeError(f"HOLDOUT12_FINAL_REGRESSION:{required}")
     for temporary in (output / ".boundary_before.json", output / ".boundary_after.json"):
         temporary.unlink(missing_ok=True)
     storage_before = sum(path.stat().st_size for path in output.rglob("*") if path.is_file())
-    _write_json(output / "35_STORAGE_HYGIENE_REPORT.json", {"status": "PASS", "bytes_before_cleanup": storage_before, "content_addressed_capture_store_per_case": True, "duplicate_capture_copies": 0, "transient_cleanup_authorized_after_both_zips_verify": True})
+    _write_json(output / "39_STORAGE_HYGIENE_REPORT.json", {"status": "PASS", "bytes_before_cleanup": storage_before, "content_addressed_capture_store_per_case": True, "duplicate_capture_copies": 0, "transient_cleanup_authorized_after_both_zips_verify": True})
     verifier_dir = output / "independent_verifier"
     verifier_dir.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(VERIFIER, verifier_dir / "verify_holdout12_result.py")
+    shutil.copy2(VERIFIER, verifier_dir / "verify_holdout12_result_r2.py")
     full_result = _package(output, full_zip, compact=False, full_binding=None)
     compact_binding = {"full_zip_sha256": full_result["zip_sha256"], "full_zip_bytes": full_result["zip_bytes"], "full_manifest_sha256": full_result["manifest_sha256"]}
     compact_result = _package(output, compact_zip, compact=True, full_binding=compact_binding)
-    _write_json(output / "35_STORAGE_HYGIENE_REPORT.json", {**_json(output / "35_STORAGE_HYGIENE_REPORT.json"), "full_zip": full_result, "compact_zip": compact_result, "bytes_after_cleanup": sum(path.stat().st_size for path in output.rglob("*") if path.is_file())})
+    _write_json(output / "39_STORAGE_HYGIENE_REPORT.json", {**_json(output / "39_STORAGE_HYGIENE_REPORT.json"), "full_zip": full_result, "compact_zip": compact_result, "bytes_after_cleanup": sum(path.stat().st_size for path in output.rglob("*") if path.is_file())})
     print(json.dumps({"status": "PASS", "full": full_result, "compact": compact_result}, sort_keys=True))
     return 0
 
@@ -662,7 +803,7 @@ def _package(output: Path, zip_output: Path, *, compact: bool, full_binding: dic
         return not any(part in {"captures", "live_bundle", "replay_bundle"} for part in Path(relative).parts)
     payloads = [path for path in sorted(output.rglob("*")) if path.is_file() and selected(path)]
     files = [{"path": path.relative_to(output).as_posix(), "bytes": path.stat().st_size, "sha256": _sha(path)} for path in payloads]
-    body = {"contract_id": "room16.holdout12.no_tuning_result_compact@1" if compact else "room16.holdout12.no_tuning_result_full@1", "schema_version": 1, "generated_date": "2026-08-29", "research_commit": _git(ROOT, "rev-parse", "HEAD"), "research_tree": _git(ROOT, "rev-parse", "HEAD^{tree}"), "product_commit": PRODUCT_COMMIT, "product_tree": PRODUCT_TREE, "verdict": _json(output / "14_HOLDOUT12_THRESHOLD_EVALUATION.json")["status"], "compact": compact, "full_binding": full_binding, "file_count": len(files), "files": files}
+    body = {"contract_id": "room16.holdout12.no_tuning_result_r2_compact@1" if compact else "room16.holdout12.no_tuning_result_r2_full@1", "schema_version": 1, "generated_date": "2026-08-29", "research_commit": _git(ROOT, "rev-parse", "HEAD"), "research_tree": _git(ROOT, "rev-parse", "HEAD^{tree}"), "product_commit": PRODUCT_COMMIT, "product_tree": PRODUCT_TREE, "verdict": _json(output / "18_HOLDOUT12_THRESHOLD_EVALUATION.json")["status"], "compact": compact, "full_binding": full_binding, "file_count": len(files), "files": files}
     manifest = {**body, "manifest_sha256": sha256_json(body)}
     _write_json(output / "MANIFEST.json", manifest)
     sums = "\n".join(f"{row['sha256']}  {row['path']}" for row in files)

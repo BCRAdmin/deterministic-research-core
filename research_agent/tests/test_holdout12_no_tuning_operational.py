@@ -119,3 +119,52 @@ def test_holdout_tickers_do_not_appear_in_semantic_modules():
     for relative in semantic_files:
         text = (ROOT / relative).read_text(encoding="utf-8")
         assert not any(ticker in text for ticker in tickers)
+
+
+def test_ba12_package_file_set_is_complete_sorted_and_frozen():
+    package_files = RUNNER._ba12_package_files()
+    assert package_files
+    assert list(package_files) == sorted(set(package_files))
+    assert "research_agent/ba12_live_source.py" not in package_files
+    assert all((ROOT / path).is_file() for path in package_files)
+    freeze = RUNNER._freeze(_runtime())
+    assert freeze["ba12_live_source_package_files"] == list(package_files)
+    assert freeze["ba12_live_source_file_set_sha256"] == sha256_json(
+        list(package_files)
+    )
+    assert all(path in freeze["frozen_source_hashes"] for path in package_files)
+    assert all(RUNNER._freeze_source_checks(freeze).values())
+
+
+def test_ba12_package_member_removal_blocks_freeze_verification():
+    freeze = RUNNER._freeze(_runtime())
+    current = RUNNER._ba12_package_files()[1:]
+    checks = RUNNER._freeze_source_checks(freeze, current_package_files=current)
+    assert checks["package_list_exact"] is False
+    assert checks["package_file_set_selfhash"] is False
+
+
+def test_unexpected_ba12_package_member_blocks_freeze_verification():
+    freeze = RUNNER._freeze(_runtime())
+    current = (*RUNNER._ba12_package_files(), "research_agent/ba12_live_source/unexpected.py")
+    checks = RUNNER._freeze_source_checks(freeze, current_package_files=current)
+    assert checks["package_list_exact"] is False
+    assert checks["package_file_set_selfhash"] is False
+
+
+def test_ba12_package_member_hash_tamper_blocks_freeze_verification():
+    freeze = RUNNER._freeze(_runtime())
+    hashes = dict(freeze["frozen_source_hashes"])
+    hashes[RUNNER._ba12_package_files()[0]] = "0" * 64
+    checks = RUNNER._freeze_source_checks(freeze, current_source_hashes=hashes)
+    assert checks["all_frozen_source_hashes_match"] is False
+
+
+def test_wrong_execution_authority_source_hash_blocks_freeze_verification():
+    freeze = RUNNER._freeze(_runtime())
+    assert freeze["execution_authority_source_sha256"] == RUNNER._sha(
+        ROOT / RUNNER.EXECUTION_AUTHORITY_SOURCE
+    )
+    freeze["execution_authority_source_sha256"] = "0" * 64
+    checks = RUNNER._freeze_source_checks(freeze)
+    assert checks["execution_authority_source_binding"] is False
