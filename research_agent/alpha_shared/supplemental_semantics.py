@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+import unicodedata
 from calendar import monthrange
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
@@ -11,6 +12,7 @@ from typing import Any
 from research_agent.compiler_foundation.canonical import sha256_json
 
 from .contracts import DocumentObservationIR, SupplementalCompileInputIR
+from .concept_registry import concept_record
 from .metric_resolver import MetricCandidate, resolve_metric
 from .period_freshness import PeriodCandidate, classify_period
 
@@ -138,11 +140,24 @@ def classify_reit_row_role(observation: DocumentObservationIR) -> str:
         return "PERCENTAGE_OR_RATE"
     if observation.parsed_numeric_value_or_null is None:
         return "DEFINITION_TEXT"
+    normalized_label = unicodedata.normalize("NFKC", row_label)
+    normalized_label = normalized_label.translate(
+        str.maketrans({"“": '"', "”": '"', "‘": "'", "’": "'"})
+    )
+    normalized_label = re.sub(
+        r"\(\s*['\"]?\s*ffo\s*['\"]?\s*\)",
+        "(FFO)",
+        normalized_label,
+        flags=re.IGNORECASE,
+    )
+    normalized_label = re.sub(r"(?:\s*[*†‡]+|\s*\(\d+\))+$", "", normalized_label)
+    normalized_label = re.sub(r"\s+", " ", normalized_label).strip()
     if re.fullmatch(
         r"(?:affo|adjusted funds from operations\s*\(affo\)|core ffo|"
-        r"funds from operations\s*\(ffo\)|ffo attributable to common stockholders|"
+        r"funds from operations\s*\(ffo\)(?: attributable to common stockholders)?|"
+        r"ffo attributable to common stockholders|"
         r"remaining performance obligations?|total rpo)",
-        row_label,
+        normalized_label,
         re.IGNORECASE,
     ):
         return "TOTAL_MEASURE"
@@ -271,12 +286,17 @@ def build_supplemental_semantics(
             h3["receipt_sha256"] = sha256_json(h3)
             if h3["period_type"] not in profile.get("allowed_period_types", ["DURATION"]):
                 reasons.append("PERIOD_TYPE_UNSUPPORTED")
-            elif h3["period_type"] == "DURATION" and h3["duration_role"] not in profile["allowed_duration_roles"]:
+            elif (
+                h3["period_type"] == "DURATION"
+                and h3["duration_role"] not in profile["allowed_duration_roles"]
+            ):
                 reasons.append("DURATION_ROLE_UNSUPPORTED")
             else:
+                concept_label = observation.reported_label.casefold()
+                concept = concept_record(str(profile["semantic_metric_id"]), concept_label)
                 candidate = MetricCandidate(
                     candidate_id=observation.observation_id,
-                    concept_or_label=observation.reported_label.casefold(),
+                    concept_or_label=concept_label,
                     source_kind="rfc0011_supplemental_evidence",
                     period_type=h3["period_type"],
                     period_role=h3["comparative_role"],
@@ -292,7 +312,9 @@ def build_supplemental_semantics(
                         scale_factor if profile.get("scale_required") else 1,
                     ),
                     semantic_metric_id=str(profile["semantic_metric_id"]),
-                    semantic_role="EXACT_DIRECT",
+                    semantic_role=(
+                        str(concept["semantic_role"]) if concept is not None else "EXACT_DIRECT"
+                    ),
                     aggregation_role="DIRECT_TOTAL",
                     archetype_profile_id=archetype_profile_id,
                     period_receipt_sha256=h3["receipt_sha256"],

@@ -21,6 +21,18 @@ HEADER_SIGNAL = re.compile(
     r"\b(?:ended|ending|as of|percent|percentage|usd|dollars?|millions?|billions?)\b|[%$])",
     re.IGNORECASE,
 )
+TEMPORAL_FRAGMENT = re.compile(
+    r"^(?:(?:Three|Six|Nine|Twelve) Months Ended(?: [A-Za-z]+ \d{1,2},?)?|"
+    r"As of(?: [A-Za-z]+ \d{1,2},?)?|[A-Za-z]+ \d{1,2},?|(?:19|20)\d{2}|"
+    r"Q[1-4](?: (?:19|20)\d{2})?|Current|Prior|Current Year|Prior Year)$",
+    re.IGNORECASE,
+)
+COMPLETE_TEMPORAL_HEADER = re.compile(
+    r"^(?:(?:Three|Six|Nine|Twelve) Months Ended [A-Za-z]+ \d{1,2},? (?:19|20)\d{2}|"
+    r"As of [A-Za-z]+ \d{1,2},? (?:19|20)\d{2}|Q[1-4] (?:19|20)\d{2}|"
+    r"Current|Prior|Current Year|Prior Year)$",
+    re.IGNORECASE,
+)
 
 
 def _clean(value: str) -> str:
@@ -69,6 +81,7 @@ class NormalizedTable(StrictModel):
     table_index: int = Field(ge=0)
     rows: tuple[tuple[str, ...], ...]
     context_blocks: tuple[str, ...] = ()
+    column_origins: tuple[tuple[int, ...], ...] = ()
 
 
 class NormalizedDocument(StrictModel):
@@ -93,9 +106,11 @@ class _NeutralHTMLParser(HTMLParser):
         self.blocks: list[str] = []
         self._buffer: list[str] = []
         self.tables: list[list[list[str]]] = []
+        self.table_column_origins: list[list[list[int]]] = []
         self.table_contexts: list[tuple[str, ...]] = []
         self._table: list[list[str]] | None = None
         self._row: list[str] | None = None
+        self._row_origins: list[int] | None = None
         self._cell: list[str] | None = None
         self._cell_colspan = 1
 
@@ -103,9 +118,11 @@ class _NeutralHTMLParser(HTMLParser):
         if tag == "table":
             self._flush()
             self._table = []
+            self.table_column_origins.append([])
             self.table_contexts.append(tuple(self.blocks[-4:]))
         elif tag == "tr" and self._table is not None:
             self._row = []
+            self._row_origins = []
         elif tag in {"td", "th"} and self._row is not None:
             self._cell = []
             attributes = {key.casefold(): value for key, value in attrs}
@@ -119,13 +136,20 @@ class _NeutralHTMLParser(HTMLParser):
     def handle_endtag(self, tag: str) -> None:
         if tag in {"td", "th"} and self._cell is not None and self._row is not None:
             value = _clean(" ".join(self._cell))
+            origin = len(self._row)
             self._row.extend([value, *("" for _ in range(self._cell_colspan - 1))])
+            if self._row_origins is not None:
+                self._row_origins.extend([origin] * self._cell_colspan)
             self._cell = None
             self._cell_colspan = 1
         elif tag == "tr" and self._row is not None and self._table is not None:
             if any(self._row):
                 self._table.append(self._row)
+                self.table_column_origins[-1].append(
+                    self._row_origins or list(range(len(self._row)))
+                )
             self._row = None
+            self._row_origins = None
         elif tag == "table" and self._table is not None:
             self.tables.append(self._table)
             self._table = None
@@ -170,8 +194,11 @@ def normalize_document(
                 table_index=index,
                 rows=tuple(tuple(row) for row in rows),
                 context_blocks=(
-                    parser.table_contexts[index]
-                    if index < len(parser.table_contexts)
+                    parser.table_contexts[index] if index < len(parser.table_contexts) else ()
+                ),
+                column_origins=(
+                    tuple(tuple(row) for row in parser.table_column_origins[index])
+                    if index < len(parser.table_column_origins)
                     else ()
                 ),
             )
@@ -190,7 +217,7 @@ def normalize_document(
         "media_type": media_type,
         "normalized_text_blocks": blocks,
         "normalized_tables": [table.model_dump(mode="json") for table in tables],
-        "normalizer_version": 1,
+        "normalizer_version": 2,
     }
     return NormalizedDocument(**body, normalizer_sha256=sha256_json(body))
 
@@ -247,36 +274,55 @@ def discover_observations(
                         if not tokens:
                             continue
                         header_values: list[str] = []
-                        for prior in table.rows[:row_index]:
-                            value = prior[value_column] if value_column < len(prior) else ""
-                            if not value:
-                                value = next(
-                                    (
-                                        prior[index]
-                                        for index in range(min(value_column, len(prior) - 1), -1, -1)
-                                        if prior[index]
-                                    ),
-                                    "",
-                                )
-                            if value and HEADER_SIGNAL.search(value) and value not in header_values:
+                        header_row_limit = row_index
+                        for possible_data_index, possible_data_row in enumerate(
+                            table.rows[:row_index]
+                        ):
+                            later_cells = possible_data_row[1:]
+                            if (
+                                possible_data_row
+                                and possible_data_row[0]
+                                and not TEMPORAL_FRAGMENT.fullmatch(possible_data_row[0])
+                                and any(NUMBER.fullmatch(cell.strip()) for cell in later_cells)
+                            ):
+                                header_row_limit = possible_data_index
+                                break
+                        for prior_index, prior in enumerate(table.rows[:header_row_limit]):
+                            value = ""
+                            if value_column < len(prior):
+                                if prior_index < len(table.column_origins):
+                                    origins = table.column_origins[prior_index]
+                                    if value_column < len(origins):
+                                        origin = origins[value_column]
+                                        if origin < len(prior):
+                                            value = prior[origin]
+                                elif prior[value_column]:
+                                    value = prior[value_column]
+                            if (
+                                value
+                                and TEMPORAL_FRAGMENT.fullmatch(value)
+                                and value not in header_values
+                            ):
                                 header_values.append(value)
                         header = " ".join(header_values)
-                        unambiguous = (
-                            len(tokens) == 1
-                            and bool(header)
-                            and not NUMBER.fullmatch(header)
-                            and bool(HEADER_SIGNAL.search(header))
+                        unambiguous = len(tokens) == 1 and bool(
+                            COMPLETE_TEMPORAL_HEADER.fullmatch(header)
                         )
                         ambiguity = () if unambiguous else ("TABLE_CELL_VALUE_AMBIGUOUS",)
                         token = tokens[0] if len(tokens) == 1 else ""
                         table_context = " | ".join(
-                            (*table.context_blocks, *(" | ".join(item) for item in table.rows[:row_index]))
+                            (
+                                *table.context_blocks,
+                                *(" | ".join(item) for item in table.rows[:row_index]),
+                            )
                         )
                         row_context = " | ".join(row)
                         currency = (
                             "$" in row[:value_column]
                             or "$" in table_context
-                            or bool(re.search(r"\b(?:usd|dollars?)\b", table_context, re.IGNORECASE))
+                            or bool(
+                                re.search(r"\b(?:usd|dollars?)\b", table_context, re.IGNORECASE)
+                            )
                         )
                         reported_unit = (
                             "percent"
@@ -284,10 +330,16 @@ def discover_observations(
                             else "USD"
                             if currency
                             else "shares"
-                            if re.search(r"\b(?:diluted|weighted-average) shares\b", label_cell, re.IGNORECASE)
+                            if re.search(
+                                r"\b(?:diluted|weighted-average) shares\b",
+                                label_cell,
+                                re.IGNORECASE,
+                            )
                             else None
                         )
-                        if re.search(r"\battributable to common stockholders\b", label_cell, re.IGNORECASE):
+                        if re.search(
+                            r"\battributable to common stockholders\b", label_cell, re.IGNORECASE
+                        ):
                             basis = "attributable_to_common_stockholders"
                         elif re.search(r"\bcompany share\b", label_cell, re.IGNORECASE):
                             basis = "company_share"

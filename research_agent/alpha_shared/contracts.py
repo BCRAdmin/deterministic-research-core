@@ -27,6 +27,14 @@ NumericRole = Literal[
     "ORDINAL_OR_COUNT",
     "AMBIGUOUS",
 ]
+FilingIntentRole = Literal["EARNINGS_RESULTS"]
+SelectionContextTag = Literal[
+    "CURRENT_PRIMARY",
+    "ITEM_2_02_PARENT_PRIMARY",
+    "ITEM_2_02_EXHIBIT",
+    "OTHER_FILED_EXHIBIT",
+    "OTHER_PRIMARY",
+]
 
 
 def _body(model: StrictModel, hash_field: str) -> dict[str, object]:
@@ -224,6 +232,124 @@ class DiscoveredSourceSetIR(StrictModel):
             raise ValueError("candidate set must be sorted")
         if sha256_json(_body(self, "set_sha256")) != self.set_sha256:
             raise ValueError("candidate set self-hash mismatch")
+        return self
+
+
+class SecFilingIntentIR(StrictModel):
+    """Captured-submissions filing semantics kept separate from candidate v1."""
+
+    contract_id: Literal["room16.reit.sec_filing_intent"] = "room16.reit.sec_filing_intent"
+    contract_version: Literal[1] = 1
+    accession_number: str
+    filing_date: str
+    report_date: str | None = None
+    form: str
+    primary_document: str
+    primary_document_description: str
+    filing_items: tuple[str, ...]
+    intent_roles: tuple[FilingIntentRole, ...]
+    parent_submissions_receipt_sha256: str = Field(pattern=SHA256)
+    intent_sha256: str = Field(pattern=SHA256)
+
+    @classmethod
+    def create(cls, **values: object) -> "SecFilingIntentIR":
+        body = {
+            "contract_id": "room16.reit.sec_filing_intent",
+            "contract_version": 1,
+            **values,
+        }
+        return cls(**body, intent_sha256=sha256_json(body))
+
+    @model_validator(mode="after")
+    def validate_intent(self) -> "SecFilingIntentIR":
+        date.fromisoformat(self.filing_date)
+        if self.report_date:
+            date.fromisoformat(self.report_date)
+        if tuple(sorted(set(self.filing_items))) != self.filing_items:
+            raise ValueError("filing items must be unique and sorted")
+        expected_roles = (
+            ("EARNINGS_RESULTS",) if self.form == "8-K" and "2.02" in self.filing_items else ()
+        )
+        if self.intent_roles != expected_roles:
+            raise ValueError("filing intent roles do not match exact SEC item semantics")
+        if sha256_json(_body(self, "intent_sha256")) != self.intent_sha256:
+            raise ValueError("filing intent self-hash mismatch")
+        return self
+
+
+class SecFilingIntentSetIR(StrictModel):
+    contract_id: Literal["room16.reit.sec_filing_intent_set"] = "room16.reit.sec_filing_intent_set"
+    contract_version: Literal[1] = 1
+    policy_sha256: str = Field(pattern=SHA256)
+    submissions_receipt_sha256: str = Field(pattern=SHA256)
+    intents: tuple[SecFilingIntentIR, ...]
+    intent_set_sha256: str = Field(pattern=SHA256)
+
+    @classmethod
+    def create(
+        cls,
+        *,
+        policy_sha256: str,
+        submissions_receipt_sha256: str,
+        intents: tuple[SecFilingIntentIR, ...],
+    ) -> "SecFilingIntentSetIR":
+        ordered = tuple(sorted(intents, key=lambda item: item.accession_number))
+        body = {
+            "contract_id": "room16.reit.sec_filing_intent_set",
+            "contract_version": 1,
+            "policy_sha256": policy_sha256,
+            "submissions_receipt_sha256": submissions_receipt_sha256,
+            "intents": [item.model_dump(mode="json") for item in ordered],
+        }
+        return cls(**body, intent_set_sha256=sha256_json(body))
+
+    @model_validator(mode="after")
+    def validate_hash(self) -> "SecFilingIntentSetIR":
+        if tuple(item.accession_number for item in self.intents) != tuple(
+            sorted(item.accession_number for item in self.intents)
+        ):
+            raise ValueError("filing intent set must be accession-sorted")
+        if any(
+            item.parent_submissions_receipt_sha256 != self.submissions_receipt_sha256
+            for item in self.intents
+        ):
+            raise ValueError("filing intent submissions binding mismatch")
+        if sha256_json(_body(self, "intent_set_sha256")) != self.intent_set_sha256:
+            raise ValueError("filing intent set self-hash mismatch")
+        return self
+
+
+class CandidateSelectionContextIR(StrictModel):
+    """Hash-bound semantic context for immutable candidate-v1 objects."""
+
+    contract_id: Literal["room16.reit.candidate_selection_context"] = (
+        "room16.reit.candidate_selection_context"
+    )
+    contract_version: Literal[2] = 2
+    policy_sha256: str = Field(pattern=SHA256)
+    candidate_set_sha256: str = Field(pattern=SHA256)
+    filing_intent_set_sha256: str = Field(pattern=SHA256)
+    candidate_tags: tuple[tuple[str, SelectionContextTag], ...]
+    context_sha256: str = Field(pattern=SHA256)
+
+    @classmethod
+    def create(cls, **values: object) -> "CandidateSelectionContextIR":
+        tags = tuple(sorted(values["candidate_tags"], key=lambda item: item[0]))
+        body = {
+            "contract_id": "room16.reit.candidate_selection_context",
+            "contract_version": 2,
+            **values,
+            "candidate_tags": tags,
+        }
+        return cls(**body, context_sha256=sha256_json(body))
+
+    @model_validator(mode="after")
+    def validate_hash(self) -> "CandidateSelectionContextIR":
+        candidate_ids = tuple(item[0] for item in self.candidate_tags)
+        if candidate_ids != tuple(sorted(set(candidate_ids))):
+            raise ValueError("candidate selection tags must be unique and sorted")
+        if sha256_json(_body(self, "context_sha256")) != self.context_sha256:
+            raise ValueError("candidate selection context self-hash mismatch")
         return self
 
 
