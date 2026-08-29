@@ -6,18 +6,24 @@ import json
 import re
 from dataclasses import dataclass
 from datetime import date, timedelta
+from html.parser import HTMLParser
 from pathlib import Path
+from pathlib import PurePosixPath
 from typing import Callable
-from urllib.parse import urlparse
+from urllib.parse import unquote, urlparse
 
 from research_agent.ba12_live_source.capture_store import ContentAddressedCaptureStore
 
 from .contracts import (
     CandidateSelectionContextIR,
+    CandidateSelectionContextV3IR,
     DiscoveryCaptureReceiptIR,
     DiscoveryRequestIR,
     DiscoveredSourceCandidateIR,
     DiscoveredSourceSetIR,
+    ReferencedExhibitCandidateBindingIR,
+    SecExhibitReferenceIR,
+    SecExhibitReferenceSetIR,
     SecFilingIntentIR,
     SecFilingIntentSetIR,
     SupplementalCaptureReceiptIR,
@@ -52,6 +58,8 @@ _NON_EARNINGS_SIGNAL = re.compile(
     re.IGNORECASE,
 )
 _SEC_ITEM_CODE = re.compile(r"^[0-9]+\.[0-9]{2}$")
+_EXHIBIT_NUMBER = re.compile(r"(?<![0-9])99\.([0-9]+)(?![0-9])")
+_REFERENCE_EXTENSION = {".htm", ".html", ".txt"}
 
 
 def is_sec_index_page(document_name: str) -> bool:
@@ -87,6 +95,75 @@ def _allowed_locator(locator: str, policy: SupplementalSourcePolicyIR) -> None:
 
 def _media_type(value: str) -> str:
     return value.split(";", 1)[0].strip().lower()
+
+
+def _safe_exhibit_href(href: str) -> str:
+    """Return a safe same-directory SEC exhibit name or fail closed."""
+
+    value = href.strip()
+    parsed = urlparse(value)
+    path = PurePosixPath(parsed.path)
+    if (
+        not value
+        or unquote(value) != value
+        or parsed.scheme
+        or parsed.netloc
+        or parsed.username
+        or parsed.password
+        or parsed.query
+        or parsed.fragment
+        or parsed.path.startswith("/")
+        or ".." in path.parts
+        or len(path.parts) != 1
+        or path.suffix.lower() not in _REFERENCE_EXTENSION
+        or is_sec_index_page(path.name)
+    ):
+        raise SupplementalSourceError("REIT_EXHIBIT_REFERENCE_HREF_UNSAFE", href)
+    return path.name
+
+
+class _ExhibitReferenceHTMLParser(HTMLParser):
+    """Collect anchors within their structural table row."""
+
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.rows: list[tuple[str, tuple[dict[str, object], ...]]] = []
+        self._in_row = False
+        self._row_text: list[str] = []
+        self._anchors: list[dict[str, object]] = []
+        self._anchor: dict[str, object] | None = None
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        lowered = tag.casefold()
+        if lowered == "tr":
+            self._in_row = True
+            self._row_text = []
+            self._anchors = []
+            self._anchor = None
+        elif lowered == "a" and self._in_row:
+            values = {key.casefold(): value or "" for key, value in attrs}
+            self._anchor = {
+                "href": values.get("href", ""),
+                "sec_extract": "-sec-extract:exhibit" in values.get("style", "").casefold(),
+                "text": [],
+            }
+
+    def handle_endtag(self, tag: str) -> None:
+        lowered = tag.casefold()
+        if lowered == "a" and self._anchor is not None:
+            self._anchor["text"] = " ".join(self._anchor["text"]).strip()
+            self._anchors.append(self._anchor)
+            self._anchor = None
+        elif lowered == "tr" and self._in_row:
+            text = " ".join(" ".join(self._row_text).split())
+            self.rows.append((text, tuple(self._anchors)))
+            self._in_row = False
+
+    def handle_data(self, data: str) -> None:
+        if self._in_row:
+            self._row_text.append(data)
+        if self._anchor is not None:
+            self._anchor["text"].append(data)
 
 
 class SupplementalSourceAuthority:
@@ -305,6 +382,185 @@ class SupplementalSourceAuthority:
 
         return tuple(sorted(eligible, key=rank)[:max_parents])
 
+    def derive_sec_exhibit_references(
+        self,
+        *,
+        parent_intent: SecFilingIntentIR,
+        parent_candidate: DiscoveredSourceCandidateIR,
+        parent_capture: SupplementalCaptureReceiptIR,
+    ) -> SecExhibitReferenceSetIR:
+        """Parse explicit 99.x references only from a verified captured parent 8-K."""
+
+        if (
+            parent_intent.form != "8-K"
+            or parent_intent.intent_roles != ("EARNINGS_RESULTS",)
+            or parent_intent.accession_number != parent_candidate.accession_number
+            or parent_intent.primary_document != parent_candidate.document_name
+            or parent_candidate.source_family_id != "sec_primary_document"
+        ):
+            raise SupplementalSourceError(
+                "REIT_EXHIBIT_REFERENCE_PARENT_INTENT_MISMATCH", parent_candidate.candidate_id
+            )
+        if parent_capture.candidate_id != parent_candidate.candidate_id:
+            raise SupplementalSourceError(
+                "REIT_EXHIBIT_REFERENCE_PARENT_CAPTURE_MISMATCH", parent_capture.candidate_id
+            )
+        artifact, payload = self.store.load_verified(parent_capture.payload_sha256)
+        if (
+            artifact.artifact_sha256 != parent_capture.capture_artifact_sha256
+            or len(payload) != parent_capture.payload_bytes
+        ):
+            raise SupplementalSourceError(
+                "REIT_EXHIBIT_REFERENCE_PARENT_CAPTURE_MISMATCH", parent_capture.candidate_id
+            )
+        try:
+            html = payload.decode("utf-8")
+        except UnicodeDecodeError as exc:
+            raise SupplementalSourceError(
+                "REIT_EXHIBIT_REFERENCE_PARENT_HTML_INVALID", str(exc)
+            ) from exc
+        parser = _ExhibitReferenceHTMLParser()
+        parser.feed(html)
+        references: dict[tuple[str, str], SecExhibitReferenceIR] = {}
+        base_locator = parent_candidate.locator.rsplit("/", 1)[0]
+        for row_text, anchors in parser.rows:
+            numbers = sorted(
+                {f"99.{match.group(1)}" for match in _EXHIBIT_NUMBER.finditer(row_text)},
+                key=lambda value: (int(value.split(".", 1)[1]), value),
+            )
+            if not numbers:
+                continue
+            href_groups: dict[str, list[dict[str, object]]] = {}
+            for anchor in anchors:
+                href = str(anchor["href"])
+                if href:
+                    href_groups.setdefault(href, []).append(anchor)
+            for raw_href, group in href_groups.items():
+                anchor_numbers = {
+                    f"99.{match.group(1)}"
+                    for anchor in group
+                    for match in _EXHIBIT_NUMBER.finditer(str(anchor["text"]))
+                }
+                exhibit_number = min(
+                    anchor_numbers or set(numbers),
+                    key=lambda value: (int(value.split(".", 1)[1]), value),
+                )
+                name = _safe_exhibit_href(raw_href)
+                locator = f"{base_locator}/{name}"
+                _allowed_locator(locator, self.policy)
+                descriptions = [
+                    str(anchor["text"]).strip()
+                    for anchor in group
+                    if str(anchor["text"]).strip()
+                    and not _EXHIBIT_NUMBER.fullmatch(str(anchor["text"]).strip())
+                ]
+                description = max(descriptions, key=len, default=row_text).strip()
+                reference = SecExhibitReferenceIR.create(
+                    parent_accession_number=parent_intent.accession_number,
+                    parent_filing_intent_sha256=parent_intent.intent_sha256,
+                    parent_document_sha256=parent_capture.payload_sha256,
+                    parent_document_name=parent_candidate.document_name,
+                    exhibit_number=exhibit_number,
+                    referenced_href=raw_href,
+                    referenced_document_name=name,
+                    description=description,
+                    reference_locator=locator,
+                    sec_extract_exhibit_attribute=any(bool(item["sec_extract"]) for item in group),
+                    reference_role="ITEM_2_02_EXHIBIT_REFERENCE",
+                )
+                references[(exhibit_number, name)] = reference
+        return SecExhibitReferenceSetIR.create(
+            policy_sha256=self.policy.policy_sha256,
+            parent_filing_intent_sha256=parent_intent.intent_sha256,
+            parent_document_sha256=parent_capture.payload_sha256,
+            references=tuple(references.values()),
+        )
+
+    def derive_referenced_exhibit_candidates(
+        self,
+        *,
+        parent_intent: SecFilingIntentIR,
+        reference_set: SecExhibitReferenceSetIR,
+        filing_index_receipt: DiscoveryCaptureReceiptIR,
+        issuer_cik: str,
+    ) -> tuple[
+        tuple[DiscoveredSourceCandidateIR, ...],
+        tuple[ReferencedExhibitCandidateBindingIR, ...],
+    ]:
+        """Bind explicit references to exact same-accession captured-index membership."""
+
+        if (
+            reference_set.policy_sha256 != self.policy.policy_sha256
+            or reference_set.parent_filing_intent_sha256 != parent_intent.intent_sha256
+        ):
+            raise SupplementalSourceError(
+                "REIT_EXHIBIT_REFERENCE_SET_BINDING_MISMATCH", parent_intent.accession_number
+            )
+        cik = issuer_cik.lstrip("0") or "0"
+        accession_path = parent_intent.accession_number.replace("-", "")
+        expected_index = (
+            f"https://www.sec.gov/Archives/edgar/data/{cik}/{accession_path}/index.json"
+        )
+        if (
+            filing_index_receipt.original_locator != expected_index
+            or filing_index_receipt.final_locator != expected_index
+        ):
+            raise SupplementalSourceError(
+                "REIT_EXHIBIT_REFERENCE_CROSS_ACCESSION_INDEX", filing_index_receipt.original_locator
+            )
+        payload = self._captured_json(filing_index_receipt)
+        directory = payload.get("directory", {})
+        items = directory.get("item", []) if isinstance(directory, dict) else []
+        if not isinstance(items, list):
+            raise SupplementalSourceError("RFC0011_DISCOVERY_SHAPE_INVALID", "index items")
+        inventory = {
+            str(item.get("name") or "")
+            for item in items
+            if isinstance(item, dict) and str(item.get("name") or "")
+        }
+        candidates: list[DiscoveredSourceCandidateIR] = []
+        bindings: list[ReferencedExhibitCandidateBindingIR] = []
+        for reference in reference_set.references:
+            name = _safe_exhibit_href(reference.referenced_href)
+            if (
+                reference.parent_accession_number != parent_intent.accession_number
+                or reference.parent_filing_intent_sha256 != parent_intent.intent_sha256
+                or name != reference.referenced_document_name
+                or name not in inventory
+                or is_sec_index_page(name)
+            ):
+                raise SupplementalSourceError(
+                    "REIT_EXHIBIT_REFERENCE_INDEX_MEMBERSHIP_MISSING", name
+                )
+            locator = f"https://www.sec.gov/Archives/edgar/data/{cik}/{accession_path}/{name}"
+            if locator != reference.reference_locator:
+                raise SupplementalSourceError(
+                    "REIT_EXHIBIT_REFERENCE_LOCATOR_MISMATCH", locator
+                )
+            candidate = DiscoveredSourceCandidateIR.create(
+                source_family_id="sec_filed_exhibit",
+                issuer_cik=cik,
+                accession_number=parent_intent.accession_number,
+                filing_date=parent_intent.filing_date,
+                report_date=parent_intent.report_date,
+                form=parent_intent.form,
+                document_name=name,
+                locator=locator,
+                parent_discovery_receipt_sha256=filing_index_receipt.receipt_sha256,
+            )
+            candidates.append(candidate)
+            bindings.append(
+                ReferencedExhibitCandidateBindingIR.create(
+                    candidate_id=candidate.candidate_id,
+                    candidate_sha256=candidate.candidate_sha256,
+                    exhibit_reference_sha256=reference.reference_sha256,
+                    index_receipt_sha256=filing_index_receipt.receipt_sha256,
+                    exhibit_number=reference.exhibit_number,
+                )
+            )
+        ordered = sorted(zip(candidates, bindings), key=lambda item: item[0].candidate_id)
+        return tuple(item[0] for item in ordered), tuple(item[1] for item in ordered)
+
     @staticmethod
     def _current_primary(
         candidate_set: DiscoveredSourceSetIR,
@@ -361,6 +617,73 @@ class SupplementalSourceAuthority:
             policy_sha256=self.policy.policy_sha256,
             candidate_set_sha256=candidate_set.set_sha256,
             filing_intent_set_sha256=intent_set.intent_set_sha256,
+            candidate_tags=tuple(tags),
+        )
+
+    def selection_context_v3(
+        self,
+        candidate_set: DiscoveredSourceSetIR,
+        intent_set: SecFilingIntentSetIR,
+        item202_parents: tuple[SecFilingIntentIR, ...],
+        reference_sets: tuple[SecExhibitReferenceSetIR, ...],
+        reference_bindings: tuple[ReferencedExhibitCandidateBindingIR, ...],
+    ) -> CandidateSelectionContextV3IR:
+        if candidate_set.policy_sha256 != self.policy.policy_sha256:
+            raise SupplementalSourceError("RFC0011_POLICY_BINDING_MISMATCH", "candidate set")
+        if intent_set.policy_sha256 != self.policy.policy_sha256:
+            raise SupplementalSourceError("RFC0011_POLICY_BINDING_MISMATCH", "filing intent set")
+        candidates = {item.candidate_id: item for item in candidate_set.candidates}
+        references = {
+            item.reference_sha256: item
+            for reference_set in reference_sets
+            for item in reference_set.references
+        }
+        binding_map = {item.candidate_id: item for item in reference_bindings}
+        if len(binding_map) != len(reference_bindings):
+            raise SupplementalSourceError("REIT_EXHIBIT_REFERENCE_BINDING_DUPLICATE", "candidate")
+        for binding in reference_bindings:
+            candidate = candidates.get(binding.candidate_id)
+            reference = references.get(binding.exhibit_reference_sha256)
+            if (
+                candidate is None
+                or reference is None
+                or candidate.candidate_sha256 != binding.candidate_sha256
+                or candidate.document_name != reference.referenced_document_name
+                or candidate.accession_number != reference.parent_accession_number
+                or binding.exhibit_number != reference.exhibit_number
+            ):
+                raise SupplementalSourceError(
+                    "REIT_EXHIBIT_REFERENCE_CANDIDATE_BINDING_MISMATCH", binding.candidate_id
+                )
+        current_primary = self._current_primary(candidate_set)
+        parent_accessions = {item.accession_number for item in item202_parents}
+        allowed_parent_hashes = {item.intent_sha256 for item in intent_set.intents}
+        if any(item.intent_sha256 not in allowed_parent_hashes for item in item202_parents):
+            raise SupplementalSourceError("RFC0011_INTENT_NOT_BOUND", "Item 2.02 parent")
+        tags: list[tuple[str, str]] = []
+        for candidate in candidate_set.candidates:
+            if current_primary and candidate.candidate_id == current_primary.candidate_id:
+                tag = "CURRENT_PRIMARY"
+            elif candidate.candidate_id in binding_map:
+                tag = "ITEM_2_02_REFERENCED_EXHIBIT"
+            elif (
+                candidate.accession_number in parent_accessions
+                and candidate.source_family_id == "sec_primary_document"
+            ):
+                tag = "ITEM_2_02_PARENT_PRIMARY"
+            elif candidate.source_family_id == "sec_filed_exhibit":
+                tag = "OTHER_FILED_EXHIBIT"
+            else:
+                tag = "OTHER_PRIMARY"
+            tags.append((candidate.candidate_id, tag))
+        return CandidateSelectionContextV3IR.create(
+            policy_sha256=self.policy.policy_sha256,
+            candidate_set_sha256=candidate_set.set_sha256,
+            filing_intent_set_sha256=intent_set.intent_set_sha256,
+            exhibit_reference_set_sha256s=tuple(
+                item.reference_set_sha256 for item in reference_sets
+            ),
+            reference_candidate_bindings=reference_bindings,
             candidate_tags=tuple(tags),
         )
 
@@ -435,7 +758,7 @@ class SupplementalSourceAuthority:
     def select(
         self,
         candidate_set: DiscoveredSourceSetIR,
-        selection_context: CandidateSelectionContextIR | None = None,
+        selection_context: CandidateSelectionContextIR | CandidateSelectionContextV3IR | None = None,
     ) -> tuple[DiscoveredSourceCandidateIR, ...]:
         if candidate_set.policy_sha256 != self.policy.policy_sha256:
             raise SupplementalSourceError("RFC0011_POLICY_BINDING_MISMATCH", "candidate set")
@@ -456,17 +779,39 @@ class SupplementalSourceAuthority:
                 raise SupplementalSourceError(
                     "RFC0011_SELECTION_CONTEXT_INCOMPLETE", "candidate tags"
                 )
-            priorities = {
-                "CURRENT_PRIMARY": 0,
-                "ITEM_2_02_EXHIBIT": 1,
-                "ITEM_2_02_PARENT_PRIMARY": 2,
-                "OTHER_FILED_EXHIBIT": 3,
-                "OTHER_PRIMARY": 4,
-            }
+            priorities = (
+                {
+                    "CURRENT_PRIMARY": 0,
+                    "ITEM_2_02_REFERENCED_EXHIBIT": 1,
+                    "ITEM_2_02_PARENT_PRIMARY": 2,
+                    "OTHER_FILED_EXHIBIT": 3,
+                    "OTHER_PRIMARY": 4,
+                }
+                if isinstance(selection_context, CandidateSelectionContextV3IR)
+                else {
+                    "CURRENT_PRIMARY": 0,
+                    "ITEM_2_02_EXHIBIT": 1,
+                    "ITEM_2_02_PARENT_PRIMARY": 2,
+                    "OTHER_FILED_EXHIBIT": 3,
+                    "OTHER_PRIMARY": 4,
+                }
+            )
+            reference_order = (
+                {
+                    item.candidate_id: (
+                        int(item.exhibit_number.split(".", 1)[1]),
+                        item.candidate_id,
+                    )
+                    for item in selection_context.reference_candidate_bindings
+                }
+                if isinstance(selection_context, CandidateSelectionContextV3IR)
+                else {}
+            )
 
             def context_rank(item: DiscoveredSourceCandidateIR) -> tuple[object, ...]:
                 return (
                     priorities[tags[item.candidate_id]],
+                    reference_order.get(item.candidate_id, (10**9, item.candidate_id)),
                     -(date.fromisoformat(item.report_date or item.filing_date).toordinal()),
                     -(date.fromisoformat(item.filing_date).toordinal()),
                     item.accession_number,

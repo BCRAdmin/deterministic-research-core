@@ -35,6 +35,14 @@ SelectionContextTag = Literal[
     "OTHER_FILED_EXHIBIT",
     "OTHER_PRIMARY",
 ]
+SelectionContextV3Tag = Literal[
+    "CURRENT_PRIMARY",
+    "ITEM_2_02_REFERENCED_EXHIBIT",
+    "ITEM_2_02_PARENT_PRIMARY",
+    "OTHER_FILED_EXHIBIT",
+    "OTHER_PRIMARY",
+]
+ExhibitReferenceRole = Literal["ITEM_2_02_EXHIBIT_REFERENCE"]
 
 
 def _body(model: StrictModel, hash_field: str) -> dict[str, object]:
@@ -319,6 +327,111 @@ class SecFilingIntentSetIR(StrictModel):
         return self
 
 
+class SecExhibitReferenceIR(StrictModel):
+    """Hash-bound reference parsed from a captured Item 2.02 parent document."""
+
+    contract_id: Literal["room16.reit.sec_exhibit_reference"] = (
+        "room16.reit.sec_exhibit_reference"
+    )
+    contract_version: Literal[1] = 1
+    parent_accession_number: str
+    parent_filing_intent_sha256: str = Field(pattern=SHA256)
+    parent_document_sha256: str = Field(pattern=SHA256)
+    parent_document_name: str
+    exhibit_number: str = Field(pattern=r"^99\.[0-9]+$")
+    referenced_href: str
+    referenced_document_name: str
+    description: str
+    reference_locator: str
+    sec_extract_exhibit_attribute: bool
+    reference_role: ExhibitReferenceRole
+    reference_sha256: str = Field(pattern=SHA256)
+
+    @classmethod
+    def create(cls, **values: object) -> "SecExhibitReferenceIR":
+        body = {
+            "contract_id": "room16.reit.sec_exhibit_reference",
+            "contract_version": 1,
+            **values,
+        }
+        return cls(**body, reference_sha256=sha256_json(body))
+
+    @model_validator(mode="after")
+    def validate_hash(self) -> "SecExhibitReferenceIR":
+        if sha256_json(_body(self, "reference_sha256")) != self.reference_sha256:
+            raise ValueError("SEC exhibit reference self-hash mismatch")
+        return self
+
+
+class SecExhibitReferenceSetIR(StrictModel):
+    contract_id: Literal["room16.reit.sec_exhibit_reference_set"] = (
+        "room16.reit.sec_exhibit_reference_set"
+    )
+    contract_version: Literal[1] = 1
+    policy_sha256: str = Field(pattern=SHA256)
+    parent_filing_intent_sha256: str = Field(pattern=SHA256)
+    parent_document_sha256: str = Field(pattern=SHA256)
+    references: tuple[SecExhibitReferenceIR, ...]
+    reference_set_sha256: str = Field(pattern=SHA256)
+
+    @classmethod
+    def create(cls, **values: object) -> "SecExhibitReferenceSetIR":
+        references = tuple(
+            sorted(values["references"], key=lambda item: item.reference_sha256)
+        )
+        body = {
+            "contract_id": "room16.reit.sec_exhibit_reference_set",
+            "contract_version": 1,
+            **values,
+            "references": [item.model_dump(mode="json") for item in references],
+        }
+        return cls(**body, reference_set_sha256=sha256_json(body))
+
+    @model_validator(mode="after")
+    def validate_bindings(self) -> "SecExhibitReferenceSetIR":
+        if tuple(item.reference_sha256 for item in self.references) != tuple(
+            sorted({item.reference_sha256 for item in self.references})
+        ):
+            raise ValueError("SEC exhibit references must be unique and hash-sorted")
+        if any(
+            item.parent_filing_intent_sha256 != self.parent_filing_intent_sha256
+            or item.parent_document_sha256 != self.parent_document_sha256
+            for item in self.references
+        ):
+            raise ValueError("SEC exhibit reference parent binding mismatch")
+        if sha256_json(_body(self, "reference_set_sha256")) != self.reference_set_sha256:
+            raise ValueError("SEC exhibit reference set self-hash mismatch")
+        return self
+
+
+class ReferencedExhibitCandidateBindingIR(StrictModel):
+    contract_id: Literal["room16.reit.referenced_exhibit_candidate_binding"] = (
+        "room16.reit.referenced_exhibit_candidate_binding"
+    )
+    contract_version: Literal[1] = 1
+    candidate_id: str
+    candidate_sha256: str = Field(pattern=SHA256)
+    exhibit_reference_sha256: str = Field(pattern=SHA256)
+    index_receipt_sha256: str = Field(pattern=SHA256)
+    exhibit_number: str = Field(pattern=r"^99\.[0-9]+$")
+    binding_sha256: str = Field(pattern=SHA256)
+
+    @classmethod
+    def create(cls, **values: object) -> "ReferencedExhibitCandidateBindingIR":
+        body = {
+            "contract_id": "room16.reit.referenced_exhibit_candidate_binding",
+            "contract_version": 1,
+            **values,
+        }
+        return cls(**body, binding_sha256=sha256_json(body))
+
+    @model_validator(mode="after")
+    def validate_hash(self) -> "ReferencedExhibitCandidateBindingIR":
+        if sha256_json(_body(self, "binding_sha256")) != self.binding_sha256:
+            raise ValueError("referenced exhibit candidate binding self-hash mismatch")
+        return self
+
+
 class CandidateSelectionContextIR(StrictModel):
     """Hash-bound semantic context for immutable candidate-v1 objects."""
 
@@ -350,6 +463,57 @@ class CandidateSelectionContextIR(StrictModel):
             raise ValueError("candidate selection tags must be unique and sorted")
         if sha256_json(_body(self, "context_sha256")) != self.context_sha256:
             raise ValueError("candidate selection context self-hash mismatch")
+        return self
+
+
+class CandidateSelectionContextV3IR(StrictModel):
+    """Selection authority whose exhibit tier is backed by explicit references."""
+
+    contract_id: Literal["room16.reit.candidate_selection_context"] = (
+        "room16.reit.candidate_selection_context"
+    )
+    contract_version: Literal[3] = 3
+    policy_sha256: str = Field(pattern=SHA256)
+    candidate_set_sha256: str = Field(pattern=SHA256)
+    filing_intent_set_sha256: str = Field(pattern=SHA256)
+    exhibit_reference_set_sha256s: tuple[str, ...]
+    reference_candidate_bindings: tuple[ReferencedExhibitCandidateBindingIR, ...]
+    candidate_tags: tuple[tuple[str, SelectionContextV3Tag], ...]
+    context_sha256: str = Field(pattern=SHA256)
+
+    @classmethod
+    def create(cls, **values: object) -> "CandidateSelectionContextV3IR":
+        tags = tuple(sorted(values["candidate_tags"], key=lambda item: item[0]))
+        bindings = tuple(
+            sorted(values["reference_candidate_bindings"], key=lambda item: item.candidate_id)
+        )
+        reference_sets = tuple(sorted(set(values["exhibit_reference_set_sha256s"])))
+        body = {
+            "contract_id": "room16.reit.candidate_selection_context",
+            "contract_version": 3,
+            **values,
+            "candidate_tags": tags,
+            "reference_candidate_bindings": [item.model_dump(mode="json") for item in bindings],
+            "exhibit_reference_set_sha256s": reference_sets,
+        }
+        return cls(**body, context_sha256=sha256_json(body))
+
+    @model_validator(mode="after")
+    def validate_bindings(self) -> "CandidateSelectionContextV3IR":
+        candidate_ids = tuple(item[0] for item in self.candidate_tags)
+        if candidate_ids != tuple(sorted(set(candidate_ids))):
+            raise ValueError("candidate selection tags must be unique and sorted")
+        binding_ids = tuple(item.candidate_id for item in self.reference_candidate_bindings)
+        if binding_ids != tuple(sorted(set(binding_ids))):
+            raise ValueError("reference candidate bindings must be unique and sorted")
+        tag_map = dict(self.candidate_tags)
+        if any(
+            tag_map.get(item.candidate_id) != "ITEM_2_02_REFERENCED_EXHIBIT"
+            for item in self.reference_candidate_bindings
+        ):
+            raise ValueError("reference binding requires referenced-exhibit tag")
+        if sha256_json(_body(self, "context_sha256")) != self.context_sha256:
+            raise ValueError("candidate selection context v3 self-hash mismatch")
         return self
 
 
