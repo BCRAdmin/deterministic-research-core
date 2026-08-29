@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import re
-import unicodedata
 from calendar import monthrange
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
@@ -15,6 +14,7 @@ from .contracts import DocumentObservationIR, SupplementalCompileInputIR
 from .concept_registry import concept_record
 from .metric_resolver import MetricCandidate, resolve_metric
 from .period_freshness import PeriodCandidate, classify_period
+from .reit_total_row_grammar import is_plain_reported_ffo_total_label
 
 SUPPLEMENTAL_SEMANTIC_REGISTRY = {
     "contract_id": "room16.rfc0011.supplemental_semantic_registry",
@@ -140,22 +140,11 @@ def classify_reit_row_role(observation: DocumentObservationIR) -> str:
         return "PERCENTAGE_OR_RATE"
     if observation.parsed_numeric_value_or_null is None:
         return "DEFINITION_TEXT"
-    normalized_label = unicodedata.normalize("NFKC", row_label)
-    normalized_label = normalized_label.translate(
-        str.maketrans({"“": '"', "”": '"', "‘": "'", "’": "'"})
-    )
-    normalized_label = re.sub(
-        r"\(\s*['\"]?\s*ffo\s*['\"]?\s*\)",
-        "(FFO)",
-        normalized_label,
-        flags=re.IGNORECASE,
-    )
-    normalized_label = re.sub(r"(?:\s*[*†‡]+|\s*\(\d+\))+$", "", normalized_label)
-    normalized_label = re.sub(r"\s+", " ", normalized_label).strip()
+    if is_plain_reported_ffo_total_label(row_label):
+        return "TOTAL_MEASURE"
+    normalized_label = re.sub(r"\s+", " ", row_label).strip()
     if re.fullmatch(
         r"(?:affo|adjusted funds from operations\s*\(affo\)|core ffo|"
-        r"funds from operations\s*\(ffo\)(?: attributable to common stockholders)?|"
-        r"ffo attributable to common stockholders|"
         r"remaining performance obligations?|total rpo)",
         normalized_label,
         re.IGNORECASE,

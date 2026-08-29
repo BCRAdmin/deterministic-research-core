@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import subprocess
 import sys
 import zipfile
@@ -17,7 +18,10 @@ ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_PRODUCT = ROOT.parent / "company-dossier-lab"
 DEFAULT_RECORD = ROOT / "docs/compiler_foundation/freezes/RFC0009_BA12_NATIVE_TRUST_EPOCH2_FREEZE_v1.json"
 DEFAULT_ACCEPTANCE = ROOT / "docs/compiler_foundation/acceptance/RFC0009_R2_EXTERNAL_INDEPENDENT_ACCEPTANCE.json"
-DEFAULT_HANDOFF = Path("/Users/BjornRosinger/Downloads/ROOM16_RFC0009_ACCEPTANCE_FREEZE_AND_BA12_FINAL_RESUME_EXECUTION_R1_B523B123796E_2026-08-24.zip")
+HISTORICAL_INPUT_ROOT = Path(
+    os.environ.get("ROOM16_HISTORICAL_REGRESSION_INPUT_ROOT", "/Users/BjornRosinger/Downloads")
+)
+DEFAULT_HANDOFF = HISTORICAL_INPUT_ROOT / "ROOM16_RFC0009_ACCEPTANCE_FREEZE_AND_BA12_FINAL_RESUME_EXECUTION_R1_B523B123796E_2026-08-24.zip"
 
 
 class RFC0009FreezeError(RuntimeError):

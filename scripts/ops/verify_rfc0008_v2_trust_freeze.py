@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import subprocess
 import sys
 import zipfile
@@ -25,8 +26,10 @@ DEFAULT_ACCEPTANCE = (
     / "docs/compiler_foundation/acceptance/"
     "RFC0008_R2_EXTERNAL_INDEPENDENT_ACCEPTANCE.json"
 )
-DEFAULT_HANDOFF = Path(
-    "/Users/BjornRosinger/Downloads/"
+HISTORICAL_INPUT_ROOT = Path(
+    os.environ.get("ROOM16_HISTORICAL_REGRESSION_INPUT_ROOT", "/Users/BjornRosinger/Downloads")
+)
+DEFAULT_HANDOFF = HISTORICAL_INPUT_ROOT / (
     "ROOM16_RFC0008_ACCEPTANCE_FREEZE_AND_BA12_RESUME_EXECUTION_R1_"
     "2A718E7656C6_2026-08-22.zip"
 )

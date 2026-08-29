@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import subprocess
 import sys
 import zipfile
@@ -16,8 +17,10 @@ ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_PRODUCT = ROOT.parent / "company-dossier-lab"
 DEFAULT_RECORD = ROOT / "docs/compiler_foundation/freezes/RFC0010_BA12_LIVE_CAPTURE_TRANSPORT_FREEZE_v1.json"
 DEFAULT_ACCEPTANCE = ROOT / "docs/compiler_foundation/acceptance/RFC0010_R2_EXTERNAL_INDEPENDENT_ACCEPTANCE.json"
-DEFAULT_HANDOFF = Path(
-    "/Users/BjornRosinger/Downloads/"
+HISTORICAL_INPUT_ROOT = Path(
+    os.environ.get("ROOM16_HISTORICAL_REGRESSION_INPUT_ROOT", "/Users/BjornRosinger/Downloads")
+)
+DEFAULT_HANDOFF = HISTORICAL_INPUT_ROOT / (
     "ROOM16_RFC0010_ACCEPTANCE_FREEZE_AND_BA12_RESUME_EXECUTION_R1_"
     "B3C1F0A161CA_2026-08-25.zip"
 )

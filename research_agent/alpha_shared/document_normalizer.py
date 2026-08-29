@@ -5,6 +5,7 @@ from __future__ import annotations
 import re
 import unicodedata
 from html.parser import HTMLParser
+from typing import NamedTuple
 
 from pydantic import Field
 
@@ -12,6 +13,7 @@ from research_agent.compiler_foundation.canonical import sha256_bytes, sha256_js
 from research_agent.compiler_foundation.contracts import StrictModel
 
 from .contracts import DocumentObservationIR
+from .reit_total_row_grammar import is_plain_reported_ffo_total_label
 
 SPACE = re.compile(r"\s+")
 NUMBER = re.compile(r"(?<![A-Za-z0-9])[-+]?\$?\d[\d,]*(?:\.\d+)?%?(?![A-Za-z0-9])")
@@ -33,10 +35,18 @@ COMPLETE_TEMPORAL_HEADER = re.compile(
     r"Current|Prior|Current Year|Prior Year)$",
     re.IGNORECASE,
 )
+ZERO_WIDTH = re.compile(r"[\u200b\u200c\u200d\ufeff]")
+CURRENCY_OR_UNIT_MARKER = re.compile(r"^(?:[$€£¥]|US\$|USD|EUR|GBP|JPY)$", re.IGNORECASE)
 
 
 def _clean(value: str) -> str:
     return SPACE.sub(" ", value).strip()
+
+
+def _semantic_cell(value: str) -> str:
+    """Treat presentation-only zero-width characters as empty for table semantics."""
+
+    return _clean(ZERO_WIDTH.sub("", value))
 
 
 def _normalized_phrase(value: str) -> str:
@@ -82,6 +92,75 @@ class NormalizedTable(StrictModel):
     rows: tuple[tuple[str, ...], ...]
     context_blocks: tuple[str, ...] = ()
     column_origins: tuple[tuple[int, ...], ...] = ()
+
+
+class TemporalHeaderBinding(NamedTuple):
+    value: str
+    target_value_column: int
+    header_row_index: int
+    temporal_anchor_column: int
+    binding_reason: str
+    origin_cell_coordinates: tuple[int, int]
+
+
+def bind_temporal_header_fragment(
+    *,
+    table: NormalizedTable,
+    header_row_index: int,
+    target_value_column: int,
+    numeric_value_columns: frozenset[int],
+    label_column: int,
+) -> TemporalHeaderBinding | None:
+    """Bind one temporal header row to a numeric column using only table structure."""
+
+    if header_row_index >= len(table.rows):
+        return None
+    row = table.rows[header_row_index]
+    origins = (
+        table.column_origins[header_row_index]
+        if header_row_index < len(table.column_origins)
+        else tuple(range(len(row)))
+    )
+
+    def candidate(column: int) -> tuple[str, int]:
+        origin = origins[column] if column < len(origins) else column
+        value = _semantic_cell(row[origin]) if origin < len(row) else ""
+        return value, origin
+
+    direct, direct_origin = candidate(target_value_column)
+    if direct and TEMPORAL_FRAGMENT.fullmatch(direct):
+        return TemporalHeaderBinding(
+            value=direct,
+            target_value_column=target_value_column,
+            header_row_index=header_row_index,
+            temporal_anchor_column=direct_origin,
+            binding_reason="COLUMN_ORIGIN",
+            origin_cell_coordinates=(header_row_index, direct_origin),
+        )
+    if direct and not CURRENCY_OR_UNIT_MARKER.fullmatch(direct):
+        return None
+
+    visited_origins = {direct_origin}
+    for column in range(target_value_column - 1, label_column, -1):
+        if column in numeric_value_columns:
+            break
+        value, origin = candidate(column)
+        if origin in visited_origins:
+            continue
+        visited_origins.add(origin)
+        if not value or CURRENCY_OR_UNIT_MARKER.fullmatch(value):
+            continue
+        if TEMPORAL_FRAGMENT.fullmatch(value):
+            return TemporalHeaderBinding(
+                value=value,
+                target_value_column=target_value_column,
+                header_row_index=header_row_index,
+                temporal_anchor_column=origin,
+                binding_reason="NEAREST_LEFT_WITHIN_MEASURE_GROUP",
+                origin_cell_coordinates=(header_row_index, origin),
+            )
+        break
+    return None
 
 
 class NormalizedDocument(StrictModel):
@@ -265,6 +344,12 @@ def discover_observations(
                     matched = next(
                         (alias for alias in aliases if _contains_alias(label_cell, alias)), None
                     )
+                    if (
+                        matched is None
+                        and metric_id == "reported_ffo"
+                        and is_plain_reported_ffo_total_label(label_cell)
+                    ):
+                        matched = "funds from operations"
                     if matched is None:
                         continue
                     for value_column, value_cell in enumerate(row):
@@ -273,31 +358,43 @@ def discover_observations(
                         tokens = NUMBER.findall(value_cell)
                         if not tokens:
                             continue
+                        numeric_value_columns = frozenset(
+                            column
+                            for column, cell in enumerate(row)
+                            if NUMBER.findall(cell)
+                        )
                         header_values: list[str] = []
                         header_row_limit = row_index
                         for possible_data_index, possible_data_row in enumerate(
                             table.rows[:row_index]
                         ):
                             later_cells = possible_data_row[1:]
+                            first_cell = (
+                                _semantic_cell(possible_data_row[0])
+                                if possible_data_row
+                                else ""
+                            )
                             if (
                                 possible_data_row
-                                and possible_data_row[0]
-                                and not TEMPORAL_FRAGMENT.fullmatch(possible_data_row[0])
-                                and any(NUMBER.fullmatch(cell.strip()) for cell in later_cells)
+                                and first_cell
+                                and not TEMPORAL_FRAGMENT.fullmatch(first_cell)
+                                and any(
+                                    NUMBER.fullmatch(_semantic_cell(cell))
+                                    and not TEMPORAL_FRAGMENT.fullmatch(_semantic_cell(cell))
+                                    for cell in later_cells
+                                )
                             ):
                                 header_row_limit = possible_data_index
                                 break
-                        for prior_index, prior in enumerate(table.rows[:header_row_limit]):
-                            value = ""
-                            if value_column < len(prior):
-                                if prior_index < len(table.column_origins):
-                                    origins = table.column_origins[prior_index]
-                                    if value_column < len(origins):
-                                        origin = origins[value_column]
-                                        if origin < len(prior):
-                                            value = prior[origin]
-                                elif prior[value_column]:
-                                    value = prior[value_column]
+                        for prior_index, _prior in enumerate(table.rows[:header_row_limit]):
+                            binding = bind_temporal_header_fragment(
+                                table=table,
+                                header_row_index=prior_index,
+                                target_value_column=value_column,
+                                numeric_value_columns=numeric_value_columns,
+                                label_column=label_column,
+                            )
+                            value = binding.value if binding else ""
                             if (
                                 value
                                 and TEMPORAL_FRAGMENT.fullmatch(value)

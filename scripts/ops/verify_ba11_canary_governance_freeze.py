@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import subprocess
 import sys
 import zipfile
@@ -18,8 +19,10 @@ DEFAULT_RECORD = ROOT / "docs/compiler_foundation/freezes/BA11_CANARY_GOVERNANCE
 DEFAULT_ACCEPTANCE = (
     ROOT / "docs/compiler_foundation/acceptance/BA11_R5_EXTERNAL_INDEPENDENT_ACCEPTANCE.json"
 )
-DEFAULT_HANDOFF = Path(
-    "/Users/BjornRosinger/Downloads/"
+HISTORICAL_INPUT_ROOT = Path(
+    os.environ.get("ROOM16_HISTORICAL_REGRESSION_INPUT_ROOT", "/Users/BjornRosinger/Downloads")
+)
+DEFAULT_HANDOFF = HISTORICAL_INPUT_ROOT / (
     "ROOM16_BA11_R5_INDEPENDENT_ACCEPTANCE_FREEZE_VEGA_0DD42A068BA8_2026-08-21.zip"
 )
 
