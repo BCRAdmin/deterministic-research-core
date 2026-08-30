@@ -43,6 +43,7 @@ from research_agent.alpha_shared.execution_authority import (
     ordered_cases_from_fixed_company_list,
     threshold_authority_sha256,
 )
+from research_agent.alpha_shared.issuer_identity import resolve_issuer_identity
 from research_agent.alpha_shared.observation_registry import label_profiles
 from research_agent.alpha_shared.runner import (
     replay_canonical_alpha_case,
@@ -480,18 +481,16 @@ class SupplementalFetcher:
 
 def _resolve_identity(ticker: str, company_name: str, sec: RetryAdapter) -> tuple[dict[str, Any], dict[str, Any]]:
     payload = sec.get_company_tickers()
-    matches = [row for row in payload.values() if isinstance(row, dict) and str(row.get("ticker") or "").upper() == ticker]
-    if len(matches) != 1:
-        raise RuntimeError(f"FIXED24_IDENTITY_NOT_UNIQUE:{ticker}:{len(matches)}")
-    match = matches[0]
-    if str(match.get("title") or "").casefold() != company_name.casefold():
-        aliases = {"the goldman sachs group, inc.": "goldman sachs group inc", "the pnc financial services group, inc.": "pnc financial services group inc", "bill holdings, inc.": "bill holdings inc", "oracle corporation": "oracle corp", "adobe inc.": "adobe inc", "intuit inc.": "intuit inc", "hubspot, inc.": "hubspot inc", "digitalocean holdings, inc.": "digitalocean holdings inc", "american tower corporation": "american tower corp", "equinix, inc.": "equinix inc", "eastgroup properties, inc.": "eastgroup properties inc", "rexford industrial realty, inc.": "rexford industrial realty inc", "wells fargo & company": "wells fargo & co", "citigroup inc.": "citigroup inc", "u.s. bancorp": "us bancorp", "fifth third bancorp": "fifth third bancorp", "conocophillips": "conocophillips", "eog resources, inc.": "eog resources inc", "marathon petroleum corporation": "marathon petroleum corp", "occidental petroleum corporation": "occidental petroleum corp", "hf sinclair corporation": "hf sinclair corp", "matador resources company": "matador resources co", "public storage": "public storage", "cubesmart": "cubesmart"}
-        expected = aliases.get(company_name.casefold(), company_name.casefold().replace(",", "").replace(".", ""))
-        actual = str(match.get("title") or "").casefold().replace(",", "").replace(".", "")
-        if expected.replace(",", "").replace(".", "") not in actual and actual not in expected:
-            raise RuntimeError(f"FIXED24_IDENTITY_NAME_MISMATCH:{ticker}:{match.get('title')}")
-    resolution = {"status": "supported", "runtimeReady": True, "inputKind": "ticker", "input": ticker, "ticker": ticker, "companyName": company_name, "exchange": "US Listed", "exchangeCode": "US", "jurisdiction": "US", "isin": None, "source": "SEC company_tickers.json"}
-    return resolution, {"status": "PASS", "provider_query_count": 1, "ticker": ticker, "company_name": company_name, "cik": str(match["cik_str"]), "matched_record": match, "resolution": resolution}
+    identity = resolve_issuer_identity(
+        requested_ticker=ticker,
+        canonical_company_name=company_name,
+        as_of_date=AS_OF,
+        current_directory=payload,
+        source_receipt_sha256=sha256_json(payload),
+    )
+    effective = str(identity["effective_ticker"])
+    resolution = {"status": "supported", "runtimeReady": True, "inputKind": "ticker", "input": ticker, "ticker": effective, "requestedTicker": ticker, "companyName": company_name, "exchange": "US Listed", "exchangeCode": "US", "jurisdiction": "US", "isin": None, "source": "SEC company_tickers.json"}
+    return resolution, {"status": "PASS", "provider_query_count": 1, "ticker": ticker, "effective_ticker": effective, "company_name": company_name, "cik": str(identity["cik"]), "issuer_identity": identity, "resolution": resolution}
 
 
 def _supplemental(case_root: Path, request_sha: str, ticker: str, company: str, cik: str, profile: str, fetch_log: list[dict[str, Any]]) -> tuple[SupplementalCompileInputIR, dict[str, Any]]:
@@ -548,9 +547,10 @@ def _base_capture(case_root: Path, ticker: str, company: str, retry_log: list[di
     start = (date.fromisoformat(AS_OF) - timedelta(days=400)).isoformat()
     nasdaq = RetryAdapter(NasdaqPriceProvider(), retry_log)
     cik = str(identity["cik"])
+    provider_ticker = str(identity["effective_ticker"])
     adapters = {
         "sec": ExistingAdapterHarness(provider_id="sec", adapter=sec, method_name="get_companyfacts", source_id=f"SEC_COMPANYFACTS_CIK{cik.zfill(10)}", source_type="sec_filing", original_locator=f"https://data.sec.gov/api/xbrl/companyfacts/CIK{cik.zfill(10)}.json", final_locator=f"https://data.sec.gov/api/xbrl/companyfacts/CIK{cik.zfill(10)}.json", raw_status="200", media_type="application/json", fetched_at_utc=authority_time, available_at_utc=authority_time, args=(cik,)),
-        "nasdaq": ExistingAdapterHarness(provider_id="nasdaq", adapter=nasdaq, method_name="get_history", source_id=f"NASDAQ_OHLCV_{ticker}", source_type="exchange_ohlcv", original_locator=f"https://www.nasdaq.com/market-activity/stocks/{ticker.lower()}/historical", final_locator=f"https://api.nasdaq.com/api/quote/{ticker}/historical", raw_status="200", media_type="application/json", fetched_at_utc=authority_time, available_at_utc=authority_time, args=(ticker, start, AS_OF)),
+        "nasdaq": ExistingAdapterHarness(provider_id="nasdaq", adapter=nasdaq, method_name="get_history", source_id=f"NASDAQ_OHLCV_{provider_ticker}", source_type="exchange_ohlcv", original_locator=f"https://www.nasdaq.com/market-activity/stocks/{provider_ticker.lower()}/historical", final_locator=f"https://api.nasdaq.com/api/quote/{provider_ticker}/historical", raw_status="200", media_type="application/json", fetched_at_utc=authority_time, available_at_utc=authority_time, args=(provider_ticker, start, AS_OF)),
     }
     records = tuple(executor.capture(request=request, plan=plan, acquisition_id=item.acquisition_id, attempt_id=f"{EXECUTION_LABEL}.{ticker.lower()}.{item.provider_id}.1", adapter=adapters[item.provider_id]) for item in plan.acquisitions)
     snapshot_root = case_root / "captures/ba3_snapshot"
