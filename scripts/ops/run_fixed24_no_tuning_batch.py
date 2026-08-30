@@ -90,10 +90,37 @@ USER_AGENT = os.environ.get(
 )
 PROFILE_METRICS = {
     "saas": ("crpo", "guidance"),
-    "reit": ("adjusted_ffo", "occupancy", "same_store_noi"),
+    "reit": (
+        "reported_ffo",
+        "reported_core_ffo",
+        "reported_affo",
+        "occupancy",
+        "same_store_noi",
+    ),
     "bank": ("efficiency_ratio", "net_interest_margin", "rotce"),
     "energy": ("production_volume", "segment_operating_results"),
 }
+
+
+def validate_profile_metric_requests(
+    profile_metrics: dict[str, tuple[str, ...]] | None = None,
+) -> dict[str, dict[str, Any]]:
+    """Bind operational profile requests to registry IDs before network use."""
+    requested_by_profile = PROFILE_METRICS if profile_metrics is None else profile_metrics
+    profiles = label_profiles()
+    validated: dict[str, dict[str, Any]] = {}
+    for profile, metric_ids in requested_by_profile.items():
+        if len(metric_ids) != len(set(metric_ids)):
+            raise RuntimeError(f"SUPPLEMENTAL_PROFILE_LABEL_DUPLICATE:{profile}")
+        requested: dict[str, Any] = {}
+        for metric_id in metric_ids:
+            if metric_id not in profiles:
+                raise RuntimeError(
+                    f"SUPPLEMENTAL_PROFILE_LABEL_MISSING:{profile}:{metric_id}"
+                )
+            requested[metric_id] = profiles[metric_id]
+        validated[profile] = requested
+    return validated
 
 
 def _json(path: Path) -> Any:
@@ -183,6 +210,7 @@ def _documents(contract_root: Path) -> tuple[dict[str, Any], dict[str, Any]]:
 
 
 def _self_test(contract_root: Path, product_root: Path) -> dict[str, Any]:
+    validated_profile_requests = validate_profile_metric_requests()
     runtime = _runtime_identity(product_root)
     fixed, thresholds = _documents(contract_root)
     authority = BatchExecutionAuthorityIR.create(
@@ -227,11 +255,24 @@ def _self_test(contract_root: Path, product_root: Path) -> dict[str, Any]:
         blocked = True
     if len(receipts) != 24 or network_counter != 0 or not blocked:
         raise RuntimeError("FIXED24_OPERATIONAL_FIXTURE_FAILED")
+    missing_label_blocked = False
+    try:
+        validate_profile_metric_requests({"synthetic": ("missing_metric_id",)})
+    except RuntimeError as exc:
+        missing_label_blocked = str(exc) == (
+            "SUPPLEMENTAL_PROFILE_LABEL_MISSING:synthetic:missing_metric_id"
+        )
+    if not missing_label_blocked:
+        raise RuntimeError("FIXED24_PROFILE_LABEL_GUARD_FAILED")
     return {
         "status": "PASS",
         "fixture_preflight_count": len(receipts),
         "fixture_network_query_count": 0,
         "negative_authorization_blocked_before_network": True,
+        "profile_metric_request_count": sum(
+            len(requests) for requests in validated_profile_requests.values()
+        ),
+        "missing_profile_label_blocked_before_network": True,
         "runner_sha256": _sha(RUNNER),
         "verifier_sha256": _sha(VERIFIER),
     }
@@ -241,6 +282,7 @@ def _prepare(contract_root: Path, output: Path, product_root: Path) -> int:
     if output.exists():
         raise SystemExit(f"output already exists: {output}")
     output.mkdir(parents=True)
+    validate_profile_metric_requests()
     runtime_report = _verify_runtime(contract_root, product_root)
     fixed, thresholds = _documents(contract_root)
     fixture = _self_test(contract_root, product_root)
@@ -476,8 +518,7 @@ def _supplemental(case_root: Path, request_sha: str, ticker: str, company: str, 
     selected = (primary,) + tuple(exhibits[:1])
     evidence = authority.capture_selected(candidate_set, selected, fetcher)
     candidate_by_id = {item.candidate_id: item for item in candidate_set.candidates}
-    profiles = label_profiles()
-    requested = {metric: profiles[metric] for metric in PROFILE_METRICS[profile]}
+    requested = validate_profile_metric_requests()[profile]
     observations: list[DocumentObservationIR] = []
     normalized: list[dict[str, Any]] = []
     for receipt in evidence.capture_receipts:
@@ -536,6 +577,7 @@ def _execute_case(output: Path, case: dict[str, Any], receipt: AuthorizationRece
     if case_root.exists():
         raise RuntimeError(f"FIXED24_CASE_OUTPUT_EXISTS:{ticker}")
     case_root.mkdir(parents=True)
+    validate_profile_metric_requests()
     freeze = _json(output / FREEZE_FILENAME)
     _verify_runtime(contract_root, product_root, freeze)
     _write_json(case_root / "01_AUTHORIZATION_RECEIPT.json", receipt.model_dump(mode="json"))
