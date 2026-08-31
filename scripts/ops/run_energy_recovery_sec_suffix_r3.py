@@ -39,6 +39,9 @@ PRODUCT_TREE = "a382d9c096825910b5e0e8865414ea232b95bd40"
 PRIOR_RESULT_SHA256 = "502a2f7dcc569c8db9ef197e93289565ccb5cd599cf9ddf1b4c105829a22c062"
 PRIOR_RESULT_MANIFEST = "97d850fdbd927a62c5b5688045837b9c69de6be222049e6870f590b388f43e78"
 PRIOR_RECOVERY4_FREEZE = "b9f1fcb3140b411264dfa2f74ba5ba536cdfff82f31574cc0706032709211738"
+DISK_BASELINE_SHA256 = "e0029001597defbd821be70f288d69f66ec6ddd74dca0b7aac4687e018a843a5"
+DYNAMIC_DISK_LEDGER_MEMBER = "21_DYNAMIC_DISK_CASE_LEDGER.json"
+RECOVERY4_RUN_LEDGER_MEMBER = "17_RECOVERY4_RUN_LEDGER.json"
 COMPANY_DIRECTORY = ROOT / "research_agent/data/cache/sec/https___www.sec.gov_files_company_tickers.json.json"
 CASES = (
     {
@@ -101,6 +104,129 @@ def _write(path: Path, value: object) -> None:
     path.write_text(
         json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False) + "\n",
         encoding="utf-8",
+    )
+
+
+def _positive_peak(value: object, *, error: str) -> int:
+    if type(value) is not int or value <= 0:
+        raise RuntimeError(error)
+    return value
+
+
+def load_dynamic_disk_baseline(prior_result: Path) -> dict[str, Any]:
+    """Derive the first Energy guard baseline from the bound Recovery4 evidence."""
+
+    if _sha(prior_result) != PRIOR_RESULT_SHA256:
+        raise RuntimeError("DYNAMIC_DISK_BASELINE_RESULT_HASH_MISMATCH")
+    with zipfile.ZipFile(prior_result) as archive:
+        names = set(archive.namelist())
+        required = {"MANIFEST.json", DYNAMIC_DISK_LEDGER_MEMBER, RECOVERY4_RUN_LEDGER_MEMBER}
+        if not required <= names:
+            raise RuntimeError("DYNAMIC_DISK_BASELINE_SOURCE_MEMBER_MISSING")
+        manifest = json.loads(archive.read("MANIFEST.json"))
+        manifest_body = dict(manifest)
+        manifest_claim = manifest_body.pop("manifest_sha256", None)
+        if manifest_claim != PRIOR_RESULT_MANIFEST or sha256_json(manifest_body) != manifest_claim:
+            raise RuntimeError("DYNAMIC_DISK_BASELINE_MANIFEST_MISMATCH")
+        manifest_files = {item.get("path"): item for item in manifest.get("files", [])}
+        payloads: dict[str, bytes] = {}
+        payload_hashes: dict[str, str] = {}
+        for member in (DYNAMIC_DISK_LEDGER_MEMBER, RECOVERY4_RUN_LEDGER_MEMBER):
+            row = manifest_files.get(member)
+            payload = archive.read(member)
+            payload_sha = hashlib.sha256(payload).hexdigest()
+            if row is None or row.get("sha256") != payload_sha or row.get("bytes") != len(payload):
+                raise RuntimeError("DYNAMIC_DISK_BASELINE_SOURCE_HASH_MISMATCH")
+            payloads[member] = payload
+            payload_hashes[member] = payload_sha
+
+    disk_ledger = json.loads(payloads[DYNAMIC_DISK_LEDGER_MEMBER])
+    run_ledger = json.loads(payloads[RECOVERY4_RUN_LEDGER_MEMBER])
+    stt_guards = [
+        item
+        for item in disk_ledger.get("cases", [])
+        if item.get("sequence") == 1 and item.get("ticker") == "STT"
+    ]
+    if len(stt_guards) != 1 or stt_guards[0].get("decision") != "PASS":
+        raise RuntimeError("DYNAMIC_DISK_BASELINE_STT_GUARD_INVALID")
+    stt_guard = stt_guards[0]
+    measured = [
+        _positive_peak(item, error="DYNAMIC_DISK_BASELINE_MEASURED_PEAK_INVALID")
+        for item in stt_guard.get("measured_case_peaks", [])
+    ]
+    comparators = [
+        _positive_peak(item, error="DYNAMIC_DISK_BASELINE_COMPARATOR_INVALID")
+        for item in stt_guard.get("comparator_peaks", [])
+    ]
+    if not measured:
+        raise RuntimeError("DYNAMIC_DISK_BASELINE_MEASURED_EMPTY")
+    if not comparators:
+        raise RuntimeError("DYNAMIC_DISK_BASELINE_COMPARATOR_EMPTY")
+    if len(measured) != len(set(measured)) or len(comparators) != len(set(comparators)):
+        raise RuntimeError("DYNAMIC_DISK_BASELINE_DUPLICATE_PEAK")
+
+    stt_events = [
+        item
+        for item in run_ledger.get("events", [])
+        if item.get("sequence") == 1 and item.get("ticker") == "STT" and item.get("status") == "COMPLETE"
+    ]
+    if len(stt_events) != 1:
+        raise RuntimeError("DYNAMIC_DISK_BASELINE_STT_COMPLETE_MISSING")
+    actual_peak = _positive_peak(
+        stt_events[0].get("actual_peak_bytes"),
+        error="DYNAMIC_DISK_BASELINE_STT_ACTUAL_PEAK_INVALID",
+    )
+    if actual_peak in measured or actual_peak in comparators or set(measured) & set(comparators):
+        raise RuntimeError("DYNAMIC_DISK_BASELINE_DUPLICATE_PEAK")
+    measured_with_stt = [*measured, actual_peak]
+    baseline_body = {
+        "contract_id": "room16.dynamic_disk_baseline_evidence@1",
+        "source_result_sha256": PRIOR_RESULT_SHA256,
+        "source_result_manifest_sha256": PRIOR_RESULT_MANIFEST,
+        "source_files": [DYNAMIC_DISK_LEDGER_MEMBER, RECOVERY4_RUN_LEDGER_MEMBER],
+        "baseline_measured_case_peaks": measured_with_stt,
+        "baseline_comparator_peaks": comparators,
+        "stt_actual_peak_bytes": actual_peak,
+        "derivation": {
+            "recovery8_measured_from_first_stt_guard": measured,
+            "fixed24_comparator_from_first_stt_guard": comparators,
+            "completed_stt_actual_peak_from_run_ledger": actual_peak,
+        },
+        "numbers_hardcoded_without_source": False,
+    }
+    if sha256_json(baseline_body) != DISK_BASELINE_SHA256:
+        raise RuntimeError("DYNAMIC_DISK_BASELINE_AUTHORITY_MISMATCH")
+    receipt_body = {
+        "contract_id": "room16.dynamic_disk_baseline_receipt@1",
+        "baseline_sha256": DISK_BASELINE_SHA256,
+        "source_result_sha256": PRIOR_RESULT_SHA256,
+        "source_result_manifest_sha256": PRIOR_RESULT_MANIFEST,
+        "source_payload_sha256": payload_hashes,
+        "stt_guard_sequence": 1,
+        "stt_guard_ticker": "STT",
+        "stt_guard_decision": "PASS",
+        "baseline_measured_case_peaks": measured_with_stt,
+        "baseline_comparator_peaks": comparators,
+        "evidence_refs": [
+            f"{PRIOR_RESULT_SHA256}:{DYNAMIC_DISK_LEDGER_MEMBER}",
+            f"{PRIOR_RESULT_SHA256}:{RECOVERY4_RUN_LEDGER_MEMBER}",
+        ],
+    }
+    return {**receipt_body, "receipt_sha256": sha256_json(receipt_body)}
+
+
+def _guard_from_baseline(
+    receipt: dict[str, Any], *, measured: list[int], evidence_refs: tuple[str, ...]
+) -> dict[str, object]:
+    receipt_body = dict(receipt)
+    receipt_claim = receipt_body.pop("receipt_sha256", None)
+    if receipt_claim != sha256_json(receipt_body):
+        raise RuntimeError("DYNAMIC_DISK_BASELINE_RECEIPT_HASH_MISMATCH")
+    return evaluate_disk_guard(
+        free_before=shutil.disk_usage(ROOT).free,
+        measured_case_peaks=measured,
+        comparator_peaks=receipt["baseline_comparator_peaks"],
+        evidence_refs=evidence_refs,
     )
 
 
@@ -226,7 +352,10 @@ def offline_proof(args: argparse.Namespace) -> int:
     return 0
 
 
-def _configure(output: Path, product_root: Path) -> tuple[Any, dict[str, Any], list[Any]]:
+def _configure(
+    output: Path, product_root: Path, baseline_result: Path
+) -> tuple[Any, dict[str, Any], list[Any], dict[str, Any]]:
+    baseline_receipt = load_dynamic_disk_baseline(baseline_result)
     runner = _load_fixed_runner()
     research_commit = _git(ROOT, "rev-parse", "HEAD")
     research_tree = _git(ROOT, "rev-parse", "HEAD^{tree}")
@@ -284,6 +413,8 @@ def _configure(output: Path, product_root: Path) -> tuple[Any, dict[str, Any], l
         "prior_result_sha256": PRIOR_RESULT_SHA256,
         "prior_result_manifest_sha256": PRIOR_RESULT_MANIFEST,
         "prior_recovery4_freeze_sha256": PRIOR_RECOVERY4_FREEZE,
+        "dynamic_disk_baseline_sha256": DISK_BASELINE_SHA256,
+        "dynamic_disk_baseline_receipt_sha256": baseline_receipt["receipt_sha256"],
         "stt_carry_forward": "COMPLETE_UNCHANGED",
         "vlo_classification": "INFRASTRUCTURE_CORRECTION_VALIDATION",
         "psx_dvn_classification": "UNTOUCHED",
@@ -340,13 +471,16 @@ def _configure(output: Path, product_root: Path) -> tuple[Any, dict[str, Any], l
     _write(runtime_root / "15_ENERGY_RECOVERY_FREEZE.json", freeze)
     _write(runtime_root / "authority.json", authority.model_dump(mode="json"))
     _write(runtime_root / "receipts.json", [item.model_dump(mode="json") for item in receipts])
-    return runner, freeze, receipts
+    _write(runtime_root / "dynamic_disk_baseline_receipt.json", baseline_receipt)
+    return runner, freeze, receipts, baseline_receipt
 
 
 def prepare(args: argparse.Namespace) -> int:
     output: Path = args.output
     output.mkdir(parents=True, exist_ok=False)
-    _, freeze, receipts = _configure(output, args.product_root)
+    _, freeze, receipts, baseline_receipt = _configure(
+        output, args.product_root, args.baseline_result
+    )
     body = dict(freeze)
     claim = body.pop("freeze_sha256")
     recomputed = hashlib.sha256(_canonical(body)).hexdigest()
@@ -354,6 +488,12 @@ def prepare(args: argparse.Namespace) -> int:
     for receipt in receipts:
         value = receipt.model_dump(mode="json")
         receipt_checks.append({"ticker": value["ticker"], "receipt_sha256": value["receipt_sha256"]})
+    first_guard = _guard_from_baseline(
+        baseline_receipt,
+        measured=list(baseline_receipt["baseline_measured_case_peaks"]),
+        evidence_refs=tuple(baseline_receipt["evidence_refs"]),
+    )
+    _write(output / "03_DYNAMIC_DISK_BASELINE_RECEIPT.json", baseline_receipt)
     _write(output / "15_ENERGY_RECOVERY_FREEZE.json", freeze)
     _write(
         output / "16_FREEZE_VERIFICATION.json",
@@ -366,33 +506,60 @@ def prepare(args: argparse.Namespace) -> int:
     )
     _write(
         output / "17_ALL_PREFLIGHTS.json",
-        {"status": "PASS", "receipt_count": 3, "provider_calls": 0, "receipts": receipt_checks},
+        {
+            "status": "PASS" if first_guard["decision"] == "PASS" else "STOP",
+            "receipt_count": 3,
+            "provider_calls": 0,
+            "receipts": receipt_checks,
+            "baseline_receipt_sha256": baseline_receipt["receipt_sha256"],
+            "first_dynamic_disk_guard": first_guard,
+        },
     )
     _write(
         output / "18_PRESTART_STATE.json",
         {"status": "PASS", "case_attempts": 0, "provider_calls": 0, "ordered_tickers": ["VLO", "PSX", "DVN"]},
     )
     _write(output / "19_RUN_LEDGER.json", {"status": "PRESTART", "events": []})
-    _write(output / "23_DYNAMIC_DISK_LEDGER.json", {"status": "PRESTART", "cases": []})
-    print(json.dumps({"status": "PASS", "freeze_sha256": claim, "receipts": 3, "provider_calls": 0}, sort_keys=True))
+    _write(
+        output / "23_DYNAMIC_DISK_LEDGER.json",
+        {"status": "PRESTART", "cases": [{"sequence": 1, "ticker": "VLO", **first_guard}]},
+    )
+    print(
+        json.dumps(
+            {
+                "status": "PASS" if first_guard["decision"] == "PASS" else "STOP",
+                "freeze_sha256": claim,
+                "receipts": 3,
+                "baseline_receipt_sha256": baseline_receipt["receipt_sha256"],
+                "first_guard_decision": first_guard["decision"],
+                "provider_calls": 0,
+            },
+            sort_keys=True,
+        )
+    )
     return 0
 
 
 def run(args: argparse.Namespace) -> int:
     output: Path = args.output
-    runner, freeze, receipts = _configure(output, args.product_root)
+    runner, freeze, receipts, baseline_receipt = _configure(
+        output, args.product_root, args.baseline_result
+    )
     runtime_root = output / "_runtime"
     directory = _read(COMPANY_DIRECTORY)
     directory_sha = _sha(COMPANY_DIRECTORY)
     events: list[dict[str, Any]] = []
     disk_cases: list[dict[str, Any]] = []
-    measured: list[int] = []
+    measured = list(baseline_receipt["baseline_measured_case_peaks"])
+    _write(output / "03_DYNAMIC_DISK_BASELINE_RECEIPT.json", baseline_receipt)
     for case, receipt in zip(CASES, receipts, strict=True):
-        guard = evaluate_disk_guard(
-            free_before=shutil.disk_usage(ROOT).free,
-            measured_case_peaks=measured,
-            comparator_peaks=(),
-            evidence_refs=("Recovery4:STT", *(f"EnergyRecoveryR3:{item['ticker']}" for item in events)),
+        guard = _guard_from_baseline(
+            baseline_receipt,
+            measured=measured,
+            evidence_refs=(
+                *tuple(baseline_receipt["evidence_refs"]),
+                *(f"EnergyRecoveryR5:{item['ticker']}" for item in events),
+            ),
         )
         disk_cases.append({"sequence": case["sequence"], "ticker": case["ticker"], **guard})
         _write(output / "23_DYNAMIC_DISK_LEDGER.json", {"status": "RUNNING", "cases": disk_cases})
@@ -418,7 +585,6 @@ def run(args: argparse.Namespace) -> int:
             summary = runner._failure_case(runtime_root, case, receipt, exc)
         case_root = runtime_root / "companies" / f"{int(case['sequence']):02d}_{case['ticker']}"
         actual_peak = sum(item.stat().st_size for item in case_root.rglob("*") if item.is_file())
-        measured.append(actual_peak)
         event = {
             "sequence": case["sequence"],
             "ticker": case["ticker"],
@@ -432,6 +598,8 @@ def run(args: argparse.Namespace) -> int:
             "actual_peak_bytes": actual_peak,
         }
         events.append(event)
+        if summary["status"] == "COMPLETE":
+            measured.append(actual_peak)
         _write(output / "19_RUN_LEDGER.json", {"status": "RUNNING", "events": events})
         if summary.get("P0", 0) or summary.get("P1", 0):
             break
@@ -461,9 +629,11 @@ def main() -> int:
     prep = sub.add_parser("prepare")
     prep.add_argument("--output", required=True, type=Path)
     prep.add_argument("--product-root", required=True, type=Path)
+    prep.add_argument("--baseline-result", required=True, type=Path)
     execute = sub.add_parser("run")
     execute.add_argument("--output", required=True, type=Path)
     execute.add_argument("--product-root", required=True, type=Path)
+    execute.add_argument("--baseline-result", required=True, type=Path)
     replay = sub.add_parser("replay-case")
     replay.add_argument("--case-root", required=True, type=Path)
     replay.add_argument("--product-root", required=True, type=Path)
