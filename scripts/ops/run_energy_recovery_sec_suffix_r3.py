@@ -250,10 +250,19 @@ def _configure(output: Path, product_root: Path) -> tuple[Any, dict[str, Any], l
     )
     fixed = {"contract_id": "room16.energy_recovery_r3.fixed_list@1", "companies": list(CASES)}
     thresholds = {
-        "contract_id": "room16.energy_recovery_r3.acceptance_thresholds@1",
-        "scope": "vlo_correction_validation_plus_untouched_psx_dvn",
-        "minimum_company_core_coverage": 60,
-        "minimum_energy_median_core_coverage": 80,
+        "contract_id": "room16.alpha.fixed_batch_acceptance_thresholds@2",
+        "scope": "vlo_infrastructure_correction_plus_untouched_psx_dvn",
+        "minimum_company_core_coverage_percent": 60,
+        "minimum_archetype_median_core_coverage_percent": 80,
+        "minimum_section_completeness_percent": 90,
+        "required_surfaced_fact_lineage_percent": 100,
+        "maximum_stale_primary_metric_count": 0,
+        "required_replay_identity_percent": 100,
+        "maximum_replay_provider_calls": 0,
+        "maximum_P0": 0,
+        "maximum_P1": 0,
+        "maximum_manual_semantic_interventions": 0,
+        "maximum_ticker_specific_semantic_patches": 0,
         "no_waiver": True,
     }
     fixed_sha = fixed_company_list_sha256(fixed)

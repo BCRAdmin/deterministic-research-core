@@ -22,6 +22,37 @@ _ARCHETYPE_PROFILE_IDS = {
     "Integrated Energy": "energy",
 }
 
+_LEGACY_FIXED24_THRESHOLD_CONTRACT = (
+    "room16.alpha.fixed_24_batch_acceptance_thresholds@1"
+)
+_GENERIC_FIXED_BATCH_THRESHOLD_V2_CONTRACT = (
+    "room16.alpha.fixed_batch_acceptance_thresholds@2"
+)
+_GENERIC_THRESHOLD_V2_PERCENT_FIELDS = (
+    "minimum_company_core_coverage_percent",
+    "minimum_archetype_median_core_coverage_percent",
+    "minimum_section_completeness_percent",
+)
+_GENERIC_THRESHOLD_V2_EXACT_SAFETY_FIELDS = {
+    "required_surfaced_fact_lineage_percent": 100,
+    "maximum_stale_primary_metric_count": 0,
+    "required_replay_identity_percent": 100,
+    "maximum_replay_provider_calls": 0,
+    "maximum_P0": 0,
+    "maximum_P1": 0,
+    "maximum_manual_semantic_interventions": 0,
+    "maximum_ticker_specific_semantic_patches": 0,
+}
+_GENERIC_THRESHOLD_V2_REQUIRED_FIELDS = frozenset(
+    {
+        "contract_id",
+        "scope",
+        "no_waiver",
+        *_GENERIC_THRESHOLD_V2_PERCENT_FIELDS,
+        *_GENERIC_THRESHOLD_V2_EXACT_SAFETY_FIELDS,
+    }
+)
+
 
 class ExecutionAuthorityError(RuntimeError):
     """Fail-closed execution-authority error with a stable code."""
@@ -214,9 +245,61 @@ def fixed_company_list_sha256(document: dict[str, Any]) -> str:
 
 
 def threshold_authority_sha256(document: dict[str, Any]) -> str:
-    if document.get("contract_id") != "room16.alpha.fixed_24_batch_acceptance_thresholds@1":
+    contract_id = document.get("contract_id")
+    if contract_id == _LEGACY_FIXED24_THRESHOLD_CONTRACT:
+        return sha256_json(document)
+    if contract_id != _GENERIC_FIXED_BATCH_THRESHOLD_V2_CONTRACT:
         raise ExecutionAuthorityError(
             "EXEC_AUTH_THRESHOLD_INVALID", "threshold contract identity mismatch"
+        )
+
+    missing = _GENERIC_THRESHOLD_V2_REQUIRED_FIELDS.difference(document)
+    if missing:
+        raise ExecutionAuthorityError(
+            "EXEC_AUTH_THRESHOLD_V2_MISSING_FIELD",
+            f"required threshold field missing: {sorted(missing)[0]}",
+        )
+    unexpected = set(document).difference(_GENERIC_THRESHOLD_V2_REQUIRED_FIELDS)
+    if unexpected:
+        raise ExecutionAuthorityError(
+            "EXEC_AUTH_THRESHOLD_V2_UNEXPECTED_FIELD",
+            f"unexpected threshold field: {sorted(unexpected)[0]}",
+        )
+
+    scope = document["scope"]
+    if not isinstance(scope, str) or not scope.strip() or len(scope) > 200:
+        raise ExecutionAuthorityError(
+            "EXEC_AUTH_THRESHOLD_V2_SCOPE_INVALID",
+            "scope must be a non-empty bounded string",
+        )
+    for field in _GENERIC_THRESHOLD_V2_PERCENT_FIELDS:
+        value = document[field]
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
+            raise ExecutionAuthorityError(
+                "EXEC_AUTH_THRESHOLD_V2_TYPE_INVALID",
+                f"{field} must be a numeric scalar",
+            )
+        if not 0 <= value <= 100:
+            raise ExecutionAuthorityError(
+                "EXEC_AUTH_THRESHOLD_V2_RANGE_INVALID",
+                f"{field} must be in [0,100]",
+            )
+    for field, required in _GENERIC_THRESHOLD_V2_EXACT_SAFETY_FIELDS.items():
+        value = document[field]
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
+            raise ExecutionAuthorityError(
+                "EXEC_AUTH_THRESHOLD_V2_TYPE_INVALID",
+                f"{field} must be a numeric scalar",
+            )
+        if value != required:
+            raise ExecutionAuthorityError(
+                "EXEC_AUTH_THRESHOLD_V2_SAFETY_INVALID",
+                f"{field} must equal {required}",
+            )
+    if document["no_waiver"] is not True:
+        raise ExecutionAuthorityError(
+            "EXEC_AUTH_THRESHOLD_V2_SAFETY_INVALID",
+            "no_waiver must be exactly true",
         )
     return sha256_json(document)
 
