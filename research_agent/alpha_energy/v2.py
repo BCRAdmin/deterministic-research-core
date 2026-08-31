@@ -21,12 +21,16 @@ REVENUE_CONCEPT_FAMILY_V2: dict[str, Any] = {
     "contract_id": "room16.alpha.energy_revenue_concept_family_v2_candidate",
     "contract_version": 2,
     "namespace": "us-gaap",
-    "ordered_concepts": [
-        "Revenues",
-        "RevenueFromContractWithCustomerExcludingAssessedTax",
-    ],
-    "equivalence_scope": "consolidated_total_company_revenue_excluding_assessed_tax",
+    "ordered_concepts": ["Revenues"],
+    "equivalence_scope": "consolidated_total_company_revenues_exact",
+    "removed_candidate_concepts": {
+        "RevenueFromContractWithCustomerExcludingAssessedTax": (
+            "R8 independent matched-pair review found material non-equivalence across "
+            "the captured Energy population; registry naming is not equivalence proof."
+        )
+    },
     "forbidden_concepts": [
+        "RevenueFromContractWithCustomerExcludingAssessedTax",
         "RevenueFromContractWithCustomerIncludingAssessedTax",
         "SalesRevenueNet",
         "RefiningAndMarketingRevenue",
@@ -43,6 +47,33 @@ REVENUE_CONCEPT_FAMILY_V2: dict[str, Any] = {
     "issuer_extension_concepts_allowed": False,
 }
 
+DEBT_COMPARABILITY_CONTRACT_V2: dict[str, Any] = {
+    "contract_id": "room16.alpha.energy_debt_comparability_v2_candidate",
+    "contract_version": 2,
+    "economic_slot_label": "long_term_debt_measure",
+    "allowed_grades": ["A", "B"],
+    "concepts": {
+        "LongTermDebtNoncurrent": {
+            "grade": "A",
+            "scope": "noncurrent_long_term_debt",
+            "leases_included": False,
+        },
+        "LongTermDebtAndFinanceLeaseObligationsNoncurrent": {
+            "grade": "B",
+            "scope": "noncurrent_long_term_debt_and_finance_leases",
+            "leases_included": True,
+        },
+        "LongTermDebtAndCapitalLeaseObligations": {
+            "grade": "B",
+            "scope": "reported_long_term_debt_and_capital_lease_obligations",
+            "leases_included": True,
+        },
+    },
+    "grade_c_counts_as_comparable": False,
+    "current_noncurrent_components_summed": False,
+    "exact_concept_identity_required": True,
+}
+
 MAPPING_REGISTRY_V2: dict[str, Any] = {
     "contract_id": "room16.alpha.energy_mapping_registry_v2_candidate",
     "contract_version": 2,
@@ -55,10 +86,10 @@ MAPPING_REGISTRY_V2: dict[str, Any] = {
         "net_income": ["NetIncomeLoss"],
         "operating_cash_flow": ["NetCashProvidedByUsedInOperatingActivities"],
         "capital_expenditure": ["PaymentsToAcquirePropertyPlantAndEquipment"],
-        "long_term_debt_and_leases": [
-            "LongTermDebtAndCapitalLeaseObligations",
-            "LongTermDebtAndFinanceLeaseObligationsNoncurrent",
+        "long_term_debt_measure": [
             "LongTermDebtNoncurrent",
+            "LongTermDebtAndFinanceLeaseObligationsNoncurrent",
+            "LongTermDebtAndCapitalLeaseObligations",
         ],
     },
 }
@@ -75,6 +106,15 @@ PERIOD_FRESHNESS_POLICY_V2: dict[str, Any] = {
     "incomparable_period_combination_allowed": False,
     "unit_conversion_allowed": False,
     "source_lineage_required": True,
+    "duration_basis_policy": {
+        "revenue": ["STANDALONE_QUARTER"],
+        "net_income": ["STANDALONE_QUARTER"],
+        "operating_cash_flow": ["YEAR_TO_DATE", "ANNUAL", "STANDALONE_QUARTER"],
+        "capital_expenditure": ["YEAR_TO_DATE", "ANNUAL", "STANDALONE_QUARTER"],
+    },
+    "coverage_acceptance_semantics": "DUAL_THRESHOLD_REQUIRED",
+    "usable_coverage_includes_aging_with_typed_disclosure": True,
+    "current_only_coverage_report_required": True,
 }
 
 CORE_SLOT_REGISTRY_V2: dict[str, Any] = {
@@ -87,7 +127,7 @@ CORE_SLOT_REGISTRY_V2: dict[str, Any] = {
         "net_income",
         "operating_cash_flow",
         "capital_expenditure",
-        "long_term_debt_and_leases",
+        "long_term_debt_measure",
     ],
     "removed_v1_slot": {
         "slot_id": "diluted_eps",
@@ -129,11 +169,11 @@ _DURATION_METRICS = {
     "capital_expenditure",
 }
 _BASIS_ORDER = {
-    "revenue": {"STANDALONE_QUARTER": 0, "YEAR_TO_DATE": 1, "ANNUAL": 2},
-    "net_income": {"STANDALONE_QUARTER": 0, "YEAR_TO_DATE": 1, "ANNUAL": 2},
+    "revenue": {"STANDALONE_QUARTER": 0},
+    "net_income": {"STANDALONE_QUARTER": 0},
     "operating_cash_flow": {"YEAR_TO_DATE": 0, "ANNUAL": 1, "STANDALONE_QUARTER": 2},
     "capital_expenditure": {"YEAR_TO_DATE": 0, "ANNUAL": 1, "STANDALONE_QUARTER": 2},
-    "long_term_debt_and_leases": {"INSTANT": 0},
+    "long_term_debt_measure": {"INSTANT": 0},
 }
 
 
@@ -242,13 +282,17 @@ def select_metric(
             # Frozen adapters may preserve a duration value without its original start.
             # That evidence remains inspectable but cannot be silently relabelled.
             reasons.append("DURATION_BASIS_NOT_COMPARABLE")
-        if metric_id == "long_term_debt_and_leases" and row["period_basis"] != "INSTANT":
+        if metric_id == "long_term_debt_measure" and row["period_basis"] != "INSTANT":
             reasons.append("DEBT_NOT_INSTANT")
         if reasons:
             rejected.append({"candidate_id": row["candidate_id"], "reason_codes": reasons})
             continue
         status, age = _availability(as_of, str(row["period_end"]))
         candidate = {**row, "availability_status": status, "age_days": age}
+        if metric_id == "long_term_debt_measure":
+            comparison = DEBT_COMPARABILITY_CONTRACT_V2["concepts"][row["concept"]]
+            candidate["comparability_grade"] = comparison["grade"]
+            candidate["economic_scope"] = comparison["scope"]
         if status == "HISTORICAL_ONLY":
             historical.append(candidate)
         else:
@@ -277,6 +321,13 @@ def select_metric(
         "quarter_from_ytd_subtraction_used": False,
         "unit_conversion_used": False,
     }
+    if metric_id == "long_term_debt_measure":
+        value["economic_slot_label"] = DEBT_COMPARABILITY_CONTRACT_V2[
+            "economic_slot_label"
+        ]
+        value["allowed_comparability_grades"] = DEBT_COMPARABILITY_CONTRACT_V2[
+            "allowed_grades"
+        ]
     return {**value, "receipt_sha256": sha256_json(value)}
 
 

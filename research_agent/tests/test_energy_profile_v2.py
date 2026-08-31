@@ -6,6 +6,7 @@ import pytest
 
 from research_agent.alpha_energy.v2 import (
     CORE_SLOT_REGISTRY_V2,
+    DEBT_COMPARABILITY_CONTRACT_V2,
     ENERGY_PROFILE_V2_CANDIDATE,
     MAPPING_REGISTRY_V2,
     PERIOD_FRESHNESS_POLICY_V2,
@@ -55,7 +56,7 @@ def _fact(
 
 def _complete_case() -> list[dict[str, object]]:
     return [
-        _fact("RevenueFromContractWithCustomerExcludingAssessedTax"),
+        _fact("Revenues"),
         _fact("NetIncomeLoss"),
         _fact(
             "NetCashProvidedByUsedInOperatingActivities",
@@ -98,16 +99,14 @@ def test_registry_hashes_bind_canonical_documents() -> None:
     assert hashes["core_slot_registry_v2_sha256"] == sha256_json(CORE_SLOT_REGISTRY_V2)
 
 
-def test_revenue_family_accepts_proven_ex_tax_total() -> None:
+def test_revenue_family_rejects_ex_tax_after_independent_pair_review() -> None:
     receipt = select_metric(
         "revenue",
         [_fact("RevenueFromContractWithCustomerExcludingAssessedTax")],
         as_of=AS_OF,
     )
-    assert receipt["status"] == "CURRENT_COMPARABLE"
-    assert receipt["selected_fact"]["concept"] == (
-        "RevenueFromContractWithCustomerExcludingAssessedTax"
-    )
+    assert receipt["status"] == "ABSENT"
+    assert receipt["counted"] == 0
 
 
 @pytest.mark.parametrize(
@@ -123,7 +122,7 @@ def test_revenue_negative_controls_are_not_mapped(concept: str) -> None:
 def test_segment_revenue_is_rejected_even_for_allowed_concept() -> None:
     receipt = select_metric(
         "revenue",
-        [_fact("RevenueFromContractWithCustomerExcludingAssessedTax", dimensions=True)],
+        [_fact("Revenues", dimensions=True)],
         as_of=AS_OF,
     )
     assert receipt["status"] == "ABSENT"
@@ -186,9 +185,9 @@ def test_quarter_from_ytd_is_never_synthesized() -> None:
     assert receipt["quarter_from_ytd_subtraction_used"] is False
 
 
-def test_long_term_debt_family_preserves_exact_concept() -> None:
+def test_long_term_debt_measure_preserves_exact_concept_and_grade() -> None:
     receipt = select_metric(
-        "long_term_debt_and_leases",
+        "long_term_debt_measure",
         [
             _fact(
                 "LongTermDebtNoncurrent",
@@ -200,15 +199,45 @@ def test_long_term_debt_family_preserves_exact_concept() -> None:
     )
     assert receipt["counted"] == 1
     assert receipt["selected_fact"]["concept"] == "LongTermDebtNoncurrent"
+    assert receipt["selected_fact"]["comparability_grade"] == "A"
+    assert receipt["economic_slot_label"] == "long_term_debt_measure"
+
+
+def test_grade_b_debt_is_typed_without_claiming_grade_a_scope() -> None:
+    receipt = select_metric(
+        "long_term_debt_measure",
+        [
+            _fact(
+                "LongTermDebtAndCapitalLeaseObligations",
+                start=None,
+                basis="INSTANT",
+            )
+        ],
+        as_of=AS_OF,
+    )
+    assert receipt["selected_fact"]["comparability_grade"] == "B"
+    assert receipt["selected_fact"]["economic_scope"] == (
+        "reported_long_term_debt_and_capital_lease_obligations"
+    )
+    assert DEBT_COMPARABILITY_CONTRACT_V2["grade_c_counts_as_comparable"] is False
+
+
+def test_standalone_quarter_basis_is_required_for_revenue() -> None:
+    receipt = select_metric(
+        "revenue",
+        [_fact("Revenues", start="2026-01-01", basis="YEAR_TO_DATE")],
+        as_of=AS_OF,
+    )
+    assert receipt["status"] == "ABSENT"
+    assert receipt["rejected_candidates"][0]["reason_codes"] == [
+        "DURATION_BASIS_NOT_COMPARABLE"
+    ]
 
 
 def test_selection_is_deterministic_under_input_reordering() -> None:
     rows = [
         _fact("Revenues", candidate_id="raw.z"),
-        _fact(
-            "RevenueFromContractWithCustomerExcludingAssessedTax",
-            candidate_id="raw.a",
-        ),
+        _fact("Revenues", candidate_id="raw.a"),
     ]
     left = select_metric("revenue", rows, as_of=AS_OF)
     right = select_metric("revenue", reversed(rows), as_of=AS_OF)
@@ -229,7 +258,7 @@ def test_selected_fact_preserves_lineage() -> None:
 def test_profile_redesign_retains_capex_and_replaces_eps_with_debt() -> None:
     assert CORE_SLOT_REGISTRY_V2["retained_difficult_slot"] == "capital_expenditure"
     assert "diluted_eps" not in CORE_SLOT_REGISTRY_V2["slots"]
-    assert "long_term_debt_and_leases" in CORE_SLOT_REGISTRY_V2["slots"]
+    assert "long_term_debt_measure" in CORE_SLOT_REGISTRY_V2["slots"]
 
 
 def test_complete_candidate_case_is_five_of_five() -> None:
