@@ -199,3 +199,37 @@ def test_guard_stop_does_not_call_provider(monkeypatch: pytest.MonkeyPatch) -> N
         provider_calls += 1
     assert guard["decision"] == "STOP"
     assert provider_calls == 0
+
+
+def test_finalization_reverifies_bound_runtime_freeze_without_case_or_provider_work(
+    tmp_path: Path,
+) -> None:
+    output = tmp_path / "r5-runtime"
+    runtime = output / "_runtime"
+    runtime.mkdir(parents=True)
+    expected = "d" * 64
+    (runtime / "15_ENERGY_RECOVERY_FREEZE.json").write_text(
+        json.dumps({"freeze_sha256": expected})
+    )
+
+    provider_calls = 0
+    case_executions = 0
+    with pytest.raises(FileNotFoundError):
+        runner._read(output / "15_ENERGY_RECOVERY_FREEZE.json")
+
+    freeze = runner.verify_runtime_energy_freeze(output, expected)
+    assert freeze["freeze_sha256"] == expected
+    assert provider_calls == 0
+    assert case_executions == 0
+
+
+def test_finalization_rejects_runtime_freeze_drift(tmp_path: Path) -> None:
+    output = tmp_path / "r5-runtime"
+    runtime = output / "_runtime"
+    runtime.mkdir(parents=True)
+    (runtime / "15_ENERGY_RECOVERY_FREEZE.json").write_text(
+        json.dumps({"freeze_sha256": "e" * 64})
+    )
+
+    with pytest.raises(RuntimeError, match="ENERGY_RECOVERY_FREEZE_DRIFT"):
+        runner.verify_runtime_energy_freeze(output, "f" * 64)

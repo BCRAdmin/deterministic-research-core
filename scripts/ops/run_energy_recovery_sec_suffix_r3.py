@@ -107,6 +107,16 @@ def _write(path: Path, value: object) -> None:
     )
 
 
+def verify_runtime_energy_freeze(output: Path, expected_freeze_sha256: str) -> dict[str, Any]:
+    """Reverify the bound runtime freeze without touching case or provider execution."""
+
+    freeze_path = output / "_runtime" / "15_ENERGY_RECOVERY_FREEZE.json"
+    current = _read(freeze_path)
+    if current.get("freeze_sha256") != expected_freeze_sha256:
+        raise RuntimeError("ENERGY_RECOVERY_FREEZE_DRIFT")
+    return current
+
+
 def _positive_peak(value: object, *, error: str) -> int:
     if type(value) is not int or value <= 0:
         raise RuntimeError(error)
@@ -609,9 +619,7 @@ def run(args: argparse.Namespace) -> int:
         output / "23_DYNAMIC_DISK_LEDGER.json",
         {"status": "PASS" if all(item["decision"] == "PASS" for item in disk_cases) else "STOPPED", "cases": disk_cases},
     )
-    current = _read(output / "15_ENERGY_RECOVERY_FREEZE.json")
-    if current["freeze_sha256"] != freeze["freeze_sha256"]:
-        raise RuntimeError("ENERGY_RECOVERY_FREEZE_DRIFT")
+    verify_runtime_energy_freeze(output, freeze["freeze_sha256"])
     print(json.dumps({"status": "COMPLETE" if complete else "STOPPED", "events": events}, sort_keys=True))
     return 0
 
