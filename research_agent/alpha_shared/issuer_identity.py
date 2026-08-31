@@ -13,6 +13,14 @@ from dataclasses import asdict, dataclass
 from typing import Any, Iterable, Mapping
 
 
+_SEC_JURISDICTION_CODES = frozenset(
+    "AL AK AZ AR CA CO CT DE FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN "
+    "MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA "
+    "WA WV WI WY DC PR VI GU AS MP".split()
+)
+_SEC_TERMINAL_JURISDICTION = re.compile(r"/([A-Za-z]{2})$")
+
+
 def _canonical_json(value: object) -> bytes:
     return json.dumps(
         value, sort_keys=True, separators=(",", ":"), ensure_ascii=False
@@ -35,7 +43,11 @@ def _cik(value: object) -> str:
 
 
 def _legal_name(value: object) -> str:
-    text = str(value or "").casefold().replace("&", " and ")
+    text = str(value or "").strip()
+    suffix = _SEC_TERMINAL_JURISDICTION.search(text)
+    if suffix is not None and suffix.group(1).upper() in _SEC_JURISDICTION_CODES:
+        text = text[: suffix.start()]
+    text = text.casefold().replace("&", " and ").replace("/", " slash ")
     text = re.sub(r"[^a-z0-9]+", " ", text).strip()
     if text.startswith("the "):
         text = text[4:]
@@ -140,4 +152,3 @@ def resolve_issuer_identity(
         "resolution_method": method,
     }
     return {**body, "identity_sha256": _sha256_json(body)}
-

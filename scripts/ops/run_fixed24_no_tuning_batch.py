@@ -19,7 +19,7 @@ import urllib.request
 import zipfile
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any, Callable, Mapping
 
 from research_agent.alpha_shared.archetype_profiles import archetype_profile_registry
 from research_agent.alpha_shared.contracts import (
@@ -479,18 +479,36 @@ class SupplementalFetcher:
         raise RuntimeError("unreachable retry state") from last
 
 
-def _resolve_identity(ticker: str, company_name: str, sec: RetryAdapter) -> tuple[dict[str, Any], dict[str, Any]]:
-    payload = sec.get_company_tickers()
+def _resolve_identity(
+    ticker: str,
+    company_name: str,
+    sec: RetryAdapter,
+    *,
+    directory_payload: Mapping[str, Mapping[str, Any]] | None = None,
+    directory_source_receipt_sha256: str | None = None,
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    if directory_payload is None:
+        payload = sec.get_company_tickers()
+        provider_query_count = 1
+        source_receipt_sha256 = sha256_json(payload)
+        identity_source_mode = "live_company_directory"
+    else:
+        if directory_source_receipt_sha256 is None:
+            raise RuntimeError("ISSUER_IDENTITY_OFFLINE_DIRECTORY_RECEIPT_MISSING")
+        payload = directory_payload
+        provider_query_count = 0
+        source_receipt_sha256 = directory_source_receipt_sha256
+        identity_source_mode = "pinned_existing_company_directory"
     identity = resolve_issuer_identity(
         requested_ticker=ticker,
         canonical_company_name=company_name,
         as_of_date=AS_OF,
         current_directory=payload,
-        source_receipt_sha256=sha256_json(payload),
+        source_receipt_sha256=source_receipt_sha256,
     )
     effective = str(identity["effective_ticker"])
     resolution = {"status": "supported", "runtimeReady": True, "inputKind": "ticker", "input": ticker, "ticker": effective, "requestedTicker": ticker, "companyName": company_name, "exchange": "US Listed", "exchangeCode": "US", "jurisdiction": "US", "isin": None, "source": "SEC company_tickers.json"}
-    return resolution, {"status": "PASS", "provider_query_count": 1, "ticker": ticker, "effective_ticker": effective, "company_name": company_name, "cik": str(identity["cik"]), "issuer_identity": identity, "resolution": resolution}
+    return resolution, {"status": "PASS", "provider_query_count": provider_query_count, "identity_source_mode": identity_source_mode, "ticker": ticker, "effective_ticker": effective, "company_name": company_name, "cik": str(identity["cik"]), "issuer_identity": identity, "resolution": resolution}
 
 
 def _supplemental(case_root: Path, request_sha: str, ticker: str, company: str, cik: str, profile: str, fetch_log: list[dict[str, Any]]) -> tuple[SupplementalCompileInputIR, dict[str, Any]]:
@@ -533,10 +551,24 @@ def _supplemental(case_root: Path, request_sha: str, ticker: str, company: str, 
     return supplemental, {"status": "PASS", "policy": policy.model_dump(mode="json"), "discovery_receipts": [item.model_dump(mode="json") for item in discovery], "candidate_set": candidate_set.model_dump(mode="json"), "evidence_set": evidence.model_dump(mode="json"), "normalized_document_count": len(normalized), "observation_count": len(observations), "observations": [item.model_dump(mode="json") for item in observations], "offline_replay_network_calls": 0}
 
 
-def _base_capture(case_root: Path, ticker: str, company: str, retry_log: list[dict[str, Any]]) -> tuple[SharedBaseInputIR, dict[str, Any], dict[str, Any], dict[str, Any]]:
+def _base_capture(
+    case_root: Path,
+    ticker: str,
+    company: str,
+    retry_log: list[dict[str, Any]],
+    *,
+    identity_directory_payload: Mapping[str, Mapping[str, Any]] | None = None,
+    identity_directory_source_receipt_sha256: str | None = None,
+) -> tuple[SharedBaseInputIR, dict[str, Any], dict[str, Any], dict[str, Any]]:
     sec_raw = SecClient(SecClientConfig(user_agent=USER_AGENT, request_delay_seconds=0.5, timeout_seconds=30, max_retries=1, use_cache=False))
     sec = RetryAdapter(sec_raw, retry_log)
-    resolution, identity = _resolve_identity(ticker, company, sec)
+    resolution, identity = _resolve_identity(
+        ticker,
+        company,
+        sec,
+        directory_payload=identity_directory_payload,
+        directory_source_receipt_sha256=identity_directory_source_receipt_sha256,
+    )
     request = build_compile_request(resolution, as_of_date=AS_OF, allowed_provider_ids=("nasdaq", "sec"), available_configuration_ids=("ROOM16_SEC_USER_AGENT",), network_mode="live_acquisition")
     plan = plan_source_acquisition(request, price_provider_id="nasdaq")
     live_root = case_root / "captures/rfc0010"
@@ -558,7 +590,7 @@ def _base_capture(case_root: Path, ticker: str, company: str, retry_log: list[di
     verification = verify_live_bridge(records=records, result=bridge, capture_store_root=executor.capture_store.root)
     base = SharedBaseInputIR.from_snapshot(snapshot=bridge.snapshot, snapshot_root=snapshot_root)
     capture = {"status": "PASS", "records": [{"receipt": item.receipt.model_dump(mode="json"), "artifact": item.artifact.model_dump(mode="json")} for item in records], "capture_set": bridge.capture_set.model_dump(mode="json"), "closure": bridge.closure.model_dump(mode="json"), "bridge_verification": verification, "snapshot": bridge.snapshot.model_dump(mode="json"), "snapshot_root": str(snapshot_root)}
-    return base, identity, request.model_dump(mode="json"), {"plan": plan.model_dump(mode="json"), "capture": capture}
+    return base, identity, request.model_dump(mode="json"), {"plan": plan.model_dump(mode="json"), "capture": capture, "identity_provider_query_count": identity["provider_query_count"]}
 
 
 def _replay_case(case_root: Path, product_root: Path, counter: int) -> int:
@@ -571,7 +603,16 @@ def _replay_case(case_root: Path, product_root: Path, counter: int) -> int:
     return 0
 
 
-def _execute_case(output: Path, case: dict[str, Any], receipt: AuthorizationReceiptIR, contract_root: Path, product_root: Path) -> dict[str, Any]:
+def _execute_case(
+    output: Path,
+    case: dict[str, Any],
+    receipt: AuthorizationReceiptIR,
+    contract_root: Path,
+    product_root: Path,
+    *,
+    identity_directory_payload: Mapping[str, Mapping[str, Any]] | None = None,
+    identity_directory_source_receipt_sha256: str | None = None,
+) -> dict[str, Any]:
     sequence = int(case["sequence"]); ticker = str(case["ticker"]); company = str(case["company_name"]); profile = str(case["archetype_profile_id"])
     case_root = output / "companies" / f"{sequence:02d}_{ticker}"
     if case_root.exists():
@@ -584,7 +625,14 @@ def _execute_case(output: Path, case: dict[str, Any], receipt: AuthorizationRece
     _write_json(case_root / "02_AUTHORIZATION_BINDING_AUDIT.json", {"status": "PASS", "receipt_sha256": receipt.receipt_sha256, "authority_sha256": receipt.authority_sha256, "verified_before_provider_event": True, "event_sequence": 1})
     retry_log: list[dict[str, Any]] = []
     supplemental_log: list[dict[str, Any]] = []
-    base, identity, request, base_details = _base_capture(case_root, ticker, company, retry_log)
+    base, identity, request, base_details = _base_capture(
+        case_root,
+        ticker,
+        company,
+        retry_log,
+        identity_directory_payload=identity_directory_payload,
+        identity_directory_source_receipt_sha256=identity_directory_source_receipt_sha256,
+    )
     _write_json(case_root / "03_IDENTITY_PREFLIGHT.json", identity)
     _write_json(case_root / "04_COMPILE_REQUEST.json", request)
     _write_json(case_root / "05_SOURCE_PLAN.json", base_details["plan"])
@@ -618,7 +666,7 @@ def _execute_case(output: Path, case: dict[str, Any], receipt: AuthorizationRece
     completeness = int(report.report_completeness["required_section_completeness_percent"])
     lineage = int(report.evidence_lineage["surfaced_fact_lineage_rate_percent"])
     stale = int(report.evidence_lineage["stale_primary_metric_count"])
-    live_provider_calls = 1 + len(base_details["capture"]["records"]) + len(supplemental_log)
+    live_provider_calls = int(base_details["identity_provider_query_count"]) + len(base_details["capture"]["records"]) + len(supplemental_log)
     findings = [{"severity": "P2", "code": "UNSUPPORTED_CORE_METRIC", "metric": item} for item in report.important_unsupported_metrics]
     _write_json(case_root / "19_CASE_FINDINGS.json", {"status": "PASS", "findings": findings})
     metrics = {"core_metric_coverage_percent": coverage, "required_section_completeness_percent": completeness, "surfaced_fact_lineage_percent": lineage, "stale_primary_metric_count": stale, "unsupported_important_metric_count": len(report.important_unsupported_metrics)}
