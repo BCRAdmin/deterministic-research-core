@@ -113,9 +113,18 @@ def legacy_baseline(
     values = {
         "mapping_registry": module.MAPPING_REGISTRY,
         "formula_registry": module.FORMULA_REGISTRY,
-        "freshness_policy": module.FRESHNESS_POLICY,
+        "freshness_policy": getattr(
+            module,
+            "FRESHNESS_POLICY",
+            {
+                "status": "NO_SEPARATE_NAMED_POLICY_IN_CURRENT_PROFILE",
+                "behavior": "current projection preserves source period and ranks newest admissible facts",
+            },
+        ),
         "ranking_profile": module.RANKING_PROFILE,
     }
+    if hasattr(module, "SOURCE_PROFILE"):
+        values["source_profile"] = module.SOURCE_PROFILE
     if hasattr(module, "PERIOD_BASIS_POLICY"):
         values["period_basis_policy"] = module.PERIOD_BASIS_POLICY
     body = {
