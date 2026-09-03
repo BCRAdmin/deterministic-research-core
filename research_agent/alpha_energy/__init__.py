@@ -23,7 +23,10 @@ from .v2 import (
     select_metric,
 )
 from .v3 import (
+    AUTHORIZED_PERIOD_POLICY_SHA256,
+    AUTHORIZED_SEMANTIC_SHA256,
     CAPEX_COMPARABILITY_CONTRACT_V3,
+    CANDIDATE_INTEGRITY_CONTRACT_V3,
     CORE_SLOT_REGISTRY_V3,
     DEBT_COMPARABILITY_CONTRACT_V3,
     ENERGY_PROFILE_V3_CANDIDATE,
@@ -33,7 +36,9 @@ from .v3 import (
     evaluate_energy_v3_case,
     inline_xbrl_candidates_v3,
     registry_hashes_v3,
+    require_authorized_contract_v3,
     select_metric_v3,
+    validate_candidate_integrity_v3,
 )
 
 __all__ = [
@@ -56,6 +61,9 @@ __all__ = [
     "registry_hashes",
     "select_metric",
     "CAPEX_COMPARABILITY_CONTRACT_V3",
+    "AUTHORIZED_PERIOD_POLICY_SHA256",
+    "AUTHORIZED_SEMANTIC_SHA256",
+    "CANDIDATE_INTEGRITY_CONTRACT_V3",
     "CORE_SLOT_REGISTRY_V3",
     "DEBT_COMPARABILITY_CONTRACT_V3",
     "ENERGY_PROFILE_V3_CANDIDATE",
@@ -65,5 +73,7 @@ __all__ = [
     "evaluate_energy_v3_case",
     "inline_xbrl_candidates_v3",
     "registry_hashes_v3",
+    "require_authorized_contract_v3",
     "select_metric_v3",
+    "validate_candidate_integrity_v3",
 ]

@@ -42,7 +42,25 @@ def _fact(
         "source_snapshot_sha256": "b" * 64,
     }
     digest = sha256_json(body)
-    return {**body, "candidate_id": f"raw.{digest}", "candidate_sha256": digest}
+    return {
+        "contract_id": "room16.alpha.energy_v3.inline_raw_typed_candidate",
+        "contract_version": 3,
+        "candidate_id": f"energy-v3-inline.{digest}",
+        "candidate_sha256": digest,
+        **body,
+    }
+
+
+def _resign_inline(fact):
+    body = {
+        key: value
+        for key, value in fact.items()
+        if key not in {"contract_id", "contract_version", "candidate_id", "candidate_sha256"}
+    }
+    digest = sha256_json(body)
+    fact["candidate_id"] = f"energy-v3-inline.{digest}"
+    fact["candidate_sha256"] = digest
+    return fact
 
 
 def test_v3_selects_newer_admissible_ocf_without_v1_receipt_authority():
@@ -129,6 +147,7 @@ def test_sole_successor_lifecycle_context_is_typed_not_treated_as_segment():
     fact["dimensions_present"] = True
     fact["dimension_key"] = "lifecycle"
     fact["dimensions"] = {"us-gaap:BusinessAcquisitionAxis": "issuer:SuccessorMember"}
+    _resign_inline(fact)
     receipt = select_metric_v3("revenue", [fact], as_of="2026-09-03")
     assert receipt["counted"] == 1
     assert receipt["selected_fact"]["context_scope_grade"] == "B"
@@ -140,6 +159,7 @@ def test_predecessor_lifecycle_context_fails_closed():
     fact["dimensions_present"] = True
     fact["dimension_key"] = "lifecycle"
     fact["dimensions"] = {"us-gaap:BusinessAcquisitionAxis": "issuer:PredecessorMember"}
+    _resign_inline(fact)
     receipt = select_metric_v3("revenue", [fact], as_of="2026-09-03")
     assert receipt["status"] == "ABSENT"
 
@@ -178,6 +198,83 @@ def test_tampered_semantic_or_period_contract_is_rejected():
     policy["contract_id"] = "weakened"
     with pytest.raises(ValueError, match="PERIOD_POLICY_NOT_AUTHORIZED"):
         select_metric_v3("revenue", [], as_of="2026-09-03", period_policy=policy)
+
+
+@pytest.mark.parametrize(
+    ("mutation", "message"),
+    [
+        (
+            lambda value: value["metrics"]["revenue"].update(
+                {"IssuerExtensionRevenue": {"grade": "B", "economic_scope": "extension"}}
+            ),
+            "SEMANTIC_CONTRACT_HASH_NOT_AUTHORIZED",
+        ),
+        (
+            lambda value: value["metrics"]["revenue"][
+                "RevenueFromContractWithCustomerExcludingAssessedTax"
+            ].update({"grade": "A"}),
+            "SEMANTIC_CONTRACT_HASH_NOT_AUTHORIZED",
+        ),
+        (
+            lambda value: value["lifecycle_context_policy"].update(
+                {"additional_dimensions_allowed": True}
+            ),
+            "SEMANTIC_CONTRACT_HASH_NOT_AUTHORIZED",
+        ),
+    ],
+)
+def test_same_id_semantic_contract_mutations_are_rejected(mutation, message):
+    semantic = deepcopy(ENERGY_SEMANTIC_CONTRACT_V3)
+    mutation(semantic)
+    with pytest.raises(ValueError, match=message):
+        select_metric_v3("revenue", [], as_of="2026-09-03", semantic_contract=semantic)
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    [
+        lambda value: value["duration_basis_policy"]["revenue"].append("YEAR_TO_DATE"),
+        lambda value: value.update({"financial_current_max_age_days": 9999}),
+        lambda value: value.update({"historical_only_counts_as_resolved": True}),
+        lambda value: value.update({"incomparable_period_combination_allowed": True}),
+    ],
+)
+def test_same_id_period_policy_mutations_are_rejected(mutation):
+    policy = deepcopy(PERIOD_FRESHNESS_POLICY_V3)
+    mutation(policy)
+    with pytest.raises(ValueError, match="PERIOD_POLICY_HASH_NOT_AUTHORIZED"):
+        select_metric_v3("revenue", [], as_of="2026-09-03", period_policy=policy)
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("value", "101"),
+        ("concept", "NetIncomeLoss"),
+        ("end", "2026-06-29"),
+        ("dimensions_present", True),
+        ("source_artifact_sha256", "c" * 64),
+    ],
+)
+def test_candidate_semantic_or_lineage_tamper_is_rejected(field, value):
+    fact = _fact("Revenues")
+    fact[field] = value
+    with pytest.raises(ValueError, match="CANDIDATE_SELF_HASH_MISMATCH"):
+        select_metric_v3("revenue", [fact], as_of="2026-09-03")
+
+
+def test_candidate_id_hash_mismatch_is_rejected():
+    fact = _fact("Revenues")
+    fact["candidate_id"] = f"energy-v3-inline.{'f' * 64}"
+    with pytest.raises(ValueError, match="CANDIDATE_ID_HASH_MISMATCH"):
+        select_metric_v3("revenue", [fact], as_of="2026-09-03")
+
+
+def test_forged_candidate_hash_format_is_rejected():
+    fact = _fact("Revenues")
+    fact["candidate_sha256"] = "not-a-sha256"
+    with pytest.raises(ValueError, match="CANDIDATE_HASH_FORMAT_INVALID"):
+        select_metric_v3("revenue", [fact], as_of="2026-09-03")
 
 
 def test_inline_xbrl_adapter_resolves_opaque_usd_unit_and_preserves_lineage():

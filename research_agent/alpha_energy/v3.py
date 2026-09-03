@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import re
 from datetime import date
-from typing import Any, Iterable
+from typing import Any, Iterable, Mapping
 
 from research_agent.compiler_foundation.canonical import sha256_json
 from research_agent.sources.sec.sec_inline_facts import (
@@ -192,6 +192,128 @@ PERIOD_FRESHNESS_POLICY_V3: dict[str, Any] = {
     },
 }
 
+AUTHORIZED_SEMANTIC_SHA256 = sha256_json(ENERGY_SEMANTIC_CONTRACT_V3)
+AUTHORIZED_PERIOD_POLICY_SHA256 = sha256_json(PERIOD_FRESHNESS_POLICY_V3)
+
+CANDIDATE_INTEGRITY_CONTRACT_V3: dict[str, Any] = {
+    "contract_id": "room16.alpha.energy_v3.candidate_integrity_contract",
+    "contract_version": 1,
+    "accepted_candidate_contracts": [
+        "room16.rfc0011.raw_fact_candidate_ir",
+        "room16.alpha.energy_v3.inline_raw_typed_candidate",
+    ],
+    "hash_algorithm": "SHA-256",
+    "canonical_serialization": "SORTED_COMPACT_JSON_UTF8",
+    "source_lineage_sha256_fields": [
+        "source_artifact_sha256",
+        "source_payload_sha256",
+        "source_snapshot_sha256",
+    ],
+    "supplied_hash_recomputed": True,
+    "candidate_id_recomputed": True,
+    "unknown_candidate_contracts_allowed": False,
+}
+
+_SHA256 = re.compile(r"^[0-9a-f]{64}$")
+_RAW_FACT_IDENTITY_FIELDS = (
+    "source_snapshot_sha256",
+    "source_artifact_sha256",
+    "namespace",
+    "concept",
+    "unit",
+    "start_or_null",
+    "end",
+    "filed",
+    "form",
+    "accession_or_null",
+    "frame_or_null",
+    "value",
+)
+_CANDIDATE_REQUIRED_FIELDS = (
+    "candidate_id",
+    "candidate_sha256",
+    "source_artifact_sha256",
+    "source_snapshot_sha256",
+    "namespace",
+    "concept",
+    "value",
+    "unit",
+    "end",
+    "filed",
+    "form",
+    "dimensions_present",
+    "dimension_key",
+)
+
+
+def require_authorized_contract_v3(
+    value: Mapping[str, Any], *, expected_id: str, expected_sha256: str, label: str
+) -> None:
+    """Reject same-ID mutations by binding the complete canonical contract."""
+
+    if not isinstance(value, Mapping) or value.get("contract_id") != expected_id:
+        raise ValueError(f"ENERGY_V3_{label}_NOT_AUTHORIZED")
+    if sha256_json(dict(value)) != expected_sha256:
+        raise ValueError(f"ENERGY_V3_{label}_HASH_NOT_AUTHORIZED")
+
+
+def validate_candidate_integrity_v3(raw: Mapping[str, Any]) -> dict[str, str]:
+    """Recompute a supported raw candidate's hash, identity, and lineage.
+
+    RFC-0011 raw facts and Energy-v3 inline facts use different historical ID
+    formulas.  Both are validated byte-semantically here; neither may supply an
+    opaque caller-controlled hash or place selectable fields outside its hash.
+    """
+
+    if not isinstance(raw, Mapping):
+        raise ValueError("ENERGY_V3_CANDIDATE_NOT_A_MAPPING")
+    missing = [field for field in _CANDIDATE_REQUIRED_FIELDS if field not in raw]
+    if missing:
+        raise ValueError(f"ENERGY_V3_CANDIDATE_REQUIRED_FIELD_MISSING:{','.join(missing)}")
+    supplied_hash = str(raw.get("candidate_sha256") or "")
+    if not _SHA256.fullmatch(supplied_hash):
+        raise ValueError("ENERGY_V3_CANDIDATE_HASH_FORMAT_INVALID")
+    for field in CANDIDATE_INTEGRITY_CONTRACT_V3["source_lineage_sha256_fields"]:
+        value = raw.get(field)
+        if field == "source_payload_sha256" and value is None:
+            continue
+        if not isinstance(value, str) or not _SHA256.fullmatch(value):
+            raise ValueError(f"ENERGY_V3_CANDIDATE_LINEAGE_HASH_INVALID:{field}")
+
+    contract_id = raw.get("contract_id")
+    if contract_id == "room16.rfc0011.raw_fact_candidate_ir":
+        if raw.get("contract_version") != 1:
+            raise ValueError("ENERGY_V3_CANDIDATE_CONTRACT_VERSION_INVALID")
+        body = dict(raw)
+        body.pop("candidate_sha256", None)
+        observed_hash = sha256_json(body)
+        identity = {field: raw.get(field) for field in _RAW_FACT_IDENTITY_FIELDS}
+        expected_id = f"raw.{sha256_json(identity)}"
+        validation_mode = "RFC0011_RAW_FACT_COMPATIBILITY"
+    elif contract_id == "room16.alpha.energy_v3.inline_raw_typed_candidate":
+        if raw.get("contract_version") != 3:
+            raise ValueError("ENERGY_V3_CANDIDATE_CONTRACT_VERSION_INVALID")
+        body = {
+            key: value
+            for key, value in raw.items()
+            if key not in {"contract_id", "contract_version", "candidate_id", "candidate_sha256"}
+        }
+        observed_hash = sha256_json(body)
+        expected_id = f"energy-v3-inline.{observed_hash}"
+        validation_mode = "ENERGY_V3_INLINE_CANONICAL"
+    else:
+        raise ValueError("ENERGY_V3_CANDIDATE_CONTRACT_NOT_AUTHORIZED")
+
+    if observed_hash != supplied_hash:
+        raise ValueError("ENERGY_V3_CANDIDATE_SELF_HASH_MISMATCH")
+    if raw.get("candidate_id") != expected_id:
+        raise ValueError("ENERGY_V3_CANDIDATE_ID_HASH_MISMATCH")
+    return {
+        "candidate_id": expected_id,
+        "candidate_sha256": observed_hash,
+        "validation_mode": validation_mode,
+    }
+
 CORE_SLOT_REGISTRY_V3: dict[str, Any] = {
     "contract_id": "room16.alpha.energy_core_slot_registry_v3_candidate",
     "contract_version": 3,
@@ -325,10 +447,18 @@ def select_metric_v3(
 ) -> dict[str, Any]:
     """Select the newest admissible fact without consulting an Energy v1 receipt."""
 
-    if semantic_contract.get("contract_id") != ENERGY_SEMANTIC_CONTRACT_V3["contract_id"]:
-        raise ValueError("ENERGY_V3_SEMANTIC_CONTRACT_NOT_AUTHORIZED")
-    if period_policy.get("contract_id") != PERIOD_FRESHNESS_POLICY_V3["contract_id"]:
-        raise ValueError("ENERGY_V3_PERIOD_POLICY_NOT_AUTHORIZED")
+    require_authorized_contract_v3(
+        semantic_contract,
+        expected_id=ENERGY_SEMANTIC_CONTRACT_V3["contract_id"],
+        expected_sha256=AUTHORIZED_SEMANTIC_SHA256,
+        label="SEMANTIC_CONTRACT",
+    )
+    require_authorized_contract_v3(
+        period_policy,
+        expected_id=PERIOD_FRESHNESS_POLICY_V3["contract_id"],
+        expected_sha256=AUTHORIZED_PERIOD_POLICY_SHA256,
+        label="PERIOD_POLICY",
+    )
     metrics = semantic_contract.get("metrics") or {}
     if metric_id not in metrics:
         raise ValueError(f"UNKNOWN_ENERGY_V3_METRIC:{metric_id}")
@@ -338,6 +468,7 @@ def select_metric_v3(
     historical: list[dict[str, Any]] = []
     rejected: list[dict[str, Any]] = []
     for raw in raw_typed_candidates:
+        validate_candidate_integrity_v3(raw)
         row = _normalise_fact(raw)
         if row["concept"] not in concepts:
             continue
