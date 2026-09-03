@@ -926,6 +926,7 @@ def main() -> int:
         shutil.copy2(ROOT / relative, destination)
     (target / "r12_binding").mkdir()
     shutil.copy2(args.r12, target / "r12_binding" / args.r12.name)
+    (target / "test_evidence").mkdir()
     shutil.copy2(args.full_junit, target / "test_evidence/full_research.junit.xml")
     shutil.copy2(args.focused_junit, target / "test_evidence/focused_energy_v3_r13.junit.xml")
 
