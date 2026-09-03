@@ -18,6 +18,7 @@ from .v2 import (
     seal_reit_v2_candidate,
     validate_raw_candidate,
 )
+from .v3 import REIT_V3_PROFILE, SOURCE_EXTENSION_CONTRACT
 
 __all__ = [
     "ACCEPTANCE_THRESHOLDS_V2",
@@ -29,6 +30,8 @@ __all__ = [
     "RANKING_PROFILE",
     "REIT_V2_DESCRIPTOR_HASH",
     "REIT_V2_PROFILE",
+    "REIT_V3_PROFILE",
+    "SOURCE_EXTENSION_CONTRACT",
     "UNSUPPORTED_TEXT_METRICS",
     "build_alpha_reit_bundle",
     "build_reit_semantic_artifacts",
