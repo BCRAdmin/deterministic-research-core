@@ -188,8 +188,11 @@ def verify_repository_state() -> tuple[str, str]:
         raise RuntimeError("R12_PRODUCT_ORIGIN_DRIFT")
     head = git(ROOT, "rev-parse", "HEAD")
     tree = git(ROOT, "rev-parse", "HEAD^{tree}")
-    if git(ROOT, "rev-parse", "HEAD^") != R11_COMMIT:
-        raise RuntimeError("R12_RESEARCH_PARENT_NOT_R11")
+    if subprocess.run(
+        ["git", "-C", str(ROOT), "merge-base", "--is-ancestor", R11_COMMIT, head],
+        check=False,
+    ).returncode:
+        raise RuntimeError("R12_RESEARCH_HISTORY_NOT_DESCENDED_FROM_R11")
     if (git(PRODUCT, "rev-parse", "HEAD"), git(PRODUCT, "rev-parse", "HEAD^{tree}")) != (
         PRODUCT_COMMIT,
         PRODUCT_TREE,
@@ -694,6 +697,27 @@ def thresholds() -> dict[str, Any]:
     }
 
 
+def execution_thresholds() -> dict[str, Any]:
+    """Use the frozen shared runner's threshold schema for execution authority."""
+
+    return {
+        "contract_id": "room16.alpha.fixed_batch_acceptance_thresholds@2",
+        "scope": "energy_v3_r12_clean_validation_epoch2",
+        "minimum_company_core_coverage_percent": 60,
+        "minimum_archetype_median_core_coverage_percent": 80,
+        "minimum_section_completeness_percent": 90,
+        "required_surfaced_fact_lineage_percent": 100,
+        "maximum_stale_primary_metric_count": 0,
+        "required_replay_identity_percent": 100,
+        "maximum_replay_provider_calls": 0,
+        "maximum_P0": 0,
+        "maximum_P1": 0,
+        "maximum_manual_semantic_interventions": 0,
+        "maximum_ticker_specific_semantic_patches": 0,
+        "no_waiver": True,
+    }
+
+
 def candidate_seal(
     *,
     head: str,
@@ -910,7 +934,7 @@ def prepare_runtime(head: str, tree: str, seal: dict[str, Any], epoch: dict[str,
     SUMMARIES.mkdir(parents=True, exist_ok=False)
     ARCHIVES.mkdir(parents=True, exist_ok=False)
     fixed = fixed_document(epoch)
-    threshold_doc = thresholds()
+    threshold_doc = execution_thresholds()
     runtime = RuntimeIdentityIR(
         research_commit=head,
         research_tree=tree,
