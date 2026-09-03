@@ -21,6 +21,27 @@ EXPECTED_R12_SEMANTIC_SHA256 = "888dac95b998ec7d093bdccd781f1f0a7bf9166dd91450da
 EXPECTED_R13_VERDICT = "ENERGY_V3_R13_FREEZE_CLOSURE_PASS_READY_FOR_FINAL_INDEPENDENT_FREEZE"
 EXPECTED_TICKERS = ["DWSN", "EPM", "OVV", "ANNA", "BKV", "EGY", "AR", "CNR", "CVI", "CKX", "XPRO", "HAL"]
 AS_OF = "2026-09-03"
+CONCEPT_ORDER = {
+    "revenue": [
+        "Revenues",
+        "RevenueFromContractWithCustomerExcludingAssessedTax",
+        "RevenueFromContractWithCustomerIncludingAssessedTax",
+    ],
+    "net_income": ["NetIncomeLoss"],
+    "operating_cash_flow": ["NetCashProvidedByUsedInOperatingActivities"],
+    "capital_expenditure": [
+        "PaymentsToAcquirePropertyPlantAndEquipment",
+        "PaymentsToAcquireProductiveAssets",
+        "PaymentsToAcquireOilAndGasPropertyAndEquipment",
+        "PaymentsToAcquireOilAndGasProperty",
+    ],
+    "long_term_debt_measure": [
+        "LongTermDebtNoncurrent",
+        "LongTermDebtAndFinanceLeaseObligationsNoncurrent",
+        "LongTermDebtAndCapitalLeaseObligations",
+        "LongTermDebt",
+    ],
+}
 SHA_FIELDS = {
     "01_R12_INDEPENDENT_REVIEW_INPUT_BINDING.json": "binding_sha256",
     "02_PRESEAL_ENERGY_V3_SEMANTIC_AUTHORITY_STUDY.json": "study_sha256",
@@ -180,7 +201,7 @@ def select_metric(metric: str, candidates: list[dict[str, Any]], semantic: dict[
         availability = "CURRENT_COMPARABLE" if age <= policy["financial_current_max_age_days"] else "AGING_BUT_VALID_DISCLOSED" if age <= policy["financial_aging_max_age_days"] else "HISTORICAL_ONLY"
         candidate = {**row, "availability_state": availability, "age_days": age, "economic_scope_grade": comparison["grade"], "economic_scope": comparison["economic_scope"], "context_scope_grade": context_grade, "context_scope": context}
         (historical if availability == "HISTORICAL_ONLY" else eligible).append(candidate)
-    eligible.sort(key=lambda row: ({"CURRENT_COMPARABLE": 0, "AGING_BUT_VALID_DISCLOSED": 1}[row["availability_state"]], -int(str(row["period_end"]).replace("-", "")), {"A": 0, "B": 1}.get(row["economic_scope_grade"], 99), {"A": 0, "B": 1}.get(row["context_scope_grade"], 99), basis_order.get(row["period_basis"], 99), -int(str(row.get("filed") or "0000-00-00").replace("-", "")), tuple(concepts).index(row["concept"]), str(row["candidate_id"])))
+    eligible.sort(key=lambda row: ({"CURRENT_COMPARABLE": 0, "AGING_BUT_VALID_DISCLOSED": 1}[row["availability_state"]], -int(str(row["period_end"]).replace("-", "")), {"A": 0, "B": 1}.get(row["economic_scope_grade"], 99), {"A": 0, "B": 1}.get(row["context_scope_grade"], 99), basis_order.get(row["period_basis"], 99), -int(str(row.get("filed") or "0000-00-00").replace("-", "")), CONCEPT_ORDER[metric].index(row["concept"]), str(row["candidate_id"])))
     historical.sort(key=lambda row: (row["age_days"], str(row["candidate_id"])))
     selected = eligible[0] if eligible else None
     return {
@@ -232,7 +253,7 @@ def run_guard_attacks(semantic: dict[str, Any], policy: dict[str, Any], semantic
         else: raise RuntimeError("SAME_ID_MUTATION_ACCEPTED")
     for field, replacement, expected in (
         ("value", "101", "CANDIDATE_SELF_HASH_MISMATCH"),
-        ("concept", "NetIncomeLoss", "CANDIDATE_SELF_HASH_MISMATCH"),
+        ("concept", "TamperedConcept", "CANDIDATE_SELF_HASH_MISMATCH"),
         ("end", "2026-06-29", "CANDIDATE_SELF_HASH_MISMATCH"),
         ("dimensions", {"axis": "member"}, "CANDIDATE_SELF_HASH_MISMATCH"),
         ("source_artifact_sha256", "d" * 64, "CANDIDATE_SELF_HASH_MISMATCH"),
