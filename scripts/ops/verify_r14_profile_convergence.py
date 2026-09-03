@@ -67,16 +67,35 @@ def main() -> int:
         recomputed = {
             "minimum_company_coverage": min(coverage) >= 60,
             "median_coverage": statistics.median(coverage) >= 80,
+            "section_completeness": min(
+                row["section_completeness_percent"] for row in results
+            )
+            >= 90,
             "lineage": min(row["surfaced_fact_lineage_percent"] for row in results) == 100,
             "stale_zero": sum(row["stale_primary_metric_count"] for row in results) == 0,
             "replay_identity": min(row["replay_identity_percent"] for row in results) == 100,
             "replay_provider_calls_zero": sum(row["replay_provider_calls"] for row in results) == 0,
             "P0_zero": sum(row["P0"] for row in results) == 0,
             "P1_zero": sum(row["P1"] for row in results) == 0,
+            "manual_zero": sum(row["manual_semantic_interventions"] for row in results) == 0,
+            "ticker_patches_zero": sum(
+                row["ticker_specific_semantic_patches"] for row in results
+            )
+            == 0,
         }
         acceptance = json.loads(archive.read("19_REIT_BATCH_ACCEPTANCE.json"))
-        if not all(recomputed.values()) or acceptance["status"] != "PASS":
-            raise ValueError("ACCEPTANCE_RECOMPUTE")
+        if any(acceptance["checks"][key] != value for key, value in recomputed.items()):
+            raise ValueError("ACCEPTANCE_CHECK_DRIFT")
+        computed_status = "PASS" if all(recomputed.values()) else "FAIL"
+        if acceptance["status"] != computed_status:
+            raise ValueError("ACCEPTANCE_STATUS_DRIFT")
+        expected_verdict = (
+            "R14_ENERGY_FROZEN_REIT_V2_PASS_READY_FOR_INDEPENDENT_FREEZE_REVIEW"
+            if computed_status == "PASS"
+            else "R14_ENERGY_FROZEN_REIT_CLEAN_VALIDATION_FAIL"
+        )
+        if manifest["verdict"] != expected_verdict:
+            raise ValueError("VERDICT_DRIFT")
         regression = json.loads(archive.read("21_FULL_REGRESSION.json"))
         if any(
             regression[k]["status"] != "PASS"
@@ -93,9 +112,12 @@ def main() -> int:
         json.dumps(
             {
                 "status": "PASS",
+                "verdict": expected_verdict,
                 "verified_payloads": manifest["file_count"],
                 "freeze_authority_sha256": freeze_hash,
                 "selected_cases_sha256": selected_hash,
+                "minimum_coverage": min(coverage),
+                "median_coverage": statistics.median(coverage),
                 "recomputed_acceptance": recomputed,
             },
             sort_keys=True,

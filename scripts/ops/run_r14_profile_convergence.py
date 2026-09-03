@@ -702,6 +702,7 @@ def main() -> int:
     (output / "00_VERDICT.md").write_text(
         f"# R14 Verdict\n\n`{verdict}`\n\nEnergy v3 is frozen by an external append-only authority. REIT v2 remains a candidate and is not frozen. Product cutover, release, and publication remain unauthorized.\n"
     )
+    (output / "independent_verifier").mkdir(parents=True, exist_ok=True)
     shutil.copy2(
         Path(__file__).with_name("verify_r14_profile_convergence.py"),
         output / "independent_verifier/verify_result.py",
