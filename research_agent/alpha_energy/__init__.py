@@ -22,6 +22,19 @@ from .v2 import (
     registry_hashes,
     select_metric,
 )
+from .v3 import (
+    CAPEX_COMPARABILITY_CONTRACT_V3,
+    CORE_SLOT_REGISTRY_V3,
+    DEBT_COMPARABILITY_CONTRACT_V3,
+    ENERGY_PROFILE_V3_CANDIDATE,
+    ENERGY_SEMANTIC_CONTRACT_V3,
+    PERIOD_FRESHNESS_POLICY_V3,
+    REVENUE_COMPARABILITY_CONTRACT_V3,
+    evaluate_energy_v3_case,
+    inline_xbrl_candidates_v3,
+    registry_hashes_v3,
+    select_metric_v3,
+)
 
 __all__ = [
     "FRESHNESS_POLICY",
@@ -42,4 +55,15 @@ __all__ = [
     "evaluate_energy_v2_case",
     "registry_hashes",
     "select_metric",
+    "CAPEX_COMPARABILITY_CONTRACT_V3",
+    "CORE_SLOT_REGISTRY_V3",
+    "DEBT_COMPARABILITY_CONTRACT_V3",
+    "ENERGY_PROFILE_V3_CANDIDATE",
+    "ENERGY_SEMANTIC_CONTRACT_V3",
+    "PERIOD_FRESHNESS_POLICY_V3",
+    "REVENUE_COMPARABILITY_CONTRACT_V3",
+    "evaluate_energy_v3_case",
+    "inline_xbrl_candidates_v3",
+    "registry_hashes_v3",
+    "select_metric_v3",
 ]
