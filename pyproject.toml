@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Deterministic calculation and validation layer for stock research agents."
 requires-python = ">=3.9"
 dependencies = [
+  "lxml>=5.0",
   "numpy>=1.24",
   "openpyxl>=3.1",
   "pandas>=2.0",
