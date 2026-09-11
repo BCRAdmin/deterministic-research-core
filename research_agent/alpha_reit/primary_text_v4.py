@@ -40,8 +40,12 @@ PARSER_CONTRACT: dict[str, Any] = {
     "per_share_excluded": True,
     "component_and_adjustment_rows_excluded": True,
     "table_local_scale_required": True,
+    "cross_table_scale_propagation_prohibited": True,
+    "conflicting_local_scale_rejected": True,
     "column_period_binding_required": True,
     "local_reconciliation_required_for_unqualified_ffo": True,
+    "reconciliation_value_period_column_binding_required": True,
+    "reconciliation_arithmetic_required": True,
     "synthetic_ffo_prohibited": True,
     "ticker_specific_rules": False,
 }
@@ -82,6 +86,11 @@ def _parse_number(value: str) -> Decimal | None:
     if not text or text.lower() in {"-", "—", "–", "−", "nm", "n/m", "n.a.", "na"}:
         return None
     text = text.replace("$", "").replace("€", "").replace(",", "").strip()
+    # SEC tables often split an accounting close parenthesis into its own cell.
+    # An incomplete parenthetical must not silently become a positive number;
+    # _numeric_cells_after_label joins the adjacent close cell deterministically.
+    if text.startswith("(") != text.endswith(")"):
+        return None
     negative = text.startswith("(") and text.endswith(")")
     text = text.strip("()")
     text = re.sub(r"\s*\([a-z0-9]+\)\s*$", "", text, flags=re.I)
@@ -284,43 +293,7 @@ def _element_locator(node: HtmlElement) -> str:
         return "UNAVAILABLE"
 
 
-def _local_scale_authority(grid: TableGrid, target_row: int) -> dict[str, Any] | None:
-    candidates: list[tuple[int, str, str, str]] = []
-    for row_index in range(0, min(target_row + 1, len(grid.rows))):
-        row_text = _clean_text(" ".join(ref.text for ref in grid.rows[row_index]))
-        declaration = _scale_declaration(row_text)
-        if declaration:
-            authority_text, scale_token = declaration
-            candidates.append(
-                (
-                    30_000 + row_index,
-                    f"table:{grid.table_index}/row:{row_index}",
-                    authority_text,
-                    scale_token,
-                )
-            )
-    caption = grid.table.find("caption")
-    if caption is not None:
-        declaration = _scale_declaration(_clean_text(" ".join(caption.itertext())))
-        if declaration:
-            authority_text, scale_token = declaration
-            candidates.append((25_000, _element_locator(caption), authority_text, scale_token))
-    preceding = grid.table.xpath(
-        "preceding::*[self::p or self::div or self::span or self::h1 or self::h2 or self::h3 or self::h4][normalize-space()]"
-    )
-    for offset, node in enumerate(preceding[-12:]):
-        text = _clean_text(" ".join(node.itertext()))
-        if not text or len(text) > 1000:
-            continue
-        declaration = _scale_declaration(text)
-        if declaration:
-            authority_text, scale_token = declaration
-            candidates.append(
-                (10_000 + offset, _element_locator(node), authority_text, scale_token)
-            )
-    if not candidates:
-        return None
-    _, locator, authority_text, scale_token = max(candidates, key=lambda item: item[0])
+def _scale_proof(locator: str, authority_text: str, scale_token: str) -> dict[str, Any]:
     return {
         "multiplier": _scale_multiplier(scale_token),
         "scale": scale_token.upper(),
@@ -330,6 +303,98 @@ def _local_scale_authority(grid: TableGrid, target_row: int) -> dict[str, Any] |
             {"locator": locator, "text": authority_text, "scale": scale_token}
         ),
     }
+
+
+def _resolve_scale_candidates(
+    candidates: Sequence[tuple[str, str, str]],
+) -> tuple[dict[str, Any] | None, str | None]:
+    if not candidates:
+        return None, "UNSUPPORTED_SCALE"
+    multipliers = {_scale_multiplier(scale) for _, _, scale in candidates}
+    if len(multipliers) != 1:
+        return None, "AMBIGUOUS_SCALE_AUTHORITY"
+    locator, authority_text, scale_token = candidates[-1]
+    return _scale_proof(locator, authority_text, scale_token), None
+
+
+def _is_explicitly_bound_scale_text(text: str, authority_text: str) -> bool:
+    normalized = _norm_label(text)
+    if re.search(r"\b(?:ffo|funds from operations|reconciliation)\b", normalized):
+        return True
+    remainder = _clean_text(text).lower().replace(authority_text.lower(), "")
+    remainder = re.sub(
+        r"[\s()\[\]{},.:;\-$]+|\b(?:unaudited|table)\b", "", remainder
+    )
+    return not remainder
+
+
+def _nearest_bound_section_scale(table: HtmlElement) -> list[tuple[str, str, str]]:
+    """Return only the structurally adjacent scale declaration, if any.
+
+    SEC exhibits commonly wrap a table in a one-child div and place a title,
+    ``Unaudited`` marker, and scale line immediately before that wrapper.  We
+    climb transparent wrappers, skip only empty/Unaudited separators, and stop
+    at the first substantive sibling.  This deliberately cannot walk past a
+    different table or arbitrary prose section.
+    """
+
+    current = table
+    for _ in range(4):
+        parent = current.getparent()
+        if parent is None:
+            break
+        siblings = list(parent)
+        try:
+            index = siblings.index(current)
+        except ValueError:
+            break
+        skipped = 0
+        for node in reversed(siblings[:index]):
+            if node.tag == "table" or node.xpath(".//table"):
+                return []
+            text = _clean_text(" ".join(node.itertext()))
+            normalized = _norm_label(text)
+            if not text or normalized in {"unaudited", "\u200b"}:
+                skipped += 1
+                if skipped > 3:
+                    return []
+                continue
+            declaration = _scale_declaration(text)
+            if declaration is None:
+                return []
+            authority_text, scale_token = declaration
+            if not _is_explicitly_bound_scale_text(text, authority_text):
+                return []
+            return [(_element_locator(node), authority_text, scale_token)]
+        if parent.tag in {"body", "html"}:
+            break
+        current = parent
+    return []
+
+
+def _local_scale_authority(
+    grid: TableGrid, target_row: int
+) -> tuple[dict[str, Any] | None, str | None]:
+    table_candidates: list[tuple[str, str, str]] = []
+    for row_index in range(0, min(target_row + 1, len(grid.rows))):
+        row_text = _clean_text(" ".join(ref.text for ref in grid.rows[row_index]))
+        declaration = _scale_declaration(row_text)
+        if declaration:
+            authority_text, scale_token = declaration
+            table_candidates.append(
+                (f"table:{grid.table_index}/row:{row_index}", authority_text, scale_token)
+            )
+    caption = grid.table.find("caption")
+    if caption is not None:
+        declaration = _scale_declaration(_clean_text(" ".join(caption.itertext())))
+        if declaration:
+            authority_text, scale_token = declaration
+            table_candidates.append(
+                (_element_locator(caption), authority_text, scale_token)
+            )
+    if table_candidates:
+        return _resolve_scale_candidates(table_candidates)
+    return _resolve_scale_candidates(_nearest_bound_section_scale(grid.table))
 
 
 _MONTHS = {
@@ -504,34 +569,6 @@ def _per_share_section_context(grid: TableGrid, target_row: int) -> dict[str, An
     return None
 
 
-def _table_reconciliation_authority(grid: TableGrid) -> dict[str, Any] | None:
-    labels = [
-        _norm_label(ref.text)
-        for row in grid.rows
-        if (ref := _first_meaningful_cell(row)) is not None
-    ]
-    text = " | ".join(labels)
-    has_net_income = bool(
-        re.search(r"\b(?:net\s+(?:\([^)]*\)\s*)?(?:income|loss)|profit\s+loss)\b", text)
-    )
-    has_depreciation = bool(
-        re.search(r"\bdepreciation(?:\s+and\s+amortization)?\b", text)
-    )
-    has_ffo_measure = any(
-        classify_ffo_label(label).get("status") == "POTENTIAL_CORE" for label in labels
-    )
-    if not (has_net_income and has_depreciation and has_ffo_measure):
-        return None
-    proof = {
-        "locator": f"table:{grid.table_index}",
-        "has_net_income_or_loss": has_net_income,
-        "has_depreciation": has_depreciation,
-        "has_positive_ffo_measure": has_ffo_measure,
-        "label_set_sha256": canonical_sha256(labels),
-    }
-    return {**proof, "authority_sha256": canonical_sha256(proof)}
-
-
 def _numeric_cells_after_label(
     row: Sequence[CellRef], label_ref: CellRef
 ) -> list[tuple[CellRef, Decimal]]:
@@ -552,6 +589,177 @@ def _numeric_cells_after_label(
             continue
         results.append((ref, value))
     return results
+
+
+_NET_INCOME_RE = re.compile(
+    r"\b(?:net\s+(?:\([^)]*\)\s*)?(?:income|loss)|profit\s+loss)\b", re.I
+)
+_DEPRECIATION_RE = re.compile(r"\bdepreciation(?:\s+and\s+amortization)?\b", re.I)
+
+
+def _bound_row_record(
+    grid: TableGrid,
+    row: Sequence[CellRef],
+    *,
+    target_period: Mapping[str, Any],
+) -> dict[str, Any] | None:
+    label_ref = _first_meaningful_cell(row)
+    if label_ref is None:
+        return None
+    matches: list[tuple[CellRef, Decimal]] = []
+    for value_ref, value in _numeric_cells_after_label(row, label_ref):
+        period = _period_binding(grid, value_ref)
+        if period is not None and period["header_sha256"] == target_period["header_sha256"]:
+            matches.append((value_ref, value))
+    if len(matches) != 1:
+        return None
+    value_ref, value = matches[0]
+    normalized = _norm_label(label_ref.text)
+    label_class = classify_ffo_label(label_ref.text)
+    if _NET_INCOME_RE.search(normalized):
+        role = "GAAP_NET_INCOME_OR_LOSS"
+    elif label_class.get("status") == "POTENTIAL_CORE":
+        role = "FFO_MEASURE"
+    elif _DEPRECIATION_RE.search(normalized):
+        role = "DEPRECIATION_OR_AMORTIZATION"
+    else:
+        role = "RECONCILIATION_COMPONENT"
+    return {
+        "role": role,
+        "reported_label": label_ref.text,
+        "normalized_label": normalized,
+        "row_index": label_ref.row_index,
+        "row_locator": f"table:{grid.table_index}/row:{label_ref.row_index}",
+        "value_cell_locator": (
+            f"table:{grid.table_index}/row:{value_ref.row_index}/cell:{value_ref.cell_index}"
+        ),
+        "value_grid_columns": [value_ref.start_col, value_ref.end_col],
+        "reported_numeric_value": format(value, "f"),
+        "period_end": target_period["period_end"],
+        "period_basis": target_period["period_basis"],
+        "column_header_sha256": target_period["header_sha256"],
+    }
+
+
+def _stage(
+    kind: str,
+    base: Mapping[str, Any],
+    components: Sequence[Mapping[str, Any]],
+    target: Mapping[str, Any],
+) -> dict[str, Any] | None:
+    if not components:
+        return None
+    calculated = Decimal(str(base["reported_numeric_value"])) + sum(
+        (Decimal(str(item["reported_numeric_value"])) for item in components), Decimal(0)
+    )
+    expected = Decimal(str(target["reported_numeric_value"]))
+    if calculated != expected:
+        return None
+    return {
+        "stage_type": kind,
+        "base": dict(base),
+        "components": [dict(item) for item in components],
+        "target": dict(target),
+        "calculated_target_value": format(calculated, "f"),
+    }
+
+
+def _reconciliation_authority(
+    grid: TableGrid,
+    *,
+    label_ref: CellRef,
+    value_ref: CellRef,
+    value: Decimal,
+    period: Mapping[str, Any],
+) -> dict[str, Any] | None:
+    """Bind GAAP-to-FFO authority to this exact value and header lineage."""
+
+    rows = [
+        record
+        for row in grid.rows[: label_ref.row_index + 1]
+        if (record := _bound_row_record(grid, row, target_period=period)) is not None
+    ]
+    target = next(
+        (
+            record
+            for record in rows
+            if record["row_index"] == label_ref.row_index
+            and record["value_cell_locator"]
+            == f"table:{grid.table_index}/row:{value_ref.row_index}/cell:{value_ref.cell_index}"
+            and Decimal(str(record["reported_numeric_value"])) == value
+        ),
+        None,
+    )
+    if target is None:
+        return None
+
+    ffo_rows = [
+        record
+        for record in rows
+        if record["role"] == "FFO_MEASURE" and record["row_index"] <= target["row_index"]
+    ]
+    proven: dict[int, list[dict[str, Any]]] = {}
+    for ffo_target in ffo_rows:
+        earlier_ffo = [
+            record
+            for record in ffo_rows
+            if record["row_index"] < ffo_target["row_index"]
+            and record["row_index"] in proven
+        ]
+        options: list[list[dict[str, Any]]] = []
+        if earlier_ffo:
+            base = earlier_ffo[-1]
+            components = [
+                record
+                for record in rows
+                if base["row_index"] < record["row_index"] < ffo_target["row_index"]
+                and record["role"] != "FFO_MEASURE"
+            ]
+            stage = _stage("FFO_TO_ATTRIBUTABLE_FFO", base, components, ffo_target)
+            if stage is not None:
+                options.append([*proven[base["row_index"]], stage])
+
+        intervening_ffo_rows = {
+            record["row_index"]
+            for record in ffo_rows
+            if record["row_index"] < ffo_target["row_index"]
+        }
+        for base in rows:
+            if base["role"] != "GAAP_NET_INCOME_OR_LOSS":
+                continue
+            if base["row_index"] >= ffo_target["row_index"]:
+                continue
+            if any(base["row_index"] < index < ffo_target["row_index"] for index in intervening_ffo_rows):
+                continue
+            components = [
+                record
+                for record in rows
+                if base["row_index"] < record["row_index"] < ffo_target["row_index"]
+                and record["role"] != "FFO_MEASURE"
+            ]
+            if not any(
+                item["role"] == "DEPRECIATION_OR_AMORTIZATION" for item in components
+            ):
+                continue
+            stage = _stage("GAAP_NET_INCOME_TO_FFO", base, components, ffo_target)
+            if stage is not None:
+                options.append([stage])
+        # More than one arithmetically valid local chain is ambiguous rather
+        # than a license to pick whichever happens to be nearest.
+        if len(options) == 1:
+            proven[ffo_target["row_index"]] = options[0]
+
+    stages = proven.get(target["row_index"])
+    if not stages:
+        return None
+    proof = {
+        "contract_id": "room16.reit.v4.bound_reconciliation_authority@1",
+        "locator": f"table:{grid.table_index}",
+        "issuer_binding": {"scope": "CURRENT_FILING", "table_index": grid.table_index},
+        "target": target,
+        "stages": stages,
+    }
+    return {**proof, "authority_sha256": canonical_sha256(proof)}
 
 
 def _candidate_body(
@@ -724,7 +932,92 @@ def validate_primary_text_candidate_v4(candidate: Mapping[str, Any]) -> str:
         if canonical_sha256(proof) != claimed:
             raise ValueError("REIT_V4_PRIMARY_CANDIDATE_RECONCILIATION_AUTHORITY_MISMATCH")
 
-    if candidate.get("economic_scope_grade") not in {"A", "B", "C"}:
+        target = reconciliation.get("target")
+        stages = reconciliation.get("stages")
+        if not isinstance(target, Mapping) or not isinstance(stages, list) or not stages:
+            raise ValueError("REIT_V4_PRIMARY_CANDIDATE_RECONCILIATION_TARGET_INVALID")
+        expected_target = {
+            "row_locator": candidate.get("row_locator"),
+            "value_cell_locator": candidate.get("value_cell_locator"),
+            "value_grid_columns": candidate.get("value_grid_columns"),
+            "reported_numeric_value": candidate.get("reported_numeric_value"),
+            "period_end": candidate.get("period_end"),
+            "period_basis": candidate.get("period_basis"),
+            "column_header_sha256": candidate.get("column_header_sha256"),
+        }
+        if any(target.get(key) != value for key, value in expected_target.items()):
+            raise ValueError("REIT_V4_PRIMARY_CANDIDATE_RECONCILIATION_TARGET_MISMATCH")
+        previous_target: Mapping[str, Any] | None = None
+        for index, stage in enumerate(stages):
+            if not isinstance(stage, Mapping):
+                raise ValueError("REIT_V4_PRIMARY_CANDIDATE_RECONCILIATION_STAGE_INVALID")
+            base = stage.get("base")
+            components = stage.get("components")
+            stage_target = stage.get("target")
+            if (
+                not isinstance(base, Mapping)
+                or not isinstance(components, list)
+                or not components
+                or not isinstance(stage_target, Mapping)
+            ):
+                raise ValueError("REIT_V4_PRIMARY_CANDIDATE_RECONCILIATION_STAGE_INVALID")
+            records = [base, *components, stage_target]
+            if any(
+                record.get("period_end") != candidate.get("period_end")
+                or record.get("period_basis") != candidate.get("period_basis")
+                or record.get("column_header_sha256")
+                != candidate.get("column_header_sha256")
+                for record in records
+            ):
+                raise ValueError("REIT_V4_PRIMARY_CANDIDATE_RECONCILIATION_PERIOD_MISMATCH")
+            row_indexes = [int(record.get("row_index", -1)) for record in records]
+            if row_indexes != sorted(row_indexes) or len(set(row_indexes)) != len(row_indexes):
+                raise ValueError("REIT_V4_PRIMARY_CANDIDATE_RECONCILIATION_ORDER_INVALID")
+            if index == 0:
+                if (
+                    stage.get("stage_type") != "GAAP_NET_INCOME_TO_FFO"
+                    or base.get("role") != "GAAP_NET_INCOME_OR_LOSS"
+                    or not any(
+                        isinstance(item, Mapping)
+                        and item.get("role") == "DEPRECIATION_OR_AMORTIZATION"
+                        for item in components
+                    )
+                ):
+                    raise ValueError("REIT_V4_PRIMARY_CANDIDATE_RECONCILIATION_BASE_INVALID")
+            elif (
+                stage.get("stage_type") != "FFO_TO_ATTRIBUTABLE_FFO"
+                or previous_target is None
+                or dict(base) != dict(previous_target)
+            ):
+                raise ValueError("REIT_V4_PRIMARY_CANDIDATE_RECONCILIATION_CHAIN_INVALID")
+            calculated = Decimal(str(base.get("reported_numeric_value"))) + sum(
+                (
+                    Decimal(str(item.get("reported_numeric_value")))
+                    for item in components
+                    if isinstance(item, Mapping)
+                ),
+                Decimal(0),
+            )
+            if (
+                calculated != Decimal(str(stage_target.get("reported_numeric_value")))
+                or stage.get("calculated_target_value") != format(calculated, "f")
+            ):
+                raise ValueError("REIT_V4_PRIMARY_CANDIDATE_RECONCILIATION_ARITHMETIC_INVALID")
+            previous_target = stage_target
+        if previous_target is None or dict(previous_target) != dict(target):
+            raise ValueError("REIT_V4_PRIMARY_CANDIDATE_RECONCILIATION_FINAL_TARGET_MISMATCH")
+
+    label_class = classify_ffo_label(str(candidate.get("reported_label", "")))
+    expected_grade = (
+        "C"
+        if label_class.get("status") == "VISIBLE_NON_CORE"
+        else (
+            "A"
+            if label_class.get("explicit_nareit") or reconciliation is not None
+            else "B"
+        )
+    )
+    if candidate.get("economic_scope_grade") != expected_grade:
         raise ValueError("REIT_V4_PRIMARY_CANDIDATE_GRADE_INVALID")
     if candidate.get("period_basis") not in {
         "STANDALONE_QUARTER",
@@ -761,7 +1054,6 @@ def parse_primary_text_candidates_v4(
     rejected: list[dict[str, Any]] = []
     for table_index, table in enumerate(root.xpath("//table")):
         grid = _build_table_grid(table, table_index)
-        reconciliation = _table_reconciliation_authority(grid)
         for row in grid.rows:
             label_refs = [
                 ref
@@ -806,14 +1098,14 @@ def parse_primary_text_candidates_v4(
                     }
                 )
                 continue
-            scale = _local_scale_authority(grid, label_ref.row_index)
+            scale, scale_error = _local_scale_authority(grid, label_ref.row_index)
             if scale is None:
                 rejected.append(
                     {
                         "document_identity": filing.get("document_name"),
                         "row_locator": f"table:{table_index}/row:{label_ref.row_index}",
                         "reported_label": label_ref.text,
-                        "reason": "UNSUPPORTED_SCALE",
+                        "reason": scale_error or "UNSUPPORTED_SCALE",
                     }
                 )
                 continue
@@ -823,6 +1115,13 @@ def parse_primary_text_candidates_v4(
                 if period is None or period["period_basis"] == "UNKNOWN_DURATION":
                     continue
                 bound_any = True
+                reconciliation = _reconciliation_authority(
+                    grid,
+                    label_ref=label_ref,
+                    value_ref=value_ref,
+                    value=value,
+                    period=period,
+                )
                 candidates.append(
                     _candidate_body(
                         ticker=ticker,
