@@ -5,18 +5,17 @@ import json
 
 import pytest
 
-from scripts.ops.verify_ba12_whole_system_freeze import (
-    DEFAULT_RECORD,
-    freeze_sha256,
-    verify,
+from research_agent.tests.support.historical_freeze import (
+    verify_historical_ba12_freeze,
 )
+from scripts.ops.verify_ba12_whole_system_freeze import DEFAULT_RECORD, freeze_sha256
 
 CASES = tuple(f"BA12-F-T-{index:03d}" for index in range(1, 31))
 
 
 @pytest.fixture(scope="module")
 def result() -> dict[str, object]:
-    return verify()
+    return verify_historical_ba12_freeze()
 
 
 @pytest.mark.parametrize("test_id", CASES, ids=CASES)
@@ -69,8 +68,9 @@ def test_freeze_hash_rejects_operational_gate_escalation() -> None:
     assert tampered["freeze_sha256"] != freeze_sha256(tampered)
 
 
-def test_freeze_has_zero_runtime_semantic_diff() -> None:
-    result = verify()
+def test_freeze_has_zero_runtime_semantic_diff(
+    result: dict[str, object],
+) -> None:
     assert result["research_runtime_committed_diff"] == []
     assert result["research_runtime_worktree_diff"] == []
     assert result["product_runtime_committed_diff"] == []

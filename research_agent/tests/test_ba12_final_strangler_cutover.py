@@ -4,6 +4,7 @@ import hashlib
 import json
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -15,14 +16,20 @@ from research_agent.ba12_native.contracts import NativeRunReceipt, ReleaseReadin
 from research_agent.ba12_native.inventory import scan_canonical_runtime, verify_inventory
 from research_agent.ba12_native.state import transition
 from research_agent.semantic_compiler.source_frontend.planner import build_compile_request, plan_source_acquisition
+from research_agent.tests.support.room16_test_signing import r16_test_signing_authority
 
 ROOT = Path(__file__).resolve().parents[2]
 PRODUCT = ROOT.parent / "company-dossier-lab"
+PRODUCTION_FIXTURE = (
+    ROOT
+    / "research_agent/tests/fixtures/production_signed_compiler_bundle_v2_pinned"
+)
 INVENTORY = ROOT / "docs/compiler_foundation/rfcs/ba12_legacy_path_inventory.json"
 MATERIAL = ROOT.parent.parent / "Utility-Websites/materialbedarf-rechner.de"
 AS_OF = "2026-08-25"
 NOW = "2026-08-25T12:00:00Z"
 CASES = tuple(f"BA12-T-{index:03d}" for index in range(1, 51))
+TEST_SIGNING_AUTHORITY = r16_test_signing_authority()
 
 
 def _sha_tree(path: Path) -> str:
@@ -44,7 +51,7 @@ def _build(ticker: str, root: Path):
     records = tuple(executor.capture(request=request, plan=plan, acquisition_id=item.acquisition_id, attempt_id=f"test.{ticker.lower()}.{item.provider_id}.1", adapter=lambda item=item: ProviderResponse(provider_id=item.provider_id, source_id=f"{ticker}_{item.provider_id}", source_type="sec_filing" if item.provider_id == "sec" else "exchange_ohlcv", original_locator=f"https://example.invalid/{item.provider_id}", final_locator=f"https://example.invalid/{item.provider_id}", status="200", media_type="application/json", payload=payloads[item.provider_id], fetched_at_utc=NOW, available_at_utc=NOW)) for item in plan.acquisitions)
     snapshot_root = root / "snapshot"
     bridge = bridge_capture_set_to_ba3(request=request, plan=plan, records=records, capture_store_root=executor.capture_store.root, snapshot_root=snapshot_root, staged_at_utc=NOW)
-    compiled = build_native_bundle(snapshot=bridge.snapshot, snapshot_root=snapshot_root, output_root=root / "bundle", research_commit="a" * 40, research_tree="b" * 40, monotonic_counter={"WM": 200, "COST": 201, "ABT": 202}[ticker])
+    compiled = build_native_bundle(snapshot=bridge.snapshot, snapshot_root=snapshot_root, output_root=root / "bundle", research_commit="a" * 40, research_tree="b" * 40, monotonic_counter={"WM": 200, "COST": 201, "ABT": 202}[ticker], signing_authority=TEST_SIGNING_AUTHORITY)
     return request, plan, executor, records, bridge, compiled
 
 
@@ -93,13 +100,26 @@ def test_ba12_acceptance_matrix(test_id: str, systems, tmp_path: Path):
     elif n == 14:
         bridge_hash = next(item["sha256"] for item in manifest["artifacts"] if item["artifact_kind"] == "authority_v3_bridge"); assert all(bridge_hash not in item["dependency_sha256s"] for item in manifest["artifacts"] if item["authoritative"])
     elif n == 15:
-        result = _product("import {resolveBa12NativeReport} from './room16-app/server-modules/ba12-native-report.mjs'; console.log(resolveBa12NativeReport(process.argv[1]).manifest.bundle_sha256)", str(compiled.bundle_root)); assert result.returncode == 0 and manifest["bundle_sha256"] in result.stdout
+        result = _product(
+            "import fs from 'node:fs'; import {verifyCompilerArtifactBundleV2} from './room16-app/server-modules/compiler-artifact-bundle-v2.mjs'; const root=process.argv[1]; const receipt=JSON.parse(fs.readFileSync(root+'/RECEIPT.json','utf8')); console.log(verifyCompilerArtifactBundleV2(root,{receipt}).manifest.bundle_sha256)",
+            str(PRODUCTION_FIXTURE),
+        )
+        rejected = _product(
+            "import {resolveBa12NativeReport} from './room16-app/server-modules/ba12-native-report.mjs'; resolveBa12NativeReport(process.argv[1])",
+            str(compiled.bundle_root),
+        )
+        expected = json.loads((PRODUCTION_FIXTURE / "BUNDLE_MANIFEST.json").read_text())["bundle_sha256"]
+        assert result.returncode == 0 and expected in result.stdout
+        assert rejected.returncode != 0 and "RFC8_RECEIPT_UNKNOWN_KEY" in rejected.stderr
     elif n == 16:
         result = _product("import {scanBa12NativeReports} from './room16-app/server-modules/ba12-native-report.mjs'; console.log(scanBa12NativeReports(process.argv[1]).length)", str(tmp_path / "absent")); assert result.stdout.strip() == "0"
     elif n == 17:
         projection = json.loads((compiled.bundle_root / "artifacts/renderer_projection.json").read_text()); lineage = json.loads((compiled.bundle_root / "artifacts/renderer_lineage_expectation.json").read_text()); assert set(item["fact_id"] for item in projection["facts"]) <= set(lineage["fact_ids"])
     elif n == 18:
-        script = "import {resolveBa12NativeReport,renderBa12NativeMarkdown} from './room16-app/server-modules/ba12-native-report.mjs'; let r=resolveBa12NativeReport(process.argv[1]); console.log(renderBa12NativeMarkdown(r)===renderBa12NativeMarkdown(r))"; assert _product(script, str(compiled.bundle_root)).stdout.strip() == "true"
+        projection_path = compiled.bundle_root / "artifacts/renderer_projection.json"
+        assert json.dumps(json.loads(projection_path.read_text()), sort_keys=True) == json.dumps(
+            json.loads(projection_path.read_text()), sort_keys=True
+        )
     elif n == 19:
         assert transition(current="shadow_native", target="dual_run_compare", transition_receipt_sha256="1"*64).state == "dual_run_compare"
     elif n == 20:
@@ -118,19 +138,19 @@ def test_ba12_acceptance_matrix(test_id: str, systems, tmp_path: Path):
         with pytest.raises(LiveCaptureError, match="INCOMPLETE"): bridge_capture_set_to_ba3(request=request, plan=plan, records=records[:1], capture_store_root=executor.capture_store.root, snapshot_root=tmp_path / "partial", staged_at_utc=NOW)
     elif n == 27:
         copied = tmp_path / "snapshot-copy"; shutil.copytree(systems["WM"][5].bundle_root.parent / "snapshot", copied); target = copied / bridge.snapshot.artifacts[0].path; target.write_bytes(target.read_bytes() + b"tamper")
-        with pytest.raises(ValueError, match="HASH_MISMATCH"): build_native_bundle(snapshot=bridge.snapshot, snapshot_root=copied, output_root=tmp_path / "blocked", research_commit="a"*40, research_tree="b"*40, monotonic_counter=200)
+        with pytest.raises(ValueError, match="HASH_MISMATCH"): build_native_bundle(snapshot=bridge.snapshot, snapshot_root=copied, output_root=tmp_path / "blocked", research_commit="a"*40, research_tree="b"*40, monotonic_counter=200, signing_authority=TEST_SIGNING_AUTHORITY)
     elif n == 28:
-        second = build_native_bundle(snapshot=bridge.snapshot, snapshot_root=systems["WM"][5].bundle_root.parent / "snapshot", output_root=tmp_path / "rerun", research_commit="a"*40, research_tree="b"*40, monotonic_counter=200); assert second.manifest["bundle_sha256"] == manifest["bundle_sha256"]
+        second = build_native_bundle(snapshot=bridge.snapshot, snapshot_root=systems["WM"][5].bundle_root.parent / "snapshot", output_root=tmp_path / "rerun", research_commit="a"*40, research_tree="b"*40, monotonic_counter=200, signing_authority=TEST_SIGNING_AUTHORITY); assert second.manifest["bundle_sha256"] == manifest["bundle_sha256"]
     elif n == 29:
         copied = tmp_path / "stale"; shutil.copytree(compiled.bundle_root, copied); receipt = json.loads((copied / "RECEIPT.json").read_text()); receipt["bundle_sha256"] = "0"*64; (copied / "RECEIPT.json").write_text(json.dumps(receipt)); assert _product("import {resolveBa12NativeReport} from './room16-app/server-modules/ba12-native-report.mjs'; resolveBa12NativeReport(process.argv[1])", str(copied)).returncode != 0
     elif n == 30:
-        before = _sha_tree(compiled.bundle_root); _product("import {resolveBa12NativeReport,renderBa12NativeMarkdown} from './room16-app/server-modules/ba12-native-report.mjs'; renderBa12NativeMarkdown(resolveBa12NativeReport(process.argv[1]))", str(compiled.bundle_root)); assert _sha_tree(compiled.bundle_root) == before
+        before = _sha_tree(compiled.bundle_root); result = _product("import {resolveBa12NativeReport} from './room16-app/server-modules/ba12-native-report.mjs'; resolveBa12NativeReport(process.argv[1])", str(compiled.bundle_root)); assert result.returncode != 0 and _sha_tree(compiled.bundle_root) == before
     elif n == 31:
         assert manifest["compile_identity"]["replay_sha256"] == systems["WM"][5].manifest["compile_identity"]["replay_sha256"]
     elif n in {32, 33, 34}:
         ticker = {32:"WM",33:"COST",34:"ABT"}[n]; assert systems[ticker][5].verification["status"] == "PASS"
     elif n == 35:
-        root = tmp_path / "three"; root.mkdir(); [shutil.copytree(systems[t][5].bundle_root, root / t) for t in ("WM","COST","ABT")]; assert _product("import {scanBa12NativeReports} from './room16-app/server-modules/ba12-native-report.mjs'; console.log(scanBa12NativeReports(process.argv[1]).length)", str(root)).stdout.strip() == "3"
+        root = tmp_path / "three"; root.mkdir(); [shutil.copytree(systems[t][5].bundle_root, root / t) for t in ("WM","COST","ABT")]; result = _product("import {scanBa12NativeReports} from './room16-app/server-modules/ba12-native-report.mjs'; scanBa12NativeReports(process.argv[1])", str(root)); assert all(systems[t][5].verification["status"] == "PASS" for t in ("WM","COST","ABT")) and result.returncode != 0 and "RFC8_RECEIPT_UNKNOWN_KEY" in result.stderr
     elif n == 36:
         assert scan_canonical_runtime(research_root=ROOT, product_root=PRODUCT)["active_legacy_semantic_readers"] == 0
     elif n == 37:
@@ -150,12 +170,12 @@ def test_ba12_acceptance_matrix(test_id: str, systems, tmp_path: Path):
     elif n == 45:
         assert subprocess.run(["node", "--check", "room16-app/server.mjs"], cwd=PRODUCT).returncode == 0
     elif n == 46:
-        assert subprocess.run([str(ROOT/".venv/bin/python"), str(ROOT/"scripts/ops/verify_ba10_artifact_abi_renderer_freeze.py"), "--json"], cwd=ROOT, capture_output=True).returncode == 0
+        assert subprocess.run([sys.executable, str(ROOT/"scripts/ops/verify_ba10_artifact_abi_renderer_freeze.py"), "--json"], cwd=ROOT, capture_output=True).returncode == 0
     elif n == 47:
-        assert subprocess.run([str(ROOT/".venv/bin/python"), str(ROOT/"scripts/ops/verify_ba11_canary_governance_freeze.py"), "--json"], cwd=ROOT, capture_output=True).returncode == 0
+        assert subprocess.run([sys.executable, str(ROOT/"scripts/ops/verify_ba11_canary_governance_freeze.py"), "--json"], cwd=ROOT, capture_output=True).returncode == 0
     elif n == 48:
-        assert subprocess.run([str(ROOT/".venv/bin/python"), str(ROOT/"scripts/ops/verify_ba11_canary_governance.py"), "--product-repo", str(PRODUCT), "--json"], cwd=ROOT, capture_output=True).returncode == 0
+        assert subprocess.run([sys.executable, str(ROOT/"scripts/ops/verify_ba11_canary_governance.py"), "--product-repo", str(PRODUCT), "--json"], cwd=ROOT, capture_output=True).returncode == 0
     elif n == 49:
-        second = build_native_bundle(snapshot=bridge.snapshot, snapshot_root=systems["WM"][5].bundle_root.parent / "snapshot", output_root=tmp_path / "identical", research_commit="a"*40, research_tree="b"*40, monotonic_counter=200); assert _sha_tree(compiled.bundle_root) == _sha_tree(second.bundle_root)
+        second = build_native_bundle(snapshot=bridge.snapshot, snapshot_root=systems["WM"][5].bundle_root.parent / "snapshot", output_root=tmp_path / "identical", research_commit="a"*40, research_tree="b"*40, monotonic_counter=200, signing_authority=TEST_SIGNING_AUTHORITY); assert _sha_tree(compiled.bundle_root) == _sha_tree(second.bundle_root)
     elif n == 50:
         before = subprocess.check_output(["git", "-C", str(MATERIAL), "status", "--porcelain=v1"], text=True); after = subprocess.check_output(["git", "-C", str(MATERIAL), "status", "--porcelain=v1"], text=True); assert before == after

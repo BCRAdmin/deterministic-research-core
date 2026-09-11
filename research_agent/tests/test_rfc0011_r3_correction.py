@@ -16,6 +16,7 @@ from research_agent.tests.test_rfc0011_r2_correction import (
     _mini_evidence_zip,
     _supplemental,
 )
+from research_agent.tests.support.room16_test_signing import r16_test_signing_authority
 
 
 def _positive() -> DocumentObservationIR:
@@ -116,6 +117,7 @@ def test_r3_real_runner_emits_exact_identity_and_verified_bundle(tmp_path: Path)
         research_commit="a" * 40,
         research_tree="b" * 40,
         monotonic_counter=1001,
+        signing_authority=r16_test_signing_authority(),
     )
     identity = result.compiled.manifest["compile_identity"]
     assert identity["compile_request_sha256"] == base.snapshot_ir.request_sha256
@@ -141,6 +143,7 @@ def test_r3_runner_replay_is_byte_identical(tmp_path: Path):
             research_commit="a" * 40,
             research_tree="b" * 40,
             monotonic_counter=1002,
+            signing_authority=r16_test_signing_authority(),
         )
         values.append(
             (
@@ -176,6 +179,7 @@ def test_r3_bundle_extension_keeps_supplemental_out_of_native_identity(tmp_path:
         research_commit="a" * 40,
         research_tree="b" * 40,
         monotonic_counter=1003,
+        signing_authority=r16_test_signing_authority(),
     )
     identity_values = set(result.compiled.manifest["compile_identity"].values())
     assert supplemental.supplemental_evidence_set_sha256 not in identity_values

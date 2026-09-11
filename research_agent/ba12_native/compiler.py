@@ -6,13 +6,18 @@ import hashlib
 import json
 from dataclasses import dataclass
 from pathlib import Path
+from types import SimpleNamespace
 from typing import Any
 
 from nacl.signing import SigningKey
 
 from research_agent.compiler_foundation.canonical import canonical_bytes, sha256_json
+from research_agent.productization_v2.contracts import PublicKeyPolicyV2
 from research_agent.productization_v2.native_trust import CONFIG_ROOT, load_native_trust, verify_native_bundle_v2
-from research_agent.productization_v2.trust_receipt import sign_bundle_receipt_v2
+from research_agent.productization_v2.trust_receipt import (
+    sign_bundle_receipt_v2,
+    verify_bundle_receipt_v2,
+)
 from research_agent.semantic_compiler.source_frontend.contracts import SourceSnapshotIR
 
 from .contracts import NativeRunReceipt, create_record
@@ -37,6 +42,87 @@ class NativeCompileResult:
     receipt: dict[str, Any]
     native_run_receipt: NativeRunReceipt
     verification: dict[str, Any]
+
+
+@dataclass(frozen=True)
+class BundleSigningAuthority:
+    """Explicit test signing input; production remains the default when omitted."""
+
+    signing_key: SigningKey
+    key_id: str
+    verification_key_policy: PublicKeyPolicyV2
+
+
+def resolve_bundle_signing_authority(
+    authority: BundleSigningAuthority | None,
+    *,
+    production_key_policy: PublicKeyPolicyV2,
+    mismatch_code: str,
+) -> BundleSigningAuthority:
+    if authority is None:
+        signing_key = SigningKey(SIGNING_KEY.read_bytes())
+        authority = BundleSigningAuthority(
+            signing_key=signing_key,
+            key_id=production_key_policy.keys[0].key_id,
+            verification_key_policy=production_key_policy,
+        )
+    else:
+        public_key_hex = authority.signing_key.verify_key.encode().hex()
+        production_public_keys = {
+            item.public_key_hex for item in production_key_policy.keys
+        }
+        if (
+            not authority.key_id.startswith("room16.test_only.")
+            or public_key_hex in production_public_keys
+        ):
+            raise ValueError("BA12_TEST_ONLY_SIGNING_AUTHORITY_REQUIRED")
+    key_record = next(
+        (item for item in authority.verification_key_policy.keys if item.key_id == authority.key_id),
+        None,
+    )
+    if key_record is None or authority.signing_key.verify_key.encode().hex() != key_record.public_key_hex:
+        raise ValueError(mismatch_code)
+    return authority
+
+
+def verify_bundle_for_authority(
+    *,
+    bundle_root: Path,
+    manifest: dict[str, Any],
+    receipt_model: Any,
+    trust: dict[str, Any],
+    authority: BundleSigningAuthority,
+    signing_authority: BundleSigningAuthority | None,
+    now_utc: str,
+) -> dict[str, Any]:
+    """Use frozen production verification or an explicitly injected test-only key."""
+
+    if signing_authority is None:
+        return verify_native_bundle_v2(
+            bundle_root,
+            receipt=receipt_model,
+            now_utc=now_utc,
+        )
+    verify_bundle_receipt_v2(
+        receipt_model,
+        manifest=SimpleNamespace(
+            bundle_sha256=manifest["bundle_sha256"],
+            compile_identity=manifest["compile_identity"],
+            compiler_identity=manifest["compiler_identity"],
+            emitter_identity=manifest["emitter_identity"],
+            ba10_v1_freeze_sha256=manifest["ba10_v1_freeze_sha256"],
+            ba11_freeze_sha256=manifest["ba11_freeze_sha256"],
+        ),
+        consumer_policy=trust["policy"],
+        key_policy=authority.verification_key_policy,
+        now_utc=now_utc,
+    )
+    return {
+        "status": "PASS",
+        "bundle_sha256": manifest["bundle_sha256"],
+        "receipt_sha256": receipt_model.receipt_sha256,
+        "trust_mode": "TEST_ONLY_INJECTED_KEY",
+    }
 
 
 def _write_json(path: Path, value: object) -> bytes:
@@ -164,7 +250,16 @@ def _semantic_artifacts(snapshot: SourceSnapshotIR, snapshot_root: Path) -> dict
     return artifacts
 
 
-def build_native_bundle(*, snapshot: SourceSnapshotIR, snapshot_root: Path, output_root: Path, research_commit: str, research_tree: str, monotonic_counter: int = 100) -> NativeCompileResult:
+def build_native_bundle(
+    *,
+    snapshot: SourceSnapshotIR,
+    snapshot_root: Path,
+    output_root: Path,
+    research_commit: str,
+    research_tree: str,
+    monotonic_counter: int = 100,
+    signing_authority: BundleSigningAuthority | None = None,
+) -> NativeCompileResult:
     artifacts = _semantic_artifacts(snapshot, snapshot_root)
     if set(artifacts) != set(KINDS):
         raise ValueError("BA12_ARTIFACT_CLOSURE_INVALID")
@@ -226,13 +321,23 @@ def build_native_bundle(*, snapshot: SourceSnapshotIR, snapshot_root: Path, outp
     manifest["bundle_sha256"] = sha256_json({key: value for key, value in manifest.items() if key != "bundle_sha256"})
     _write_json(bundle_root / "BUNDLE_MANIFEST.json", manifest)
     key_policy = trust["key_policy"]
-    signing_key = SigningKey(SIGNING_KEY.read_bytes())
-    if signing_key.verify_key.encode().hex() != key_policy.keys[0].public_key_hex:
-        raise ValueError("BA12_SIGNING_KEY_POLICY_MISMATCH")
-    receipt_model = sign_bundle_receipt_v2({"contract_id": "room16.compiler_artifact_bundle_receipt", "contract_version": 2, "receipt_id": f"rfc0008.ba12.native.{snapshot.ticker.lower()}.{manifest['bundle_sha256'][:16]}", "bundle_sha256": manifest["bundle_sha256"], "compile_identity_sha256": sha256_json(manifest["compile_identity"]), "compiler_identity_sha256": sha256_json(manifest["compiler_identity"]), "emitter_identity_sha256": sha256_json(manifest["emitter_identity"]), "policy_sha256": trust["policy"].policy_sha256, "ba10_v1_freeze_sha256": manifest["ba10_v1_freeze_sha256"], "ba11_freeze_sha256": manifest["ba11_freeze_sha256"], "research_key_id": key_policy.keys[0].key_id, "issued_at_utc": f"{snapshot.as_of_date}T23:00:00Z", "not_after_utc": None, "monotonic_counter": monotonic_counter, "nonce": f"ba12.{snapshot.ticker.lower()}.{manifest['bundle_sha256'][:24]}", "signature_algorithm": "ed25519"}, signing_key=signing_key)
+    authority = resolve_bundle_signing_authority(
+        signing_authority,
+        production_key_policy=key_policy,
+        mismatch_code="BA12_SIGNING_KEY_POLICY_MISMATCH",
+    )
+    receipt_model = sign_bundle_receipt_v2({"contract_id": "room16.compiler_artifact_bundle_receipt", "contract_version": 2, "receipt_id": f"rfc0008.ba12.native.{snapshot.ticker.lower()}.{manifest['bundle_sha256'][:16]}", "bundle_sha256": manifest["bundle_sha256"], "compile_identity_sha256": sha256_json(manifest["compile_identity"]), "compiler_identity_sha256": sha256_json(manifest["compiler_identity"]), "emitter_identity_sha256": sha256_json(manifest["emitter_identity"]), "policy_sha256": trust["policy"].policy_sha256, "ba10_v1_freeze_sha256": manifest["ba10_v1_freeze_sha256"], "ba11_freeze_sha256": manifest["ba11_freeze_sha256"], "research_key_id": authority.key_id, "issued_at_utc": f"{snapshot.as_of_date}T23:00:00Z", "not_after_utc": None, "monotonic_counter": monotonic_counter, "nonce": f"ba12.{snapshot.ticker.lower()}.{manifest['bundle_sha256'][:24]}", "signature_algorithm": "ed25519"}, signing_key=authority.signing_key)
     receipt = receipt_model.model_dump(mode="json")
     _write_json(bundle_root / "RECEIPT.json", receipt)
-    verification = verify_native_bundle_v2(bundle_root, receipt=receipt, now_utc=f"{snapshot.as_of_date}T23:30:00Z")
+    verification = verify_bundle_for_authority(
+        bundle_root=bundle_root,
+        manifest=manifest,
+        receipt_model=receipt_model,
+        trust=trust,
+        authority=authority,
+        signing_authority=signing_authority,
+        now_utc=f"{snapshot.as_of_date}T23:30:00Z",
+    )
     run_receipt = create_record(NativeRunReceipt, ticker=snapshot.ticker, as_of_date=snapshot.as_of_date, compile_request_sha256=snapshot.request_sha256, source_acquisition_sha256=snapshot.acquisition_plan_sha256, retrieval_receipt_set_sha256=receipt_set_sha, source_snapshot_sha256=snapshot.snapshot_sha256, pass_execution_profile_sha256=sha256_json(artifacts["pass_execution_records"]), compiler_artifact_bundle_sha256=manifest["bundle_sha256"], ba11_governance_snapshot_sha256=BA11_GOVERNANCE_SNAPSHOT_SHA256, research_commit=research_commit, research_tree=research_tree, semantic_input="source_snapshot_ir_only", legacy_semantic_input_allowed=False, status="PASS")
     _write_json(bundle_root / "NATIVE_RUN_RECEIPT.json", run_receipt.model_dump(mode="json"))
     return NativeCompileResult(bundle_root, manifest, receipt, run_receipt, verification)

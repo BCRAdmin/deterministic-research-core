@@ -19,7 +19,10 @@ PRODUCT = ROOT.parent / "company-dossier-lab"
 DEFAULT_RECORD = ROOT / "docs/compiler_foundation/freezes/BA12_WHOLE_SYSTEM_FREEZE_v1.json"
 DEFAULT_ACCEPTANCE = ROOT / "docs/compiler_foundation/acceptance/BA12_R5_EXTERNAL_INDEPENDENT_ACCEPTANCE.json"
 HISTORICAL_INPUT_ROOT = Path(
-    os.environ.get("ROOM16_HISTORICAL_REGRESSION_INPUT_ROOT", "/Users/BjornRosinger/Downloads")
+    os.environ.get(
+        "ROOM16_HISTORICAL_REGRESSION_INPUT_ROOT",
+        str(ROOT / "research_agent/tests/fixtures/historical_authorities"),
+    )
 )
 DEFAULT_HANDOFF = HISTORICAL_INPUT_ROOT / (
     "ROOM16_BA12_WHOLE_SYSTEM_ACCEPTANCE_FREEZE_EXECUTION_R1_CB3CF2FA346A_2026-08-25.zip"

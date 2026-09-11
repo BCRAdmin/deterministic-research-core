@@ -4,6 +4,7 @@ import hashlib
 import inspect
 import json
 import subprocess
+import sys
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import replace
 from pathlib import Path
@@ -163,7 +164,7 @@ def test_rfc10_t_001_ba3_contract_file_byte_hash_unchanged():
 def test_rfc10_t_002_semantic_wave_v1_freeze_verifier_unchanged():
     result = subprocess.run(
         [
-            str(ROOT / ".venv/bin/python"),
+            sys.executable,
             str(ROOT / "scripts/ops/verify_semantic_compiler_wave_freeze.py"),
             "--product-repo",
             str(PRODUCT),
@@ -179,7 +180,7 @@ def test_rfc10_t_002_semantic_wave_v1_freeze_verifier_unchanged():
 def test_rfc10_t_003_rfc0009_freeze_verifier_unchanged():
     result = subprocess.run(
         [
-            str(ROOT / ".venv/bin/python"),
+            sys.executable,
             str(ROOT / "scripts/ops/verify_rfc0009_native_trust_freeze.py"),
             "--json",
         ],

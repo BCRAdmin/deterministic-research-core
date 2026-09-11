@@ -1,0 +1,27 @@
+{
+  "contract_id": "room16.r16.materialized_historical_test_authorities@1",
+  "fixture_root": "research_agent/tests/fixtures/historical_authorities",
+  "objects": [
+    {
+      "bytes": 113501,
+      "filename": "ROOM16_BA12_WHOLE_SYSTEM_ACCEPTANCE_FREEZE_EXECUTION_R1_CB3CF2FA346A_2026-08-25.zip",
+      "sha256": "cb3cf2fa346ac542bba7dc0516e70109fced024484fa042054777bfa5be6431c"
+    },
+    {
+      "bytes": 391088,
+      "filename": "ROOM16_RFC0008_ACCEPTANCE_FREEZE_AND_BA12_RESUME_EXECUTION_R1_2A718E7656C6_2026-08-22.zip",
+      "sha256": "2a718e7656c60588c1935d790983688bd09e5e45649c26e6ebca63342f33fb3f"
+    },
+    {
+      "bytes": 263808,
+      "filename": "ROOM16_RFC0009_ACCEPTANCE_FREEZE_AND_BA12_FINAL_RESUME_EXECUTION_R1_B523B123796E_2026-08-24.zip",
+      "sha256": "b523b123796e20c7bdaf52bb175be254376e35c5d17fa171651d18bda5163ebf"
+    },
+    {
+      "bytes": 160762,
+      "filename": "ROOM16_RFC0010_ACCEPTANCE_FREEZE_AND_BA12_RESUME_EXECUTION_R1_B3C1F0A161CA_2026-08-25.zip",
+      "sha256": "b3c1f0a161ca3492777807146247a314d074056bf2feaf61f55c27fe25667a1f"
+    }
+  ],
+  "status": "PASS"
+}

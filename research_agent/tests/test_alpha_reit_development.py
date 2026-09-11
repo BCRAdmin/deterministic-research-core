@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import ast
 import json
-import subprocess
 from pathlib import Path
 
 import pytest
+
+from research_agent.tests.support.room16_test_signing import r16_test_signing_authority
+from research_agent.tests.support.historical_freeze import verify_historical_ba12_freeze
 
 from research_agent.alpha_reit import FRESHNESS_POLICY, FORMULA_REGISTRY, MAPPING_REGISTRY, PRIMARY_TEXT_SOURCE_PROFILE, RANKING_PROFILE, UNSUPPORTED_TEXT_METRICS, build_alpha_reit_bundle, build_reit_semantic_artifacts
 from research_agent.ba12_live_source import LiveCaptureExecutor, ProviderResponse, bridge_capture_set_to_ba3
@@ -79,7 +81,7 @@ def _system(tmp_path: Path, *, incompatible_cash=False):
 def compiled(tmp_path_factory):
     root = tmp_path_factory.mktemp("alpha-reit")
     bridge, snapshot_root, artifacts = _system(root)
-    bundle = build_alpha_reit_bundle(snapshot=bridge.snapshot, snapshot_root=snapshot_root, output_root=root / "bundle", research_commit="a" * 40, research_tree="b" * 40, monotonic_counter=501)
+    bundle = build_alpha_reit_bundle(snapshot=bridge.snapshot, snapshot_root=snapshot_root, output_root=root / "bundle", research_commit="a" * 40, research_tree="b" * 40, monotonic_counter=501, signing_authority=r16_test_signing_authority())
     return artifacts, bundle
 
 
@@ -129,8 +131,7 @@ def test_alpha_reit_development_matrix(test_id, compiled, tmp_path):
         assert freeze["freeze_sha256"] == "063e322929c7a4586e21c8c97e0177516e8870e4f777181c9964042fe5242f0c"
         assert freeze["status"] == "FROZEN"
     elif n == 21:
-        result = subprocess.run([str(ROOT / ".venv/bin/python"), "scripts/ops/verify_ba12_whole_system_freeze.py", "--json"], cwd=ROOT, capture_output=True)
-        assert result.returncode == 0
+        assert verify_historical_ba12_freeze()["status"] == "PASS"
     elif n == 22:
         assert bundle.verification["status"] == "PASS" and RANKING_PROFILE["ticker_specific_rules"] is False
     elif n == 23:

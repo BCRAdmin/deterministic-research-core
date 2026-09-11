@@ -1,0 +1,15 @@
+{
+  "artifact_file_count": 18,
+  "bundle_manifest_file_sha256": "b8250abb18081b02602a186b3686d5cd9e15bb5f5e9e2532ecd4713af3a5b885",
+  "contract_id": "room16.r16.pre_signed_production_fixture_verification@1",
+  "fixture": "compiler-artifact-bundle-v2-pinned",
+  "production_private_key_used_for_this_verification": false,
+  "production_public_key_hex": "7287a555bbd5bb0302cc45d5b716c94ead99ed1a41840999e7d3c1aa7d889a2d",
+  "receipt_domain_hash_verification": "PASS",
+  "receipt_file_sha256": "dcc988e44201ee9d9ebf479d7a25442873f1c44d354de1a5d14566a859a225c5",
+  "receipt_key_id": "research.rfc0008.primary.2026-08-21",
+  "receipt_sha256": "de31a54f5f73e532b649d224ecb4df4c826077be78371952bf764393cd724942",
+  "signature_algorithm": "ed25519",
+  "signature_verification": "PASS",
+  "source_authority": "ROOM16_RFC0008_ACCEPTANCE_FREEZE_AND_BA12_RESUME_EXECUTION_R1_2A718E7656C6_2026-08-22.zip"
+}

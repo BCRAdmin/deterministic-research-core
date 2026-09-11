@@ -8,23 +8,44 @@ on:
 jobs:
   deterministic-core:
     runs-on: ubuntu-latest
+    env:
+      GIT_OPTIONAL_LOCKS: "0"
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: Setup Python
         uses: actions/setup-python@v6
         with:
           python-version: "3.11"
 
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+
+      - name: Materialize hermetic companion authorities
+        run: python scripts/materialize_room16_ci_companions.py --repo "$GITHUB_WORKSPACE"
+
       - name: Install package
         run: python -m pip install -e ".[dev]"
 
+      - name: Verify dependencies
+        run: python -m pip check
+
       - name: Compile Python
-        run: python -m compileall -q research_agent
+        run: python -m compileall -q research_agent scripts
 
       - name: Ruff
-        run: python -m ruff check research_agent
+        run: python -m ruff check research_agent scripts
+
+      - name: Test trust split
+        run: python -m pytest -q research_agent/tests/test_room16_test_trust_contract.py research_agent/tests/test_ba12_final_strangler_cutover.py
+
+      - name: Audit test hermeticity
+        run: python scripts/audit_test_hermeticity.py --repo .
 
       - name: Run tests
         run: python -m coverage run -m pytest -q

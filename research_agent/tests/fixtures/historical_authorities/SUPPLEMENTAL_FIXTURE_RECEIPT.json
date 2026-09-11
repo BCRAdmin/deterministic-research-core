@@ -1,0 +1,13 @@
+{
+  "contract_id": "room16.r16.supplemental_historical_test_authority@1",
+  "objects": [
+    {
+      "bytes": 1376565,
+      "filename": "ROOM16_BA11_R5_INDEPENDENT_ACCEPTANCE_FREEZE_VEGA_0DD42A068BA8_2026-08-21.zip",
+      "sha256": "0dd42a068ba8be1eac0e938fdadc4fc7434c2dbaeeaa9176fef89f939654b267",
+      "zip_entries": 11
+    }
+  ],
+  "source_binding": "docs/compiler_foundation/freezes/BA11_CANARY_GOVERNANCE_FREEZE_v1.json",
+  "status": "PASS"
+}

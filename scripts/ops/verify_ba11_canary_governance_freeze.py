@@ -20,7 +20,10 @@ DEFAULT_ACCEPTANCE = (
     ROOT / "docs/compiler_foundation/acceptance/BA11_R5_EXTERNAL_INDEPENDENT_ACCEPTANCE.json"
 )
 HISTORICAL_INPUT_ROOT = Path(
-    os.environ.get("ROOM16_HISTORICAL_REGRESSION_INPUT_ROOT", "/Users/BjornRosinger/Downloads")
+    os.environ.get(
+        "ROOM16_HISTORICAL_REGRESSION_INPUT_ROOT",
+        str(ROOT / "research_agent/tests/fixtures/historical_authorities"),
+    )
 )
 DEFAULT_HANDOFF = HISTORICAL_INPUT_ROOT / (
     "ROOM16_BA11_R5_INDEPENDENT_ACCEPTANCE_FREEZE_VEGA_0DD42A068BA8_2026-08-21.zip"

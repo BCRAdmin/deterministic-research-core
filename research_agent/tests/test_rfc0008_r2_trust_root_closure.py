@@ -4,6 +4,7 @@ import copy
 import hashlib
 import json
 import subprocess
+import sys
 import zipfile
 from pathlib import Path
 
@@ -408,7 +409,7 @@ def test_rfc0008_r2_acceptance_matrix(test_id: str, tmp_path: Path) -> None:
     elif number == 42:
         result = subprocess.run(
             [
-                str(ROOT / ".venv/bin/python"),
+                sys.executable,
                 "scripts/ops/verify_ba10_artifact_abi_renderer_freeze.py",
                 "--product-repo",
                 str(PRODUCT),
@@ -423,7 +424,7 @@ def test_rfc0008_r2_acceptance_matrix(test_id: str, tmp_path: Path) -> None:
     elif number == 43:
         result = subprocess.run(
             [
-                str(ROOT / ".venv/bin/python"),
+                sys.executable,
                 "scripts/ops/verify_ba11_canary_governance_freeze.py",
                 "--json",
             ],

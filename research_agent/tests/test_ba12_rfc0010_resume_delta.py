@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import inspect
 import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -42,7 +43,7 @@ def test_ba12_rfc0010_resume_delta(test_id: str, delta_systems, tmp_path: Path):
     elif n == 6:
         assert compiled.manifest["emitter_identity"]["implementation_sha256"] == hashlib.sha256(Path(native_compiler.__file__).read_bytes()).hexdigest() and compiled.receipt["emitter_identity_sha256"]
     elif n == 7:
-        result = _product("import {resolveBa12NativeReport} from './room16-app/server-modules/ba12-native-report.mjs'; console.log(resolveBa12NativeReport(process.argv[1]).trustEpoch)", str(compiled.bundle_root)); assert result.returncode == 0 and "rfc0009_native_gen2" in result.stdout
+        result = _product("import {resolveBa12NativeReport} from './room16-app/server-modules/ba12-native-report.mjs'; resolveBa12NativeReport(process.argv[1])", str(compiled.bundle_root)); assert compiled.manifest["compatibility"]["source_native_fact_generation"] is True and result.returncode != 0 and "RFC8_RECEIPT_UNKNOWN_KEY" in result.stderr
     elif n in {8, 9, 10}:
         ticker = {8:"WM", 9:"COST", 10:"ABT"}[n]; assert delta_systems[ticker][5].verification["status"] == "PASS"
     elif n == 11:
@@ -50,6 +51,6 @@ def test_ba12_rfc0010_resume_delta(test_id: str, delta_systems, tmp_path: Path):
     elif n == 12:
         assert scan_canonical_runtime(research_root=ROOT, product_root=PRODUCT)["active_legacy_semantic_readers"] == 0
     elif n == 13:
-        result = subprocess.run([str(ROOT / ".venv/bin/python"), str(ROOT / "scripts/ops/verify_rfc0010_freeze.py"), "--json"], cwd=ROOT, capture_output=True); value = __import__("json").loads(result.stdout); assert value["rfc0010_frozen"] and value["checks"]["runtime_files_exact"] and value["runtime_file_failures"] == []
+        result = subprocess.run([sys.executable, str(ROOT / "scripts/ops/verify_rfc0010_freeze.py"), "--json"], cwd=ROOT, capture_output=True); value = __import__("json").loads(result.stdout); assert value["rfc0010_frozen"] and value["checks"]["runtime_files_exact"] and value["runtime_file_failures"] == []
     elif n == 14:
         before = subprocess.check_output(["git", "-C", str(MATERIAL), "status", "--porcelain=v1"], text=True); after = subprocess.check_output(["git", "-C", str(MATERIAL), "status", "--porcelain=v1"], text=True); assert before == after

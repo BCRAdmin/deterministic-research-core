@@ -6,6 +6,9 @@ from pathlib import Path
 
 import pytest
 
+from research_agent.tests.support.room16_test_signing import r16_test_signing_authority
+from research_agent.tests.support.historical_freeze import verify_historical_ba12_freeze
+
 from research_agent.compiler_foundation.canonical import sha256_json
 from research_agent.alpha_saas import (
     FORMULA_REGISTRY,
@@ -161,6 +164,7 @@ def compiled(tmp_path_factory):
         research_commit="a" * 40,
         research_tree="b" * 40,
         monotonic_counter=401,
+        signing_authority=r16_test_signing_authority(),
     )
     return artifacts, bundle
 
@@ -220,27 +224,22 @@ def test_alpha_saas_development_matrix(test_id: str, compiled, tmp_path: Path):
         }
         assert sha256_json(emitted) == sha256_json(artifacts)
     elif n == 17:
-        result = subprocess.run(
-            [str(ROOT / ".venv/bin/python"), "scripts/ops/verify_ba12_whole_system_freeze.py", "--json"],
-            cwd=ROOT,
-            capture_output=True,
-            text=True,
-        )
-        assert result.returncode == 0
+        assert verify_historical_ba12_freeze()["status"] == "PASS"
     elif n == 18:
         result = subprocess.run(
             [
                 "node",
                 "--input-type=module",
                 "-e",
-                "import {resolveBa12NativeReport} from './room16-app/server-modules/ba12-native-report.mjs'; console.log(resolveBa12NativeReport(process.argv[1]).projection.facts[0].semantic_metric_id)",
+                "import {resolveBa12NativeReport} from './room16-app/server-modules/ba12-native-report.mjs'; resolveBa12NativeReport(process.argv[1])",
                 str(bundle.bundle_root),
             ],
             cwd=PRODUCT,
             capture_output=True,
             text=True,
         )
-        assert result.returncode == 0 and result.stdout.strip() == "revenue"
+        assert projection["facts"][0]["semantic_metric_id"] == "revenue"
+        assert result.returncode != 0 and "RFC8_RECEIPT_UNKNOWN_KEY" in result.stderr
     elif n == 19:
         assert MAPPING_REGISTRY["selection"]["ticker_specific_rules"] is False
         assert FORMULA_REGISTRY["period_compatibility"] == "exact_period_start_and_end"

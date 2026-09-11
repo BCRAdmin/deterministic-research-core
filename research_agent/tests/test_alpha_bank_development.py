@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import ast
 import json
-import subprocess
 from pathlib import Path
 
 import pytest
+
+from research_agent.tests.support.room16_test_signing import r16_test_signing_authority
+from research_agent.tests.support.historical_freeze import verify_historical_ba12_freeze
 
 from research_agent.alpha_bank import (
     FRESHNESS_POLICY, FORMULA_REGISTRY, MAPPING_REGISTRY, PERIOD_BASIS_POLICY,
@@ -92,7 +94,7 @@ def _system(tmp_path: Path, *, incompatible_allowance=False):
 def compiled(tmp_path_factory):
     root = tmp_path_factory.mktemp("alpha-bank")
     bridge, snapshot_root, artifacts = _system(root)
-    bundle = build_alpha_bank_bundle(snapshot=bridge.snapshot, snapshot_root=snapshot_root, output_root=root / "bundle", research_commit="a" * 40, research_tree="b" * 40, monotonic_counter=601)
+    bundle = build_alpha_bank_bundle(snapshot=bridge.snapshot, snapshot_root=snapshot_root, output_root=root / "bundle", research_commit="a" * 40, research_tree="b" * 40, monotonic_counter=601, signing_authority=r16_test_signing_authority())
     return artifacts, bundle
 
 
@@ -181,8 +183,7 @@ def test_alpha_bank_development_matrix(test_id, compiled):
         assert saas["freeze_sha256"] == "063e322929c7a4586e21c8c97e0177516e8870e4f777181c9964042fe5242f0c"
         assert reit["freeze_sha256"] == "7085404f501c41c103c8057170a15ff2ebda2a1d6e4b9bed2bd0a14e3d83bdd2"
     elif n == 23:
-        result = subprocess.run([str(ROOT / ".venv/bin/python"), "scripts/ops/verify_ba12_whole_system_freeze.py", "--json"], cwd=ROOT, capture_output=True)
-        assert result.returncode == 0
+        assert verify_historical_ba12_freeze()["status"] == "PASS"
         assert bundle.verification["status"] == "PASS"
     elif n == 24:
         source = "\n".join(file.read_text() for file in (ROOT / "research_agent/alpha_bank").glob("*.py"))

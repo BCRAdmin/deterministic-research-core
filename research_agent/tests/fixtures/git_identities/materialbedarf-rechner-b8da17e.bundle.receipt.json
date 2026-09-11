@@ -1,0 +1,13 @@
+{
+  "bundle": "materialbedarf-rechner-b8da17e.bundle",
+  "bytes": 1436767,
+  "commit": "b8da17ea731d014341da2a45ec86af65dce5291a",
+  "contract_id": "room16.r16.readonly_git_identity_fixture@1",
+  "included_refs": [
+    "refs/heads/codex/mbr-product-repair-v1-ba0"
+  ],
+  "sha256": "24397de0eb4cff4c3c42d2ed39753b59d84ec7afe2fd20d9bac43464a4a6a60d",
+  "source_ref": "refs/heads/codex/mbr-product-repair-v1-ba0",
+  "status": "PASS",
+  "tree": "ca79b2022dcba4a3257b9035d225cdc9df7451df"
+}

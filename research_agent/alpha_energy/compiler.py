@@ -7,19 +7,19 @@ import json
 from pathlib import Path
 from typing import Any
 
-from nacl.signing import SigningKey
-
 from research_agent.ba12_native.compiler import (
     BA11_GOVERNANCE_SNAPSHOT_SHA256,
     KINDS,
-    SIGNING_KEY,
+    BundleSigningAuthority,
     NativeCompileResult,
     _read_snapshot_payloads,
     build_native_bundle,
+    resolve_bundle_signing_authority,
+    verify_bundle_for_authority,
 )
 from research_agent.ba12_native.contracts import NativeRunReceipt, create_record
 from research_agent.compiler_foundation.canonical import sha256_json
-from research_agent.productization_v2.native_trust import load_native_trust, verify_native_bundle_v2
+from research_agent.productization_v2.native_trust import load_native_trust
 from research_agent.productization_v2.trust_receipt import sign_bundle_receipt_v2
 from research_agent.semantic_compiler.source_frontend.contracts import SourceSnapshotIR
 
@@ -87,6 +87,7 @@ def build_alpha_energy_bundle(
     research_commit: str,
     research_tree: str,
     monotonic_counter: int,
+    signing_authority: BundleSigningAuthority | None = None,
 ) -> NativeCompileResult:
     """Emit a signed Alpha Energy Bundle@2 using additive successor code only."""
     bundle_root = output_root.resolve()
@@ -99,6 +100,7 @@ def build_alpha_energy_bundle(
         research_commit=research_commit,
         research_tree=research_tree,
         monotonic_counter=monotonic_counter,
+        signing_authority=signing_authority,
     )
     artifacts = build_energy_semantic_artifacts(
         snapshot=snapshot,
@@ -109,9 +111,11 @@ def build_alpha_energy_bundle(
     manifest = _refresh_manifest(bundle_root=bundle_root, artifacts=artifacts)
     trust = load_native_trust()
     key_policy = trust["key_policy"]
-    signing_key = SigningKey(SIGNING_KEY.read_bytes())
-    if signing_key.verify_key.encode().hex() != key_policy.keys[0].public_key_hex:
-        raise ValueError("ALPHA_ENERGY_SIGNING_KEY_POLICY_MISMATCH")
+    authority = resolve_bundle_signing_authority(
+        signing_authority,
+        production_key_policy=key_policy,
+        mismatch_code="ALPHA_ENERGY_SIGNING_KEY_POLICY_MISMATCH",
+    )
     receipt_set_sha = sha256_json(
         [item.model_dump(mode="json") for item in snapshot.retrieval_receipts]
     )
@@ -130,7 +134,7 @@ def build_alpha_energy_bundle(
             "policy_sha256": trust["policy"].policy_sha256,
             "ba10_v1_freeze_sha256": manifest["ba10_v1_freeze_sha256"],
             "ba11_freeze_sha256": manifest["ba11_freeze_sha256"],
-            "research_key_id": key_policy.keys[0].key_id,
+            "research_key_id": authority.key_id,
             "issued_at_utc": f"{snapshot.as_of_date}T23:00:00Z",
             "not_after_utc": None,
             "monotonic_counter": monotonic_counter,
@@ -140,15 +144,11 @@ def build_alpha_energy_bundle(
             ),
             "signature_algorithm": "ed25519",
         },
-        signing_key=signing_key,
+        signing_key=authority.signing_key,
     )
     receipt = receipt_model.model_dump(mode="json")
     _write_json(bundle_root / "RECEIPT.json", receipt)
-    verification = verify_native_bundle_v2(
-        bundle_root,
-        receipt=receipt,
-        now_utc=f"{snapshot.as_of_date}T23:30:00Z",
-    )
+    verification = verify_bundle_for_authority(bundle_root=bundle_root, manifest=manifest, receipt_model=receipt_model, trust=trust, authority=authority, signing_authority=signing_authority, now_utc=f"{snapshot.as_of_date}T23:30:00Z")
     run_receipt = create_record(
         NativeRunReceipt,
         ticker=snapshot.ticker,

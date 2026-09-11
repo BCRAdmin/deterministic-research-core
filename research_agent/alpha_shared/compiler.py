@@ -8,18 +8,15 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from nacl.signing import SigningKey
-
 from research_agent.ba12_native.compiler import (
     KINDS,
-    SIGNING_KEY,
+    BundleSigningAuthority,
     TEMPLATE,
+    resolve_bundle_signing_authority,
+    verify_bundle_for_authority,
 )
 from research_agent.compiler_foundation.canonical import sha256_json
-from research_agent.productization_v2.native_trust import (
-    load_native_trust,
-    verify_native_bundle_v2,
-)
+from research_agent.productization_v2.native_trust import load_native_trust
 from research_agent.productization_v2.trust_receipt import sign_bundle_receipt_v2
 
 from .archetype_profiles import ArchetypeProfileAdapterIR, load_archetype_profile
@@ -528,6 +525,7 @@ def compile_shared_successor(
     research_tree: str,
     monotonic_counter: int,
     run_id_override: str | None = None,
+    signing_authority: BundleSigningAuthority | None = None,
 ) -> SharedCompileResult:
     """Run verified SourceSnapshot -> H3/H2 -> signed native Bundle@2."""
 
@@ -796,9 +794,11 @@ def compile_shared_successor(
     _write_json(output_root / "BUNDLE_MANIFEST.json", manifest)
     _event(ledger, run_id, "bundle_v2_emit", (resolution_sha,), (manifest["bundle_sha256"],))
     key_policy = trust["key_policy"]
-    signing_key = SigningKey(SIGNING_KEY.read_bytes())
-    if signing_key.verify_key.encode().hex() != key_policy.keys[0].public_key_hex:
-        raise ValueError("RFC0011_SHARED_SIGNING_KEY_POLICY_MISMATCH")
+    authority = resolve_bundle_signing_authority(
+        signing_authority,
+        production_key_policy=key_policy,
+        mismatch_code="RFC0011_SHARED_SIGNING_KEY_POLICY_MISMATCH",
+    )
     receipt_model = sign_bundle_receipt_v2(
         {
             "contract_id": "room16.compiler_artifact_bundle_receipt",
@@ -811,19 +811,25 @@ def compile_shared_successor(
             "policy_sha256": trust["policy"].policy_sha256,
             "ba10_v1_freeze_sha256": manifest["ba10_v1_freeze_sha256"],
             "ba11_freeze_sha256": manifest["ba11_freeze_sha256"],
-            "research_key_id": key_policy.keys[0].key_id,
+            "research_key_id": authority.key_id,
             "issued_at_utc": f"{base_input.as_of_date}T23:00:00Z",
             "not_after_utc": None,
             "monotonic_counter": monotonic_counter,
             "nonce": f"rfc0011.r4.{base_input.ticker.lower()}.{manifest['bundle_sha256'][:24]}",
             "signature_algorithm": "ed25519",
         },
-        signing_key=signing_key,
+        signing_key=authority.signing_key,
     )
     receipt = receipt_model.model_dump(mode="json")
     _write_json(output_root / "RECEIPT.json", receipt)
-    verification = verify_native_bundle_v2(
-        output_root, receipt=receipt, now_utc=f"{base_input.as_of_date}T23:30:00Z"
+    verification = verify_bundle_for_authority(
+        bundle_root=output_root,
+        manifest=manifest,
+        receipt_model=receipt_model,
+        trust=trust,
+        authority=authority,
+        signing_authority=signing_authority,
+        now_utc=f"{base_input.as_of_date}T23:30:00Z",
     )
     _event(
         ledger,

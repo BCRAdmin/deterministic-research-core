@@ -38,6 +38,7 @@ from research_agent.semantic_compiler.source_frontend.contracts import (
     SourceDispositionIR,
     SourceSnapshotIR,
 )
+from research_agent.tests.support.room16_test_signing import r16_test_signing_authority
 from research_agent.tests.test_rfc0011_r2_correction import (
     _canonical_base,
     _supplemental,
@@ -285,6 +286,7 @@ def test_r4_canonical_local_fixture_uses_same_runner_for_every_archetype(
         research_commit="a" * 40,
         research_tree="b" * 40,
         monotonic_counter=2000,
+        signing_authority=r16_test_signing_authority(),
     )
     assert result.report["actual_function_called"] == "run_canonical_alpha_case"
     assert result.report["bundle_verified"] is True
@@ -338,6 +340,7 @@ def test_r4_verified_live_receipts_populate_h4_provider_telemetry(tmp_path: Path
         monotonic_counter=2001,
         acquisition_mode="verified_live_capture",
         authorization_receipt=receipt,
+        signing_authority=r16_test_signing_authority(),
     )
     assert result.report["live_network_call_count"] == 1
     assert result.report["live_capture_bytes"] > 0
@@ -363,6 +366,7 @@ def test_r4_replay_is_semantically_identical_and_provider_silent(tmp_path: Path)
                 research_commit="a" * 40,
                 research_tree="b" * 40,
                 monotonic_counter=2002,
+                signing_authority=r16_test_signing_authority(),
             )
         )
     assert results[0].compiled.manifest == results[1].compiled.manifest

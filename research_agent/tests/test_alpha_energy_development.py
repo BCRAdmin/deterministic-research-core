@@ -3,9 +3,12 @@ from __future__ import annotations
 import ast
 import json
 import subprocess
+import sys
 from pathlib import Path
 
 import pytest
+
+from research_agent.tests.support.room16_test_signing import r16_test_signing_authority
 
 from research_agent.alpha_energy import (
     FRESHNESS_POLICY,
@@ -200,6 +203,7 @@ def compiled(tmp_path_factory):
         research_commit="a" * 40,
         research_tree="b" * 40,
         monotonic_counter=701,
+        signing_authority=r16_test_signing_authority(),
     )
     return artifacts, bundle
 
@@ -335,7 +339,7 @@ def test_alpha_energy_development_matrix(test_id, compiled, tmp_path):
         copied.write_bytes((ROOT / "scripts/ops/run_alpha_energy_company.py").read_bytes())
         result = subprocess.run(
             [
-                str(ROOT / ".venv/bin/python"),
+            sys.executable,
                 str(copied),
                 "--research-root",
                 str(ROOT),

@@ -1,0 +1,15 @@
+{
+  "bundle": "company-dossier-lab-ed86bb8.bundle",
+  "bytes": 24899558,
+  "commit": "ed86bb841aab88d878266cf8ed498eabc6fa9029",
+  "contract_id": "room16.r16.readonly_git_identity_fixture@1",
+  "included_refs": [
+    "refs/heads/bcr-report-lab-original-trading-flow",
+    "refs/tags/room16-compiler-foundation-v1.0.0",
+    "refs/tags/room16-registry-foundation-v1.1.0"
+  ],
+  "sha256": "3dde4aa31b2be68520a718c745e68d09f3250064c62c6386239e2fc9b450ba4f",
+  "source_ref": "refs/heads/bcr-report-lab-original-trading-flow",
+  "status": "PASS",
+  "tree": "a382d9c096825910b5e0e8865414ea232b95bd40"
+}

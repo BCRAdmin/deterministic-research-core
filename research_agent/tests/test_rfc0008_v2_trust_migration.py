@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import json
 import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -98,7 +99,7 @@ def test_rfc0008_acceptance_matrix(test_id: str) -> None:
     if number == 1:
         result = subprocess.run(
             [
-                str(ROOT / ".venv/bin/python"),
+                sys.executable,
                 "scripts/ops/verify_ba10_artifact_abi_renderer_freeze.py",
                 "--product-repo",
                 str(PRODUCT),
@@ -113,7 +114,7 @@ def test_rfc0008_acceptance_matrix(test_id: str) -> None:
     elif number == 2:
         result = subprocess.run(
             [
-                str(ROOT / ".venv/bin/python"),
+                sys.executable,
                 "scripts/ops/verify_ba11_canary_governance_freeze.py",
                 "--json",
             ],

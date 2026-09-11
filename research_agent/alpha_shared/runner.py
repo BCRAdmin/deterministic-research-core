@@ -7,6 +7,8 @@ from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any
 
+from research_agent.ba12_native.compiler import BundleSigningAuthority
+
 from .compiler import SharedCompileResult, compile_shared_successor
 from .contracts import SharedBaseInputIR, SupplementalCompileInputIR
 from .execution_authority import AuthorizationReceiptIR, verify_receipt_for_live_case
@@ -91,6 +93,7 @@ def run_shared_case(
     research_commit: str,
     research_tree: str,
     monotonic_counter: int,
+    signing_authority: BundleSigningAuthority | None = None,
 ) -> SharedCaseRunResult:
     """Execute the real shared compiler path with no hidden network fallback."""
 
@@ -103,6 +106,7 @@ def run_shared_case(
         research_commit=research_commit,
         research_tree=research_tree,
         monotonic_counter=monotonic_counter,
+        signing_authority=signing_authority,
     )
     stages = [item["stage"] for item in compiled.ledger_report["events"]]
     return SharedCaseRunResult(
@@ -134,6 +138,7 @@ def run_canonical_alpha_case(
     monotonic_counter: int,
     acquisition_mode: str,
     authorization_receipt: AuthorizationReceiptIR | None = None,
+    signing_authority: BundleSigningAuthority | None = None,
 ) -> CanonicalAlphaCaseRunResult:
     """Bind a verified full source case to the R4 shared compiler and report surface."""
 
@@ -235,6 +240,7 @@ def run_canonical_alpha_case(
         research_tree=research_tree,
         monotonic_counter=monotonic_counter,
         run_id_override=run_id,
+        signing_authority=signing_authority,
     )
     if not live:
         _append_stage(

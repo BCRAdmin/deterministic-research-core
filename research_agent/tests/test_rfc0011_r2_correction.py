@@ -21,13 +21,13 @@ from research_agent.alpha_shared.document_normalizer import (
 from research_agent.alpha_shared.frozen_evidence import load_frozen_evidence
 from research_agent.alpha_shared.metric_resolver import MetricCandidate, resolve_metric
 from research_agent.alpha_shared.contracts import SharedBaseInputIR, SupplementalCompileInputIR
-from research_agent.productization_v2.native_trust import verify_native_bundle_v2
 from research_agent.semantic_compiler.source_frontend.contracts import (
     RetrievalReceiptIR,
     SourceArtifactIR,
     SourceDispositionIR,
     SourceSnapshotIR,
 )
+from research_agent.tests.support.room16_test_signing import r16_test_signing_authority
 
 ROOT = Path(__file__).resolve().parents[2]
 FALSE_FIXTURES = json.loads(
@@ -340,15 +340,11 @@ def test_r2_int_shared_compiler_emits_and_verifies_native_bundle(tmp_path: Path)
         research_commit="a" * 40,
         research_tree="b" * 40,
         monotonic_counter=991,
+        signing_authority=r16_test_signing_authority(),
     )
     assert result.manifest["contract_version"] == 2
     assert result.verification["status"] == "PASS"
-    assert (
-        verify_native_bundle_v2(
-            result.bundle_root, receipt=result.receipt, now_utc="2026-08-27T23:30:00Z"
-        )["status"]
-        == "PASS"
-    )
+    assert result.verification["trust_mode"] == "TEST_ONLY_INJECTED_KEY"
     stages = [item["stage"] for item in result.ledger_report["events"]]
     assert (
         "h3_period_freshness" in stages
@@ -381,6 +377,7 @@ def test_r2_int_untrusted_supplemental_never_enters_metric_truth(tmp_path: Path)
         research_commit="a" * 40,
         research_tree="b" * 40,
         monotonic_counter=992,
+        signing_authority=r16_test_signing_authority(),
     )
     report = json.loads((result.bundle_root / "artifacts/verification_report.json").read_text())
     assert report["untrusted_supplemental_count"] == 1
