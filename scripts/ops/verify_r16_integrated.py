@@ -331,6 +331,33 @@ def main() -> int:
         case_results = read_json(archive, "15_EPOCH3_CASE_RESULTS.json")["cases"]
         if len(case_results) != 12:
             raise ValueError("CASE_CARDINALITY")
+        provider_ledger = read_json(archive, "14_EPOCH3_PROVIDER_CAPTURE_LEDGER.json")
+        provider_records = provider_ledger.get("records", [])
+        if (
+            provider_ledger.get("provider_calls_before_selection_seal") != 0
+            or provider_ledger.get("replacements") != 0
+            or provider_ledger.get("calls_after_seal") != len(provider_records)
+        ):
+            raise ValueError("PROVIDER_LEDGER_POLICY")
+        captured_case_prefixes: set[str] = set()
+        for record in provider_records:
+            capture_path = str(record.get("capture_path", "")).replace("\\", "/")
+            marker = "epoch3_cases/"
+            if marker not in capture_path:
+                raise ValueError("PROVIDER_CAPTURE_PATH")
+            relative = marker + capture_path.split(marker, 1)[1]
+            if "/primary_text/captures/" not in relative:
+                raise ValueError("PROVIDER_CAPTURE_SCOPE")
+            payload = archive.read(relative)
+            if (
+                hashlib.sha256(payload).hexdigest() != record.get("sha256")
+                or len(payload) != record.get("bytes")
+                or record.get("captured_before_parse") is not True
+            ):
+                raise ValueError("PROVIDER_CAPTURE_HASH")
+            captured_case_prefixes.add(relative.split("/primary_text/", 1)[0])
+        if len(captured_case_prefixes) != 12:
+            raise ValueError("PROVIDER_CAPTURE_CASE_COVERAGE")
         for index, row in enumerate(selected_doc["selected"], start=1):
             case_prefix = f"epoch3_cases/{index:02d}_{row['ticker']}"
             verify_base_capture(archive, case_prefix)
@@ -397,8 +424,25 @@ def main() -> int:
         ):
             raise ValueError("ACCEPTANCE")
         no_tuning = read_json(archive, "17_NO_TUNING_NO_REPLACEMENT_RECEIPT.json")
-        if no_tuning["replacements"] or no_tuning["semantic_or_selection_mutations_after_seal"]:
+        if any(
+            no_tuning.get(field) not in (0, False)
+            for field in (
+                "replacements",
+                "second_batch",
+                "semantic_or_selection_mutations_after_seal",
+                "parser_changes_after_seal",
+                "threshold_changes_after_seal",
+                "mapping_changes_after_seal",
+            )
+        ):
             raise ValueError("NO_TUNING")
+        if (
+            seal.get("full_tests_sha256")
+            != hashlib.sha256(archive.read("full_research.junit.xml")).hexdigest()
+            or seal.get("adversarial_tests_sha256")
+            != hashlib.sha256(archive.read("adversarial_r16.junit.xml")).hexdigest()
+        ):
+            raise ValueError("CANDIDATE_TEST_BINDING")
         expected = (
             "ROOM16_R16_PASS_READY_FOR_INDEPENDENT_REVIEW"
             if acceptance["status"] == "PASS"
