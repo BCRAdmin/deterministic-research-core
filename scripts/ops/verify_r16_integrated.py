@@ -40,6 +40,74 @@ def read_json(archive: zipfile.ZipFile, name: str) -> dict:
     return value
 
 
+def verify_base_capture(archive: zipfile.ZipFile, prefix: str) -> None:
+    """Rehash the raw CompanyFacts capture and its frozen BA3 snapshot copy."""
+
+    report = read_json(archive, f"{prefix}/base/evidence/04_CAPTURE_REPORT.json")
+    sec_records = [
+        row
+        for row in report.get("records", [])
+        if row.get("receipt", {}).get("provider_id") == "sec"
+        and row.get("receipt", {}).get("source_type") == "sec_filing"
+    ]
+    if len(sec_records) != 1:
+        raise ValueError("COMPANYFACTS_CAPTURE_CARDINALITY")
+    row = sec_records[0]
+    receipt = row["receipt"]
+    artifact = row["artifact"]
+    content_sha = str(artifact.get("content_sha256", ""))
+    expected_relative = f"captures/sha256/{content_sha[:2]}/{content_sha}"
+    if (
+        not SHA256.fullmatch(content_sha)
+        or artifact.get("content_addressed_relative_path") != expected_relative
+        or receipt.get("payload_sha256") != content_sha
+        or artifact.get("readback_sha256") != content_sha
+    ):
+        raise ValueError("COMPANYFACTS_CAPTURE_BINDING")
+    capture_name = f"{prefix}/base/runtime/live/capture_store/{expected_relative}"
+    payload = archive.read(capture_name)
+    if (
+        hashlib.sha256(payload).hexdigest() != content_sha
+        or len(payload) != artifact.get("byte_length")
+        or len(payload) != artifact.get("readback_byte_length")
+        or len(payload) != receipt.get("payload_bytes")
+    ):
+        raise ValueError("COMPANYFACTS_CAPTURE_HASH")
+    metadata = read_json(
+        archive,
+        f"{prefix}/base/runtime/live/capture_store/metadata/{content_sha}.json",
+    )
+    if metadata != artifact:
+        raise ValueError("COMPANYFACTS_CAPTURE_METADATA")
+
+    snapshot_name = f"{prefix}/base/runtime/ba3_snapshot/source_snapshot_ir.json"
+    snapshot = read_json(archive, snapshot_name)
+    snapshot_receipts = [
+        item
+        for item in snapshot.get("retrieval_receipts", [])
+        if item.get("provider_id") == "sec"
+        and item.get("source_type") == "sec_filing"
+        and item.get("payload_sha256") == content_sha
+    ]
+    if len(snapshot_receipts) != 1:
+        raise ValueError("COMPANYFACTS_SNAPSHOT_RECEIPT")
+    snapshot_artifacts = [
+        item for item in snapshot.get("artifacts", []) if item.get("sha256") == content_sha
+    ]
+    if len(snapshot_artifacts) != 1:
+        raise ValueError("COMPANYFACTS_SNAPSHOT_ARTIFACT")
+    snapshot_artifact = snapshot_artifacts[0]
+    snapshot_payload = archive.read(
+        f"{prefix}/base/runtime/ba3_snapshot/{snapshot_artifact['path']}"
+    )
+    if (
+        snapshot_payload != payload
+        or len(snapshot_payload) != snapshot_artifact.get("bytes")
+        or hashlib.sha256(snapshot_payload).hexdigest() != content_sha
+    ):
+        raise ValueError("COMPANYFACTS_SNAPSHOT_HASH")
+
+
 def validate_candidate(candidate: dict) -> None:
     claimed = str(candidate.get("candidate_sha256", ""))
     if digest({k: v for k, v in candidate.items() if k != "candidate_sha256"}) != claimed:
@@ -232,7 +300,9 @@ def main() -> int:
         if len(case_results) != 12:
             raise ValueError("CASE_CARDINALITY")
         for index, row in enumerate(selected_doc["selected"], start=1):
-            prefix = f"epoch3_cases/{index:02d}_{row['ticker']}/primary_text"
+            case_prefix = f"epoch3_cases/{index:02d}_{row['ticker']}"
+            verify_base_capture(archive, case_prefix)
+            prefix = f"{case_prefix}/primary_text"
             discovery = read_json(archive, f"{prefix}/DISCOVERED_SOURCE_SET_RECEIPT.json")
             selfhash(discovery, "discovered_source_set_sha256")
             submissions = archive.read(f"{prefix}/captures/sec_submissions/submissions.json")

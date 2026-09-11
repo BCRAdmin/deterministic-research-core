@@ -197,7 +197,7 @@ def package(output: Path, verdict: str) -> tuple[Path, Path]:
     lines = [f"{row['sha256']}  {row['path']}" for row in files]
     lines.append(f"{sha(output / 'MANIFEST.json')}  MANIFEST.json")
     (output / "CHECKSUMS.sha256").write_text("\n".join(lines) + "\n", encoding="utf-8")
-    stem = f"ROOM16_R16_INTEGRATED_RESULT_{git('rev-parse', '--short=12', 'HEAD').upper()}_2026-09-11"
+    stem = f"ROOM16_R16_INTEGRATED_RESULT_{git('rev-parse', '--short=12', 'HEAD').upper()}_2026-09-04"
     release = ROOT / "outputs/release"
     release.mkdir(parents=True, exist_ok=True)
     full = release / f"{stem}_FULL.zip"
@@ -394,6 +394,7 @@ def main() -> int:
             "verifier_source_sha256": sha(ROOT / "scripts/ops/verify_r16_integrated.py"),
             "raw_html_hashes_verified": True,
             "raw_companyfacts_packaged": True,
+            "raw_companyfacts_hashes_and_snapshot_bindings_verified": True,
             "candidate_semantic_proofs_recomputed": True,
             "manifest_and_selection_recomputed": True,
         },
