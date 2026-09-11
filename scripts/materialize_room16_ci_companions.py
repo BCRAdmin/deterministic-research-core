@@ -87,6 +87,19 @@ def _bind_research(repo: Path) -> dict[str, str]:
     return observed
 
 
+def _bind_research_layout_alias(repo: Path) -> str:
+    """Expose the historical sibling name expected by the frozen Product fixture."""
+    alias = repo.parent / "research-agent-ops"
+    if alias == repo:
+        return str(repo)
+    if alias.exists() or alias.is_symlink():
+        raise SystemExit(f"BLOCK research layout alias already exists: {alias}")
+    alias.symlink_to(repo, target_is_directory=True)
+    if alias.resolve() != repo:
+        raise SystemExit("BLOCK research layout alias target mismatch")
+    return str(alias)
+
+
 def _sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as handle:
@@ -153,12 +166,14 @@ def main() -> None:
     release_target = product_target / ".runtime/cross-company-release-current"
     shutil.copytree(release_source, release_target)
     runtime_fixtures = _materialize_runtime_fixtures(repo)
+    research_layout_alias = _bind_research_layout_alias(repo)
     print(
         json.dumps(
             {
                 "contract_id": "room16.r16.hermetic_ci_companions@1",
                 "status": "PASS",
                 "research": research,
+                "research_layout_alias": research_layout_alias,
                 "product": product,
                 "foreign": foreign,
                 "cross_company_release": str(release_target),
