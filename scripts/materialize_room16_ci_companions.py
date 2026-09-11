@@ -12,6 +12,10 @@ from pathlib import Path
 from typing import Any
 
 
+RESEARCH = {
+    "branch": "main",
+    "remote": "https://github.com/BCRAdmin/deterministic-research-core.git",
+}
 PRODUCT = {
     "bundle": "company-dossier-lab-ed86bb8.bundle",
     "commit": "ed86bb841aab88d878266cf8ed498eabc6fa9029",
@@ -56,6 +60,27 @@ def _clone(bundle_root: Path, target: Path, spec: dict[str, str]) -> dict[str, A
     return {**observed, "path": str(target), "bundle": spec["bundle"]}
 
 
+def _bind_research(repo: Path) -> dict[str, str]:
+    commit = _run(["git", "rev-parse", "HEAD"], cwd=repo)
+    tree = _run(["git", "rev-parse", "HEAD^{tree}"], cwd=repo)
+    _run(["git", "checkout", "-B", RESEARCH["branch"], commit], cwd=repo)
+    _run(["git", "remote", "set-url", "origin", RESEARCH["remote"]], cwd=repo)
+    observed = {
+        "commit": _run(["git", "rev-parse", "HEAD"], cwd=repo),
+        "tree": _run(["git", "rev-parse", "HEAD^{tree}"], cwd=repo),
+        "branch": _run(["git", "branch", "--show-current"], cwd=repo),
+        "remote": _run(["git", "remote", "get-url", "origin"], cwd=repo),
+    }
+    if (
+        observed["commit"] != commit
+        or observed["tree"] != tree
+        or observed["branch"] != RESEARCH["branch"]
+        or observed["remote"] != RESEARCH["remote"]
+    ):
+        raise SystemExit("BLOCK research checkout identity mismatch")
+    return observed
+
+
 def _make_read_only(root: Path) -> None:
     for path in [root, *root.rglob("*")]:
         if path.is_symlink():
@@ -73,6 +98,7 @@ def main() -> None:
     product_target = repo.parent / "company-dossier-lab"
     foreign_target = repo.parent.parent / "Utility-Websites/materialbedarf-rechner.de"
 
+    research = _bind_research(repo)
     product = _clone(bundle_root, product_target, PRODUCT)
     foreign = _clone(bundle_root, foreign_target, FOREIGN)
     release_source = repo / "research_agent/tests/fixtures/cross_company_release_current"
@@ -85,6 +111,7 @@ def main() -> None:
             {
                 "contract_id": "room16.r16.hermetic_ci_companions@1",
                 "status": "PASS",
+                "research": research,
                 "product": product,
                 "foreign": foreign,
                 "cross_company_release": str(release_target),
