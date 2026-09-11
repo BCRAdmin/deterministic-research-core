@@ -6,6 +6,22 @@
       "filename": "ROOM16_BA11_R5_INDEPENDENT_ACCEPTANCE_FREEZE_VEGA_0DD42A068BA8_2026-08-21.zip",
       "sha256": "0dd42a068ba8be1eac0e938fdadc4fc7434c2dbaeeaa9176fef89f939654b267",
       "zip_entries": 11
+    },
+    {
+      "bytes": 1370936,
+      "filename": "ROOM16_BA11_ARCHITECTURE_R1_CORRECTED_REREVIEW_R5_D31B2C064043_2026-08-21.zip",
+      "sha256": "f81e08620fac195642291d279492c3751e86dbf5130697e3f8205e512023938c",
+      "zip_entries": 35
+    },
+    {
+      "bytes": 634,
+      "filename": "ROOM16_BA11_ARCHITECTURE_R1_CORRECTED_REREVIEW_R5_D31B2C064043_2026-08-21.zip.identity.json",
+      "sha256": "ec8aaa193ae82aa0ceb64adf5725a429554999d844e5a41ae5bd07238382dd23"
+    },
+    {
+      "bytes": 144,
+      "filename": "ROOM16_BA11_ARCHITECTURE_R1_CORRECTED_REREVIEW_R5_D31B2C064043_2026-08-21.zip.sha256",
+      "sha256": "4f4aa8025348c6f5f14b239dbbddccaf8b97909ec1448596f3d1f7333aed5ac2"
     }
   ],
   "source_binding": "docs/compiler_foundation/freezes/BA11_CANARY_GOVERNANCE_FREEZE_v1.json",

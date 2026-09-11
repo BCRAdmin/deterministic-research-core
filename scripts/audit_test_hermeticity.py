@@ -22,24 +22,35 @@ def main() -> None:
     parser.add_argument("--repo", type=Path, required=True)
     args = parser.parse_args()
     roots = [args.repo / "research_agent" / "tests", args.repo / "tests"]
+    files = {
+        file
+        for root in roots
+        if root.exists()
+        for file in root.rglob("*.py")
+    }
+    files.update(
+        {
+            args.repo / "scripts/ops/verify_ba11_canary_governance.py",
+            args.repo / "scripts/ops/verify_ba11_canary_governance_freeze.py",
+        }
+    )
     findings = []
-    for root in roots:
-        if not root.exists():
+    for file in sorted(files):
+        if not file.is_file():
             continue
-        for file in root.rglob("*.py"):
-            for line_number, line in enumerate(file.read_text(errors="replace").splitlines(), 1):
-                if any(marker in line for marker in ALLOW_MARKERS):
-                    continue
-                for kind, pattern in PATTERNS.items():
-                    if pattern.search(line):
-                        findings.append(
-                            {
-                                "file": str(file.relative_to(args.repo)),
-                                "line": line_number,
-                                "kind": kind,
-                                "text": line.strip()[:240],
-                            }
-                        )
+        for line_number, line in enumerate(file.read_text(errors="replace").splitlines(), 1):
+            if any(marker in line for marker in ALLOW_MARKERS):
+                continue
+            for kind, pattern in PATTERNS.items():
+                if pattern.search(line):
+                    findings.append(
+                        {
+                            "file": str(file.relative_to(args.repo)),
+                            "line": line_number,
+                            "kind": kind,
+                            "text": line.strip()[:240],
+                        }
+                    )
     result = {
         "contract_id": "room16.r16.test_hermeticity_static_audit@1",
         "status": "PASS" if not findings else "BLOCK",

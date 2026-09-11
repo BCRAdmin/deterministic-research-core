@@ -104,15 +104,18 @@ def _runtime_task_diff(record: dict[str, Any]) -> tuple[list[str], list[str]]:
 
 def _verify_r5(record: dict[str, Any]) -> dict[str, Any]:
     source = record["source_r5"]
+    package_path = HISTORICAL_INPUT_ROOT / Path(source["package_path"]).name
+    sidecar_path = HISTORICAL_INPUT_ROOT / Path(source["sidecar_path"]).name
+    identity_path = HISTORICAL_INPUT_ROOT / Path(source["identity_path"]).name
     return _run_json(
         [
             sys.executable,
             source["verifier_path"],
-            source["package_path"],
+            str(package_path),
             "--sidecar",
-            source["sidecar_path"],
+            str(sidecar_path),
             "--identity",
-            source["identity_path"],
+            str(identity_path),
         ],
         ROOT,
     )
@@ -189,7 +192,7 @@ def verify(
         checks["acceptance_handoff_zip"] = False
 
     source = record["source_r5"]
-    source_path = ROOT / source["package_path"]
+    source_path = HISTORICAL_INPUT_ROOT / Path(source["package_path"]).name
     checks["source_r5_file"] = (
         source_path.is_file()
         and _sha256(source_path) == record["source_r5_package_sha256"]

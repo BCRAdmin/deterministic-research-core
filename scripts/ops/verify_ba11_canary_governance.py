@@ -72,7 +72,7 @@ def main() -> int:
     checks["schemas_strict"] = {"pass": not schema_errors, "errors": schema_errors}
     ba10 = run(
         [
-            str(ROOT / ".venv/bin/python"),
+            sys.executable,
             str(ROOT / "scripts/ops/verify_ba10_artifact_abi_renderer_freeze.py"),
             "--product-repo",
             str(args.product_repo),
@@ -82,7 +82,7 @@ def main() -> int:
     checks["ba10_freeze_unchanged"] = {"pass": ba10["exit_code"] == 0, "receipt": ba10}
     tests = run(
         [
-            str(ROOT / ".venv/bin/python"),
+            sys.executable,
             "-m",
             "pytest",
             "research_agent/tests/test_canary_governance.py",
