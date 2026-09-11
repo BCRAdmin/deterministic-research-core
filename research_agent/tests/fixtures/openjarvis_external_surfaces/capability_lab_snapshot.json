@@ -1,0 +1,23 @@
+{
+  "code_qa_shadow": {
+    "pass_count": 3,
+    "status": "PASS"
+  },
+  "hardening": {
+    "runtime_action_executed": false
+  },
+  "preflight": {
+    "blocker_count": 0,
+    "status": "PASS"
+  },
+  "retrieval_benchmark": {
+    "pass_count": 4,
+    "status": "PASS"
+  },
+  "runtime": {
+    "runtime_available": false,
+    "runtime_execution_attempted": false
+  },
+  "source_document_count": 218,
+  "status": "PASS"
+}

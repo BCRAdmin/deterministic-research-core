@@ -1,0 +1,6 @@
+{
+  "control_capabilities": {
+    "openjarvis_capability_arena": true
+  },
+  "fixture_only": true
+}

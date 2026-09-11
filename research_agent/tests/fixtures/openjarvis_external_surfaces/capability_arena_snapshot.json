@@ -1,0 +1,24 @@
+{
+  "engine_summary": {
+    "openjarvis_shadow": {
+      "average_score": 88.67,
+      "fail_count": 0,
+      "pass_count": 27
+    },
+    "pig_obsidian_baseline": {
+      "average_score": 75.73
+    }
+  },
+  "evaluated_task_count": 30,
+  "runtime": {
+    "runtime_action_executed": false,
+    "runtime_execution_attempted": false
+  },
+  "source_document_count": 218,
+  "status": "PASS",
+  "winner_summary": {
+    "openjarvis_shadow": 14,
+    "pig_obsidian_baseline": 9,
+    "tie": 7
+  }
+}

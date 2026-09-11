@@ -4,11 +4,13 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import shutil
-import stat
 import subprocess
+import zipfile
 from pathlib import Path
+from pathlib import PurePosixPath
 from typing import Any
 
 
@@ -29,6 +31,10 @@ FOREIGN = {
     "tree": "ca79b2022dcba4a3257b9035d225cdc9df7451df",
     "branch": "codex/mbr-product-repair-v1-ba0",
     "remote": "https://github.com/BCRAdmin/materialbedarf-rechner.de.git",
+}
+RUNTIME_FIXTURE = {
+    "file": "room16_phase_a_runtime_fixtures.zip",
+    "sha256": "e36e5801564a0ded9211a6a03e506c22882e35a9f66ea2b8f949e63e7fa49971",
 }
 
 
@@ -81,12 +87,54 @@ def _bind_research(repo: Path) -> dict[str, str]:
     return observed
 
 
-def _make_read_only(root: Path) -> None:
-    for path in [root, *root.rglob("*")]:
-        if path.is_symlink():
-            continue
-        mode = path.stat().st_mode
-        path.chmod(mode & ~(stat.S_IWUSR | stat.S_IWGRP | stat.S_IWOTH))
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _materialize_runtime_fixtures(repo: Path) -> dict[str, Any]:
+    archive_path = (
+        repo
+        / "research_agent/tests/fixtures/hermetic_ci"
+        / RUNTIME_FIXTURE["file"]
+    )
+    if not archive_path.is_file() or _sha256(archive_path) != RUNTIME_FIXTURE["sha256"]:
+        raise SystemExit("BLOCK hermetic runtime fixture identity mismatch")
+
+    targets = {
+        "rfc0008": repo / ".runtime/rfc0008",
+        "ba12": repo / "outputs/ba12",
+        "alpha": repo.parent / "Alpha/RUNS",
+    }
+    counts = {prefix: 0 for prefix in targets}
+    with zipfile.ZipFile(archive_path) as archive:
+        names = archive.namelist()
+        if len(names) != len(set(names)):
+            raise SystemExit("BLOCK duplicate hermetic runtime fixture member")
+        for info in archive.infolist():
+            member = PurePosixPath(info.filename)
+            if member.is_absolute() or ".." in member.parts or not member.parts:
+                raise SystemExit(f"BLOCK unsafe hermetic runtime fixture member: {info.filename}")
+            prefix = member.parts[0]
+            if prefix not in targets:
+                raise SystemExit(f"BLOCK unknown hermetic runtime fixture prefix: {prefix}")
+            relative = Path(*member.parts[1:])
+            destination = targets[prefix] / relative
+            if info.is_dir():
+                destination.mkdir(parents=True, exist_ok=True)
+                continue
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            with archive.open(info) as source, destination.open("wb") as target:
+                shutil.copyfileobj(source, target)
+            counts[prefix] += 1
+    return {
+        "archive": str(archive_path),
+        "archive_sha256": RUNTIME_FIXTURE["sha256"],
+        "materialized_file_counts": counts,
+    }
 
 
 def main() -> None:
@@ -104,8 +152,7 @@ def main() -> None:
     release_source = repo / "research_agent/tests/fixtures/cross_company_release_current"
     release_target = product_target / ".runtime/cross-company-release-current"
     shutil.copytree(release_source, release_target)
-    _make_read_only(product_target)
-    _make_read_only(foreign_target)
+    runtime_fixtures = _materialize_runtime_fixtures(repo)
     print(
         json.dumps(
             {
@@ -115,7 +162,9 @@ def main() -> None:
                 "product": product,
                 "foreign": foreign,
                 "cross_company_release": str(release_target),
+                "runtime_fixtures": runtime_fixtures,
                 "git_optional_locks_required": True,
+                "companion_scope": "read_only_by_contract_without_permission_mutation",
                 "production_private_key_materialized": False,
             },
             indent=2,

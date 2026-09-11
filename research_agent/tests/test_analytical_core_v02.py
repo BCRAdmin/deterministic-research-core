@@ -166,6 +166,7 @@ def test_elevated_financial_risk_can_only_reduce_composite_score():
         current_ratio=0.7,
         debt_to_equity=3.0,
         free_cash_flow_interest_coverage_ttm=1.0,
+        operating_income_interest_coverage_ttm=1.0,
         free_cash_flow_ttm=-1_000_000,
         fcf_margin_ttm=-0.05,
         free_cash_flow_conversion_ttm=-0.10,

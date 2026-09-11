@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
 from typing import Any
 
@@ -27,6 +28,7 @@ from research_agent.ops.openjarvis_capability_lab import (
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_PLAN_PATH = REPO_ROOT / "configs/openjarvis/openjarvis_decision_gauntlet_plan.json"
 DEFAULT_OUTPUT_DIR = REPO_ROOT / "outputs/openjarvis_capability_lab/decision_gauntlet"
+HERMETIC_SURFACE_ROOT = REPO_ROOT / "research_agent/tests/fixtures/openjarvis_external_surfaces"
 
 PASS = "PASS"
 FAIL = "FAIL"
@@ -44,6 +46,19 @@ def resolve_path(payload: Any, dotted_path: str) -> Any:
 
 
 def coerce_file(path: str) -> Path:
+    if os.environ.get("ROOM16_HERMETIC_CI") == "1":
+        replacements = {
+            "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Latest Session Context.md": HERMETIC_SURFACE_ROOT / "Latest Session Context.md",
+            "/Users/BjornRosinger/Documents/Obsidian/Test Vaul Privat/Human Overview/Backbone Home.md": HERMETIC_SURFACE_ROOT / "Backbone Home.md",
+            "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/package.json": HERMETIC_SURFACE_ROOT / "lioncom-package.json",
+            "/Users/BjornRosinger/Documents/DreamFactory/Room16/company-dossier-lab/room16-app/package.json": REPO_ROOT.parent / "company-dossier-lab/room16-app/package.json",
+            "/Users/BjornRosinger/Documents/DreamFactory/Project-Intelligence-Graph/outputs/project_intelligence_graph/quality_os_operator_surface.json": HERMETIC_SURFACE_ROOT / "quality_os_operator_surface.json",
+            "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/lib/types.ts": HERMETIC_SURFACE_ROOT / "lioncom-types.ts",
+            "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/components/portfolio-control-tower-page.tsx": HERMETIC_SURFACE_ROOT / "portfolio-control-tower-page.tsx",
+        }
+        replacement = replacements.get(path)
+        if replacement is not None:
+            return replacement.resolve()
     raw = Path(path).expanduser()
     if raw.is_absolute():
         return raw
@@ -231,8 +246,12 @@ def build_decision_gauntlet(
 ) -> dict[str, Any]:
     plan = load_json(plan_path)
     policy = load_json(policy_path)
-    lab = build_capability_lab(policy_path)
-    arena = build_capability_arena(policy_path)
+    if os.environ.get("ROOM16_HERMETIC_CI") == "1" and policy_path == DEFAULT_POLICY_PATH:
+        lab = load_json(HERMETIC_SURFACE_ROOT / "capability_lab_snapshot.json")
+        arena = load_json(HERMETIC_SURFACE_ROOT / "capability_arena_snapshot.json")
+    else:
+        lab = build_capability_lab(policy_path)
+        arena = build_capability_arena(policy_path)
     plan_errors = validate_plan(plan)
     workstreams = evaluate_workstreams(
         plan,
