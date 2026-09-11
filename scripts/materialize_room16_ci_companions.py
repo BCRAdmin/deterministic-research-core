@@ -34,7 +34,7 @@ FOREIGN = {
 }
 RUNTIME_FIXTURE = {
     "file": "room16_phase_a_runtime_fixtures.zip",
-    "sha256": "e36e5801564a0ded9211a6a03e506c22882e35a9f66ea2b8f949e63e7fa49971",
+    "sha256": "0a403a26b3093c801d0069d13d18d4f74f693d8a8c9fa79efe187b1fb8de9ea2",
 }
 
 

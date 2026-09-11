@@ -55,6 +55,7 @@ def coerce_file(path: str) -> Path:
             "/Users/BjornRosinger/Documents/DreamFactory/Project-Intelligence-Graph/outputs/project_intelligence_graph/quality_os_operator_surface.json": HERMETIC_SURFACE_ROOT / "quality_os_operator_surface.json",
             "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/lib/types.ts": HERMETIC_SURFACE_ROOT / "lioncom-types.ts",
             "/Users/BjornRosinger/Documents/DreamFactory/LIONCOM/mission-control-board/components/portfolio-control-tower-page.tsx": HERMETIC_SURFACE_ROOT / "portfolio-control-tower-page.tsx",
+            "outputs/openjarvis_capability_lab/openjarvis-capability-arena-v1-20260525.zip": HERMETIC_SURFACE_ROOT / "openjarvis-capability-arena-v1-20260525.zip",
         }
         replacement = replacements.get(path)
         if replacement is not None:

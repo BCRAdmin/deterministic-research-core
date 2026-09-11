@@ -37,7 +37,9 @@ jobs:
 
       - name: Install Product test dependencies
         working-directory: ../company-dossier-lab/room16-app
-        run: npm ci --ignore-scripts
+        run: |
+          npm ci --ignore-scripts
+          npm run build
 
       - name: Verify dependencies
         run: .venv/bin/python -m pip check
