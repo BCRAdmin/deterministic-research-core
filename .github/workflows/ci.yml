@@ -53,6 +53,12 @@ jobs:
       - name: Test trust split
         run: .venv/bin/python -m pytest -q research_agent/tests/test_room16_test_trust_contract.py research_agent/tests/test_ba12_final_strangler_cutover.py
 
+      - name: Test Product hermetic companion
+        working-directory: ../company-dossier-lab/room16-app
+        run: |
+          node --test --test-concurrency=1 scripts/test_ba12_native_cutover.mjs scripts/test_ba12_r5_runtime_activation.mjs
+          node --test scripts/test_compiler_artifact_bundle_v2.mjs
+
       - name: Audit test hermeticity
         run: .venv/bin/python scripts/audit_test_hermeticity.py --repo .
 

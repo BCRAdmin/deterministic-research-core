@@ -33,6 +33,7 @@ def product_runtime_receipt() -> dict[str, object]:
         [
             "node",
             "--test",
+            "--test-concurrency=1",
             "scripts/test_ba12_native_cutover.mjs",
             "scripts/test_ba12_r5_runtime_activation.mjs",
         ],
@@ -60,7 +61,7 @@ def test_ba12_r5_acceptance_matrix(
     runtime_output = str(product_runtime_receipt["runtime_output"])
     package = product_runtime_receipt["package"]
     assert product_runtime_receipt["launch_exit"] == 0
-    assert product_runtime_receipt["runtime_exit"] == 0
+    assert product_runtime_receipt["runtime_exit"] == 0, runtime_output
 
     if number in {1, 2, 3, 4, 15, 16}:
         assert launch["status"] == "PASS"

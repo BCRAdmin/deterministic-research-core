@@ -313,7 +313,7 @@ def test_rfc0008_acceptance_matrix(test_id: str) -> None:
             capture_output=True,
             text=True,
         )
-        assert result.returncode == 0
+        assert result.returncode == 0, result.stdout + result.stderr
     elif number == 38:
         assert policy().mutable_bundle_hash_allowlist_allowed is False
         assert "bundle_hashes" not in load_json(CONFIG / "consumer_policy_v2.json")

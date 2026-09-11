@@ -329,7 +329,11 @@ def _classify_disclosed_business_risks(
 def _risk_band(score: Optional[float], coverage_ratio: float) -> str:
     if score is None:
         return "not_measured"
-    if coverage_ratio < 1:
+    # Python 3.11's ordinary float summation can represent the complete
+    # 0.35 + 0.30 + 0.20 + 0.15 weight set as 0.9999999999999999.  Treat only
+    # a material coverage deficit as incomplete; the component coverage
+    # calculations themselves remain fail-closed.
+    if coverage_ratio < 1.0 - 1e-9:
         return "incomplete_financial_screen"
     if score < 25:
         return "low_financial_risk"
