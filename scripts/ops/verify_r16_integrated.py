@@ -270,6 +270,38 @@ def main() -> int:
         selfhash(contract, "selection_contract_sha256")
         selected_doc = read_json(archive, "13_EPOCH3_SELECTED_CASES_SEALED.json")
         selfhash(selected_doc, "selected_cases_sha256")
+        universe_name = "authority_inputs/14_REIT_UNIVERSE_AUTHORITY.json"
+        ledger_name = "authority_inputs/REIT_CASE_USAGE_LEDGER.json"
+        previous_name = "authority_inputs/09_REIT_EPOCH2_SELECTED_CASES_SEALED.json"
+        universe = read_json(archive, universe_name)
+        ledger = read_json(archive, ledger_name)
+        previous = read_json(archive, previous_name)
+        selfhash(universe, "universe_sha256")
+        selfhash(previous, "selected_cases_sha256")
+        if (
+            seal.get("clean_validation_universe_sha256") != universe["universe_sha256"]
+            or seal.get("exposed_case_ledger_sha256")
+            != hashlib.sha256(archive.read(ledger_name)).hexdigest()
+            or seal.get("prior_epoch2_selection_sha256")
+            != hashlib.sha256(archive.read(previous_name)).hexdigest()
+            or contract.get("universe_sha256") != universe["universe_sha256"]
+        ):
+            raise ValueError("ELIGIBILITY_AUTHORITY_BINDING")
+        exposed = [*ledger["cases"], *previous["selected"]]
+        excluded_tickers = {row["ticker"] for row in exposed}
+        excluded_ciks = {str(row["cik"]) for row in exposed}
+        excluded_aliases = {
+            alias.lower() for row in exposed for alias in row.get("aliases", [])
+        }
+        eligible = [
+            row
+            for row in universe["eligible_equity_reits"]
+            if row["ticker"] not in excluded_tickers
+            and str(row["cik"]) not in excluded_ciks
+            and not ({alias.lower() for alias in row.get("aliases", [])} & excluded_aliases)
+        ]
+        if contract.get("eligible") != eligible:
+            raise ValueError("ELIGIBILITY_RECOMPUTE")
         if (
             contract["provider_calls_before_selection_seal"] != 0
             or selected_doc["provider_calls_before_selection_seal"] != 0

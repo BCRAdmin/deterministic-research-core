@@ -367,6 +367,14 @@ def main() -> int:
     if development["status"] != "PASS":
         raise SystemExit("REIT-v4 development gate failed")
 
+    universe = read_json(R15 / "14_REIT_UNIVERSE_AUTHORITY.json")
+    ledger_doc = read_json(R15 / "REIT_CASE_USAGE_LEDGER.json")
+    previous_selected_doc = read_json(
+        R15 / "09_REIT_EPOCH2_SELECTED_CASES_SEALED.json"
+    )
+    ledger = ledger_doc["cases"]
+    previous_selected = previous_selected_doc["selected"]
+
     seal_body = {
         "contract_id": "room16.r16.reit_v4_candidate_seal@1",
         "profile_family": "REIT",
@@ -377,10 +385,22 @@ def main() -> int:
         "parser_contract_sha256": PARSER_CONTRACT_SHA256,
         "shared_profile_contract_sha256": REIT_V3_PROFILE["profile_contract_sha256"],
         "core_slot_contract_sha256": CORE_SLOT_CONTRACT["core_slot_contract_sha256"],
+        "mapping_and_registry_state_sha256": canonical_sha256(
+            {
+                "reit_profile": REIT_V3_PROFILE,
+                "core_slot_contract": CORE_SLOT_CONTRACT,
+            }
+        ),
         "acceptance_threshold_sha256": canonical_sha256(ACCEPTANCE_THRESHOLDS_V2),
         "development_gate_sha256": canonical_sha256(development),
         "exposed_replay_sha256": exposed["exposed_replay_sha256"],
+        "exposed_case_ledger_sha256": sha(R15 / "REIT_CASE_USAGE_LEDGER.json"),
+        "prior_epoch2_selection_sha256": sha(
+            R15 / "09_REIT_EPOCH2_SELECTED_CASES_SEALED.json"
+        ),
+        "clean_validation_universe_sha256": universe["universe_sha256"],
         "full_tests_sha256": sha(args.research_junit),
+        "adversarial_tests_sha256": sha(args.adversarial_junit),
         "freeze_authorized": False,
         "semantic_or_selection_mutations_after_seal": 0,
     }
@@ -400,9 +420,6 @@ def main() -> int:
         },
     )
 
-    universe = read_json(R15 / "14_REIT_UNIVERSE_AUTHORITY.json")
-    ledger = read_json(R15 / "REIT_CASE_USAGE_LEDGER.json")["cases"]
-    previous_selected = read_json(R15 / "09_REIT_EPOCH2_SELECTED_CASES_SEALED.json")["selected"]
     exposed_rows = [*ledger, *previous_selected]
     excluded_tickers = {row["ticker"] for row in exposed_rows}
     excluded_ciks = {str(row["cik"]) for row in exposed_rows}
@@ -658,6 +675,12 @@ def main() -> int:
     authority_dir = output / "authority_inputs"
     authority_dir.mkdir(parents=True)
     shutil.copy2(args.r15_compact, authority_dir / args.r15_compact.name)
+    for name in (
+        "09_REIT_EPOCH2_SELECTED_CASES_SEALED.json",
+        "14_REIT_UNIVERSE_AUTHORITY.json",
+        "REIT_CASE_USAGE_LEDGER.json",
+    ):
+        shutil.copy2(R15 / name, authority_dir / name)
 
     full, compact = package(output, verdict)
     verify = subprocess.run(
