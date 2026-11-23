@@ -24,6 +24,7 @@ def main() -> int:
     parser.add_argument("--exchange", default=None)
     parser.add_argument("--wkn", default=None)
     parser.add_argument("--emit-compiler-artifact-bundle", action="store_true")
+    parser.add_argument("--emit-room16-os-dossier", action="store_true")
     args = parser.parse_args()
     try:
         request = request_from_environment(
@@ -34,6 +35,7 @@ def main() -> int:
             exchange=args.exchange,
             wkn=args.wkn,
             emit_compiler_artifact_bundle=args.emit_compiler_artifact_bundle,
+            emit_room16_os_dossier=args.emit_room16_os_dossier,
         )
         result = run_current_research(request)
     except (ValidationError, CurrentResearchError, RuntimeError, ValueError) as exc:

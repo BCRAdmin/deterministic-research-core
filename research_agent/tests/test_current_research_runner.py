@@ -746,6 +746,89 @@ def test_current_runner_stages_generic_inputs_and_returns_authority(monkeypatch,
     assert (tmp_path / "staging" / "GENR" / "2026-07-26" / "sources").exists()
 
 
+def test_current_runner_emits_a_bound_source_native_dossier_only_after_verification(
+    monkeypatch,
+    tmp_path,
+):
+    def fake_pipeline(ticker, as_of_date, config):
+        authority = tmp_path / "outputs" / ticker / as_of_date / "authority_bundle"
+        authority.mkdir(parents=True)
+        (authority / "authority_manifest.json").write_text(
+            json.dumps(
+                {
+                    "contract_id": "room16.research_authority_bundle",
+                    "analysis_allowed": True,
+                }
+            ),
+            encoding="utf-8",
+        )
+
+    observed = {}
+
+    def fake_compile(*, authority_bundle_dir, output_path):
+        observed["authority_bundle_dir"] = authority_bundle_dir
+        observed["output_path"] = output_path
+        return {
+            "status": "verified_private",
+            "receipt_sha256": "a" * 64,
+            "dossier": {
+                "dossier_sha256": "b" * 64,
+                "public_evidence_status": "blocked",
+            },
+        }
+
+    monkeypatch.setattr(runner, "run_research_pipeline", fake_pipeline)
+    monkeypatch.setattr(runner, "compile_current_authority_bundle", fake_compile)
+    request = _request(tmp_path).model_copy(update={"emit_room16_os_dossier": True})
+
+    result = run_current_research(
+        request,
+        price_provider=_FakePrices(),
+        sec_client=_FakeSec(),
+    )
+
+    expected_root = tmp_path / "outputs" / "GENR" / "2026-07-26"
+    assert Path(observed["authority_bundle_dir"]) == expected_root / "authority_bundle"
+    assert Path(observed["output_path"]) == expected_root / "room16_os_dossier.json"
+    assert result["room16_os_dossier"] == str(expected_root / "room16_os_dossier.json")
+    assert result["room16_os_receipt_sha256"] == "a" * 64
+    assert result["room16_os_dossier_sha256"] == "b" * 64
+    assert result["room16_os_public_edition_status"] == "blocked"
+
+
+def test_current_runner_rejects_a_blocked_source_native_dossier(monkeypatch, tmp_path):
+    def fake_pipeline(ticker, as_of_date, config):
+        authority = tmp_path / "outputs" / ticker / as_of_date / "authority_bundle"
+        authority.mkdir(parents=True)
+        (authority / "authority_manifest.json").write_text(
+            json.dumps(
+                {
+                    "contract_id": "room16.research_authority_bundle",
+                    "analysis_allowed": True,
+                }
+            ),
+            encoding="utf-8",
+        )
+
+    monkeypatch.setattr(runner, "run_research_pipeline", fake_pipeline)
+    monkeypatch.setattr(
+        runner,
+        "compile_current_authority_bundle",
+        lambda **_kwargs: {
+            "status": "blocked",
+            "dossier": {"quality_blocker_codes": ["CURRENCY_UNKNOWN"]},
+        },
+    )
+    request = _request(tmp_path).model_copy(update={"emit_room16_os_dossier": True})
+
+    with pytest.raises(CurrentResearchError, match="CURRENCY_UNKNOWN"):
+        run_current_research(
+            request,
+            price_provider=_FakePrices(),
+            sec_client=_FakeSec(),
+        )
+
+
 def test_current_runner_stages_sec_risks_for_the_existing_pipeline(monkeypatch, tmp_path):
     def fake_pipeline(ticker, as_of_date, config):
         risk_path = Path(config.sec_risk_factors_path)

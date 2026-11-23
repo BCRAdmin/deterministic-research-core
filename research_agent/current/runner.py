@@ -34,6 +34,10 @@ from research_agent.productization.artifact_bundle import (
     build_compiler_artifact_bundle,
     build_current_output_archive,
 )
+from research_agent.current.room16_os_compiler import (
+    CurrentRoom16OSCompilerError,
+    compile_current_authority_bundle,
+)
 from research_agent.sources.bse.bse_provider import BseIssuerProvider
 from research_agent.sources.prices.massive_price_provider import MassivePriceProvider
 from research_agent.sources.prices.nasdaq_price_provider import NasdaqPriceProvider
@@ -130,6 +134,7 @@ class CurrentResearchRequest(BaseModel):
     earnings_calendar_path: Optional[str] = None
     official_news_dir: Optional[str] = None
     emit_compiler_artifact_bundle: bool = False
+    emit_room16_os_dossier: bool = False
 
     @field_validator("ticker")
     @classmethod
@@ -1192,6 +1197,28 @@ def run_current_research(
             "Room16 erstellt daraus keinen Bericht."
         )
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    room16_os_receipt = None
+    room16_os_receipt_path = resolved_output_root / symbol / request.as_of_date / "room16_os_dossier.json"
+    if request.emit_room16_os_dossier:
+        try:
+            room16_os_receipt = compile_current_authority_bundle(
+                authority_bundle_dir=authority_dir,
+                output_path=room16_os_receipt_path,
+            )
+        except CurrentRoom16OSCompilerError as exc:
+            raise CurrentResearchError(
+                "Der source-native Room16-Compiler konnte aus dem verifizierten "
+                f"Authority-Bundle kein Dossier ableiten: {exc}"
+            ) from exc
+        if room16_os_receipt.get("status") != "verified_private":
+            blockers = (
+                room16_os_receipt.get("dossier", {}).get("quality_blocker_codes")
+                or ["ROOM16_OS_COMPILER_BLOCKED"]
+            )
+            raise CurrentResearchError(
+                "Der source-native Room16-Compiler hat den Lauf fail-closed blockiert: "
+                + ", ".join(str(item) for item in blockers)
+            )
     result = {
         "status": "authority_ready",
         "ticker": symbol,
@@ -1226,6 +1253,15 @@ def run_current_research(
         "analysis_allowed": manifest.get("analysis_allowed"),
         "staging_dir": str(staging_dir),
     }
+    if room16_os_receipt is not None:
+        result.update(
+            {
+                "room16_os_dossier": str(room16_os_receipt_path),
+                "room16_os_receipt_sha256": room16_os_receipt.get("receipt_sha256"),
+                "room16_os_dossier_sha256": room16_os_receipt.get("dossier", {}).get("dossier_sha256"),
+                "room16_os_public_edition_status": room16_os_receipt.get("dossier", {}).get("public_evidence_status"),
+            }
+        )
     if compiler_bundle is not None:
         result.update(
             {
@@ -1645,6 +1681,7 @@ def request_from_environment(
     exchange: Optional[str] = None,
     wkn: Optional[str] = None,
     emit_compiler_artifact_bundle: bool = False,
+    emit_room16_os_dossier: bool = False,
 ) -> CurrentResearchRequest:
     return CurrentResearchRequest(
         ticker=ticker,
@@ -1654,6 +1691,7 @@ def request_from_environment(
         exchange=exchange,
         wkn=wkn,
         emit_compiler_artifact_bundle=emit_compiler_artifact_bundle,
+        emit_room16_os_dossier=emit_room16_os_dossier,
         sec_user_agent=os.environ.get("ROOM16_SEC_USER_AGENT", ""),
         price_provider=os.environ.get("ROOM16_PRICE_PROVIDER", "auto"),
         price_api_key=(os.environ.get("MASSIVE_API_KEY") or os.environ.get("POLYGON_API_KEY")),
