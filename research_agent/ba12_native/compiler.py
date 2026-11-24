@@ -23,7 +23,6 @@ from research_agent.semantic_compiler.source_frontend.contracts import SourceSna
 from .contracts import NativeRunReceipt, create_record
 
 ROOT = Path(__file__).resolve().parents[2]
-TEMPLATE = ROOT / "research_agent/tests/fixtures/rfc0009-native-probe/BUNDLE_MANIFEST.json"
 SIGNING_KEY = ROOT / ".runtime/rfc0008/signing_key_ed25519.bin"
 BA11_GOVERNANCE_SNAPSHOT_SHA256 = "2c0e0e292f2b167e68814e2e2180f9f0823ea8be452be52b95f56db95a4ca1cf"
 KINDS = (
@@ -33,6 +32,106 @@ KINDS = (
     "renderer_lineage_expectation", "renderer_projection", "source_provenance",
     "typed_facts", "verification_plan", "verification_report",
 )
+
+
+def _native_manifest_template(trust: dict[str, Any]) -> dict[str, Any]:
+    """Build the static Bundle@2 envelope from runtime-owned trust contracts.
+
+    Native compilation must never borrow a template from the test tree: a
+    sealed capsule deliberately excludes tests and fixtures.  The signed
+    schema profile already names every required section and the policy owns
+    the frozen compiler identity, so those two runtime contracts are the
+    canonical template authority.
+    """
+
+    profile = trust["native_profile"]
+    policy = trust["policy"]
+    compiler_identity = policy.compiler_identity.model_dump(mode="json")
+    bundle_contract = profile["bundle_contract"]
+    native_emitter = profile["native_emitter_lock"]
+    template_hash = sha256_json(
+        {
+            "contract_id": "room16.ba12.native_manifest_template",
+            "contract_version": 1,
+            "profile_sha256": profile["profile_sha256"],
+        }
+    )
+    static_section_hashes = {
+        "foundation_version": sha256_json(
+            compiler_identity["foundation_version"]
+        ),
+        "pass_manifest": sha256_json(
+            compiler_identity["pass_manifest_sha256"]
+        ),
+        "registry_lock": sha256_json(
+            compiler_identity["registry_authority_sha256"]
+        ),
+    }
+    sections = [
+        {
+            "artifact_ids": [],
+            "compatibility_rule": "exact_version",
+            "owner": "research_compiler",
+            "required": True,
+            "schema_version": bundle_contract["schema_version"],
+            "section_id": section_id,
+            "sha256": static_section_hashes.get(section_id, template_hash),
+        }
+        for section_id in profile["required_bundle_section_ids"]
+    ]
+    return {
+        **bundle_contract,
+        "ba10_v1_freeze_sha256": policy.ba10_v1_freeze_sha256,
+        "ba11_freeze_sha256": policy.ba11_freeze_sha256,
+        "bundle_sha256": template_hash,
+        "compiler_identity": compiler_identity,
+        "emitter_identity": {
+            "emitter_id": native_emitter["emitter_id"],
+            "emitter_version": native_emitter["emitter_version"],
+            "producer_pass_id": native_emitter["producer_pass_id"],
+            "schema_sha256": native_emitter["schema_sha256"],
+            "implementation_sha256": template_hash,
+            "consumer_policy_sha256": policy.policy_sha256,
+        },
+        "compile_identity": {
+            "ticker": "TEMPLATE",
+            "as_of_date": "1970-01-01",
+            "compile_request_sha256": template_hash,
+            "source_acquisition_sha256": template_hash,
+            "retrieval_receipt_set_sha256": template_hash,
+            "source_snapshot_sha256": template_hash,
+            "final_compile_state_sha256": template_hash,
+            "verification_report_sha256": template_hash,
+            "replay_sha256": template_hash,
+            "migration_v1_bundle_sha256": None,
+        },
+        "compatibility": {
+            "authority_v3_bridge_direction": "bundle_to_authority_v3_only",
+            "authority_v3_semantic_input_allowed": False,
+            "compiler_mode": "source_native",
+            "legacy_semantic_input_allowed": False,
+            "mode": "bundle_native",
+            "native_source_production": True,
+            "source_native_fact_generation": True,
+        },
+        "eligibility": {
+            "ba11_frozen": True,
+            "ba12_cutover_candidate": False,
+            "compile_allowed": False,
+            "deploy_allowed": False,
+            "publication_allowed": False,
+            "release_ready": False,
+            "renderer_cutover": False,
+            "renderer_eligible": False,
+        },
+        "extensions": {"native_manifest_template": "runtime_owned"},
+        "artifact_index_sha256": template_hash,
+        "artifacts": [],
+        "required_sections": list(profile["required_artifact_kinds"]),
+        "optional_sections": [],
+        "section_index_sha256": template_hash,
+        "sections": sections,
+    }
 
 
 @dataclass(frozen=True)
@@ -282,8 +381,7 @@ def build_native_bundle(
             "required": True, "sha256": digest,
         })
     trust = load_native_trust()
-    template = json.loads(TEMPLATE.read_text(encoding="utf-8"))
-    manifest = {key: value for key, value in template.items()}
+    manifest = _native_manifest_template(trust)
     manifest["compiler_identity"] = trust["policy"].compiler_identity.model_dump(mode="json")
     emitter_lock = trust["emitter_profile"]["emitter_contract_lock"]
     manifest["emitter_identity"] = {
@@ -311,7 +409,28 @@ def build_native_bundle(
     manifest["required_sections"] = list(trust["native_profile"]["required_artifact_kinds"])
     manifest["optional_sections"] = []
     kind_to_id = {item["artifact_kind"]: item["artifact_id"] for item in artifact_entries}
-    section_hashes = {"artifact_hashes": sha256_json(artifact_entries), "compatibility_state": sha256_json(manifest["compatibility"]), "compile_identity": sha256_json(manifest["compile_identity"]), "compiler_version": sha256_json(manifest["compiler_identity"]), "ir_references": sha256_json([{"artifact_id": item["artifact_id"], "sha256": item["sha256"]} for item in artifact_entries if item["authoritative"]])}
+    section_hashes = {
+        "artifact_hashes": sha256_json(artifact_entries),
+        "compatibility_state": sha256_json(manifest["compatibility"]),
+        "compile_identity": sha256_json(manifest["compile_identity"]),
+        "compiler_version": sha256_json(manifest["compiler_identity"]),
+        "foundation_version": sha256_json(
+            manifest["compiler_identity"]["foundation_version"]
+        ),
+        "ir_references": sha256_json(
+            [
+                {"artifact_id": item["artifact_id"], "sha256": item["sha256"]}
+                for item in artifact_entries
+                if item["authoritative"]
+            ]
+        ),
+        "pass_manifest": sha256_json(
+            manifest["compiler_identity"]["pass_manifest_sha256"]
+        ),
+        "registry_lock": sha256_json(
+            manifest["compiler_identity"]["registry_authority_sha256"]
+        ),
+    }
     for section in manifest["sections"]:
         kind = section["section_id"]
         section["artifact_ids"] = [kind_to_id[kind]] if kind in kind_to_id else []

@@ -55,6 +55,14 @@ def _build(ticker: str, root: Path):
     return request, plan, executor, records, bridge, compiled
 
 
+def test_native_compiler_does_not_depend_on_test_fixtures_at_runtime() -> None:
+    source = (ROOT / "research_agent/ba12_native/compiler.py").read_text(
+        encoding="utf-8"
+    )
+    assert "research_agent/tests/" not in source
+    assert "_native_manifest_template" in source
+
+
 @pytest.fixture(scope="session")
 def systems(tmp_path_factory):
     base = tmp_path_factory.mktemp("ba12")
